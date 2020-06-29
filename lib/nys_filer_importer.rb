@@ -12,6 +12,15 @@ module NYSFilerImporter
     import
   end
 
+  def self.process
+    ExternalData.nys_filer.find_each do |external_data|
+      ExternalEntity
+        .nys_filer
+        .find_or_create_by!(external_data: external_data)
+        .automatch
+    end
+  end
+
   def self.download_data
     unless FILER_LOCAL_PATH.exist?
       File.open(FILER_LOCAL_PATH, 'wb') do |f|
@@ -44,7 +53,8 @@ module NYSFilerImporter
     begin
       HEADERS.zip(CSV.parse_line(line)).to_h
     rescue CSV::MalformedCSVError
-      # The CSV file does not properly double-quote "
+      # Try to correct middle names in quotes that are not escaped
+      # example: 'Foo "Middle" Bar'
       if (match = /"(\w+\")[^,]/.match(line))
         line.gsub!(match[1], "\"#{match[1]}\"")
         retry
