@@ -8,8 +8,9 @@ module NYSFilerImporter
   HEADERS = %w[filer_id name filer_type status committee_type office district treas_first_name treas_last_name address city state zip].freeze
 
   def self.run
-    download_data
+    download
     import
+    process
   end
 
   def self.process
@@ -21,7 +22,7 @@ module NYSFilerImporter
     end
   end
 
-  def self.download_data
+  def self.download
     unless FILER_LOCAL_PATH.exist?
       File.open(FILER_LOCAL_PATH, 'wb') do |f|
         f.write HTTParty.get(FILER_SOURCE_URL).body

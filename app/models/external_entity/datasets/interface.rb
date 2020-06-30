@@ -15,6 +15,10 @@ class ExternalEntity
         raise NotImplementedError
       end
 
+      def unmatch_action
+        Rails.logger.info "No unmatch action defined for #{dataset}"
+      end
+
       def automatch
         self
       end

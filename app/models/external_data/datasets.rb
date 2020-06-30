@@ -3,11 +3,11 @@
 class ExternalData
   module Datasets
     def self.relationships
-      ['iapd_schedule_a']
+      ['iapd_schedule_a', 'nys_disclosure'].freeze
     end
 
     def self.entities
-      @entities ||= (names - relationships)
+      @entities ||= (names - relationships).freeze
     end
 
     def self.names
@@ -111,6 +111,12 @@ class ExternalData
           .nys_filer
           .where("JSON_VALUE(data, '$.name') like ?", params.query_string)
           .order(params.order_hash)
+      end
+    end
+
+    class NYSDisclosure < SimpleDelegator
+      def self.search(params)
+        raise NotImplementedError
       end
     end
   end
