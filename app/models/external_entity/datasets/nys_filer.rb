@@ -17,6 +17,7 @@ class ExternalEntity
       def matches
         if external_data.wrapper.individual_campaign_committee?
           EntityMatcher.find_matches_for_person(
+            # TODO: Move this EntityMatcher::NyFiler function to a better place
             EntityMatcher::NyFiler.extract_name_from(external_data.wrapper.name)
           )
         else

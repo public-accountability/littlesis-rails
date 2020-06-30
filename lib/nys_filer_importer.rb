@@ -1,33 +1,17 @@
 # frozen_string_literal: true
 
 require 'zip'
+require Rails.root.join('lib/utility.rb').to_s
 
 module NYSFilerImporter
   FILER_REMOTE_URL = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
-  FILER_LOCAL_PATH = Rails.root.join('data/nys_campaign_finance_commcand.zip')
+  FILER_LOCAL_PATH = Rails.root.join('data/nys_campaign_finance_commcand.zip').to_s
   HEADERS = %w[filer_id name filer_type status committee_type office district treas_first_name treas_last_name address city state zip].freeze
 
   def self.run
-    download
+    Utility.stream_file_if_not_exists(url: FILER_REMOTE_URL, path: FILER_LOCAL_PATH)
     import
     process
-  end
-
-  def self.process
-    ExternalData.nys_filer.find_each do |external_data|
-      ExternalEntity
-        .nys_filer
-        .find_or_create_by!(external_data: external_data)
-        .automatch
-    end
-  end
-
-  def self.download
-    unless FILER_LOCAL_PATH.exist?
-      File.open(FILER_LOCAL_PATH, 'wb') do |f|
-        f.write HTTParty.get(FILER_SOURCE_URL).body
-      end
-    end
   end
 
   def self.import
@@ -40,28 +24,46 @@ module NYSFilerImporter
     end
   end
 
-  def self.extract_rows
-    Zip::File.open(FILER_LOCAL_PATH) do |zip_file|
-      zip_file.get_entry('COMMCAND.txt').get_input_stream do |io|
-        io.each do |line|
-          yield parse_line(line)
-        end
-      end
+  def self.process
+    ExternalData.nys_filer.find_each do |external_data|
+      ExternalEntity
+        .nys_filer
+        .find_or_create_by!(external_data: external_data)
+        .automatch
     end
   end
 
-  def self.parse_line(line)
-    begin
-      HEADERS.zip(CSV.parse_line(line)).to_h
-    rescue CSV::MalformedCSVError
-      # Try to correct middle names in quotes that are not escaped
-      # example: 'Foo "Middle" Bar'
-      if (match = /"(\w+\")[^,]/.match(line))
-        line.gsub!(match[1], "\"#{match[1]}\"")
-        retry
-      else
-        raise
+  def self.extract_rows
+    errors = 0
+    Zip::File.open(FILER_LOCAL_PATH) do |zip_file|
+      zip_file.get_entry('COMMCAND.txt').get_input_stream do |io|
+        io.each do |line|
+          parsed_line = parse_line(line.encode('ASCII', invalid: :replace, undef: :replace, replace: ''))
+          if parsed_line == :error
+            Rails.logger.warn "[NYSFilerImporter] Could not import line\n    #{line.strip}\n"
+            errors += 1
+          else
+            yield parsed_line
+          end
+        end
       end
+    end
+    Rails.logger.warn "[NYSFilerImporter] Skipped #{errors} lines with errors."
+  end
+
+  def self.parse_line(line, attempt: 0)
+    return :error if attempt == 2
+
+    HEADERS.zip(CSV.parse_line(line)).to_h
+  rescue CSV::MalformedCSVError
+    # Try to correct some middle names in quotes that are not escaped (example: 'Foo "Middle" Bar')
+    # and other misquoting errors...
+    if (match = /[ \(]("[a-zA-Z \-]+")[\) ]/.match(line))
+      parse_line(line.gsub(match[1], "\"#{match[1]}\""), attempt: attempt + 1)
+    elsif (match = /[ ]("\w+)/.match(line))
+      parse_line(line.gsub(match[1], "\"#{match[1]}"), attempt: attempt + 1)
+    else
+      parse_line(line, attempt: attempt + 1)
     end
   end
 end

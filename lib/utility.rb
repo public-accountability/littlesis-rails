@@ -68,16 +68,14 @@ module Utility
   # Saves url to local path with streams
   def self.stream_file(url:, path:)
     File.open(path, 'wb') do |file|
-      HTTParty.get(url, stream_body: true) do
+      HTTParty.get(url, streambody: true) do |fragment|
         file.write(fragment)
       end
     end
   end
 
   def self.stream_file_if_not_exists(url:, path:)
-    unless file_is_empty_or_nonexistent(path)
-      stream_file_if_not_exists(url: url, path: path)
-    end
+    stream_file(url: url, path: path) if file_is_empty_or_nonexistent(path)
   end
 
   def self.yes_no_converter(x)
