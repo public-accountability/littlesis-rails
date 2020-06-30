@@ -89,7 +89,6 @@ class DevelopmentDb
                  entity_fields
                  extension_definition
                  extension_record
-                 external_datasets
                  external_links
                  family
                  fields
