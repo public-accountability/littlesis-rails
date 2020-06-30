@@ -28,7 +28,7 @@ class ExternalData
       }.with_indifferent_access.freeze
     end
 
-    # Class for each dataset:
+    # Class for each dataset.
 
     class NYCC < SimpleDelegator
       def self.search(params)
@@ -90,6 +90,10 @@ class ExternalData
         super(**data.symbolize_keys)
       end
 
+      def individual_campaign_committee?
+        committee_type == '1'
+      end
+
       def nice
         @nice ||= {
           filer_id: filer_id,
@@ -103,9 +107,11 @@ class ExternalData
       end
 
       def self.search(params)
-        # ExternalData
+        ExternalData
+          .nys_filer
+          .where("JSON_VALUE(data, '$.name') like ?", params.query_string)
+          .order(params.order_hash)
       end
     end
-
   end
 end

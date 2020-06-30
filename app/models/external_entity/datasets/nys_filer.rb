@@ -15,11 +15,21 @@ class ExternalEntity
   module Datasets
     module NYSFiler
       def matches
-        raise NotImplementedError
+        if external_data.wrapper.individual_campaign_committee?
+          EntityMatcher.find_matches_for_person(
+            EntityMatcher::NyFiler.extract_name_from(external_data.wrapper.name)
+          )
+        else
+          EntityMatcher.find_matches_for_org(external_data.wrapper.name)
+        end
       end
 
       def search_for_matches(search_term)
-        raise NotImplementedError
+        if external_data.wrapper.individual_campaign_committee?
+          EntityMatcher.find_matches_for_person(search_term)
+        else
+          EntityMatcher.find_matches_for_org(search_term)
+        end
       end
 
       def match_action
@@ -29,15 +39,11 @@ class ExternalEntity
           .find_or_create_by!(entity_id: entity_id, link_id: filer_id)
       end
 
-      def automatch
-        self
-      end
-
       # Filer type #1 is an "Individual Campaign Committee"
       # and is associated directly with the politician or candidate.
       # PACs and other committees are matched with Organizations.
       def set_primary_ext
-        self.primary_ext = if external_data.wrapper.committee_type == '1'
+        self.primary_ext = if external_data.wrapper.individual_campaign_committee?
                              'Person'
                            else
                              'Org'

@@ -32,6 +32,17 @@
         <th>Advisor</th>
         <th>Acquired</th>
       </tr>
+
+    <% elsif @dataset == 'nys_filer' %>
+      <tr>
+        <th>
+          <span class="pr-1">Name</span>
+          <%= render partial: 'match_toggle' %>
+        </th>
+        <th>Type</th> <%# committee_type %>
+        <th>Office</th>
+      </tr>
+
     <% else %>
       <% raise NotImplementedError %>
     <%end %>
