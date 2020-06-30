@@ -92,7 +92,6 @@ class DevelopmentDb
                  external_datasets
                  external_links
                  family
-                 fedspending_filing
                  fields
                  generic
                  government_body
@@ -148,12 +147,19 @@ class DevelopmentDb
                  chat_user
                  delayed_jobs
                  edited_entities
+                 external_data
+                 external_entities
+                 external_relationships
                  map_annotations
+                 ny_disclosures
+                 ny_filers
+                 ny_matches
                  object_tag
                  sessions
                  sphinx_index
                  user_requests
-                 versions].freeze
+                 versions
+                 unmatched_ny_filers].freeze
 
   NON_CLEANED_IGNORED = %w[user_profiles users].freeze
 
@@ -161,9 +167,6 @@ class DevelopmentDb
 
   LIMIT = %w[modification
              modification_field
-             ny_disclosures
-             ny_filers
-             ny_matches
              os_candidates
              os_committees
              os_donations
@@ -171,8 +174,7 @@ class DevelopmentDb
              os_entity_donor
              os_matches
              reference
-             reference_excerpt
-             unmatched_ny_filers].freeze
+             reference_excerpt].freeze
 
   OPEN_SECRETS = %w[os_candidates os_committees os_donations os_entity_category os_entity_donor os_matches].freeze
 
