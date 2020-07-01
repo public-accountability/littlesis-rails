@@ -3,7 +3,7 @@
 require 'csv'
 require 'tempfile'
 
-# Various helper functions used by scripts and rake tasks.
+# Helper functions used by scripts and rake tasks
 
 module Utility
   def self.save_hash_array_to_csv(file_path, data, mode: 'wb')
@@ -102,6 +102,6 @@ module Utility
     end
   end
 
-  class SubshellCommandError < StandardError; end
-  class SQLFileError < StandardError; end
+  class SubshellCommandError < Exceptions::LittleSisError; end
+  class SQLFileError < Exceptions::LittleSisError; end
 end

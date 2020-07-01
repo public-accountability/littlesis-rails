@@ -1,5 +1,3 @@
-require Rails.root.join('lib', 'utility.rb').to_s
-
 namespace :users do
 
   desc 'recent signups since date'
@@ -19,5 +17,5 @@ namespace :users do
 
     ColorPrinter.print_blue "#{users.count} users saved to #{file_path.to_s}"
   end
-  
+
 end

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'zip'
-require Rails.root.join('lib/utility.rb').to_s
 
 module NYSFilerImporter
   REMOTE_URL = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
