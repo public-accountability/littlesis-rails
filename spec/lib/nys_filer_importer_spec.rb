@@ -4,7 +4,7 @@ describe NYSFilerImporter do
   end
 
   before do
-    stub_const('NYSFilerImporter::FILER_LOCAL_PATH', test_filer_data)
+    stub_const('NYSFilerImporter::LOCAL_PATH', test_filer_data)
   end
 
   it 'creates 10 ExternalData' do
