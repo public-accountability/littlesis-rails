@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class NysController < ApplicationController
+class NYSController < ApplicationController
   before_action :authenticate_user!
 
   IMPORTER_ACTIONS = %i[create create_ny_filer_entity match_donations
