@@ -16,12 +16,12 @@ describe ExternalEntity, type: :model do
   end
 
   describe 'match_with' do
-    before { create(:tag, name: 'iapd') }
-
     context 'with an iapd advisor' do
       let(:aum) { 2_397_975_077 } # see factories/external_data
       let(:external_entity) { create(:external_entity_iapd_advisor) }
       let(:entity) { create(:entity_org) }
+
+      before { create(:tag, name: 'iapd') }
 
       it 'updates entity id field' do
         expect { external_entity.match_with(entity) }
@@ -45,6 +45,19 @@ describe ExternalEntity, type: :model do
         entity.add_extension('Business')
         expect { external_entity.match_with(entity) }.not_to change(Business, :count)
         expect(entity.reload.business.aum).to eq aum
+      end
+    end
+
+    context 'with a nys_filer' do
+      let(:politician) { create(:entity_person) }
+      let(:external_entity) { create(:external_entity_nys_filer) }
+
+      it 'updates entity id and creates an external link' do
+        expect { external_entity.match_with(politician) }
+          .to change(external_entity, :entity_id)
+                .from(nil).to(politician.id)
+
+        expect(external_entity.entity.external_links.nys_filer.first.link_id).to eq 'A123456'
       end
     end
   end
@@ -72,6 +85,23 @@ describe ExternalEntity, type: :model do
       it 'updates entity_id field' do
         external_entity.match_with_new_entity(entity_params)
         expect(external_entity.reload.entity_id).to eq Entity.last.id
+      end
+    end
+  end
+
+  describe 'unmatch!' do
+    context 'with a nys_filer' do
+      let(:politician) { create(:entity_person) }
+      let(:external_entity) { create(:external_entity_nys_filer) }
+
+      before do
+        external_entity.match_with(politician)
+      end
+
+      it 'removes entity and external link' do
+        expect(politician.external_links.nys_filer.exists?).to be true
+        external_entity.unmatch!
+        expect(politician.reload.external_links.nys_filer.exists?).to be false
       end
     end
   end

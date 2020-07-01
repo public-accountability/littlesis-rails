@@ -65,8 +65,8 @@ class ExternalEntity < ApplicationRecord
     raise Exceptions::LittleSisError, "Not yet matched" unless matched?
 
     ApplicationRecord.transaction do
-      update!(entity_id: nil)
       unmatch_action
+      update!(entity_id: nil)
     end
   end
 

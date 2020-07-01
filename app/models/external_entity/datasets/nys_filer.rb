@@ -34,10 +34,13 @@ class ExternalEntity
       end
 
       def match_action
-        filer_id = external_data.dataset_id
         ExternalLink
           .nys_filer
-          .find_or_create_by!(entity_id: entity_id, link_id: filer_id)
+          .find_or_create_by!(entity_id: entity_id, link_id: external_data.dataset_id)
+      end
+
+      def unmatch_action
+        entity.external_links.nys_filer.find_by(link_id: external_data.dataset_id).destroy!
       end
 
       # Filer type #1 is an "Individual Campaign Committee"

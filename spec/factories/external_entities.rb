@@ -19,4 +19,11 @@ FactoryBot.define do
     # for an explanation of why this is required.
     initialize_with { new(dataset: dataset) }
   end
+
+  factory :external_entity_nys_filer, class: 'ExternalEntity' do
+    dataset { "nys_filer" }
+    association :external_data, factory: :external_data_nys_filer, strategy: :build
+
+    initialize_with { new(dataset: dataset) }
+  end
 end
