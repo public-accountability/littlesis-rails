@@ -35,7 +35,8 @@ class ExternalLink < ApplicationRecord
     },
     crd: {
       enum_val: 4,
-      title: "Investment Adviser Public Disclosure: {}",
+      title: 'Investment Adviser Public Disclosure: {}',
+      grouped_title: 'Investment Adviser Public Disclosures',
       url: ->(elink) do
         if elink.entity.primary_ext == 'Org'
           'https://adviserinfo.sec.gov/Firm/{}'
@@ -49,6 +50,7 @@ class ExternalLink < ApplicationRecord
     nys_filer: {
       enum_val: 5,
       title: 'NYS Board of Election Filer: {}',
+      grouped_title: 'NYS Board of Election Filings',
       url: 'https://cfapp.elections.ny.gov/ords/plsql_browser/getfiler2_loaddates?filerid_IN={}',
       editable: false,
       multiple: true

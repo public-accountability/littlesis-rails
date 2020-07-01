@@ -1,7 +1,24 @@
 <ul class="list-unstyled">
-  <% @entity.external_links.each do |el| %>
-    <li>
-      <%= link_to el.title, el.url, 'target' => '_blank' %>
-    </li>
+  <% @entity.external_links.group_by(&:link_type).each do |(link_type, links)| %>
+    <% if links.count == 1 %>
+      <li>
+        <%= link_to links.first.title, links.first.url, 'target' => '_blank' %>
+      </li>
+    <% else  %>
+      <li>
+        <a data-toggle="collapse"
+           href="#external-links-grouped-<%= link_type %>"
+           onclick="$(this).find('span.glyphicon').toggleClass('glyphicon-plus-sign').toggleClass('glyphicon-minus-sign')"
+        >
+          <%= ExternalLink::LINK_TYPES.dig(link_type, :grouped_title)  %>
+          <span class="glyphicon glyphicon-plus-sign"></span>
+        </a>
+        <div class="collapse" id="external-links-grouped-<%= link_type %>">
+          <% links.each do |link| %>
+            <%= link_to link.link_id, link.url, target: '_blank', class: 'd-block ml-2' %>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
   <% end %>
 </ul>

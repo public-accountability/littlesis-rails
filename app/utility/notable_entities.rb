@@ -7,7 +7,8 @@ NotableEntities = {
   :republican_party => 12_901,
   :trump => 15_108,
   :exxon => 2,
-  :cuomo => 36_930
+  :cuomo => 36_930,
+  :deBlasio => 110_291
 }.with_indifferent_access
 
 NotableEntities.singleton_class.define_method(:get) do |entity|
