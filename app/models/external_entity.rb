@@ -7,6 +7,9 @@
 #   ExternalEntity#automatch            Automatically matches, if possible
 #   ExternalEntity#match_with(<Entity>) Performs match
 #   ExternalEntity#unmatch!             Reverts Match
+#
+#   ^^ These methods are defined in models/external_entity/datasets/<dataset_name>.rb
+#
 class ExternalEntity < ApplicationRecord
   include Datasets::Interface
 
