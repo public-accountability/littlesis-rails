@@ -3,9 +3,13 @@
 # External Entity links a LittleSis Entity to a row in External Data
 #
 #   ExternalEntity#matches              ResultSet of potential matches
+#   ExternalEntity#search_for_matches   Search entities for possible match
 #   ExternalEntity#automatch            Automatically matches, if possible
 #   ExternalEntity#match_with(<Entity>) Performs match
-#   ExternalEntity#search_for_matches   Search entities for possible match
+#   ExternalEntity#unmatch!             Reverts Match
+#
+#   ^^ These methods are defined in models/external_entity/datasets/<dataset_name>.rb
+#
 class ExternalEntity < ApplicationRecord
   include Datasets::Interface
 
@@ -28,7 +32,7 @@ class ExternalEntity < ApplicationRecord
   # For example the module ExternalEntity::Datasets::IapdAdvisors
   # is extended if record's dataset is iapd_advisors
   after_initialize do
-    extend "ExternalEntity::Datasets::#{dataset.camelize}".constantize
+    extend "ExternalEntity::Datasets::#{dataset.classify}".constantize
   end
 
   # is it already connected to an entity
@@ -56,6 +60,17 @@ class ExternalEntity < ApplicationRecord
       match_with Entity.create!(entity_params)
     end
     self
+  end
+
+  # This removed the entity_id and calls unmatch_match.
+  # For many datasets this will not *fully* revert the effects of #match_action
+  def unmatch!
+    raise Exceptions::LittleSisError, "Not yet matched" unless matched?
+
+    ApplicationRecord.transaction do
+      unmatch_action
+      update!(entity_id: nil)
+    end
   end
 
   def presenter

@@ -1,4 +1,4 @@
-describe NysController, type: :controller do
+describe NYSController, type: :controller do
   before do
     Entity.skip_callback(:create, :after, :create_primary_ext)
     ActiveJob::Base.queue_adapter = :test
@@ -97,7 +97,7 @@ describe NysController, type: :controller do
         post :match_donations, params: { payload: { disclosure_ids: [12, 17], donor_id: '666' } }
       end
 
-      # it 'enques delayed_delta job' do 
+      # it 'enques delayed_delta job' do
       #   allow(NyMatch).to receive(:match)
       #   expect { post(:match_donations, {payload: {disclosure_ids: [@disclosure.id], donor_id: '666'}}) }
       #     .to have_enqueued_job.on_queue('delta')

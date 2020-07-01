@@ -18,4 +18,5 @@
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular 'external_data', 'external_data'
   inflect.acronym 'NYCC'
+  inflect.acronym 'NYS'
 end

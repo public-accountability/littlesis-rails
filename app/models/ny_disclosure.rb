@@ -1,42 +1,6 @@
 # frozen_string_literal: true
 
 class NyDisclosure < ApplicationRecord
-  REPORT_ID = {
-    'A' => '32 Day Pre Primary',
-    'B' => '11 Day Pre Primary',
-    'C' => '10 Day Post Primary',
-    'D' => '32 Day Pre General',
-    'E' => '11 Day Pre General',
-    'F' => '27 Day Post General',
-    'G' => '32 Day Pre Special',
-    'H' => '11 Day Pre Special',
-    'I' => '27 Day Post Special',
-    'J' => 'Periodic Jan',
-    'K' => 'Periodic July',
-    'L' => '24 hour Notice'
-  }.freeze
-
-  TRANSACTION_CODE = {
-    'A' => 'Monetary Contributions Received from: Individuals & Partnerships',
-    'B' => 'Monetary Contributions Received from: Corporate',
-    'C' => 'Monetary Contributions Received from: All Other',
-    'D' => 'In-Kind (Non-Monetary) Contributions Received',
-    'E' => 'Other Receipts Received',
-    'F' => 'Expenditures/Payments',
-    'G' => 'Transfers In',
-    'H' => 'Transfers Out',
-    'I' => 'Loans Received',
-    'J' => 'Loan Repayments',
-    'K' => 'Liabilities/Loans Forgiven',
-    'L' => 'Expenditure Refunds (Increases Balance)',
-    'M' => 'Expenditure Refunded (Decreases Balance)',
-    'N' => 'Outstanding Liabilities/Loans',
-    'O' => 'Partnerships / Subcontractor',
-    'P' => 'Non-Campaign Housekeeping Receipts',
-    'Q' => 'Non-Campaign Housekeeping Expenses',
-    'R' => 'Expense Allocation Among Candidates'
-  }.freeze
-
   has_one :ny_match, inverse_of: :ny_disclosure, dependent: :destroy
   belongs_to :ny_filer,
              class_name: 'NyFiler',
@@ -81,7 +45,7 @@ class NyDisclosure < ApplicationRecord
   end
 
   def reference_name
-    "#{e_year} NYS Board of Elections Financial Disclosure Report: #{NyDisclosure::REPORT_ID[report_id]}"
+    "#{e_year} NYS Board of Elections Financial Disclosure Report: #{NYSCampaignFinance::REPORT_ID[report_id]}"
   end
 
   #################

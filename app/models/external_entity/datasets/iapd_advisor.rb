@@ -2,7 +2,7 @@
 
 class ExternalEntity
   module Datasets
-    module IapdAdvisors
+    module IapdAdvisor
       def match_action
         entity.add_tag('iapd')
 

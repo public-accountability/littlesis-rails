@@ -451,6 +451,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-rails
   rubocop-rspec
+  rubyzip
   sassc-rails
   seed_dump
   selenium-webdriver (>= 3.11.0)

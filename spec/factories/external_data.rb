@@ -75,4 +75,24 @@ FactoryBot.define do
       }
     end
   end
+
+  factory :external_data_nys_filer, class: 'ExternalData' do
+    dataset { "nys_filer" }
+    dataset_id { 'A123456' }
+    data do
+      { 'filer_id' => 'A123456',
+        'name' => 'Foo Bar',
+        'filer_type' => 'CANDIDATE',
+        'status' => 'INACTIVE',
+        'committee_type' => '',
+        'office' => '42',
+        'district' => '1',
+        'treas_first_name' => 'Foo',
+        'treas_last_name' => 'Bar',
+        'address' => 'PO Box 1',
+        'city' => 'New York',
+        'state' => 'NY',
+        'zip' => '10001' }
+    end
+  end
 end

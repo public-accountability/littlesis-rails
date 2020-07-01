@@ -8,13 +8,12 @@ describe 'Datasets' do
 
     it 'has links to individual pages' do
       expect(page.status_code).to eq 200
-      page_has_selector '#datasets-overview a', count: 3
+      page_has_selector '#datasets-overview a', count: ExternalData::Datasets.names.count
     end
   end
 
   feature 'dataset table' do
     before { visit dataset_path(dataset: "nycc") }
-
 
     it 'shows datatables' do
       expect(page.status_code).to eq 200

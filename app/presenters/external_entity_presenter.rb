@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 class ExternalEntityPresenter < SimpleDelegator
-  # This returns a hash of useful information from
-  # external dataset. It is displayed on the left-hands-side
-  # of the entity matcher tool.
+  # This returns a hash of useful information from external dataset.
+  # It is displayed on the left-hands-side of the entity matcher tool.
   def display_information
     return @display_information if defined?(@display_information)
 
@@ -12,6 +11,12 @@ class ExternalEntityPresenter < SimpleDelegator
       @display_information = iapd_advisors_information
     when 'nycc'
       @display_information = nycc_information
+    when 'nys_filer'
+      @display_information = external_data
+                               .wrapper
+                               .nice
+                               .slice(:filer_id, :name, :status, :office, :address)
+                               .transform_keys { |k| k.to_s.tr('_', ' ').capitalize }
     else
       raise NotImplementedError
     end

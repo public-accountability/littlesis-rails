@@ -16,10 +16,6 @@ describe NyDisclosure, type: :model do
           e_year: "2006")
   end
 
-  it 'has REPORT_ID constant' do
-    expect(NyDisclosure::REPORT_ID).to be_a Hash
-  end
-
   describe '#full_name' do
     it 'returns corp_name if it exists' do
       d = build(:ny_disclosure, corp_name: 'corp inc')

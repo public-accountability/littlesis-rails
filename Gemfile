@@ -106,6 +106,7 @@ gem 'text', '>= 1.3.1'
 gem 'httparty', '>= 0.16.2'
 
 gem 'sqlite3', :require => false
+gem 'rubyzip', :require => false
 
 gem 'nokogiri'
 

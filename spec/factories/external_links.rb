@@ -34,4 +34,10 @@ FactoryBot.define do
     association :entity, factory: :person, strategy: :build
     link_id { Faker::Number.unique.number(digits: 5).to_s }
   end
+
+  factory :nys_filer_link_org, class: ExternalLink do
+    link_type { 5 }
+    association :entity, factory: :org, strategy: :build
+    link_id { "A#{Faker::Number.unique.number(digits: 5)}" }
+  end
 end

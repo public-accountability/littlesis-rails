@@ -65,6 +65,19 @@ module Utility
     Time.zone.now.strftime('%F')
   end
 
+  # Saves url to local path with streams
+  def self.stream_file(url:, path:)
+    File.open(path, 'wb') do |file|
+      HTTParty.get(url, streambody: true) do |fragment|
+        file.write(fragment)
+      end
+    end
+  end
+
+  def self.stream_file_if_not_exists(url:, path:)
+    stream_file(url: url, path: path) if file_is_empty_or_nonexistent(path)
+  end
+
   def self.yes_no_converter(x)
     return nil if x.nil?
 
