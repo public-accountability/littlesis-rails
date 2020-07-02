@@ -30,6 +30,7 @@ class User < ApplicationRecord
   has_one :user_profile, inverse_of: :user, dependent: :destroy
   has_one :api_token, dependent: :destroy
   has_many :user_permissions, dependent: :destroy
+  has_many :permission_passes, foreign_key: 'creator_id', inverse_of: :creator, dependent: :destroy
 
   # entities last edited by the user
   has_many :edited_entities, class_name: "Entity", foreign_key: "last_user_id", inverse_of: :last_user

@@ -1443,6 +1443,22 @@ CREATE TABLE `pages` (
   UNIQUE KEY `index_pages_on_name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `permission_passes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `permission_passes` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `event_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `valid_from` datetime NOT NULL,
+  `valid_to` datetime NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `creator_id` int(11) NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `updated_at` datetime(6) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `person`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2252,6 +2268,6 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200528185753'),
 ('20200610195236'),
 ('20200701145405'),
-('20200708135038');
-
+('20200708135038'),
+('20200702145236');
 
