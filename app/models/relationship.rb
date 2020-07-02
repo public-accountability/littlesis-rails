@@ -54,6 +54,11 @@ class Relationship < ApplicationRecord
 
   ALL_CATEGORIES_WITH_FIELDS = %w[Position Education Membership Family Donation Trans Ownership].freeze
   ALL_CATEGORY_IDS_WITH_FIELDS = [1, 2, 3, 4, 5, 6, 10].freeze
+  TEMPORAL_STATUS_RANK = {
+    current: 2,
+    unknown: 1,
+    past: 0
+  }.freeze
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, foreign_key: "entity1_id", optional: true
@@ -511,6 +516,37 @@ class Relationship < ApplicationRecord
 
   def url
     Rails.application.routes.url_helpers.relationship_url(self)
+  end
+
+  concerning :DateSorting do
+    def temporal_status
+      case is_current
+      when true
+        :current
+      when false
+        :past
+      when nil
+        :unknown
+      end
+    end
+
+    def temporal_status_rank
+      TEMPORAL_STATUS_RANK[temporal_status]
+    end
+
+    def end_date_rank
+      end_date.blank? ? 1 : 0
+    end
+
+    def date_rank
+      [
+        temporal_status_rank,
+        start_date.to_s,
+        end_date_rank,
+        end_date.to_s,
+        updated_at
+      ]
+    end
   end
 
   private
