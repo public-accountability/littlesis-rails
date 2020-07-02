@@ -67,9 +67,15 @@ module Utility
 
   # Saves url to local path with streams
   def self.stream_file(url:, path:)
-    File.open(path, 'wb') do |file|
-      HTTParty.get(url, streambody: true) do |fragment|
-        file.write(fragment)
+    uri = URI(url)
+    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      http.request(Net::HTTP::Get.new(uri)) do |response|
+        response.value # this raises an error if the response is not successful
+        File.open(path, 'wb') do |file|
+          response.read_body do |fragment|
+            file.write(fragment)
+          end
+        end
       end
     end
   end
