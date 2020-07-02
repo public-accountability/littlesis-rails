@@ -14,7 +14,7 @@
         <tr>
           <td class="connected-entity-cell">
             <% connected_entity =  connected_entity_hash['connected_entity'] %>
-            <%= link_to connected_entity.name, connected_entity %>
+            <%= link_to connected_entity.name, connected_entity, data: {toggle: :tooltip, placement: :top, title: connected_entity.blurb} %>
           </td>
 
           <% if has_stat %>
