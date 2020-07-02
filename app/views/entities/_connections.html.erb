@@ -1,6 +1,6 @@
 <% #locals: connected_entities: [ConnectedEntityHash],
-#           connection_type: Symbol
-#           has_stat: Boolean %>
+  #           connection_type: Symbol
+  #           has_stat: Boolean %>
 
 <div id="entity-connections-container">
 
@@ -11,22 +11,22 @@
     <%= entity_connections_table_headers(connection_type, @entity) %>
     <tbody>
       <% connected_entities.each do |connected_entity_hash| %>
-	<tr>
-	  <td class="connected-entity-cell">
-	    <% connected_entity =  connected_entity_hash['connected_entity'] %>
-	    <%= link_to connected_entity.name, connected_entity %>
-	  </td>
+        <tr>
+          <td class="connected-entity-cell">
+            <% connected_entity =  connected_entity_hash['connected_entity'] %>
+            <%= link_to connected_entity.name, connected_entity %>
+          </td>
 
-	  <% if has_stat %>
-	    <td class="connection-stat-cell">
-	      <%= connected_entity_hash['stat'] %>
-	    </td>
-	  <% end %>
+          <% if has_stat %>
+            <td class="connection-stat-cell">
+              <%= connected_entity_hash['stat'] %>
+            </td>
+          <% end %>
 
-	  <td class="connecting-entities-cell">
-	    <%= entity_links(connected_entity_hash['connecting_entities']) %>
-	  </td>
-	</tr>
+          <td class="connecting-entities-cell">
+            <%= entity_links(connected_entity_hash['connecting_entities']) %>
+          </td>
+        </tr>
       <% end %>
     </tbody>
   </table>
