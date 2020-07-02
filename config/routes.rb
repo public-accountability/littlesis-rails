@@ -213,6 +213,7 @@ Lilsis::Application.routes.draw do
       get 'lock'
       post 'lock'
       post 'clone'
+      get 'embedded'
     end
   end
 

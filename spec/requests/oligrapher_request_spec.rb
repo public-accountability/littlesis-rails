@@ -4,7 +4,7 @@ require Rails.root.join('app/services/oligrapher_lock_service.rb').to_s
 describe "Oligrapher", type: :request do
   let(:user) { create_basic_user }
 
-  describe 'GET /oligrapher' do
+  describe 'GET /oligrapher/:id' do
     let(:user1) { create_basic_user }
     let(:user2) { create_basic_user }
     let(:network_map) { create(:network_map_version3, user_id: user1.id, is_private: true) }
@@ -32,6 +32,22 @@ describe "Oligrapher", type: :request do
     it 'redirects to path with slug' do
       get "/oligrapher/#{network_map.id}"
       expect(response).to redirect_to(oligrapher_path(network_map))
+    end
+  end
+
+  describe 'GET /oligrapher/:id/embedded' do
+    let(:user1) { create_basic_user }
+    let(:network_map) { create(:network_map_version3, user_id: user1.id) }
+
+    it 'renders with correct template' do
+      get "/oligrapher/#{network_map.to_param}/embedded"
+      expect(response.status).to eq 200
+      expect(response).to render_template(:embedded_oligrapher)
+    end
+
+    it 'configures map for embed' do
+      get "/oligrapher/#{network_map.to_param}/embedded"
+      expect(assigns(:configuration)[:settings][:embed]).to eq(true)
     end
   end
 
