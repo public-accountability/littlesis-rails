@@ -146,6 +146,10 @@ Lilsis::Application.routes.draw do
     end
   end
 
+  resources :permission_passes, except: [:show] do
+    get 'apply' => 'permission_passes#apply'
+  end
+
   #############
   # Datatable #
   #############

@@ -1,0 +1,46 @@
+<%= form_with(model: permission_pass, local: true, id: 'permission-pass-form', class: 'col') do |f| %>
+  <% if permission_pass.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(permission_pass.errors.count, "error") %> prohibited this permission_pass from being saved:</h2>
+
+      <ul>
+        <% permission_pass.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :event_name, for: 'permission_pass_event_name' %>
+    <%= f.text_field :event_name, id: 'permission_pass_event_name' %>
+  </div>
+
+  <div class="field valid-from">
+    <%= f.label :valid_from, for: 'permission_pass_valid_from' %>
+    <%= f.datetime_select :valid_from %>
+  </div>
+
+  <div class="field">
+    <%= f.label :valid_to, for: 'permission_pass_valid_to' %>
+    <%= f.datetime_select :valid_to %>
+  </div>
+
+  <div class="abilities">
+    <h3>Abilities</h3>
+    <p>All users who use the permission pass link will gain these abilities.</p>
+
+    <% PermissionPass::PERMITTED_ABILITIES.each do |ability| %>
+      <div class='row'>
+        <%= f.label ability, for: ability do %>
+          <%= f.check_box :abilities, {multiple: true}, ability, nil %>
+          <%= ability %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit class: 'btn btn-primary' %>
+  </div>
+<% end %>

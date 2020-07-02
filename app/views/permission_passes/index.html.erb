@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Permission Passes</h1>
+
+<%= link_to 'New Permission Pass', new_permission_pass_path, class: 'btn btn-primary' %>
+
+<table id='permission-passes' class='table'>
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>URL</th>
+      <th>Valid from</th>
+      <th>Valid to</th>
+      <th>Grants abilities</th>
+      <th>Created by</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @permission_passes.each do |permission_pass| %>
+      <tr id='pass_<%= permission_pass.id %>' class='<%= permission_pass.status %>'>
+        <td><%= permission_pass.event_name %></td>
+        <td><%= permission_pass_apply_url(permission_pass) %></td>
+        <td><%= l permission_pass.valid_from %></td>
+        <td><%= l permission_pass.valid_to %></td>
+        <td><%= permission_pass.abilities.to_a.join(', ') %></td>
+        <td><%= permission_pass.creator.user_profile&.full_name %></td>
+
+        <td><%= link_to 'Edit', edit_permission_pass_path(permission_pass) %></td>
+        <td><%= link_to 'Delete', permission_pass, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

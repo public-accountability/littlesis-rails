@@ -17,8 +17,22 @@ class PermissionPass < ApplicationRecord
     self.valid_from = Time.current if valid_from.blank?
   end
 
+  def self.non_past
+    where('valid_to > ?', Time.current)
+  end
+
   def current?
     (valid_from..valid_to).cover? Time.current
+  end
+
+  def status
+    if current?
+      :current
+    elsif valid_from > Time.current
+      :upcoming
+    elsif valid_to < Time.current
+      :past
+    end
   end
 
   private
