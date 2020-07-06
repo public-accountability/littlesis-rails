@@ -10,7 +10,7 @@ class OligrapherController < ApplicationController
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
   before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges get_interlocks embedded]
-  before_action :set_map, only: %i[update get_editors editors confirm_editor show lock clone destroy embedded]
+  before_action :set_map, only: %i[update editors confirm_editor show lock clone destroy embedded]
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
   before_action :check_editor, only: %i[update]
@@ -49,10 +49,6 @@ class OligrapherController < ApplicationController
     @map = NetworkMap.new(oligrapher_version: 3, title: 'Untitled Map', user: current_user)
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
     render 'oligrapher/new', layout: 'oligrapher3'
-  end
-
-  def get_editors
-    render json: editor_data
   end
 
   # two actions { editor: { action: add | remove, username: <username> } }
