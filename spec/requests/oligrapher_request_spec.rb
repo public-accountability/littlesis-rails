@@ -7,31 +7,98 @@ describe "Oligrapher", type: :request do
   describe 'GET /oligrapher/:id' do
     let(:user1) { create_basic_user }
     let(:user2) { create_basic_user }
-    let(:network_map) { create(:network_map_version3, user_id: user1.id, is_private: true) }
 
-    context 'when logged in as normal non-owner user' do
-      before { login_as(user2, scope: :user) }
-      after { logout(:user) }
+    context 'private map' do
+      let(:network_map) { create(:network_map_version3, user_id: user1.id, is_private: true) }
 
-      it 'private map cannot be viewed' do
-        get "/oligrapher/#{network_map.to_param}"
-        expect(response.status).to eq 403
+      context 'when logged in as normal non-owner non-editor user' do
+        before { login_as(user2, scope: :user) }
+        after { logout(:user) }
+
+        it 'map cannot be viewed' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(response.status).to eq 403
+        end
+      end
+
+      context 'when logged in as a non-owner editor' do
+        before {
+          network_map.add_editor(user2)
+          network_map.confirm_editor(user2)
+          network_map.save
+          login_as(user2, scope: :user)
+        }
+
+        after {
+          network_map.remove_editor(user2)
+          network_map.save
+          logout(:user)
+        }
+
+        it 'map can be viewed' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(response.status).to eq 200
+        end
+      end
+
+      context 'when logged in as owner' do
+        before { login_as(user1, scope: :user) }
+        after { logout(:user) }
+
+        it 'map can be viewed' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(response.status).to eq 200
+        end
       end
     end
 
-    context 'when logged in as owner' do
-      before { login_as(user1, scope: :user) }
-      after { logout(:user) }
+    context 'public map' do
+      let(:network_map) { create(:network_map_version3, user_id: user1.id, is_private: false) }
 
-      it 'private map can be viewed' do
-        get "/oligrapher/#{network_map.to_param}"
-        expect(response.status).to eq 200
+      context 'when logged in as normal non-owner non-editor user' do
+        before { login_as(user2, scope: :user) }
+        after { logout(:user) }
+
+        it 'map cannot be edited' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(assigns(:user_can_edit)).to eq false
+        end
       end
-    end
 
-    it 'redirects to path with slug' do
-      get "/oligrapher/#{network_map.id}"
-      expect(response).to redirect_to(oligrapher_path(network_map))
+      context 'when logged in as a non-owner editor' do
+        before {
+          network_map.add_editor(user2)
+          network_map.confirm_editor(user2)
+          network_map.save
+          login_as(user2, scope: :user)
+        }
+
+        after {
+          network_map.remove_editor(user2)
+          network_map.save
+          logout(:user)
+        }
+
+        it 'map can be edited' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(assigns(:user_can_edit)).to eq true
+        end
+      end
+
+      context 'when logged in as owner' do
+        before { login_as(user1, scope: :user) }
+        after { logout(:user) }
+
+        it 'map can be edited' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(assigns(:user_can_edit)).to eq true
+        end
+      end
+
+      it 'redirects to path with slug' do
+        get "/oligrapher/#{network_map.id}"
+        expect(response).to redirect_to(oligrapher_path(network_map))
+      end
     end
   end
 

@@ -1,3 +1,9 @@
+<%= content_for(:head) do %>
+<% if @user_can_edit %>
+  <script src="https://cdn.ckeditor.com/ckeditor5/10.0.1/classic/ckeditor.js"></script>
+<% end %>
+<% end %>
+
 <%= content_for(:body) do %>
 
 <% if @is_pending_editor %>

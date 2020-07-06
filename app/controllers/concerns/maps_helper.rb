@@ -23,7 +23,7 @@ module MapsHelper
   end
 
   def check_private_access
-    if @map.is_private && !is_owner
+    if @map.is_private && !@map.can_edit?(current_user)
       unless params[:secret] && params[:secret] == @map.secret
         raise Exceptions::PermissionError
       end

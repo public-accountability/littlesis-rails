@@ -116,6 +116,7 @@ class OligrapherController < ApplicationController
 
   def show
     check_private_access
+    @user_can_edit = @map.can_edit?(current_user)
     @is_pending_editor = (current_user and @map.has_pending_editor?(current_user))
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
     render 'oligrapher/oligrapher', layout: 'oligrapher3'

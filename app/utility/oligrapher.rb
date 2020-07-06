@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
-  VERSION = 'ae6f2baf7f9eba7900d055755413a2e8a92bede1'
+  VERSION = '35d9e3f58f3895e54a80643fca01af6f99f94e8e'
 
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
@@ -23,8 +23,8 @@ module Oligrapher
       settings: {
         debug: Rails.env.development?,
         embed: embed,
-        logoUrl: "https://dfl6orqdcqt4f.cloudfront.net/assets/lilsis-logo-trans-200-74169fd94db9637c31388ad2060b48720f94450b40c45c23a3889cf480f02c52.png",
-        url: Rails.application.routes.url_helpers.map_url(map),
+        logoUrl: ActionController::Base.helpers.asset_path('lilsis-logo-trans-200.png'),
+        url: Rails.application.routes.url_helpers.map_url(map)
       },
       attributes: {
         id: map.id,
