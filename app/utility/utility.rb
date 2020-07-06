@@ -46,11 +46,9 @@ module Utility
     # populate temp file with converted data
     tmp_file = Tempfile.new
     File.foreach(path) do |line|
-      utf8_line = line
-                    .encode('UTF-8', :invalid => :replace, :undef => :replace, :replace => '')
-                    .force_encoding('UTF-8')
-
-      tmp_file.write utf8_line
+      tmp_file.write line
+                       .encode('UTF-8', :invalid => :replace, :undef => :replace, :replace => '')
+                       .force_encoding('UTF-8')
     end
 
     # replace CSV_FILE_PATH with new utf-8 data
