@@ -116,7 +116,6 @@ class ExternalRelationship < ApplicationRecord
     end
 
     module NYSDisclosure
-
     end
   end
 

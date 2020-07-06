@@ -106,6 +106,10 @@ class ExternalData
         }
       end
 
+      def reference_url
+        "https://cfapp.elections.ny.gov/ords/plsql_browser/getfiler2_loaddates?filerid_IN=#{filer_id}"
+      end
+
       def self.search(params)
         ExternalData
           .nys_filer

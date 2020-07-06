@@ -95,8 +95,6 @@ module Utility
       true
     elsif x.strip.casecmp('N').zero?
       false
-    else
-      nil
     end
   end
 
@@ -107,8 +105,6 @@ module Utility
       true
     elsif x.strip == '0'
       false
-    else
-      nil
     end
   end
 

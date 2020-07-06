@@ -113,6 +113,9 @@ Layout/EmptyLinesAroundBlockBody:
     - 'spec/**/*.rb'
     - 'lib/scripts/*.rb'
 
+Rails/FilePath:
+  Enabled: false
+
 Rails/SkipsModelValidations:
   Exclude:
     - 'spec/**/*.rb'

@@ -1,5 +1,5 @@
 # require Rails.root.join('lib', 'nys_campaign_finance.rb')
-require Rails.root.join('lib', 'nys_disclosure_importer.rb').to_s
+require Rails.root.join('lib', 'importers', 'nys_disclosure_importer.rb').to_s
 
 namespace :nys do
   desc 'download nys disclosures'

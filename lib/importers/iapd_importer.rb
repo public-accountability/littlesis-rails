@@ -39,12 +39,12 @@ class IapdImporter
       LEFT JOIN advisors ON advisors.crd_number = owners_schedule_a.advisor_crd_number AND owners_schedule_a.advisor_crd_number IS NOT NULL
     SQL
 
-    dataset_id = "#{row['owner_key']}-#{row['advisor_crd_number']}"
+      dataset_id = "#{row['owner_key']}-#{row['advisor_crd_number']}"
 
-    ed = ExternalData
-           .find_or_initialize_by(dataset: :iapd_schedule_a, dataset_id: dataset_id)
-           .merge_data(schedule_a_data(row))
-    ed.save || Rails.logger.warn("Failed to save owner: #{row}")
+      ed = ExternalData
+             .find_or_initialize_by(dataset: :iapd_schedule_a, dataset_id: dataset_id)
+             .merge_data(schedule_a_data(row))
+      ed.save || Rails.logger.warn("Failed to save owner: #{row}")
     end
   end
 
