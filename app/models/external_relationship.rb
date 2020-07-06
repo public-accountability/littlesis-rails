@@ -25,7 +25,7 @@ class ExternalRelationship < ApplicationRecord
   validates :category_id, presence: true
 
   after_initialize do
-    extend "ExternalRelationship::Datasets::#{dataset.camelize}".constantize
+    extend "ExternalRelationship::Datasets::#{dataset.classify}".constantize
   end
 
   ##
@@ -113,6 +113,10 @@ class ExternalRelationship < ApplicationRecord
 
         relationships.first
       end
+    end
+
+    module NYSDisclosure
+
     end
   end
 

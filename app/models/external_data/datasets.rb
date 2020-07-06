@@ -115,6 +115,14 @@ class ExternalData
     end
 
     class NYSDisclosure < SimpleDelegator
+      def amount
+        data['AMOUNT_70'].to_i
+      end
+
+      def date
+        LsDate.transform_date data['DATE1_10']
+      end
+
       def self.search(params)
         raise NotImplementedError
       end
