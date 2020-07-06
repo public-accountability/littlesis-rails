@@ -64,6 +64,11 @@ describe ExternalEntity, type: :model do
 
         expect(external_entity.entity.external_links.nys_filer.first.link_id).to eq 'A123456'
       end
+
+      it 'creates a new reference and document' do
+        expect { external_entity.match_with(politician) }.to change(Reference, :count).by(1)
+        expect(Document.last.name).to eq "New York State Campaign Finance Disclosure: Foo Bar"
+      end
     end
   end
 
