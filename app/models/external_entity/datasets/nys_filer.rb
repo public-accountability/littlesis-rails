@@ -43,6 +43,14 @@ class ExternalEntity
         entity.external_links.nys_filer.find_by(link_id: external_data.dataset_id).destroy!
       end
 
+      def automatch
+        unless matched?
+          if (entity = ExternalLink.nys_filer.find_by(link_id: external_data.dataset_id)&.entity)
+            match_with entity
+          end
+        end
+      end
+
       # Filer type #1 is an "Individual Campaign Committee"
       # and is associated directly with the politician or candidate.
       # PACs and other committees are matched with Organizations.

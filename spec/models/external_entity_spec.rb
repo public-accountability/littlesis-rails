@@ -89,19 +89,27 @@ describe ExternalEntity, type: :model do
     end
   end
 
-  describe 'unmatch!' do
-    context 'with a nys_filer' do
-      let(:politician) { create(:entity_person) }
-      let(:external_entity) { create(:external_entity_nys_filer) }
+  describe 'NYS Filer' do
+    let(:politician) { create(:entity_person) }
+    let!(:external_entity) { create(:external_entity_nys_filer) }
 
-      before do
-        external_entity.match_with(politician)
-      end
-
+    describe 'unmatch!' do
       it 'removes entity and external link' do
+        external_entity.match_with(politician)
         expect(politician.external_links.nys_filer.exists?).to be true
         external_entity.unmatch!
         expect(politician.reload.external_links.nys_filer.exists?).to be false
+      end
+    end
+
+    describe 'automatching' do
+      specify 'external link does not exists' do
+        expect { external_entity.automatch }.not_to change(external_entity, :entity_id)
+      end
+
+      specify 'external link exists' do
+        ExternalLink.nys_filer.create!(entity: politician, link_id: external_entity.external_data.dataset_id)
+        expect { external_entity.automatch }.to change(external_entity, :entity_id).from(nil).to(politician.id)
       end
     end
   end
