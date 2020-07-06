@@ -84,6 +84,12 @@ module Utility
     stream_file(url: url, path: path) if file_is_empty_or_nonexistent(path)
   end
 
+  def self.zip_entry_each_line(zip:, file:, &block)
+    Zip::File.open(zip) do |zip_file|
+      zip_file.get_entry(file).get_input_stream.each(&block)
+    end
+  end
+
   def self.yes_no_converter(x)
     return nil if x.nil?
 

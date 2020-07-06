@@ -34,17 +34,13 @@ module NYSFilerImporter
 
   def self.extract_rows
     errors = 0
-    Zip::File.open(LOCAL_PATH) do |zip_file|
-      zip_file.get_entry('COMMCAND.txt').get_input_stream do |io|
-        io.each do |line|
-          parsed_line = parse_line(line.encode('ASCII', invalid: :replace, undef: :replace, replace: ''))
-          if parsed_line == :error
-            Rails.logger.warn "[NYSFilerImporter] Could not import line\n    #{line.strip}\n"
-            errors += 1
-          else
-            yield parsed_line
-          end
-        end
+    Utility.zip_entry_each_line(zip: LOCAL_PATH, file: 'COMMCAND.txt') do |line|
+      parsed_line = parse_line(line.encode('ASCII', invalid: :replace, undef: :replace, replace: ''))
+      if parsed_line == :error
+        Rails.logger.warn "[NYSFilerImporter] Could not import line\n    #{line.strip}\n"
+        errors += 1
+      else
+        yield parsed_line
       end
     end
     Rails.logger.warn "[NYSFilerImporter] Skipped #{errors} lines with errors."

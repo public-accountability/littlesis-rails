@@ -49,16 +49,12 @@ module NYSDisclosureImporter
 
   def self.loop_rows
     errors = 0
-    Zip::File.open(LOCAL_PATH) do |zip_file|
-      zip_file.get_entry(FILENAME).get_input_stream do |io|
-        io.each do |line|
-          line_encoded = line.encode('ASCII', invalid: :replace, undef: :replace, replace: '')
-          yield HEADERS.zip(CSV.parse_line(line_encoded, liberal_parsing: true)).to_h
-        rescue CSV::MalformedCSVError
-          errors += 1
-          Rails.logger.warn "[NYSDisclosureImporter] Failed to parse line: #{line}"
-        end
-      end
+    Utility.zip_entry_each_line(zip: LOCAL_PATH, file: FILENAME) do |line|
+      line_encoded = line.encode('ASCII', invalid: :replace, undef: :replace, replace: '')
+      yield HEADERS.zip(CSV.parse_line(line_encoded, liberal_parsing: true)).to_h
+    rescue CSV::MalformedCSVError
+      errors += 1
+      Rails.logger.warn "[NYSDisclosureImporter] Failed to parse line: #{line}"
     end
     Rails.logger.warn("[NYSDisclosureImporter] skipped #{errors} lines with errors") unless errors.zero?
   end

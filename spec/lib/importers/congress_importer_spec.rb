@@ -1,4 +1,4 @@
-require Rails.root.join('lib/congress_importer')
+require Rails.root.join('lib/importers/congress_importer')
 
 # rubocop:disable RSpec/NamedSubject
 
