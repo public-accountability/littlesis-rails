@@ -28,6 +28,14 @@ module NYSDisclosureImporter
         .find_or_initialize_by(dataset_id: dataset_id)
         .merge_data(row)
         .save!
+    rescue NoMethodError => e
+      # A few rows have null values for fields that compose the dataset_id
+      if e.message.include?('strip')
+        Rails.logger.warn "[NYSDisclosureImporter] Failed to import row: #{row}"
+        next
+      else
+        raise
+      end
     end
   end
 
