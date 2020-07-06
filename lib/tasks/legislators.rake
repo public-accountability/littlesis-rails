@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require Rails.root.join('lib', 'congress_importer').to_s
+require Rails.root.join('lib', 'importers, ''congress_importer').to_s
 
 namespace :legislators do
   desc 'import legislators'
