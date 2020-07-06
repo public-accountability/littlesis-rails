@@ -46,6 +46,11 @@ describe ExternalEntity, type: :model do
         expect { external_entity.match_with(entity) }.not_to change(Business, :count)
         expect(entity.reload.business.aum).to eq aum
       end
+
+      it 'creates a new reference' do
+        expect { external_entity.match_with(entity) }.to change(Reference, :count).by(1)
+        expect(Document.last.url).to eq "https://adviserinfo.sec.gov/Firm/#{external_entity.external_data.dataset_id}"
+      end
     end
 
     context 'with a nys_filer' do
@@ -103,7 +108,7 @@ describe ExternalEntity, type: :model do
     end
 
     describe 'automatching' do
-      specify 'external link does not exists' do
+     specify 'external link does not exists' do
         expect { external_entity.automatch }.not_to change(external_entity, :entity_id)
       end
 
