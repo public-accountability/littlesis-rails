@@ -1,5 +1,5 @@
 describe ExternalEntity, type: :model do
-  subject { build(:external_entity) }
+  subject { build(:external_entity_nys_filer) }
 
   it { is_expected.to have_db_column(:dataset).of_type(:integer) }
   it { is_expected.to have_db_column(:match_data).of_type(:text) }
@@ -7,7 +7,7 @@ describe ExternalEntity, type: :model do
   it { is_expected.to have_db_column(:external_data_id).of_type(:integer) }
   it { is_expected.to have_db_column(:priority).of_type(:integer) }
   it { is_expected.to have_db_column(:primary_ext).of_type(:string) }
-  it { is_expected.to belong_to(:external_data) }
+  xit { is_expected.to belong_to(:external_data) }
   it { is_expected.to belong_to(:entity).optional }
 
   specify 'matched?' do
