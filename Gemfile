@@ -51,26 +51,30 @@ gem 'whenever', '~> 1.0.0', :require => false
 # handle currencies etc
 gem 'money'
 
+group :test do
+  gem 'simplecov', :require => false
+  gem 'codecov', :require => false
+end
+
 group :development do
+  gem 'better_errors', '>= 2.5.0'
+  gem 'memory_profiler'
+  gem 'rack-mini-profiler', require: false
+  gem 'seed_dump', require: false
   gem 'web-console'
 end
 
 group :test, :development do
-  gem 'better_errors', '>= 2.5.0'
   gem 'capybara', '>= 3.14.0'
   gem 'database_cleaner'
   gem 'factory_bot_rails', '~> 6.0'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
-  # gem 'jasmine', '>= 3.2'
-  # gem 'jasmine_selenium_runner'
-  gem 'memory_profiler'
   gem 'pry', '>= 0.12.0'
   gem 'pry-byebug'
   gem 'pry-doc', require: false
   gem 'pry-rails', '>= 0.3.7'
-  gem 'rack-mini-profiler'
   gem 'rails-controller-testing'
-  gem 'rspec-rails', '>= 4.0.0.beta2'
+  gem 'rspec-rails', '>= 4.0.1'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
@@ -80,10 +84,6 @@ group :test, :development do
   gem 'spring'
   gem 'spring-commands-rspec'
 end
-
-gem 'seed_dump', :require => false
-gem 'simplecov', :require => false, :group => :test
-gem 'codecov', :require => false, :group => :test
 
 gem 'validate_url', :git => 'https://github.com/perfectline/validates_url.git', :branch => 'master'
 

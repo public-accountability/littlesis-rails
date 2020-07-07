@@ -121,7 +121,7 @@ data.rels = new_rels;
 
 var sorted_entities = [];
 
-data.entities.forEach(function(e, i) { 
+data.entities.forEach(function(e, i) {
   e.scale = 5;
   e.rel_count = data.rels.reduce(function(prev, r) {
     switch (r.category_id) {
@@ -130,7 +130,7 @@ data.entities.forEach(function(e, i) {
         return prev + ((r.entity1_id == e.id || r.entity2_id == e.id) ? 2 : 0);
       case 5:
       case 10:
-        return prev + (r.entity1_id == e.id ? 1 : 0); 
+        return prev + (r.entity1_id == e.id ? 1 : 0);
       default:
         return prev;
     }
@@ -236,7 +236,7 @@ var entity_cat = function(id) {
   for (i = 0; i < cat_ids.length; i++) {
     if (cat_ids[i].indexOf(id) != -1) {
       return i;
-    }    
+    }
   }
 
   return null;
@@ -252,7 +252,7 @@ data.rels = data.rels.filter(function(r) {
   return true;
 });
 
-data.rels.forEach(function(r) { 
+data.rels.forEach(function(r) {
   if (entity_cat(r.entity1_id) == 0 && entity_cat(r.entity2_id) == 0) {
     //r.fill_color = "url(#gradient-left)";
     r.fill_opacity = 0.12;
@@ -264,21 +264,21 @@ data.rels.forEach(function(r) {
   else {
     //r.fill_opacity = 0.13;
 
-    if (r.category_id == 1) { 
+    if (r.category_id == 1) {
       //r.fill_color = "url(#gradient-middle-magenta)";
       //r.fill_color = "#f0f";
     } else {
       //r.fill_color = "url(#gradient-middle-green)";
       //r.fill_color = "#0f0";
-    }       
+    }
 
-    // r.fill_opacity = 1;    
+    // r.fill_opacity = 1;
   }
 });
 
 var width = 1100;
 var height = 800;
-var key = '<%= Lilsis::Application.config.netmap_api_key %>';
+var key = '<%= APP_CONFIG['netmap_api_key'] %>';
 var netmap = new Netmap(width, height, "#netmap", key, true, false);
 netmap.set_data(data);
 netmap.auto_center();

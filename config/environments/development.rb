@@ -1,36 +1,18 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  # see: https://github.com/rails/web-console for info on web_console configuruation
-  config.web_console.whitelisted_ips = ['172.0.0.0/8']
-  config.web_console.whiny_requests = false
+  config.routes.default_url_options[:host] = 'localhost:8080'
+  config.routes.default_url_options[:protocol] = 'http'
+
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
-
-  # Do not eager load code on boot.
   config.eager_load = false
-
-  # Show full error reports and disable caching.
   config.consider_all_requests_local = true
-
-  # Enable/disable caching. By default caching is disabled.
-  # Run rails dev:cache to toggle caching.
-  # if Rails.root.join('tmp', 'caching-dev.txt').exist?
-  #   config.action_controller.perform_caching = true
-
-  #   config.cache_store = :memory_store
-  #   config.public_file_server.headers = {
-  #     'Cache-Control' => "public, max-age=#{2.days.to_i}"
-  #   }
-  # else
-  #   config.action_controller.perform_caching = false
-
-  #   config.cache_store = :null_store
-  # end
-
   config.action_controller.perform_caching = true
   config.action_controller.enable_fragment_cache_logging = true
 
@@ -42,7 +24,6 @@ Rails.application.configure do
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
-  
 
   config.assets.css_compressor = :sass
 
@@ -50,10 +31,8 @@ Rails.application.configure do
   config.assets.debug = true
   config.assets.quiet = true
 
-
   # Raises error for missing translations
   config.action_view.raise_on_missing_translations = true
-
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -66,24 +45,26 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations
   config.active_record.migration_error = :page_load
 
-  # In development, links in emails should point local
-  # config.action_mailer.default_url_options = { host: 'lilsis.local' }
-
-  config.action_mailer.default_url_options = { :host => "littlesis.org" }
+  config.action_mailer.default_url_options[:host] = 'localhost:8080'
+  config.action_mailer.default_url_options[:protocol] = 'http'
+  config.action_mailer.perform_deliveries = false
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.perform_deliveries = true
   config.action_mailer.smtp_settings = {
-    address:              Lilsis::APP_CONFIG['smtp_address'],
-    port:                 Lilsis::APP_CONFIG['smtp_port'],
-    domain:               Lilsis::APP_CONFIG['smtp_domain'],
-    user_name:            Lilsis::APP_CONFIG['smtp_user_name'],
-    password:             Lilsis::APP_CONFIG['smtp_password'],
-    authentication:       Lilsis::APP_CONFIG['smtp_authentication'],
+    address:              APP_CONFIG['smtp_address'],
+    port:                 APP_CONFIG['smtp_port'],
+    domain:               APP_CONFIG['smtp_domain'],
+    user_name:            APP_CONFIG['smtp_user_name'],
+    password:             APP_CONFIG['smtp_password'],
+    authentication:       APP_CONFIG['smtp_authentication'],
     ssl: true
   }
 
   config.active_storage.service = :local
+
+  # see: https://github.com/rails/web-console for info on web_console configuration
+  config.web_console.allowed_ips = ['172.0.0.0/8']
+  config.web_console.whiny_requests = false
 
   # TODO: Maybe enable this?
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
