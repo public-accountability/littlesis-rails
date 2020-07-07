@@ -19,12 +19,14 @@ module Lilsis
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       rewrite  %r{\A/(person|org)/([0-9]+)/[^/ ]+(/.*)?}, '/entities/$2$3'
       rewrite  %r{\A/(person|org)/(.*)},                  '/entities/$2'
-      r301     %r{^/(beginnerhelp|advancedhelp)$},      '/help'
-      r301     %r{/user/(.*)},                          '/users/$1'
+      r301     %r{^/(beginnerhelp|advancedhelp)$},        '/help'
+      r301     %r{/user/(.*)},                            '/users/$1'
     end
 
     config.time_zone = 'UTC'
     config.active_record.default_timezone = :utc
+    # Since Rails 6 `belongs_to` associations are by default
+    config.active_record.belongs_to_required_by_default = false
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
@@ -42,9 +44,13 @@ module Lilsis
 
     config.active_job.queue_adapter = :delayed_job
 
+    config.action_controller.per_form_csrf_tokens = false
     # we can't check only check if requests come from 'littlesis.org'
     # because the chrome extension is allowed to also make requests
     config.action_controller.forgery_protection_origin_check = false
+
+    # Make `form_with` generate non-remote forms.
+    config.action_view.form_with_generates_remote_forms = false
   end
 end
 
