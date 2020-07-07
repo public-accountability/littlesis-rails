@@ -34,7 +34,7 @@ class Image < ApplicationRecord
 
   DATA_URL_PREFIX_REGEX = /image\/(jpeg|jpg|png|gif);base64/i
 
-  DEFAULT_FILE_TYPE = Lilsis::Application.config.default_image_file_type
+  DEFAULT_FILE_TYPE = APP_CONFIG['default_image_file_type']
 
   before_soft_delete :unfeature, if: :is_featured
 

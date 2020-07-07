@@ -54,8 +54,8 @@ class NetworkMap < ApplicationRecord
   end
 
   def set_defaults
-    self.width = Lilsis::Application.config.netmap_default_width if width.blank?
-    self.height = Lilsis::Application.config.netmap_default_width if height.blank?
+    self.width = APP_CONFIG['netmap_default_width'] if width.blank?
+    self.height = APP_CONFIG['netmap_default_height'] if height.blank?
     self.zoom = '1' if zoom.blank?
   end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class S3
-  BUCKET = Lilsis::Application.config.aws_s3_bucket.dup.freeze
+  BUCKET = APP_CONFIG['aws_s3_bucket'].dup.freeze
   CACHE_CONTROL = 'public, max-age=2592000' # 30 days
 
   def self.url(path)
@@ -9,15 +9,14 @@ class S3
   end
 
   def self.base_url
-    config = Lilsis::Application.config
-    config.aws_s3_base + '/' + config.aws_s3_bucket
+    APP_CONFIG['aws_s3_base'] + '/' + APP_CONFIG['aws_s3_bucket']
   end
 
   def self.s3
     @s3 ||= Aws::S3::Resource.new(
-      region: Lilsis::Application.config.aws_region,
-      access_key_id: Lilsis::Application.config.aws_key,
-      secret_access_key: Lilsis::Application.config.aws_secret
+      region: APP_CONFIG['aws_region'],
+      access_key_id: APP_CONFIG['aws_key'],
+      secret_access_key: APP_CONFIG['aws_secret']
     )
   end
 
@@ -25,7 +24,7 @@ class S3
     s3.bucket(BUCKET)
   end
 
-  def self.file_exists?(path, bucket = Lilsis::Application.config.aws_s3_bucket)
+  def self.file_exists?(path, bucket = BUCKET)
     s3.bucket(bucket).object(path).exists?
   end
 

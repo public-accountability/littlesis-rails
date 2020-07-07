@@ -1,8 +1,13 @@
+# frozen_string_literal: true
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  config.action_mailer.default_url_options[:protocol] = 'https'
+
   # Code is not reloaded between requests.
   config.cache_classes = true
+
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both thread web servers
@@ -53,22 +58,22 @@ Rails.application.configure do
   config.log_level = :info
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
+  config.log_tags = []
+  # config.log_tags = [ :request_id ]
 
   # Use a different logger for distributed setups.
   # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
 
-  # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
-
   # possibly needed to ensure that FOG_DIRECTORY is initialized
+  # TODO: is this needed?
   config.assets.initialize_on_precompile = true
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-
+  # TODO: Check how this configuration variable is delcared
   config.action_controller.asset_host = "https://#{config.asset_host}"
 
   # store assets in a 'folder' instead of bucket root
+  # TODO: is this needed?
   config.assets.prefix = "/assets"
 
   # Precompile additional assets.
@@ -84,12 +89,12 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_deliveries = true
   config.action_mailer.smtp_settings = {
-    address:              Lilsis::APP_CONFIG['smtp_address'],
-    port:                 Lilsis::APP_CONFIG['smtp_port'],
-    domain:               Lilsis::APP_CONFIG['smtp_domain'],
-    user_name:            Lilsis::APP_CONFIG['smtp_user_name'],
-    password:             Lilsis::APP_CONFIG['smtp_password'],
-    authentication:       Lilsis::APP_CONFIG['smtp_authentication'],
+    address:              APP_CONFIG['smtp_address'],
+    port:                 APP_CONFIG['smtp_port'],
+    domain:               APP_CONFIG['smtp_domain'],
+    user_name:            APP_CONFIG['smtp_user_name'],
+    password:             APP_CONFIG['smtp_password'],
+    authentication:       APP_CONFIG['smtp_authentication'],
     ssl: true
   }
 
