@@ -41,8 +41,8 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations
   config.active_record.migration_error = :page_load
 
-  config.action_mailer.default_url_options[:host] = 'localhost:8080'
-  config.action_mailer.default_url_options[:protocol] = 'http'
+  config.action_mailer.default_url_options[:host] = APP_CONFIG['host']
+  config.action_mailer.default_url_options[:protocol] = APP_CONFIG['protocol']
   config.action_mailer.perform_deliveries = false
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = true
