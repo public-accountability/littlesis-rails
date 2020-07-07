@@ -14,6 +14,7 @@
 # TODO:
 #  - validate category_id + entity primary ext
 #  - handle relationship soft_delete
+#  - handle entity soft_delete
 class ExternalRelationship < ApplicationRecord
   enum dataset: ExternalData::DATASETS
 

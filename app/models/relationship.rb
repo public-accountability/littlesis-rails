@@ -56,12 +56,10 @@ class Relationship < ApplicationRecord
   ALL_CATEGORY_IDS_WITH_FIELDS = [1, 2, 3, 4, 5, 6, 10].freeze
 
   has_many :links, inverse_of: :relationship, dependent: :destroy
-  belongs_to :entity, foreign_key: "entity1_id", optional: true
+  belongs_to :entity, class_name: "Entity", foreign_key: "entity1_id", optional: true
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id", optional: true
   belongs_to :unscoped_entity, -> { unscope(where: :is_deleted) }, foreign_key: "entity1_id", class_name: "Entity", optional: true
   belongs_to :unscoped_related, -> { unscope(where: :is_deleted) }, class_name: "Entity", foreign_key: "entity2_id", optional: true
-  #has_many :references, -> { where(object_model: 'Relationship') }, foreign_key: 'object_id'
-
   has_one :position, inverse_of: :relationship, dependent: :destroy
   has_one :education, inverse_of: :relationship, dependent: :destroy
   has_one :membership, inverse_of: :relationship, dependent: :destroy
@@ -88,6 +86,10 @@ class Relationship < ApplicationRecord
   # NY Contributions
   has_many :ny_matches, inverse_of: :relationship
   has_many :ny_disclosures, through: :ny_matches
+
+  # External Data
+  has_many :external_relationships, dependent: :nullify
+  has_many :external_data, through: :external_relationships
 
   validates :entity1_id, presence: true
   validates :entity2_id, presence: true
@@ -412,6 +414,21 @@ class Relationship < ApplicationRecord
 
   def shares_owned
     ownership.nil? ? nil : ownership.shares
+  end
+
+  #########################
+  # External Relationship #
+  #########################
+
+  def update_attributes_from_external_data
+    return unless external_relationships.count > 1
+
+    external_datas = external_relationships.includes(:external_data).map(&:external_data).to_a
+
+    self[:start_date] = external_datas.map { |ed| ed.wrapper.date }.min
+    self[:end_date] = external_datas.map { |ed| ed.wrapper.date }.max
+    self[:amount] = external_datas.map { |ed| ed.wrapper.amount }.sum
+    self
   end
 
   ########################

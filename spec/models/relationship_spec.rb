@@ -20,6 +20,8 @@ describe Relationship, type: :model do
     it { is_expected.to have_many(:os_donations) }
     it { is_expected.to have_many(:ny_matches) }
     it { is_expected.to have_many(:ny_disclosures) }
+    it { is_expected.to have_many(:external_relationships) }
+    it { is_expected.to have_many(:external_data) }
 
     it 'aliases trans as transaction' do
       expect(Trans).to eql Transaction
