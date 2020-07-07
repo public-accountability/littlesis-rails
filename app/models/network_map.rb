@@ -9,6 +9,13 @@ class NetworkMap < ApplicationRecord
   LS_DATA_SOURCE_BASE_URL = "#{Rails.application.default_url_options[:protocol]}://#{Rails.application.default_url_options[:host]}"
 
   OLIGRAPHER_VERSION = APP_CONFIG['oligrapher_version']
+
+  THUMBNAIL_HOST = if Rails.env.production?
+                     'https://littlesis.org'
+                   else
+                     'http://127.0.0.1:8081'
+                   end
+
   attribute :graph_data, OligrapherGraphData::Type.new
   serialize :editors, Array
 
@@ -87,23 +94,15 @@ class NetworkMap < ApplicationRecord
     title.nil? ? id.to_s : "#{id}-#{title.parameterize}"
   end
 
-  # TODO: store image locally instead of uploading to S3
-  def generate_s3_thumb
-    url = Rails.application.routes.url_helpers.embedded_map_url(self, :host => 'https://littlesis.org')
+  def generate_thumbnail
+    url = Rails.application.routes.url_helpers.embedded_map_url(self, host: THUMBNAIL_HOST)
+    path = File.join(APP_CONFIG['image_root'], 'maps', "map-#{id}.png")
 
-    local_path = "tmp/map-#{id}.png"
-    s3_path = "images/maps/#{id}.png"
-
-    # Screenshot is located in lib/screenshot.rb
-    if Screenshot.take(url, local_path)
-      Screenshot.resize_map_thumbnail(local_path)
-
-      S3.upload_file remote_path: s3_path, local_path: local_path, check_first: false
-      File.delete(local_path)
-      self.thumbnail = S3.url('/' + s3_path)
-      save
+    if Screenshot.take(url, path)
+      Screenshot.resize_map_thumbnail(path)
+      update_column :thumbnail, "/images/maps/map-#{id}.png"
     else
-      Rails.logger.debug "Failed to save screenshot for map #{id}"
+      Rails.logger.info "Failed to save screenshot for map #{id}"
     end
   end
 

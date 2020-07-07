@@ -25,13 +25,13 @@ module Lilsis
 
     if Rails.env.production?
       Rails.application.default_url_options = {
-        host: 'littlesis.org',
-        protocol: 'https'
+        host: APP_CONFIG.fetch('host', 'littlesis.org'),
+        protocol: APP_CONFIG.fetch('protocol', 'https')
       }
     else
       Rails.application.default_url_options = {
-        host: 'localhost:8080',
-        protocol: 'http'
+        host: APP_CONFIG['host'],
+        protocol: APP_CONFIG['protocol']
       }
     end
 
@@ -58,8 +58,8 @@ module Lilsis
     config.active_job.queue_adapter = :delayed_job
 
     config.action_mailer.default_url_options = {
-      host: 'littlesis.org',
-      protocol: 'https'
+      host: APP_CONFIG.fetch('host', 'littlesis.org'),
+      protocol: APP_CONFIG.fetch('protocol', 'https')
     }
 
     config.action_controller.per_form_csrf_tokens = false

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'seed_dump'
-
 namespace :opensecrets do
   desc 'import individual contribution data'
   task :import_indivs, [:filepath] => :environment do |_t, args|
@@ -111,7 +109,7 @@ namespace :opensecrets do
   end
 
   desc 'Find Os_Matches without recipients'
-  task os_matches_without_recip: :environment do 
+  task os_matches_without_recip: :environment do
     OsMatch.where('recip_id is null').each do |match|
       recipid = match.os_donation.recipid
       cycle = match.os_donation.cycle
@@ -135,25 +133,6 @@ namespace :opensecrets do
        match.set_recipient
        match.update_donation_relationship
        match.create_reference
-    end
-  end
-
-  desc 'dump devos and exxon donations'
-  task devos_exxon_dump: :environment do
-    file_path = 'data/devos_exxon_dump.rb'
-
-    SeedDump.dump(OsMatch.where(donor_id: 38467).map(&:os_donation),
-                  file: file_path,
-                  append: true,
-                  exclude: [])
-    SeedDump.dump(OsMatch.where(donor_id: 38467),
-                  file: file_path,
-                  append: true,
-                  exclude: [])
-
-    Entity.find(2).links.where(category_id: 1).map(&:entity2_id).uniq.each do |entity_id|
-      SeedDump.dump(OsMatch.where(donor_id: entity_id).map(&:os_donation), file: file_path, append: true, exclude: [])
-      SeedDump.dump(OsMatch.where(donor_id: entity_id), file: file_path, append: true, exclude: [])
     end
   end
 end

@@ -1,10 +1,11 @@
 defaults: &defaults
   aws_key: ''
   aws_secret: ''
-  aws_region: ''
+  aws_region: 'us-east-1'
   aws_s3_base: "https://s3.amazonaws.com"
   aws_s3_bucket: "littlesis-dev"
   default_from_email: dev@littlesis.org
+  default_to_email: dev@littlesis.org
   admins_only: false
   netmap_api_key: freeapiforlittlesisdevs
   netmap_default_width: 960
@@ -14,46 +15,53 @@ defaults: &defaults
   default_image_file_type: jpg
   system_user_id: 1
   default_network_id: 79
-  asset_host: "littlesis.org"
-  image_asset_host:
   cloudfront_distribtion_id:
-  smtp_address:
-  smtp_port:
-  smtp_domain:
-  smtp_user_name:
-  smtp_password:
-  smtp_authentication:
-  notification_to:
+  smtp_address: "mail.littlesis.org"
+  smtp_port: 465
+  smtp_domain: "littlesis.org"
+  smtp_user_name: "staff@littlesis.org"
+  smtp_password: ""
+  smtp_authentication: 'plain'
+  notification_email: "email.robot@littlesis.org"
+  notification_user_name: "email.robot@littlesis.org"
+  notification_password: ""
+  notification_to: "test@littlesis.org"
   carousel_list_id: 404
   restricted_ips:
+    - 192.0.2.1
   recaptcha:
     site_key: 'your-recaptcha-site-key-here'
     secret_key: 'your-recaptcha-secret-key-here'
   action_network_api_key: 'your-action-network-api-key-here'
   redis_url: "redis://redis:6379/0/cache"
-  donation_banner_display: false  # use 'everywhere' to display on all pages and 'homepage' for just the homepage
+  donation_banner_display: false # use 'everywhere' to display on all pages and 'homepage' for just the homepage
   donation_banner_html: |
-    Today is #GivingTuesday. Please <a href="https://littlesis.org/donate/">make a tax-deductible donation</a><span class="d-sm-none d-md-inline">  to support our efforts to develop and maintain LittleSis.org
-  oligrapher_version: 0.4.1
+    <b>LittleSis</b> is turning <b>10</b> years old! <a href="https://littlesis.org/donate/">Become a $10/month sustaining donor</a> and we’ll send you an anniversary t-shirt!
+  oligrapher_version: 0.4.3
+  asset_host: "127.0.0.1:8080"
   image_host: "https://littlesis.org"
   image_root: public/images
-
+  host: littlesis.org
+  protocol: https
+  image_host: "https://littlesis.org"
+  image_root: public/images
 
 test:
   <<: *defaults
   notification_email: notification@littlesis.dev
   notification_to: rspec@testing.com
   asset_host: assets.example.net
-  image_asset_host: images.example.net
   donation_banner_display: false
   oligrapher_version: 0.0.1
   image_root: tmp
+  host: 'localhost:8080'
+  protocol: http
 
 development:
   <<: *defaults
-  image_host: "http://localhost:8080"
-  site_url: "http://localhost:8080"
-
+  image_host: "http://127.0.0.1:8080"
+  host: 'localhost:8080'
+  protocol: http
 
 production:
   <<: *defaults
