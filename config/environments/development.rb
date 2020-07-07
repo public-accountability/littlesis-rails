@@ -3,9 +3,9 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  # Note: /lib is NOT loaded in production
-  config.autoload_paths += %W(#{config.root}/lib)
-  config.autoload_paths += %W(#{config.root}/lib/importers)
+  config.routes.default_url_options[:host] = 'localhost:8080'
+  config.routes.default_url_options[:protocol] = 'http'
+
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -44,7 +44,6 @@ Rails.application.configure do
 
   # Raise an error on page load if there are pending migrations
   config.active_record.migration_error = :page_load
-
 
   config.action_mailer.default_url_options[:host] = 'localhost:8080'
   config.action_mailer.default_url_options[:protocol] = 'http'

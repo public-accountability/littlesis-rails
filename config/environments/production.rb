@@ -3,8 +3,6 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
-  config.action_mailer.default_url_options[:protocol] = 'https'
-
   # Code is not reloaded between requests.
   config.cache_classes = true
 
@@ -72,14 +70,10 @@ Rails.application.configure do
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   config.action_controller.asset_host = "https://#{APP_CONFIG['asset_host']}"
-
   config.assets.prefix = '/assets'
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
-  # config.action_mailer.default_url_options = { host: 'littlesis.org' }
-
+  config.action_mailer.default_url_options[:host] = 'littlesis.org'
+  config.action_mailer.default_url_options[:protocol] = 'https'
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_deliveries = true

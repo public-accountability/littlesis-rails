@@ -23,6 +23,18 @@ module Lilsis
       r301     %r{/user/(.*)},                            '/users/$1'
     end
 
+    if Rails.env.production?
+      Rails.application.default_url_options = {
+        host: 'littlesis.org',
+        protocol: 'https'
+      }
+    else
+      Rails.application.default_url_options = {
+        host: 'localhost:8080',
+        protocol: 'http'
+      }
+    end
+
     config.time_zone = 'UTC'
     config.active_record.default_timezone = :utc
     # Since Rails 6 `belongs_to` associations are by default
@@ -34,17 +46,24 @@ module Lilsis
 
     # APP_CONFIG.each_pair { |k,v| config.send :"#{k}=", v }
 
-    config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch('redis_url') }
+    # /lib is not loaded in production
+    config.autoload_paths += %W(#{config.root}/lib)
+    config.autoload_paths += %W(#{config.root}/lib/importers)
 
-    config.action_mailer.default_url_options = { :host => "littlesis.org" }
+    config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch('redis_url') }
 
     # config.action_controller.asset_host = APP_CONFIG['site_url']
 
     config.assets.paths << "#{Rails.root}/vendor/assets/images"
-
     config.active_job.queue_adapter = :delayed_job
 
+    config.action_mailer.default_url_options = {
+      host: 'littlesis.org',
+      protocol: 'https'
+    }
+
     config.action_controller.per_form_csrf_tokens = false
+
     # we can't check only check if requests come from 'littlesis.org'
     # because the chrome extension is allowed to also make requests
     config.action_controller.forgery_protection_origin_check = false
