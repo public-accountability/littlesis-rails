@@ -59,6 +59,26 @@ describe NetworkMap, type: :model do
     end
   end
 
+  describe 'generate_thumbnail' do
+    let(:network_map) { create(:network_map, user_id: 1) }
+
+    specify 'screenshot is successful' do
+      expect(Screenshot).to receive(:take).once.and_return(true)
+      expect(Screenshot).to receive(:resize_map_thumbnail).once
+      expect(network_map.thumbnail).to be nil
+      network_map.generate_thumbnail
+      expect(network_map.thumbnail).to eq "/images/maps/map-#{network_map.id}.png"
+    end
+
+    specify 'screenshot failed' do
+      expect(Screenshot).to receive(:take).once.and_return(false)
+      expect(Screenshot).not_to receive(:resize_map_thumbnail)
+      expect(Rails.logger).to receive(:info).once
+      network_map.generate_thumbnail
+      expect(network_map.thumbnail).to be nil
+    end
+  end
+
   describe '#documents' do
     let(:relationships) do
       Array.new(2) do

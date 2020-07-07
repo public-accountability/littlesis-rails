@@ -6,7 +6,12 @@ module HomeHelper
   # If the map thumbnail is missing, it returns the default image path
   def networkmap_image_path(map)
     return asset_path 'netmap-org.png' if map.thumbnail.blank?
-    map.thumbnail
+
+    if map.thumbnail.slice(0, 7) == '/images'
+      "#{APP_CONFIG['image_host']}#{map.thumbnail}"
+    else
+      map.thumbnail
+    end
   end
 
   def homepage_headline_h3(text)
