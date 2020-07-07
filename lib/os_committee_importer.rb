@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'csv'
-require Rails.root.join('lib', 'utility.rb').to_s
 
 module OsCommitteeImporter
   def self.line_to_a(line)

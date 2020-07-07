@@ -48,6 +48,7 @@ class ExternalEntity < ApplicationRecord
 
     ApplicationRecord.transaction do
       update!(entity_id: Entity.entity_id_for(entity_or_id))
+      add_reference
       match_action
     end
     self

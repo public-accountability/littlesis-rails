@@ -21,6 +21,14 @@ class ExternalEntity
         end
       end
 
+      def add_reference
+        if ExternalLink.crd_number?(external_data.dataset_id)
+          entity.add_reference(url: "https://adviserinfo.sec.gov/Firm/#{external_data.dataset_id}",
+                               name: "Investment Adviser Public Disclosure: #{external_data.dataset_id}")
+            .save!
+        end
+      end
+
       def matches
         # TODO: handle additional aliases
         org_name = external_data.data['names'].first

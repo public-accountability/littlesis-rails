@@ -14,6 +14,10 @@ class IapdImporter
     import_advisors
     ColorPrinter.print_green 'Importing Schedule A'
     import_schedule_a
+    ColorPrinter.print_green 'Processing Advisors'
+    process_advisors
+    ColorPrinter.print_green 'Processing Schedule A'
+    process_schedule_a
   end
 
   def self.import_advisors
@@ -35,14 +39,39 @@ class IapdImporter
       LEFT JOIN advisors ON advisors.crd_number = owners_schedule_a.advisor_crd_number AND owners_schedule_a.advisor_crd_number IS NOT NULL
     SQL
 
-    dataset_id = "#{row['owner_key']}-#{row['advisor_crd_number']}"
+      dataset_id = "#{row['owner_key']}-#{row['advisor_crd_number']}"
 
-    ed = ExternalData
-           .find_or_initialize_by(dataset: :iapd_schedule_a, dataset_id: dataset_id)
-           .merge_data(schedule_a_data(row))
-    ed.save || Rails.logger.warn("Failed to save owner: #{row}")
+      ed = ExternalData
+             .find_or_initialize_by(dataset: :iapd_schedule_a, dataset_id: dataset_id)
+             .merge_data(schedule_a_data(row))
+      ed.save || Rails.logger.warn("Failed to save owner: #{row}")
     end
   end
+
+  def self.process_advisors
+    ExternalData.iapd_advisors.find_each do |external_data|
+      ExternalEntity
+        .iapd_advisors
+        .find_or_create_by!(external_data: external_data)
+        .automatch
+    end
+  end
+
+  def self.process_schedule_a
+    ExternalData.iapd_schedule_a.find_each do |external_data|
+      category_id = if external_data.data_wrapper.owner_primary_ext == 'Person'
+                      Relationship::POSITION_CATEGORY
+                    else
+                      Relationship::OWNERSHIP_CATEGORY
+                    end
+
+      ExternalRelationship
+        .iapd_schedule_a
+        .find_or_create_by!(external_data: external_data, category_id: category_id)
+    end
+  end
+
+  ## Helpers ##
 
   # Some of the text fields in iapd.db are JSON and need to be parsed first.
   # See the iapd.sql file in public-accountability/iapd for how these columns were generated.

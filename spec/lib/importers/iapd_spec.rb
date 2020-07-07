@@ -1,5 +1,5 @@
 require 'sqlite3'
-require Rails.root.join('lib/iapd_importer.rb')
+require Rails.root.join('lib/importers/iapd_importer.rb')
 
 describe 'Iapd Dataset' do
   let(:db) do
@@ -39,7 +39,10 @@ SQL
     end
   end
 
-  before { allow(IapdImporter).to receive(:db).and_return(db) }
+  before do
+    allow(IapdImporter).to receive(:db).and_return(db)
+    create(:tag, name: 'iapd')
+  end
 
   describe 'import' do
     it 'creates 4 ExternalData' do
@@ -49,34 +52,18 @@ SQL
     it 'does not import duplicates' do
       expect { IapdImporter.run }.to change(ExternalData, :count).by(4)
       expect { IapdImporter.run }.not_to change(ExternalData, :count)
-    end
-  end
-
-  describe 'processor' do
-    before do
-      IapdImporter.run
-      create(:tag, name: 'iapd')
+      expect { IapdImporter.run }.not_to change(ExternalRelationship, :count)
     end
 
     it 'creates 2 ExternalEntity' do
-      expect { IapdProcessor.run }.to change(ExternalEntity, :count).by(2)
+      expect { IapdImporter.run }.to change(ExternalEntity, :count).by(2)
     end
 
     it 'can automatch entities by crd number' do
       entity = create(:entity_org, name: "Wealth Advisors LLC").tap { |e| e.external_links.crd.create!(link_id: '1') }
-      IapdProcessor.run
+      IapdImporter.run
       expect(ExternalEntity.find_by(external_data: ExternalData.iapd_advisors.find_by(dataset_id: '1')).entity_id)
         .to eq entity.id
-    end
-
-    it 'creates 2 ExternalRelationship' do
-      expect { IapdProcessor.run }.to change(ExternalRelationship, :count).by(2)
-    end
-
-    it 'does not import duplicates' do
-      expect do
-        2.times { IapdProcessor.run }
-      end.to change(ExternalRelationship, :count).by(2)
     end
   end
 end

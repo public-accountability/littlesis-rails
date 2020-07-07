@@ -3,7 +3,7 @@
 require 'csv'
 require 'tempfile'
 
-# Various helper functions used by scripts and rake tasks.
+# Helper functions used by scripts and rake tasks
 
 module Utility
   def self.save_hash_array_to_csv(file_path, data, mode: 'wb')
@@ -46,11 +46,9 @@ module Utility
     # populate temp file with converted data
     tmp_file = Tempfile.new
     File.foreach(path) do |line|
-      utf8_line = line
-                    .encode('UTF-8', :invalid => :replace, :undef => :replace, :replace => '')
-                    .force_encoding('UTF-8')
-
-      tmp_file.write utf8_line
+      tmp_file.write line
+                       .encode('UTF-8', :invalid => :replace, :undef => :replace, :replace => '')
+                       .force_encoding('UTF-8')
     end
 
     # replace CSV_FILE_PATH with new utf-8 data
@@ -67,15 +65,27 @@ module Utility
 
   # Saves url to local path with streams
   def self.stream_file(url:, path:)
-    File.open(path, 'wb') do |file|
-      HTTParty.get(url, streambody: true) do |fragment|
-        file.write(fragment)
+    uri = URI(url)
+    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      http.request(Net::HTTP::Get.new(uri)) do |response|
+        response.value # this raises an error if the response is not successful
+        File.open(path, 'wb') do |file|
+          response.read_body do |fragment|
+            file.write(fragment)
+          end
+        end
       end
     end
   end
 
   def self.stream_file_if_not_exists(url:, path:)
     stream_file(url: url, path: path) if file_is_empty_or_nonexistent(path)
+  end
+
+  def self.zip_entry_each_line(zip:, file:, &block)
+    Zip::File.open(zip) do |zip_file|
+      zip_file.get_entry(file).get_input_stream.each(&block)
+    end
   end
 
   def self.yes_no_converter(x)
@@ -85,8 +95,6 @@ module Utility
       true
     elsif x.strip.casecmp('N').zero?
       false
-    else
-      nil
     end
   end
 
@@ -97,11 +105,9 @@ module Utility
       true
     elsif x.strip == '0'
       false
-    else
-      nil
     end
   end
 
-  class SubshellCommandError < StandardError; end
-  class SQLFileError < StandardError; end
+  class SubshellCommandError < Exceptions::LittleSisError; end
+  class SQLFileError < Exceptions::LittleSisError; end
 end

@@ -39,8 +39,22 @@ class ExternalEntity
           .find_or_create_by!(entity_id: entity_id, link_id: external_data.dataset_id)
       end
 
+      def add_reference
+        name = "New York State Campaign Finance Disclosure: #{external_data.wrapper.nice[:name]}"
+        url = external_data.wrapper.reference_url
+        entity.add_reference(url: url, name: name).save!
+      end
+
       def unmatch_action
         entity.external_links.nys_filer.find_by(link_id: external_data.dataset_id).destroy!
+      end
+
+      def automatch
+        unless matched?
+          if (entity = ExternalLink.nys_filer.find_by(link_id: external_data.dataset_id)&.entity)
+            match_with entity
+          end
+        end
       end
 
       # Filer type #1 is an "Individual Campaign Committee"

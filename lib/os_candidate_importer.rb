@@ -2,8 +2,6 @@
 
 # rubocop:disable Metrics/MethodLength
 
-require Rails.root.join('lib', 'utility.rb').to_s
-
 module OsCandidateImporter
   def self.process_line(line)
     row = CSV.parse_line(line, :quote_char => "|").map { |x| nil_or_strip(x) }

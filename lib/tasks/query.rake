@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'csv'
-require Rails.root.join('lib', 'utility.rb').to_s
 
 namespace :query do
   desc 'Saves Os Donations for each member of a list as csv'

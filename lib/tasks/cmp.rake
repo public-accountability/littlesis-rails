@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require Rails.root.join('lib', 'utility.rb').to_s
 require Rails.root.join('lib', 'cmp.rb').to_s
 require 'csv'
 
@@ -207,7 +206,7 @@ namespace :cmp do
 
       CSV.foreach(csv_file, headers: true).each do |row|
         cmpid = row['cmpid'].to_s
-        begin 
+        begin
           if CmpEntity.exists?(cmp_id: cmpid)
             ColorPrinter.print_brown "cmp entity already imported: #{cmpid}"
           elsif ['Y', 'YES'].include? row['match']&.upcase

@@ -1,15 +1,14 @@
 # frozen_string_literal: true
 
 require 'zip'
-require Rails.root.join('lib/utility.rb').to_s
 
 module NYSFilerImporter
-  FILER_REMOTE_URL = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
-  FILER_LOCAL_PATH = Rails.root.join('data/nys_campaign_finance_commcand.zip').to_s
+  REMOTE_URL = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
+  LOCAL_PATH = Rails.root.join('data/nys_campaign_finance_commcand.zip').to_s
   HEADERS = %w[filer_id name filer_type status committee_type office district treas_first_name treas_last_name address city state zip].freeze
 
   def self.run
-    Utility.stream_file_if_not_exists(url: FILER_REMOTE_URL, path: FILER_LOCAL_PATH)
+    Utility.stream_file_if_not_exists(url: REMOTE_URL, path: LOCAL_PATH)
     import
     process
   end
@@ -35,17 +34,13 @@ module NYSFilerImporter
 
   def self.extract_rows
     errors = 0
-    Zip::File.open(FILER_LOCAL_PATH) do |zip_file|
-      zip_file.get_entry('COMMCAND.txt').get_input_stream do |io|
-        io.each do |line|
-          parsed_line = parse_line(line.encode('ASCII', invalid: :replace, undef: :replace, replace: ''))
-          if parsed_line == :error
-            Rails.logger.warn "[NYSFilerImporter] Could not import line\n    #{line.strip}\n"
-            errors += 1
-          else
-            yield parsed_line
-          end
-        end
+    Utility.zip_entry_each_line(zip: LOCAL_PATH, file: 'COMMCAND.txt') do |line|
+      parsed_line = parse_line(line.encode('ASCII', invalid: :replace, undef: :replace, replace: ''))
+      if parsed_line == :error
+        Rails.logger.warn "[NYSFilerImporter] Could not import line\n    #{line.strip}\n"
+        errors += 1
+      else
+        yield parsed_line
       end
     end
     Rails.logger.warn "[NYSFilerImporter] Skipped #{errors} lines with errors."
