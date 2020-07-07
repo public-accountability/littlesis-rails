@@ -52,15 +52,14 @@ gem 'whenever', '~> 1.0.0', :require => false
 gem 'money'
 
 group :test do
-  gem 'simplecov', :require => false
   gem 'codecov', :require => false
+  gem 'simplecov', :require => false
 end
 
 group :development do
   gem 'better_errors', '>= 2.5.0'
   gem 'memory_profiler'
   gem 'rack-mini-profiler', require: false
-  gem 'seed_dump', require: false
   gem 'web-console'
 end
 
