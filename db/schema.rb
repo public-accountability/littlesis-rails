@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_01_145405) do
+ActiveRecord::Schema.define(version: 2020_07_08_135038) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1345,6 +1345,21 @@ ActiveRecord::Schema.define(version: 2020_07_01_145405) do
     t.index ["entity2_id"], name: "index_versions_on_entity2_id"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
+  end
+
+  create_table "web_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "remote_address"
+    t.time "time"
+    t.string "host"
+    t.string "method"
+    t.text "uri"
+    t.integer "status", limit: 1
+    t.integer "body_bytes"
+    t.float "request_time"
+    t.text "referer"
+    t.text "user_agent"
+    t.string "request_id", null: false
+    t.index ["request_id"], name: "index_web_requests_on_request_id", unique: true
   end
 
   add_foreign_key "address", "address_category", column: "category_id", on_update: :cascade, on_delete: :nullify
