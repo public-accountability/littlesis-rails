@@ -84,22 +84,6 @@ GEM
     ast (2.4.1)
     autoprefixer-rails (9.8.4)
       execjs
-    aws-eventstream (1.1.0)
-    aws-partitions (1.336.0)
-    aws-sdk-core (3.102.1)
-      aws-eventstream (~> 1, >= 1.0.2)
-      aws-partitions (~> 1, >= 1.239.0)
-      aws-sigv4 (~> 1.1)
-      jmespath (~> 1.0)
-    aws-sdk-kms (1.35.0)
-      aws-sdk-core (~> 3, >= 3.99.0)
-      aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.72.0)
-      aws-sdk-core (~> 3, >= 3.102.1)
-      aws-sdk-kms (~> 1)
-      aws-sigv4 (~> 1.1)
-    aws-sigv4 (1.2.1)
-      aws-eventstream (~> 1, >= 1.0.2)
     bcrypt (3.1.13)
     better_errors (2.7.1)
       coderay (>= 1.0.0)
@@ -163,7 +147,6 @@ GEM
     i18n (1.8.3)
       concurrent-ruby (~> 1.0)
     innertube (1.1.0)
-    jmespath (1.4.0)
     joiner (0.5.0)
       activerecord (>= 6.0.0.rc2)
     jquery-rails (4.4.0)
@@ -406,7 +389,6 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-session_store
-  aws-sdk-s3 (~> 1)
   better_errors (>= 2.5.0)
   bootsnap (>= 1.4.3)
   bootstrap (>= 4.3.1)

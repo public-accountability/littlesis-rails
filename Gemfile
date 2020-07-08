@@ -20,7 +20,6 @@ gem 'delayed_job', '~> 4.1'
 gem 'delayed_job_active_record', '>= 4.1.3'
 
 # Assets, image uploading & processing
-gem 'aws-sdk-s3', '~> 1'
 gem 'mini_magick'
 
 gem 'sprockets', '~> 3.0'
