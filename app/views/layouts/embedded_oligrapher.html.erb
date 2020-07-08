@@ -2,18 +2,17 @@
 <html class="fullscreen">
   <head>
     <title><%= page_title %></title>
-    <%= javascript_pack_tag 'application' %> 
+    <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag "application" %>
     <%= facebook_meta %>
 
     <% if content_for?(:head) %>
       <%= yield :head %>
     <% end %>
-    
+
   </head>
   <body>
     <%= yield %>
     <%= yield :body %>
-    <%= render 'shared/analytics' %>
   </body>
 </html>

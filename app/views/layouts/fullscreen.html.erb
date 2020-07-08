@@ -11,14 +11,9 @@
   <% if content_for?(:head) %>
     <%= yield :head %>
   <% end %>
-  
-  <% if Lilsis::Application.config.respond_to?(:google_site_verification) %>
-    <meta name="google-site-verification" content="<%= Lilsis::Application.config.google_site_verification %>" />
-  <% end %>
 </head>
 <body class="static fullscreen">
   <%= yield %>
   <%= yield :body %>
-  <%= render 'shared/analytics' %>
 </body>
 </html>
