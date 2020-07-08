@@ -27,6 +27,7 @@ log_file = '/var/www/littlesis/log/cron.log'
 
 every 1.day do
   rake "sessions:clear_expired", output: log_file
+  runner "WebRequest.nullify_identifying_data", output: log_file
 end
 
 every 1.day, at: '3:30 am' do

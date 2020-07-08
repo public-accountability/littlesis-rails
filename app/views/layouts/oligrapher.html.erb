@@ -3,7 +3,7 @@
   <head>
     <title><%= raw(page_title) %></title>
     <%= stylesheet_link_tag    "application", media: "all" %>
-    <%= javascript_pack_tag 'application' %> 
+    <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag "application" %>
     <%= csrf_meta_tags %>
     <%= facebook_meta %>
@@ -21,8 +21,5 @@
     <% if content_for? :body %>
       <%= yield :body %>
     <% end %>
-
-    <%= render 'shared/analytics' %>
-
   </body>
 </html>
