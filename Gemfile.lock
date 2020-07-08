@@ -9,7 +9,7 @@ GIT
 
 GIT
   remote: https://github.com/stympy/faker.git
-  revision: 49feb023d93670f521ec5aee90004c2e4aa62c2f
+  revision: f163f8c5d5b28048816520004f56df8d866133f7
   branch: master
   specs:
     faker (2.13.0)
@@ -84,22 +84,6 @@ GEM
     ast (2.4.1)
     autoprefixer-rails (9.8.4)
       execjs
-    aws-eventstream (1.1.0)
-    aws-partitions (1.336.0)
-    aws-sdk-core (3.102.1)
-      aws-eventstream (~> 1, >= 1.0.2)
-      aws-partitions (~> 1, >= 1.239.0)
-      aws-sigv4 (~> 1.1)
-      jmespath (~> 1.0)
-    aws-sdk-kms (1.35.0)
-      aws-sdk-core (~> 3, >= 3.99.0)
-      aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.72.0)
-      aws-sdk-core (~> 3, >= 3.102.1)
-      aws-sdk-kms (~> 1)
-      aws-sigv4 (~> 1.1)
-    aws-sigv4 (1.2.1)
-      aws-eventstream (~> 1, >= 1.0.2)
     bcrypt (3.1.13)
     better_errors (2.7.1)
       coderay (>= 1.0.0)
@@ -124,11 +108,12 @@ GEM
       xpath (~> 3.2)
     childprocess (3.0.0)
     chronic (0.10.2)
-    codecov (0.1.17)
+    codecov (0.1.19)
+      colorize
       json
       simplecov
-      url
     coderay (1.1.3)
+    colorize (0.8.1)
     concurrent-ruby (1.1.6)
     crass (1.0.6)
     daemons (1.3.1)
@@ -144,7 +129,7 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
-    diff-lcs (1.4.2)
+    diff-lcs (1.4.4)
     docile (1.3.2)
     erubi (1.9.0)
     execjs (2.7.0)
@@ -163,7 +148,6 @@ GEM
     i18n (1.8.3)
       concurrent-ruby (~> 1.0)
     innertube (1.1.0)
-    jmespath (1.4.0)
     joiner (0.5.0)
       activerecord (>= 6.0.0.rc2)
     jquery-rails (4.4.0)
@@ -172,7 +156,7 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
-    json (2.3.0)
+    json (2.3.1)
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.1)
@@ -203,14 +187,14 @@ GEM
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.14.1)
-    money (6.13.7)
+    money (6.13.8)
       i18n (>= 0.6.4, <= 2)
     msgpack (1.3.3)
     multi_json (1.14.1)
     multi_xml (0.6.0)
     mysql2 (0.5.3)
     nio4r (2.5.2)
-    nokogiri (1.10.9)
+    nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
     orm_adapter (0.5.0)
     paper_trail (10.3.1)
@@ -306,24 +290,24 @@ GEM
       rspec-mocks (~> 3.9)
       rspec-support (~> 3.9)
     rspec-support (3.9.3)
-    rubocop (0.86.0)
+    rubocop (0.87.1)
       parallel (~> 1.10)
-      parser (>= 2.7.0.1)
+      parser (>= 2.7.1.1)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.7)
       rexml
-      rubocop-ast (>= 0.0.3, < 1.0)
+      rubocop-ast (>= 0.1.0, < 1.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 2.0)
     rubocop-ast (0.1.0)
       parser (>= 2.7.0.1)
-    rubocop-performance (1.6.1)
-      rubocop (>= 0.71.0)
+    rubocop-performance (1.7.0)
+      rubocop (>= 0.82.0)
     rubocop-rails (2.6.0)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 0.82.0)
-    rubocop-rspec (1.40.0)
+    rubocop-rspec (1.41.0)
       rubocop (>= 0.68.1)
     ruby-progressbar (1.10.1)
     rubyzip (2.3.0)
@@ -378,7 +362,6 @@ GEM
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.7.0)
-    url (0.3.2)
     warden (1.2.8)
       rack (>= 2.0.6)
     web-console (4.0.3)
@@ -406,7 +389,6 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-session_store
-  aws-sdk-s3 (~> 1)
   better_errors (>= 2.5.0)
   bootsnap (>= 1.4.3)
   bootstrap (>= 4.3.1)
