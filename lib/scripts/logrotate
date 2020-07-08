@@ -1,0 +1,8 @@
+#!/usr/bin/env -S rails runner
+
+log = ARGV.first
+
+if log.include? 'access'
+  Rails.logger.info "Rotating log #{log}"
+  NginxLogService.insert_file log
+end
