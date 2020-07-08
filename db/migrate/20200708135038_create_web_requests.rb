@@ -2,11 +2,11 @@ class CreateWebRequests < ActiveRecord::Migration[6.0]
   def change
     create_table :web_requests do |t|
       t.string :remote_address
-      t.time :time
+      t.datetime :time
       t.string :host
-      t.string :method
+      t.string :http_method
       t.text :uri
-      t.integer :status, limit: 1
+      t.integer :status, limit: 2
       t.integer :body_bytes
       t.float :request_time
       t.text :referer

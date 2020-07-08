@@ -156,9 +156,10 @@ class DevelopmentDb
                  object_tag
                  sessions
                  sphinx_index
+                 unmatched_ny_filers
                  user_requests
                  versions
-                 unmatched_ny_filers].freeze
+                 web_requests].freeze
 
   NON_CLEANED_IGNORED = %w[user_profiles users].freeze
 
