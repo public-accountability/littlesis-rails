@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
+  include SpamHelper
+
   before_action :authenticate_user!,
                 except: [:dismiss, :index, :contact, :flag, :token, :newsletter_signup, :pai_signup]
 
@@ -168,9 +170,5 @@ class HomeController < ApplicationController
 
   def flag_params
     params.permit(:email, :url, :name, :message)
-  end
-
-  def likely_a_spam_bot
-    params['very_important_wink_wink'].present?
   end
 end

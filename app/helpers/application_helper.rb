@@ -190,4 +190,11 @@ module ApplicationHelper
       false
     end
   end
+
+  # honeypot for spam bots
+  def very_important_wink_wink
+    tag.div :style => 'position: absolute; left: -5000px;', :"aria-hidden" => 'true' do
+      text_field_tag 'very_important_wink_wink'
+    end
+  end
 end
