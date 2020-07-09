@@ -18,11 +18,11 @@ class ErrorsController < ApplicationController
       NotificationMailer.bug_report_email(bug_report_params).deliver_later
       redirect_to home_dashboard_path, notice: THANK_YOU_NOTICE
     else
-      if SpamDetector.bug_report?(params)
+      if SpamDetector.bug_report?(bug_report_params)
+        flash.now[:notice] = YOU_ARE_SPAM
+      else
         NotificationMailer.bug_report_email(bug_report_params).deliver_later
         flash.now[:notice] = THANK_YOU_NOTICE
-      else
-        flash.now[:notice] = YOU_ARE_SPAM
       end
       render 'bug_report'
     end
