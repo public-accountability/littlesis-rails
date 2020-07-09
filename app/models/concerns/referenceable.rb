@@ -16,6 +16,8 @@ module Referenceable
     url = document_attributes[:url] || document_attributes['url']
     name = document_attributes[:name] || document_attributes['name']
 
+    return if url.blank? && reference_optional?
+
     if url.blank?
       reference_error "A source URL is required"
     elsif !Document.valid_url?(url)
@@ -34,6 +36,9 @@ module Referenceable
 
     if self.valid?
       url = document_attributes[:url] || document_attributes['url']
+
+      return if url.blank? && reference_optional?
+
       doc = Document.find_by_url(url) || Document.create!(document_attributes)
       references.create(document_id: doc.id) unless references.exists?(document_id: doc.id)
     end
@@ -103,5 +108,9 @@ module Referenceable
     define_singleton_method(:valid_new_reference?) do
       errors.add :base, msg
     end
+  end
+
+  def reference_optional?
+    self.class.respond_to?(:reference_optional?) && self.class.reference_optional?
   end
 end

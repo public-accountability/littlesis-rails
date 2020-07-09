@@ -32,9 +32,9 @@ describe 'List Requests' do
 
       specify do
         expect { post '/lists', params: params }
-          .not_to change(List, :count)
+          .to change(List, :count).by(1)
 
-        expect(response.body).to include "A source URL is required"
+        expect(response).to have_http_status(302)
       end
     end
 

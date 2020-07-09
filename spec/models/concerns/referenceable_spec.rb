@@ -126,6 +126,26 @@ describe Referenceable, type: :model do
       end
     end
 
+    context 'with no URL when references are optional' do
+      let(:referenceable) { TestReferenceable.new }
+      let(:url) { '' }
+
+      before do
+        referenceable.class.define_singleton_method(:reference_optional?) do
+          true
+        end
+      end
+
+      it 'does not create a new document' do
+        expect { add_reference.call }.not_to change(Document, :count)
+      end
+
+      it 'does not add an error to the record' do
+        add_reference.call
+        expect(referenceable.valid?).to be true
+      end
+    end
+
     # What should we do in this situation?
     context 'existing Document, with different name'
   end

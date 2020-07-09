@@ -135,29 +135,24 @@ describe ListsController, :list_helper, type: :controller do
   describe 'POST create' do
     login_user
 
-    context 'when missing name and url' do
-      let(:params) { { list: { name: '' }, ref: { url: '' } } }
+    context 'when missing name' do
+      let(:params) { { list: { name: '' }, ref: { url: 'http://mysource' } } }
 
       before { post :create, params: params }
 
-      specify { expect(response).to render_template(:new) }
-      specify { expect(assigns(:list).errors.size).to eq(2) }
+      it 'raises a validation error for the missing name' do
+        expect(response).to render_template(:new)
+        expect(assigns(:list).errors.size).to eq(1)
+        expect(assigns(:list).errors.full_messages.first).to eq "Name can't be blank"
+      end
     end
 
-    context 'when missing just name or just source' do
-      it 'renders new template' do
-        post :create, params: { list: { name: 'a name' }, ref: { url: '' } }
-        expect(response).to render_template(:new)
-      end
-
-      it 'has one error - blank name' do
-        post :create, params: { list: { name: '' }, ref: { url: 'http://mysource' } }
-        expect(assigns(:list).errors.size).to eq 1
-      end
-
-      it 'has one error - missing source' do
-        post :create, params: { list: { name: 'the list name' }, ref: { url: '' } }
-        expect(assigns(:list).errors.size).to eq 1
+    context 'when missing source' do
+      it 'creates the list without a reference' do
+        expect {
+          post :create, params: { list: { name: 'a name' }, ref: { url: '' } }
+        }.to change(List, :count).by(1)
+        expect(assigns(:list).references.count).to be 0
       end
     end
 
@@ -173,27 +168,26 @@ describe ListsController, :list_helper, type: :controller do
         end.to change(List, :count).by(1)
       end
 
-      it 'create a reference with a name provided' do
+      it 'creates a reference for the list' do
         expect do
           post :create, params: { list: { name: 'list name' }, ref: { url: 'http://mysource' } }
         end.to change(Reference, :count).by(1)
 
         expect(Reference.last.referenceable_id).to eql assigns(:list).id
         expect(Reference.last.referenceable_type).to eql 'List'
-        # the reference name is set to be the same as the the source url if no name isprovided
-        expect(Reference.last.document.url).to eql 'http://mysource'
       end
 
       it 'creates a reference with a name provided' do
         params = { list: { name: 'list name' }, ref: { url: 'http://mysource', name: 'important source' } }
         post :create, params: params
-        expect(Reference.last.document.name).to eql'important source'
+        expect(Reference.last.document.name).to eql 'important source'
         expect(Reference.last.document.url).to eql 'http://mysource'
       end
     end
 
     xdescribe 'modifications' do
       let(:new_list) { create(:list) }
+
       before { get :modifications, params: { id: new_list.id } }
 
       it 'renders modifications template' do
