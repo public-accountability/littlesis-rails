@@ -6,7 +6,7 @@
    }
    var password = document.getElementsByName("user[password]")[0].value;
    var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
-   
+
    if (password.length < 8) {
      alert('Please ensure that your password is 8 or more characters long!');
      return false;
@@ -17,11 +17,11 @@
      return true;
    }
  }
- 
+
  $(function() {
    var aboutYouInput = document.getElementById('about-you-input');
    aboutYouInput.setCustomValidity("Don't forget to fill out this field");
-   
+
    aboutYouInput.addEventListener("input", function(e){
      if (this.value === '') {
        this.setCustomValidity("Don't forget to fill out this field");
@@ -38,25 +38,21 @@
 
 
    /*
-      This validates the username input field.
-      
-      It first checks if the username passes the character requirements.
-      If it does, it then submits a request to '/users/check_username'
-      which checks if the username is available. 
-
-      It change the customValidity of the input accordingly.
-   */
+      This validates the username input field by checking:
+        - the minium charachter requirement
+        - It's availablity, via requests to /users/check_username
+    */
    var usernameTimeout = null;
    var INPUT_DELAY = 500;
    var usernameRegex = new RegExp('^[A-Za-z]{1}\\w{2,}$')
 
    $('#user_username').on('input', function() {
      if (usernameTimeout !== null) {
-        clearTimeout(usernameTimeout);
+       clearTimeout(usernameTimeout);
      }
 
      var inputElement = this;
-     
+
      var validateInput = function() {
        var val = $(inputElement).val();
 
@@ -80,10 +76,10 @@
 
      usernameTimeout = setTimeout(validateInput, INPUT_DELAY);
    });
-   
+
  });
- 
- 
+
+
 </script>
 
 <% column_class = 'col-sm-8' %>
@@ -139,18 +135,18 @@
 	  </div>
       <% end %>
     <% end %>
-    
+
     <%= registrations_form_group do %>
 	<%= profile_fields.label :name_first, "First Name", :class => label_class   %>
 	<%= profile_fields.text_field :name_first, :required => true, :class => input_class %>
     <% end %>
-    
+
     <%= registrations_form_group do %>
       <%= profile_fields.label :name_last, "Last Name", :class => label_class %>
       <%= profile_fields.text_field :name_last, class: input_class %>
       <small><em>(your name and email will not be public)</em> </small>
     <% end %>
-        
+
     <%= registrations_form_group do %>
       <%= f.label :email,
       "Email",
@@ -171,7 +167,7 @@
       :id => 'user_username'
       %>
     <% end %>
-    
+
     <%= registrations_form_group do %>
       <%= f.label :password, "Password (Minimum 8 letters)", :class => label_class %>
       <%= f.password_field :password, autocomplete: "off", :required => true, :class => input_class  %>
@@ -181,7 +177,7 @@
       <%= f.label :password_confirmation, :class => label_class  %>
       <%= f.password_field :password_confirmation, autocomplete: "off", :required => true, :class => input_class  %>
     <% end %>
-    
+
     <%= registrations_form_group do %>
       <%= label_tag 'terms_of_use', "Terms of use", :class => label_class %>
       <div class="bg-info p-3">
@@ -211,11 +207,13 @@
       <%= profile_fields.label :reason, raw("What are your research interests? <br> What are you hoping to use LittleSis for?*"), :class => label_class  %>
       <%= profile_fields.text_area :reason, :class => input_class, :rows => 5, :id => 'about-you-input' %>
     <% end %>
-    
+
     <%= registrations_form_group do %>
-      <%=  label_tag 'spam_test', "", :class => label_class %>
-      <%= flash[:recaptcha_error] %>
-      <%= recaptcha_tags %>
+      <%= label_tag 'spam_test', raw("Please solve the following math problem: <b> #{math_captcha.question}</b>"), :class => label_class %>
+      <%= hidden_field_tag "math[number_one]", math_captcha.number_one %>
+      <%= hidden_field_tag "math[number_two]", math_captcha.number_two %>
+      <%= hidden_field_tag "math[operation]", math_captcha.operation %>
+      <%= number_field_tag "math[answer]", nil, min: -20, max: 40 %>
     <% end %>
 
     <%= registrations_form_group(column_class: 'col-4') do %>
@@ -223,4 +221,4 @@
       <p class="mt-3"><small><%= render "users/shared/links" %></small></p>
     <% end %>
   <% end %>
-<% end %> 
+<% end %>

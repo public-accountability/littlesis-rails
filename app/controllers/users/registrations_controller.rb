@@ -1,41 +1,42 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  include SpamHelper
+  helper_method :math_captcha
+
   # before_action :configure_sign_up_params, only: [:create]
   before_action :configure_account_update_params, only: [:update]
 
-  # GET /resource/sign_up
+  # GET /join
   def new
     super
   end
 
-  # "resource" is the generic term used in devise. 'resource' here
-  #  are just instances of User. (ziggy 10-27-16)
-  # POST /resource
+  # POST /join
+  # note: "resource" is a generic term from devise: resource.is_a?(User)
   def create
     @signup_errors = []
     build_resource(user_params)
 
-    # check recaptcha
-    unless verify_recaptcha
-      @signup_errors << 'The recaptcha failed to verify'
+    unless verify_math_captcha
+      @signup_errors << 'Failed to solve the math problem'
       reset_signup_session
       return render 'new'
     end
 
     resource.user_profile.assign_attributes user_profile_params
 
-    ApplicationRecord.transaction do
-      begin
-        resource.save!
-      rescue ActiveRecord::StatementInvalid
-        raise
-      rescue
-        raise ActiveRecord::Rollback
-      end
-    end
+    # ApplicationRecord.transaction do
+    #   begin
+    #     resource.save!
+    #   rescue ActiveRecord::StatementInvalid
+    #     raise
+    #   rescue
+    #     raise ActiveRecord::Rollback
+    #   end
+    # end
 
-    if resource.persisted?
+    if resource.save
       if resource.active_for_authentication?
         set_flash_message! :notice, :signed_up
         sign_up(resource_name, resource)
@@ -64,7 +65,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
-  # post /users/api_token
+  # POST /users/api_token
   def api_token
     # see https://github.com/plataformatec/devise/blob/master/app/controllers/devise/registrations_controller.rb
     authenticate_scope!
@@ -84,12 +85,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
     render action: :edit
   end
 
-  # GET /resource/edit
+  # GET /users/edit
   # def edit
   #   super
   # end
 
-  # PUT /resource
+  # PUT /users
   def update
     super
   end

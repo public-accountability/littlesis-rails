@@ -96,4 +96,10 @@ feature "Signing up for an account", type: :feature do
       expect(page.find("#signup-errors-alert")).to have_text "The username -- #{username} -- has already been taken"
     end
   end
+
+  scenario 'a spam bot is joining' do
+
+
+  end
+
 end
