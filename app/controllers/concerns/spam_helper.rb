@@ -14,7 +14,8 @@ module SpamHelper
   def verify_math_captcha
     MathCaptcha.correct?(**params
                              .require(:math)
-                             .permit(:number_onem, :number_two, :operation, :answer)
-                             .to_h)
+                             .permit(:number_one, :number_two, :operation, :answer)
+                             .to_h
+                             .symbolize_keys)
   end
 end
