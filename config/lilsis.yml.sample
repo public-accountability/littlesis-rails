@@ -29,9 +29,6 @@ defaults: &defaults
   carousel_list_id: 404
   restricted_ips:
     - 192.0.2.1
-  recaptcha:
-    site_key: 'your-recaptcha-site-key-here'
-    secret_key: 'your-recaptcha-secret-key-here'
   action_network_api_key: 'your-action-network-api-key-here'
   redis_url: "redis://redis:6379/0/cache"
   donation_banner_display: false # use 'everywhere' to display on all pages and 'homepage' for just the homepage

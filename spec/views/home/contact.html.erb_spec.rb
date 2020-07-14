@@ -11,7 +11,7 @@ describe 'home/contact.html.erb', type: :view do
     end
 
     it 'does not have math captcha_answer' do
-      not_css '#match_answer'
+      not_css '#math_answer'
     end
   end
 

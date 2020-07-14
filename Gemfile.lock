@@ -258,8 +258,6 @@ GEM
       thor (>= 0.20.3, < 2.0)
     rainbow (3.0.0)
     rake (13.0.1)
-    recaptcha (5.5.0)
-      json
     redcarpet (3.5.0)
     redis (4.2.1)
     regexp_parser (1.7.1)
@@ -421,7 +419,6 @@ DEPENDENCIES
   rack-rewrite (~> 1.5.1)
   rails (= 6.0.3.2)
   rails-controller-testing
-  recaptcha (>= 4.14.0)
   redcarpet (>= 3.4.0)
   redis
   roo (~> 2.8.1)
