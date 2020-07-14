@@ -11,9 +11,10 @@ describe HomeController, type: :controller do
 
   describe 'GET contact' do
     before { get :contact }
-    it { should respond_with(:success) }
-    it { should render_template('contact') }
-    it { should_not set_flash.now }
+
+    it { is_expected.to respond_with(:success) }
+    it { is_expected.to render_template('contact') }
+    it { is_expected.not_to set_flash.now }
   end
 
   describe 'GET home/dashboard' do
@@ -26,23 +27,30 @@ describe HomeController, type: :controller do
   describe 'POST contact' do
     describe 'no name provided' do
       let(:params) { { email: 'email@email.com', message: 'hey' } }
+
       before { post :contact, params: params }
-      it { should set_flash.now[:alert] }
-      it { should render_template('contact') }
+
+      it { is_expected.to set_flash.now[:alert] }
+      it { is_expected.to render_template('contact') }
     end
 
     describe 'no email provided' do
       let(:params) { { name: 'me', message: 'hey' } }
+
       before { post :contact, params: params }
-      it { should set_flash.now[:alert] }
-      it { should render_template('contact') }
+
+      it { is_expected.to set_flash.now[:alert] }
+      it { is_expected.to render_template('contact') }
     end
 
     describe 'no message provided' do
       let(:params) { { name: 'me', email: 'email@email.com', message: '' } }
+
       before { post :contact, params: params }
-      it { should set_flash.now[:alert] }
-      it { should render_template('contact') }
+
+      it { is_expected.to set_flash.now[:alert] }
+      it { is_expected.to render_template('contact') }
+
       it ' assigns given name to @name' do
         expect(assigns(:name)).to eql 'me'
       end
@@ -59,40 +67,43 @@ describe HomeController, type: :controller do
         post :contact, params: post_params
       end
 
-      it { should_not set_flash.now[:alert] }
-      it { should set_flash.now[:notice] }
-      it { should render_template('contact') }
+      it { is_expected.to_not set_flash.now[:alert] }
+      it { is_expected.to set_flash.now[:notice] }
+      it { is_expected.to render_template('contact') }
     end
   end
 
   describe '/flag' do
     describe 'GET' do
       before { get :flag }
-      it { should respond_with(:success) }
-      it { should render_template('flag') }
+
+      it { is_expected.to respond_with(:success) }
+      it { is_expected.to render_template('flag') }
     end
 
     describe 'POST' do
-      context 'no email provided' do
+      context 'when no email provided' do
+
         before do
           expect(NotificationMailer).not_to receive(:flag_email)
           post :flag, params: { url: 'http://url', message: 'hey' }
         end
-        it { should set_flash.now[:alert] }
-        it { should render_template('flag') }
+
+        it { is_expected.to set_flash.now[:alert] }
+        it { is_expected.to render_template('flag') }
       end
 
-      context 'no message provided' do
+      context 'when no message provided' do
         before do
           expect(NotificationMailer).not_to receive(:flag_email)
           post :flag, params: { url: 'http://url', email: 'test@example.com' }
         end
-        it { should set_flash.now[:alert] }
-        it { should render_template('flag') }
+        it { is_expected.to set_flash.now[:alert] }
+        it { is_expected.to render_template('flag') }
       end
 
-      context 'with all params' do
-        let(:params) { {'url' => 'http://url', 'email' => 'test@example.com', 'message' => 'hey' } }
+      context 'when all required params provided' do
+        let(:params) { { 'url' => 'http://url', 'email' => 'test@example.com', 'message' => 'hey' } }
 
         before do
           expect(NotificationMailer)
@@ -100,9 +111,9 @@ describe HomeController, type: :controller do
           post :flag, params: { url: 'http://url', email: 'test@example.com', message: 'hey' }
         end
 
-        it { should_not set_flash.now[:alert] }
-        it { should set_flash.now[:notice] }
-        it { should render_template('flag') }
+        it { is_expected.not_to set_flash.now[:alert] }
+        it { is_expected.to set_flash.now[:notice] }
+        it { is_expected.to render_template('flag') }
       end
     end
   end
@@ -112,7 +123,7 @@ describe HomeController, type: :controller do
 
     it 'denies access after 4 requests' do
       4.times { controller.send(:pai_signup_ip_limit, ip) }
-      expect(Rails.cache.read("pai_signup_request_count_for_#{ip}")).to eql 4
+      expect(Rails.cache.read("pai_signup_request_count_for_#{ip}")).to eq 4
       expect(Rails.logger).to receive(:warn).with("#{ip} has submitted too many requests this hour!").once
       expect { controller.send(:pai_signup_ip_limit, ip) }.to raise_error(Exceptions::PermissionError)
     end
