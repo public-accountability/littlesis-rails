@@ -65,14 +65,14 @@ class HomeController < ApplicationController
         flash.now[:alert] = "Don't forget to write a message!"
         @name = params[:name]
       else
-
-        if user_signed_in? || verify_recaptcha
+        if likely_a_spam_bot
+          flash.now[:alert] = ErrorsController::YOU_ARE_SPAM
+        elsif user_signed_in? || verify_math_captcha
           NotificationMailer.contact_email(contact_params).deliver_later # send_mail
           flash.now[:notice] = 'Your message has been sent. Thank you!'
         else
-          flash.now[:alert] = "Captcha incorrectly filled out"
+          flash.now[:alert] = 'Incorrect solution to the math problem. Please try again.'
         end
-
       end
     end
   end

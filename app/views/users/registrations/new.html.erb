@@ -210,11 +210,7 @@
     <% end %>
 
     <%= registrations_form_group do %>
-      <%= label_tag 'spam_test', raw("Please solve the following math problem: <b> #{math_captcha.question}</b>"), :class => label_class %>
-      <%= hidden_field_tag "math[number_one]", math_captcha.number_one %>
-      <%= hidden_field_tag "math[number_two]", math_captcha.number_two %>
-      <%= hidden_field_tag "math[operation]", math_captcha.operation %>
-      <%= number_field_tag "math[answer]", nil, min: -20, max: 40 %>
+      <%= math_captcha_fields(math_captcha, label_class: label_class) %>
     <% end %>
 
     <%= registrations_form_group(column_class: 'col-4') do %>

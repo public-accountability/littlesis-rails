@@ -197,4 +197,14 @@ module ApplicationHelper
       text_field_tag 'very_important_wink_wink'
     end
   end
+
+  def math_captcha_fields(math_captcha, label_class: '', input_class: '')
+    [
+      label_tag('spam_test', raw("Please solve the following math problem: <b> #{math_captcha.question}</b>"), :class => label_class),
+      hidden_field_tag('math[number_one]', math_captcha.number_one),
+      hidden_field_tag('math[number_two]', math_captcha.number_two),
+      hidden_field_tag('math[operation]', math_captcha.operation),
+      number_field_tag('math[answer]', nil, min: -20, max: 40, class: input_class)
+    ].reduce(&:concat)
+  end
 end

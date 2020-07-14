@@ -1,6 +1,6 @@
 describe 'home/contact.html.erb', type: :view do
-  describe 'user signed in ' do
-    before(:each) do
+  context 'when user signed in' do
+    before do
       allow(view).to receive(:user_signed_in?).and_return(true)
       allow(view).to receive(:current_user).and_return(double(email: 'email@email.com'))
       render
@@ -10,23 +10,21 @@ describe 'home/contact.html.erb', type: :view do
       css 'input[type=email][readonly][value="email@email.com"]', count: 1
     end
 
-    it 'does not have recaptcha' do
-      not_css '#g-recaptcha-response'
+    it 'does not have math captcha_answer' do
+      not_css '#match_answer'
     end
   end
 
-  describe 'layout' do
+  context 'when user not signed in' do
     before { render }
 
     it 'has title' do
       css 'h1'
     end
 
-    context 'user not signed in' do
-      it 'has email tag' do
-        css 'input[type=email]', count: 1
-        css 'input[type=email][readonly]', count: 0
-      end
+    it 'has email tag' do
+      css 'input[type=email]', count: 1
+      css 'input[type=email][readonly]', count: 0
     end
 
     it 'contains form' do
@@ -45,8 +43,8 @@ describe 'home/contact.html.erb', type: :view do
       css 'textarea#message', count: 1
     end
 
-    it 'has recaptcha' do
-      css '#g-recaptcha-response'
+    it 'has math captcha_answer' do
+      css '#math_answer'
     end
   end
 end
