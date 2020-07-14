@@ -1,70 +1,36 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  include SpamHelper
+  helper_method :math_captcha
+
   # before_action :configure_sign_up_params, only: [:create]
   before_action :configure_account_update_params, only: [:update]
 
-  # GET /resource/sign_up
+  # GET /join
   def new
-    super
+    super do |user|
+      user.build_user_profile
+    end
   end
 
-  # "resource" is the generic term used in devise. 'resource' here
-  #  are just instances of User. (ziggy 10-27-16)
-  # POST /resource
   def create
-    @signup_errors = []
-    build_resource(user_params)
-
-    # check recaptcha
-    unless verify_recaptcha
-      @signup_errors << 'The recaptcha failed to verify'
-      reset_signup_session
-      return render 'new'
-    end
-
-    resource.user_profile.assign_attributes user_profile_params
-
-    ApplicationRecord.transaction do
-      begin
-        resource.save!
-      rescue ActiveRecord::StatementInvalid
-        raise
-      rescue
-        raise ActiveRecord::Rollback
-      end
-    end
-
-    if resource.persisted?
-      if resource.active_for_authentication?
-        set_flash_message! :notice, :signed_up
-        sign_up(resource_name, resource)
-        return respond_with resource, location: after_sign_up_path_for(resource)
-      else
-        # set_flash_message! :notice, :"signed_up_but_#{resource.inactive_message}"
-        expire_data_after_sign_in!
-        return respond_with resource, location: after_inactive_sign_up_path_for(resource)
+    if verify_math_captcha
+      super do |user|
+        @signup_errors = if user.persisted? && user.valid?
+                           []
+                         else
+                           user.errors.full_messages
+                         end
       end
     else
-
-      if resource.errors[:email].include?('has already been taken')
-        @signup_errors << 'The email address you provided already has an account'
-      end
-
-      if resource.errors[:username].include?('has already been taken')
-        @signup_errors << "The username -- #{resource.username} -- has already been taken"
-      end
-
-      if @signup_errors.empty?
-        @signup_errors << 'A computer error occured! Please contact admin@littlesis.org'
-      end
-
-      reset_signup_session
-      return render 'new'
+      @signup_errors = ['Failed to solve the math problem']
+      self.resource = resource_class.new sign_up_params
+      respond_with_navigational(resource) { render :new }
     end
   end
 
-  # post /users/api_token
+    # post /users/api_token
   def api_token
     # see https://github.com/plataformatec/devise/blob/master/app/controllers/devise/registrations_controller.rb
     authenticate_scope!
@@ -84,12 +50,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
     render action: :edit
   end
 
-  # GET /resource/edit
+  # GET /users/edit
   # def edit
   #   super
   # end
 
-  # PUT /resource
+  # PUT /users
   def update
     super
   end
@@ -110,24 +76,11 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   protected
 
-  def build_resource(hash = nil)
-    # self.resource = resource_class.new_with_session(hash || {}, session)
-    self.resource = User.new(hash)
-    self.resource.build_user_profile
-  end
-
-  def user_params
+  def sign_up_params
     params
       .require(:user)
-      .permit(:username, :email, :password, :password_confirmation, :newsletter, :map_the_power)
-  end
-
-  def user_profile_params
-    params
-      .require(:user)
-      .require(:user_profile_attributes)
-      .permit(:name_first, :name_last, :location, :reason)
-      .to_h
+      .permit(:username, :email, :password, :password_confirmation, :newsletter, :map_the_power,
+              :user_profile_attributes => [:name_first, :name_last, :location, :reason])
   end
 
   # The path used after sign up.
@@ -152,11 +105,4 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_sign_up_params
   # end
-
-  private
-
-  def reset_signup_session
-    clean_up_passwords resource
-    set_minimum_password_length
-  end
 end

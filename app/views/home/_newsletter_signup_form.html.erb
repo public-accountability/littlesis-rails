@@ -1,11 +1,8 @@
 <%= form_tag('/home/newsletter_signup', id: 'newsletter-signup-form') do %>
-  <%# honeypot for spam bots %>
-  <div style="position: absolute; left: -5000px;" aria-hidden="true">
-    <%= text_field_tag 'very_important_wink_wink' %>
-  </div>
-  
+  <%= very_important_wink_wink %>
+
   <div class="input-group">
-    
+
     <%= email_field_tag 'email', nil,
       class: 'form-control',
       placeholder: 'Your email',

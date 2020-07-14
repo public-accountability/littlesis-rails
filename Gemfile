@@ -89,9 +89,6 @@ gem 'headless'
 # used by Pages and Toolkit for Markdown->Html
 gem 'redcarpet', '>= 3.4.0'
 
-# google's recaptcha
-gem "recaptcha", '>= 4.14.0', require: "recaptcha/rails"
-
 # Used by `lib/cmp`
 gem "roo", "~> 2.8.1", :require => false
 

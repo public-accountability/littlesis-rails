@@ -6,7 +6,7 @@
 
 <div class="row no-gutters">
   <%= form_tag("/contact", method: "post", multipart: true, id: 'contact-us-form') do %>
-    
+
     <div class="form-group">
       <label>Name</label>
       <%= text_field_tag(:name, @name, class: 'form-control') %>
@@ -28,13 +28,15 @@
       <%= text_area_tag "message", @message, size: '40x8', class: 'form-control'  %>
     </div>
 
+    <%= very_important_wink_wink %>
+
     <% unless user_signed_in? %>
       <div class="form-group">
-	<%= recaptcha_tags %>
+	<%= math_captcha_fields(MathCaptcha.new, input_class: 'form-control') %>
       </div>
     <% end %>
 
     <%= submit_tag("submit", class: 'btn btn-primary') %>
-    
+
   <% end %>
 </div>
