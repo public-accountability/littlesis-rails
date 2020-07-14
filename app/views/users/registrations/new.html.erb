@@ -122,7 +122,8 @@
 <% input_class = 'form-control' %>
 
 <%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {:onsubmit => 'return validateForm();', }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+  <%#% render "devise/shared/error_messages", resource: resource %>
+
   <%= f.fields_for :user_profile do |profile_fields| %>
 
     <% if @signup_errors.present? %>
