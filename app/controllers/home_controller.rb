@@ -65,7 +65,7 @@ class HomeController < ApplicationController
         flash.now[:alert] = "Don't forget to write a message!"
         @name = params[:name]
       else
-        if likely_a_spam_bot
+        if likely_a_spam_bot || SpamDetector.mostly_cyrillic?(params[:message])
           flash.now[:alert] = ErrorsController::YOU_ARE_SPAM
         elsif user_signed_in? || verify_math_captcha
           NotificationMailer.contact_email(contact_params).deliver_later # send_mail

@@ -61,6 +61,8 @@ describe HomeController, type: :controller do
 
       before do
         email = double('contact_email')
+        expect(controller).to receive(:verify_math_captcha)
+                                .once.and_return(true)
         expect(email).to receive(:deliver_later)
         expect(NotificationMailer)
           .to receive(:contact_email).with(hash_including(post_params)).and_return(email)

@@ -50,7 +50,10 @@ describe Users::RegistrationsController, type: :controller do
   end
 
   describe 'Creating new users' do
-    before { request.env['devise.mapping'] = Devise.mappings[:user] }
+    before do
+      request.env['devise.mapping'] = Devise.mappings[:user]
+      allow(controller).to receive(:verify_math_captcha).and_return(true)
+    end
 
     context 'when submitting with valid data' do
       it 'creates user' do
