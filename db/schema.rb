@@ -595,6 +595,7 @@ ActiveRecord::Schema.define(version: 2020_08_27_170003) do
     t.integer "creator_user_id"
     t.string "short_description"
     t.integer "access", limit: 1, default: 0, null: false
+    t.integer "entity_count", default: 0
     t.index ["delta"], name: "index_ls_list_on_delta"
     t.index ["featured_list_id"], name: "featured_list_id"
     t.index ["last_user_id"], name: "last_user_id_idx"
