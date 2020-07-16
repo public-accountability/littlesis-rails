@@ -42,7 +42,7 @@ class List < ApplicationRecord
   end
 
   def self.order_by_entity_count
-    left_joins(:list_entities).group(:id).order('COUNT(ls_list_entity.id) DESC')
+    order(entity_count: :desc)
   end
 
   def self.order_by_user(user)
@@ -128,12 +128,6 @@ class List < ApplicationRecord
     end
 
     query
-  end
-
-  def entity_count
-    return @entity_count if defined?(@entity_count)
-
-    @entity_count = list_entities.count
   end
 
   # The host argument is there for compatibility reasons:
