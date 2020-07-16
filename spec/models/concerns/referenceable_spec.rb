@@ -154,14 +154,14 @@ describe Referenceable, type: :model do
     let(:referenceable) { TestReferenceable.new }
 
     it 'raises error if document does not exist' do
-      expect(Document).to receive(:find_by_id).with('123').and_return(nil)
+      expect(Document).to receive(:find_by).with(id: '123').and_return(nil)
       expect { referenceable.add_reference_by_document_id('123') }
         .to raise_error(ArgumentError)
     end
 
     it 'adds new reference' do
       references_double = double("references")
-      expect(Document).to receive(:find_by_id).with('123').and_return(build(:document))
+      expect(Document).to receive(:find_by).with(id: '123').and_return(build(:document))
       expect(references_double).to receive(:create).with(document_id: '123')
       expect(referenceable).to receive(:references).and_return(double(:exists? => false))
       expect(referenceable).to receive(:references).and_return(references_double)
