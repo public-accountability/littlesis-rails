@@ -27,7 +27,7 @@ class List < ApplicationRecord
 
   def self.viewable(user)
     if user
-      public_scope.or(user.lists).order_by_user(user)
+      public_scope.or(user.lists).order_by_entity_count.order_by_user(user)
     else
       public_scope
     end
@@ -35,14 +35,18 @@ class List < ApplicationRecord
 
   def self.editable(user)
     if user&.has_ability?(:list)
-      open_scope.or(user.lists).order_by_user(user)
+      open_scope.or(user.lists).order_by_entity_count.order_by_user(user)
     else
       none
     end
   end
 
+  def self.order_by_entity_count
+    left_joins(:list_entities).group(:id).order('COUNT(ls_list_entity.id) DESC')
+  end
+
   def self.order_by_user(user)
-    order(Arel.sql("ls_list.creator_user_id = #{user.id} DESC, updated_at DESC"))
+    order(Arel.sql("ls_list.creator_user_id = #{user.id} DESC, ls_list.updated_at DESC"))
   end
 
   def self.force_reorder(sort_by = nil, order = nil)
