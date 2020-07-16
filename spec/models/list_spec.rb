@@ -194,4 +194,17 @@ describe List do
       end
     end
   end
+
+  describe 'ordering' do
+    let!(:org) { create(:entity_org) }
+    let!(:three_list) { create(:list).tap { |l| 3.times { ListEntity.create(list_id: l.id, entity_id: org.id) } } }
+    let!(:two_list) { create(:list).tap { |l| 2.times { ListEntity.create(list_id: l.id, entity_id: org.id) } } }
+    let!(:one_list) { create(:list).tap { |l| 1.times { ListEntity.create(list_id: l.id, entity_id: org.id) } } }
+    let!(:none_list) { create(:list) }
+
+    it 'ranks by number of entities' do
+      lists = List.all
+      expect(lists.order_by_entity_count.to_a).to match([three_list, two_list, one_list, none_list])
+    end
+  end
 end
