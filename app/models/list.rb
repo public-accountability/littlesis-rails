@@ -53,6 +53,10 @@ class List < ApplicationRecord
     end
   end
 
+  def self.reference_optional?
+    @reference_optional = true
+  end
+
   def destroy
     soft_delete
   end

@@ -126,6 +126,26 @@ describe Referenceable, type: :model do
       end
     end
 
+    context 'with no URL when references are optional' do
+      let(:referenceable) { TestReferenceable.new }
+      let(:url) { '' }
+
+      before do
+        referenceable.class.define_singleton_method(:reference_optional?) do
+          true
+        end
+      end
+
+      it 'does not create a new document' do
+        expect { add_reference.call }.not_to change(Document, :count)
+      end
+
+      it 'does not add an error to the record' do
+        add_reference.call
+        expect(referenceable.valid?).to be true
+      end
+    end
+
     # What should we do in this situation?
     context 'existing Document, with different name'
   end
@@ -134,14 +154,14 @@ describe Referenceable, type: :model do
     let(:referenceable) { TestReferenceable.new }
 
     it 'raises error if document does not exist' do
-      expect(Document).to receive(:find_by_id).with('123').and_return(nil)
+      expect(Document).to receive(:find_by).with(id: '123').and_return(nil)
       expect { referenceable.add_reference_by_document_id('123') }
         .to raise_error(ArgumentError)
     end
 
     it 'adds new reference' do
       references_double = double("references")
-      expect(Document).to receive(:find_by_id).with('123').and_return(build(:document))
+      expect(Document).to receive(:find_by).with(id: '123').and_return(build(:document))
       expect(references_double).to receive(:create).with(document_id: '123')
       expect(referenceable).to receive(:references).and_return(double(:exists? => false))
       expect(referenceable).to receive(:references).and_return(references_double)
