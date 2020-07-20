@@ -106,6 +106,10 @@ class ExternalData
         }
       end
 
+      def reference_url
+        "https://cfapp.elections.ny.gov/ords/plsql_browser/getfiler2_loaddates?filerid_IN=#{filer_id}"
+      end
+
       def self.search(params)
         ExternalData
           .nys_filer
@@ -115,6 +119,14 @@ class ExternalData
     end
 
     class NYSDisclosure < SimpleDelegator
+      def amount
+        data['AMOUNT_70'].to_i
+      end
+
+      def date
+        LsDate.transform_date data['DATE1_10']
+      end
+
       def self.search(params)
         raise NotImplementedError
       end

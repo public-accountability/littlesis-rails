@@ -14,6 +14,7 @@
 # TODO:
 #  - validate category_id + entity primary ext
 #  - handle relationship soft_delete
+#  - handle entity soft_delete
 class ExternalRelationship < ApplicationRecord
   enum dataset: ExternalData::DATASETS
 
@@ -25,7 +26,7 @@ class ExternalRelationship < ApplicationRecord
   validates :category_id, presence: true
 
   after_initialize do
-    extend "ExternalRelationship::Datasets::#{dataset.camelize}".constantize
+    extend "ExternalRelationship::Datasets::#{dataset.classify}".constantize
   end
 
   ##
@@ -113,6 +114,9 @@ class ExternalRelationship < ApplicationRecord
 
         relationships.first
       end
+    end
+
+    module NYSDisclosure
     end
   end
 

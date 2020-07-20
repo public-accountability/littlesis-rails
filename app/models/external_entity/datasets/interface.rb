@@ -23,6 +23,8 @@ class ExternalEntity
         self
       end
 
+      def add_reference; end
+
       def set_primary_ext; end
     end
   end

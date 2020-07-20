@@ -8,7 +8,7 @@ describe IpBlocker do
 
   context 'when restricted_ips is blank' do
     before do
-      allow(APP_CONFIG).to receive(:[]).with('restricted_ips').and_return(nil)
+      stub_const 'APP_CONFIG', { 'restricted_ips' => nil }
       reload_mod
     end
 
@@ -19,7 +19,7 @@ describe IpBlocker do
 
   context 'when restricted_ips contains two ip ranges' do
     before do
-      allow(APP_CONFIG).to receive(:[]).twice.with('restricted_ips').and_return(['192.0.2.0/24', '192.0.3.0/24'])
+      stub_const 'APP_CONFIG', { 'restricted_ips' => ['192.0.2.0/24', '192.0.3.0/24'] }
       reload_mod
     end
 
@@ -34,7 +34,7 @@ describe IpBlocker do
 
   context 'when list of restricted ips contain invalid addresses' do
     before do
-      allow(APP_CONFIG).to receive(:[]).twice.with('restricted_ips').and_return(['192.0.2.0/24', 'FAKE'])
+      stub_const 'APP_CONFIG', { 'restricted_ips' => ['192.0.2.0/24', 'FAKE'] }
       reload_mod
     end
 

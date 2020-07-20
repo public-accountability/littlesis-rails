@@ -68,6 +68,6 @@ class ApplicationRecord < ActiveRecord::Base
   protected
 
   def set_last_user_id
-    self.last_user_id = Lilsis::Application.config.system_user_id unless self.last_user_id.present?
+    self.last_user_id = APP_CONFIG.fetch('system_user_id') unless self.last_user_id.present?
   end
 end

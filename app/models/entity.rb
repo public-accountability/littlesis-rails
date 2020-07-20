@@ -511,7 +511,7 @@ class Entity < ApplicationRecord
       name: name,
       blurb: blurb,
       primary_ext: 'Couple',
-      last_user_id: Lilsis::Application.config.system_user_id
+      last_user_id: APP_CONFIG['system_user_id']
     )
     e.couple.partner1_id = partner1.id
     e.couple.partner2_id = partner2.id

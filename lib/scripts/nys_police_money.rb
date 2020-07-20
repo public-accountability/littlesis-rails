@@ -2,8 +2,6 @@
 
 # rubocop:disable Metrics/MethodLength
 
-require Rails.root.join('lib/utility.rb').to_s
-
 PAC_NAMES = <<~TXT
   %Court Officers%
   %CORRECTION OFFICERS%

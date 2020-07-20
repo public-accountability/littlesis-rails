@@ -8,8 +8,6 @@
 #
 # rubocop:disable Style/ImplicitRuntimeError
 
-require Rails.root.join('lib', 'utility.rb').to_s
-
 URL = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/ALL_REPORTS.zip'
 
 # Paths

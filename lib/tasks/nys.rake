@@ -1,6 +1,12 @@
 # require Rails.root.join('lib', 'nys_campaign_finance.rb')
+require Rails.root.join('lib', 'importers', 'nys_disclosure_importer.rb').to_s
 
 namespace :nys do
+  desc 'download nys disclosures'
+  task download: :environment do
+    NYSDisclosureImporter.run
+  end
+
   # desc 'import latest donation data to staging table'
   # task :disclosure_import, [:file] => :environment do |t, args|
   #   puts "dropping and re-creating #{NYSCampaignFinance::STAGING_TABLE_NAME}"

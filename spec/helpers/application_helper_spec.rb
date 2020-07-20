@@ -88,7 +88,8 @@ describe ApplicationHelper, :type => :helper do
     before do
       allow(helper).to receive(:controller_name).and_return(controller_name)
       allow(controller).to receive(:action_name).and_return(action_name)
-      allow(APP_CONFIG).to receive(:[]).and_return(donation_banner_display)
+
+      stub_const 'APP_CONFIG', { 'donation_banner_display' => donation_banner_display }
     end
 
     context 'when set to everywhere' do
