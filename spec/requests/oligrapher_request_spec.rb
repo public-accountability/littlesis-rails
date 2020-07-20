@@ -214,7 +214,7 @@ describe "Oligrapher", type: :request do
 
       it 'updates annotations' do
         annotations_json = [
-          { id: "1", title: "look at this", text: "", nodeIds: [], edgeIds: [], captionIds: [] }, 
+          { id: "1", title: "look at this", text: "", nodeIds: [], edgeIds: [], captionIds: [] },
           { id: "2", title: "look at that", text: "", nodeIds: [], edgeIds: [], captionIds: [] }
         ].to_json
         expect do
@@ -302,45 +302,6 @@ describe "Oligrapher", type: :request do
     end
 
     before { network_map }
-
-    describe 'GET /oligrapher/:id/editors' do
-      describe 'as map owner' do
-        before { login_as(map_owner, scope: :user) }
-
-        after { logout(map_owner) }
-
-        specify do
-          get editors_oligrapher_path(network_map)
-          expect(response.status).to eq 200
-          expect(json.map { |e| e["name"] }.to_set).to eql %w[editor pending].to_set
-          expect(json.map { |e| e["pending"] }.to_set).to eql [true, false].to_set
-        end
-      end
-
-      describe 'as editor' do
-        before { login_as(editor, scope: :user) }
-
-        after { logout(editor) }
-
-        specify do
-          get editors_oligrapher_path(network_map)
-          expect(response.status).to eq 200
-          expect(json.map { |hash| hash["name"] }).to eql %w[editor]
-        end
-      end
-
-      describe 'as non-editor' do
-        before { login_as(pending_user, scope: :user) }
-
-        after { logout(pending_user) }
-
-        specify do
-          get editors_oligrapher_path(network_map)
-          expect(response.status).to eq 200
-          expect(json.map { |hash| hash["name"] }).to eql %w[editor]
-        end
-      end
-    end
 
     describe 'POST /oligrapher/:id/editors' do
       context 'as map owner' do
@@ -503,9 +464,9 @@ describe "Oligrapher", type: :request do
     end
 
     it 'renders json with node and edge data if connections are found' do
-      get '/oligrapher/get_edges', params: { 
-        entity1_id: entity1.id, 
-        entity2_ids: [entity2.id, entity3.id] 
+      get '/oligrapher/get_edges', params: {
+        entity1_id: entity1.id,
+        entity2_ids: [entity2.id, entity3.id]
       }
       expect(response).to have_http_status 200
       expect(json.length).to eq 2
@@ -539,8 +500,8 @@ describe "Oligrapher", type: :request do
     before { entity1; entity2; entity3; entity4; rel1; rel2; rel3; rel4 }
 
     it 'renders json with node and edge data if connections are found' do
-      get '/oligrapher/get_interlocks', params: { 
-        entity1_id: entity1.id, 
+      get '/oligrapher/get_interlocks', params: {
+        entity1_id: entity1.id,
         entity2_id: entity2.id,
         entity_ids: entity4.id
       }
