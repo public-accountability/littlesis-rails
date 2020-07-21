@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_02_145236) do
+ActiveRecord::Schema.define(version: 2020_07_21_195543) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -212,6 +212,7 @@ ActiveRecord::Schema.define(version: 2020_07_02_145236) do
     t.integer "cmp_org_id", null: false
     t.integer "cmp_person_id", null: false
     t.bigint "relationship_id"
+    t.integer "status19", limit: 1
     t.index ["cmp_affiliation_id"], name: "index_cmp_relationships_on_cmp_affiliation_id", unique: true
   end
 
@@ -389,7 +390,7 @@ ActiveRecord::Schema.define(version: 2020_07_02_145236) do
     t.index ["last_user_id"], name: "last_user_id_idx"
   end
 
-  create_table "external_data", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "external_data", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.integer "dataset", limit: 1, null: false
     t.string "dataset_id", null: false
     t.text "data", size: :long, null: false
@@ -398,7 +399,7 @@ ActiveRecord::Schema.define(version: 2020_07_02_145236) do
     t.index ["dataset", "dataset_id"], name: "index_external_data_on_dataset_and_dataset_id", unique: true
   end
 
-  create_table "external_entities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "external_entities", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.integer "dataset", limit: 1, null: false
     t.text "match_data", size: :long
     t.bigint "external_data_id"
@@ -422,7 +423,7 @@ ActiveRecord::Schema.define(version: 2020_07_02_145236) do
     t.index ["link_type", "link_id"], name: "index_external_links_on_link_type_and_link_id", unique: true
   end
 
-  create_table "external_relationships", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "external_relationships", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.bigint "external_data_id", null: false
     t.bigint "relationship_id"
     t.integer "dataset", limit: 1, null: false
@@ -438,19 +439,6 @@ ActiveRecord::Schema.define(version: 2020_07_02_145236) do
   create_table "family", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.boolean "is_nonbiological"
     t.bigint "relationship_id", null: false
-    t.index ["relationship_id"], name: "relationship_id_idx"
-  end
-
-  create_table "fedspending_filing", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.bigint "relationship_id"
-    t.bigint "amount"
-    t.text "goods", size: :long
-    t.bigint "district_id"
-    t.string "fedspending_id", limit: 30
-    t.string "start_date", limit: 10
-    t.string "end_date", limit: 10
-    t.boolean "is_current"
-    t.index ["district_id"], name: "district_id_idx"
     t.index ["relationship_id"], name: "relationship_id_idx"
   end
 
@@ -738,7 +726,6 @@ ActiveRecord::Schema.define(version: 2020_07_02_145236) do
     t.datetime "updated_at"
     t.boolean "delta", default: true, null: false
     t.index ["contrib_code"], name: "index_ny_disclosures_on_contrib_code"
-    t.index ["corp_name"], name: "idx_ny_disclosures_corp_name"
     t.index ["delta"], name: "index_ny_disclosures_on_delta"
     t.index ["e_year"], name: "index_ny_disclosures_on_e_year"
     t.index ["filer_id", "report_id", "transaction_id", "schedule_transaction_date", "e_year"], name: "index_filer_report_trans_date_e_year", length: { report_id: 191 }
@@ -1358,7 +1345,7 @@ ActiveRecord::Schema.define(version: 2020_07_02_145236) do
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
   end
 
-  create_table "web_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "web_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "remote_address"
     t.datetime "time"
     t.string "host"
@@ -1398,8 +1385,6 @@ ActiveRecord::Schema.define(version: 2020_07_02_145236) do
   add_foreign_key "external_relationships", "external_data", on_delete: :cascade
   add_foreign_key "external_relationships", "relationship", on_delete: :nullify
   add_foreign_key "family", "relationship", name: "family_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "fedspending_filing", "political_district", column: "district_id", name: "fedspending_filing_ibfk_2", on_update: :cascade, on_delete: :nullify
-  add_foreign_key "fedspending_filing", "relationship", name: "fedspending_filing_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "government_body", "address_state", column: "state_id", name: "government_body_ibfk_1", on_update: :cascade
   add_foreign_key "government_body", "entity", name: "government_body_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "image", "entity", name: "image_ibfk_1", on_update: :cascade, on_delete: :cascade
