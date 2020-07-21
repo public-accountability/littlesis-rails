@@ -4,34 +4,68 @@ require Rails.root.join('app/services/oligrapher_lock_service.rb').to_s
 describe "Oligrapher", type: :request do
   let(:user) { create_basic_user }
 
-  describe 'GET /oligrapher' do
+  describe 'GET /oligrapher/:id' do
     let(:user1) { create_basic_user }
     let(:user2) { create_basic_user }
-    let(:network_map) { create(:network_map_version3, user_id: user1.id, is_private: true) }
 
-    context 'when logged in as normal non-owner user' do
-      before { login_as(user2, scope: :user) }
-      after { logout(:user) }
+    context 'private map' do
+      let(:network_map) { create(:network_map_version3, user_id: user1.id, is_private: true) }
 
-      it 'private map cannot be viewed' do
-        get "/oligrapher/#{network_map.to_param}"
-        expect(response.status).to eq 403
+      context 'when logged in as normal non-owner non-editor user' do
+        before { login_as(user2, scope: :user) }
+        after { logout(:user) }
+
+        it 'map cannot be viewed' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(response.status).to eq 403
+        end
+      end
+
+      context 'when logged in as a non-owner editor' do
+        before {
+          network_map.add_editor(user2)
+          network_map.confirm_editor(user2)
+          network_map.save
+          login_as(user2, scope: :user)
+        }
+
+        after {
+          network_map.remove_editor(user2)
+          network_map.save
+          logout(:user)
+        }
+
+        it 'map can be viewed' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(response.status).to eq 200
+        end
+      end
+
+      context 'when logged in as owner' do
+        before { login_as(user1, scope: :user) }
+        after { logout(:user) }
+
+        it 'map can be viewed' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(response.status).to eq 200
+        end
       end
     end
+  end
 
-    context 'when logged in as owner' do
-      before { login_as(user1, scope: :user) }
-      after { logout(:user) }
+  describe 'GET /oligrapher/:id/embedded' do
+    let(:user1) { create_basic_user }
+    let(:network_map) { create(:network_map_version3, user_id: user1.id) }
 
-      it 'private map can be viewed' do
-        get "/oligrapher/#{network_map.to_param}"
-        expect(response.status).to eq 200
-      end
+    it 'renders with correct template' do
+      get "/oligrapher/#{network_map.to_param}/embedded"
+      expect(response.status).to eq 200
+      expect(response).to render_template(:embedded_oligrapher)
     end
 
-    it 'redirects to path with slug' do
-      get "/oligrapher/#{network_map.id}"
-      expect(response).to redirect_to(oligrapher_path(network_map))
+    it 'configures map for embed' do
+      get "/oligrapher/#{network_map.to_param}/embedded"
+      expect(assigns(:configuration)[:settings][:embed]).to eq(true)
     end
   end
 
@@ -131,7 +165,7 @@ describe "Oligrapher", type: :request do
 
       it 'updates annotations' do
         annotations_json = [
-          { id: "1", title: "look at this", text: "", nodeIds: [], edgeIds: [], captionIds: [] }, 
+          { id: "1", title: "look at this", text: "", nodeIds: [], edgeIds: [], captionIds: [] },
           { id: "2", title: "look at that", text: "", nodeIds: [], edgeIds: [], captionIds: [] }
         ].to_json
         expect do
@@ -219,45 +253,6 @@ describe "Oligrapher", type: :request do
     end
 
     before { network_map }
-
-    describe 'GET /oligrapher/:id/editors' do
-      describe 'as map owner' do
-        before { login_as(map_owner, scope: :user) }
-
-        after { logout(map_owner) }
-
-        specify do
-          get editors_oligrapher_path(network_map)
-          expect(response.status).to eq 200
-          expect(json.map { |e| e["name"] }.to_set).to eql %w[editor pending].to_set
-          expect(json.map { |e| e["pending"] }.to_set).to eql [true, false].to_set
-        end
-      end
-
-      describe 'as editor' do
-        before { login_as(editor, scope: :user) }
-
-        after { logout(editor) }
-
-        specify do
-          get editors_oligrapher_path(network_map)
-          expect(response.status).to eq 200
-          expect(json.map { |hash| hash["name"] }).to eql %w[editor]
-        end
-      end
-
-      describe 'as non-editor' do
-        before { login_as(pending_user, scope: :user) }
-
-        after { logout(pending_user) }
-
-        specify do
-          get editors_oligrapher_path(network_map)
-          expect(response.status).to eq 200
-          expect(json.map { |hash| hash["name"] }).to eql %w[editor]
-        end
-      end
-    end
 
     describe 'POST /oligrapher/:id/editors' do
       context 'as map owner' do
@@ -420,9 +415,9 @@ describe "Oligrapher", type: :request do
     end
 
     it 'renders json with node and edge data if connections are found' do
-      get '/oligrapher/get_edges', params: { 
-        entity1_id: entity1.id, 
-        entity2_ids: [entity2.id, entity3.id] 
+      get '/oligrapher/get_edges', params: {
+        entity1_id: entity1.id,
+        entity2_ids: [entity2.id, entity3.id]
       }
       expect(response).to have_http_status 200
       expect(json.length).to eq 2
@@ -456,8 +451,8 @@ describe "Oligrapher", type: :request do
     before { entity1; entity2; entity3; entity4; rel1; rel2; rel3; rel4 }
 
     it 'renders json with node and edge data if connections are found' do
-      get '/oligrapher/get_interlocks', params: { 
-        entity1_id: entity1.id, 
+      get '/oligrapher/get_interlocks', params: {
+        entity1_id: entity1.id,
         entity2_id: entity2.id,
         entity_ids: entity4.id
       }

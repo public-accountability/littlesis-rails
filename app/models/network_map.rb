@@ -259,6 +259,8 @@ class NetworkMap < ApplicationRecord
   end
 
   def can_edit?(user)
+    return false if user.blank?
+
     editor_id = user.try(:id) || user.try!(:to_i)
     editor_id == user_id or confirmed_editor_ids.include?(editor_id)
   end

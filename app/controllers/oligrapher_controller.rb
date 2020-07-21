@@ -9,8 +9,8 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges get_interlocks]
-  before_action :set_map, only: %i[update get_editors editors confirm_editor show lock clone destroy]
+  before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges get_interlocks embedded]
+  before_action :set_map, only: %i[update editors confirm_editor show lock clone destroy embedded]
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
   before_action :check_editor, only: %i[update]
@@ -49,10 +49,6 @@ class OligrapherController < ApplicationController
     @map = NetworkMap.new(oligrapher_version: 3, title: 'Untitled Map', user: current_user)
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
     render 'oligrapher/new', layout: 'oligrapher3'
-  end
-
-  def get_editors
-    render json: editor_data
   end
 
   # two actions { editor: { action: add | remove, username: <username> } }
@@ -121,6 +117,12 @@ class OligrapherController < ApplicationController
     render 'oligrapher/oligrapher', layout: 'oligrapher3'
   end
 
+  def embedded
+    check_private_access
+    @configuration = Oligrapher.configuration(map: @map, current_user: current_user, embed: true)
+    render layout: 'embedded_oligrapher'
+  end
+
   def example
     render 'oligrapher/example', layout: 'oligrapher3'
   end
@@ -168,7 +170,7 @@ class OligrapherController < ApplicationController
       .where(entity1_id: params[:entity1_id].to_i)
       .where(entity2_id: params[:entity2_ids].split(','))
       .pluck(:relationship_id)
-    
+
     edges = Relationship.find(rel_ids).map(&Oligrapher.method(:rel_to_edge))
 
     render json: edges

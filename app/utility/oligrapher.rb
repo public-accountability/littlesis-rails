@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
-  VERSION = '7aa36fe497b1e86e6d9348dfc68eb450a0aaf2ae'
+  VERSION = 'faff9c0f847ef93373e29474cb8326cb2fde2f8c'
 
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
@@ -9,7 +9,7 @@ module Oligrapher
                                       Relationship::DONATION_CATEGORY,
                                       Relationship::OWNERSHIP_CATEGORY]).freeze
 
-  def self.configuration(map:, current_user: nil)
+  def self.configuration(map:, current_user: nil, embed: false)
     is_owner = current_user.present? && map.user_id == current_user.id
     owner = map.user || current_user || nil
 
@@ -20,7 +20,12 @@ module Oligrapher
         list: JSON.parse(map.annotations_data || "[]"),
         sources: map.sources_annotation
       },
-      settings: { debug: Rails.env.development? },
+      settings: {
+        debug: Rails.env.development?,
+        embed: embed,
+        logoUrl: ActionController::Base.helpers.asset_path('lilsis-logo-trans-200.png'),
+        url: Rails.application.routes.url_helpers.map_url(map)
+      },
       attributes: {
         id: map.id,
         title: map.title,
