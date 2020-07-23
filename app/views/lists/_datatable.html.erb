@@ -32,6 +32,7 @@
         <th>Rank</th>
       <% end %>
       <th>Name</th>
+      <th>Total USD donations</th>
       <% if table.list.custom_field_name.present? %>
           <th><%= table.context_field_name %></th>
       <% end %>
@@ -43,7 +44,13 @@
 </table>
 
 <script>
- var data = <%= raw(table.data.to_json); %>
+  var currency_formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    currencyDisplay: 'symbol'
+  });
+
+  var data = <%= raw(table.data.to_json); %>
 
    var ternary = function(data, type, row) {
      if (data == null) {
@@ -156,6 +163,14 @@
            return  str;
          }
        },
+       {
+         data: 'total_usd_donations',
+         name: 'total USD donations',
+         width: "30%",
+         render: function(data, type, row) {
+           return currency_formatter.format(row.total_usd_donations).replace('.00', '');
+         }
+       },
        <% if table.list.custom_field_name.present? %>
        {
          data: 'context',
@@ -219,6 +234,8 @@
      ]
      <% if table.ranked? %>
        , "order": [[ 0, "asc" ]]
+     <% else %>
+       , "order": [[ 1, "desc" ]]
      <% end %>
    });
 
