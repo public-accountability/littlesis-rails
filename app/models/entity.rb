@@ -577,6 +577,15 @@ class Entity < ApplicationRecord
     index.values.concat(nils)
   end
 
+  def total_usd_donations
+    relationships.joins(:category)
+      .where(
+        relationship_category: { name: 'Donation' },
+        currency: 'USD'
+      )
+      .sum(:amount)
+  end
+
   ##
   # View Helpers
   # TODO: Move these to a presenter
