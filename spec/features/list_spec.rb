@@ -108,7 +108,7 @@ describe 'lists', type: :feature do
 
           it 'shows both edits' do
             visit "#{list_path(List.last)}/modifications"
-            page_has_selector '#record-history-container table tr', count: 2
+            page_has_selector '#record-history-container table tr', count: 3
           end
         end
       end

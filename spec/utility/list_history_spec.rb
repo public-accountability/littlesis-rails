@@ -11,8 +11,8 @@ describe ListHistory do
       end
       subject { ListHistory.new(@list).versions }
 
-      it 'contains 3 versions' do
-        expect(subject.length).to eql 3
+      it 'contains 4 versions' do
+        expect(subject.length).to be 4
       end
 
       it 'versions contain reference to the list' do
