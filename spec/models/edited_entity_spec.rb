@@ -116,12 +116,6 @@ describe EditedEntity, type: :model do
       expect(EditedEntity.recent.page(1).to_a.size).to eq 2
     end
 
-    it 'orders correctly' do
-      recently_edited_entities = EditedEntity.recent.page(1)
-      expect(recently_edited_entities[0].entity).to eq org
-      expect(recently_edited_entities[1].entity).to eq person
-    end
-
     it 'has correct dates' do
       recently_edited_entities = EditedEntity.recent.page(1)
 
