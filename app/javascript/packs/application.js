@@ -10,15 +10,18 @@
 import utility from './common/utility';
 import http from './common/http';
 import clipboardjs from 'clipboard';
+import datatable from 'datatables.net'
+import listDatatableLoader from './list_datatable'
 
 window.utility = utility;
 window.utility.delete = utility.del;
 window.clipboardjs = clipboardjs;
+window.datatable = datatable;
 
 if (!window.LittleSis) {
   window.LittleSis = {};
 }
 
 window.LittleSis.http = http;
-
+window.LittleSis.listDatatableLoader = listDatatableLoader;
 
