@@ -17,6 +17,7 @@ FactoryBot.define do
   end
 
   factory :admin_user, parent: :user do
+    abilities { UserAbilities.new(:admin, :edit, :delete, :merge, :bulk, :match, :list) }
   end
 
   factory :user_with_id, class: User do

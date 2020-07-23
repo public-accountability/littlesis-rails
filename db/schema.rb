@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_08_135038) do
+ActiveRecord::Schema.define(version: 2020_07_02_145236) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -983,6 +983,17 @@ ActiveRecord::Schema.define(version: 2020_07_08_135038) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_pages_on_name", unique: true
+  end
+
+  create_table "permission_passes", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "event_name"
+    t.string "token", null: false
+    t.datetime "valid_from", null: false
+    t.datetime "valid_to", null: false
+    t.text "abilities", null: false
+    t.integer "creator_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "person", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|

@@ -9,10 +9,11 @@
 
 import utility from './common/utility';
 import http from './common/http';
-
+import clipboardjs from 'clipboard';
 
 window.utility = utility;
 window.utility.delete = utility.del;
+window.clipboardjs = clipboardjs;
 
 if (!window.LittleSis) {
   window.LittleSis = {};
