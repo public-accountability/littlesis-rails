@@ -137,6 +137,14 @@ class ListsController < ApplicationController
   def members
     @table = ListDatatable.new(@list)
     @table.generate_data
+
+    @datatable_config = {
+      update_path: update_entity_list_path(@table.list),
+      include_context_col: @table.list.custom_field_name.present?,
+      context_field_name: @table.context_field_name,
+      editable: @permissions[:editable],
+      ranked_table: @table.ranked?
+    }
   end
 
   def clear_cache
