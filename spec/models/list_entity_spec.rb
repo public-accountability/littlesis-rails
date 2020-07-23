@@ -18,7 +18,7 @@ describe ListEntity do
       context 'when creating a list' do
         it 'creates a version' do
           expect(&create_list_entity)
-            .to change { PaperTrail::Version.count }.by(1)
+            .to change { PaperTrail::Version.count }.by(2)
         end
 
         it 'sets entity1_id correctly' do
