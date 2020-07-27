@@ -10,7 +10,7 @@ describe CmpEntity, type: :model do
     specify { expect(build(:cmp_entity, entity: entity, strata: 1)).to be_valid }
     specify { expect(build(:cmp_entity, entity: entity, strata: 5)).to be_valid }
     specify { expect(build(:cmp_entity, entity: entity, strata: nil)).to be_valid }
-    specify { expect(build(:cmp_entity, entity: entity, strata: 6)).not_to be_valid }
+    specify { expect(build(:cmp_entity, entity: entity, strata: 11)).not_to be_valid }
   end
 
   describe 'entity type enum' do

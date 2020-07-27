@@ -159,7 +159,7 @@ describe Cmp::CmpOrg do
         end
 
         it 'creates 5 versions' do
-          expect { subject.import! }.to change { PaperTrail::Version.count }.by(5)
+          expect { subject.import! }.to change { PaperTrail::Version.count }.by(6) # one version is CmpEntity
           whodunnit = PaperTrail::Version.last(5).pluck('whodunnit').uniq
           expect(whodunnit.count).to eql 1
           expect(whodunnit.first).to eql Cmp::CMP_USER_ID.to_s
@@ -211,7 +211,7 @@ describe Cmp::CmpOrg do
 
   describe 'helper methods' do
     describe '#attrs_for' do
-      let(:cmpid) { Faker::Number.number(digits: 6) } 
+      let(:cmpid) { Faker::Number.number(digits: 6) }
       let(:attributes) do
         { website: 'http://example.com',
           city: 'new york',
