@@ -45,7 +45,7 @@ describe EntitiesController, type: :controller do
     describe 'entity/id/contributions' do
       let(:entity) { build(:mega_corp_inc, updated_at: Time.current) }
       before do
-        expect(Entity).to receive(:find_by_id).and_return(entity)
+        expect(Entity).to receive(:find_with_merges).and_return(entity)
         expect(entity).to receive(:contribution_info).and_return([build(:os_donation)])
         get :contributions, params: { id: entity.id }
       end
@@ -67,7 +67,7 @@ describe EntitiesController, type: :controller do
         login_user([:edit, :bulk])
 
         before do
-          expect(Entity).to receive(:find_by_id).and_return(build(:entity_org))
+          expect(Entity).to receive(:find_with_merges).and_return(build(:entity_org))
           expect(controller).to receive(:check_permission).with('importer').and_call_original
         end
 
@@ -299,7 +299,7 @@ describe EntitiesController, type: :controller do
     login_user
 
     before do
-      expect(Entity).to receive(:find_by_id).and_return(build(:entity_org))
+      expect(Entity).to receive(:find_with_merges).and_return(build(:entity_org))
       get :add_relationship, params: { id: rand(100) }
     end
 
@@ -311,7 +311,7 @@ describe EntitiesController, type: :controller do
     login_user
 
     before do
-      expect(Entity).to receive(:find_by_id).and_return(build(:org))
+      expect(Entity).to receive(:find_with_merges).and_return(build(:org))
       get :edit, params: { id: rand(100) }
     end
 
