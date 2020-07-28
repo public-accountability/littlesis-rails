@@ -1,7 +1,4 @@
 describe EntitiesController, type: :controller do
-  before(:all) { DatabaseCleaner.start }
-  after(:all)  { DatabaseCleaner.clean }
-
   it { is_expected.to use_before_action(:authenticate_user!) }
   it { is_expected.to use_before_action(:importers_only) }
   it { is_expected.to use_before_action(:set_entity) }
@@ -34,16 +31,19 @@ describe EntitiesController, type: :controller do
 
     describe '/entity/id' do
       before { get :show, params: { id: entity.id } }
+
       it { is_expected.to render_template(:show) }
     end
 
     describe 'entity/id/datatable' do
       before { get :datatable, params: { id: entity.id } }
+
       it { is_expected.to render_template(:datatable) }
     end
 
     describe 'entity/id/contributions' do
       let(:entity) { build(:mega_corp_inc, updated_at: Time.current) }
+
       before do
         expect(Entity).to receive(:find_with_merges).and_return(entity)
         expect(entity).to receive(:contribution_info).and_return([build(:os_donation)])
@@ -86,7 +86,7 @@ describe EntitiesController, type: :controller do
         end
       end
 
-      context 'user without importer permissions' do
+      context 'without importer permissions' do
         login_basic_user
 
         before do
@@ -147,7 +147,7 @@ describe EntitiesController, type: :controller do
         end
       end
 
-      context 'from the /entities/id/add_relationship page' do
+      describe 'from the /entities/id/add_relationship page' do
         context 'without errors' do
           it 'is_expected.to create a new entity' do
             expect { post :create, params: params_add_relationship_page }.to change { Entity.count }.by(1)
@@ -168,7 +168,7 @@ describe EntitiesController, type: :controller do
         context 'with errors' do
           it 'is_expected.to NOT create a new entity' do
             expect { post :create, params: params_missing_ext_add_relationship_page }
-              .not_to change { Entity.count }
+              .not_to change(Entity, :count)
           end
 
           it 'is_expected.to render json with errors' do
@@ -180,7 +180,7 @@ describe EntitiesController, type: :controller do
       end
     end
 
-    context 'user is not logged in' do
+    context 'when the user is not logged in' do
       it 'does not create a new entity' do
         expect { post :create, params: params_add_relationship_page }.not_to change { Entity.count }
       end
@@ -196,7 +196,7 @@ describe EntitiesController, type: :controller do
       login_user_without_permissions
 
       it 'does not create a new entity' do
-        expect { post :create, params: params }.not_to change { Entity.count }
+        expect { post :create, params: params }.not_to change(Entity, :count)
       end
 
       it 'returns http status 403' do
@@ -209,7 +209,7 @@ describe EntitiesController, type: :controller do
       login_restricted_user
 
       it 'does not create a new entity' do
-        expect { post :create, params: params }.not_to change { Entity.count }
+        expect { post :create, params: params }.not_to change(Entity, :count)
       end
 
       it 'redirects to login page' do
@@ -221,37 +221,32 @@ describe EntitiesController, type: :controller do
   end # end of create
 
   describe 'Political' do
-    before { @entity = create(:entity_org, updated_at: Time.current) }
+    let!(:entity) { create(:entity_org, updated_at: Time.current) }
 
     describe 'Political' do
-      before { get(:political, params: { id: @entity.id }) }
+      before { get(:political, params: { id: entity.id }) }
+
       it { is_expected.to render_template(:political) }
     end
 
     describe 'match/unmatch donations' do
       login_user([:edit, :bulk])
 
-      before(:all) do
-        @entity = create(:entity_org)
-      end
-
-      after(:all) do
-        @entity.delete
-      end
+      let!(:entity) { create(:entity_org) }
 
       describe 'POST #match_donation' do
-        before(:each) do
+        before do
           expect(controller).to receive(:check_permission).and_call_original
           d1 = create(:os_donation, fec_cycle_id: 'unique_id_1')
           d2 = create(:os_donation, fec_cycle_id: 'unique_id_2')
-          post :match_donation, params: { id: @entity.id, payload: [d1.id, d2.id] }
+          post :match_donation, params: { id: entity.id, payload: [d1.id, d2.id] }
         end
 
         it { is_expected.to respond_with(200) }
         it { is_expected.to use_before_action(:importers_only) }
 
         it "updates the entity's last user id after matching" do
-          expect(@entity.reload.last_user_id).to eql User.last.id
+          expect(entity.reload.last_user_id).to eql User.last.id
         end
 
         it 'sets the matched_by field of OsMatch' do
@@ -263,22 +258,22 @@ describe EntitiesController, type: :controller do
       end
 
       describe '#unmatch_donation' do
-        before do
+        specify do
           expect(controller).to receive(:check_permission).with('importer').and_call_original
-          @os_match = double('os match')
-          expect(@os_match).to receive(:destroy).exactly(3).times
-          expect(OsMatch).to receive(:find).exactly(3).times.and_return(@os_match)
-          post :unmatch_donation, params: { id: @entity.id, payload: [5, 6, 7] }
+          os_match = double('os match')
+          expect(os_match).to receive(:destroy).exactly(3).times
+          expect(OsMatch).to receive(:find).exactly(3).times.and_return(os_match)
+          post :unmatch_donation, params: { id: entity.id, payload: [5, 6, 7] }
+          expect(response).to have_http_status(200)
         end
-
-        it { is_expected.to respond_with(200) }
       end
 
       describe '#match_ny_donations' do
         before do
           expect(controller).to receive(:check_permission).with('importer').and_call_original
-          get :match_ny_donations, params: { id: @entity.id }
+          get :match_ny_donations, params: { id: entity.id }
         end
+
         it { is_expected.to respond_with(200) }
         it { is_expected.to render_template(:match_ny_donations) }
       end
@@ -286,7 +281,7 @@ describe EntitiesController, type: :controller do
       describe '#reiview_ny_donations' do
         before do
           expect(controller).to receive(:check_permission).with('importer').and_call_original
-          get :review_ny_donations, params: { id: @entity.id }
+          get :review_ny_donations, params: { id: entity.id }
         end
 
         it { is_expected.to respond_with(200) }
@@ -323,7 +318,7 @@ describe EntitiesController, type: :controller do
     let(:user) { create(:user) }
     login_user
 
-    context 'Updating an Org without a reference' do
+    describe 'Updating an Org without a reference' do
       let(:org)  { create(:entity_org, last_user_id: user.id) }
       let(:params) do
         { id: org.id, entity: { 'website' => 'http://example.com' }, reference: { 'just_cleaning_up' => '1' } }
@@ -346,7 +341,7 @@ describe EntitiesController, type: :controller do
       end
     end
 
-    context 'Updating an Org with a reference' do
+    describe 'Updating an Org with a reference' do
       let(:org) { create(:entity_org) }
       let(:params) do
         { id: org.id,
@@ -361,7 +356,7 @@ describe EntitiesController, type: :controller do
       end
 
       it 'creates a new reference' do
-        expect { patch :update, params: params }.to change { Reference.count }.by(1)
+        expect { patch :update, params: params }.to change(Reference, :count).by(1)
       end
 
       it 'redirects to legacy url' do
@@ -370,7 +365,7 @@ describe EntitiesController, type: :controller do
       end
     end
 
-    context 'Updating a Person without a reference' do
+    describe 'Updating a Person without a reference' do
       let(:person) { create(:entity_person) }
       let(:params) do
         { id: person.id,
@@ -392,7 +387,7 @@ describe EntitiesController, type: :controller do
       end
 
       it 'does not create a new reference' do
-        expect { patch :update, params: params }.not_to change { Reference.count }
+        expect { patch :update, params: params }.not_to change(Reference, :count)
       end
 
       it 'redirects to legacy url' do
@@ -414,7 +409,7 @@ describe EntitiesController, type: :controller do
         let(:extension_def_ids) { '8,9,10' }
 
         it 'is_expected.to create 3 new extension records' do
-          expect { patch :update, params: params }.to change { ExtensionRecord.count }.by(3)
+          expect { patch :update, params: params }.to change(ExtensionRecord, :count).by(3)
         end
 
         it 'redirects to legacy url' do
@@ -425,14 +420,15 @@ describe EntitiesController, type: :controller do
 
       describe 'removing types' do
         let(:extension_def_ids) { '' }
+
         before { org.add_extension('School') }
 
         it 'is_expected.to remove one extension records' do
-          expect { patch :update, params: params }.to change { ExtensionRecord.count }.by(-1)
+          expect { patch :update, params: params }.to change(ExtensionRecord, :count).by(-1)
         end
 
         it 'is_expected.to remove School model' do
-          expect { patch :update, params: params }.to change { School.count }.by(-1)
+          expect { patch :update, params: params }.to change(School, :count).by(-1)
         end
 
         it 'redirects to legacy url' do
@@ -484,7 +480,7 @@ describe EntitiesController, type: :controller do
 
     describe 'updating a public company' do
       let(:public_company) { create(:public_company_entity) }
-      let(:params) {
+      let(:params) do
         { id: public_company.id,
           entity: {
             name: public_company.name,
@@ -498,10 +494,10 @@ describe EntitiesController, type: :controller do
               assets: 100,
               marketcap: 200,
               net_income: 300
-            },
+            }
           },
           reference: { 'url' => 'http://example.com', 'name' => 'new reference' } }
-      }
+      end
 
       it 'updates ticker' do
         expect(Entity.find(public_company.id).public_company.ticker).to eq 'XYZ'
@@ -542,8 +538,9 @@ describe EntitiesController, type: :controller do
   end
 
   describe '#destory' do
-    context 'user is not a deleter' do
+    context 'when user is not a deleter' do
       before { delete :destroy, params: { id: '123' } }
+
       it { is_expected.to respond_with 302 }
     end
   end
