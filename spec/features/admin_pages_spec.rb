@@ -17,7 +17,7 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
       scenario 'displays the admin page' do
         successfully_visits_page '/admin'
         expect(page).to have_content 'Rails Admin'
-        page_has_selector '#admin-links a', count: 5
+        page_has_selector '#admin-links a', count: 7
       end
     end
 

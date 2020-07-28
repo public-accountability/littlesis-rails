@@ -684,17 +684,36 @@ class Entity < ApplicationRecord
     EntityMerger.new(source: self, dest: dest).merge!
   end
 
+  # Similar to find() except raises Exceptions::MergedEntityError instead of
+  # ActiveRecord::RecordNotFound when the entity is merged and deleted.
   def self.find_with_merges(id:, skope: :itself)
-    e = Entity.unscoped.send(skope).find_by_id(id)
-    raise Exceptions::MergedEntityError.new(e.resolve_merges(skope)) if e&.has_merges?
-    raise ActiveRecord::RecordNotFound if e.nil? or e&.is_deleted?
-    e
+    unscoped.send(skope).find_by(id: id).tap do |e|
+      if e&.has_merges?
+        raise Exceptions::MergedEntityError.new(e.resolve_merges(skope))
+      elsif e.nil? || e&.is_deleted?
+        raise ActiveRecord::RecordNotFound
+      end
+    end
+  end
+
+  # Similar to find() except returns the final merged entity if it exists
+  def self.find_with_resolved_merge(id:, skope: :itself)
+    unscoped.send(skope).find(id).resolve_merges!
   end
 
   # ?Symbol -> Entity
   def resolve_merges(skope = :itself)
-    return Entity.unscoped.send(skope).find_by_id(merged_id).resolve_merges(skope) if has_merges?
-    self
+    if has_merges?
+      Entity.unscoped.send(skope).find_by(id: merged_id).resolve_merges(skope)
+    else
+      self
+    end
+  end
+
+  def resolve_merges!(skope = :itself)
+    resolve_merges(skope).tap do |e|
+      raise ActiveRecord::RecordNotFound if e.is_deleted?
+    end
   end
 
   def has_merges?

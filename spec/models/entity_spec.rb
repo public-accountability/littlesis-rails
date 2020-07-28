@@ -1047,10 +1047,10 @@ describe Entity, :tag_helper do
       let!(person) { create(:entity_person) }
     end
 
-    context "entity exists" do
-
+    context "when the entity exists" do
       it "returns entity" do
         expect(Entity.find_with_merges(id: alice.id)).to eql alice
+        expect(Entity.find_with_resolved_merge(id: alice.id)).to eql alice
       end
 
       it "preloads entity's associations" do
@@ -1060,9 +1060,12 @@ describe Entity, :tag_helper do
       end
     end
 
-    context "entity does not exist" do
+    context "when the entity does not exist" do
       it "raises not found error" do
         expect { Entity.find_with_merges(id: 'non_existent') }
+          .to raise_error ActiveRecord::RecordNotFound
+
+        expect { Entity.find_with_resolved_merge(id: 'non_existent') }
           .to raise_error ActiveRecord::RecordNotFound
       end
     end
@@ -1071,8 +1074,8 @@ describe Entity, :tag_helper do
       before { alice.soft_delete }
 
       it "raises not found error" do
-        expect { Entity.find_with_merges(id: alice.id) }
-          .to raise_error ActiveRecord::RecordNotFound
+        expect { Entity.find_with_merges(id: alice.id) }.to raise_error ActiveRecord::RecordNotFound
+        expect { Entity.find_with_resolved_merge(id: alice.id) }.to raise_error ActiveRecord::RecordNotFound
       end
     end
 
@@ -1084,6 +1087,11 @@ describe Entity, :tag_helper do
           expect(err).to be_a Exceptions::MergedEntityError
           expect(err.merged_entity).to eql bob
         end
+      end
+
+      it 'find with resolved merge returns bob' do
+        expect { Entity.find_with_resolved_merge(id: alice.id) }.not_to raise_error
+        expect(Entity.find_with_resolved_merge(id: alice.id)).to eql bob
       end
     end
 
@@ -1098,6 +1106,10 @@ describe Entity, :tag_helper do
           expect(err).to be_a Exceptions::MergedEntityError
           expect(err.merged_entity).to eql cassie
         end
+      end
+
+      it 'find with resolved merge returns cassie' do
+        expect(Entity.find_with_resolved_merge(id: alice.id)).to eql cassie
       end
     end
   end
@@ -1121,6 +1133,25 @@ describe Entity, :tag_helper do
       it "resolves alice to bob" do
         expect(alice.resolve_merges).to eql bob
       end
+
+      it "resolves_merges! resolves alice to bob" do
+        expect(alice.resolve_merges!).to eql bob
+      end
+    end
+
+    context "when Alice has been merged into bob and then bob is deleted" do
+      before do
+        EntityMerger.new(source: alice, dest: bob).merge!
+        bob.soft_delete
+      end
+
+      it "resolve_merges resolves to alice to bob" do
+        expect(alice.resolve_merges).to eql bob
+      end
+
+      it "resolve_merges! resolves raises an error" do
+        expect { alice.resolve_merges! }.to raise_error ActiveRecord::RecordNotFound
+      end
     end
 
     context "when alice has been merged into bob, bob into cassie" do
@@ -1133,6 +1164,8 @@ describe Entity, :tag_helper do
         expect(alice.resolve_merges).to eql cassie
       end
     end
+
+
   end
 
   describe "parent/child relationships" do

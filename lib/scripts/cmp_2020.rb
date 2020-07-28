@@ -62,8 +62,8 @@ def run(dry_run:)
   ENTITIES.each do |row|
     entity = if row['entity_id'].present?
                begin
-                 Entity.find_with_merges(id: row['entity_id'])
-               rescue Exceptions::MergedEntityError, ActiveRecord::RecordNotFound
+                 Entity.find_with_resolved_merge(id: row['entity_id'])
+               rescue ActiveRecord::RecordNotFound
                  Rails.logger.warn "No entity found wth id #{row['entity_id']}"
                  next
                end
@@ -118,7 +118,7 @@ def run(dry_run:)
                      Rails.logger.debug "Found existing CMP relationship: #{cmp_affiliation_id}"
                      CmpRelationship.find_by(cmp_affiliation_id: cmp_affiliation_id).relationship
                    elsif r['relationship_id'].present? && Relationship.exists?(id: r['relationship_id'])
-                     Relationship.find_by(r['relationship_id'])
+                     Relationship.find_by(id: r['relationship_id'])
                    end
 
     if relationship.nil? && r['relationship_id'].present?
@@ -129,7 +129,12 @@ def run(dry_run:)
     if relationship.present?
       unless dry_run
         relationship.update!(is_current: is_current)
-        relationship.position.update!(is_board: is_board, is_executive: is_executive)
+
+        if relationship.position.present?
+          relationship.position.update!(is_board: is_board, is_executive: is_executive)
+        else
+          Rails.logger.warn "Relationship #{relationship.id} has no associated position (CMP affiliation: #{cmp_affiliation_id})"
+        end
       end
     else # create new relationship
       entity = CmpEntity.find_by(cmp_id: r['cmp_person_id'])&.entity
