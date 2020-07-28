@@ -2,31 +2,31 @@ describe EntitiesController, type: :controller do
   before(:all) { DatabaseCleaner.start }
   after(:all)  { DatabaseCleaner.clean }
 
-  it { should use_before_action(:authenticate_user!) }
-  it { should use_before_action(:importers_only) }
-  it { should use_before_action(:set_entity) }
+  it { is_expected.to use_before_action(:authenticate_user!) }
+  it { is_expected.to use_before_action(:importers_only) }
+  it { is_expected.to use_before_action(:set_entity) }
 
   describe 'routes' do
-    it { should route(:get, '/entities/1').to(action: :show, id: 1) }
-    it { should route(:get, '/entities/1/interlocks').to(action: :interlocks, id: 1) }
-    it { should route(:get, '/entities/1/giving').to(action: :giving, id: 1) }
-    it { should route(:get, '/entities/1/datatable').to(action: :datatable, id: 1) }
-    it { should route(:get, '/entities/1/add_relationship').to(action: :add_relationship, id: 1) }
-    it { should route(:get, '/entities/new').to(action: :new) }
-    it { should route(:post, '/entities').to(action: :create) }
-    it { should route(:post, '/entities/bulk').to(action: :create_bulk) }
-    it { should route(:get, '/entities/1/edit').to(action: :edit, id: 1) }
-    it { should route(:patch, '/entities/1').to(action: :update, id: 1) }
-    it { should route(:delete, '/entities/1').to(action: :destroy, id: 1) }
-    it { should route(:get, '/entities/1/political').to(action: :political, id: 1) }
-    it { should route(:get, '/entities/1/references').to(action: :references, id: 1) }
-    it { should route(:get, '/entities/1/match_donations').to(action: :match_donations, id: 1) }
-    it { should route(:post, '/entities/1/match_donation').to(action: :match_donation, id: 1) }
-    it { should route(:post, '/entities/1/unmatch_donation').to(action: :unmatch_donation, id: 1) }
-    it { should route(:get, '/entities/1/match_ny_donations').to(action: :match_ny_donations, id: 1) }
-    it { should route(:get, '/entities/1/review_donations').to(action: :review_donations, id: 1) }
-    it { should route(:get, '/entities/1/review_ny_donations').to(action: :review_ny_donations, id: 1) }
-    it { should route(:post, '/entities/1/tags').to(action: :tags, id: 1) }
+    it { is_expected.to route(:get, '/entities/1').to(action: :show, id: 1) }
+    it { is_expected.to route(:get, '/entities/1/interlocks').to(action: :interlocks, id: 1) }
+    it { is_expected.to route(:get, '/entities/1/giving').to(action: :giving, id: 1) }
+    it { is_expected.to route(:get, '/entities/1/datatable').to(action: :datatable, id: 1) }
+    it { is_expected.to route(:get, '/entities/1/add_relationship').to(action: :add_relationship, id: 1) }
+    it { is_expected.to route(:get, '/entities/new').to(action: :new) }
+    it { is_expected.to route(:post, '/entities').to(action: :create) }
+    it { is_expected.to route(:post, '/entities/bulk').to(action: :create_bulk) }
+    it { is_expected.to route(:get, '/entities/1/edit').to(action: :edit, id: 1) }
+    it { is_expected.to route(:patch, '/entities/1').to(action: :update, id: 1) }
+    it { is_expected.to route(:delete, '/entities/1').to(action: :destroy, id: 1) }
+    it { is_expected.to route(:get, '/entities/1/political').to(action: :political, id: 1) }
+    it { is_expected.to route(:get, '/entities/1/references').to(action: :references, id: 1) }
+    it { is_expected.to route(:get, '/entities/1/match_donations').to(action: :match_donations, id: 1) }
+    it { is_expected.to route(:post, '/entities/1/match_donation').to(action: :match_donation, id: 1) }
+    it { is_expected.to route(:post, '/entities/1/unmatch_donation').to(action: :unmatch_donation, id: 1) }
+    it { is_expected.to route(:get, '/entities/1/match_ny_donations').to(action: :match_ny_donations, id: 1) }
+    it { is_expected.to route(:get, '/entities/1/review_donations').to(action: :review_donations, id: 1) }
+    it { is_expected.to route(:get, '/entities/1/review_ny_donations').to(action: :review_ny_donations, id: 1) }
+    it { is_expected.to route(:post, '/entities/1/tags').to(action: :tags, id: 1) }
   end
 
   describe 'GETs' do
@@ -34,12 +34,12 @@ describe EntitiesController, type: :controller do
 
     describe '/entity/id' do
       before { get :show, params: { id: entity.id } }
-      it { should render_template(:show) }
+      it { is_expected.to render_template(:show) }
     end
 
     describe 'entity/id/datatable' do
       before { get :datatable, params: { id: entity.id } }
-      it { should render_template(:datatable) }
+      it { is_expected.to render_template(:datatable) }
     end
 
     describe 'entity/id/contributions' do
@@ -50,7 +50,7 @@ describe EntitiesController, type: :controller do
         get :contributions, params: { id: entity.id }
       end
 
-      it { should respond_with(200) }
+      it { is_expected.to respond_with(200) }
 
       it 'responds with json' do
         expect(response.headers['Content-Type']).to include 'application/json'
@@ -102,8 +102,8 @@ describe EntitiesController, type: :controller do
 
         describe 'review_donations' do
           before { get(:review_donations, params: { id: rand(100) }) }
-          it { should_not render_template(:review_donations) }
-          it { should respond_with(403) }
+          it { is_expected.to_not render_template(:review_donations) }
+          it { is_expected.to respond_with(403) }
         end
       end
     end
@@ -125,11 +125,11 @@ describe EntitiesController, type: :controller do
             expect(response).to redirect_to Routes.edit_entity_path(Entity.last)
           end
 
-          it 'should create a new entity' do
+          it 'is_expected.to create a new entity' do
             expect { post :create, params: params }.to change { Entity.count }.by(1)
           end
 
-          it "should set last_user_id to be the user's id" do
+          it "is_expected.to set last_user_id to be the user's id" do
             post :create, params: params
             expect(Entity.last.last_user_id).to eql controller.current_user.id
           end
@@ -149,11 +149,11 @@ describe EntitiesController, type: :controller do
 
       context 'from the /entities/id/add_relationship page' do
         context 'without errors' do
-          it 'should create a new entity' do
+          it 'is_expected.to create a new entity' do
             expect { post :create, params: params_add_relationship_page }.to change { Entity.count }.by(1)
           end
 
-          it 'should render json with entity id' do
+          it 'is_expected.to render json with entity id' do
             post :create, params: params_add_relationship_page
             json = JSON.parse(response.body)
             expect(json.fetch('status')).to eql 'OK'
@@ -166,12 +166,12 @@ describe EntitiesController, type: :controller do
         end
 
         context 'with errors' do
-          it 'should NOT create a new entity' do
+          it 'is_expected.to NOT create a new entity' do
             expect { post :create, params: params_missing_ext_add_relationship_page }
               .not_to change { Entity.count }
           end
 
-          it 'should render json with errors' do
+          it 'is_expected.to render json with errors' do
             post :create, params: params_missing_ext_add_relationship_page
             expect(JSON.parse(response.body)).to have_key 'errors'
             expect(JSON.parse(response.body).fetch('status')).to eql 'ERROR'
@@ -225,7 +225,7 @@ describe EntitiesController, type: :controller do
 
     describe 'Political' do
       before { get(:political, params: { id: @entity.id }) }
-      it { should render_template(:political) }
+      it { is_expected.to render_template(:political) }
     end
 
     describe 'match/unmatch donations' do
@@ -247,8 +247,8 @@ describe EntitiesController, type: :controller do
           post :match_donation, params: { id: @entity.id, payload: [d1.id, d2.id] }
         end
 
-        it { should respond_with(200) }
-        it { should use_before_action(:importers_only) }
+        it { is_expected.to respond_with(200) }
+        it { is_expected.to use_before_action(:importers_only) }
 
         it "updates the entity's last user id after matching" do
           expect(@entity.reload.last_user_id).to eql User.last.id
@@ -271,7 +271,7 @@ describe EntitiesController, type: :controller do
           post :unmatch_donation, params: { id: @entity.id, payload: [5, 6, 7] }
         end
 
-        it { should respond_with(200) }
+        it { is_expected.to respond_with(200) }
       end
 
       describe '#match_ny_donations' do
@@ -279,8 +279,8 @@ describe EntitiesController, type: :controller do
           expect(controller).to receive(:check_permission).with('importer').and_call_original
           get :match_ny_donations, params: { id: @entity.id }
         end
-        it { should respond_with(200) }
-        it { should render_template(:match_ny_donations) }
+        it { is_expected.to respond_with(200) }
+        it { is_expected.to render_template(:match_ny_donations) }
       end
 
       describe '#reiview_ny_donations' do
@@ -289,8 +289,8 @@ describe EntitiesController, type: :controller do
           get :review_ny_donations, params: { id: @entity.id }
         end
 
-        it { should respond_with(200) }
-        it { should render_template(:review_ny_donations) }
+        it { is_expected.to respond_with(200) }
+        it { is_expected.to render_template(:review_ny_donations) }
       end
     end
   end # end political
@@ -303,8 +303,8 @@ describe EntitiesController, type: :controller do
       get :add_relationship, params: { id: rand(100) }
     end
 
-    it { should render_template(:add_relationship) }
-    it { should respond_with(200) }
+    it { is_expected.to render_template(:add_relationship) }
+    it { is_expected.to respond_with(200) }
   end
 
   describe '#edit' do
@@ -315,8 +315,8 @@ describe EntitiesController, type: :controller do
       get :edit, params: { id: rand(100) }
     end
 
-    it { should render_template(:edit) }
-    it { should respond_with(200) }
+    it { is_expected.to render_template(:edit) }
+    it { is_expected.to respond_with(200) }
   end
 
   describe '#update' do
@@ -413,7 +413,7 @@ describe EntitiesController, type: :controller do
       describe 'adding new types' do
         let(:extension_def_ids) { '8,9,10' }
 
-        it 'should create 3 new extension records' do
+        it 'is_expected.to create 3 new extension records' do
           expect { patch :update, params: params }.to change { ExtensionRecord.count }.by(3)
         end
 
@@ -427,11 +427,11 @@ describe EntitiesController, type: :controller do
         let(:extension_def_ids) { '' }
         before { org.add_extension('School') }
 
-        it 'should remove one extension records' do
+        it 'is_expected.to remove one extension records' do
           expect { patch :update, params: params }.to change { ExtensionRecord.count }.by(-1)
         end
 
-        it 'should remove School model' do
+        it 'is_expected.to remove School model' do
           expect { patch :update, params: params }.to change { School.count }.by(-1)
         end
 
@@ -544,7 +544,7 @@ describe EntitiesController, type: :controller do
   describe '#destory' do
     context 'user is not a deleter' do
       before { delete :destroy, params: { id: '123' } }
-      it { should respond_with 302 }
+      it { is_expected.to respond_with 302 }
     end
   end
 
