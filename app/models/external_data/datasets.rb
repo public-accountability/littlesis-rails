@@ -77,7 +77,7 @@ class ExternalData
       def self.search(params)
         ExternalData
           .iapd_schedule_a
-          .where("JSON_SEARCH(data, 'one', ?, null, '$.records[*].name') IS NOT NULL", params.query_query)
+          .where("JSON_SEARCH(data, 'one', ?, null, '$.records[*].name') IS NOT NULL", params.query_string)
           .order(params.order_hash)
       end
     end
