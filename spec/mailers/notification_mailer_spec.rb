@@ -65,7 +65,7 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'has name' do
-      expect(mail.encoded).to include "#{user_profile.name_first} #{user_profile.name_last}"
+      expect(mail.encoded).to include CGI.escapeHTML("#{user_profile.name_first} #{user_profile.name_last}")
     end
 
     it 'has location' do
