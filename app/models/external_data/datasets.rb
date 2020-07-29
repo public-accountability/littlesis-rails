@@ -125,6 +125,9 @@ class ExternalData
 
       def date
         LsDate.transform_date self['DATE1_10']
+      rescue LsDate::InvalidLsDateError => e
+        Rails.logger.info e.message
+        nil
       end
 
       def title
