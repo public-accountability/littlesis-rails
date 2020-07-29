@@ -47,7 +47,7 @@
       <tr>
         <th>
           <span class="pr-1">Disclosure</span>
-          <%= render partial: 'match_toggle' %>
+          <%= render partial: 'nys_disclosure_header' %>
         </th>
         <th>Date</th>
       </tr>
@@ -78,6 +78,13 @@
          } else  {
            console.error('#external-entities-match-toggle not found')
          }
+
+         <% if @dataset == 'nys_disclosure' %>
+         if ($('#nys-disclosure-schedule-transaction-code').length) {
+           var selected_codes = $('#nys-disclosure-schedule-transaction-code').select2('data').map(x => x.id)
+           d.transaction_code = selected_codes
+         }
+         <% end %>
 
        }
      },

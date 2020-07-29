@@ -1,0 +1,14 @@
+<div style="display: inline-block;">
+  <%= render partial: 'match_toggle' %>
+
+  <select id="nys-disclosure-schedule-transaction-code" class="" name="transaction_codes[]" multiple="multiple">
+    <%= nys_disclosure_transaction_code_options %>
+  </select>
+</div>
+
+
+<script>
+ $(document).ready(function(){
+   $('#nys-disclosure-schedule-transaction-code').select2();
+ })
+</script>
