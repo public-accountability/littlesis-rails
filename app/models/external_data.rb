@@ -175,11 +175,9 @@ class ExternalData < ApplicationRecord
   # TRANSACTION_CODE_OPTIONS groups multiple transactions codes together
   # in order to simplify the options on the table.
   # This is only for the NYS Disclosure dataset.
-  def self.filter_by_transaction_code(selections)
-    where(
-      "JSON_VALUE(data, '$.transaction_code') in ?",
-      NYSCampaignFinance::TRANSACTION_CODE_OPTIONS.values_at(*selections).reduce(:concat)
-    )
+  def self.filter_by_transaction_code(*selections)
+    transaction_codes = NYSCampaignFinance::TRANSACTION_CODE_OPTIONS.values_at(*selections).reduce(:concat)
+    where "JSON_VALUE(data, '$.TRANSACTION_CODE') IN #{sqlize_array(transaction_codes)}"
   end
 
   private_class_method def self.records_total(dataset)

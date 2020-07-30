@@ -95,4 +95,83 @@ FactoryBot.define do
         'zip' => '10001' }
     end
   end
+
+  # transaction_code = A
+  factory :external_data_nys_disclosure, class: 'ExternalData' do
+    dataset { 'nys_disclosure' }
+    dataset_id { "A01182-F-A-2006-7452" }
+    data do
+      {
+        "FILER_ID" => "A01182",
+        "FREPORT_ID" => "F",
+        "TRANSACTION_CODE" => "A",
+        "E_YEAR" => "2006",
+        "T3_TRID" => "7452",
+        "DATE1_10" => "11/06/2006",
+        "DATE2_12" => "",
+        "CONTRIB_CODE_20" => "IND",
+        "CONTRIB_TYPE_CODE_25" => "",
+        "CORP_30" => "",
+        "FIRST_NAME_40" => "FRANK",
+        "MID_INIT_42" => "",
+        "LAST_NAME_44" => "UNKNOWN",
+        "ADDR_1_50" => "123 MAIN ST",
+        "CITY_52" => "BUFFALO",
+        "STATE_54" => "NY",
+        "ZIP_56" => "14203",
+        "CHECK_NO_60" => "176",
+        "CHECK_DATE_62" => "",
+        "AMOUNT_70" => "500",
+        "AMOUNT2_72" => "",
+        "DESCRIPTION_80" => "",
+        "OTHER_RECPT_CODE_90" => "",
+        "PURPOSE_CODE1_100" => "",
+        "PURPOSE_CODE2_1" => "",
+        "EXPLANATION_110" => "",
+        "XFER_TYPE_120" => "",
+        "CHKBOX_130" => "",
+        "CREREC_UID" => "KB",
+        "CREREC_DATE" => '11/27/2006 15:03:44'
+      }
+    end
+  end
+
+  factory :external_data_nys_disclosure_transaction_code_f, class: 'ExternalData' do
+    dataset { 'nys_disclosure' }
+    dataset_id { "A00076-J-F-2003-1868" }
+    data do
+      {
+        "FILER_ID" => "A00076",
+        "FREPORT_ID" => "J",
+        "TRANSACTION_CODE" => "F",
+        "E_YEAR" => "2003",
+        "T3_TRID" => "1868",
+        "DATE1_10" => "07/10/2002",
+        "DATE2_12" => "",
+        "CONTRIB_CODE_20" => "",
+        "CONTRIB_TYPE_CODE_25" => "",
+        "CORP_30" => "FOO BAR",
+        "FIRST_NAME_40" => "",
+        "MID_INIT_42" => "",
+        "LAST_NAME_44" => "",
+        "ADDR_1_50" => "456 MAIN ST",
+        "CITY_52" => "GREENWICH",
+        "STATE_54" => "CT",
+        "ZIP_56" => "06830",
+        "CHECK_NO_60" => "1008",
+        "CHECK_DATE_62" => "",
+        "AMOUNT_70" => "1800",
+        "AMOUNT2_72" => "",
+        "DESCRIPTION_80" => "",
+        "OTHER_RECPT_CODE_90" => "",
+        "PURPOSE_CODE1_100" => "WAGES",
+        "PURPOSE_CODE2_1" => "",
+        "EXPLANATION_110" => "JULY SALARY",
+        "XFER_TYPE_120" => "",
+        "CHKBOX_130" => "",
+        "CREREC_UID" => "HH",
+        "CREREC_DATE" => '12/19/2002 13:11:51'
+      }
+    end
+  end
 end
