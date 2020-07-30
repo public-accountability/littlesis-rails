@@ -78,6 +78,13 @@ module Datatables
       end.join(', ')
     end
 
+    # Used only for the NYS Disclosure dataset
+    def transaction_codes
+      if @params['transaction_codes']
+        @params['transaction_codes'].map(&:to_sym)
+      end
+    end
+
     private
 
     # input: { '0' => { 'column' => '2', 'dir' => 'desc' },

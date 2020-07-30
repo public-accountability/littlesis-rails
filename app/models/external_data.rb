@@ -23,22 +23,13 @@ class ExternalData < ApplicationRecord
   enum dataset: DATASETS
   serialize :data, JSON
 
-  Stats = Struct.new(:name, :description, :total, :matched, :unmatched, keyword_init: true) do
-    def percent_matched
-      ((matched / total.to_f) * 100).round(1)
-    end
-
-    def url
-      Rails.application.routes.url_helpers.dataset_path(dataset: name, matched: 'unmatched')
-    end
-  end
-
   has_one :external_entity, required: false, dependent: :destroy
   has_one :external_relationship, required: false, dependent: :destroy
 
   # Rails equivalent of the unique index: index_external_data_on_dataset_and_dataset_id
   validates :dataset, uniqueness: { scope: :dataset_id }
 
+  # helper function to update existing rows.Used importer scripts.
   def merge_data(d)
     if data.nil?
       self.data = d
@@ -58,8 +49,12 @@ class ExternalData < ApplicationRecord
     Datasets.entities.include? dataset
   end
 
+  # Used primarily by the /external_data/<dataset> route
   def datatables_json
     as_json(only: %i[id data dataset]).tap do |json|
+      # Some datasets have data wrappers which add additional functionality.
+      # Some of those implement a method `nice` which is a hash which contains
+      # formatted fields used by the views or javascript.
       json.store('nice', wrapper.nice) if wrapper.respond_to?(:nice)
 
       if external_relationship?
@@ -100,7 +95,8 @@ class ExternalData < ApplicationRecord
     Datasets.names.include? x.to_s.downcase
   end
 
-  # This is the backend for the external data overview table
+  # This is the backend for a datatables.js table.
+  # Each dataset has it's on table. Table can ordered and searched.
   # input: Datatables::Params
   def self.datatables_query(params)
     relation = if params.search_requested?
@@ -113,6 +109,10 @@ class ExternalData < ApplicationRecord
       relation = relation.public_send(params.matched, params.dataset)
     end
 
+    if params.dataset == 'nys_disclosure'
+      relation.filter_by_transaction_code(params.transaction_codes)
+    end
+
     Datatables::Response.new(draw: params.draw).tap do |response|
       response.recordsTotal = records_total(params.dataset)
       response.recordsFiltered = relation.count
@@ -120,7 +120,7 @@ class ExternalData < ApplicationRecord
     end
   end
 
-  # +params+ should be a Datatables::Params (or have two attributes/methods: search_value, dataset)
+  # +params+ needs to be be a Datatables::Params
   def self.dataset_search(params)
     const_get("Datasets::#{params.dataset.classify}").send(:search, params)
   rescue NoMethodError, NameError => e
@@ -151,6 +151,17 @@ class ExternalData < ApplicationRecord
     end
   end
 
+  # Object to hold information about each dataset. Used on the overview page  (/datasets)
+  Stats = Struct.new(:name, :description, :total, :matched, :unmatched, keyword_init: true) do
+    def percent_matched
+      ((matched / total.to_f) * 100).round(1)
+    end
+
+    def url
+      Rails.application.routes.url_helpers.dataset_path(dataset: name, matched: 'unmatched')
+    end
+  end
+
   def self.stats(dataset)
     verify_dataset!(dataset)
 
@@ -161,14 +172,14 @@ class ExternalData < ApplicationRecord
               unmatched: public_send(dataset).unmatched(dataset).count)
   end
 
-  # For data exploration and testing
-  def self.random_iapd_schedule_a_records(take = 100)
-    iapd_schedule_a
-      .order('RAND()')
-      .pluck(:data)
-      .take(take)
-      .map { |r| r['records'] }
-      .flatten
+  # TRANSACTION_CODE_OPTIONS groups multiple transactions codes together
+  # in order to simplify the options on the table.
+  # This is only for the NYS Disclosure dataset.
+  def self.filter_by_transaction_code(selections)
+    where(
+      "JSON_VALUE(data, '$.transaction_code') in ?",
+      NYSCampaignFinance::TRANSACTION_CODE_OPTIONS.values_at(*selections).reduce(:concat)
+    )
   end
 
   private_class_method def self.records_total(dataset)
