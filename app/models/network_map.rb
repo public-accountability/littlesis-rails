@@ -266,6 +266,8 @@ class NetworkMap < ApplicationRecord
   end
 
   def has_pending_editor?(user)
+    return false if user.blank?
+
     pending_editor_ids.include?(user.id)
   end
 
