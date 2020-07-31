@@ -201,7 +201,7 @@ class NetworkMap < ApplicationRecord
   # Editor methods
   # These are only for oligrapher version 3
   def confirmed_editor_ids
-    editors.delete_if { |e| e[:pending] }.map { |e| e[:id] }
+    editors.reject { |e| e[:pending] }.map { |e| e[:id] }
   end
 
   def pending_editor_ids
