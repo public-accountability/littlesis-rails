@@ -81,8 +81,7 @@
 
          <% if @dataset == 'nys_disclosure' %>
          if ($('#nys-disclosure-schedule-transaction-code').length) {
-           var selected_codes = $('#nys-disclosure-schedule-transaction-code').select2('data').map(x => x.id)
-           d.transaction_code = selected_codes
+           d.transaction_codes = $('#nys-disclosure-schedule-transaction-code').select2('data').map(x => x.id)
          }
          <% end %>
 

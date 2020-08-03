@@ -82,6 +82,8 @@ module Datatables
     def transaction_codes
       if @params['transaction_codes']
         @params['transaction_codes'].map(&:to_sym)
+      else
+        []
       end
     end
 

@@ -110,7 +110,7 @@ class ExternalData < ApplicationRecord
     end
 
     if params.dataset == 'nys_disclosure'
-      relation.filter_by_transaction_code(params.transaction_codes)
+      relation = relation.filter_by_transaction_code(*params.transaction_codes)
     end
 
     Datatables::Response.new(draw: params.draw).tap do |response|
