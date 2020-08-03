@@ -41,6 +41,26 @@ describe "Oligrapher", type: :request do
         end
       end
 
+
+      context 'when logged in as a non-owner pending editor' do
+        before {
+          network_map.add_editor(user2)
+          network_map.save
+          login_as(user2, scope: :user)
+        }
+
+        after {
+          network_map.remove_editor(user2)
+          network_map.save
+          logout(:user)
+        }
+
+        it 'map can be viewed' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(response.status).to eq 200
+        end
+      end
+
       context 'when logged in as owner' do
         before { login_as(user1, scope: :user) }
         after { logout(:user) }

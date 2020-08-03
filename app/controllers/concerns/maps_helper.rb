@@ -22,8 +22,12 @@ module MapsHelper
     @map.user_id == current_user.id
   end
 
+  def can_view_if_private?
+    @map.can_edit?(current_user) || @map.has_pending_editor?(current_user)
+  end
+
   def check_private_access
-    if @map.is_private && !@map.can_edit?(current_user)
+    if @map.is_private && !can_view_if_private?
       unless params[:secret] && params[:secret] == @map.secret
         raise Exceptions::PermissionError
       end
