@@ -43,6 +43,14 @@
         <th>Office</th>
       </tr>
 
+    <% elsif @dataset == 'nys_disclosure' %>
+      <tr>
+        <th>
+          <span class="pr-1">Disclosure</span>
+          <%= render partial: 'nys_disclosure_header' %>
+        </th>
+        <th>Date</th>
+      </tr>
     <% else %>
       <% raise NotImplementedError %>
     <%end %>
@@ -70,6 +78,12 @@
          } else  {
            console.error('#external-entities-match-toggle not found')
          }
+
+         <% if @dataset == 'nys_disclosure' %>
+         if ($('#nys-disclosure-schedule-transaction-code').length) {
+           d.transaction_codes = $('#nys-disclosure-schedule-transaction-code').select2('data').map(x => x.id)
+         }
+         <% end %>
 
        }
      },

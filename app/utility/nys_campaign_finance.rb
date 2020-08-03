@@ -37,6 +37,16 @@ module NYSCampaignFinance
     'R' => 'Expense Allocation Among Candidates'
   }.freeze
 
+  TRANSACTION_CODE_OPTIONS = {
+    :contributions => %w[A B C],
+    :in_kind => ['D'],
+    :expenditures => ['F'],
+    :transfers => %w[G H],
+    :loans => %w[I J K N],
+    :refunds => %w[L M],
+    :other => %w[E O P Q R]
+  }.freeze
+
   OFFICES = {
     4 => 'Governor',
     5 => 'Lt. Governor',

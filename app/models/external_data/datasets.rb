@@ -77,7 +77,7 @@ class ExternalData
       def self.search(params)
         ExternalData
           .iapd_schedule_a
-          .where("JSON_SEARCH(data, 'one', ?, null, '$.records[*].name') IS NOT NULL", params.query_query)
+          .where("JSON_SEARCH(data, 'one', ?, null, '$.records[*].name') IS NOT NULL", params.query_string)
           .order(params.order_hash)
       end
     end
@@ -120,11 +120,44 @@ class ExternalData
 
     class NYSDisclosure < SimpleDelegator
       def amount
-        data['AMOUNT_70'].to_i
+        self['AMOUNT_70'].to_i if self['AMOUNT_70'].present?
       end
 
       def date
-        LsDate.transform_date data['DATE1_10']
+        LsDate.transform_date self['DATE1_10']
+      rescue LsDate::InvalidLsDateError => e
+        Rails.logger.info e.message
+        nil
+      end
+
+      def title
+        name = if self['CORP_30']
+                 OrgName.format(self['CORP_30'])
+               elsif self['LAST_NAME_44']
+                 NameParser.format values_at('FIRST_NAME_40', 'MID_INIT_42', 'LAST_NAME_44').join(' ')
+               else
+                 '?'
+               end
+
+        transaction = if %w[A B C D].include? self['TRANSACTION_CODE']
+                        ' - Contribution'
+                      elsif self['TRANSACTION_CODE'] == 'F'
+                        ' - Expenditure/Payment'
+                      else
+                        ' - Other Transaction'
+                      end
+
+        fmt_amount = amount.present? ? " $#{amount.to_s(:delimited)}" : ''
+
+        "#{name}#{transaction}#{fmt_amount}"
+      end
+
+      def nice
+        @nice ||= {
+          'amount' => amount,
+          'date' => date,
+          'title' => title
+        }
       end
 
       def self.search(params)

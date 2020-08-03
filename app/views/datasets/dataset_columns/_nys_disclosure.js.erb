@@ -1,0 +1,19 @@
+[
+  {
+    "data": "id",
+    "orderable": false,
+    "render": function(data, type, row, meta ) {
+      var html = '<a href="/external_relationships/' + row.external_relationship_id + '">' + row.nice.title + '</a>';
+
+      if(row['matched']) {
+        html += " ✔"
+      }
+
+      return html;
+    },
+  },
+  {
+    "data": "nice.date",
+    "orderable": false,
+  }
+]

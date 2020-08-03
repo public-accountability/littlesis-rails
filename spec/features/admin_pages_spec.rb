@@ -5,30 +5,33 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
   let(:normal_user) { create_really_basic_user }
   let(:user) { normal_user }
 
-  before(:each) { login_as(user, scope: :user) }
-  after(:each) { logout(:user) }
+  before { login_as(user, scope: :user) }
+
+  after { logout(:user) }
 
   feature 'Accessing the admin home page' do
-    before(:each) { visit '/admin' }
+    before { visit '/admin' }
 
-    context 'An admin can view the the home page' do
+    describe 'An admin can view the the home page' do
       let(:user) { admin }
 
       scenario 'displays the admin page' do
         successfully_visits_page '/admin'
-        expect(page).to have_content 'Rails Admin'
-        page_has_selector '#admin-links a', count: 7
+        expect(page).to have_content 'Admin'
+        page_has_selector '#admin-links a', count: 8
       end
     end
 
-    context 'A regular user cannot view the home page' do
+    describe 'A regular user cannot view the home page' do
       let(:user) { normal_user }
+
       denies_access
     end
   end
 
   feature 'Tag admin page' do
-    before(:each) { visit '/admin/tags' }
+    before { visit '/admin/tags' }
+
     let(:user) { admin }
 
     scenario 'Displays overview of current tags' do
@@ -44,7 +47,7 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
       page.check('Restricted')
       click_button('Create Tag')
 
-      expect(Tag.count).to eql(4)
+      expect(Tag.count).to eq 4
       expect(Tag.last.attributes.slice('name', 'description', 'restricted'))
         .to eq('name' => 'cylon',
                'description' => 'spin up those ftl drives',
@@ -66,17 +69,27 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
       expect(Tag.count).to eq tag_count
     end
 
-    context 'as a regular user' do
+    context 'with a regular user' do
       let(:user) { normal_user }
+
       denies_access
     end
   end
 
   feature 'Stats page' do
-    context 'as an admin' do
+    context 'with a normal user' do
+      let(:user) { normal_user }
+
+      before { visit '/admin/stats' }
+
+      denies_access
+    end
+
+    describe 'with an admin' do
       let(:user) { admin }
       let(:editors) { Array.new(4) { create_really_basic_user } }
-      let!(:versions) do
+
+      before do
         [
           create(:entity_version, whodunnit: editors[0].id.to_s),
           create(:entity_version, whodunnit: editors[0].id.to_s),
@@ -109,7 +122,7 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
           .to eql '6 months'
       end
 
-      context 'pagination' do
+      describe 'pagination' do
         stub_page_limit UserEdits, limit: 2, const: :ACTIVE_USERS_PER_PAGE
         before { visit '/admin/stats' }
 
@@ -122,12 +135,6 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
           page_has_selector '#active-users-table tbody tr', count: 1
         end
       end
-    end
-
-    context 'as a regular user' do
-      let(:user) { normal_user }
-      before { visit '/admin/stats' }
-      denies_access
     end
   end
 end
