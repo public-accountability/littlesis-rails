@@ -177,7 +177,7 @@ class ExternalData < ApplicationRecord
   # This is only for the NYS Disclosure dataset.
   def self.filter_by_transaction_code(*selections)
     transaction_codes = NYSCampaignFinance::TRANSACTION_CODE_OPTIONS.values_at(*selections).reduce(:concat)
-    where "JSON_VALUE(data, '$.TRANSACTION_CODE') IN #{sqlize_array(transaction_codes)}"
+    where "transaction_code IN #{sqlize_array(transaction_codes)}"
   end
 
   private_class_method def self.records_total(dataset)
