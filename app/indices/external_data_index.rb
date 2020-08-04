@@ -2,10 +2,12 @@ ThinkingSphinx::Index.define(
   :external_data,  :name => 'external_data_nys_disclosure', :with => :active_record
 ) do
   where 'dataset = 4'
-  has "JSON_VALUE(data, '$.TRANSACTION_CODE')", :as => :transaction_code, :type => :string
 
-  has "(CASE WHEN JSON_VALUE(data, '$.DATE1_10') = '' THEN NULL ELSE DATE_FORMAT(STR_TO_DATE(JSON_VALUE(data, '$.DATE1_10'),  '%m/%d/%Y'), '%Y-%m-%d') END)",
-      :as => :date, :type => :string
+  has "CAST(JSON_VALUE(data, '$.TRANSACTION_CODE') AS CHAR(1))", :as => :transaction_code, :type => :string
+
+  has(<<-SQL, :as => :date, :type => :string)
+    CASE WHEN JSON_VALUE(data, '$.DATE1_10') = '' THEN NULL ELSE DATE_FORMAT(STR_TO_DATE(JSON_VALUE(data, '$.DATE1_10'),  '%m/%d/%Y'), '%Y-%m-%d') END
+  SQL
 
   has(<<-SQL, :as => :amount, :type => :bigint)
     CASE

@@ -13,6 +13,7 @@ describe ExternalDataSphinxQuery, :sphinx do
   end
 
   let(:search_value) { '' }
+  let(:transaction_codes) { nil }
 
   let(:params) do
     Datatables::Params.new(
@@ -29,7 +30,8 @@ describe ExternalDataSphinxQuery, :sphinx do
         },
         order: {
           '0' => { 'column' => 1, 'dir' => 'desc' }
-        }
+        },
+        transaction_codes: transaction_codes
       )
     )
   end
@@ -50,6 +52,32 @@ describe ExternalDataSphinxQuery, :sphinx do
       response = ExternalDataSphinxQuery.run(params)
       expect(response.recordsFiltered).to eq 1
       expect(response.data.first['data']['FIRST_NAME_40']).to eq 'FRANK'
+    end
+  end
+
+  describe 'filtering by transaction type' do
+    context 'when searching for contributions' do
+      let(:transaction_codes) { ['contributions'] }
+
+      specify do
+        expect(ExternalDataSphinxQuery.run(params).recordsFiltered).to eq 1
+      end
+    end
+
+    context 'when searching for expenditures and contirbutions' do
+      let(:transaction_codes) { ['contributions', 'expenditures'] }
+
+      specify do
+        expect(ExternalDataSphinxQuery.run(params).recordsFiltered).to eq 2
+      end
+    end
+
+    context 'when searching for refunds' do
+      let(:transaction_codes) { ['refunds'] }
+
+      specify do
+        expect(ExternalDataSphinxQuery.run(params).recordsFiltered).to eq 0
+      end
     end
   end
 end

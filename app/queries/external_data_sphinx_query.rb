@@ -13,13 +13,16 @@ module ExternalDataSphinxQuery
     end
   end
 
+  # helper methods
+
   def self.search_options(params)
     {
       indices: ["external_data_#{params.dataset}_core"],
       order: params.order_sql,
       page: (params.start / params.length) + 1,
       per_page: params.length,
-      sql: active_record_sql(params.dataset)
+      sql: active_record_sql(params.dataset),
+      with: sphinx_filter(params)
     }
   end
 
@@ -32,9 +35,21 @@ module ExternalDataSphinxQuery
     end
   end
 
+  def self.sphinx_filter(params)
+    if params.dataset == 'nys_disclosure' && params.transaction_codes.present?
+      {
+        :transaction_code =>  NYSCampaignFinance::TRANSACTION_CODE_OPTIONS
+                                .values_at(*params.transaction_codes)
+                                .reduce(:concat)
+      }
+    else
+      {}
+    end
+  end
+
   def self.make_datatables_array(sphinx_search)
     sphinx_search.to_a.map(&:datatables_json)
   end
 
-  private_class_method :search_options, :active_record_sql, :make_datatables_array
+  private_class_method :search_options, :active_record_sql, :make_datatables_array, :sphinx_filter
 end
