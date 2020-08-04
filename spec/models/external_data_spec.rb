@@ -132,18 +132,4 @@ describe ExternalData, type: :model do
       expect(build(:external_data_nycc_borelli).wrapper.__getobj__).to be_a Hash
     end
   end
-
-  describe 'filtering nys disclosures by transaction codes' do
-    before do
-      create(:external_data_nys_disclosure)
-      create(:external_data_nys_disclosure_transaction_code_f)
-    end
-
-    specify do
-      expect(ExternalData.nys_disclosure.filter_by_transaction_code(:contributions).count).to eq 1
-      expect(ExternalData.nys_disclosure.filter_by_transaction_code(:expenditures).count).to eq 1
-      expect(ExternalData.nys_disclosure.filter_by_transaction_code(:contributions, :expenditures).count).to eq 2
-      expect(ExternalData.nys_disclosure.filter_by_transaction_code(:loans).count).to eq 0
-    end
-  end
 end

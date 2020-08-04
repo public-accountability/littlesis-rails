@@ -151,14 +151,6 @@ class ExternalData < ApplicationRecord
               unmatched: public_send(dataset).unmatched(dataset).count)
   end
 
-  # TRANSACTION_CODE_OPTIONS groups multiple transactions codes together
-  # in order to simplify the options on the table.
-  # This is only for the NYS Disclosure dataset.
-  def self.filter_by_transaction_code(*selections)
-    transaction_codes = NYSCampaignFinance::TRANSACTION_CODE_OPTIONS.values_at(*selections).reduce(:concat)
-    where "transaction_code IN #{sqlize_array(transaction_codes)}"
-  end
-
   private_class_method def self.verify_dataset!(x)
     unless dataset?(x)
       raise Exceptions::LittleSisError # , "Invalid Dataset: #{x}"
