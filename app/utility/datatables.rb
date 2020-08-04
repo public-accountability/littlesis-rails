@@ -73,8 +73,8 @@ module Datatables
     def order_sql
       return '' if @order.blank?
 
-      'ORDER BY ' + @order.map do |order|
-        @columns[order[:column].to_i][:data] + ' ' + order[:dir].upcase
+      @order.map do |o|
+        @columns[o[:column].to_i][:data] + ' ' + o[:dir].upcase
       end.join(', ')
     end
 

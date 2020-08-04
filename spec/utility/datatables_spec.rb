@@ -51,7 +51,7 @@ describe Datatables do
     end
 
     specify 'order_sql' do
-      expect(params.order_sql).to eq "ORDER BY amount DESC, id ASC"
+      expect(params.order_sql).to eq "amount DESC, id ASC"
     end
 
     specify 'order_hash' do

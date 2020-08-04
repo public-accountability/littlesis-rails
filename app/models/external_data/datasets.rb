@@ -131,9 +131,9 @@ class ExternalData
       end
 
       def title
-        name = if self['CORP_30']
+        name = if self['CORP_30'].present?
                  OrgName.format(self['CORP_30'])
-               elsif self['LAST_NAME_44']
+               elsif self['LAST_NAME_44'].present?
                  NameParser.format values_at('FIRST_NAME_40', 'MID_INIT_42', 'LAST_NAME_44').join(' ')
                else
                  '?'
@@ -147,7 +147,7 @@ class ExternalData
                         ' - Other Transaction'
                       end
 
-        fmt_amount = amount.present? ? " $#{amount.to_s(:delimited)}" : ''
+        fmt_amount = amount.present? ? " - $#{amount.to_s(:delimited)}" : ''
 
         "#{name}#{transaction}#{fmt_amount}"
       end
@@ -158,10 +158,6 @@ class ExternalData
           'date' => date,
           'title' => title
         }
-      end
-
-      def self.search(params)
-        raise NotImplementedError
       end
     end
   end
