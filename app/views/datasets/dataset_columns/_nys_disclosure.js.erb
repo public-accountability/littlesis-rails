@@ -13,7 +13,17 @@
     },
   },
   {
-    "data": "nice.date",
-    "orderable": false,
+    "data": "amount",
+    "orderable": true,
+    "render": function(data, type, row, meta) {
+      return row.nice.amount;
+    }
+  },
+  {
+    "data": "date",
+    "orderable": true,
+    "render": function(data, type, row, meta) {
+      return row.nice.date;
+    }
   }
 ]

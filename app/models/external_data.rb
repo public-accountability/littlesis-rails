@@ -99,41 +99,20 @@ class ExternalData < ApplicationRecord
   # Each dataset has it's on table. Table can ordered and searched.
   # input: Datatables::Params
   def self.datatables_query(params)
-    relation = if params.search_requested?
-                 dataset_search(params)
-               else
-                 public_send(params.dataset)
-               end
-
-    if %i[matched unmatched].include? params.matched
-      relation = relation.public_send(params.matched, params.dataset)
-    end
-
     if params.dataset == 'nys_disclosure'
-      relation = relation.filter_by_transaction_code(*params.transaction_codes)
-    end
-
-    Datatables::Response.new(draw: params.draw).tap do |response|
-      response.recordsTotal = records_total(params.dataset)
-      response.recordsFiltered = relation.count
-      response.data = relation.to_datatables_array(params)
+      ExternalDataSphinxQuery.run(params)
+    else
+      ExternalDataMysqlQuery.run(params)
     end
   end
 
-  # +params+ needs to be be a Datatables::Params
-  def self.dataset_search(params)
-    const_get("Datasets::#{params.dataset.classify}").send(:search, params)
-  rescue NoMethodError, NameError => e
-    raise e, "Search for dataset #{params.dataset} not yet implemented"
-  end
-
-  def self.to_datatables_array(params)
-    preload(:external_entity, :external_relationship)
-      .offset(params.start)
-      .limit(params.length)
-      .to_a
-      .map(&:datatables_json)
-  end
+  # def self.to_datatables_array(params)
+  #   preload(:external_entity, :external_relationship)
+  #     .offset(params.start)
+  #     .limit(params.length)
+  #     .to_a
+  #     .map(&:datatables_json)
+  # end
 
   def self.matched(dataset)
     if Datasets.relationships.include?(dataset)
@@ -167,21 +146,9 @@ class ExternalData < ApplicationRecord
 
     Stats.new(name: dataset,
               description: Datasets.descriptions.fetch(dataset),
-              total: records_total(dataset),
+              total: public_send(dataset).count,
               matched: public_send(dataset).matched(dataset).count,
               unmatched: public_send(dataset).unmatched(dataset).count)
-  end
-
-  # TRANSACTION_CODE_OPTIONS groups multiple transactions codes together
-  # in order to simplify the options on the table.
-  # This is only for the NYS Disclosure dataset.
-  def self.filter_by_transaction_code(*selections)
-    transaction_codes = NYSCampaignFinance::TRANSACTION_CODE_OPTIONS.values_at(*selections).reduce(:concat)
-    where "JSON_VALUE(data, '$.TRANSACTION_CODE') IN #{sqlize_array(transaction_codes)}"
-  end
-
-  private_class_method def self.records_total(dataset)
-    class_eval "#{dataset}.count"
   end
 
   private_class_method def self.verify_dataset!(x)
