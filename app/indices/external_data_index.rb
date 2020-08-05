@@ -1,7 +1,11 @@
 ThinkingSphinx::Index.define(
   :external_data,  :name => 'external_data_nys_disclosure', :with => :active_record
 ) do
-  where 'dataset = 4'
+  where 'external_data.dataset = 4'
+
+  join external_relationship
+
+  has 'IF(external_relationships.id is not null, TRUE, FALSE)', as: :matched, type: :boolean
 
   has "CAST(JSON_VALUE(data, '$.TRANSACTION_CODE') AS CHAR(1))", :as => :transaction_code, :type => :string
 

@@ -71,7 +71,6 @@
        "dataSrc": "data",
        "data": function(d) {
 
-
          // adds field matched to the request (from the button group toggle)
          if ($('#external-entities-match-toggle').length) {
            var toggleStatus = $('#external-entities-match-toggle input:checked').val()
@@ -92,10 +91,15 @@
    });
 
    if ($('#external-entities-match-toggle').length) {
-
      $("#external-entities-match-toggle input").change(function() {
        $('#dataset-table').DataTable().draw()
      });
+   }
+
+   if ($('#nys-disclosure-schedule-transaction-code').length) {
+     $('#nys-disclosure-schedule-transaction-code').change(function() {
+       $('#dataset-table').DataTable().draw()
+     })
    }
 
  })
