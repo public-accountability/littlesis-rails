@@ -20,8 +20,9 @@
 <% end %>
 
 <%# references input id from list_actions. this is only needed for the edit page.%>
-<%= render partial: 'shared/add_entity_js',
+<%= render partial: 'shared/entity_autocomplete_js',
 	   locals: {
 	     input_id: 'add-entity-input',
-	     post_path: add_entity_list_path(@list, entity_id: "XXX"),
-	     query_path: raw("/search/entity?q=%QUERY&exclude_list=#{@list.id}") } %>
+       http_method: 'post',
+       form_path: add_entity_list_path(@list, entity_id: "XXX"),
+       query_path: raw("/search/entity?q=%QUERY&exclude_list=#{@list.id}") } %>

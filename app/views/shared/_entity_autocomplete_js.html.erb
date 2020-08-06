@@ -7,9 +7,9 @@ end
 <script>
  $(window).ready(function() {
 
-   var post = function(path) {
+   var form = function(path) {
      var form = document.createElement("form");
-     form.setAttribute("method", "post");
+     form.setAttribute("method", <%= http_method %>);
      form.setAttribute("action", path);
      var input = document.createElement("input");
      input.setAttribute("type", "hidden");
@@ -17,11 +17,11 @@ end
      input.setAttribute("value", "<%= form_authenticity_token %>");
      form.appendChild(input);
      document.body.appendChild(form);
-     form.submit();
+     return form;
    }
 
    var submitEntity = function(entity_id) {
-     post('<%= post_path %>'.replace(/XXX/, entity_id));
+     form('<%= form_path %>'.replace(/XXX/, entity_id)).submit();
    }
 
    var entitySuggestionTemplate = Hogan
