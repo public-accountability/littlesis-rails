@@ -27,6 +27,7 @@ class ListsController < ApplicationController
   # permissions
   before_action :set_permissions,
                 only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
+  before_action :set_entity, only: :index
   before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references]
   before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
@@ -242,6 +243,10 @@ class ListsController < ApplicationController
     @list = List.find(params[:id])
   end
 
+  def set_entity
+    @entity = Entity.find(params[:entity_id]) if params[:entity_id].present?
+  end
+
   # Only allow a trusted parameter "white list" through.
   def list_params
     params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :is_private, :custom_field_name, :short_description, :access)
@@ -307,7 +312,7 @@ class ListsController < ApplicationController
     end
   end
 
-  def available_scope
+  def permitted_scope
     if params[:editable] == 'true'
       List.editable(current_user)
     else
@@ -315,16 +320,20 @@ class ListsController < ApplicationController
     end
   end
 
+  def available_scope
+    return permitted_scope unless @entity
+
+    permitted_scope.where(id: @entity.lists.pluck(:id))
+  end
+
   def search_lists(lists)
-    if params[:q].present?
-      ids = List.search_for_ids(
-        Riddle::Query.escape(params[:q]),
-        with: { is_deleted: 0, is_admin: search_admin_param }
-      )
-      lists.where(id: ids)
-    else
-      lists
-    end
+    return lists if params[:q].blank?
+
+    ids = List.search_for_ids(
+      Riddle::Query.escape(params[:q]),
+      with: { is_deleted: 0, is_admin: search_admin_param }
+    )
+    lists.where(id: ids)
   end
 
   def search_admin_param

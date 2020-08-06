@@ -183,7 +183,10 @@ describe 'List Requests' do
   describe 'search', :sphinx do
     before(:all) do # rubocop:disable RSpec/BeforeAfterAll
       setup_sphinx do
-        create(:list, name: 'my interesting list')
+        create(:list, name: 'my interesting list').tap do |l|
+          ListEntity.create(list_id: l.id, entity_id: create(:entity_person, name: 'Angela Merkel').id)
+        end
+
         create(:list, name: 'some other list')
       end
     end
@@ -214,6 +217,22 @@ describe 'List Requests' do
 
         it 'formats the list in a way that select2 can use' do
           expect(json['results'].first['text']).to eq json['results'].first['name']
+        end
+      end
+    end
+
+    describe 'finding lists that include a given entity' do
+      # Can't use a normal let earlier on because this entity needs to be created in the before block
+      # for the Sphinx setup.
+      let(:entity) { Entity.find_by(name: 'Angela Merkel') }
+
+      describe 'JSON query' do
+        before { get lists_path, params: { entity_id: entity.id, format: 'json' } }
+
+        it 'returns the correct matching list' do
+          expect(response).to have_http_status 200
+          expect(json['results'].select { |list| list['name'].include? 'interesting' }).not_to be_empty
+          expect(json['results'].select { |list| list['name'].include? 'other' }).to be_empty
         end
       end
     end
