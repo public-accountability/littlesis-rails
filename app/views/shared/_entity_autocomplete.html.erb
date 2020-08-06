@@ -1,0 +1,35 @@
+<% @config = {
+      query_path: query_path || '/search/entity?&q=%QUERY',
+      input_id: input_id,
+      templates: {
+        entity_suggestion: '#entity_suggestion',
+        empty_message: '#empty_message',
+        form: '#autocomplete_form'
+      }
+}
+%>
+
+<script>
+  $(window).ready(function() {
+    let autocomplete = new LittleSis.entityAutocomplete({config: <%= @config.to_json.html_safe %>});
+    autocomplete.prepare();
+  });
+</script>
+
+<template id="entity_suggestion">
+  <div class="add-entity-suggestion">
+	  <div class="add-entity-name">{{name}}</div>
+	  <div class="add-entity-blurb">{{blurb}}</div>
+	</div>
+</template>
+
+<template id="empty_message">
+  <div class="add-entity-suggestion">No entities found</div>
+</template>
+
+<template id="autocomplete_form">
+  <form method="<%= http_method %>" action="<%= form_path %>">
+    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"/>
+    <input type="hidden" name="entity_id" value=""/>
+  </form>
+</template>
