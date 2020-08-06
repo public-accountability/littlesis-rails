@@ -12,10 +12,6 @@ module ExternalDataMysqlQuery
       relation = relation.public_send(params.matched, params.dataset)
     end
 
-    # if params.dataset == 'nys_disclosure'
-    #   relation = relation.filter_by_transaction_code(*params.transaction_codes)
-    # end
-
     Datatables::Response.new(draw: params.draw).tap do |response|
       response.recordsTotal = ExternalData.public_send(params.dataset).count
       response.recordsFiltered = relation.count

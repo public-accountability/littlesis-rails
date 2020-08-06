@@ -36,14 +36,15 @@ module ExternalDataSphinxQuery
   end
 
   def self.sphinx_filter(params)
-    if params.dataset == 'nys_disclosure' && params.transaction_codes.present?
-      {
-        :transaction_code =>  NYSCampaignFinance::TRANSACTION_CODE_OPTIONS
-                                .values_at(*params.transaction_codes)
-                                .reduce(:concat)
-      }
-    else
-      {}
+    {}.tap do |h|
+      if params.dataset == 'nys_disclosure' && params.transaction_codes.present?
+        h.store :transaction_code, NYSCampaignFinance::TRANSACTION_CODE_OPTIONS
+                                          .values_at(*params.transaction_codes)
+                                          .reduce(:concat)
+      end
+
+      h.store(:matched, true) if params.matched == :matched
+      h.store(:matched, false) if params.matched == :unmatched
     end
   end
 
