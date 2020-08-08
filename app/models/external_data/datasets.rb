@@ -116,9 +116,20 @@ class ExternalData
           .where("JSON_VALUE(data, '$.name') like ?", params.query_string)
           .order(params.order_hash)
       end
+
+      def self.json
+        ExternalData.nys_filer.pluck(:data)
+      end
     end
 
+                 # ExternalData.nys_disclosure.includes([:external_relationship])
     class NYSDisclosure < SimpleDelegator
+      SCOPE = {
+        include: %i[external_relationship],
+        select: "external_data.*, JSON_VALUE(nys_filers.data, '$.name') AS filer_name, nys_filers.dataset_id AS filer_id",
+        joins: "LEFT JOIN external_data AS nys_filers ON nys_filers.dataset = 5 AND nys_filers.dataset_id = JSON_VALUE(external_data.data, '$.FILER_ID')"
+      }.freeze
+
       def amount
         self['AMOUNT_70'].to_i if self['AMOUNT_70'].present?
       end

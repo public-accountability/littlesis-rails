@@ -51,10 +51,10 @@ class ExternalData < ApplicationRecord
 
   # Used primarily by the /external_data/<dataset> route
   def datatables_json
-    as_json(only: %i[id data dataset]).tap do |json|
-      # Some datasets have data wrappers which add additional functionality.
-      # Some of those implement a method `nice` which is a hash which contains
-      # formatted fields used by the views or javascript.
+    as_json.tap do |json|
+      # Datasets have data wrappers which add additional functionality.
+      # Some of those implement a method `nice`, a hash with formatted fields,
+      # used by the views or javascript.
       json.store('nice', wrapper.nice) if wrapper.respond_to?(:nice)
 
       if external_relationship?

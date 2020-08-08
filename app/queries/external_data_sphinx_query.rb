@@ -23,11 +23,11 @@ module ExternalDataSphinxQuery
   end
 
   # helper methods
-
+  # sql => :include, :joins, :select, :order
   def self.active_record_sql(dataset)
     case dataset
-    when 'nyc_disclosure'
-      { :include => :external_relationship }
+    when 'nys_disclosure'
+      ExternalData::Datasets::NYSDisclosure::SCOPE
     else
       {}
     end
