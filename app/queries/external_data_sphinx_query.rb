@@ -2,9 +2,18 @@
 
 module ExternalDataSphinxQuery
   def self.run(params)
-    search_term = params.search_requested? ? params.search_value : nil
+    query = params.search_requested? ? params.search_value : nil
 
-    sphinx_search = ExternalData.search(search_term, search_options(params))
+    options = {
+      indices: ["external_data_#{params.dataset}_core"],
+      order: params.order_sql,
+      page: (params.start / params.length) + 1,
+      per_page: params.length,
+      sql: active_record_sql(params.dataset),
+      with: sphinx_filter(params)
+    }
+
+    sphinx_search = ExternalData.search(query, options)
 
     Datatables::Response.new(draw: params.draw).tap do |response|
       response.recordsTotal = ExternalData.public_send(params.dataset).count
@@ -14,17 +23,6 @@ module ExternalDataSphinxQuery
   end
 
   # helper methods
-
-  def self.search_options(params)
-    {
-      indices: ["external_data_#{params.dataset}_core"],
-      order: params.order_sql,
-      page: (params.start / params.length) + 1,
-      per_page: params.length,
-      sql: active_record_sql(params.dataset),
-      with: sphinx_filter(params)
-    }
-  end
 
   def self.active_record_sql(dataset)
     case dataset
@@ -52,5 +50,19 @@ module ExternalDataSphinxQuery
     sphinx_search.to_a.map(&:datatables_json)
   end
 
-  private_class_method :search_options, :active_record_sql, :make_datatables_array, :sphinx_filter
+  def self.nys_disclosure_search(query = nil, start: 0, length: 10, transaction_codes: 'contributions', matched: :unmatched)
+    run Datatables::Params.from_hash(
+      draw: 1,
+      search: { value: query },
+      dataset: 'nys_disclosure',
+      start: start,
+      length: length,
+      columns: [{ data: 'id' }, { data: 'amount' }, { data: 'date' }],
+      order: [{ column: 0, dir: 'desc' }],
+      transaction_codes: Array.wrap(transaction_codes),
+      matched: matched
+    )
+  end
+
+  private_class_method :active_record_sql, :make_datatables_array, :sphinx_filter
 end
