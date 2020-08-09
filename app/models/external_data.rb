@@ -84,7 +84,9 @@ class ExternalData < ApplicationRecord
   alias wrapper data_wrapper
 
   def self.dataset_count
-    connection.exec_query(<<~SQL).map { |h| h.merge!('dataset' => Datasets.inverted_names[h['dataset']]) }
+    @enum_lookup ||= DATASETS.invert.freeze
+
+    connection.exec_query(<<~SQL).map { |h| h.merge!('dataset' => @enum_lookup[h['dataset']]) }
       SELECT dataset, COUNT(*) as count
       FROM external_data
       GROUP BY dataset
