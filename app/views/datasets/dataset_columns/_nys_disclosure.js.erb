@@ -13,6 +13,13 @@
     },
   },
   {
+    "data": "filer_id",
+    "orderable": false,
+    "render": function(data, type, row, meta) {
+      return row['filer_name'] + ' (' + row['filer_id'] + ')'
+    }
+  },
+  {
     "data": "amount",
     "orderable": true,
     "render": function(data, type, row, meta) {
