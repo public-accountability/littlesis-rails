@@ -17,9 +17,8 @@ class ExternalData
       end
 
       def date
-        LsDate.transform_date self['DATE1_10']
-      rescue LsDate::InvalidLsDateError => e
-        Rails.logger.info e.message
+        Date.strptime(self['DATE1_10'], '%m/%d/%Y').strftime('%Y-%m-%d')
+      rescue ArgumentError
         nil
       end
 
