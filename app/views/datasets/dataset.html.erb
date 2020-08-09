@@ -67,6 +67,11 @@
      "serverSide": true,
      "dom": 'frtip<"clearfix">l',
      "pageLength": 10,
+
+     <% if @dataset == 'nys_disclosure' %>
+     "order": [ [ 2, "desc" ] ],
+     <% end %>
+
      "ajax": {
        "url":  "/external_data/<%= @dataset %>",
        "dataSrc": "data",
