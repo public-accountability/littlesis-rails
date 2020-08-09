@@ -120,7 +120,9 @@ describe ExternalData, type: :model do
 
   describe 'data_wrapper' do
     specify do
-      expect(build(:external_data_schedule_a).data_wrapper).to be_a ExternalData::Datasets::IapdScheduleA
+      klass = ExternalData::Datasets::IapdScheduleA
+      data_wrapper = build(:external_data_schedule_a).data_wrapper
+      expect(data_wrapper).to be_a klass
     end
 
     specify do
