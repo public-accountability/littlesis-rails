@@ -1,91 +1,22 @@
+<%= cache_unless user_signed_in?, 'anonymous_user_navmenu' do %>
 
-<%
-items = {}
+  <% items = UserNavmenuPresenter.new(current_user) %>
 
-if user_signed_in?
-  items[current_user.username] = {
-    highlighted: true,
-    items: {
-      Maps: home_maps_path,
-      Lists: home_lists_path,
-      Edits: user_edits_path(username: current_user.username),
-      'divider2' => 'divider',
-      Settings: edit_user_registration_path,
-      Logout: destroy_user_session_path
-    }
-  }
+  <% if items.size > 0 %>
+    <ul class="nav mr-auto ml-2">
+      <% items.each do |(header_text, url_or_links)| %>
+        <% if url_or_links.is_a? String %>
+	  <%= navbar_item dropdown: false do %>
+	    <%= navbar_header_link header_text, href: url_or_links, dropdown: false %>
+	  <% end %>
+        <%  else %>
+	  <%= navbar_item do %>
+	    <%= navbar_header_link header_text %>
+	    <%= navbar_dropdown url_or_links %>
+	  <% end %>
 
-else
-  items['Login'] = { url: new_user_session_path }
-  items['Sign Up'] = { url: new_user_registration_path }
-end
-
-items['Explore'] = {
-  items: {
-    Maps: "/maps",
-    Lists: "/lists",
-    Tags: "/tags",
-    Edits:"/edits"
-  }
-}
-
-if user_signed_in?
-  items['Add'] = {
-    items: {
-      Entity: "/entities/new",
-      List: "/lists/new",
-      Map: "/maps/new"
-    }
-  }
-end
-
-items['Help'] = {
-  items: {
-    'Toolkit' => "/toolkit",
-    'Help' => "/help",
-    'Report a bug' => '/bug_report'
-  }
-}
-
-items['About'] = {
-  items: {
-    LittleSis: "/about",
-    Features: "/features",
-    'Our Team' => "/team",
-    Blog: "https://news.littlesis.org",
-    'Data API' => "/api",
-    'Source Code' => "https://github.com/public-accountability/littlesis-rails",
-    Disclaimer: "/disclaimer",
-    'Contact Us' => contact_path,
-    'Jobs' => "https://public-accountability.org/category/job/",
-    'Donate' => "/donate"
-  }
-}
-
-unless user_signed_in?
-  items['About'][:items].delete('Blog')
-  items['Blog'] = { url: "https://news.littlesis.org" }
-end
-
-%>
-
-<% if items.count > 0 %>
-  <ul class="nav mr-auto ml-2">
-    <% items.each do |header_text, data| %>
-      <% if data[:items].blank? %>
-
-	<%= navbar_item dropdown: false do %>
-	  <%= navbar_header_link header_text, href: data[:url], dropdown: false %>
-	<% end %>
-
-      <%  else %>
-	<%= navbar_item do %>
-	  <%= navbar_header_link header_text %>
-	  <%= navbar_dropdown data[:items] %>
-	<% end %>
-
+        <% end %>
       <% end %>
-    <% end %>
-  </ul>
-
+    </ul>
+  <% end %>
 <% end %>

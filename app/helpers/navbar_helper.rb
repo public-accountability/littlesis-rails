@@ -10,10 +10,6 @@ module NavbarHelper
     link_to text, href, class: 'dropdown-item'
   end
 
-  def navbar_dropdown_divider
-    tag.div nil, class: 'dropdown-divider'
-  end
-
   def navbar_header_link(text, dropdown: true, href: '#')
     class_name = dropdown ? 'nav-link dropdown-toggle' : 'nav-link'
     options = { 'class' => class_name, 'href' => href, 'id' => "navbar-header-#{text}" }
@@ -26,13 +22,14 @@ module NavbarHelper
     tag.a(text, **options)
   end
 
-  def navbar_dropdown(items)
+  # links = [ [link_name, link_url] ]
+  def navbar_dropdown(links)
     tag.div(class: 'dropdown-menu') do
-      items.map do |item_text, url|
-        if url == 'divider'
-          navbar_dropdown_divider
+      links.map do |link|
+        if link == :divider
+          tag.div nil, class: 'dropdown-divider'
         else
-          navbar_dropdown_item(item_text, url)
+          navbar_dropdown_item(*link)
         end
       end.reduce(:+)
     end
