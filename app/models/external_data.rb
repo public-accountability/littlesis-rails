@@ -29,7 +29,7 @@ class ExternalData < ApplicationRecord
   # Rails equivalent of the unique index: index_external_data_on_dataset_and_dataset_id
   validates :dataset, uniqueness: { scope: :dataset_id }
 
-  # helper function to update existing rows.Used importer scripts.
+  # helper function to update existing rows. Used by importer scripts.
   def merge_data(d)
     if data.nil?
       self.data = d
@@ -51,10 +51,10 @@ class ExternalData < ApplicationRecord
 
   # Used primarily by the /external_data/<dataset> route
   def datatables_json
-    as_json(only: %i[id data dataset]).tap do |json|
-      # Some datasets have data wrappers which add additional functionality.
-      # Some of those implement a method `nice` which is a hash which contains
-      # formatted fields used by the views or javascript.
+    as_json.tap do |json|
+      # Datasets have data wrappers which add additional functionality.
+      # Some of those implement a method `nice`, a hash with formatted fields,
+      # used by the views or javascript.
       json.store('nice', wrapper.nice) if wrapper.respond_to?(:nice)
 
       if external_relationship?
@@ -72,11 +72,11 @@ class ExternalData < ApplicationRecord
   # Wraps `data` by calling .new(data) with the class at ExternalData::Datasets::<DatasetName>
   # If no wrapper is defined, then `data` is returned
   def data_wrapper
-    if defined?(@data_wrapper)
-      @data_wrapper
-    elsif Datasets.const_defined?(dataset.classify)
+    return @data_wrapper if defined?(@data_wrapper)
+
+    begin
       @data_wrapper = Datasets.const_get(dataset.classify).new(data)
-    else
+    rescue NameError
       @data_wrapper = data
     end
   end
@@ -84,7 +84,9 @@ class ExternalData < ApplicationRecord
   alias wrapper data_wrapper
 
   def self.dataset_count
-    connection.exec_query(<<~SQL).map { |h| h.merge!('dataset' => Datasets.inverted_names[h['dataset']]) }
+    @enum_lookup ||= DATASETS.invert.freeze
+
+    connection.exec_query(<<~SQL).map { |h| h.merge!('dataset' => @enum_lookup[h['dataset']]) }
       SELECT dataset, COUNT(*) as count
       FROM external_data
       GROUP BY dataset
@@ -105,14 +107,6 @@ class ExternalData < ApplicationRecord
       ExternalDataMysqlQuery.run(params)
     end
   end
-
-  # def self.to_datatables_array(params)
-  #   preload(:external_entity, :external_relationship)
-  #     .offset(params.start)
-  #     .limit(params.length)
-  #     .to_a
-  #     .map(&:datatables_json)
-  # end
 
   def self.matched(dataset)
     if Datasets.relationships.include?(dataset)

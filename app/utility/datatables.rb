@@ -10,7 +10,11 @@ module Datatables
 
     def_delegators :@params, :require, :permit, :permit!
 
-    # input: ActionController:Parameters
+    def self.from_hash(h)
+      new ActionController::Parameters.new(h)
+    end
+
+    # input: ActionController::Parameters
     def initialize(params)
       @params = params
       @draw = @params.require(:draw).to_i
@@ -89,10 +93,9 @@ module Datatables
 
     private
 
-    # input: { '0' => { 'column' => '2', 'dir' => 'desc' },
-    #          '1' => { 'column' => '0', 'dir' => 'asc' } }
-    #
     def parse_columns(columns)
+      return columns if columns.is_a? Array
+
       to_array(columns).map do |column|
         column
           .permit(:data, :name, :searchable, :orderable, search: [:value, :regex])
@@ -101,8 +104,12 @@ module Datatables
       end
     end
 
-    def parse_order(hash)
-      to_array(hash).map do |h|
+    # input: { '0' => { 'column' => '2', 'dir' => 'desc' },
+    #          '1' => { 'column' => '0', 'dir' => 'asc' } }
+    def parse_order(order)
+      return order if order.is_a? Array
+
+      to_array(order).map do |h|
         h.permit(:column, :dir).to_h.with_indifferent_access
       end
     end
