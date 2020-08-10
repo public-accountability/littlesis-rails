@@ -72,11 +72,11 @@ class ExternalData < ApplicationRecord
   # Wraps `data` by calling .new(data) with the class at ExternalData::Datasets::<DatasetName>
   # If no wrapper is defined, then `data` is returned
   def data_wrapper
-    if defined?(@data_wrapper)
-      @data_wrapper
-    elsif Datasets.const_defined?(dataset.classify)
+    return @data_wrapper if defined?(@data_wrapper)
+
+    begin
       @data_wrapper = Datasets.const_get(dataset.classify).new(data)
-    else
+    rescue NameError
       @data_wrapper = data
     end
   end
