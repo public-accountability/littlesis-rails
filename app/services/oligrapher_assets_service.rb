@@ -10,7 +10,6 @@
 class OligrapherAssetsService
   attr_accessor :commit
 
-  DEFAULT_BRANCH = '3.0'
   REPO = 'https://github.com/public-accountability/oligrapher'
   REPO_DIR = Rails.root.join('tmp', Rails.env.production? ? 'oligrapher' : 'oligrapher-test').to_s
   ASSET_DIR = Rails.root.join('public/oligrapher').to_s
@@ -26,7 +25,7 @@ class OligrapherAssetsService
     `git -C #{REPO_DIR} rev-parse HEAD`.strip
   end
 
-  def initialize(commit = DEFAULT_BRANCH, skip_fetch: false, development: false)
+  def initialize(commit = Oligrapher::VERSION, skip_fetch: false, development: false)
     self.class.setup_repo
     @commit = commit
     @development = development
