@@ -79,6 +79,12 @@ describe User do
     end
   end
 
+  describe 'settings' do
+    specify do
+      expect(build(:user).settings).to be_a UserSettings
+    end
+  end
+
   it 'user has permissions class' do
     user = create_basic_user
     expect(user.permissions).to be_a Permissions

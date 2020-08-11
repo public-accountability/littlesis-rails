@@ -14,13 +14,21 @@ class ExternalData
         committee_type == '1'
       end
 
+      def office_description
+        NYSCampaignFinance::OFFICES[office.to_i]
+      end
+
+      def committee_type_description
+        NYSCampaignFinance.committee_type_description(committee_type)
+      end
+
       def nice
         @nice ||= {
           filer_id: filer_id,
           name: OrgName.format(name),
-          committee_type:  NYSCampaignFinance.committee_type_description(committee_type),
+          committee_type: committee_type_description,
           status: status.titleize,
-          office: NYSCampaignFinance::OFFICES[office.to_i],
+          office: office_description,
           district: district,
           address: [address, city, state, zip].join(', ')
         }
@@ -37,10 +45,16 @@ class ExternalData
           .order(params.order_hash)
       end
 
+      def self.find_by_filer_id(filer_id)
+        ExternalData
+          .nys_filer
+          .select("*, JSON_VALUE(data, '$.name') as filer_name, dataset_id as filer_id")
+          .find_by(dataset_id: filer_id)
+      end
+
       def self.json
         ExternalData.nys_filer.pluck(:data)
       end
     end
-
   end
 end

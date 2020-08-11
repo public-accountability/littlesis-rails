@@ -477,6 +477,14 @@ class Relationship < ApplicationRecord
     self
   end
 
+  ##############################
+  # External Data/Relationship #
+  ##############################
+
+  def external_dataset_name
+    external_relationships.first&.dataset
+  end
+
   ########################################
   # Update Entity Timestamp after update #
   ########################################

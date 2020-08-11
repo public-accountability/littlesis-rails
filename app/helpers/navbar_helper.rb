@@ -3,15 +3,11 @@
 module NavbarHelper
   def navbar_item(dropdown: true)
     class_name = dropdown ? 'nav-item dropdown' : 'nav-item'
-    content_tag(:li, class: class_name) { yield }
+    tag.li(class: class_name) { yield }
   end
 
   def navbar_dropdown_item(text, href)
     link_to text, href, class: 'dropdown-item'
-  end
-
-  def navbar_dropdown_divider
-    content_tag('div', nil, class: 'dropdown-divider')
   end
 
   def navbar_header_link(text, dropdown: true, href: '#')
@@ -23,16 +19,17 @@ module NavbarHelper
                      'aria-haspopup' => 'true',
                      'aria-expanded' => 'false')
     end
-    content_tag 'a', text, options
+    tag.a(text, **options)
   end
 
-  def navbar_dropdown(items)
-    content_tag(:div, class: 'dropdown-menu') do
-      items.map do |item_text, url|
-        if url == 'divider'
-          navbar_dropdown_divider
+  # links = [ [link_name, link_url] ]
+  def navbar_dropdown(links)
+    tag.div(class: 'dropdown-menu') do
+      links.map do |link|
+        if link == :divider
+          tag.div nil, class: 'dropdown-divider'
         else
-          navbar_dropdown_item(item_text, url)
+          navbar_dropdown_item(*link)
         end
       end.reduce(:+)
     end

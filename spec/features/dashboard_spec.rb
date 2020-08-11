@@ -1,14 +1,23 @@
 # frozen_string_literal: true
 
-# rubocop:disable Capybara/FeatureMethods
-
-
 describe 'home/dashboard', type: :feature do
   let(:current_user) { create_basic_user }
 
   before { login_as(current_user, :scope => :user) }
 
   after { logout(:user) }
+
+  context 'as an admin' do
+    let(:current_user) { create_admin_user }
+
+    before do
+      visit '/home/dashboard'
+    end
+
+    specify 'has admin link in dropdown' do
+      expect(page).to have_selector 'ul.nav li a', text: 'Admin'
+    end
+  end
 
   describe 'Using the navigation bar on top of the basic as a regular user' do
     before { visit '/home/dashboard' }
@@ -19,8 +28,10 @@ describe 'home/dashboard', type: :feature do
       [current_user.username, 'Tags', 'Donate', 'Help'].each do |text|
         expect(page).to have_selector 'ul.nav li a', text: text
       end
-      # verifing that networks have been removed:
+      # verifying that networks have been removed
       expect(page).not_to have_selector 'ul.nav li a', text: 'United States'
+      # verifying admin page is not accessible
+      expect(page).not_to have_selector 'ul.nav li a', text: 'Admin'
     end
   end
 

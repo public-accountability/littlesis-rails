@@ -1,5 +1,12 @@
 <div class="row">
-  <h2 class="w-100">Edit your settings</h2>
+  <div class="col">
+    <h2>Edit your settings</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+
 
   <%= form_for(resource, as: resource_name, url: users_path, html: { method: :put }) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
@@ -26,7 +33,7 @@
 	<em><%= @minimum_password_length %> characters minimum</em>
       <% end %>
     </div>
-    
+
     <div class="form-group">
       <%= f.label :password_confirmation %><br />
       <%= f.password_field :password_confirmation, autocomplete: "off", class: 'form-control' %>
@@ -38,13 +45,34 @@
     </div>
 
     <div class="form-group">
-      <%= f.label :current_password %><br /> <i><small>(we need your current password to confirm your changes)<small></i><br />
+      <%= f.label :current_password %><br /> <i><small>(we need your current password to confirm your changes)</small></i><br />
       <%= f.password_field :current_password, autocomplete: "off", class: 'form-control'  %>
       <div class="top-1em">
 	<%= f.submit "Update" %>
       </div>
     </div>
   <% end %>
+
+  </div>
+  <div class="col-sm-6">
+    <%= form_with(url: '/users/settings', method: :put) do %>
+
+    <div class="form-group mb-2">
+      <label class="mr-2 font-weight-bold">enable Oligrapher 3</label>
+
+      <label class="user-settings-toggle">
+        <input name="settings[oligrapher_beta]" type="hidden" value="0" />
+        <input type="checkbox"
+               id="settings_oligrapher_beta"
+               name="settings[oligrapher_beta]" value="1"
+               onchange="this.closest('form').submit()"
+               <%= @user.settings.oligrapher_beta ? 'checked="checked"' : nil %> />
+        <span></span>
+      </label>
+    </div>
+    <% end %>
+
+  </div>
 </div>
 
 <div class="row">
@@ -66,10 +94,9 @@
   <div class="w-25">
     <%= button_to "Cancel my account", users_path, data: { confirm: "Are you sure?" }, method: :delete, class: 'btn btn-danger btn-sm' %>
 </div>
- <br/>
-  
+
 </div>
+
 <div class="row">
   <%= link_to "Back", :back, class: 'mt-5' %>
 </div>
-

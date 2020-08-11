@@ -5,34 +5,10 @@ class ExternalRelationshipsController < ApplicationController
   before_action :set_external_relationship, only: %i[show update]
 
   def show
-    @entity_matchers = [
-      EntityMatcherPresenter.new(
-        :model => @external_relationship,
-        :title => @external_relationship.data_summary['Name'],
-        :matches_method => :potential_matches_entity1,
-        :search_method => :potential_matches_entity1,
-        :search_param => 'search_entity1',
-        :search_term => params['search_entity1'],
-        :primary_ext => @external_relationship.external_data.wrapper.owner_primary_ext,
-        :match_url => external_relationship_path(@external_relationship, entity_side: 1),
-        :search_url => external_relationship_path(@external_relationship, entity_side: 1),
-        :matched? => @external_relationship.entity1_matched?,
-        :active_tab => :matches
-      ),
-      EntityMatcherPresenter.new(
-        :model => @external_relationship,
-        :title => @external_relationship.data_summary['Advisor'],
-        :matches_method => :potential_matches_entity2,
-        :search_method => :potential_matches_entity2,
-        :search_param => 'search_entity2',
-        :search_term => params['search_entity2'],
-        :primary_ext => 'Org',
-        :match_url => external_relationship_path(@external_relationship, entity_side: 2),
-        :search_url => external_relationship_path(@external_relationship, entity_side: 2),
-        :matched? => @external_relationship.entity2_matched?,
-        :active_tab => :matches
-      )
-    ]
+    @entity_matchers = EntityMatcherPresenter
+                         .for_external_relationship(@external_relationship,
+                                                    search_entity1: params['search_entity1'],
+                                                    search_entity2: params['search_entity2'])
   end
 
   def random

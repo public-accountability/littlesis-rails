@@ -8,6 +8,7 @@ class User < ApplicationRecord
   enum role: { user: 0, admin: 1, system: 2 }
 
   serialize :abilities, UserAbilities
+  serialize :settings, UserSettings
 
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username,

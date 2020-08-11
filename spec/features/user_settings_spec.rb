@@ -8,7 +8,7 @@ feature 'User Settings' do
     )
   end
 
-  let!(:other_user) do # rubocop:disable RSpec/LetSetup
+  let(:other_user) do
     create(
       :user,
       email: 'who@ever.org',
@@ -17,6 +17,7 @@ feature 'User Settings' do
   end
 
   before do
+    other_user
     login_as(current_user, scope: :user)
     visit '/users/edit'
   end
