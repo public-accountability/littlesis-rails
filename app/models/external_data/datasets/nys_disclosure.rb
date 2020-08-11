@@ -47,7 +47,7 @@ class ExternalData
       def name
         if self['CORP_30'].present?
           OrgName.format(self['CORP_30'])
-        elsif self['CORP_30'].present?
+        elsif self['LAST_NAME_44'].present?
           NameParser.format values_at('FIRST_NAME_40', 'MID_INIT_42', 'LAST_NAME_44').join(' ')
         else
           '?'
@@ -70,9 +70,11 @@ class ExternalData
         end
       end
 
-      def transaction_code
-        tcode = self['TRANSACTION_CODE']
+      def tcode
+        self['TRANSACTION_CODE']
+      end
 
+      def transaction_code
         description = if %w[A B C D].include?(tcode)
                         'Contribution'
                       elsif tcode == 'F'
@@ -85,7 +87,7 @@ class ExternalData
       end
 
       def title
-        [name, transaction_code, amount_str].compact.join(' - ')
+        [name, transaction_code, amount_str, filer_name].compact.join(' - ')
       end
 
       def nice
