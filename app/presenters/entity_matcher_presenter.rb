@@ -53,7 +53,7 @@ EntityMatcherPresenter = Struct.new(*attributes, keyword_init: true) do
         matchers[0].title = er.data_summary['Name']
         matchers[0].primary_ext = er.external_data.wrapper.owner_primary_ext
         matchers[1].title = er.data_summary['Advisor']
-        matchres[1].primary_ext = 'Org'
+        matchers[1].primary_ext = 'Org'
       when 'nys_disclosure'
         matchers[0].title = er.external_data.wrapper.name
         matchers[0].primary_ext = er.external_data.wrapper.donor_primary_ext

@@ -23,7 +23,9 @@ class ExternalData
       end
 
       def filer_name
-        OrgName.format(filer_record.data['name'])
+        if filer_record&.data&.key?('name')
+          OrgName.format filer_record.data['name']
+        end
       end
 
       def filer_id
