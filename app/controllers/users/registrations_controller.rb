@@ -30,7 +30,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
-    # post /users/api_token
+  # post /users/api_token
   def api_token
     # see https://github.com/plataformatec/devise/blob/master/app/controllers/devise/registrations_controller.rb
     authenticate_scope!
@@ -50,15 +50,25 @@ class Users::RegistrationsController < Devise::RegistrationsController
     render action: :edit
   end
 
+  # PUT /users/settings
+  def update_settings
+    authenticate_scope!
+
+    resource.settings.update(user_settings_params)
+    resource.save!
+
+    redirect_to action: :edit
+  end
+
   # GET /users/edit
   # def edit
   #   super
   # end
 
   # PUT /users
-  def update
-    super
-  end
+  # def update
+  #   super
+  # end
 
   # DELETE /resource
   # def destroy
@@ -99,7 +109,15 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # If you have extra params to permit, append them to the sanitizer.
   def configure_account_update_params
-    devise_parameter_sanitizer.permit(:account_update, keys: [:username])
+    devise_parameter_sanitizer.permit(:account_update,
+                                      keys: [:username, settings: [:oligrapher_beta]])
+  end
+
+  def user_settings_params
+    params
+      .require(:settings)
+      .permit(*UserSettings::DEFAULTS.keys)
+      .to_h
   end
 
   # If you have extra params to permit, append them to the sanitizer.

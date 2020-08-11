@@ -15,6 +15,7 @@ Lilsis::Application.routes.draw do
     put '/users' => 'users/registrations#update'
     delete '/users' => 'users/registrations#destroy'
     post '/users/api_token' => 'users/registrations#api_token'
+    put '/users/settings' => 'users/registrations#update_settings'
   end
 
   get '/join/success' => 'users#success'
@@ -30,7 +31,6 @@ Lilsis::Application.routes.draw do
 
   get '/bug_report' => 'errors#bug_report'
   post '/bug_report' => 'errors#file_bug_report'
-
 
   #########
   # ADMIN #

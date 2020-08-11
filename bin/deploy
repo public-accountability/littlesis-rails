@@ -59,6 +59,12 @@ then
     bundle exec rake assets:precompile
 fi
 
+if git_files_changed 'oligrapher.rb'
+then
+    echo 'Running OligrapherAssetsService'
+    bundle exec rails runner 'OligrapherAssetsService.new.run'
+fi
+
 echo "Restarting delayed job"
 bin/delayed_job -n 2 restart
 
