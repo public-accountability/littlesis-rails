@@ -36,6 +36,27 @@ describe 'NYS Disclosure External Data' do
                                  "CREREC_DATE" => "07/15/2005 11:52:52" })
   end
 
+  let(:external_data_nys_disclosure2) do
+    ExternalData.create!(dataset: "nys_disclosure",
+                         dataset_id: "A00266-K-A-2019-5000",
+                         data: { "FILER_ID" => filer_id,
+                                 "FREPORT_ID" => "K",
+                                 "TRANSACTION_CODE" => "A",
+                                 "E_YEAR" => "2010",
+                                 "T3_TRID" => "5000",
+                                 "DATE1_10" => "01/01/2010",
+                                 "CORP_30" => "",
+                                 "FIRST_NAME_40" => "JOSEPH",
+                                 "LAST_NAME_44" => "P",
+                                 "ADDR_1_50" => "123 MAIN ST",
+                                 "CITY_52" => "WHITE PLAINS",
+                                 "STATE_54" => "NY",
+                                 "ZIP_56" => "10601",
+                                 "CHECK_NO_60" => "584",
+                                 "CHECK_DATE_62" => "",
+                                 "AMOUNT_70" => "500" })
+  end
+
   let!(:external_data_nys_filer) do
     ExternalData.create!(dataset: 'nys_filer',
                          dataset_id: filer_id,
@@ -58,7 +79,14 @@ describe 'NYS Disclosure External Data' do
     create(:external_relationship,
            dataset: 'nys_disclosure',
            external_data: external_data_nys_disclosure,
-           category_id: Relationship::POSITION_CATEGORY)
+           category_id: Relationship::DONATION_CATEGORY)
+  end
+
+  let(:external_relationship_nys_disclosure2) do
+    create(:external_relationship,
+           dataset: 'nys_disclosure',
+           external_data: external_data_nys_disclosure2,
+           category_id: Relationship::DONATION_CATEGORY)
   end
 
   let(:external_entity_nys_filer) do
@@ -106,10 +134,59 @@ describe 'NYS Disclosure External Data' do
     end
   end
 
-  describe 'External Relationship: NYS Filer' do
+  describe 'NYSDisclosure methods for ExternalRelationship' do
     specify 'potential_matches_entity1' do
       expect(EntityMatcher).to receive(:find_matches_for_person).with('Joseph P').once
       external_relationship_nys_disclosure.potential_matches_entity1
+    end
+
+    specify 'matched?' do
+      expect(external_relationship_nys_disclosure.matched?).to be false
+    end
+
+    describe 'find_existing' do
+      let(:donor) { create(:entity_person, name: 'Joseph P') }
+      let(:recipient) { create(:entity_person, name: 'Vito Lopez') }
+
+      before do
+        external_relationship_nys_disclosure.update!(entity1_id: donor.id, entity2_id: recipient.id)
+      end
+
+      context 'when no relationship exists' do
+        specify do
+          expect(external_relationship_nys_disclosure.find_existing).to eq nil
+        end
+      end
+
+      context 'when a relationship exists' do
+        let!(:relationship) { create(:donation_relationship, entity: donor, related: recipient) }
+
+        specify do
+          expect(external_relationship_nys_disclosure.find_existing).to eq relationship
+        end
+      end
+
+      context 'when an existing relationships exists' do
+        let(:connected_relationship) do
+          create(:donation_relationship, entity: donor, related: recipient)
+        end
+
+        let(:other_relationship) do
+          create(:donation_relationship, entity: donor, related: recipient)
+        end
+
+        before do
+          other_relationship
+          external_relationship_nys_disclosure.update!(entity1_id: donor.id, entity2_id: recipient.id, relationship_id: connected_relationship.id)
+          external_relationship_nys_disclosure2.update!(entity1_id: donor.id, entity2_id: recipient.id)
+        end
+
+        specify do
+          expect(external_relationship_nys_disclosure.matched?).to be true
+          expect(external_relationship_nys_disclosure2.matched?).to be false
+          expect(external_relationship_nys_disclosure2.find_existing).to eq connected_relationship
+        end
+      end
     end
   end
 end

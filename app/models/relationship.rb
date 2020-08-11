@@ -477,6 +477,14 @@ class Relationship < ApplicationRecord
     self
   end
 
+  ##############################
+  # External Data/Relationship #
+  ##############################
+
+  def external_dataset_name
+    external_relationships.first&.dataset
+  end
+
   ########################################
   # Update Entity Timestamp after update #
   ########################################
@@ -486,7 +494,7 @@ class Relationship < ApplicationRecord
     # The safe navigation operator here is for the
     # the odd-case that an entity has been deleted.
     # TODO: notify admins that a dangling relationship exists?
-    entity&.update_timestamp_for(current_user || last_user_id)
+    entity&.update_timestamp_for(current_user | last_user_id)
     related&.update_timestamp_for(current_user || last_user_id)
   end
 
