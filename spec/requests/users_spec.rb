@@ -42,4 +42,22 @@ describe 'Users' do
       expect(response.body).to be_blank
     end
   end
+
+  describe 'updating settings' do
+    let(:user) { create_basic_user }
+
+    before do
+      login_as(user, :scope => :user)
+    end
+
+    after { logout(:user) }
+
+    it 'changes oligrapher_beta' do
+      expect(user.settings.oligrapher_beta).to be false
+      put "/users/settings", params: { settings: { oligrapher_beta: true } }, as: :json
+      expect(user.reload.settings.oligrapher_beta).to be true
+      expect(response.status).to eq 302
+      expect(response.location).to include '/users/edit'
+    end
+  end
 end

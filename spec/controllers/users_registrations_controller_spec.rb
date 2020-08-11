@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe Users::RegistrationsController, type: :controller do
   let(:user_data) do
     {
@@ -33,6 +32,7 @@ describe Users::RegistrationsController, type: :controller do
     it { is_expected.to route(:put, '/users').to(action: :update) }
     it { is_expected.to route(:delete, '/users').to(action: :destroy) }
     it { is_expected.to route(:post, '/users/api_token').to(action: :api_token) }
+    it { is_expected.to route(:put, '/users/settings').to(action: :update_settings) }
   end
 
   describe 'GET new' do
