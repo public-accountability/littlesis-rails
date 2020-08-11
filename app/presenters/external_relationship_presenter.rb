@@ -13,6 +13,8 @@ class ExternalRelationshipPresenter < SimpleDelegator
         'Title' => external_data.wrapper.title,
         'Advisor' => "#{OrgName.format(external_data.wrapper.advisor_name)} (#{external_data.wrapper.advisor_crd_number})"
       }
+    elsif dataset == 'nys_disclosure'
+      external_data.wrapper.data_summary
     else
       raise NotImplementedError
     end

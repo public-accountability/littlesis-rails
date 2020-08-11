@@ -151,10 +151,16 @@ module RspecGroupHelpers
   def assert_attribute(attr, expected)
     it "attribute \"#{attr}\" is equal to #{expected}" do
       if subject.is_a?(Hash)
-        expect(subject.send(:fetch, attr)).to eql expected
+        expect(subject.send(:fetch, attr)).to eq expected
       else
-        expect(subject.send(attr)).to eql expected
+        expect(subject.send(attr)).to eq expected
       end
+    end
+  end
+
+  def assert_method_call(method, expected, args = [])
+    it "calling method #{method} is equal to #{expected}" do
+      expect(subject.send(method, *args)).to eq expected
     end
   end
 

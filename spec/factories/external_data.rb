@@ -102,7 +102,7 @@ FactoryBot.define do
     dataset_id { "A01182-F-A-2006-7452" }
     data do
       {
-        "FILER_ID" => "A01182",
+        "FILER_ID" => 'A01182',
         "FREPORT_ID" => "F",
         "TRANSACTION_CODE" => "A",
         "E_YEAR" => "2006",
@@ -138,10 +138,10 @@ FactoryBot.define do
 
   factory :external_data_nys_disclosure_transaction_code_f, class: 'ExternalData' do
     dataset { 'nys_disclosure' }
-    dataset_id { "A00076-J-F-2003-1868" }
+    dataset_id { "A123456-J-F-2003-1868" }
     data do
       {
-        "FILER_ID" => "A00076",
+        "FILER_ID" => 'A123456',
         "FREPORT_ID" => "J",
         "TRANSACTION_CODE" => "F",
         "E_YEAR" => "2003",
