@@ -14,13 +14,21 @@ class ExternalData
         committee_type == '1'
       end
 
+      def office_description
+        NYSCampaignFinance::OFFICES[office.to_i]
+      end
+
+      def committee_type_description
+        NYSCampaignFinance.committee_type_description(committee_type)
+      end
+
       def nice
         @nice ||= {
           filer_id: filer_id,
           name: OrgName.format(name),
-          committee_type:  NYSCampaignFinance.committee_type_description(committee_type),
+          committee_type: committee_type_description,
           status: status.titleize,
-          office: NYSCampaignFinance::OFFICES[office.to_i],
+          office: office_description,
           district: district,
           address: [address, city, state, zip].join(', ')
         }

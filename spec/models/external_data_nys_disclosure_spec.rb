@@ -67,8 +67,7 @@ describe 'NYS Disclosure External Data' do
            external_data: external_data_nys_filer)
   end
 
-
-  describe 'external data wrapper' do
+  describe 'nys disclosure wrapper' do
     subject { external_data_nys_disclosure.wrapper }
 
     assert_method_call :filer_id, "A00266"
@@ -78,5 +77,13 @@ describe 'NYS Disclosure External Data' do
     assert_method_call :date, '2005-06-09'
     assert_method_call :filer_name, 'Friends Of Vito Lopez'
     assert_method_call :recipient_primary_ext, 'Person'
+  end
+
+  describe 'nys filer wrapper' do
+    subject { external_data_nys_filer.wrapper }
+
+    assert_method_call :individual_campaign_committee?, true
+    assert_method_call :office_description, 'Member of Assembly'
+    assert_method_call :committee_type_description, 'Individual'
   end
 end
