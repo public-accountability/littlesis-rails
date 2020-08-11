@@ -16,8 +16,6 @@ class OligrapherController < ApplicationController
   before_action :check_editor, only: %i[update]
   before_action :set_oligrapher_version
 
-  before_action :admins_only if Rails.env.production?
-
   # Crud actions
 
   # POST /oligrapher
