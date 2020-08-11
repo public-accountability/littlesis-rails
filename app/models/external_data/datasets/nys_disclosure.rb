@@ -45,27 +45,19 @@ class ExternalData
       end
 
       def name
-        if org?
+        if self['CORP_30'].present?
           OrgName.format(self['CORP_30'])
-        elsif person?
+        elsif self['CORP_30'].present?
           NameParser.format values_at('FIRST_NAME_40', 'MID_INIT_42', 'LAST_NAME_44').join(' ')
         else
           '?'
         end
       end
 
-      def org?
-        self['CORP_30'].present?
-      end
-
-      def person?
-        self['LAST_NAME_44'].present?
-      end
-
       def donor_primary_ext
-        if org?
+        if self['CORP_30'].present?
           'Org'
-        elsif person?
+        else
           'Person'
         end
       end
