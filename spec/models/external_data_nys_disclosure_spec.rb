@@ -67,6 +67,13 @@ describe 'NYS Disclosure External Data' do
            external_data: external_data_nys_filer)
   end
 
+  specify 'ExternalData: #external_relationship? and #external_entity?' do
+    expect(external_data_nys_disclosure.external_relationship?).to be true
+    expect(external_data_nys_disclosure.external_entity?).to be false
+    expect(external_data_nys_filer.external_relationship?).to be false
+    expect(external_data_nys_filer.external_entity?).to be true
+  end
+
   describe 'nys disclosure wrapper' do
     subject { external_data_nys_disclosure.wrapper }
 
@@ -85,5 +92,24 @@ describe 'NYS Disclosure External Data' do
     assert_method_call :individual_campaign_committee?, true
     assert_method_call :office_description, 'Member of Assembly'
     assert_method_call :committee_type_description, 'Individual'
+  end
+
+  describe 'NysFiler.find_by_filer_id' do
+    specify do
+      expect(ExternalData::Datasets::NYSFiler.find_by_filer_id(filer_id))
+        .to eq external_data_nys_filer
+    end
+
+    specify do
+      expect(ExternalData::Datasets::NYSFiler.find_by_filer_id(filer_id).filer_name)
+        .to eq 'FRIENDS OF VITO LOPEZ'
+    end
+  end
+
+  describe 'External Relationship: NYS Filer' do
+    specify 'potential_matches_entity1' do
+      expect(EntityMatcher).to receive(:find_matches_for_person).with('Joseph P').once
+      external_relationship_nys_disclosure.potential_matches_entity1
+    end
   end
 end
