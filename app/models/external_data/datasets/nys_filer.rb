@@ -37,10 +37,16 @@ class ExternalData
           .order(params.order_hash)
       end
 
+      def self.find_by_filer_id(filer_id)
+        ExternalData
+          .nys_filer
+          .select("*, JSON_VALUE(data, '$.name') as filer_name, dataset_id as filer_id")
+          .find_by(dataset_id: filer_id)
+      end
+
       def self.json
         ExternalData.nys_filer.pluck(:data)
       end
     end
-
   end
 end
