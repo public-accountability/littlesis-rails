@@ -39,7 +39,7 @@ class OligrapherController < ApplicationController
       @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
       render json: @configuration
     else
-      render json:@map.errors, status: :bad_request
+      render json: @map.errors, status: :bad_request
     end
   end
 

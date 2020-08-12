@@ -7,7 +7,6 @@
 <div class="row">
   <div class="col-md-6">
 
-
   <%= form_for(resource, as: resource_name, url: users_path, html: { method: :put }) do |f| %>
     <%= render "devise/shared/error_messages", resource: resource %>
 
@@ -52,41 +51,17 @@
       </div>
     </div>
   <% end %>
-
   </div>
+
   <div class="col-sm-6">
-    <%= form_with(url: '/users/settings', method: :put) do %>
-
-    <div class="form-group mb-2">
-      <label class="mr-2 font-weight-bold">enable Oligrapher 3</label>
-
-      <label class="user-settings-toggle">
-        <input name="settings[oligrapher_beta]" type="hidden" value="0" />
-        <input type="checkbox"
-               id="settings_oligrapher_beta"
-               name="settings[oligrapher_beta]" value="1"
-               onchange="this.closest('form').submit()"
-               <%= @user.settings.oligrapher_beta ? 'checked="checked"' : nil %> />
-        <span></span>
-      </label>
-    </div>
-    <% end %>
-
+    <%= render partial: 'user_settings' %>
   </div>
 </div>
 
-<div class="row">
-  <h3 class="w-100">Profile Picture</h3>
-  <div class="entity-profile-image">
-    <%= user_profile_image %>
-    <p><%= button_to "Edit profile picture", image_user_path(@user) %></p>
-  </div>
-</div>
+<%# render partial: 'profile_picture %>
 
-<div class="row">
-  <h3 class="w-100">Api Token</h3>
-  <%= render partial: 'api_token_form' %>
-</div>
+<%# api tokens have been disabled %>
+<%# render partial: 'api_token_form' %>
 
 <div class="row">
   <h3 class="w-100">Cancel my account</h3>

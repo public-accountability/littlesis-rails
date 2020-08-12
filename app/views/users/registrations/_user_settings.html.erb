@@ -1,0 +1,16 @@
+<%= form_with(url: '/users/settings', method: :put) do %>
+
+  <div class="form-group mb-2">
+    <label class="mr-2 font-weight-bold">enable Oligrapher 3</label>
+
+    <label class="user-settings-toggle">
+      <input name="settings[oligrapher_beta]" type="hidden" value="0" />
+      <input type="checkbox"
+             id="settings_oligrapher_beta"
+             name="settings[oligrapher_beta]" value="1"
+             onchange="this.closest('form').submit()"
+             <%= @user.settings.oligrapher_beta ? 'checked="checked"' : nil %> />
+      <span></span>
+    </label>
+  </div>
+<% end %>
