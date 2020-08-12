@@ -63,15 +63,16 @@
 <%# api tokens have been disabled %>
 <%# render partial: 'api_token_form' %>
 
-<div class="row">
-  <h3 class="w-100">Cancel my account</h3>
-
-  <div class="w-25">
-    <%= button_to "Cancel my account", users_path, data: { confirm: "Are you sure?" }, method: :delete, class: 'btn btn-danger btn-sm' %>
+<div class="row mb-3">
+  <div class="col-md-6">
+  </div>
 </div>
 
-</div>
 
-<div class="row">
-  <%= link_to "Back", :back, class: 'mt-5' %>
+<div class="row mt-1 mb-2">
+  <div class="col">
+    <div class="float-left">
+      <%= button_to "Cancel my account", users_path, data: { confirm: "Are you sure?" }, method: :delete, class: 'btn btn-danger btn-sm' %>
+    </div>
+  </div>
 </div>
