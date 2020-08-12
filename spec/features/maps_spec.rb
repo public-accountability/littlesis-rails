@@ -1,8 +1,4 @@
-require 'rails_helper'
-
-# rubocop:disable Capybara/FeatureMethods
-
-describe 'map pages' do
+describe 'Maps' do
   let(:other_user) { create_really_basic_user }
   let(:user) { create_really_basic_user }
   let(:admin) { create_admin_user }
@@ -30,6 +26,36 @@ describe 'map pages' do
     it 'has oligrapher js with username and link' do
       expect(page.html).to include "/js/oligrapher/oligrapher-1.2.3.js"
       expect(page.html).to include "/js/oligrapher/oligrapher_littlesis_bridge-1.2.3.js"
+    end
+  end
+
+  describe 'oligrapher creation page' do
+    before { login_as(user, scope: :user) }
+
+    after { logout(user) }
+
+    context 'with oligrapher_beta setting disabled' do
+      before do
+        user.settings.update(oligrapher_beta: false)
+        user.save!
+        visit new_map_path
+      end
+
+      it 'uses oligrapher legacy path' do
+        successfully_visits_page new_map_path
+      end
+    end
+
+    context 'with oligrapher_beta setting enabled' do
+      before do
+        user.settings.update(oligrapher_beta: true)
+        user.save!
+        visit new_map_path
+      end
+
+      it 'uses new oligrapher path' do
+        successfully_visits_page new_oligrapher_path
+      end
     end
   end
 
@@ -180,5 +206,3 @@ describe 'map pages' do
     end
   end
 end
-
-# rubocop:enable Capybara/FeatureMethods
