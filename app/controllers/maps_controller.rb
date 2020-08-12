@@ -111,6 +111,11 @@ class MapsController < ApplicationController
 
   def new
     check_permission 'editor'
+
+    if current_user.settings.oligrapher_beta
+      return redirect_to new_oligrapher_path
+    end
+
     @map = NetworkMap.new
     @map.title = 'Untitled Map'
     @map.user = current_user
