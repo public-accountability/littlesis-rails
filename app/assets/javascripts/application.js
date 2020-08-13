@@ -24,7 +24,11 @@
 //= require dataTables.editor
 //= require bootstrap-select.min.js
 //= require typeahead.bundle.min.js
+
+// TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
+// entity autocomplete has already been switched over
 //= require hogan-3.0.1.js
+
 //= require d3.v5.min.js
 //= require papaparse.min.js
 //= require FileSaver.min.js

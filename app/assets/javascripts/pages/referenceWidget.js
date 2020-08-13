@@ -202,7 +202,8 @@
     '</a></div>'
   ].join('');
 
-  
+  // TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
+  // entity autocomplete has already been switched over
   var suggestionRender = Hogan.compile(
     [ '<div class="reference-suggestion" title="{{url}}">',
       referenceVisitLink,
