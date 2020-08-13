@@ -78,9 +78,16 @@ class ListDatatable
       types: list_entity.entity.types.join(","),
       industries: list_entity.entity.industries.join(','),    
       interlock_ids: interlock_ids,
-      list_interlock_ids: list_interlock_ids,
-      total_usd_donations: list_entity.entity.total_usd_donations
-     }
+      list_interlock_ids: list_interlock_ids
+    }.merge(sort_column(list_entity.entity))
+  end
+
+  def sort_column(entity)
+    if @list.sort_by.present?
+      { @list.sort_by => entity.public_send(@list.sort_by) }
+    else
+      {}
+    end
   end
 
   def prepare_options

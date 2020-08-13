@@ -953,6 +953,7 @@ CREATE TABLE `ls_list` (
   `short_description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `access` tinyint(4) NOT NULL DEFAULT 0,
   `entity_count` int(11) DEFAULT 0,
+  `sort_by` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_ls_list_on_delta` (`delta`),
   KEY `featured_list_id` (`featured_list_id`),
@@ -2266,6 +2267,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200721195543'),
 ('20200803182602'),
 ('20200811164427'),
+('20200813195904'),
 ('20200827170003');
 
 

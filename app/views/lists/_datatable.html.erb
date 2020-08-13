@@ -34,7 +34,9 @@
         <th>Rank</th>
       <% end %>
       <th>Name</th>
-      <th>Total USD donations</th>
+      <% if @list.sort_by %>
+        <th><%= @list.sort_by.to_s.humanize %></th>
+      <% end %>
       <% if @permissions[:editable] %>
           <th></th>
       <% end %>

@@ -6,6 +6,7 @@ import { BasicColumn } from './list_datatable/columns/basic_column.js';
 import { RankedTableColumns } from './list_datatable/columns/ranked_table_columns.js';
 import { NameColumn } from './list_datatable/columns/name_column.js';
 import { DonationsColumn } from './list_datatable/columns/donations_column.js';
+import { LinkCountColumn } from './list_datatable/columns/link_count_column.js';
 import { ActionsColumn } from './list_datatable/columns/actions_column.js';
 import { IdColumn } from './list_datatable/columns/id_column.js';
 import { MasterSearchColumn } from './list_datatable/columns/master_search_column.js';
@@ -40,7 +41,8 @@ export default function ListDatatableLoader({config, data}){
     return [].concat(
         ...RankedTableColumns(config),
         NameColumn(),
-        DonationsColumn,
+        DonationsColumn(config),
+        LinkCountColumn(config),
         ActionsColumn(config),
         IdColumn,
         BasicColumn('types'),
@@ -52,10 +54,10 @@ export default function ListDatatableLoader({config, data}){
   }
 
   const sortOrder = function(){
-    if ( config['ranked_table'] ){
+    if( config['sort_by'] ) {
+      return [[ columnConfigs().findIndex(col => col['data'] == config['sort_by']), 'desc' ]]
+    } else if ( config['ranked_table'] ){
       return [[ columnConfigs().findIndex(col => col['data'] == 'default_sort_position'), 'asc' ]]
-    } else {
-      return [[ columnConfigs().findIndex(col => col['data'] == 'total_usd_donations'), 'desc' ]]
     }
   }
 }

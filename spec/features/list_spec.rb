@@ -114,4 +114,43 @@ describe 'lists', type: :feature do
       end
     end
   end
+
+  describe "sorting a list by the donations column" do
+    let(:user) { create_admin_user }
+    let(:entity) { create(:entity_person) }
+    let(:entity2) { create(:entity_org) }
+    let(:donation) { create(:donation_relationship, entity: entity, entity2_id: entity2.id, amount: 323_00) }
+    let!(:list) do
+      create(:list, sort_by: nil).tap do |l|
+        ListEntity.create!(list_id: l.id, entity_id: entity.id)
+      end
+    end
+
+    before do
+      login_as(user, scope: :user)
+      visit edit_list_path(list)
+    end
+
+    scenario "user shows the list's donations column then hides it again" do
+      within '.edit_list' do
+        select 'Total usd donations', from: 'Sort by'
+        click_on 'Save'
+      end
+
+      expect(page).to have_css('.alert-success', text: 'List was successfully updated.')
+      expect(list.reload.sort_by).to eq('total_usd_donations')
+
+      within '.list-actions' do
+        click_on 'edit'
+      end
+
+      expect(page).to have_css('h1', text: 'Editing list')
+      within '.edit_list' do
+        select '', from: 'Sort by'
+        click_on 'Save'
+      end
+
+      expect(list.reload.sort_by.blank?).to be true
+    end
+  end
 end
