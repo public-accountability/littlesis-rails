@@ -17,6 +17,7 @@ class Entity < ApplicationRecord
   EXCERPT_SIZE = 150
   PER_PAGE = 20
   BULK_LIMIT = 10
+  SORTABLE_ATTRIBUTES = %i[link_count total_usd_donations].freeze
 
   has_paper_trail :ignore => [:link_count, :delta, :last_user_id],
                   :on =>  [:create, :destroy, :update],

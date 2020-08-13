@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_16_191825) do
+ActiveRecord::Schema.define(version: 2020_08_13_195904) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -596,6 +596,7 @@ ActiveRecord::Schema.define(version: 2020_07_16_191825) do
     t.string "short_description"
     t.integer "access", limit: 1, default: 0, null: false
     t.integer "entity_count", default: 0
+    t.string "sort_by"
     t.index ["delta"], name: "index_ls_list_on_delta"
     t.index ["featured_list_id"], name: "featured_list_id"
     t.index ["last_user_id"], name: "last_user_id_idx"

@@ -142,7 +142,8 @@ class ListsController < ApplicationController
     @datatable_config = {
       update_path: update_entity_list_path(@table.list),
       editable: @permissions[:editable],
-      ranked_table: @table.ranked?
+      ranked_table: @table.ranked?,
+      sort_by: @list.sort_by
     }
   end
 
@@ -246,8 +247,20 @@ class ListsController < ApplicationController
   end
 
   # Only allow a trusted parameter "white list" through.
-  def list_params
-    params.require(:list).permit(:name, :description, :is_ranked, :is_admin, :is_featured, :is_private, :custom_field_name, :short_description, :access)
+  def list_params # rubocop:disable Metrics/MethodLength
+    params.require(:list)
+      .permit(
+        :name,
+        :description,
+        :is_ranked,
+        :sort_by,
+        :is_admin,
+        :is_featured,
+        :is_private,
+        :custom_field_name,
+        :short_description,
+        :access
+      )
   end
 
   def reference_params
