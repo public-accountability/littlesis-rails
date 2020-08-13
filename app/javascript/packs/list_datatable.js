@@ -6,7 +6,6 @@ import { BasicColumn } from './list_datatable/columns/basic_column.js';
 import { RankedTableColumns } from './list_datatable/columns/ranked_table_columns.js';
 import { NameColumn } from './list_datatable/columns/name_column.js';
 import { DonationsColumn } from './list_datatable/columns/donations_column.js';
-import { ContextColumn } from './list_datatable/columns/context_column.js';
 import { ActionsColumn } from './list_datatable/columns/actions_column.js';
 import { IdColumn } from './list_datatable/columns/id_column.js';
 import { MasterSearchColumn } from './list_datatable/columns/master_search_column.js';
@@ -42,7 +41,6 @@ export default function ListDatatableLoader({config, data}){
         ...RankedTableColumns(config),
         NameColumn(),
         DonationsColumn,
-        ContextColumn(config),
         ActionsColumn(config),
         IdColumn,
         BasicColumn('types'),

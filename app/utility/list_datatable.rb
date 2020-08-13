@@ -77,7 +77,6 @@ class ListDatatable
       blurb_excerpt: excerpt(list_entity.entity.blurb, 70 - list_entity.entity.name.length),
       types: list_entity.entity.types.join(","),
       industries: list_entity.entity.industries.join(','),    
-      context: list_entity.list.custom_field_name.present? ? list_entity.custom_field : list_entity.entity.blurb,
       interlock_ids: interlock_ids,
       list_interlock_ids: list_interlock_ids,
       total_usd_donations: list_entity.entity.total_usd_donations
@@ -103,10 +102,6 @@ class ListDatatable
 
   def lists?
     @entity_ids.count < 500
-  end
-
-  def context_field_name
-    @list.custom_field_name.present? ? @list.custom_field_name : 'Details'
   end
 
   private

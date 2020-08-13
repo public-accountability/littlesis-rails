@@ -35,9 +35,6 @@
       <% end %>
       <th>Name</th>
       <th>Total USD donations</th>
-      <% if table.list.custom_field_name.present? %>
-          <th><%= table.context_field_name %></th>
-      <% end %>
       <% if @permissions[:editable] %>
           <th></th>
       <% end %>
