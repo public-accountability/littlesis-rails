@@ -198,6 +198,10 @@ class NetworkMap < ApplicationRecord
     url_helpers.share_oligrapher_path(id: id, secret: secret)
   end
 
+  def version3?
+    oligrapher_version == 3
+  end
+
   # Editor methods
   # These are only for oligrapher version 3
   def confirmed_editor_ids
