@@ -13,10 +13,8 @@
     <% end %>
   </head>
   <body>
-    <div id="top">
-      <%= render partial: 'shared/nav_menu',
-                 locals: { full_width: true } %>
-    </div>
+    <%= render partial: 'shared/nav_menu',
+               locals: { full_width: true } %>
 
     <% if content_for? :body %>
       <%= yield :body %>

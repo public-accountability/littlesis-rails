@@ -15,9 +15,7 @@
   <body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
 
     <% unless content_for? :hide_top %>
-      <div id="top">
-	<%= render partial: 'shared/nav_menu' %>
-      </div>
+      <%= render partial: 'shared/nav_menu' %>
     <% end %>
 
     <% if content_for? :title %>
