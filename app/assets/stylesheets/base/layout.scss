@@ -98,8 +98,6 @@ body {
 	display:none;
     }
 
-
-
     .navbar-right-menu-item {
         @include media-breakpoint-up(sm) {
 	    display: none;
@@ -133,12 +131,20 @@ body {
 		box-shadow: -3px 3px 3px #737373;
 	    }
 	}
-
-
-
     }
 
-    //   .highlighted { font-weight: 500; }
+    #oligrapher-update-notice {
+        @extend .mr-3;
+        span {
+            font-weight: 800;
+            font-size: 11px;
+        }
+
+        span:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
 }
 
 #top_content_full {

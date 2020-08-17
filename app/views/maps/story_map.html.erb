@@ -8,6 +8,13 @@
   <%= oligrapher_js_tags %>
 <% end %>
 
+
+<% if @map.oligrapher_version == 2 && user_signed_in? %>
+  <% content_for(:navbar_notice) do %>
+    <%= render partial: 'oligrapher_update' %>
+  <% end %>
+<% end %>
+
 <%= content_for(:body) do %>
 
 <%= cache_if @cacheable, @map do %>

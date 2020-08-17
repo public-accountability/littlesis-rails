@@ -37,7 +37,7 @@ navbar_wrapper_classes << 'donation-banner' if show_donation_banner?
 
           <div id="navbar-notice" class="navbar-right-menu-item">
             <% if content_for? :navbar_notice %>
-              <%# render notice %>
+              <%= yield :navbar_notice %>
             <% end  %>
           </div>
 
