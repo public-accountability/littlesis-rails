@@ -118,6 +118,7 @@ class OligrapherController < ApplicationController
   def embedded
     check_private_access
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user, embed: true)
+    response.headers.delete('X-Frame-Options')
     render layout: 'embedded_oligrapher'
   end
 
