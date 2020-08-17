@@ -37,7 +37,7 @@ body {
 
 /*
 #top
-  nav#main-navbar-container
+  nav#main-navbar-container.navbar
     div#navbar-content-wrapper
       div#navbar-content
         div.brand --> image
@@ -46,9 +46,8 @@ body {
           div#navbar-notice   --> optional notice
           div#top_donate_link --> donate button
           div                 --> search box
-
+            form#navbar-search
 */
-
 
 #top {
     .navbar, #navbar-content-wrapper {
@@ -99,16 +98,21 @@ body {
 	display:none;
     }
 
-    #navbar-search {
-	@extend .form-inline;
 
-	@include media-breakpoint-up(sm) {
+
+    .navbar-right-menu-item {
+        @include media-breakpoint-up(sm) {
 	    display: none;
 	}
 
 	@include media-breakpoint-up(lg) {
 	    display: inherit;
 	}
+    }
+
+
+    #navbar-search {
+	@extend .form-inline;
 
 	input {
 	    max-width: 200px;

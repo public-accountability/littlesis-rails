@@ -35,17 +35,17 @@ navbar_wrapper_classes << 'donation-banner' if show_donation_banner?
 	    <%= render partial: 'shared/bootstrap_nav_menu' %>
           </div>
 
-          <div id="navbar-notice">
+          <div id="navbar-notice" class="navbar-right-menu-item">
             <% if content_for? :navbar_notice %>
               <%# render notice %>
             <% end  %>
           </div>
 
-          <div id="top_donate_link">
+          <div id="top_donate_link" class="navbar-right-menu-item">
 	    <span><strong><%= link_to('Donate', '/donate', id: 'donate-link-button')%></strong></span>
 	  </div>
 
-          <div>
+          <div class="navbar-right-menu-item">
 	    <%= render partial: 'shared/nav_menu_search' %>
           </div>
         </div>
