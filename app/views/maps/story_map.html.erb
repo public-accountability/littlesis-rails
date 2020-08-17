@@ -10,7 +10,6 @@
 
 <%= content_for(:body) do %>
 
-<%= render 'shared/facebook_sdk' %>
 <%= cache_if @cacheable, @map do %>
 
 <div id="oligrapher"></div>
@@ -49,7 +48,7 @@
  <% else %>
  var graph = null;
  <% end %>
- 
+
  <% if @map.annotations_data %>
  <% if @editable %>
  var annotations = <%= raw(@map.annotations_data) %>;
@@ -73,31 +72,31 @@
 	 return;
      }
 
-     var annotations = data.annotations.filter(function(annotation) { 
+     var annotations = data.annotations.filter(function(annotation) {
 	 return annotation.id != 'sources';
      });
 
      $.ajax({
 	 url: "<%= @map.id ? map_url(@map) : maps_path %>",
 	 type: "<%= @map.id ? 'PATCH' : 'POST' %>",
-	 data: { 
-             graph_data: JSON.stringify(data.graph), 
-             annotations_data: JSON.stringify(annotations), 
+	 data: {
+             graph_data: JSON.stringify(data.graph),
+             annotations_data: JSON.stringify(annotations),
              annotations_count: annotations.length,
              title: data.title,
              is_private: data.settings.is_private,
 	     is_cloneable: data.settings.is_cloneable,
              list_sources: data.settings.list_sources
 	 },
-	 success: function(data) { 
+	 success: function(data) {
              $('#oligrapherModal .modal-body-text').text("Map successfully saved");
              $('#oligrapherModal').modal();
              <% if !@map.persisted? %>
              window.location.href = "<%= map_url(id: 'ZZZ') %>".replace(/ZZZ/, data.id);
              <% end %>
 	 },
-	 error: function(req, str) { 
-             alert("There was an error saving the map: " + str); 
+	 error: function(req, str) {
+             alert("There was an error saving the map: " + str);
 	 },
 	 dataType: "json"
      })
@@ -105,7 +104,7 @@
 
 
  var mapTitle = <%= raw(@map.display_title(lock: !@editable)) %>;
- 
+
  var oli = new Oligrapher({
      root: root,
      data: {
@@ -198,7 +197,7 @@
  window.onpopstate = function(event) {
      if (event.state && typeof(event.state.index) !== 'undefined') {
 	 // don't push state again
-	 showAnnotation(event.state.index);      
+	 showAnnotation(event.state.index);
      } else {
 	 // window.location.href = window.location.toString();
      }
