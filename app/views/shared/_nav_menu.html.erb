@@ -31,20 +31,26 @@ navbar_wrapper_classes << 'donation-banner' if show_donation_banner?
         </div>
 
         <div class="collapse navbar-collapse">
-	  <%= render partial: 'shared/bootstrap_nav_menu' %>
+          <div class="mr-auto nav">
+	    <%= render partial: 'shared/bootstrap_nav_menu' %>
+          </div>
 
+          <div id="navbar-notice">
+            <% if content_for? :navbar_notice %>
+              <%# render notice %>
+            <% end  %>
+          </div>
 
-	  <div id="top_donate_link">
+          <div id="top_donate_link">
 	    <span><strong><%= link_to('Donate', '/donate', id: 'donate-link-button')%></strong></span>
 	  </div>
 
-	  <%= render partial: 'shared/nav_menu_search' %>
+          <div>
+	    <%= render partial: 'shared/nav_menu_search' %>
+          </div>
         </div>
-
-        <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-	     <span class="navbar-toggler-icon"></span>
-	     </button> -->
       </div>
+
     </div>
   </nav>
 </div>

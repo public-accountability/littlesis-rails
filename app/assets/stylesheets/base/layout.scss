@@ -28,18 +28,33 @@ body {
   a {
       text-decoration: none;
       color: $link_blue;
-      
+
       &:hover {
 	  text-decoration: underline;
 	  color: $link_blue_hover;
       }
 }
 
+/*
+#top
+  nav#main-navbar-container
+    div#navbar-content-wrapper
+      div#navbar-content
+        div.brand --> image
+        div.collapse.navbar-collapse
+          div                 --> bootstrap menu
+          div#navbar-notice   --> optional notice
+          div#top_donate_link --> donate button
+          div                 --> search box
+
+*/
+
+
 #top {
     .navbar, #navbar-content-wrapper {
 	height: $navbar_height;
     }
-    
+
     #donation-banner-wrapper, #navbar-content-wrapper {
 	width: $page_width;
 	margin: 0 auto;
@@ -50,7 +65,7 @@ body {
 	@include media-breakpoint-up(md) {
 	    padding-left: 15px;
 	}
-	
+
     }
 
     // change above style when full width
@@ -74,7 +89,7 @@ body {
 
     .nav-link {
 	color: #777;
-    
+
 	&:hover {
 	    color: #333;
 	}
@@ -100,7 +115,8 @@ body {
 	}
 	margin-top: 6px;
     }
-      
+
+
     #top_donate_link {
 	margin-right: 0.6em;
 
@@ -114,10 +130,10 @@ body {
 	    }
 	}
 
-	
+
 
     }
-    
+
     //   .highlighted { font-weight: 500; }
 }
 
@@ -131,8 +147,8 @@ body {
 #brand {
   margin-top: 12px;
   margin-right: 1em;
-  img { 
-    width: 180px; 
+  img {
+    width: 180px;
     cursor: pointer;
   }
 }
@@ -145,7 +161,7 @@ body {
 //     display: inline-block;
 //   }
 
-//   .menu_dropdown_name { 
+//   .menu_dropdown_name {
 //     color: white;
 //     cursor: pointer;
 //     padding-left: 1em;
@@ -158,8 +174,8 @@ body {
 //     }
 //   }
 
-//   li a { 
-//     color: $link_blue; 
+//   li a {
+//     color: $link_blue;
 //   }
 // }
 
@@ -211,7 +227,7 @@ body {
   font-weight: 600;
 }
 
-.field { 
+.field {
   input[type=text] {
     width: 500px;
   }
@@ -282,14 +298,14 @@ div.spacer {
 .section_header {
   margin-bottom: 0.5em;
   font-size: 1.5em;
-  border-bottom: 1px solid #eee;	
+  border-bottom: 1px solid #eee;
 }
 
 .pagination {
   margin: 0;
 }
 
-.left_column {	
+.left_column {
   float: left;
   width: $left_column_width - 30px;
 
@@ -307,7 +323,7 @@ div.spacer {
   float: left;
   width: $small_column_width;
 
-  h1, h2, h3 { margin-top: 0; }	
+  h1, h2, h3 { margin-top: 0; }
 }
 
 .big_right_column {
@@ -342,7 +358,7 @@ body.bootsy_text_area.form-control {
   padding: 0;
 }
 
-.alert { 
+.alert {
   img {
     margin-right: 0.8em;
     height: 16px;
