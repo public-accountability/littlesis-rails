@@ -64,7 +64,11 @@ describe Api, :pagination_helper do
       before { get api_entity_path(lawyer), params: { 'details' => 'true' } }
 
       specify { expect(response).to have_http_status 200 }
-      specify { expect(json).to eql(with_details) }
+
+      specify do
+        expect(json["data"]["attributes"].except!("updated_at"))
+          .to eq(with_details["data"]["attributes"].except!("updated_at"))
+      end
     end
 
     describe 'record not found' do
