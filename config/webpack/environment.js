@@ -6,4 +6,17 @@ environment.plugins.append('Provide', new webpack.ProvidePlugin({
    jQuery: 'jquery'
 }));
 
+environment.loaders.append('babel', {
+  test: /\.js?/,
+  use: 'babel-loader',
+  exclude: /node_modules/
+})
+
+environment.loaders.append('json', {
+  test: /\.json?/,
+  use: 'json-loader',
+  exclude: /node_modules/,
+  type: 'javascript/auto'
+})
+
 module.exports = environment
