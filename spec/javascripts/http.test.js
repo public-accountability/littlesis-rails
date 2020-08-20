@@ -1,15 +1,15 @@
 import { qs } from 'packs/common/http';
 
 describe('qs', () =>{
-  test('appends ? to strings', () => {
-    expect(qs('foo=bar')).toEqual('?foo=bar');
+  it('appends ? to strings', () => {
+    assert.equal(qs('foo=bar'), '?foo=bar');
   });
 
-  test('converts object', () => {
-    expect(qs({foo: 'bar', number: 1})).toEqual('?foo=bar&number=1');
+  it('converts object', () => {
+    assert.equal(qs({foo: 'bar', number: 1}), '?foo=bar&number=1');
   });
   
-  test('returns blank string otherwise', () => {
-    expect(qs(null)).toEqual('');
+  it('returns blank string otherwise', () => {
+    assert.equal(qs(null), '');
   });
 });

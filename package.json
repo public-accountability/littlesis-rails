@@ -1,8 +1,6 @@
 {
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
+    "test": "mochapack --webpack-config config/webpack/test.js \"spec/javascripts/**/*.js\""
   },
   "jest": {
     "roots": [
@@ -28,6 +26,7 @@
     "@public-accountability/simplestore": "^0.1.6",
     "@rails/webpacker": "^5.1.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "chai": "^4.2.0",
     "clipboard": "^2.0.6",
     "core-js": "3.6.5",
     "datatables.net": "^1.10.21",
@@ -35,6 +34,8 @@
     "immutable": "^4.0.0-rc.12",
     "install": "^0.13.0",
     "jquery": "^3.5.1",
+    "jsdom": "^16.4.0",
+    "json-loader": "^0.5.7",
     "lodash": "^4.17.19",
     "mustache": "^4.0.1",
     "prop-types": "^15.7.2",
@@ -50,6 +51,8 @@
     "enzyme-adapter-react-16": "^1.15.2",
     "jest": "^26.0.1",
     "jest-fetch-mock": "^3.0.3",
+    "mocha": "^8.1.1",
+    "mochapack": "^2.0.3",
     "webpack-dev-server": "^3.11.0"
   }
 }
