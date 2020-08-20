@@ -66,8 +66,8 @@ describe Api, :pagination_helper do
       specify { expect(response).to have_http_status 200 }
 
       specify do
-        expect(json.tap { |j| j["data"]["attributes"].delete("updated_at") })
-          .to eql(with_details.tap { |d| d["data"]["attributes"].delete("updated_at") })
+        expect(json["data"]["attributes"].except!("updated_at"))
+          .to eq(with_details["data"]["attributes"].except!("updated_at"))
       end
     end
 
