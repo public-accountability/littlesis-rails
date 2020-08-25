@@ -2,9 +2,11 @@
 <html>
   <head>
     <title>Example Oligrapher</title>
+    <% if Rails.env != "development" %>
+      <%= javascript_pack_tag 'application' %>
+      <%= javascript_include_tag 'application' %>
+    <% end %>
     <%= stylesheet_link_tag 'oligrapher', media: 'all' %>
-    <%= javascript_pack_tag 'application' %>
-    <%= javascript_include_tag "application" %>
     <%= csrf_meta_tags %>
 
     <% if content_for?(:head) %>
@@ -15,8 +17,7 @@
       <script src="http://localhost:8090/webpack-dev-server.js"></script>
       <script src="http://localhost:8090/oligrapher-dev.js"></script>
     <% else %>
-
-      <script src="<%= "/oligrapher/oligrapher-#{@oligrapher_version}.js"  %>"></script>
+      <script src="<%= "/oligrapher/oligrapher-#{@oligrapher_version}.js" %>"></script>
     <% end %>
   </head>
 

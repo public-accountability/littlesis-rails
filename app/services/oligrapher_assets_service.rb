@@ -55,6 +55,7 @@ class OligrapherAssetsService
         build_cmd << '--env.api_url=http://127.0.0.1:8081'
       else
         build_cmd << '--env.production'
+        build_cmd << '--env.public_path=/oligrapher/'
       end
 
       system(build_cmd.join(' ')) || error("Failed to build for commit #{@commit}")

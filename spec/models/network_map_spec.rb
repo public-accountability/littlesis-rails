@@ -385,6 +385,12 @@ describe NetworkMap, type: :model do
           .to change { map.reload.all_editor_ids }.from([]).to([other_user.id])
       end
 
+      it 'cannot add owner to editors array' do
+        expect(map.all_editor_ids).to eq []
+        expect { map.add_editor(owner).save }
+          .not_to change { map.reload.all_editor_ids }
+      end
+
       it 'validates user id before adding' do
         map.add_editor(5_000_000)
         expect(map.all_editor_ids).to eq []

@@ -62,4 +62,8 @@ describe OligrapherController, type: :controller do
   it do
     is_expected.to route(:get, '/oligrapher/789/embedded').to(action: :embedded, id: '789')
   end
+
+  it do
+    is_expected.to route(:post, '/oligrapher/789-abc/release_lock').to(action: :release_lock, id: '789-abc')
+  end
 end

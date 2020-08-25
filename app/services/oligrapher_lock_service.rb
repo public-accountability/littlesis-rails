@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OligrapherLockService
-  LOCK_DURATION = 10.minutes.freeze
+  LOCK_DURATION = 5.minutes.freeze
 
   Lock = Struct.new(:user_id, :time)
 
@@ -11,24 +11,33 @@ class OligrapherLockService
   def initialize(map:, current_user:)
     @map = map
     @current_user = current_user
+    @permission_denied = true
 
     unless @map.oligrapher_version == 3
       raise Error, "map \##{@map.id} is not version 3"
     end
 
-    unless @map.can_edit?(@current_user)
-      raise Error, "user #{@current_user.id} is not an editor of map #{@map.id}"
+    if @map.can_edit?(@current_user)
+      @permission_denied = false
     end
 
-    @lock = Rails.cache.fetch(cache_key)
+    fetch_lock
   end
 
-  # Note
+  def fetch_lock
+    @lock = Rails.cache.fetch(cache_key)
+    self
+  end
+
   def as_json
+    return self.class.permission_error_json unless user_has_permission?
+
     if locked?
-      @lock.to_h.merge(locked: true,
-                       name: User.find(@lock.user_id).username,
-                       user_has_lock: user_has_lock?)
+      @lock.to_h.merge(
+        locked: true,
+        name: User.find(@lock.user_id).username,
+        user_has_lock: user_has_lock?
+      )
     else
       { locked: false }
     end
@@ -40,9 +49,20 @@ class OligrapherLockService
   end
 
   def lock!
+    return self unless user_has_permission?
+
     new_lock = Lock.new(@current_user.id, Time.current)
     Rails.cache.write(cache_key, new_lock, :expires_in => LOCK_DURATION)
     @lock = new_lock
+    self
+  end
+
+  def release!
+    if user_has_lock?
+      Rails.cache.delete(cache_key)
+      fetch_lock
+    end
+
     self
   end
 
@@ -51,11 +71,19 @@ class OligrapherLockService
   end
 
   def user_has_lock?
-    @lock.user_id == @current_user.id
+    @lock.present? && @lock.user_id == @current_user.id
   end
 
   def user_can_lock?
-    !locked? || user_has_lock?
+    user_has_permission? && (!locked? || user_has_lock?)
+  end
+
+  def user_has_permission?
+    !@permission_denied
+  end
+
+  def self.permission_error_json
+    { permission_denied: true }
   end
 
   private

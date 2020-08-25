@@ -215,6 +215,7 @@ Lilsis::Application.routes.draw do
       post '/confirm_editor', action: :confirm_editor
       get 'lock'
       post 'lock'
+      post 'release_lock'
       post 'clone'
       get 'embedded'
     end
