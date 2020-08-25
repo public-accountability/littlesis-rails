@@ -9,7 +9,7 @@ module Oligrapher
                                       Relationship::DONATION_CATEGORY,
                                       Relationship::OWNERSHIP_CATEGORY]).freeze
 
-  def self.configuration(map:, current_user: nil, embed: false, locked: false)
+  def self.configuration(map:, current_user: nil, embed: false)
     is_owner = current_user.present? && map.user_id == current_user.id
     owner = map.user || current_user || nil
 
