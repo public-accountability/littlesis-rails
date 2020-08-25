@@ -3,7 +3,8 @@
 describe 'Maps', :sphinx, type: :request do
   describe 'redirecting version 3 map' do
     let(:map) { create(:network_map, user_id: User.last.id, oligrapher_version: 3) }
-    before { get "/maps/#{map.id}" }
+
+    before { get "/maps/#{map.id}-so-many-connections" }
 
     it 'redirects to oligrapher#show' do
       expect(response).to redirect_to oligrapher_path(map)

@@ -7,7 +7,6 @@ class MapsController < ApplicationController
                 except: [:featured, :all, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
   before_action :authenticate_user!,
                 except: [:featured, :all, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
-  before_action :check_oligrapher_version, only: [:show]
   before_action :enforce_slug, only: [:show]
   before_action :admins_only, only: [:feature]
 
@@ -59,6 +58,8 @@ class MapsController < ApplicationController
   end
 
   def embedded_v2
+    return redirect_to(embedded_oligrapher_path(@map)) if @map.version3?
+
     check_private_access
     @header_pct = embedded_params.fetch(:header_pct, EMBEDDED_HEADER_PCT)
     @annotation_pct = embedded_params.fetch(:annotation_pct, EMBEDDED_ANNOTATION_PCT)
@@ -68,6 +69,8 @@ class MapsController < ApplicationController
   end
 
   def embedded
+    return redirect_to(embedded_oligrapher_path(@map)) if @map.version3?
+
     check_private_access
     response.headers.delete('X-Frame-Options')
     render layout: 'fullscreen'
@@ -85,6 +88,8 @@ class MapsController < ApplicationController
 
   # renders the 'story_map' template
   def show
+    return redirect_to(oligrapher_path(@map)) if @map.version3?
+
     check_private_access
 
     @cacheable = true unless user_signed_in?
@@ -290,9 +295,5 @@ class MapsController < ApplicationController
     if params.key?(:oligrapher_version) && OLIGRAPHER_VERSION_REGEX.match?(params[:oligrapher_version])
       @oligrapher_version = params[:oligrapher_version]
     end
-  end
-
-  def check_oligrapher_version
-    redirect_to oligrapher_path(@map) if @map.oligrapher_version == 3
   end
 end

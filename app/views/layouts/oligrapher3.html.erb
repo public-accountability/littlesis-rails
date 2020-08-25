@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Example Oligrapher</title>
-    <% if Rails.env != "development" %>
-      <%= javascript_pack_tag 'application' %>
-      <%= javascript_include_tag 'application' %>
-    <% end %>
+    <title><%= page_title %></title>
+    <%= javascript_pack_tag 'application' %>
+    <%= javascript_include_tag 'application' %>
     <%= stylesheet_link_tag 'oligrapher', media: 'all' %>
     <%= csrf_meta_tags %>
 
@@ -22,10 +20,8 @@
   </head>
 
   <body>
-    <div id="top">
-      <%= render partial: 'shared/nav_menu',
-                 locals: { full_width: true } %>
-    </div>
+    <%= render partial: 'shared/nav_menu',
+               locals: { full_width: true } %>
 
     <% if content_for? :body %>
       <%= yield :body %>
