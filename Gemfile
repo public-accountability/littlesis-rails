@@ -17,7 +17,7 @@ gem 'devise', '~> 4.7.0'
 gem 'activerecord-session_store'
 
 # Versioning
-gem 'paper_trail', '10.3.1'
+gem 'paper_trail', '~> 11'
 
 # Pagination
 gem 'kaminari'
