@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
-  VERSION = '4c479c07b76ab808612e9d62a5e25e35b1ebe2de'
+  VERSION = 'd0da591d6b8ecc070b7c3b87d31082a08c37bffc'
 
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
@@ -36,7 +36,8 @@ module Oligrapher
         settings: settings_data(map),
         editors: is_owner ? editor_data(map) : confirmed_editor_data(map),
         version: map.oligrapher_version,
-        shareUrl: is_owner ? map.share_path : nil
+        shareUrl: is_owner ? map.share_path : nil,
+        lock: lock_data(map, current_user)
       } }
   end
 
@@ -67,6 +68,12 @@ module Oligrapher
       clone: map.is_cloneable,
       list_sources: map.list_sources
     })
+  end
+
+  def self.lock_data(map, current_user)
+    ::OligrapherLockService
+      .new(map: map, current_user: current_user)
+      .as_json
   end
 
   module Node

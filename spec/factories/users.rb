@@ -21,7 +21,7 @@ FactoryBot.define do
   end
 
   factory :user_with_id, class: User do
-    username { Faker::Internet.unique.user_name }
+    username { Faker::Internet.unique.user_name(specifier: 5).tr('.', '') }
     email { generate(:user_email) }
     default_network_id { 79 }
     confirmed_at { Time.current }

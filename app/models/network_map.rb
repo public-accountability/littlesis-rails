@@ -219,6 +219,7 @@ class NetworkMap < ApplicationRecord
   def add_editor(editor)
     editor_id = editor.try(:id) || editor.try!(:to_i)
     return self if all_editor_ids.include?(editor_id)
+    return self if user_id == editor_id
 
     if validate_editor(editor_id)
       editors << { id: editor_id, pending: true }
@@ -231,10 +232,8 @@ class NetworkMap < ApplicationRecord
   def remove_editor(editor)
     editor_id = editor.try(:id) || editor.try!(:to_i)
 
-    unless user_id == editor_id
-      self.editors.reject! { |e| e[:id] == editor_id }
-      editors_will_change!
-    end
+    self.editors.reject! { |e| e[:id] == editor_id }
+    editors_will_change!
 
     self
   end
@@ -254,7 +253,7 @@ class NetworkMap < ApplicationRecord
   end
 
   def validate_editor(editor_id)
-    if editor_id == user.id || User.exists?(id: editor_id)
+    if User.exists?(id: editor_id)
       true
     else
       Rails.logger.info "[NetworkMap] Could not find editor #{editor_id} in the database"

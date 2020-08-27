@@ -10,7 +10,7 @@ class OligrapherController < ApplicationController
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
   before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges get_interlocks embedded]
-  before_action :set_map, only: %i[update editors confirm_editor show lock clone destroy embedded]
+  before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded]
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
   before_action :check_editor, only: %i[update]
@@ -76,12 +76,20 @@ class OligrapherController < ApplicationController
   # a POST request is how a user can "takeover" a locked map
   # A GET request does lock polling
   def lock
-    check_private_access
-    raise Exceptions::PermissionError unless @map.can_edit?(current_user)
+    begin
+      check_private_access
+      lock_service = ::OligrapherLockService.new(map: @map, current_user: current_user)
+      lock_service.lock! if (is_owner && request.post?) || lock_service.user_can_lock?
+      render json: lock_service.as_json.merge({ editors: editor_data })
+    rescue Exceptions::PermissionError
+      render json: ::OligrapherLockService.permission_error_json
+    end
+  end
 
-    lock_service = ::OligrapherLockService.new(map: @map, current_user: current_user)
-    lock_service.lock! if request.post? || lock_service.user_can_lock?
-    render json: lock_service.as_json
+  def release_lock
+    check_private_access
+    lock_service = ::OligrapherLockService.new(map: @map, current_user: current_user).release!
+    render json: { lock_released: !lock_service.user_has_lock? }
   end
 
   def clone
@@ -133,7 +141,7 @@ class OligrapherController < ApplicationController
     entities = EntitySearchService
                  .new(query: params[:q],
                       fields: %w[name aliases blurb],
-                      per_page: params.fetch(:num, 10).to_i)
+                      num: params.fetch(:num, 10).to_i)
                  .search
                  .map(&Oligrapher::Node.method(:from_entity))
 

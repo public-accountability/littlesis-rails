@@ -63,6 +63,10 @@ describe OligrapherController, type: :controller do
     is_expected.to route(:get, '/oligrapher/789/embedded').to(action: :embedded, id: '789')
   end
 
+  it do
+    is_expected.to route(:post, '/oligrapher/789-abc/release_lock').to(action: :release_lock, id: '789-abc')
+  end
+
   it 'removes X-Frame-Options from embedded oligrapher request' do
     map = build_stubbed(:network_map_version3)
     expect(NetworkMap).to receive(:find).with(map.id.to_s).and_return(map)
