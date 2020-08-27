@@ -1,5 +1,5 @@
 <div id="entity-deletion-request-form">
-  <%= form_tag(deletion_requests_path, method: :post, class: 'user-request-form') do %>
+  <%= form_tag(deletion_requests_entities_path, method: :post, class: 'user-request-form') do %>
     <%= hidden_field_tag 'entity_id', @entity.id %>
     <div class="entity-deletion-justification user-request-justification">
       <p>Please briefly explain why this entity should be deleted:</p>

@@ -160,10 +160,12 @@ Lilsis::Application.routes.draw do
   # deletion requests #
   #####################
 
-  resources :deletion_requests, only: [:new, :create] do
-    member do
-      get 'review' => 'deletion_requests#review'
-      post 'review' => 'deletion_requests#commit_review'
+  namespace :deletion_requests do
+    resources :entities, only: [:new, :create] do
+      member do
+        get 'review' => 'entities#review'
+        post 'review' => 'entities#commit_review'
+      end
     end
   end
 

@@ -24,7 +24,7 @@ feature 'Entity deletion request & review' do
       let(:user) { requester }
 
       it "shows the deletion request page" do
-        successfully_visits_page new_deletion_request_path(entity_id: entity.id)
+        successfully_visits_page new_deletion_requests_entity_path(entity_id: entity.id)
       end
 
       it "shows information about the entity to be deleted" do
@@ -80,7 +80,7 @@ feature 'Entity deletion request & review' do
 
   describe "reviewing a deletion request" do
     let(:deletion_request) { create :deletion_request, user: requester, entity: entity }
-    before { visit review_deletion_request_path(deletion_request) }
+    before { visit review_deletion_requests_entity_path(deletion_request) }
 
     context "as a non-admin" do
       let(:user) { create_really_basic_user }
@@ -91,7 +91,7 @@ feature 'Entity deletion request & review' do
       let(:user) { create_admin_user }
 
       it "shows the deletion review page" do
-        successfully_visits_page review_deletion_request_path(deletion_request)
+        successfully_visits_page review_deletion_requests_entity_path(deletion_request)
       end
 
       it "shows a description of the request" do

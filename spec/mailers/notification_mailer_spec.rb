@@ -303,7 +303,7 @@ describe NotificationMailer, type: :mailer do
 
       it "links to deletion review page" do
         expect(body)
-          .to have_text review_deletion_request_url(id: deletion_request.id)
+          .to have_text review_deletion_requests_entity_url(id: deletion_request.id)
       end
     end
   end
