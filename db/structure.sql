@@ -1935,6 +1935,7 @@ CREATE TABLE `user_requests` (
   `reviewer_id` int(11) DEFAULT NULL,
   `entity_id` int(11) DEFAULT NULL,
   `justification` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `list_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `index_user_requests_on_user_id` (`user_id`),
   CONSTRAINT `fk_rails_de8c07e72e` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
@@ -2262,6 +2263,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20200708135038'),
 ('20200721195543'),
 ('20200803182602'),
-('20200811164427');
+('20200811164427'),
+('20200827170003');
 
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_11_164427) do
+ActiveRecord::Schema.define(version: 2020_08_27_170003) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1284,6 +1284,7 @@ ActiveRecord::Schema.define(version: 2020_08_11_164427) do
     t.integer "reviewer_id"
     t.integer "entity_id"
     t.text "justification"
+    t.integer "list_id"
     t.index ["user_id"], name: "index_user_requests_on_user_id"
   end
 
