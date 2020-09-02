@@ -37,7 +37,7 @@ module Oligrapher
         editors: is_owner ? editor_data(map) : confirmed_editor_data(map),
         version: map.oligrapher_version,
         shareUrl: is_owner ? map.share_path : nil,
-        lock: lock_data(map, current_user)
+        lock: map.oligrapher_version === 3 ? lock_data(map, current_user) : nil
       } }
   end
 
