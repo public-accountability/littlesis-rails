@@ -37,7 +37,7 @@ module Oligrapher
         editors: is_owner ? editor_data(map) : confirmed_editor_data(map),
         version: map.oligrapher_version,
         shareUrl: is_owner ? map.share_path : nil,
-        lock: map.oligrapher_version === 3 ? lock_data(map, current_user) : nil
+        lock: lock_data(map, current_user)
       } }
   end
 
@@ -71,6 +71,8 @@ module Oligrapher
   end
 
   def self.lock_data(map, current_user)
+    return nil unless map.oligrapher_version === 3
+
     ::OligrapherLockService
       .new(map: map, current_user: current_user)
       .as_json
