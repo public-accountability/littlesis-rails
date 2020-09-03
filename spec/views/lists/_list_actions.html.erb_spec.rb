@@ -1,16 +1,22 @@
 describe 'lists/list_actions', :type => :view do
-  context 'NOT EDITABLE' do
+  context 'when not editable' do
     before do
-      assign(:permissions, { :editable => false})
+      assign(:list, create(:list))
+      assign(:permissions, { :editable => false })
       render partial: 'lists/list_actions.html.erb', locals: { list: build(:list) }
     end
-    it 'renders NOTHING' do
-      expect(rendered).to eq ''
+
+    it 'renders only the removal button' do
+      within '.list-actions' do
+        expect(rendered).to have_css('a', text: 'request removal')
+        expect(rendered).to have_css('a', count: 1)
+      end
     end
   end
 
-  context 'EDITABLE' do
+  context 'when editable' do
     before do
+      assign(:list, create(:list))
       assign(:permissions, { :editable => true, :configurable => false })
       render partial: 'lists/list_actions.html.erb', locals: { list: build(:list) }
     end
@@ -32,7 +38,7 @@ describe 'lists/list_actions', :type => :view do
     end
   end
 
-  context 'configurable' do
+  context 'when configurable' do
     before do
       assign(:permissions, { :editable => true, :configurable => true })
       render partial: 'lists/list_actions.html.erb', locals: { list: build(:list) }

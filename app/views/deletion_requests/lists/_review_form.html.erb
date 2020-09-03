@@ -1,0 +1,17 @@
+<div id="list-deletion-action-buttons">
+
+  <% submit_target = review_deletion_requests_list_path(@deletion_request) %>
+
+  <%= form_tag(submit_target, method: :post) do %>
+    <%= hidden_field_tag 'id', @deletion_request.id %>
+    <%= hidden_field_tag 'decision', 'approved' %>
+    <%= submit_tag 'Approve', class: 'btn btn-lrg btn-primary' %>
+  <% end %>
+
+  <%= form_tag(submit_target, method: :post) do %>
+    <%= hidden_field_tag 'id', @deletion_request.id %>
+    <%= hidden_field_tag 'decision', 'denied' %>
+    <%= submit_tag 'Deny', class: 'btn btn-lrg btn-danger' %>
+  <% end %>
+
+</div>

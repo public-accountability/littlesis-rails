@@ -1,0 +1,12 @@
+<div id="list-deletion-request-form">
+  <%= form_tag(deletion_requests_lists_path, method: :post, class: 'user-request-form') do %>
+    <%= hidden_field_tag 'list_id', @list.id %>
+    <div class="list-deletion-justification user-request-justification">
+      <p>Please briefly explain why this list should be deleted:</p>
+    </div>
+    <div id="list-deletion-action-buttons">
+      <%= text_area_tag 'justification', nil, size: "25x4", required: true %>
+      <%= submit_tag 'Request Deletion', class: 'btn btn-lrg btn-primary', id: 'list-deletion-request-btn' %>
+    </div>
+  <% end %>
+</div>

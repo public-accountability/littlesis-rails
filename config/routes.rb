@@ -161,6 +161,13 @@ Lilsis::Application.routes.draw do
       end
     end
 
+    resources :lists, only: [:new, :create] do
+      member do
+        get 'review', to: 'lists#review'
+        post 'review', to: 'lists#commit_review'
+      end
+    end
+
     resources :images, only: [:show, :create] do
       member do
         get 'review', to: 'images#review'

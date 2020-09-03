@@ -62,6 +62,7 @@ end
 group :test, :development do
   gem 'capybara', '>= 3.14.0'
   gem 'database_cleaner'
+  gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.0'
   gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
   gem 'pry', '>= 0.12.0'
