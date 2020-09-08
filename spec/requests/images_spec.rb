@@ -7,52 +7,8 @@ describe 'Images' do
   let(:image) { create(:image, entity: entity) }
   let(:justification) { Faker::Lorem.sentence }
 
-  let(:image_deletion_request) do
-    create(:image_deletion_request, image: image, user: create_really_basic_user)
-  end
-
-  context 'as a basic user' do
+  context 'with a basic user' do
     let(:user) { create_really_basic_user }
-
-    describe 'requesting an image to be deleted' do
-      let(:deletion_request) do
-        proc do
-          post "/images/#{image.id}/request_deletion",
-               params: { 'justification' => justification, 'entity_id' => entity.id.to_s },
-               headers: { 'Referer' => 'https://littlesis.org/images' }
-        end
-      end
-
-      it 'creates an image deletion request' do
-        expect(&deletion_request).to change(ImageDeletionRequest, :count).by(1)
-        image_deletion_request = ImageDeletionRequest.last
-
-        expect(image_deletion_request.source_id).to eq image.id
-        expect(image_deletion_request.user).to eq user
-        expect(image_deletion_request.entity_id).to eq entity.id
-      end
-
-      it 'redirects backs to refer' do
-        deletion_request.call
-        expect(response.status).to eq 302
-        expect(response.location).to eql 'https://littlesis.org/images'
-      end
-    end
-
-    it 'cannot view deletion requests' do
-      get "/images/deletion_request/#{image_deletion_request.id}"
-      expect(response).to have_http_status :forbidden
-    end
-
-    it 'cannot approve deletion requests' do
-      post "/images/approve_deletion/#{image_deletion_request.id}"
-      expect(response).to have_http_status :forbidden
-    end
-
-    it 'cannot deny deletion requests' do
-      post "/images/deny_deletion/#{image_deletion_request.id}"
-      expect(response).to have_http_status :forbidden
-    end
 
     describe 'updating an image caption' do
       let(:caption) { Faker::Lorem.sentence(word_count: 3) }
@@ -66,7 +22,6 @@ describe 'Images' do
 
         expect(response).to have_http_status(302)
       end
-
     end
 
     describe 'cropping an image' do
@@ -74,14 +29,16 @@ describe 'Images' do
       let(:image) { create(:image, is_featured: true, entity: person, width: 1200, height: 900) }
 
       let(:params) do
-        { 'crop' => {
+        {
+          'crop' => {
             'type' => 'original',
             'ratio' => 2.0,
             'x' => 100,
             'y' => 100,
             'w' => 300,
             'h' => 125
-          } }
+          }
+        }
       end
 
       let(:crop_request) do
@@ -103,35 +60,12 @@ describe 'Images' do
       end
 
       it 'replaces images' do
-        entity = Entity.find(person.id)
-        expect(entity.images.count).to eq 1
-        expect(entity.featured_image.width).to eq 1200
-        expect(entity.featured_image.height).to eq 900
+        expect(person.images.count).to eq 1
+        expect(person.featured_image).to have_attributes(width: 1200, height: 900)
         crop_request.call
-        expect(entity.reload.images.count).to eq 1
-        expect(entity.featured_image.width).to eq 600
-        expect(entity.featured_image.height).to eq 250
+        expect(person.reload.images.count).to eq 1
+        expect(person.featured_image).to have_attributes(width: 600, height: 250)
       end
-    end
-  end
-
-  context 'as an admin' do
-    let(:user) { create_admin_user }
-
-    it 'admins can approve requests' do
-      expect { post "/images/approve_deletion/#{image_deletion_request.id}" }
-        .to change { image_deletion_request.reload.status }
-              .from('pending').to('approved')
-
-      expect(Image.unscoped.find(image_deletion_request.source_id).is_deleted).to be true
-    end
-
-    it 'admins can deny requests' do
-      expect { post "/images/deny_deletion/#{image_deletion_request.id}" }
-        .to change { image_deletion_request.reload.status }
-              .from('pending').to('denied')
-
-      expect(Image.unscoped.find(image_deletion_request.source_id).is_deleted).to be false
     end
   end
 end

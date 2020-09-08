@@ -131,6 +131,10 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.4.4)
     docile (1.3.2)
+    email_spec (2.2.0)
+      htmlentities (~> 4.3.3)
+      launchy (~> 2.1)
+      mail (~> 2.7)
     erubi (1.9.0)
     execjs (2.7.0)
     factory_bot (6.1.0)
@@ -142,6 +146,7 @@ GEM
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     headless (2.3.1)
+    htmlentities (4.3.4)
     httparty (0.18.1)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
@@ -169,6 +174,8 @@ GEM
       activerecord
       kaminari-core (= 1.2.1)
     kaminari-core (1.2.1)
+    launchy (2.5.0)
+      addressable (~> 2.7)
     loofah (2.6.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -397,6 +404,7 @@ DEPENDENCIES
   delayed_job (~> 4.1)
   delayed_job_active_record (>= 4.1.3)
   devise (~> 4.7.0)
+  email_spec
   factory_bot_rails (~> 6.0)
   faker!
   headless

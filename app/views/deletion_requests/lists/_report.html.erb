@@ -1,0 +1,11 @@
+<div id="deletion-report">
+  <div class="list-deletion-overview">
+    This deletion will remove the following list from the database:
+  </div>
+  <div class="list-deletion-name">
+    <div><%= link_to @list.name, list_path(@list) %></div>
+  </div>
+  <div class="list-deletion-blurb">
+    <%= @list.description  %>
+  </div>
+</div>

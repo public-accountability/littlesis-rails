@@ -16,7 +16,14 @@ module Routes
   end
   private_constant :MODIFY_PATH
 
-  EXCLUDED_PATHS = %w[new_entity admin_entity_matcher external_entity].freeze
+  EXCLUDED_PATHS = %w[
+    new_entity
+    admin_entity_matcher
+    external_entity
+    new_deletion_requests_entity
+    deletion_requests_entities
+    review_deletion_requests_entity
+  ].freeze
 
   ROUTES_TO_MODIFY = Rails.application.routes.routes.map do |route|
     if route.name.present? && route.name.include?('entity') && !route.name.include?('api') && !EXCLUDED_PATHS.include?(route.name)

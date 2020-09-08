@@ -1,14 +1,17 @@
-#entity-deletion-action-buttons {
+#entity-deletion-action-buttons,
+#list-deletion-action-buttons {
     @extend .user-request-action-buttons;
 }
 
 #deletion-report {
     padding: 1em 0 1em 0;
-    .entity-deletion-overview { // header
+    .entity-deletion-overview,
+    .list-deletion-overview { // header
         font-size: 1.5em;
         font-weight: bold;
     }
-    .entity-deletion-name { // name & relationship
+    .entity-deletion-name,
+    .list-deletion-name { // name & relationship
         display: flex;
         flex-direction: row;
         font-weight: bold;
@@ -27,7 +30,8 @@
             margin-left: 1em;
         }
     }
-    .entity-deletion-blurb { // blurb
+    .entity-deletion-blurb,
+    .list-deletion-blurb { // blurb
         font-weight: italic;
         color: gray;
         padding-bottom: 1em;

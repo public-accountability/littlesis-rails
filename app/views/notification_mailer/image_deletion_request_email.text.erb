@@ -4,4 +4,4 @@ IMAGE DELETION REQUEST
 Requester: <%= @image_deletion_request.user.username %>
 Email: <%= @image_deletion_request.user.email %>
 
-Review Page: <%= "https://littlesis.org/images/deletion_request/#{@image_deletion_request.id}" %>
+Review Page: <%= deletion_requests_image_url(@image_deletion_request.id) %>

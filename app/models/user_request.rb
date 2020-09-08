@@ -10,9 +10,12 @@ class UserRequest < ApplicationRecord
              optional: true
 
   enum status: %i[pending approved denied]
-  TYPES = { merge: 'MergeRequest',
-            deletion: 'DeletionRequest',
-            image_deletion: 'ImageDeletionRequest' }.freeze
+  TYPES = {
+    merge: 'MergeRequest',
+    deletion: 'DeletionRequest',
+    image_deletion: 'ImageDeletionRequest',
+    list_deletion: 'ListDeletionRequest'
+  }.freeze
 
   validates :user_id, presence: true
   validates :status, presence: true

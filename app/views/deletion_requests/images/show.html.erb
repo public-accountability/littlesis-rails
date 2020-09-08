@@ -1,0 +1,45 @@
+<% if @deletion_request.pending? %>
+
+  <div class="row bottom-1em">
+    <div class="col-12">
+      <h4>
+        <%= link_to @deletion_request.user.username, user_page_path(@deletion_request.user) %>
+        requests that the following image be deleted:
+      </h4>
+
+      <%= image_tag @deletion_request.image.image_url('profile'), class: 'img-responsive' %>
+    </div>
+  </div>
+
+  <div class="row bottom-1em">
+    <div class="col-12">
+      <p class="mb-1"><strong>Justification: </strong><%= @deletion_request.justification %></p>
+      <% if @deletion_request.entity  %>
+        <p><strong>Entity: </strong><%= entity_link(@deletion_request.entity) %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <%= form_tag(url_for(action: :commit_review, id: @deletion_request.id), method: :post, style: "display: inline-block;") do %>
+        <%= hidden_field_tag :decision, :approved %>
+        <%= submit_tag 'Approve', class: 'btn btn-lrg btn-primary' %>
+      <% end %>
+
+      <%= form_tag(url_for(action: :commit_review, id: @deletion_request.id), method: :post, style: "display: inline-block;") do %>
+        <%= hidden_field_tag :decision, :denied %>
+        <%= submit_tag 'Deny', class: 'btn btn-lrg btn-danger' %>
+      <% end %>
+    </div>
+  </div>
+
+<% else %>
+
+  <div class="row bottom-1em">
+    <div class="col-sm-8 col-centered">
+      <h4>Request has already been processed</h4>
+    </div>
+  </div>
+
+<% end %>

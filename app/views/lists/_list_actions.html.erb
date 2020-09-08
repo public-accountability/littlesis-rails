@@ -1,15 +1,16 @@
-<% if @permissions[:editable] %>
-  <div class="list-actions">
-    <% if @permissions[:configurable] %>
-      <%= link_to('edit', edit_list_path(list), class: 'btn btn-clear') %>
-      <%= link_to('delete', list_path(list), class: 'btn btn-clear', method: :delete, data: { confirm: 'Are you sure you want to delete this list?' }) %>
-    <% end %>
-    
+<div class="list-actions">
+  <% if @permissions[:configurable] %>
+    <%= link_to('edit', edit_list_path(list), class: 'btn btn-clear') %>
+    <%= link_to('delete', list_path(list), class: 'btn btn-clear', method: :delete, data: { confirm: 'Are you sure you want to delete this list?' }) %>
+  <% else %>
+    <%= link_to 'request removal', new_deletion_requests_list_path(list_id: @list.id), class: 'btn btn-clear' %>
+  <% end %>
+
+  <% if @permissions[:editable] %>
     <% if has_ability?('bulker') %>
       <%= link_to('add bulk', entities_bulk_list_path(list), class: 'btn btn-clear') %>
     <% end %>
-    
+
     <input id="add-entity-input" type="text" class="form-control" placeholder="add entity">
-  </div>
-  <br>
-<% end %>
+  <% end %>
+</div>

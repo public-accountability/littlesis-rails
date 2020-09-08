@@ -1,7 +1,7 @@
 # rubocop:disable RSpec/NamedSubject
 
 describe NotificationMailer, type: :mailer do
-  before(:all) { ActiveJob::Base.queue_adapter = :test }
+  before(:all) { ActiveJob::Base.queue_adapter = :test } # rubocop:disable RSpec/BeforeAfterAll
 
   describe '#contact_email' do
     let(:params) do
@@ -169,6 +169,8 @@ describe NotificationMailer, type: :mailer do
   end
 
   describe '#tag_request_email' do
+    subject { NotificationMailer.tag_request_email(user, params) }
+
     let(:user) { create_really_basic_user }
     let(:params) do
       {
@@ -181,8 +183,6 @@ describe NotificationMailer, type: :mailer do
     let(:params_with_additional_info) do
       params.merge('tag_additional' => "what kind of website doesn't have tag related to cats!?")
     end
-
-    subject { NotificationMailer.tag_request_email(user, params) }
 
     it 'sets correct subject' do
       expect(subject.subject).to eql "Tag Request: cats"
@@ -208,7 +208,7 @@ describe NotificationMailer, type: :mailer do
       expect(subject.encoded).not_to include "Additional information"
     end
 
-    context 'additional information filled out' do
+    context 'with additional information filled out' do
       subject { NotificationMailer.tag_request_email(user, params_with_additional_info) }
 
       it "includes additional information" do
@@ -303,8 +303,26 @@ describe NotificationMailer, type: :mailer do
 
       it "links to deletion review page" do
         expect(body)
-          .to have_text review_deletion_request_url(id: deletion_request.id)
+          .to have_text review_deletion_requests_entity_url(id: deletion_request.id)
       end
+    end
+  end
+
+  describe "sending list deletion request email" do
+    let(:user) { create(:really_basic_user) }
+    let(:list) { create(:list) }
+    let(:req) { create(:list_deletion_request, user: user, type: 'ListDeletionRequest', list: list) }
+
+    let(:mail) { NotificationMailer.list_deletion_request_email(req) }
+
+    it 'sends email' do
+      expect { mail.deliver_now }
+        .to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+
+    it 'email contains link to deletion request' do
+      expect(mail.body.raw_source)
+        .to have_text "/deletion_requests/lists/#{req.id}"
     end
   end
 
@@ -324,7 +342,7 @@ describe NotificationMailer, type: :mailer do
 
     it 'email contains link to deletion request' do
       expect(mail.body.raw_source)
-        .to have_text "https://littlesis.org/images/deletion_request/#{image_deletion_request.id}"
+        .to have_text "/deletion_requests/images/#{image_deletion_request.id}"
     end
   end
 end

@@ -96,14 +96,7 @@ Lilsis::Application.routes.draw do
     member do
       get 'crop'
       post 'crop'
-      post 'request_deletion'
       post 'update'
-    end
-
-    collection do
-      get 'deletion_request/:image_deletion_request_id', to: 'images#deletion_request'
-      post 'approve_deletion/:image_deletion_request_id', to: 'images#approve_deletion'
-      post 'deny_deletion/:image_deletion_request_id', to: 'images#deny_deletion'
     end
   end
 
@@ -160,10 +153,26 @@ Lilsis::Application.routes.draw do
   # deletion requests #
   #####################
 
-  resources :deletion_requests, only: [:new, :create] do
-    member do
-      get 'review' => 'deletion_requests#review'
-      post 'review' => 'deletion_requests#commit_review'
+  namespace :deletion_requests do
+    resources :entities, only: [:new, :create] do
+      member do
+        get 'review', to: 'entities#review'
+        post 'review', to: 'entities#commit_review'
+      end
+    end
+
+    resources :lists, only: [:new, :create] do
+      member do
+        get 'review', to: 'lists#review'
+        post 'review', to: 'lists#commit_review'
+      end
+    end
+
+    resources :images, only: [:show, :create] do
+      member do
+        get 'review', to: 'images#review'
+        post 'review', to: 'images#commit_review'
+      end
     end
   end
 

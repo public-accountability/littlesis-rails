@@ -1,6 +1,6 @@
-<div id="entity-deletion-action-buttons">
+<div id="list-deletion-action-buttons">
 
-  <% submit_target = review_deletion_request_path(@deletion_request) %>
+  <% submit_target = review_deletion_requests_list_path(@deletion_request) %>
 
   <%= form_tag(submit_target, method: :post) do %>
     <%= hidden_field_tag 'id', @deletion_request.id %>
