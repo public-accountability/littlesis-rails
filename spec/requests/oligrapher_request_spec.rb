@@ -84,6 +84,30 @@ describe "Oligrapher", type: :request do
         end
       end
     end
+
+    context 'version 2 map' do
+      let(:network_map) { create(:network_map_version3, user_id: user1.id) }
+
+      context 'when logged in as non-owner non-editor user' do
+        before { login_as(user2, scope: :user) }
+        after { logout(:user) }
+
+        it 'map can be viewed' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(response.status).to eq 200
+        end
+      end
+
+      context 'when logged in as owner' do
+        before { login_as(user1, scope: :user) }
+        after { logout(:user) }
+
+        it 'map can be viewed' do
+          get "/oligrapher/#{network_map.to_param}"
+          expect(response.status).to eq 200
+        end
+      end
+    end
   end
 
   describe 'GET /oligrapher/:id/embedded' do

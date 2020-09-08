@@ -71,6 +71,8 @@ module Oligrapher
   end
 
   def self.lock_data(map, current_user)
+    return nil unless map.oligrapher_version == 3
+
     ::OligrapherLockService
       .new(map: map, current_user: current_user)
       .as_json
