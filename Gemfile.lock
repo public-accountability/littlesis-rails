@@ -7,14 +7,6 @@ GIT
       activemodel (>= 3.0.0)
       public_suffix
 
-GIT
-  remote: https://github.com/stympy/faker.git
-  revision: 35ec5ed4e8a7f7477a6583a8de9a70256d4192a2
-  branch: master
-  specs:
-    faker (2.13.0)
-      i18n (>= 1.6, < 2)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -84,7 +76,7 @@ GEM
     ast (2.4.1)
     autoprefixer-rails (9.8.6.3)
       execjs
-    bcrypt (3.1.15)
+    bcrypt (3.1.16)
     better_errors (2.7.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -108,7 +100,7 @@ GEM
       xpath (~> 3.2)
     childprocess (3.0.0)
     chronic (0.10.2)
-    codecov (0.2.8)
+    codecov (0.2.11)
       json
       simplecov
     coderay (1.1.3)
@@ -140,6 +132,8 @@ GEM
     factory_bot_rails (6.1.0)
       factory_bot (~> 6.1.0)
       railties (>= 5.0.0)
+    faker (2.13.0)
+      i18n (>= 1.6, < 2)
     ffi (1.13.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
@@ -174,7 +168,7 @@ GEM
     kaminari-core (1.2.1)
     launchy (2.5.0)
       addressable (~> 2.7)
-    loofah (2.6.0)
+    loofah (2.7.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.7.1)
@@ -191,14 +185,14 @@ GEM
     mini_magick (4.10.1)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
-    minitest (5.14.1)
+    minitest (5.14.2)
     money (6.13.8)
       i18n (>= 0.6.4, <= 2)
     msgpack (1.3.3)
     multi_json (1.15.0)
     multi_xml (0.6.0)
     mysql2 (0.5.3)
-    nio4r (2.5.2)
+    nio4r (2.5.3)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
     orm_adapter (0.5.0)
@@ -220,8 +214,8 @@ GEM
       yard (~> 0.9.11)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
-    public_suffix (4.0.5)
-    puma (4.3.5)
+    public_suffix (4.0.6)
+    puma (4.3.6)
       nio4r (~> 2.0)
     rack (2.2.3)
     rack-mini-profiler (2.0.4)
@@ -264,7 +258,7 @@ GEM
     rainbow (3.0.0)
     rake (13.0.1)
     redcarpet (3.5.0)
-    redis (4.2.1)
+    redis (4.2.2)
     regexp_parser (1.7.1)
     request_store (1.5.0)
       rack (>= 1.4)
@@ -293,7 +287,7 @@ GEM
       rspec-mocks (~> 3.9)
       rspec-support (~> 3.9)
     rspec-support (3.9.3)
-    rubocop (0.89.1)
+    rubocop (0.90.0)
       parallel (~> 1.10)
       parser (>= 2.7.1.1)
       rainbow (>= 2.2.2, < 4.0)
@@ -304,9 +298,9 @@ GEM
       unicode-display_width (>= 1.4.0, < 2.0)
     rubocop-ast (0.3.0)
       parser (>= 2.7.1.4)
-    rubocop-performance (1.7.1)
-      rubocop (>= 0.82.0)
-    rubocop-rails (2.7.1)
+    rubocop-performance (1.8.0)
+      rubocop (>= 0.87.0)
+    rubocop-rails (2.8.0)
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 0.87.0)
@@ -365,8 +359,8 @@ GEM
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.7.0)
-    warden (1.2.8)
-      rack (>= 2.0.6)
+    warden (1.2.9)
+      rack (>= 2.0.9)
     web-console (4.0.4)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
@@ -401,10 +395,10 @@ DEPENDENCIES
   database_cleaner
   delayed_job (~> 4.1)
   delayed_job_active_record (>= 4.1.3)
-  devise (~> 4.7.0)
+  devise (~> 4.7)
   email_spec
   factory_bot_rails (~> 6.0)
-  faker!
+  faker (>= 2.13)
   headless
   httparty (>= 0.16.2)
   jquery-rails

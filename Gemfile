@@ -13,7 +13,7 @@ gem 'bootsnap', '>= 1.4.3', require: false
 gem 'rack-rewrite', '~> 1.5.1'
 
 # users and authentication
-gem 'devise', '~> 4.7.0'
+gem 'devise', '~> 4.7'
 gem 'activerecord-session_store'
 
 # Versioning
@@ -64,7 +64,7 @@ group :test, :development do
   gem 'database_cleaner'
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.0'
-  gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
+  gem 'faker', '>= 2.13'
   gem 'pry', '>= 0.12.0'
   gem 'pry-byebug'
   gem 'pry-doc', require: false
