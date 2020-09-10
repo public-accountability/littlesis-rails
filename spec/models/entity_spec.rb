@@ -980,6 +980,28 @@ describe Entity, :tag_helper do
     specify { expect(entity_in_strata.in_cmp_strata?).to be true }
   end
 
+  describe '#total_usd_donations' do
+    let(:entity) { create(:entity_person) }
+    let(:entity2) { create(:entity_person) }
+
+    before do
+      create(:donation_relationship, entity: entity, entity2_id: entity2.id, amount: 323_00)
+      create(:donation_relationship, entity: entity, entity2_id: entity2.id, amount: 1243)
+    end
+
+    it 'is the total of USD donations' do
+      expect(entity.total_usd_donations).to be 335_43
+    end
+
+    context 'with a non-USD donation' do
+      it 'ignores the non-USD donation' do
+        expect do
+          create(:donation_relationship, entity: entity, entity2_id: entity2.id, amount: 3121, currency: 'EUR')
+        end.not_to change(entity, :total_usd_donations)
+      end
+    end
+  end
+
   describe 'Tagging' do
     it 'can tag a person with oil' do
       person = create(:entity_person)

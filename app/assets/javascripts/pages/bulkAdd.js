@@ -4,7 +4,10 @@
 
  External requirements: jQuery, utility.js, Hogan, jQuery UI Autocomplete
 
+ TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
+ entity autocomplete has already been switched over
 */
+
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
     module.exports = factory(require('jQuery'), require('../common/utility'));
@@ -198,6 +201,8 @@
 
   /* FIND SIMILAR RELATIONSHIPS */
 
+  // TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
+  // entity autocomplete has already been switched over
   var relationshipAlertContent =  Hogan.compile('<p>A similar relationship was found in the littlesis database. Are you <em>sure</em> you want to create another one?</p><p><a href="{{url}}" target="_blank">Click here</a> to view the relationship.</p>');
 
   // input: [] -> <Span>
@@ -322,6 +327,8 @@
     };
   }
 
+  // TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
+  // entity autocomplete has already been switched over
   var entitySuggestion = Hogan.compile('<div class="entity-search-name">{{name}}</div><div class="entity-search-blurb">{{blurb}}</div>');
 
   var autocompleteRenderItem = function(ul, item) {
@@ -874,6 +881,9 @@
 
   // Compiled template for table row
   // see bulk_relationships.html.erb for template
+
+  // TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
+  // entity autocomplete has already been switched over
   var entityMatchTableRow;
   $(function(){
     if ($('#entityMatchTableRow').html()) {

@@ -10,15 +10,25 @@
 import utility from './common/utility';
 import http from './common/http';
 import clipboardjs from 'clipboard';
+import datatable from 'datatables.net';
+import typeahead from 'typeahead.js';
+import mustache from 'mustache';
+
+import listDatatableLoader from './list_datatable';
+import entityAutocomplete from './entity_autocomplete';
 
 window.utility = utility;
 window.utility.delete = utility.del;
 window.clipboardjs = clipboardjs;
+window.datatable = datatable;
+window.mustache = mustache;
 
 if (!window.LittleSis) {
   window.LittleSis = {};
 }
 
+$.typeahead = typeahead;
+
 window.LittleSis.http = http;
-
-
+window.LittleSis.listDatatableLoader = listDatatableLoader;
+window.LittleSis.entityAutocomplete = entityAutocomplete;

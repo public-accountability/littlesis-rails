@@ -53,13 +53,13 @@ class ListDatatable
     list_entities = ListEntity.includes(entity: [:extension_definitions, :os_categories]).where(list_id: @list.id, entity: { is_deleted: false })
     @total_entities = list_entities.count
 
-    @data = list_entities.map do |le|
-      entity = le.entity
-      @types = @types.concat(entity.types)
-      @industries = @industries.concat(entity.industries)
-      interlock_ids = interlocks? ? @top_interlocks.select { |l| l[1].include?(entity.id) }.map { |l| l[0] }.uniq.join(',') : nil
-      list_interlock_ids = lists? ? @top_list_interlocks.select { |l| l[1].include?(entity.id) }.map { |l| l[0] }.uniq.join(',') : nil
-      list_entity_data(le, interlock_ids, list_interlock_ids)
+    @data = Rails.cache.fetch(cache_key, expires_in: 2.weeks) do
+      list_entities.map do |le|
+        entity = le.entity
+        @types = @types.concat(entity.types)
+        @industries = @industries.concat(entity.industries)
+        list_entity_data(le, extract_interlock_ids(entity), extract_list_interlock_ids(entity))
+      end
     end
   end
 
@@ -77,10 +77,17 @@ class ListDatatable
       blurb_excerpt: excerpt(list_entity.entity.blurb, 70 - list_entity.entity.name.length),
       types: list_entity.entity.types.join(","),
       industries: list_entity.entity.industries.join(','),    
-      context: list_entity.list.custom_field_name.present? ? list_entity.custom_field : list_entity.entity.blurb,
       interlock_ids: interlock_ids,
       list_interlock_ids: list_interlock_ids
-     }
+    }.merge(sort_column(list_entity.entity))
+  end
+
+  def sort_column(entity)
+    if @list.sort_by.present?
+      { @list.sort_by => entity.public_send(@list.sort_by) }
+    else
+      {}
+    end
   end
 
   def prepare_options
@@ -104,15 +111,33 @@ class ListDatatable
     @entity_ids.count < 500
   end
 
-  def context_field_name
-    @list.custom_field_name.present? ? @list.custom_field_name : 'Details'
-  end
-
   private
 
   # Unranked entities are treated by DataTables as having a zero rank, which puts them higher than
   # entities with a rank of 1. Instead they should come at the end of the data table.
   def default_sort_position(entity)
     entity.rank.presence || @total_entities + 1
+  end
+
+  def cache_key
+    "list_datatables/#{@list.id}/#{@list.updated_at}"
+  end
+
+  def extract_interlock_ids(entity)
+    return unless interlocks?
+
+    @top_interlocks
+      .select { |l| l[1].include?(entity.id) }
+      .map { |l| l[0] }
+      .uniq.join(',')
+  end
+
+  def extract_list_interlock_ids(entity)
+    return unless lists?
+
+    @top_list_interlocks
+      .select { |l| l[1].include?(entity.id) }
+      .map { |l| l[0] }
+      .uniq.join(',')
   end
 end

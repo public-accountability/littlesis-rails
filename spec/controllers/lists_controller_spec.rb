@@ -201,12 +201,48 @@ describe ListsController, :list_helper, type: :controller do
   end
 
   describe 'show' do
-    before do
-      expect(List).to receive(:find).and_return(build(:list))
-      get :show, params: { id: 1 }
+    let(:list) { create(:list) }
+
+    it 'redirects to the members page' do
+      get :show, params: { id: list.id }
+      expect(response).to redirect_to(action: :members)
     end
-    it { should respond_with(302) }
-    it { should redirect_to(action: :members) }
+  end
+
+  describe 'members' do
+    before do
+      get :members, params: { id: list.id }
+    end
+
+    context 'with a sorted list' do
+      let(:list) { create(:list, sort_by: :total_usd_donations) }
+
+      it 'specifies sort_by in the datatable config' do
+        expect(assigns[:datatable_config][:sort_by]).to eq 'total_usd_donations'
+      end
+    end
+
+    context 'with a ranked list' do
+      let(:list) { create(:list, is_ranked: true) }
+
+      it 'specifies is ranked in the datatable config' do
+        expect(assigns[:datatable_config][:ranked_table]).to be true
+      end
+    end
+
+    context 'with an editable list' do
+      let(:list) { create(:list) }
+      let!(:admin) { create_admin_user }
+
+      before do
+        sign_in admin
+        get :members, params: { id: list.id }
+      end
+
+      it 'specifies is editable in the datatable config' do
+        expect(assigns[:datatable_config][:editable]).to be true
+      end
+    end
   end
 
   describe 'remove_entity' do

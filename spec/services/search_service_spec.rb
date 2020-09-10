@@ -54,7 +54,7 @@ describe SearchService do
                       .with("@(name,description) foo",
                             per_page: 50,
                             with: { is_deleted: false, is_admin: 0 },
-                            without: { access: Permissions::ACCESS_PRIVATE })
+                            without: { access: Permissions::ACCESS_PRIVATE, entity_count: 0 })
                       .once
 
     SearchService.new('foo').lists
@@ -65,7 +65,7 @@ describe SearchService do
                       .with("@(name,description) foo",
                             per_page: 50,
                             with: { is_deleted: false, is_admin: [0, 1] },
-                            without: { access: Permissions::ACCESS_PRIVATE })
+                            without: { access: Permissions::ACCESS_PRIVATE, entity_count: 0})
                       .once
 
     SearchService.new('foo', admin: true).lists

@@ -24,6 +24,8 @@
 </div>
 </div>
 
+<div class="buttons"></div>
+
 <table id="datatable-table" class="table table-striped table-bordered list-datatable">
   <thead>
     <tr>
@@ -32,8 +34,8 @@
         <th>Rank</th>
       <% end %>
       <th>Name</th>
-      <% if table.list.custom_field_name.present? %>
-          <th><%= table.context_field_name %></th>
+      <% if @list.sort_by %>
+        <th><%= @list.sort_by.to_s.humanize %></th>
       <% end %>
       <% if @permissions[:editable] %>
           <th></th>
@@ -43,271 +45,37 @@
 </table>
 
 <script>
- var data = <%= raw(table.data.to_json); %>
+  $(document).ready(function() {
+    let loader = new LittleSis.listDatatableLoader({
+      config: <%= @datatable_config.to_json.html_safe %>,
+      data: <%= table.data.to_json.html_safe %>
+    });
+    loader.table($('#datatable-table'));
 
-   var ternary = function(data, type, row) {
-     if (data == null) {
-       return "null";
-     } else if (data == true) {
-       return "true";
-     } else {
-       return "false";
-     }
-   }
+    /*
+      The current version of dataTable.Editor doesn't have a real npm package, apparently
+      to push users onto a new paid license, so for now we use our old version by passing
+      the constructor to our listDatatableLoader pack.
+    */
+    let editorConstructor = $.fn.dataTable.Editor;
 
- var post = function(path) {
-   var form = document.createElement("form");
-   form.setAttribute("method", "post");
-   form.setAttribute("action", path);
-   var input = document.createElement("input");
-   input.setAttribute("type", "hidden");
-   input.setAttribute("name", "authenticity_token");
-   input.setAttribute("value", "<%= form_authenticity_token %>");
-   form.appendChild(input);
-   document.body.appendChild(form);
-   form.submit();
- }
+    loader.prepareEditor($('#datatable-table'), editorConstructor);
 
- $(document).ready(function() {
-   <% if @permissions[:editable] %>
-   var editor = new $.fn.dataTable.Editor( {
-     ajax: '<%= update_entity_list_path(table.list) %>',
-     table: "#datatable-table",
-     fields: [ 
-       { 
-         label: "List Entity ID:",
-         name: 'list_entity_id'
-       },
-       {
-         label: "Rank:",
-         name: "rank"
-       }, 
-       {
-         label: "<%= table.context_field_name %>:",
-         name: "context",
-         type: "textarea",
-         className: "datatable-textarea"
-       },
-       {
-         label: 'Interlock Ids:',
-         name: 'interlock_ids'
-       },
-       {
-         label: 'List Interlock Ids:',
-         name: 'list_interlock_ids'
-       }
-     ]
-   });
+    loader.prepareExporter($('#csv_exporter'), $('.buttons')[0]);
 
-   // var openVals;
-   // editor.on('open', function(e, type) {
-   //   openVals = JSON.stringify(editor.get());
-   // })
-
-   // editor.on('preSubmit', function(e, data, action) {
-   //   if (openVals == JSON.stringify(editor.get())) {
-   //     return false;
-   //   }
-   // });
-
-   <% if table.list.custom_field_name.present? %>
-   var selector = 'tbody td.rank, tbody td.context';
-   <% else %>
-   var selector = 'tbody td.rank';
-   <% end %>
-
-   $('#datatable-table').on('click', selector, function(e) {
-     editor.inline(this, { submitOnBlur: true });
-   });
-   <% end %>
-
-   $('#datatable-table').DataTable({
-     data: data,
-     dom: "<'buttons'>iprtp",
-     pageLength: 100,
-     columns: [
-       <% if table.ranked? %>
-       {
-         data: 'default_sort_position',
-         name: 'default_sort_position',
-         visible: false,
-       },
-       {
-         data: 'rank',
-         name: 'rank',
-         width: "5%",
-         className: 'rank'
-       },
-       <% end %>
-       { 
-         data: 'name', 
-         name: 'name', 
-         width: "30%",
-         render: function(data, type, row) {
-           var a = document.createElement('a');
-           a.href = row.url;
-           a.setAttribute('class', 'entity-link');
-           a.innerHTML = row.name;
-           var str = a.outerHTML;
-           var blurb = document.createElement('span');
-           blurb.setAttribute('class', 'entity-blurb');
-           blurb.innerHTML = row.blurb;
-           str += " &nbsp; " + blurb.outerHTML;
-           return  str;
-         }
-       },
-       <% if table.list.custom_field_name.present? %>
-       {
-         data: 'context',
-         name: 'context',
-         width: '30%',
-         sortable: false,
-         className: 'context'
-       },
-       <% end %>
-       <% if @permissions[:editable] %>
-       {
-         data: 'actions',
-         name: 'actions',
-         width: '1%',
-         sortable: false,
-         render: function(data, type, row) {
-           return '<%= link_to(raw("<i class=\"glyphicon glyphicon-remove\"></i>"), remove_entity_list_path(table.list, list_entity_id: "XYZ"), method: :post, data: { confirm: "Are you sure you want to remove this entity from this list?" }) %>'.replace(/XYZ/, row.list_entity_id);
-         }
-       },
-       <% end %>
-       {
-         data: 'id',
-         name: 'id',
-         visible: false,
-         searchable: false
-       },
-       {
-         data: 'types',
-         name: 'types',
-         visible: false, 
-         searchable: true
-       },
-       {
-         data: 'industries',
-         name: 'industries',
-         visible: false,
-         searchable: true
-       },
-       {
-         data: 'master_search',
-         name: 'master_search',
-         visible: false,
-         searchable: true,
-         render: function(data, type, row) {
-           var keys = ['name', 'blurb', 'types', 'industries']
-           return keys.map(function(key) { return row[key] }).join('  ');
-         }
-       },
-       {
-         data: 'interlock_ids',
-         name: 'interlock_ids',
-         visible: false,
-         searchable: true
-       },
-       {
-         data: 'list_interlock_ids',
-         name: 'list_interlock_ids',
-         visible: false,
-         searchable: true
-       }      
-     ]
-     <% if table.ranked? %>
-       , "order": [[ 0, "asc" ]]
-     <% end %>
-   });
-
-   var tbl = $('#datatable-table').DataTable();
-
-   var type = $('#datatable-type');
-   type.on('change', function() {
-     var val = $(this).val() ? "\\b" + $(this).val() + "\\b" : "";
-     tbl.columns('types:name').search(val, true).draw();
-   });
-
-   var industry = $('#datatable-industry');
-   industry.on('change', function() {
-     var val = $(this).val() ? "\\b" + $(this).val() + "\\b" : "";
-     tbl.columns('industries:name').search(val, true).draw();
-   });
-
-   var interlock = $('#datatable-interlock');
-   interlock.on('change', function() {
-     var val = $(this).val() ? "\\b" + $(this).val() + "\\b" : "";
-     tbl.columns('interlock_ids:name').search(val, true).draw();
-   });
-
-   var list_interlock = $('#datatable-list-interlock');
-   list_interlock.on('change', function() {
-     var val = $(this).val() ? "\\b" + $(this).val() + "\\b" : "";
-     tbl.columns('list_interlock_ids:name').search(val, true).draw();
-   });
-
-   var search = $('#datatable-search');
-   search.keyup(function() {
-     tbl.columns('master_search:name').search($(this).val()).draw();
-   });
-
-   var array_to_csv_data = function(ary) {
-     var str = "data:text/csv;charset=utf-8,";
-     var lines = ary.map(function(data){
-       return data.join(",");
-     });
-     str += lines.join("\n");    
-     return encodeURI(str);
-   }
-
-   var escape_csv_value = function(value) {
-     var value = value === null ? '' : value.toString();
-     value = value.replace(/"/g, '""');
-     if (value.search(/("|,|\n)/g) >= 0) {
-       value = '"' + value + '"';      
-     }
-     return value;  
-   }
-
-   var a = document.createElement('a');
-   a.innerHTML = 'Export CSV';
-   a.setAttribute('class', 'btn btn-primary');
-   a.href="#";
-   $('.buttons')[0].appendChild(a);
-   $(a).on('click', function() {
-     var fields = [<%= table.ranked? ? raw("'rank', ") : "" %>'id', 'name', 'blurb', 'types']
-     var data = [fields]
-     var rows = $('#datatable-table').dataTable()._('tr', { filter: "applied" });
-     data = data.concat(Array.prototype.slice.apply(rows).map(function(d) {
-       return fields.map(function(field) {
-         return escape_csv_value(d[field]);
-       });
-     }));
-     window.open(array_to_csv_data(data));
-   });
-
-   var init_search = "";
-   var hash = (window.location.href.split('#').length > 1) ? window.location.href.split('#')[1] : "";
-   hash.split('&').forEach(function(pair) {
-     pair = pair.split('=');
-     var key = pair[0];
-     var val = decodeURIComponent(pair[1]);
-
-     var e = $('#datatable-' + key);
-
-     if (str_fields.indexOf(key) !== -1) {
-       e.val(val);
-       e.trigger('change');
-
-     } 
-
-     if (key == 'search') {
-       init_search = val;
-     }
-   });
-
-   tbl.columns('master_search:name').search(init_search).draw();
- });
+    loader.prepareSearch();
+  });
 </script>
+
+<template id="entity_remover">
+  <%= link_to(
+    raw('<i class="glyphicon glyphicon-remove"></i>'),
+    remove_entity_list_path(table.list, list_entity_id: 'XYZ'),
+    method: :post,
+    data: { confirm: 'Are you sure you want to remove this entity from this list?' }
+  ) %>
+</template>
+
+<template id="csv_exporter">
+  <%= link_to('Export CSV', '#', class: 'btn btn-primary') %>
+</template>

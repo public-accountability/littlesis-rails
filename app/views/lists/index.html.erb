@@ -7,10 +7,17 @@
 <%= form_tag(lists_path, method: :get) do %>
   <div class="form-inline">
     <input id="list-search" type="text" name="q" class="form-control" value="<%= params[:q] %>" placeholder="list name">
+    <input id="list-entity-search" type="text" class="form-control" value="<%= @entity&.name %>" placeholder="entity name">
     <input type="submit" value="Search" class="btn btn-secondary">
   </div>
 <% end %>
 
+<%= render partial: 'shared/entity_autocomplete',
+    locals: {
+      input_id: '#list-entity-search',
+      http_method: 'get',
+      form_path: lists_path(entity_id: "XXX"),
+      query_path: raw("/search/entity?q=%QUERY") } %>
 <br>
 
 <%= paginate @lists %>
