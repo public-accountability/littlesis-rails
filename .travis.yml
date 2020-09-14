@@ -45,7 +45,7 @@ jobs:
         - sudo mysql  -e "GRANT all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'littlesis';flush privileges;"
         - bundle exec rake db:structure:load
         - bundle exec rake db:seed
-        - bundle exec rails webpacker:compile
+        - bundle exec rake assets:precompile
       script:
         - bundle exec rspec
       after_success:
