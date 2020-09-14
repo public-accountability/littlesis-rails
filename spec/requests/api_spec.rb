@@ -192,9 +192,11 @@ describe Api, :pagination_helper do
     end
 
     context 'when request to limit results by category type' do
+      let!(:entity_org) { create(:entity_org) }
+
       before do
-        create(:position_relationship, entity: entity, related: create(:entity_org))
-        create(:generic_relationship, entity: entity, related: create(:entity_org))
+        create(:position_relationship, entity: entity, related: entity_org)
+        create(:position_relationship, entity: entity, related: entity_org)
       end
 
       it 'returns error if requesting an invalid category' do
@@ -209,10 +211,10 @@ describe Api, :pagination_helper do
         expect(json['data'].length).to eq 2
       end
 
-      it 'returns one relationships when a specific category is requested' do
+      it 'returns relationships in a specific category' do
         get relationships_api_entity_path(entity), params: { category_id: '1' }
         expect(response).to have_http_status 200
-        expect(json['data'].length).to eq 1
+        expect(json['data'].length).to eq 2
       end
 
       it 'returns zero relationships when a category without any relatinoships is selection' do

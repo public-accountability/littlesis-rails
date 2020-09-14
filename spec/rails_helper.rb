@@ -38,8 +38,6 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
 
-Capybara.server = :webrick
-
 RSpec.configure do |config|
   config.expect_with :rspec
   config.mock_with :rspec
@@ -68,10 +66,27 @@ RSpec.configure do |config|
   config.extend MergingGroupMacros, :merging_helper
   config.extend NameParserMacros, :name_parser_helper
   config.extend ExternalLinkGroupHelper, :external_link
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, remove the following line or assign false
-  # instead of true.
+
+  # Running tests in database transactions
+  #
+  # Note that this being false does not actually mean we are not using transactions;
+  # it just tells RSpec to tell Rails not to handle transactions for tests;
+  # DatabaseCleaner actually handles the transactions.
   config.use_transactional_fixtures = false
+
+  DatabaseCleaner.strategy = :transaction
+
+  # For transaction strategy, start the database cleaner before each test start
+  # Note that some individual tests also depend on local invocations of DatabaseCleaner
+  # within before(:all) blocks etc.
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  # Clean the db after each test start
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
 
   config.infer_spec_type_from_file_location!
 
@@ -97,22 +112,9 @@ RSpec.configure do |config|
   #   User.delete_all
   # end
 
-  DatabaseCleaner.strategy = :transaction
-
   # config.before(:all) do
   #   Faker::Random.seed = config.seed
   #end
-
-  # For transaction strategy, start the database cleaner before each test start
-  config.before(:each) do
-#    Faker::Random.reset!
-    DatabaseCleaner.start
-  end
-
-  # Clean the db after each test start
-  config.after(:each) do
-    DatabaseCleaner.clean
-  end
 
   config.around(:each, :caching) do |example|
     caching = ActionController::Base.perform_caching

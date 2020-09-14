@@ -182,6 +182,7 @@ module RspecGroupHelpers
 
     after(:all) do
       DatabaseCleaner.strategy = :transaction
+      ActiveRecord::Tasks::DatabaseTasks.load_seed
     end
   end
 end
