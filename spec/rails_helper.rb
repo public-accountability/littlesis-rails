@@ -50,6 +50,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include FeatureExampleMacros, :type => :feature
   config.include RequestExampleMacros, :type => :request
+  config.include CapybaraHelpers, :type => :feature
   config.include NetworkAnalysisExampleHelper, :network_analysis_helper
   config.include MergingExampleMacros, :merging_helper
   config.include SphinxTestHelper, :sphinx
@@ -74,7 +75,15 @@ RSpec.configure do |config|
   # DatabaseCleaner actually handles the transactions.
   config.use_transactional_fixtures = false
 
-  DatabaseCleaner.strategy = :transaction
+  # DatabaseCleaner.strategy = :transaction
+
+  config.before(:each) do |example|
+    if example.metadata[:js]
+      DatabaseCleaner.strategy = :truncation
+    else
+      DatabaseCleaner.strategy = :transaction
+    end
+  end
 
   # For transaction strategy, start the database cleaner before each test start
   # Note that some individual tests also depend on local invocations of DatabaseCleaner
@@ -84,8 +93,20 @@ RSpec.configure do |config|
   end
 
   # Clean the db after each test start
-  config.after(:each) do
+  config.after(:each) do |example|
     DatabaseCleaner.clean
+    if example.metadata[:js]
+      ApplicationRecord.connection.execute("ALTER TABLE `users` AUTO_INCREMENT = 1")
+      ActiveRecord::Tasks::DatabaseTasks.load_seed
+    end
+  end
+
+
+  config.around(:each, :caching) do |example|
+    caching = ActionController::Base.perform_caching
+    ActionController::Base.perform_caching = example.metadata[:caching]
+    example.run
+    ActionController::Base.perform_caching = caching
   end
 
   config.infer_spec_type_from_file_location!
@@ -102,24 +123,5 @@ RSpec.configure do |config|
       with.test_framework :rspec
       with.library :rails
     end
-  end
-
-  Capybara.ignore_hidden_elements = false
-
-  # config.before(:suite) do
-  #   Page.delete_all
-  #   ToolkitPage.delete_all
-  #   User.delete_all
-  # end
-
-  # config.before(:all) do
-  #   Faker::Random.seed = config.seed
-  #end
-
-  config.around(:each, :caching) do |example|
-    caching = ActionController::Base.perform_caching
-    ActionController::Base.perform_caching = example.metadata[:caching]
-    example.run
-    ActionController::Base.perform_caching = caching
   end
 end

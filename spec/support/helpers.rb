@@ -169,22 +169,6 @@ module RspecGroupHelpers
       expect(subject.instance_variable_get("@#{instance_var}")).to eql expected
     end
   end
-
-  # thanks to https://stackoverflow.com/questions/3853098/turn-off-transactional-fixtures-for-one-spec-with-rspec-2
-  def without_transactional_fixtures(&block)
-    self.use_transactional_tests = false
-
-    before(:all) do
-      DatabaseCleaner.strategy = :truncation
-    end
-
-    yield
-
-    after(:all) do
-      DatabaseCleaner.strategy = :transaction
-      ActiveRecord::Tasks::DatabaseTasks.load_seed
-    end
-  end
 end
 
 class TestActiveRecord
