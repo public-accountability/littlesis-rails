@@ -1,6 +1,4 @@
 describe 'Permission Passes', type: :feature do
-  include CapybaraHelpers
-
   let(:admin_user) { create_admin_user }
   let!(:old_pass) { create(:permission_pass, creator: admin_user, valid_from: 3.weeks.ago, valid_to: 2.weeks.ago) }
   let!(:pass) { create(:permission_pass, creator: admin_user) }

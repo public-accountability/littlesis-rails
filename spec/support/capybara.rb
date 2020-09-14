@@ -12,6 +12,7 @@ Capybara.register_driver :headless_chrome do |app|
   Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
 end
 
+Capybara.ignore_hidden_elements = false
 Capybara.javascript_driver = :headless_chrome
 Capybara.server = :puma, {Silent: true}  # Remove crummy test output
 Capybara.default_max_wait_time = ENV["CI"] ? 15 : 5
