@@ -54,6 +54,11 @@ class PagesController < ApplicationController
   end
 
   # GET /oligrapher
+  def oligrapher
+  end
+
+
+  # GET /oligrapher
   # Oligrapher splash page
   def oligrapher_splash
     @maps = NetworkMap.featured.order("updated_at DESC, id DESC").page(params[:page]).per(50)
@@ -65,7 +70,6 @@ class PagesController < ApplicationController
     @shale_map = NetworkMap.find(152)
     @hadley_map = NetworkMap.find(238)
     @moma_map = NetworkMap.find(282)
-
     render layout: 'splash'
   end
 

@@ -373,7 +373,8 @@ Lilsis::Application.routes.draw do
   #########
 
   get "/partypolitics" => "pages#partypolitics"
-  get "/oligrapher" => "pages#oligrapher_splash"
+  get "/oligrapher" => "pages#oligrapher"
+  get "/oligrapher_old" => "pages#oligrapher_splash"
   get "/donate" => "pages#donate"
   get "/graph" => "graph#all"
 
