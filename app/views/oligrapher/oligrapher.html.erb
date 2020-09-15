@@ -1,5 +1,4 @@
-<%= content_for(:page_title, @map.name) %>
-
+<%= content_for(:page_title, raw(@map.name)) %>
 
 <% if user_signed_in? && @map.can_edit?(current_user) %>
   <% content_for(:navbar_notice) do %>
