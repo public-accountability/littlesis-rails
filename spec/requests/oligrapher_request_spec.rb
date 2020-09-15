@@ -1,6 +1,3 @@
-require 'rails_helper'
-require Rails.root.join('app/services/oligrapher_lock_service.rb').to_s
-
 describe "Oligrapher", type: :request do
   let(:user) { create_basic_user }
 
@@ -8,11 +5,12 @@ describe "Oligrapher", type: :request do
     let(:user1) { create_basic_user }
     let(:user2) { create_basic_user }
 
-    context 'private map' do
+    context 'when map is private' do
       let(:network_map) { create(:network_map_version3, user_id: user1.id, is_private: true) }
 
       context 'when logged in as normal non-owner non-editor user' do
         before { login_as(user2, scope: :user) }
+
         after { logout(:user) }
 
         it 'map cannot be viewed' do
@@ -22,18 +20,18 @@ describe "Oligrapher", type: :request do
       end
 
       context 'when logged in as a non-owner editor' do
-        before {
+        before do
           network_map.add_editor(user2)
           network_map.confirm_editor(user2)
           network_map.save
           login_as(user2, scope: :user)
-        }
+        end
 
-        after {
+        after do
           network_map.remove_editor(user2)
           network_map.save
           logout(:user)
-        }
+        end
 
         it 'map can be viewed' do
           get "/oligrapher/#{network_map.to_param}"
@@ -41,9 +39,9 @@ describe "Oligrapher", type: :request do
         end
 
         context 'when owner has lock' do
-          before {
+          before do
             OligrapherLockService.new(map: network_map, current_user: user1).lock!
-          }
+          end
 
           it 'configuration indicates that current user is locked out' do
             get "/oligrapher/#{network_map.to_param}"
@@ -54,19 +52,18 @@ describe "Oligrapher", type: :request do
         end
       end
 
-
       context 'when logged in as a non-owner pending editor' do
-        before {
+        before do
           network_map.add_editor(user2)
           network_map.save
           login_as(user2, scope: :user)
-        }
+        end
 
-        after {
+        after do
           network_map.remove_editor(user2)
           network_map.save
           logout(:user)
-        }
+        end
 
         it 'map can be viewed' do
           get "/oligrapher/#{network_map.to_param}"
@@ -76,6 +73,7 @@ describe "Oligrapher", type: :request do
 
       context 'when logged in as owner' do
         before { login_as(user1, scope: :user) }
+
         after { logout(:user) }
 
         it 'map can be viewed' do
@@ -85,11 +83,12 @@ describe "Oligrapher", type: :request do
       end
     end
 
-    context 'version 2 map' do
+    describe 'version 2 map' do
       let(:network_map) { create(:network_map_version3, user_id: user1.id) }
 
       context 'when logged in as non-owner non-editor user' do
         before { login_as(user2, scope: :user) }
+
         after { logout(:user) }
 
         it 'map can be viewed' do
@@ -100,6 +99,7 @@ describe "Oligrapher", type: :request do
 
       context 'when logged in as owner' do
         before { login_as(user1, scope: :user) }
+
         after { logout(:user) }
 
         it 'map can be viewed' do
@@ -128,6 +128,7 @@ describe "Oligrapher", type: :request do
 
   describe 'GET /oligrapher/new' do
     let(:user) { create_basic_user }
+
     before { login_as(user, scope: :user) }
 
     it 'shows page' do
@@ -142,26 +143,26 @@ describe "Oligrapher", type: :request do
     after { logout(:user) }
 
     let(:graph_data) do
-      JSON.parse <<-JSON
-       {
-         "nodes": {
-         "EI-H6Mvz": {
-           "id": "EI-H6Mvz",
-           "name": "abc",
-           "x": -72.5,
-           "y": -10.5,
-           "scale": 1,
-           "status": "normal",
-           "type": "circle",
-           "image": null,
-           "url": null,
-           "color": "#ccc"
-         }
-       },
-       "edges": {},
-       "captions": {}
-      }
-     JSON
+      JSON.parse <<~JSON
+        {
+          "nodes": {
+            "EI-H6Mvz": {
+              "id": "EI-H6Mvz",
+              "name": "abc",
+              "x": -72.5,
+              "y": -10.5,
+              "scale": 1,
+              "status": "normal",
+              "type": "circle",
+              "image": null,
+              "url": null,
+              "color": "#ccc"
+            }
+          },
+          "edges": {},
+          "captions": {}
+        }
+      JSON
     end
 
     let(:params) do
@@ -177,7 +178,7 @@ describe "Oligrapher", type: :request do
     end
 
     it 'creates a new NetworkMap' do
-      expect { post '/oligrapher', params: params}.to change(NetworkMap, :count).by(1)
+      expect { post '/oligrapher', params: params }.to change(NetworkMap, :count).by(1)
       expect(NetworkMap.last.oligrapher_version).to eq 3
       expect(NetworkMap.last.user_id).to eq user.id
     end
@@ -239,7 +240,10 @@ describe "Oligrapher", type: :request do
     let(:network_map) { create(:network_map_version3, user_id: user1.id) }
 
     context 'when logged in' do
-      before { login_as(user2, scope: :user); network_map }
+      before do
+        login_as(user2, scope: :user)
+        network_map
+      end
 
       after { logout(user2) }
 
@@ -258,10 +262,10 @@ describe "Oligrapher", type: :request do
     end
 
     context 'when the map is not cloneable' do
-      before {
+      before do
         login_as(user2, scope: :user)
         network_map.update(is_cloneable: false)
-      }
+      end
 
       after { logout(user2) }
 
@@ -278,10 +282,10 @@ describe "Oligrapher", type: :request do
 
   describe 'DELETE /oligrapher/:id' do
     let(:user1) { create_basic_user }
-    let(:network_map) { create(:network_map_version3, user_id: user1.id) }
+    let!(:network_map) { create(:network_map_version3, user_id: user1.id) }
 
     context 'when logged in' do
-      before { login_as(user1, scope: :user); network_map }
+      before { login_as(user1, scope: :user) }
 
       after { logout(user1) }
 
@@ -301,15 +305,14 @@ describe "Oligrapher", type: :request do
     let(:map_owner) { create_basic_user(username: 'owner') }
     let(:editor) { create_basic_user(username: 'editor') }
     let(:pending_user) { create_basic_user(username: 'pending') }
-    let(:editors) { [
-      { id: editor.id, pending: false },
-      { id: pending_user.id, pending: true }
-    ] }
-    let(:network_map) do
-      create(:network_map_version3, user_id: map_owner.id, editors: editors)
+    let(:editors) do
+      [{ id: editor.id, pending: false },
+       { id: pending_user.id, pending: true }]
     end
 
-    before { network_map }
+    let!(:network_map) do
+      create(:network_map_version3, user_id: map_owner.id, editors: editors)
+    end
 
     describe 'POST /oligrapher/:id/editors' do
       context 'as map owner' do
@@ -354,13 +357,14 @@ describe "Oligrapher", type: :request do
     let(:owner) { create_basic_user }
     let(:editor) { create_basic_user }
     let(:map) do
-      create(:network_map_version3, user_id: owner.id, editors: [
-        { id: editor.id, pending: false }
-      ])
+      create(:network_map_version3,
+             user_id: owner.id,
+             editors: [{ id: editor.id, pending: false }])
     end
 
     describe 'logged in as owner' do
       before { login_as(owner, scope: :user) }
+
       after { logout(:user) }
 
       it 'GET request locks if there is no lock' do
@@ -399,6 +403,7 @@ describe "Oligrapher", type: :request do
 
     describe 'logged in as an editor' do
       before { login_as(editor, scope: :user) }
+
       after { logout(:user) }
 
       it 'POST will not take the lock' do
