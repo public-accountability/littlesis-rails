@@ -1,0 +1,83 @@
+<% content_for(:page_title, 'Map the Power with Oligrapher') %>
+
+<div class="row">
+  <div class="col text-center">
+    <h1 style="font-size: 54px">
+      Map the power with <strong>Oligrapher</strong>
+    </h1>
+    <h3 class="text-muted">
+      Oligrapher is a tool for visualizing networks of influence
+    </h3>
+    <h4><strong>New features developed in 2020:</strong>
+      <ul class="list-unstyled">
+        <li>Drag'n'drop edge creation</li>
+        <li>Easier editing experience</li>
+        <li>Collaboration tools</li>
+        <li>Export as an image</li>
+      </ul>
+    </h3>
+  </div>
+</div>
+
+<hr />
+
+<div class="row">
+  <div class="col-12 text-center" style="height: 500px">
+    <iframe height="100%"
+            width="100%"
+            scrolling="no" style="border: 0px; overflow: hidden;"
+            src="https://littlesis.org/oligrapher/5200-corporations-funding-police-foundations/embedded">
+    </iframe>
+  </div>
+</div>
+
+<hr />
+
+<div class="row mt-3 mb-3">
+  <div class="col-12 text-center" style="height: 500px">
+    <iframe height="100%"
+            width="100%"
+            scrolling="no" style="border: 0px; overflow: hidden;"
+            src="https://littlesis.org/oligrapher/5449-the-postal-privatizers-a-deep-dive-into-the-2020-usps-board-of-governors/embedded">
+    </iframe>
+  </div>
+</div>
+
+<div class="row mt-3">
+  <div class="col text-center">
+    <h1 style="font-size: 54px">Features</h1>
+  </div>
+</div>
+    <div class="row justify-content-center">
+      <div class="col-sm-4">
+	<div>
+	  <ul>
+	    <li>easily import data from LittleSis</li>
+	    <li>fullscreen and embedded maps</li>
+	    <li>customizable nodes, edges, and text</li>
+	    <li>force-directed layouts</li>
+	    <li>share and clone maps with other users</li>
+	  </ul>
+	</div>
+      </div>
+
+      <div class="col-sm-4">
+	<div>
+	  <ul>
+	    <li>undo and redo edits</li>
+	    <li>works standalone w/o LittleSis</li>
+	    <li>tell a story through click-animations</li>
+	    <li>fully-featured graph editor</li>
+	    <li><%= link_to('open-source code', 'http://github.com/public-accountability/oligrapher') %> built with React</li>
+	  </ul>
+	</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center mt-1">
+    <div id="splash-more-maps">
+      <%= button_to 'View More Maps', featured_maps_path, method: :get, class: 'btn btn-secondary btn-lg' %>
+    </div>
+  </div>

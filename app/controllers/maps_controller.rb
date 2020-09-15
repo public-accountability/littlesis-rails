@@ -86,8 +86,13 @@ class MapsController < ApplicationController
             .map { |k,v| [k, to_hash_if.call(k,v) ]  }.to_h
   end
 
-  # renders the 'story_map' template
   def show
+    redirect_to(oligrapher_path(@map))
+  end
+
+  # Main Legacy Oligrapher 2.0 show route
+  # renders the 'story_map' template
+  def show_legacy
     return redirect_to(oligrapher_path(@map)) if @map.version3?
 
     check_private_access
