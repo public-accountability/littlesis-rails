@@ -1,5 +1,12 @@
 <%= content_for(:page_title, @map.name) %>
 
+
+<% if user_signed_in? && @map.can_edit?(current_user) %>
+  <% content_for(:navbar_notice) do %>
+    <%= render partial: 'oligrapher_update' %>
+  <% end %>
+<% end %>
+
 <%= content_for(:body) do %>
 
 <% if @is_pending_editor %>

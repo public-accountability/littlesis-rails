@@ -1,0 +1,25 @@
+<div id="oligrapher-update-notice">
+  <span>⚠️Oligrapher update</span>
+</div>
+
+<template id="oligrapher-update-notice-content">
+  <div>
+    <p>
+      We've updated oligrapher with a number of new enhancements. From now on, existing maps will automatically open in the new version.
+      <%= link_to "Contact us",  contact_path %> if you have any questions or concerns about the changes.
+    </p>
+  </div>
+</template>
+
+<script>
+ $(function () {
+   $('#oligrapher-update-notice > span').popover({
+     "html": true,
+     "content": function() {
+       return $('#oligrapher-update-notice-content').html()
+     },
+     "title": "Oligrapher changes",
+     "placement": 'bottom'
+   })
+ })
+</script>
