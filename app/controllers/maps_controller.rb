@@ -120,6 +120,10 @@ class MapsController < ApplicationController
   end
 
   def new
+    redirect_to new_oligrapher_path
+  end
+
+  def new_legacy
     check_permission 'editor'
 
     if current_user.settings.oligrapher_beta

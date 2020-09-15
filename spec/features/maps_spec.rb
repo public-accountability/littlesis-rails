@@ -26,31 +26,11 @@ describe 'Maps' do
 
   describe 'oligrapher creation page' do
     before { login_as(user, scope: :user) }
-
     after { logout(user) }
 
-    context 'with oligrapher_beta setting disabled' do
-      before do
-        user.settings.update(oligrapher_beta: false)
-        user.save!
-        visit new_map_path
-      end
-
-      it 'uses oligrapher legacy path' do
-        successfully_visits_page new_map_path
-      end
-    end
-
-    context 'with oligrapher_beta setting enabled' do
-      before do
-        user.settings.update(oligrapher_beta: true)
-        user.save!
-        visit new_map_path
-      end
-
-      it 'uses new oligrapher path' do
-        successfully_visits_page new_oligrapher_path
-      end
+    it 'uses new oligrapher path' do
+      visit new_map_path
+      successfully_visits_page new_oligrapher_path
     end
   end
 
