@@ -148,7 +148,7 @@ module EntitiesHelper
   def sidebar_industry_links(os_categories)
     os_categories.to_a
       .delete_if { |cat| cat.ignore_me_in_view }
-      .collect {  |cat| link_to(cat.category_name, cat.legacy_path) } 
+      .collect {  |cat| link_to(cat.category_name, cat.legacy_path) }
       .join(', ')
   end
 
@@ -304,10 +304,7 @@ module EntitiesHelper
   end
 
   def show_cmp_data_partner?(entity)
-    return false unless entity.in_cmp_strata?
-    return false unless user_signed_in?
-
-    current_user.admin? || current_user.id == 11_276
+    entity.in_cmp_strata? && user_signed_in?
   end
 end
 
