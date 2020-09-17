@@ -29,6 +29,7 @@ module Lilsis
     }
 
     Lilsis::Application.default_url_options = default_url_options
+    routes.default_url_options = default_url_options
     config.action_controller.default_url_options = default_url_options
     config.action_mailer.default_url_options = default_url_options
 
