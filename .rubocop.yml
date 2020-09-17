@@ -125,7 +125,7 @@ RSpec/DescribedClass:
 
 RSpec/ExampleLength:
   Exclude:
-    - 'spec/features/*.rb'
+    - 'spec/features/**/*.rb'
 
 RSpec/EmptyExampleGroup:
   Exclude:
