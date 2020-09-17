@@ -23,17 +23,14 @@ module Lilsis
       r301     %r{/user/(.*)},                            '/users/$1'
     end
 
-    if Rails.env.production?
-      Rails.application.default_url_options = {
-        host: APP_CONFIG.fetch('host', 'littlesis.org'),
-        protocol: APP_CONFIG.fetch('protocol', 'https')
-      }
-    else
-      Rails.application.default_url_options = {
-        host: APP_CONFIG['host'],
-        protocol: APP_CONFIG['protocol']
-      }
-    end
+    default_url_options = {
+      host: APP_CONFIG.fetch('host', 'littlesis.org'),
+      protocol: APP_CONFIG.fetch('protocol', 'https')
+    }
+
+    Lilsis::Application.default_url_options = default_url_options
+    config.action_controller.default_url_options = default_url_options
+    config.action_mailer.default_url_options = default_url_options
 
     config.time_zone = 'UTC'
     config.active_record.default_timezone = :utc
@@ -42,9 +39,6 @@ module Lilsis
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    # config.i18n.default_locale = :de
-
-    # APP_CONFIG.each_pair { |k,v| config.send :"#{k}=", v }
 
     # /lib is not loaded in production
     config.autoload_paths += %W(#{config.root}/lib)
@@ -52,19 +46,12 @@ module Lilsis
 
     config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch('redis_url') }
 
-    # config.action_controller.asset_host = APP_CONFIG['site_url']
-
     config.assets.paths << "#{Rails.root}/vendor/assets/images"
     config.active_job.queue_adapter = :delayed_job
 
-    config.action_mailer.default_url_options = {
-      host: APP_CONFIG.fetch('host', 'littlesis.org'),
-      protocol: APP_CONFIG.fetch('protocol', 'https')
-    }
-
     config.action_controller.per_form_csrf_tokens = false
 
-    # we can't check only check if requests come from 'littlesis.org'
+    # we can't require only requests from 'littlesis.org'
     # because the chrome extension is allowed to also make requests
     config.action_controller.forgery_protection_origin_check = false
 
