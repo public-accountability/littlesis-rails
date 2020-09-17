@@ -59,5 +59,3 @@ module Lilsis
     config.action_view.form_with_generates_remote_forms = false
   end
 end
-
-ActiveRecord::SessionStore::Session.serializer = :json
