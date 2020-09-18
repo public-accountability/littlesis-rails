@@ -12,12 +12,12 @@ module Lists
         # Ought to be able to do this stuff with accepts_nested_attributes_for
         add_extensions
         add_to_list
-        flash[:success] = 'Entity added to list'
+        notice = "#{@entity.name} added to #{@list.name} list"
       else
-        flash[:alert] = 'Could not save entity'
+        notice = "Could not save entity: #{@entity.errors.full_messages.join('. ')}"
       end
 
-      redirect_to members_list_path(@list)
+      redirect_to members_list_path(@list), notice: notice
     end
 
     private
