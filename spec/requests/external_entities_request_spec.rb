@@ -30,7 +30,8 @@ describe "ExternalEntities", type: :request do
 
     it 'redirects to external_entity route' do
       patch external_entity_path(external_entity), params: { entity_id: entity.id }
-      expect(response).to redirect_to external_entity_path(external_entity)
+      expect(response).to have_http_status 302
+      expect(response.location).to include external_entity_path(external_entity)
     end
   end
 
@@ -54,7 +55,8 @@ describe "ExternalEntities", type: :request do
 
     it 'redirects to external_entity route' do
       patch external_entity_path(external_entity), params: params
-      expect(response).to redirect_to external_entity_path(external_entity)
+      expect(response).to have_http_status 302
+      expect(response.location).to include external_entity_path(external_entity)
     end
   end
 end

@@ -136,7 +136,7 @@ describe ToolkitController, type: :controller do
 
     it 'redirects to display page' do
       patch :update, params: params
-      expect(response).to redirect_to '/toolkit/cats_in_government'
+      expect(response).to redirect_to %r{/toolkit/cats_in_government}
     end
   end
 
