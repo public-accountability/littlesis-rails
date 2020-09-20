@@ -14,7 +14,7 @@ describe RelationshipDatatablePresenter do
       'start_date' => nil,
       'end_date' => nil,
       'category_id' => 1,
-      'url' => "http://localhost:8080/relationships/#{relationship.id}",
+      'url' => "http://test.host/relationships/#{relationship.id}",
       'is_board' => nil,
       'is_executive' => nil,
       'amount' => nil,

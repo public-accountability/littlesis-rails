@@ -10,7 +10,7 @@ describe Oligrapher do
                 name: entity.name,
                 image: nil,
                 description: nil,
-                url: "http://localhost:8080/org/#{entity.to_param}")
+                url: "http://test.host/org/#{entity.to_param}")
     end
   end
 
@@ -32,8 +32,8 @@ describe Oligrapher do
             label: 'Donation/Grant',
             arrow: '1->2',
             dash: false,
-            url: "http://localhost:8080/relationships/#{rel.id}"
-          })
+            url: "http://test.host/relationships/#{rel.id}"
+                  })
       end
     end
 
@@ -51,8 +51,8 @@ describe Oligrapher do
             label: 'Social',
             arrow: nil,
             dash: false,
-            url: "http://localhost:8080/relationships/#{rel.id}"
-          })
+            url: "http://test.host/relationships/#{rel.id}"
+                  })
       end
     end
   end
@@ -65,7 +65,7 @@ describe Oligrapher do
                   display: {
                     name: entity.name,
                     image: nil,
-                    url: "http://localhost:8080/org/#{entity.to_param}"
+                    url: "http://test.host/org/#{entity.to_param}"
                   })
       end
     end
@@ -88,7 +88,7 @@ describe Oligrapher do
                       label: 'Donation/Grant',
                       arrow: '1->2',
                       dash: true,
-                      url: "http://localhost:8080/relationships/#{rel.id}"
+                      url: "http://test.host/relationships/#{rel.id}"
                     })
         end
       end
@@ -107,7 +107,7 @@ describe Oligrapher do
                       label: 'Social',
                       arrow: nil,
                       dash: false,
-                      url: "http://localhost:8080/relationships/#{rel.id}"
+                      url: "http://test.host/relationships/#{rel.id}"
                     })
         end
       end
