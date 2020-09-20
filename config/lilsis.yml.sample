@@ -51,7 +51,7 @@ test:
   donation_banner_display: false
   oligrapher_version: 0.0.1
   image_root: tmp
-  host: test.host
+  host: 'localhost:8080'
   protocol: http
 
 development:

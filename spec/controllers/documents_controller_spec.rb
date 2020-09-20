@@ -17,7 +17,11 @@ describe DocumentsController, type: :controller do
 
     context 'without logging in' do
       before { get :edit, params: { id: 1 } }
-      it { should redirect_to '/login' }
+
+      it 'redirects to /login' do
+        expect(response).to have_http_status 302
+        expect(response.location).to include '/login'
+      end
     end
   end
 
