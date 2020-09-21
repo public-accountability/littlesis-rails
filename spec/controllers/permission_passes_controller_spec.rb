@@ -22,6 +22,10 @@ describe PermissionPassesController, type: :controller do
     }
   end
 
+  before do
+    controller.default_url_options[:host] = 'test.host'
+  end
+
   [:index, :new].each do |action|
     describe "GET ##{action}" do
       context 'with a logged in admin' do

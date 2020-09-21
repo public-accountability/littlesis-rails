@@ -528,13 +528,13 @@ describe "Oligrapher", type: :request do
       expect(json.first['node2_id']).to eq entity2.id.to_s
       expect(json.first['dash']).to eq true
       expect(json.first['arrow']).to eq '1->2'
-      expect(json.first['url']).to eq "http://localhost:8080/relationships/#{rel1.id}"
+      expect(json.first['url']).to eq "http://test.host/relationships/#{rel1.id}"
       expect(json.second['id']).to eq rel2.id.to_s
       expect(json.second['node1_id']).to eq entity3.id.to_s
       expect(json.second['node2_id']).to eq entity1.id.to_s
       expect(json.second['dash']).to eq false
       expect(json.second['arrow']).to eq '1->2'
-      expect(json.second['url']).to eq "http://localhost:8080/relationships/#{rel2.id}"
+      expect(json.second['url']).to eq "http://test.host/relationships/#{rel2.id}"
     end
   end
 

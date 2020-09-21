@@ -27,7 +27,7 @@ class PermissionPassesController < ApplicationController
 
     if @permission_pass.save
       flash[:notice] = 'Permission pass was successfully created.'
-      redirect_to action: :index
+      redirect_to permission_passes_path
     else
       render :new
     end
@@ -37,7 +37,7 @@ class PermissionPassesController < ApplicationController
   def update
     if @permission_pass.update(permission_pass_params)
       flash[:notice] = 'Permission pass was successfully updated.'
-      redirect_to action: :index
+      redirect_to permission_passes_path
     else
       render :edit
     end
@@ -46,7 +46,7 @@ class PermissionPassesController < ApplicationController
   # DELETE /permission_passes/1
   def destroy
     @permission_pass.destroy
-    redirect_to permission_passes_url, notice: 'Permission pass was successfully destroyed.'
+    redirect_to permission_passes_path, notice: 'Permission pass was successfully destroyed.'
   end
 
   def apply
