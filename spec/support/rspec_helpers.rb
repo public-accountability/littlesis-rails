@@ -166,6 +166,22 @@ module RspecHelpers
     def within_one_second?(a, b)
       [0, 1].include? (a.to_i - b.to_i).abs
     end
+
+    # Useful to reload modules or classes if they depend on other constants during loading.
+    # If ImageFile depended on the constant FOO, this is how  to set FOO and reload ImageFile:
+    #
+    #  stub_const_and_reload_module const: 'FOO', val: 'fake foo value', mod: :ImageFile
+    #
+    def stub_const_and_reload_module(const:, val:, mod:)
+      stub_const const, val
+      if Module.const_defined?(mod)
+        module_source_location = Module.const_source_location(mod)[0]
+        Object.send :remove_const, mod
+        load module_source_location
+      else
+        raise Exceptions::LittleSisError, "Cannot reload undefined module: #{mod}"
+      end
+    end
   end
 
   module GroupMacros
@@ -192,9 +208,3 @@ module RspecHelpers
     end
   end
 end
-
-# module RspecExampleHelpers
-# end
-
-# module RspecGroupHelpers
-# end
