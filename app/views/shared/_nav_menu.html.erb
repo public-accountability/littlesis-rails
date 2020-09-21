@@ -7,12 +7,12 @@ shared/_nav_menu_search renders the search box
 %>
 
 <%
-navbar_container_classes = %w[navbar navbar-expand-md fixed-top navbar-light bg-light]
-navbar_container_classes << 'donation-banner' if show_donation_banner?
+navbar_container_classes = +'navbar navbar-expand-md fixed-top navbar-light bg-light'
+navbar_container_classes << ' donation-banner' if show_donation_banner?
 
-navbar_wrapper_classes = []
-navbar_wrapper_classes << 'navbar-full-width' if local_assigns[:full_width].present?
-navbar_wrapper_classes << 'donation-banner' if show_donation_banner?
+navbar_wrapper_classes = +''
+navbar_wrapper_classes << ' navbar-full-width' if local_assigns[:full_width].present?
+navbar_wrapper_classes << ' donation-banner' if show_donation_banner?
 %>
 
 <div id="top">
@@ -21,9 +21,9 @@ navbar_wrapper_classes << 'donation-banner' if show_donation_banner?
     <%= render partial: 'shared/donation_banner' %>
   <% end %>
 
-  <nav class="<%= navbar_container_classes.join(' ') %>" id="main-navbar-container">
+  <nav class="<%= navbar_container_classes %>" id="main-navbar-container">
 
-    <div id="navbar-content-wrapper" class="<%= navbar_wrapper_classes.join(' ') %>">
+    <div id="navbar-content-wrapper" class="<%= navbar_wrapper_classes %>">
 
       <div id="navbar-content">
         <div id="brand mr-auto">
