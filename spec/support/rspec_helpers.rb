@@ -79,7 +79,7 @@ module RspecHelpers
     end
 
     def create_admin_user
-      RspecExampleHelpers.create_admin_user
+      ExampleMacros.create_admin_user
     end
 
     def create_bulk_user
@@ -127,7 +127,7 @@ module RspecHelpers
     end
 
     def create_basic_user(**attributes)
-      RspecExampleHelpers.create_basic_user(**attributes)
+      ExampleMacros.create_basic_user(**attributes)
     end
 
     def create_basic_user_with_profile(**attributes)
@@ -144,7 +144,7 @@ module RspecHelpers
     end
 
     def create_restricted_user
-      RspecExampleHelpers.create_restricted_user
+      ExampleMacros.create_restricted_user
     end
 
     def create_user_with_sf(attrs = {})
