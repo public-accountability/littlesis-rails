@@ -35,13 +35,9 @@ module Utility
     end
   end
 
-  # This will copy the contents of the file to a
-  # temporary file and convert the text to UTF-8,
-  # replacing any invalid characters with empty strings.
-  # Then it overwrites the original file with the new, UTF-8 data.
-  #
-  # All file operations are done streaming, and is therefore
-  # safe to use on large files.
+  # This will convert the contents of a text file UTF-8, replacing any
+  # invalid characters with empty strings.
+  # All file operations are done streaming, and is safe to use on large files.
   def self.convert_file_to_utf8(path)
     # populate temp file with converted data
     tmp_file = Tempfile.new
@@ -51,19 +47,18 @@ module Utility
                        .force_encoding('UTF-8')
     end
 
-    # replace CSV_FILE_PATH with new utf-8 data
     tmp_file.rewind
-    IO.copy_stream(tmp_file, path)
+    IO.copy_stream(tmp_file, path) # overwrite original file
     tmp_file.unlink
 
-    return true
+    true
   end
 
   def self.today_str
     Time.zone.now.strftime('%F')
   end
 
-  # Saves url to local path with streams
+  # GET HTTP request, saving the response body to a local file
   def self.stream_file(url:, path:)
     uri = URI(url)
     Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
