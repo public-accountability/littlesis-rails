@@ -1,15 +1,10 @@
 describe IpBlocker do
-  def reload_mod
-    # Removes the module from object-space:
-    Object.send(:remove_const, :IpBlocker) if Module.const_defined?(:IpBlocker)
-    # Reloads the module
-    load Rails.root.join('app/utility/ip_blocker.rb')
-  end
-
   context 'when restricted_ips is blank' do
     before do
-      stub_const 'APP_CONFIG', { 'restricted_ips' => nil }
-      reload_mod
+      stub_const_and_reload_module const: 'APP_CONFIG',
+                                   val: { 'restricted_ips' => nil },
+                                   mod: :IpBlocker
+
     end
 
     it 'defines .restricted? and always returns false' do
@@ -19,8 +14,9 @@ describe IpBlocker do
 
   context 'when restricted_ips contains two ip ranges' do
     before do
-      stub_const 'APP_CONFIG', { 'restricted_ips' => ['192.0.2.0/24', '192.0.3.0/24'] }
-      reload_mod
+      stub_const_and_reload_module const: 'APP_CONFIG',
+                                   val: { 'restricted_ips' => ['192.0.2.0/24', '192.0.3.0/24'] },
+                                   mod: :IpBlocker
     end
 
     it 'returns true if given ip is in restricted range' do
@@ -34,8 +30,9 @@ describe IpBlocker do
 
   context 'when list of restricted ips contain invalid addresses' do
     before do
-      stub_const 'APP_CONFIG', { 'restricted_ips' => ['192.0.2.0/24', 'FAKE'] }
-      reload_mod
+      stub_const_and_reload_module const: 'APP_CONFIG',
+                                   val: { 'restricted_ips' => ['192.0.2.0/24', 'FAKE'] },
+                                   mod: :IpBlocker
     end
 
     it 'removes the invalid ip addresses from the list' do

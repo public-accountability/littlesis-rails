@@ -1,7 +1,7 @@
 describe 'Api::Serializable', type: :model do
   FAKE_ATTRIBUTES = { 'api' => 'attributes' }
 
-  class TestApiModel < TestActiveRecord
+  class TestApiModel < RspecHelpers::TestActiveRecord
     include Api::Serializable
 
     def api_attributes(options = {})

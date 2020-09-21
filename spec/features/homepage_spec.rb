@@ -45,4 +45,26 @@ describe 'Homepage' do
       successfully_visits_page '/?nlty=yes'
     end
   end
+
+  feature 'Beta Version Indicator' do
+    context 'without beta enabled' do
+      it 'shows donation button' do
+        visit '/'
+        page_has_selector '#top_donate_link'
+        page_has_no_selector '#nabar-beta-notice'
+      end
+    end
+
+    context 'with beta enabled' do
+      before do
+        stub_const('APP_CONFIG', APP_CONFIG.merge('beta' => true))
+      end
+
+      it 'hides donation button' do
+        visit '/'
+        page_has_no_selector '#top_donate_link'
+        page_has_selector '#navbar-beta-notice'
+      end
+    end
+  end
 end
