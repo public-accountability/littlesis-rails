@@ -43,7 +43,10 @@ navbar_wrapper_classes << ' donation-banner' if show_donation_banner?
 
           <% if APP_CONFIG['beta'] %>
             <div id="navbar-beta-notice" class="navbar-right-menu-item mr-2">
-              <span>⚠ beta ⚠</span>
+              <span>
+                <abbr title="This is a beta version of LittleSis used for testing.&#10;Changes are not synced with our regular site.">
+                  <strong>⚠ <%= Utility.current_git_commit %></strong></span>
+              </abbr>
             </div>
           <% else %>
               <div id="top_donate_link" class="navbar-right-menu-item">

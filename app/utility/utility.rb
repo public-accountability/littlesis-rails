@@ -6,6 +6,12 @@ require 'tempfile'
 # Helper functions used by scripts and rake tasks
 
 module Utility
+  def self.current_git_commit
+    @current_git_commit ||= Dir.chdir(Rails.root.to_s) do
+      `git rev-parse --short HEAD`.chomp
+    end
+  end
+
   def self.save_hash_array_to_csv(file_path, data, mode: 'wb')
     CSV.open(file_path, mode) do |csv|
       csv << data.first.keys
