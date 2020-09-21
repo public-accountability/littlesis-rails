@@ -74,26 +74,6 @@ class Image < ApplicationRecord
     img.destroy!
   end
 
-  ######### s3 legacy methods ##############3
-
-  # def self.s3_path(filename, type)
-  #   "images/#{type}/#{filename}"
-  # end
-
-  # def self.s3_url(filename, type)
-  #   "https://#{APP_CONFIG['image_asset_host']}/#{s3_path(filename, type)}"
-  # end
-
-  # singleton_class.send(:alias_method, :image_path, :s3_url)
-
-  # def s3_url(type)
-  #   self.class.s3_url(filename, type)
-  # end
-
-  # alias_method :image_path, :s3_url
-
-  ######### s3 legacy methods ##############3
-
   def destroy
     soft_delete
   end
