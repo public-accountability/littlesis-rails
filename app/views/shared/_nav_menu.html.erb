@@ -41,9 +41,15 @@ navbar_wrapper_classes << ' donation-banner' if show_donation_banner?
             <% end  %>
           </div>
 
-          <div id="top_donate_link" class="navbar-right-menu-item">
-	    <span><strong><%= link_to('Donate', '/donate', id: 'donate-link-button')%></strong></span>
-	  </div>
+          <% if APP_CONFIG['beta'] %>
+            <div id="navbar-beta-notice" class="navbar-right-menu-item mr-2">
+              <span>⚠ beta ⚠</span>
+            </div>
+          <% else %>
+              <div id="top_donate_link" class="navbar-right-menu-item">
+	        <span><strong><%= link_to('Donate', '/donate', id: 'donate-link-button')%></strong></span>
+	      </div>
+          <% end %>
 
           <div class="navbar-right-menu-item">
 	    <%= render partial: 'shared/nav_menu_search' %>

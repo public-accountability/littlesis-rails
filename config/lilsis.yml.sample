@@ -42,6 +42,7 @@ defaults: &defaults
   protocol: https
   image_host: "https://littlesis.org"
   image_root: public/images
+  beta: false
 
 test:
   <<: *defaults

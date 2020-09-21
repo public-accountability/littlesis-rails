@@ -144,5 +144,3 @@ describe 'home/dashboard', type: :feature do
     end
   end
 end
-
-# rubocop:enable Capybara/FeatureMethods
