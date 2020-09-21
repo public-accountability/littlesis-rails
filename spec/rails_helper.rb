@@ -43,7 +43,7 @@ RSpec.configure do |config|
   config.mock_with :rspec
 
   # these run inside an example (ie: it block)
-  config.include RspecExampleHelpers
+  config.include RspecHelpers::ExampleMacros
   config.include Devise::Test::ControllerHelpers, :type => :controller
   config.include Devise::Test::ControllerHelpers, :type => :view
   config.include Warden::Test::Helpers
@@ -56,7 +56,7 @@ RSpec.configure do |config|
   config.include SphinxTestHelper, :sphinx
 
   # these run inside example groups (ie: describe blocks)
-  config.extend RspecGroupHelpers
+  config.extend RspecHelpers::GroupMacros
   config.extend ControllerMacros, :type => :controller
   config.extend FeatureGroupMacros, :type => :feature
   config.extend RequestGroupMacros, :type => :request

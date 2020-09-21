@@ -1,5 +1,5 @@
 describe Referenceable, type: :model do
-  class TestReferenceable < TestActiveRecord
+  class TestReferenceable < RspecHelpers::TestActiveRecord
     include ActiveModel::Validations
     include Referenceable
 
