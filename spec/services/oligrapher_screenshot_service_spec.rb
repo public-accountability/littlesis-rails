@@ -17,11 +17,12 @@ describe OligrapherScreenshotService do
   context 'with public map' do
     let(:map) { create(:network_map_version3, user_id: 1) }
     let(:driver) { instance_double('Selenium::WebDriver::Firefox::Marionette::Driver') }
+    let(:map_url) { Lilsis::Application.routes.url_helpers.oligrapher_url(map) }
 
     it 'saves screenshot to database' do
       expect(driver).to receive(:execute_script).with('window.oli.hideAnnotations()')
       expect(driver).to receive(:execute_script).with('return window.oli.toSvg()').and_return(svg)
-      expect(Firefox).to receive(:visit).and_yield(driver)
+      expect(Firefox).to receive(:visit).with(map_url).and_yield(driver)
       expect { OligrapherScreenshotService.run(map) }.to change(map, :screenshot)
       expect(map.screenshot).to be_a(String)
     end
