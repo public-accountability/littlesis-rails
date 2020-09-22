@@ -3,6 +3,7 @@
 class OligrapherScreenshotService
   def self.run(map)
     Firefox.visit(map_url(map)) do |driver|
+      driver.execute_script('window.oli.hideAnnotations()')
       svg = driver.execute_script('return window.oli.toSvg()')
       if svg && valid_svg?(svg)
         map.update!(screenshot: svg)
