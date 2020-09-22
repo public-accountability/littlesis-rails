@@ -1,10 +1,16 @@
 <div class="dashboard-map">
-  <a href="<%= map_path(map) %>">
-    <% if map.is_private %>
-      <div class="dashboard-private-map-thumbnail"></div>
-    <% else %>
-      <%= image_tag(networkmap_image_path(map), class: "dashboard-map-thumbnail") %><br>
-    <% end %>
-    <%= map.title %>
+  <a href="<%= map_path(map) %>" title="<%= map.title %>">
+    <div class="dashboard-map-thumbnail">
+      <% if map.is_private %>
+        <%= image_tag asset_path('lock-128.png') %>
+      <% elsif map.screenshot.present? %>
+        <%= raw(map.screenshot) %>
+      <% else %>
+        <%= image_tag asset_path('netmap-org.png') %>
+      <% end %>
+    </div>
+    <div class="dashboard-map-text">
+      <p><%= map.title %></p>
+    </div>
   </a>
 </div>
