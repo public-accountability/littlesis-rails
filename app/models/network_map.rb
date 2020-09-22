@@ -13,7 +13,7 @@ class NetworkMap < ApplicationRecord
   attribute :graph_data, OligrapherGraphData::Type.new
   serialize :editors, Array
 
-  has_paper_trail on: [:update, :destroy]
+  has_paper_trail on: [:update, :destroy], skip: [:screenshot]
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
@@ -90,6 +90,10 @@ class NetworkMap < ApplicationRecord
 
   def documents_to_html
     documents.map { |d| "<div><a href=\"#{d.url}\">#{d.name}</a></div>"}.join("\n")
+  end
+
+  def take_screenshot
+    OligrapherScreenshotService.run(self)
   end
 
   # Creates these functions:
