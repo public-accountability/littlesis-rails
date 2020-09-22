@@ -26,6 +26,7 @@ describe NetworkMap, type: :model do
 
   it { is_expected.to have_db_column(:oligrapher_version) }
   it { is_expected.to have_db_column(:editors) }
+  it { is_expected.to have_db_column(:screenshot) }
   it { is_expected.to belong_to(:user).optional }
   it { is_expected.to validate_presence_of(:title) }
 

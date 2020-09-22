@@ -9,12 +9,46 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges get_interlocks embedded]
-  before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded]
+  before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges get_interlocks embedded screenshot]
+  before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot]
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
   before_action :check_editor, only: %i[update]
   before_action :set_oligrapher_version
+
+  # Pages
+
+  def show
+    check_private_access
+    @is_pending_editor = (current_user and @map.has_pending_editor?(current_user))
+    @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
+    render 'oligrapher/oligrapher', layout: 'oligrapher3'
+  end
+
+  def embedded
+    check_private_access
+    @configuration = Oligrapher.configuration(map: @map, current_user: current_user, embed: true)
+    response.headers.delete('X-Frame-Options')
+    render layout: 'embedded_oligrapher'
+  end
+
+  def example
+    render 'oligrapher/example', layout: 'oligrapher3'
+  end
+
+  def new
+    @map = NetworkMap.new(oligrapher_version: 3, title: 'Untitled Map', user: current_user)
+    @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
+    render 'oligrapher/new', layout: 'oligrapher3'
+  end
+
+  def screenshot
+    if @map.screenshot.present?
+      render inline: @map.screenshot, content_type: 'image/svg+xml'
+    else
+      head :not_found
+    end
+  end
 
   # Crud actions
 
@@ -43,11 +77,8 @@ class OligrapherController < ApplicationController
     end
   end
 
-  def new
-    @map = NetworkMap.new(oligrapher_version: 3, title: 'Untitled Map', user: current_user)
-    @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
-    render 'oligrapher/new', layout: 'oligrapher3'
-  end
+
+  # Action Endpoints - API requests from Oligrapher
 
   # two actions { editor: { action: add | remove, username: <username> } }
   def editors
@@ -114,27 +145,8 @@ class OligrapherController < ApplicationController
     render json: { redirect_url: new_oligrapher_path }
   end
 
-  # Pages
+  # Search API
 
-  def show
-    check_private_access
-    @is_pending_editor = (current_user and @map.has_pending_editor?(current_user))
-    @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
-    render 'oligrapher/oligrapher', layout: 'oligrapher3'
-  end
-
-  def embedded
-    check_private_access
-    @configuration = Oligrapher.configuration(map: @map, current_user: current_user, embed: true)
-    response.headers.delete('X-Frame-Options')
-    render layout: 'embedded_oligrapher'
-  end
-
-  def example
-    render 'oligrapher/example', layout: 'oligrapher3'
-  end
-
-  # Search Api
   def find_nodes
     return head :bad_request if params[:q].blank?
 
@@ -161,10 +173,10 @@ class OligrapherController < ApplicationController
       .per(params.fetch(:num, 10))
       .run
       .each { |e|
-        nodes[e.id] = Oligrapher::Node.from_entity(e) unless nodes[e.id]
-        nodes[e.id][:edges] = [] unless nodes[e.id][:edges].present?
-        nodes[e.id][:edges].push(Oligrapher.rel_to_edge(Relationship.find(e.relationship_id)))
-      }
+      nodes[e.id] = Oligrapher::Node.from_entity(e) unless nodes[e.id]
+      nodes[e.id][:edges] = [] unless nodes[e.id][:edges].present?
+      nodes[e.id][:edges].push(Oligrapher.rel_to_edge(Relationship.find(e.relationship_id)))
+    }
 
     render json: nodes.values
   end
@@ -174,9 +186,9 @@ class OligrapherController < ApplicationController
     return head :bad_request if params[:entity2_ids].blank?
 
     rel_ids = Link
-      .where(entity1_id: params[:entity1_id].to_i)
-      .where(entity2_id: params[:entity2_ids].split(','))
-      .pluck(:relationship_id)
+                .where(entity1_id: params[:entity1_id].to_i)
+                .where(entity2_id: params[:entity2_ids].split(','))
+                .pluck(:relationship_id)
 
     edges = Relationship.find(rel_ids).map(&Oligrapher.method(:rel_to_edge))
 
@@ -194,12 +206,12 @@ class OligrapherController < ApplicationController
 
     if interlock_ids.count > 0
       nodes = Entity
-        .where(id: interlock_ids)
-        .map { |e| Oligrapher::Node.from_entity(e) }
+                .where(id: interlock_ids)
+                .map { |e| Oligrapher::Node.from_entity(e) }
       rel_ids = Link
-        .where(entity1_id: [params[:entity1_id], params[:entity2_id]], entity2_id: interlock_ids)
-        .pluck(:relationship_id)
-        .uniq
+                  .where(entity1_id: [params[:entity1_id], params[:entity2_id]], entity2_id: interlock_ids)
+                  .pluck(:relationship_id)
+                  .uniq
       rels = Relationship.where(id: rel_ids)
       edges = rels.map { |r| Oligrapher.rel_to_edge(r) }
 

@@ -137,6 +137,32 @@ describe "Oligrapher", type: :request do
     end
   end
 
+  describe 'GET /oligrapher/:id/screenshot' do
+    let(:svg) do
+      '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="10" height="10"><rect x="14" y="23" width="200" height="10" fill="black"/></svg>'
+    end
+
+    context 'when map has a saved screenshot' do
+      let(:map) { create(:network_map_version3, screenshot: svg, user: user)}
+
+      it 'serves image' do
+        get screenshot_oligrapher_path(map)
+        expect(response).to have_http_status 200
+        expect(response.media_type).to eq 'image/svg+xml'
+        expect(response.body).to eq svg
+      end
+    end
+
+    context 'when map is missing a screenshot' do
+      let(:map) { create(:network_map_version3, screenshot: nil, user: user)}
+
+      it 'renders 404' do
+        get screenshot_oligrapher_path(map)
+        expect(response).to have_http_status 404
+      end
+    end
+  end
+
   describe 'POST /oligrapher' do
     before { login_as(user, scope: :user) }
 
