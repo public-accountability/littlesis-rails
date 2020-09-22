@@ -10,12 +10,6 @@ class NetworkMap < ApplicationRecord
 
   OLIGRAPHER_VERSION = APP_CONFIG['oligrapher_version']
 
-  THUMBNAIL_HOST = if Rails.env.production?
-                     'https://littlesis.org'
-                   else
-                     'http://127.0.0.1:8081'
-                   end
-
   attribute :graph_data, OligrapherGraphData::Type.new
   serialize :editors, Array
 
@@ -92,18 +86,6 @@ class NetworkMap < ApplicationRecord
 
   def to_param
     title.nil? ? id.to_s : "#{id}-#{title.parameterize}"
-  end
-
-  def generate_thumbnail
-    url = Rails.application.routes.url_helpers.embedded_map_url(self, host: THUMBNAIL_HOST)
-    path = File.join(APP_CONFIG['image_root'], 'maps', "map-#{id}.png")
-
-    if Screenshot.take(url, path)
-      Screenshot.resize_map_thumbnail(path)
-      update_column :thumbnail, "/images/maps/map-#{id}.png"
-    else
-      Rails.logger.info "Failed to save screenshot for map #{id}"
-    end
   end
 
   def documents_to_html
