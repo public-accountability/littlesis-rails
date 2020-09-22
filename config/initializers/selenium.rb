@@ -8,6 +8,6 @@ else
   Rails.logger.warn "Firefox path #{firefox_path} does not exist"
 end
 
-unless Rails.env.production?
+if Rails.env.development?
   Selenium::WebDriver.logger.level = :debug
 end

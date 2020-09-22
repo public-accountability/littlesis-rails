@@ -2,8 +2,7 @@
 
 # Oligrapher 3 API endpoints
 #
-# MapsController is used for Oligrapher 2 endpoints
-# and the html pages for Oligrapher 2 and 3
+# See MapsController for Oligrapher 2 endpoints
 class OligrapherController < ApplicationController
   include MapsHelper
 
