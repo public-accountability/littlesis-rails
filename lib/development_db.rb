@@ -55,7 +55,7 @@ class DevelopmentDb
 
   # All tables can be grouped in to 4 categories for export
   #  1) Tables who'se entire contents can be dumped (i.e. entities)
-  #  2) Table where just the structure needs to exported (i.e. sessions)
+  #  2) Table where just the structure needs to exported (i.e. versions)
   #  3) Tables containing senstive information that must be cleaned first (i.e. users)
   #  4) Large tables that can be dumpt with LIMIT in order to reduce the export size (i.e. os_donations)
 
@@ -154,7 +154,6 @@ class DevelopmentDb
                  ny_filers
                  ny_matches
                  object_tag
-                 sessions
                  sphinx_index
                  unmatched_ny_filers
                  user_requests
