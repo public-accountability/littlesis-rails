@@ -26,6 +26,7 @@ describe NetworkMap, type: :model do
 
   it { is_expected.to have_db_column(:oligrapher_version) }
   it { is_expected.to have_db_column(:editors) }
+  it { is_expected.to have_db_column(:screenshot) }
   it { is_expected.to belong_to(:user).optional }
   it { is_expected.to validate_presence_of(:title) }
 
@@ -56,26 +57,6 @@ describe NetworkMap, type: :model do
     it 'generates string of index data' do
       expect(network_map.generate_index_data)
         .to eql "#{e1.name}, xyz, #{e2.name}, Caption 1"
-    end
-  end
-
-  describe 'generate_thumbnail' do
-    let(:network_map) { create(:network_map, user_id: 1) }
-
-    specify 'screenshot is successful' do
-      expect(Screenshot).to receive(:take).once.and_return(true)
-      expect(Screenshot).to receive(:resize_map_thumbnail).once
-      expect(network_map.thumbnail).to be nil
-      network_map.generate_thumbnail
-      expect(network_map.thumbnail).to eq "/images/maps/map-#{network_map.id}.png"
-    end
-
-    specify 'screenshot failed' do
-      expect(Screenshot).to receive(:take).once.and_return(false)
-      expect(Screenshot).not_to receive(:resize_map_thumbnail)
-      expect(Rails.logger).to receive(:info).once
-      network_map.generate_thumbnail
-      expect(network_map.thumbnail).to be nil
     end
   end
 

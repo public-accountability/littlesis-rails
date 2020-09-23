@@ -1,6 +1,6 @@
 #dashboard-bulletins {
     .card  {
-	margin-bottom: 1.5em;	
+	margin-bottom: 1.5em;
     }
 }
 
@@ -20,30 +20,47 @@
   font-weight: bold;
 }
 
-.dashboard-map {
-	display: inline-block;
-	width: 280px;
-	text-align: center;
-	margin-right: 30px;
-	margin-bottom: 30px;
-}
+#dashboard-maps-container {
+    display: flex;
+    flex-wrap: wrap;
 
-.dashboard-map-thumbnail {
-	width: 280px;
-	height: 161px;
-	margin-bottom: 10px;
-	border: 1px solid #ddd;
-	cursor: pointer;
-}
+    .dashboard-map {
+        width: 33.33%;
+        box-sizing: border-box;
 
-.dashboard-private-map-thumbnail {
-	width: 280px;
-	height: 161px;
-	background-image: asset-url('lock-128.png');
-	background-position: center;
-	background-repeat: no-repeat;
-	margin-bottom: 10px;
-	border: 1px solid #ddd;
+
+        .dashboard-map-thumbnail {
+            height: 161px;
+            width: 282px;
+
+            box-shadow:0 0 1px 1px lightgray;
+
+            &:hover {
+                box-shadow:0 0 1px 1px darkgray;
+            }
+
+            svg {
+                pointer-events: none;
+            }
+
+            img {
+                display: block;
+                margin: auto;
+            }
+        }
+
+        .dashboard-map-text {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            p {
+                max-width: 240px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
 }
 
 .dashboard-title-link {
@@ -72,7 +89,7 @@
 #homepage-lists {
   /* float: right;  */
   /* width: 280px;  */
-  font-size: 18px; 
+  font-size: 18px;
   line-height: 38px;
 }
 
@@ -126,7 +143,7 @@
   tr td:nth-child(2) {
     text-align: left;
   }
-  
+
 }
 
 div.social-media-buttons {
@@ -145,7 +162,7 @@ div#donate-button-container  {
 	background-color: #cc5454;
 	text-decoration: none;
 	height: 22px;
-	
+
     }
     .btn-sm {
 	font-size: 11px;
@@ -165,7 +182,7 @@ div#donate-button-container  {
 
     h1 {
 	display: inline-block;
-    } 
+    }
 
     p {
 	font-size: 1.1em;
@@ -184,7 +201,7 @@ div#donate-button-container  {
 	padding-left: 0.8em;
     }
 }
-    
+
 #explore-row {
     @extend .d-none;
     @extend .d-sm-flex;
@@ -203,7 +220,7 @@ div#donate-button-container  {
 	&:hover {
 	    color: $link_blue;
 	    text-decoration: none;
-	    
+
 	}
     }
 
@@ -213,7 +230,7 @@ div#donate-button-container  {
 	top: 71px;
 	left: -14px;
     }
-    
+
     #eyes-on-ties-homepage-img {
 	@extend .img-responsive;
 	padding-left: 0.7em;

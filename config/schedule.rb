@@ -31,7 +31,7 @@ every 1.day do
 end
 
 every 1.day, at: '3:30 am' do
-  rake "maps:generate_recent_thumbs", output: log_file
+  rake "maps:screenshot:recent", output: log_file
 end
 
 every 1.day, at: '4:30 am' do
@@ -39,9 +39,9 @@ every 1.day, at: '4:30 am' do
 end
 
 every 1.day, at: '5:00 am' do
-  rake "ts:index", output: log_file
+  rake "maps:screenshot:missing", output: log_file
 end
 
 every 1.day, at: '5:30 am' do
-  rake "maps:generate_missing_thumbs", output: log_file
+  rake "ts:index", output: log_file
 end

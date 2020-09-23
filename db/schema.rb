@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_27_170003) do
+ActiveRecord::Schema.define(version: 2020_09_22_162428) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -690,6 +690,7 @@ ActiveRecord::Schema.define(version: 2020_08_27_170003) do
     t.integer "oligrapher_version", limit: 1, default: 2, null: false
     t.text "editors"
     t.text "settings"
+    t.text "screenshot", size: :medium
     t.index ["delta"], name: "index_network_map_on_delta"
     t.index ["user_id"], name: "user_id_idx"
   end

@@ -223,6 +223,7 @@ Lilsis::Application.routes.draw do
       post '/editors', action: :editors
       post '/confirm_editor', action: :confirm_editor
       get 'lock'
+      get 'screenshot'
       post 'lock'
       post 'release_lock'
       post 'clone'

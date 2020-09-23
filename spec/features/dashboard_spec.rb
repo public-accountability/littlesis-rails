@@ -46,18 +46,19 @@ describe 'home/dashboard', type: :feature do
   end
 
   describe 'viewing map thumbnails' do
-    context 'when User has one map, with a nil thumbnail' do
+    context 'when User has one map, without a screenshot' do
       before do
         create(:network_map,
                user_id: current_user.id,
-               thumbnail: nil,
+               screenshot: nil,
                is_private: false)
         visit '/home/dashboard'
       end
 
-      scenario 'pages has default map image' do
+      scenario 'page has default map image' do
         successfully_visits_page home_dashboard_path
-        page_has_selector 'img.dashboard-map-thumbnail', count: 1
+        page_has_selector 'div.dashboard-map-thumbnail', count: 1
+        expect(page.find('.dashboard-map-thumbnail img')['src']).to include 'netmap-org'
         expect(page).not_to have_selector '#dashboard-maps-row div.pagination'
       end
     end

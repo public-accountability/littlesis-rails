@@ -85,7 +85,6 @@ gem 'validate_url', :git => 'https://github.com/perfectline/validates_url.git', 
 
 # used for screenshot capture
 gem 'selenium-webdriver', '>= 3.11.0'
-gem 'headless'
 
 # used by Pages and Toolkit for Markdown->Html
 gem 'redcarpet', '>= 3.4.0'
