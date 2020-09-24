@@ -40,9 +40,10 @@ class ExternalEntity
       end
 
       def add_reference
-        name = "New York State Campaign Finance Disclosure: #{external_data.wrapper.nice[:name]}"
-        url = external_data.wrapper.reference_url
-        entity.add_reference(url: url, name: name).save!
+        entity.add_reference(
+          url: external_data.wrapper.reference_url,
+          name: "New York State Campaign Finance Disclosure: #{external_data.wrapper.nice[:name]}"
+        ).save!
       end
 
       def unmatch_action

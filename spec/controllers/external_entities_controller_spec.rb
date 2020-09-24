@@ -11,13 +11,11 @@ describe ExternalEntitiesController, type: :controller do
   describe 'random' do
     it 'redirects to random id' do
       allow(controller).to receive(:authenticate_user!)
-      expect(ExternalEntity).to receive(:unmatched).once
-                                  .and_return(double(order: double(limit: double(pluck: [123]))))
-
+      expect(ExternalEntity).to receive(:random_unmatched)
+                                  .with(nil).once.and_return(double(id: 123))
       get :random
       expect(response.status).to eq 302
       expect(response.location).to include "external_entities/123"
     end
-
   end
 end

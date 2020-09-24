@@ -124,29 +124,39 @@ describe ExternalEntity, type: :model do
     end
   end
 
-  describe 'matched/unmatched' do
+  describe 'Class Query Methods' do
     let(:entity) { create(:entity_org) }
 
-    before do
-      ExternalEntity.create!(
-        dataset: 'iapd_advisors',
-        external_data: create(:external_data_iapd_advisor),
-        entity: entity
-      )
-
-      ExternalEntity.create!(
-        dataset: 'iapd_advisors',
-        external_data: ExternalData.create!(
-          attributes_for(:external_data_iapd_advisor).merge(dataset_id: Faker::Number.number.to_s)
-        )
-      )
+    let!(:iapd_advisor_matched) do
+      ExternalEntity.create!(dataset: 'iapd_advisors',
+                             external_data: create(:external_data_iapd_advisor),
+                             entity: entity)
     end
 
-    specify do
-      expect(ExternalEntity.count).to eq 2
-      expect(ExternalEntity.unmatched.count).to eq 1
+    let!(:iapd_advisor_unmatched) do
+      ExternalEntity.create!(dataset: 'iapd_advisors',
+                             external_data: ExternalData.create!(
+                               attributes_for(:external_data_iapd_advisor).merge(dataset_id: Faker::Number.number.to_s)
+                             ))
+    end
+
+    let!(:nycc_unmatched) do
+      ExternalEntity.create!(dataset: 'nycc',
+                             external_data: create(:external_data_nycc_borelli))
+    end
+
+    specify 'match/unmatch' do
+      expect(ExternalEntity.count).to eq 3
+      expect(ExternalEntity.unmatched.count).to eq 2
       expect(ExternalEntity.matched.count).to eq 1
       expect(ExternalEntity.matched.first).not_to eq ExternalEntity.unmatched.first
+    end
+
+    specify 'random_unmatched' do
+      expect([nycc_unmatched.id, iapd_advisor_unmatched.id]).to include(ExternalEntity.random_unmatched.id)
+      expect(ExternalEntity.random_unmatched(:nycc)).to eq nycc_unmatched
+      expect(ExternalEntity.random_unmatched(:iapd_advisors)).to eq iapd_advisor_unmatched
+      expect(ExternalEntity.random_unmatched(:iapd_schedule_a)).to be_nil
     end
   end
 end

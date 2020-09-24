@@ -86,5 +86,14 @@ class ExternalEntity < ApplicationRecord
     where.not(entity_id: nil)
   end
 
+  def self.random_unmatched(dataset = nil)
+    ExternalEntity
+      .public_send(dataset || :itself)
+      .unmatched
+      .order('RAND()')
+      .limit(1)
+      .first
+  end
+
   class AlreadyMatchedError < Exceptions::MatchingError; end
 end
