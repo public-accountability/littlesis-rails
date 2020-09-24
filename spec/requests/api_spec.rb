@@ -37,7 +37,11 @@ describe Api, :pagination_helper do
       before { get api_entity_path(lawyer) }
 
       specify { expect(response).to have_http_status 200 }
-      specify { expect(json).to eql(expected) }
+
+      specify do
+        expect(json["data"]["attributes"].except!("updated_at"))
+          .to eq(expected["data"]["attributes"].except!("updated_at"))
+      end
     end
 
     describe 'request for details: /entities/:id?details=true' do
