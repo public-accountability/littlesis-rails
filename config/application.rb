@@ -12,7 +12,7 @@ APP_CONFIG = YAML.load(
 
 module Lilsis
   class Application < Rails::Application
-    config.load_defaults 5.0
+    config.load_defaults 6.0
     config.autoloader = :classic
     # config.autoloader = :zeitwerk
 
