@@ -98,8 +98,9 @@ class ExternalData < ApplicationRecord
   end
 
   # This is the backend for a datatables.js table.
-  # Each dataset has it's on table. Table can ordered and searched.
-  # input: Datatables::Params
+  # Each dataset has it's on table. Table rows can ordered and filtered.
+  # Some datasets use Manticore (ExternalDataSphinxQuery), others use mysql (ExternalDataMysqlQuery)
+  # Datatables::Params --> Datatables::Response
   def self.datatables_query(params)
     if params.dataset == 'nys_disclosure'
       ExternalDataSphinxQuery.run(params)
