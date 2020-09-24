@@ -53,7 +53,7 @@
   <div class="col-sm-6 col-sm-offset-1">
     <h5><strong>Nothing Found</strong></h5>
     <h6>Try searching again <em>or</em> if you can't find the entity you are looking for, create it now:</h6>
-    <%= render partial: 'new_entity_form', locals: {add_relationship: true } %>
+    <%= render partial: 'new_entity_form', locals: { add_relationship: true, form_url: url_for(action: :create) } %>
   </div>
 
   <div class="col-sm-4 col-md-offset-1 top-1em" id="new-entity-errors">

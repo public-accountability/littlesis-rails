@@ -11,7 +11,7 @@
     <% entity = @entity %>
 <% end %>
 
-<%= form_for(entity) do |f| %>
+<%= form_for(entity, url: form_url) do |f| %>
     <% if entity.errors.any? %>
 	<div id="error_explanation" class="alert alert-warning">
 	    <%= pluralize(entity.errors.count, "error") %> prohibited this entity from being saved:
