@@ -30,7 +30,9 @@ feature 'Selenium JS', type: :feature, js: true do
 
       it 'allows members to be removed with JS' do
         expect(page).to have_css('.entity-link', count: 3)
-        accept_confirm { page.first('.glyphicon-remove').click }
+
+        accept_confirm { all('.remove_entity').sample.click }
+
         expect(page).to have_css('.entity-link', count: 2)
       end
 
