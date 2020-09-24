@@ -29,7 +29,7 @@ class ExternalEntitiesController < ApplicationController
   # GET /external_entities/random
   def random
     redirect_to action: :show,
-                id: ExternalEntity.unmatched.order('RAND()').limit(1).pluck(:id).first
+                id: ExternalEntity.random_unmatched(params[:dataset]).id
   end
 
   # PATCH /external_entities/:id
