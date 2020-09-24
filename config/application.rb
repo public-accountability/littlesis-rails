@@ -13,8 +13,7 @@ APP_CONFIG = YAML.load(
 module Lilsis
   class Application < Rails::Application
     config.load_defaults 6.0
-    config.autoloader = :classic
-    # config.autoloader = :zeitwerk
+    config.autoloader = :zeitwerk
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       rewrite  %r{\A/(person|org)/([0-9]+)/[^/ ]+(/.*)?}, '/entities/$2$3'
@@ -42,8 +41,8 @@ module Lilsis
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
 
     # /lib is not loaded in production
-    config.autoload_paths += %W(#{config.root}/lib)
-    config.autoload_paths += %W(#{config.root}/lib/importers)
+    # config.autoload_paths += %W(#{config.root}/lib)
+    # config.autoload_paths += %W(#{config.root}/lib/importers)
 
     config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch('redis_url') }
 
