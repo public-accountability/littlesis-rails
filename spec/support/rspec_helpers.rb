@@ -174,13 +174,8 @@ module RspecHelpers
     #
     def stub_const_and_reload_module(const:, val:, mod:)
       stub_const const, val
-      if Module.const_defined?(mod)
-        module_source_location = Module.const_source_location(mod)[0]
-        Object.send :remove_const, mod
-        load module_source_location
-      else
-        raise Exceptions::LittleSisError, "Cannot reload undefined module: #{mod}"
-      end
+      Object.send :remove_const, mod if Module.const_defined?(mod)
+      load mod.to_s.underscore
     end
   end
 
