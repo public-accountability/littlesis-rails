@@ -1,4 +1,4 @@
-require Rails.root.join('lib', 'bulk_tagger.rb')
+require 'bulk_tagger'
 
 namespace :tags do
   desc 'bulk tag a csv of entities'
