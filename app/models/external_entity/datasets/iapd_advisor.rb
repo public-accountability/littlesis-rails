@@ -35,7 +35,7 @@ class ExternalEntity
         EntityMatcher.find_matches_for_org(org_name)
       end
 
-      def search_for_matches
+      def search_for_matches(search_term)
         EntityMatcher.find_matches_for_org(search_term)
       end
 
