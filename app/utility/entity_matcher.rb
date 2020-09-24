@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'entity_matcher/query'
-require_relative 'entity_matcher/search'
-require_relative 'entity_matcher/evaluation_result'
-require_relative 'entity_matcher/evaluation'
-
 module EntityMatcher
   def self.find_matches_for_person(name, **kwargs)
     test_case = TestCase.person(name, **kwargs)
