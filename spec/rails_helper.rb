@@ -1,7 +1,10 @@
 # Only generate coverage report if environment variable is set
 if ENV["COVERAGE"]
   require 'simplecov'
-  SimpleCov.start 'rails'
+  SimpleCov.start 'rails' do
+    add_filter 'lib/tasks'
+    add_filter 'lib/scripts'
+  end
 
   if ENV['TRAVIS']
     require 'codecov'
