@@ -1,3 +1,5 @@
+require 'sec'
+
 describe Sec do
   # The test database was built from this sample csv:
   #
@@ -89,7 +91,7 @@ describe Sec do
            "company_name" => "GOLDMAN SACHS GROUP INC",
            "form_type" => "4",
            "date_filed" => "2014-02-05",
-           "filename" => "edgar/data/886982/0000769993-14-000090.txt" } 
+           "filename" => "edgar/data/886982/0000769993-14-000090.txt" }
       end
 
       let(:filing_with_data) do
@@ -123,7 +125,7 @@ describe Sec do
       it 'set @data' do
         expect(document.data).to eq form4_xml
       end
-      
+
       it 'sets @text and @document' do
         expect(document.text).to be_a String
         expect(document.document).to be_a Nokogiri::XML::Document
@@ -152,7 +154,7 @@ describe Sec do
       it 'set @data' do
         expect(document.data).to eq form8k_xml
       end
-      
+
       it 'sets @text and @document' do
         expect(document.text).to be_a String
         expect(document.document).to be_a Nokogiri::HTML::Document
@@ -214,7 +216,7 @@ describe Sec do
 
   describe Sec::ReportingOwner do
     subject(:reporting_owner) { Sec::ReportingOwner.new(reporting_owner_hash) }
-    
+
     let(:document_hash) do
       JSON.load(File.read(Rails.root.join('spec', 'testdata', 'sec', 'eep_document.json').to_s))
     end

@@ -1,3 +1,5 @@
+require 'importers'
+
 describe CongressImporter::LegislatorMatcher do
   let(:person) do
     create(:entity_person, name: 'William Vollie Alexander Jr.')

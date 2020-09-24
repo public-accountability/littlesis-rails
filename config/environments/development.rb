@@ -12,17 +12,10 @@ Rails.application.configure do
   config.action_controller.perform_caching = true
   config.action_controller.enable_fragment_cache_logging = true
 
-  # config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch(:redis_url) }
-  # config.cache_store = :redis_store #, "redis://redis:6379/0/cache"
-
   # Store uploaded files on the local file system (see config/storage.yml for options)
   config.active_storage.service = :local
-  # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.perform_caching = false
 
   config.assets.css_compressor = :sass
-
   # Debug mode disables concatenation and preprocessing of assets.
   config.assets.debug = true
   config.assets.quiet = true
@@ -41,22 +34,10 @@ Rails.application.configure do
   # Raise an error on page load if there are pending migrations
   config.active_record.migration_error = :page_load
 
-  # config.action_mailer.default_url_options[:host] = APP_CONFIG['host']
-  # config.action_mailer.default_url_options[:protocol] = APP_CONFIG['protocol']
-
+  config.action_mailer.perform_caching = false
   config.action_mailer.perform_deliveries = false
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.smtp_settings = {
-    address:              APP_CONFIG['smtp_address'],
-    port:                 APP_CONFIG['smtp_port'],
-    domain:               APP_CONFIG['smtp_domain'],
-    user_name:            APP_CONFIG['smtp_user_name'],
-    password:             APP_CONFIG['smtp_password'],
-    authentication:       APP_CONFIG['smtp_authentication'],
-    ssl: true
-  }
-
+  config.action_mailer.raise_delivery_errors = false
   config.active_storage.service = :local
 
   # see: https://github.com/rails/web-console for info on web_console configuration

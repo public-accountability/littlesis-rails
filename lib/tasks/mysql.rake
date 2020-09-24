@@ -1,4 +1,4 @@
-require Rails.root.join('lib', 'development_db.rb')
+require 'development_db'
 
 namespace :mysql do
   desc 'Creates raw public dataset'

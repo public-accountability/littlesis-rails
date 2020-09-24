@@ -1,3 +1,5 @@
+require 'os_importer'
+
 describe 'os_importer' do
 
   before(:all) do
