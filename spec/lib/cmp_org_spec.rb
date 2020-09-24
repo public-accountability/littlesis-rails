@@ -1,3 +1,5 @@
+require 'cmp'
+
 describe Cmp::CmpOrg do
   let(:org) { create(:entity_org) }
   let(:override) { {} }

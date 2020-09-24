@@ -1,3 +1,5 @@
+require 'cmp'
+
 describe Cmp::CmpPerson do
   let(:override) { {} }
   let(:attributes) do
@@ -34,8 +36,8 @@ describe Cmp::CmpPerson do
   end
 
   describe 'import!' do
-    let(:oil_executive) { create(:entity_person, name: 'Oil Executive') } 
-    
+    let(:oil_executive) { create(:entity_person, name: 'Oil Executive') }
+
     context 'Entity is not already in the database' do
       before do
         allow(subject).to receive(:preselected_match).and_return(nil)
@@ -102,7 +104,7 @@ describe Cmp::CmpPerson do
 
     context 'preseleted matched given' do
       before { oil_executive }
-      
+
       it 'does not create a entity entity' do
         expect { subject.import!(oil_executive.id.to_s) }.not_to change { Entity.count }
       end
@@ -114,7 +116,7 @@ describe Cmp::CmpPerson do
 
     context 'preseleted = new' do
       before { oil_executive }
-      
+
       it 'creates a entity entity' do
         expect { subject.import!(:new) }.to change { Entity.count }
       end

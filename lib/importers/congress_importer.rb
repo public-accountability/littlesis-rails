@@ -5,6 +5,8 @@
 require 'uri'
 require 'open-uri'
 require_relative 'congress_importer/legislator'
+require_relative 'congress_importer/legislator_matcher'
+require_relative 'congress_importer/terms_importer'
 
 # Processes congressional legistors yaml files and matches
 # each legistor with existing LittleSis entities

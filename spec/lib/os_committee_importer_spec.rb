@@ -1,3 +1,5 @@
+require 'os_committee_importer'
+
 describe 'OsCommitteeImporter' do
   describe 'line_to_a' do
     before do
@@ -12,7 +14,7 @@ describe 'OsCommitteeImporter' do
       expect(@line_output.length).to eql 14
     end
   end
-  
+
   describe 'process_line' do
     before do
       @count = OsCommittee.count
@@ -36,7 +38,7 @@ describe 'OsCommitteeImporter' do
       expect(cmte.active_in_cycle).to eql(true)
     end
 
-    it 'can be inserted twice without creating duplicates' do 
+    it 'can be inserted twice without creating duplicates' do
       OsCommitteeImporter.process_line("|2004|,|C00000059|,|Hallmark Cards|,,|Hallmark Cards|,|C00000059|,|PB|,||,,|C1400|,|Hoovers|,|N|,|0|,1")
       expect(OsCommittee.count).to eql(@count + 1)
     end
