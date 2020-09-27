@@ -228,20 +228,22 @@ var addRelationship = (function(utility) {
 
   /**
    categories() defines the acceptable valid relationship options
-   for a given two entities. However, as a convenience we,
-   allow some relationships to be selected in reverse, and correct
-   the order behind the scenes.
+   for a given two entities. As a convenience we allow some relationships
+   to be selected in reverse, where the correct direction of the relationship
+   can be determined. This function reverses the entity ids in those situations.
 
-   Entity1 must be a 'person' for position and education relationshps.
-   Entity2 must be a 'org' for people/org relationships
-
+   Org-->People relationships are reversed for these categories
+     - Position (1)
+     - Education (2)
+     - Membership (3)
+     - Ownership(10)
   */
   function reverseEntityIdsIf() {
     var catId = category_id();
 
-    if ([1,2].includes(catId) && utility.entityInfo('entitytype') === 'Org') {
-      swapEntityIds();
-    } else if (catId == 3 && selected_entity_data.primary_ext === 'Person') {
+    if ( [1,2,3,10].includes(catId) &&
+         utility.entityInfo('entitytype') === 'Org' &&
+         selected_entity_data.primary_ext === 'Person') {
       swapEntityIds();
     }
   }
