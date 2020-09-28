@@ -12,7 +12,7 @@
     <!-- This section was made before the SortedLinks class was written -->
     <!-- Eventually we should replace this with a common sorted links section that works for both People and Orgs-->
     <% if @entity.person? %>
-	
+
       <% if @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').present? %>
         <div class="text-center">
 	  <p class=""><strong>Positions</strong></p>
@@ -32,7 +32,7 @@
 	      <%= render partial: 'position', locals: { relationship: r } %>
             <% end %>
 	  <% end %>
-        </div>    
+        </div>
       <% end %>
 
       <% if @entity.relationships.where(category_id: 4).present? %>
@@ -50,9 +50,9 @@
       <% end %>
     <% end %>
 
-    
+
     <% if @entity.org? %>
-      <% cache ['match_sidebar_org', @entity.cache_key] do %>
+      <% cache ['match_sidebar_org', @entity.cache_key_with_version] do %>
 	<% sorted_links = SortedLinks.new(@entity) %>
 	<% if sorted_links.staff.count > 0 %>
 	  <div class="text-center">

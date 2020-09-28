@@ -2,7 +2,7 @@
 <%= render partial: 'entities/header', locals: { entity: @entity } %>
 <%= render partial: 'entities/actions', locals: { entity: @entity } %>
 
-<%= cache ['entity_history', @entity.cache_key, @page ] do %>
+<%= cache ['entity_history', @entity.cache_key_with_version, @page ] do %>
 
   <% versions = EntityHistory.new(@entity).versions(page: @page).as_presenters %>
 
@@ -14,9 +14,9 @@
 	    <span class="light-gray-box-rounded">Revision history for <em><%= @entity.name %></em>:</span>
 	  </h4>
 	</div>
-	
+
 	<%= render partial: 'record_history_table', locals: { versions: versions } %>
-	
+
 	<%= paginate versions %>
       </div>
       <% if @entity.created_at.year < 2017 %>

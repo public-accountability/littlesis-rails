@@ -15,7 +15,7 @@
 
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :members } %>
 
-<% cache( [@list.cache_key, 'members'], expires_in: 1.day) do %>
+<% cache( [@list.cache_key_with_version, 'members'], expires_in: 1.day) do %>
   <%= render partial: 'datatable', locals: { table: @table, editable: @editable } %>
 <% end %>
 

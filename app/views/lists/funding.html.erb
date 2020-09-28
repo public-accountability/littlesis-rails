@@ -7,7 +7,7 @@
   People on this list have received money from the following people and organizations.
 <% end %>
 
-<% cache( [ @list.cache_key, 'funding', @page ], expires_in: 1.day) do %>
+<% cache( [ @list.cache_key_with_version, 'funding', @page ], expires_in: 1.day) do %>
 
   <% if @donors.count > 0 %>
   <h3>Common Donors</h3>

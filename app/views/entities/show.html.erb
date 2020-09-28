@@ -19,7 +19,7 @@
   </div>
 
   <div class="col-md-4 col-sm-4 hidden-xs">
-    <% cache_unless user_signed_in?, ['relationship_page_sidebar',  @entity.cache_key], expires_in: 1.day do %>
+    <% cache_unless user_signed_in?, ['relationship_page_sidebar',  @entity.cache_key_with_version], expires_in: 1.day do %>
       <%= render partial: 'sidebar' %>
     <% end  %>
   </div>

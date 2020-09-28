@@ -6,10 +6,10 @@
   <h3 class="w-100">The sources documenting <%= @entity.name %></h3>
     <% if user_signed_in? %>
       <p><a href="#add-reference-modal" data-toggle="modal">Add a new reference</a></p>
-    <% end %>	    
+    <% end %>
 </div>
 
-<% cache ['entity_references', @page, @entity.cache_key ] do  %>
+<% cache ['entity_references', @page, @entity.cache_key_with_version ] do  %>
 
   <div class="row">
     <table class="table table-hover">
@@ -24,7 +24,7 @@
       <tbody>
 	<% documents = @entity.all_documents(@page, 25) %>
 	<% documents.each do |doc| %>
-	  <tr> 
+	  <tr>
 	    <% if user_signed_in? %>
 	      <td>
 		<%= link_to edit_document_path(doc) do %>
@@ -32,7 +32,7 @@
 	        <% end %>
 	      </td>
 	    <% else %>
-	      <td><%= doc.name %></td>	    	
+	      <td><%= doc.name %></td>
 	    <% end %>
 	    <td><%= link_to doc.url, doc.url, '_target' => 'blank' %></td>
 	    <td><%= doc.ref_types_display %></td>
@@ -48,4 +48,3 @@
 <% if user_signed_in? %>
   <%= render partial: 'shared/reference_new', locals: {model: @entity, reference: nil} %>
 <% end %>
-

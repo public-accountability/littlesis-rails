@@ -3,13 +3,13 @@
   <%# The 'regular' profile page %>
   <% if params[:relationships] == nil %>
 
-    <% cache ['relationship_page', @entity.cache_key] do  %>
+    <% cache ['relationship_page', @entity.cache_key_with_version] do  %>
       <% if @entity.links.count.zero? %>
 	<%= render partial: 'no_relationships' %>
       <% else %>
-	
+
 	<% @links = SortedLinks.new(@entity) %>
-	
+
 	<% section_order(@entity).each do |section| %>
 	  <% links_group = @links.send(section) %>
 	  <%= section_heading(links_group) %>
@@ -18,19 +18,19 @@
 	    <%= render partial: 'link', collection: links_group.links.take(10) %>
 	  </div>
 	<% end %>
-	
+
       <% end %>
     <% end # end cache %>
 
 
   <%# The profile page for a specific type of relationship %>
-  
+
   <% elsif section_order(@entity).include? params[:relationships] %>
-  
+
     <% page = params[:page].blank? ? 1 : params[:page] %>
 
-    <% cache ['relationship_page', @entity.cache_key, params[:relationships], page ] do  %>
-      
+    <% cache ['relationship_page', @entity.cache_key_with_version, params[:relationships], page ] do  %>
+
       <% @links = SortedLinks.new(@entity, params[:relationships], page) %>
       <% links_group = @links.send(params[:relationships]) %>
       <%= section_heading(links_group) %>
@@ -41,7 +41,7 @@
 	<%= render partial: 'link', collection: paginatable_links %>
       </div>
       <%= paginate paginatable_links %>
-    
+
     <% end %>
 
   <% end %>

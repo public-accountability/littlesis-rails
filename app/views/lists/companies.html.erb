@@ -3,6 +3,6 @@
 <%= render partial: 'header', locals: { list: @list } %>
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :interlocks } %>
 
-<% cache( [@list.cache_key, 'companies', @page ], expires_in: 1.day) do %>
+<% cache( [@list.cache_key_with_version, 'companies', @page ], expires_in: 1.day) do %>
   <%= render partial: "lists/companies", locals: { companies: @companies } %>
 <% end %>
