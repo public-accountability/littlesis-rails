@@ -11,7 +11,7 @@ class DatatableController < ApplicationController
   private
 
   def cache_relationships_datatable
-    Rails.cache.fetch("relationships_datatable/#{@entity.cache_key}", expires_in: 2.days) do
+    Rails.cache.fetch("relationships_datatable/#{@entity.cache_key_with_version}", expires_in: 2.days) do
       RelationshipsDatatable.new(@entity).data
     end
   end

@@ -7,7 +7,7 @@
   People on this list have the most positions in the following organizations.
 <% end %>
 
-<% cache( [@list.cache_key, 'interlocks' ], expires_in: 1.day) do %>
+<% cache( [@list.cache_key_with_version, 'interlocks' ], expires_in: 1.day) do %>
   <%= render partial: "lists/companies", locals: { companies: @companies, preview: true } %>
   <%= render partial: "lists/government", locals: { govt_bodies: @govt_bodies, preview: true } %>
   <%= render partial: "lists/other_orgs", locals: { others: @others, preview: true } %>

@@ -1,4 +1,4 @@
-<% cache(['interlocks', @entity.cache_key,  params[:page] ], expires_in: 2.days) do %>
+<% cache(['interlocks', @entity.cache_key_with_version,  params[:page] ], expires_in: 2.days) do %>
   <%= render partial: 'connections',
              locals: { connection_type: :interlocks,
                        connected_entities: @entity.interlocks(params[:page]),

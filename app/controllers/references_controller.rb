@@ -72,7 +72,7 @@ class ReferencesController < ApplicationController
   private
 
   def cached_recent_source_links
-    cache_key = "#{@entity.cache_key}/recent_source_links/#{source_link_params[:page]}/#{source_link_params[:per_page]}"
+    cache_key = "#{@entity.cache_key_with_version}/recent_source_links/#{source_link_params[:page]}/#{source_link_params[:per_page]}"
     Rails.cache.fetch(cache_key, expires_in: 2.weeks) do
       Document
         .documents_for_entity(entity: @entity, page: source_link_params[:page].to_i, per_page: source_link_params[:per_page].to_i, exclude_type: :fec)

@@ -8,7 +8,7 @@
     </div>
   <% end %>
 
-  <% cache ['entity_basic_info', @entity.cache_key] do %>
+  <% cache ['entity_basic_info', @entity.cache_key_with_version] do %>
     <%= profile_page_sidebar('sidebar-basic-info-container', 'Basic info') do %>
       <%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
     <% end %>
@@ -46,7 +46,7 @@
   <% end %>
 
   <%# SOURCE LINKS %>
-  <% cache ['entity_source_links', @entity.cache_key] do %>
+  <% cache ['entity_source_links', @entity.cache_key_with_version] do %>
     <%= render partial: 'entities/sidebar/source_links' %>
   <% end %>
 

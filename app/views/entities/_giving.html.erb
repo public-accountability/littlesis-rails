@@ -1,4 +1,4 @@
-<% cache(['giving', @entity.cache_key,  params[:page] ], expires_in: 2.days) do %>
+<% cache(['giving', @entity.cache_key_with_version,  params[:page] ], expires_in: 2.days) do %>
     <% method = @entity.person? ? :similar_donors : :employee_donations %>
     <% has_stat = @entity.org? %>
     <%= render partial: 'connections',

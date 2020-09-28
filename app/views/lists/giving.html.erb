@@ -7,7 +7,7 @@
   People on this list have donated to following organizations.
 <% end %>
 
-<% cache( [ @list.cache_key, 'giving', @page ], expires_in: 1.day) do %>
+<% cache( [ @list.cache_key_with_version, 'giving', @page ], expires_in: 1.day) do %>
 
   <% if @recipients.count > 0 %>
   <h3>Common Recipients</h3>
