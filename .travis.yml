@@ -1,57 +1,61 @@
 os: linux
 dist: bionic
-
+language: ruby
+rvm: 2.7.1
+cache:
+  bundler: true
+addons:
+  mariadb: '10.5'
+services:
+  - mysql
 env:
   global:
     - RAILS_ENV=test
     - COVERAGE=true
-
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -o Dpkg::Options::="--force-overwrite" -y mariadb-client libmariadb-dev
+  - sudo mysql_upgrade
+  - curl -L "https://github.com/manticoresoftware/manticoresearch/releases/download/3.4.2/manticore_3.4.2-200410-69033058-release.bionic_amd64-bin.deb" > manticore.deb
+  - sudo dpkg -i manticore.deb
+  - nvm install node
+  - node -v
+  - npm -g install yarn
+  - yarn install
+  - gem install bundler
 jobs:
   include:
-    - language: ruby
-      rvm: 2.7.1
-      cache:
-        bundler: true
-      addons:
-        mariadb: '10.5'
-      services:
-        - mysql
-      before_install:
-        - sudo apt-get -qq update
-        - sudo apt-get install -o Dpkg::Options::="--force-overwrite" -y mariadb-client libmariadb-dev
-        - sudo mysql_upgrade
-        - curl -L "https://github.com/manticoresoftware/manticoresearch/releases/download/3.4.2/manticore_3.4.2-200410-69033058-release.bionic_amd64-bin.deb" > manticore.deb
-        - sudo dpkg -i manticore.deb
-        - curl -L "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" > chrome.deb
-        - sudo dpkg -i chrome.deb
-        - curl -L "https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip" > chromedriver.zip
-        - unzip chromedriver.zip
-        - sudo mv chromedriver /usr/bin/chromedriver
-        - sudo chown root:root /usr/bin/chromedriver
-        - sudo chmod +x /usr/bin/chromedriver
-        - nvm install node
-        - node -v
-        - npm -g install yarn
-        - gem install bundler
-        - yarn install
-        - google-chrome --version
-        - chromedriver --version
+    - name: Rspec
       before_script:
-        - cp config/database.travis.yml config/database.yml
-        - cp config/lilsis.yml.sample config/lilsis.yml
-        - cp config/secrets.yml.sample config/secrets.yml
-        - mkdir -p tmp tmp/small/ tmp/profile tmp/large/ tmp/original/
-        - sudo mysql  -e 'CREATE DATABASE littlesis_test;'
-        - sudo mysql  -e "GRANT all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'littlesis';flush privileges;"
-        - bundle exec rake db:structure:load
-        - bundle exec rake db:seed
-        - bundle exec rake assets:precompile
+        - bin/travis-setup
       script:
-        - bundle exec rspec
+        - bundle exec rspec --tag ~js
       after_success:
         - bash <(curl -s https://codecov.io/bash)
-
-    - language: node_js
+    - name: Firefox
+      addons:
+        mariadb: '10.5'
+        firefox: latest
+      env: LITTLESIS_USE_FIREFOX=true
+      before_script:
+        - curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.27.0/geckodriver-v0.27.0-linux64.tar.gz" | sudo tar xzf - -C /usr/local/bin
+        - geckodriver --version
+        - bin/travis-setup
+      script:
+        - bundle exec rspec --tag js
+    - name: Chrome
+      addons:
+        mariadb: '10.5'
+        chrome: stable
+      before_script:
+        - curl -L "https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip" > chromedriver.zip
+        - sudo unzip chromedriver.zip chromedriver -d /usr/bin
+        - chromedriver --version
+        - bin/travis-setup
+      script:
+        - bundle exec rspec --tag js
+    - name: Javascript
+      language: node_js
       node_js: lts/*
       cache: yarn
       script:
