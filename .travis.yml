@@ -6,8 +6,6 @@ cache:
   bundler: true
 addons:
   mariadb: '10.5'
-  firefox: latest
-  chrome: stable
 services:
   - mysql
 env:
@@ -20,11 +18,6 @@ before_install:
   - sudo mysql_upgrade
   - curl -L "https://github.com/manticoresoftware/manticoresearch/releases/download/3.4.2/manticore_3.4.2-200410-69033058-release.bionic_amd64-bin.deb" > manticore.deb
   - sudo dpkg -i manticore.deb
-  - curl -L "https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip" > chromedriver.zip
-  - sudo unzip chromedriver.zip chromedriver -d /usr/bin
-  - curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.27.0/geckodriver-v0.27.0-linux64.tar.gz" | sudo tar xzf - -C /usr/local/bin
-  - chromedriver --version
-  - geckodriver --version
   - nvm install node
   - node -v
   - npm -g install yarn
@@ -40,13 +33,24 @@ jobs:
       after_success:
         - bash <(curl -s https://codecov.io/bash)
     - name: Firefox
+      addons:
+        mariadb: '10.5'
+        firefox: latest
       env: LITTLESIS_USE_FIREFOX=true
       before_script:
+        - curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.27.0/geckodriver-v0.27.0-linux64.tar.gz" | sudo tar xzf - -C /usr/local/bin
+        - geckodriver --version
         - bin/travis-setup
       script:
         - bundle exec rspec --tag js
     - name: Chrome
+      addons:
+        mariadb: '10.5'
+        chrome: stable
       before_script:
+        - curl -L "https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip" > chromedriver.zip
+        - sudo unzip chromedriver.zip chromedriver -d /usr/bin
+        - chromedriver --version
         - bin/travis-setup
       script:
         - bundle exec rspec --tag js
