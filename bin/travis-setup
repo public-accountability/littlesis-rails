@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if test -z $TRAVIS
+then
+    echo "Please only execute the travis setup script on travis"
+    exit 1
+fi
+
+cp config/database.travis.yml config/database.yml
+cp config/lilsis.yml.sample config/lilsis.yml
+cp config/secrets.yml.sample config/secrets.yml
+mkdir -p tmp tmp/small/ tmp/profile tmp/large/ tmp/original/
+sudo mysql  -e 'CREATE DATABASE littlesis_test;'
+sudo mysql  -e "GRANT all privileges on littlesis_test.* to 'littlesis'@'%' identified by 'littlesis';flush privileges;"
+bundle exec rake db:structure:load
+bundle exec rake db:seed
+bundle exec rake assets:precompile
