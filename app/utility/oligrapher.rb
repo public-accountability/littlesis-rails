@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
-  VERSION = 'd067ca1b74ea4d5b83c5057929147413d6b20cee'
+  VERSION = 'cd18d7d083e4999bb5e7789932d38aa73baa274d'
 
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
@@ -38,7 +38,8 @@ module Oligrapher
         version: map.oligrapher_version,
         shareUrl: is_owner ? map.share_path : nil,
         lock: lock_data(map, current_user)
-      } }
+      }
+    }
   end
 
   def self.confirmed_editor_data(map)
