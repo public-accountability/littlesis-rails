@@ -1,4 +1,4 @@
-var referenceModal = function(){
+$(document).ready(function(){
 
   $('#reference-form').submit(function(event){
     if (this.checkValidity()) {
@@ -36,6 +36,5 @@ var referenceModal = function(){
       $('.modal-footer').hide();
     }
   });
-  
-  
-}
+
+})
