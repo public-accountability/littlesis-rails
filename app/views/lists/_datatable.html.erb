@@ -72,7 +72,8 @@
     raw('<i class="glyphicon glyphicon-remove"></i>'),
     remove_entity_list_path(table.list, list_entity_id: 'XYZ'),
     method: :post,
-    data: { confirm: 'Are you sure you want to remove this entity from this list?' }
+    data: { confirm: 'Are you sure you want to remove this entity from this list?' },
+    class: 'remove_entity'
   ) %>
 </template>
 

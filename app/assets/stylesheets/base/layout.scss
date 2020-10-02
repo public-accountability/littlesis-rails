@@ -253,6 +253,20 @@ body {
   }
 }
 
+.modal .field {
+  input[type=text] {
+    width: 100%;
+  }
+
+  textarea {
+    width: 100%;
+  }
+
+  textarea.textarea_medium {
+    width: 100%;
+  }
+}
+
 .header_action {
   margin-left: 5px;
   font-size: 12px;

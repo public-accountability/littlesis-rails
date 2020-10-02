@@ -90,6 +90,8 @@ Lilsis::Application.routes.draw do
       get 'modifications'
       post 'tags'
     end
+
+    resources :entities, only: :create, controller: 'lists/entities'
   end
 
   resources :images, only: [] do

@@ -2,4 +2,4 @@
 
 <br>
 
-<%= render partial: 'new_entity_form'  %>
+<%= render partial: 'new_entity_form', locals: { form_url: url_for(action: :create) } %>

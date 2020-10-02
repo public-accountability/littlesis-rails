@@ -11,7 +11,7 @@
     <% entity = @entity %>
 <% end %>
 
-<%= form_for(entity) do |f| %>
+<%= form_for(entity, url: form_url) do |f| %>
     <% if entity.errors.any? %>
 	<div id="error_explanation" class="alert alert-warning">
 	    <%= pluralize(entity.errors.count, "error") %> prohibited this entity from being saved:
@@ -29,12 +29,12 @@
     <% end %>
 
     <div class="field">
-	<%= f.label "Name*" %>
+	<%= f.label "Name*", for: :entity_name %>
 	<%= f.text_field :name, class: "form-control", placeholder: "example: Jesse L Jackson, Jr" %>
     </div>
 
     <div class="field">
-      <%= f.label "Short description" %>
+      <%= f.label "Short description", for: :entity_blurb %>
       <%= f.text_field :blurb, class: "form-control", placeholder: "a short sentence or phrase", pattern: '.{0,200}', title: "Enter a blurb less than 200 characters" %>
     </div>
 
