@@ -1,0 +1,35 @@
+{
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true,
+    "mocha": true,
+    "jquery": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:mocha/recommended"
+  ],
+  "plugins": [
+    "mocha"
+  ],
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "react": {
+      "version": "16.10"
+    }
+  },
+  "rules": {
+    "semi": ["error", "never"],
+    "space-before-function-paren": ["error", "never"],
+    "key-spacing": "warn",
+    "react/prop-types": [ 2, { "ignore": ["dispatch"] } ],
+    "react/jsx-wrap-multilines": [ 1, { "return": "parens-new-line" } ]
+  }
+}
