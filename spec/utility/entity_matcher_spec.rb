@@ -466,11 +466,11 @@ describe EntityMatcher, :sphinx do
 
       context 'similar first names' do
         let(:test_case) do
-          EntityMatcher::TestCase::Person.new "Cindi #{Faker::Name.unique.last_name}"
+          EntityMatcher::TestCase::Person.new 'Cindi Wallanger'
         end
 
         let(:match) do
-          generate_test_case name_first: 'cindy', name_last: Faker::Name.unique.last_name
+          generate_test_case name_first: 'cindy', name_last: 'graham'
         end
 
         specify do

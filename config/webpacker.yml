@@ -49,12 +49,9 @@ default: &default
     - .jpeg
     - .jpg
 
-development:
+default_with_dev_server: &default_with_dev_server
   <<: *default
   compile: true
-
-  # Verifies that versions and hashed value of the package contents in the project's package.json
-  check_yarn_integrity: false
 
   # Reference: https://webpack.js.org/configuration/dev-server/
   dev_server:
@@ -75,13 +72,17 @@ development:
     watch_options:
       ignored: '**/node_modules/**'
 
+development:
+  <<: *default_with_dev_server
+
+  # Verifies that versions and hashed value of the package contents in the project's package.json
+  check_yarn_integrity: false
 
 test:
-  <<: *default
-  compile: false
+  <<: *default_with_dev_server
 
-  # Compile test packs to a separate directory
-  public_output_path: packs-test
+  # Verifies that versions and hashed value of the package contents in the project's package.json
+  check_yarn_integrity: true
 
 production:
   <<: *default
