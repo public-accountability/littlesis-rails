@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_07_180002) do
+ActiveRecord::Schema.define(version: 2020_10_07_181727) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -160,15 +160,6 @@ ActiveRecord::Schema.define(version: 2020_10_07_180002) do
     t.datetime "updated_at"
     t.index ["candidate_id", "district_id"], name: "uniqueness_idx", unique: true
     t.index ["district_id"], name: "district_id_idx"
-  end
-
-  create_table "chat_user", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "room", null: false
-    t.datetime "updated_at", null: false
-    t.index ["room", "updated_at", "user_id"], name: "room_updated_at_user_id_idx"
-    t.index ["room", "user_id"], name: "room_user_id_idx", unique: true
-    t.index ["user_id"], name: "user_id_idx"
   end
 
   create_table "cmp_entities", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
