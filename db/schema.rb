@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_22_162428) do
+ActiveRecord::Schema.define(version: 2020_10_07_181953) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -68,16 +68,6 @@ ActiveRecord::Schema.define(version: 2020_09_22_162428) do
     t.index ["name"], name: "name_idx"
   end
 
-  create_table "api_request", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.string "api_key", limit: 100, null: false
-    t.string "resource", limit: 200, null: false
-    t.string "ip_address", limit: 50, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["api_key"], name: "api_key_idx"
-    t.index ["created_at"], name: "created_at_idx"
-  end
-
   create_table "api_tokens", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "token", null: false
     t.integer "user_id", null: false
@@ -85,21 +75,6 @@ ActiveRecord::Schema.define(version: 2020_09_22_162428) do
     t.datetime "updated_at", null: false
     t.index ["token"], name: "index_api_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_api_tokens_on_user_id", unique: true
-  end
-
-  create_table "api_user", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.string "api_key", limit: 100, null: false
-    t.string "name_first", limit: 50, null: false
-    t.string "name_last", limit: 50, null: false
-    t.string "email", limit: 100, null: false
-    t.text "reason", size: :long, null: false
-    t.boolean "is_active", default: false, null: false
-    t.integer "request_limit", default: 10000, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["api_key"], name: "api_key_idx"
-    t.index ["api_key"], name: "api_key_unique_idx", unique: true
-    t.index ["email"], name: "email_unique_idx", unique: true
   end
 
   create_table "article", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
@@ -185,15 +160,6 @@ ActiveRecord::Schema.define(version: 2020_09_22_162428) do
     t.datetime "updated_at"
     t.index ["candidate_id", "district_id"], name: "uniqueness_idx", unique: true
     t.index ["district_id"], name: "district_id_idx"
-  end
-
-  create_table "chat_user", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "room", null: false
-    t.datetime "updated_at", null: false
-    t.index ["room", "updated_at", "user_id"], name: "room_updated_at_user_id_idx"
-    t.index ["room", "user_id"], name: "room_user_id_idx", unique: true
-    t.index ["user_id"], name: "user_id_idx"
   end
 
   create_table "cmp_entities", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -1360,7 +1326,6 @@ ActiveRecord::Schema.define(version: 2020_09_22_162428) do
   add_foreign_key "address", "address_category", column: "category_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "address", "entity", name: "address_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "alias", "entity", name: "alias_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "api_request", "api_user", column: "api_key", primary_key: "api_key", name: "api_request_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "article", "article_source", column: "source_id", name: "article_ibfk_1", on_update: :cascade, on_delete: :nullify
   add_foreign_key "business", "entity", name: "business_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "business_industry", "entity", column: "business_id", name: "business_industry_ibfk_2", on_update: :cascade, on_delete: :cascade
