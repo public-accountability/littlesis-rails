@@ -16,7 +16,7 @@
 	<div id="error_explanation" class="alert alert-warning">
 	    <%= pluralize(entity.errors.count, "error") %> prohibited this entity from being saved:
 
-	    <ul>
+	    <ul class="list-unstyled">
 		<% entity.errors.each do |attr, msg| %>
 		    <li><%= (attr == :primary_ext ? :type : attr).to_s.capitalize %> <%= msg %></li>
 		<% end %>
@@ -28,12 +28,12 @@
 	<%= hidden_field_tag :add_relationship_page, 'TRUE' %>
     <% end %>
 
-    <div class="field">
+    <div>
 	<%= f.label "Name*", for: :entity_name %>
 	<%= f.text_field :name, class: "form-control", placeholder: "example: Jesse L Jackson, Jr" %>
     </div>
 
-    <div class="field">
+    <div>
       <%= f.label "Short description", for: :entity_blurb %>
       <%= f.text_field :blurb, class: "form-control", placeholder: "a short sentence or phrase", pattern: '.{0,200}', title: "Enter a blurb less than 200 characters" %>
     </div>
@@ -80,7 +80,7 @@
 
 <template id="validation_errors">
   <div id="error_explanation" class="alert alert-warning">
-    <ul>
+    <ul class="list-unstyled">
     </ul>
   </div>
 </template>

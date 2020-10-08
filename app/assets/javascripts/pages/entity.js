@@ -82,7 +82,7 @@ entity.displayErrors = function(attributes){
     for (var value in entity.errors[attribute]){
       if (entity.errors[attribute].hasOwnProperty(value)){
         template.find("ul").append(
-          "<li>" + attribute + ": " + entity.errors[attribute][value] + "</li>"
+          "<li>" + "<b>" + attribute + ":</b> " + entity.errors[attribute][value] + "</li>"
         )
         displayableErrors = true
       }
