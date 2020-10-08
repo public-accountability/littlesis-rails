@@ -28,17 +28,17 @@ class ApplicationController < ActionController::Base
     NOTICE
   end
 
-  rescue_from Exceptions::NotFoundError do
-    render 'errors/not_found', layout: 'application', status: :not_found
+  rescue_from Exceptions::NotFoundError do |exception|
+    render_html_not_found(exception)
   end
 
-  rescue_from ActiveRecord::RecordNotFound do
-    render 'errors/not_found', layout: 'application', status: :not_found
+  rescue_from ActiveRecord::RecordNotFound do |exception|
+    render_html_not_found(exception)
   end
 
-  rescue_from ActionController::RoutingError do
+  rescue_from ActionController::RoutingError do |exception|
     raise if Rails.env.development?
-    render 'errors/not_found', status: :not_found
+    render_html_not_found(exception)
   end
 
   rescue_from Exceptions::UnauthorizedBulkRequest do |exception|
@@ -131,5 +131,13 @@ class ApplicationController < ActionController::Base
 
   def redirect_to_dashboard
     redirect_to home_dashboard_path
+  end
+
+  def render_html_not_found(exception)
+    if request.format == :html
+      render 'errors/not_found', status: :not_found
+    else
+      raise exception
+    end
   end
 end
