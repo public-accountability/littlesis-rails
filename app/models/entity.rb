@@ -195,24 +195,29 @@ class Entity < ApplicationRecord
   end
 
   def has_featured_image
-    images.featured.count.positive?
+    featured_image.present?
   end
 
   def featured_image
-    images.featured.first
+    @featured_image ||= images.featured.first
   end
 
   def featured_image_url(type = nil)
-    return if featured_image.nil?
+    return unless has_featured_image
+
+    type = (featured_image.has_square ? 'square' : 'profile') if type.nil?
+    featured_image.image_url(type)
+  end
+
+  def featured_image_path(type = nil)
+    return unless has_featured_image
 
     type = (featured_image.has_square ? 'square' : 'profile') if type.nil?
     featured_image.image_path(type)
   end
 
   def featured_image_source_url
-    return nil unless image = featured_image
-
-    image.url
+    featured_image&.url
   end
 
   def add_image_from_url(url, force_featured = false, caption = nil)
