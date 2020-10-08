@@ -1,4 +1,6 @@
-<div class="row" id="sidebar-source-links">
+<%= javascript_pack_tag 'components/sidebar_source_links_panel' %>
+
+<div class="row" id="sidebar-source-links" data-entity-id="<%= @entity.id %>">
     <div class="col-sm-12">
 	<%= sidebar_header('Source Links', subtitle: 'Articles documenting info on this page') %>
     </div>
@@ -23,14 +25,3 @@
     </div>
 
 </div>
-<script>
- $(function(){
-   sidebarSourceLinks.init(<%= @entity.id %>);
- });
-</script>
-
-<!-- <span class="links-loading hidden">
-     <span id="source-links-left-arrow" class="glyphicon glyphicon-menu-left"  aria-hidden="true"></span>
-     <span style="" id="source-links-right-arrow" class="glyphicon glyphicon-menu-right"  aria-hidden="true"></span>
-     <span class="glyphicon glyphicon-refresh animate-glyphicon"></span>
-     </span> -->
