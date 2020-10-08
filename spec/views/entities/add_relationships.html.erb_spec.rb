@@ -20,7 +20,6 @@ describe 'entities/add_relationship.html.erb' do
 
     it 'has add relationship title section' do
       css 'h2', :text => "Create a new relationship"
-      css "div.col-sm-7 p"
     end
 
     it 'has search-results-row' do
@@ -29,10 +28,6 @@ describe 'entities/add_relationship.html.erb' do
 
     it 'has one table' do
       css "table", :count => 1
-    end
-
-    it 'has one image' do
-      css "img", :count => 1
     end
 
     specify { css '#existing-reference-container' }

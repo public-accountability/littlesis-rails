@@ -64,7 +64,7 @@ describe 'Images' do
         expect(person.featured_image).to have_attributes(width: 1200, height: 900)
         crop_request.call
         expect(person.reload.images.count).to eq 1
-        expect(person.featured_image).to have_attributes(width: 600, height: 250)
+        expect(Entity.find(person.id).featured_image).to have_attributes(width: 600, height: 250)
       end
     end
   end
