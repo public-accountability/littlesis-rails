@@ -137,3 +137,7 @@ var sidebarSourceLinks = (function($){
 
   
 })(jQuery);
+
+$(document).ready(function(){
+  sidebarSourceLinks.init($('#sidebar-source-links').data('entityId'));
+});

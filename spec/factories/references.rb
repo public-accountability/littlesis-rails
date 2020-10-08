@@ -11,11 +11,10 @@ FactoryBot.define do
   end
 
   factory :entity_ref, class: Reference do
-    object_model { 'Entity' }
-    object_id { rand(100) }
+    referenceable_type { 'Entity' }
     sequence(:id)
-    name { 'reference name' }
-    sequence(:source) { |n| "https://littlesis.org/#{n}" }
+    sequence(:referenceable_id)
+    association :document, factory: :document_with_id, strategy: :build
   end
 
   factory :relationship_ref, class: Reference do
