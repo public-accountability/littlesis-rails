@@ -194,15 +194,6 @@ class Entity < ApplicationRecord
     parent.present?
   end
 
-  ##
-  # images
-  #
-  def default_image_url
-    return "/images/system/anon.png" if person?
-
-    "/images/system/anons.png"
-  end
-
   def has_featured_image
     images.featured.count.positive?
   end
@@ -212,11 +203,10 @@ class Entity < ApplicationRecord
   end
 
   def featured_image_url(type = nil)
-    image = featured_image
-    return default_image_url if image.nil?
+    return if featured_image.nil?
 
-    type = (image.has_square ? 'square' : 'profile') if type.nil?
-    image.image_path(type)
+    type = (featured_image.has_square ? 'square' : 'profile') if type.nil?
+    featured_image.image_path(type)
   end
 
   def featured_image_source_url
