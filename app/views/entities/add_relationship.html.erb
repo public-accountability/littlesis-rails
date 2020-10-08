@@ -1,62 +1,56 @@
 <% content_for(:page_title, "#{@entity.name} - Add Relationship") %>
-<% cache @entity do %>
-  <%= render partial: 'header', locals: { entity: @entity } %>
-  <%= render partial: 'explain_categories_modal' %>
 
-  <div id="entity-info"
-       data-entitytype="<%= @entity.primary_ext %>"
-       data-entityid="<%= @entity.id %>"
-       data-school="<%= @entity.school?.to_s %>">
-  </div>
+<%= render partial: 'header', locals: { entity: @entity } %>
+<%= render partial: 'explain_categories_modal' %>
 
-  <div class="row">
+<div id="entity-info"
+     data-entitytype="<%= @entity.primary_ext %>"
+     data-entityid="<%= @entity.id %>"
+     data-school="<%= @entity.school?.to_s %>">
+</div>
 
-    <div class="col-sm-7 text-center">
-      <h2 class="rel-search">Create a new relationship</h2>
-      <p class="rel-search">Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.</p>
-      
-      <div class="hidden rel-add">
-	<h3 class="text-center">Creating a new relationship between <br /><strong><%= @entity.name %></strong><br /><em>and</em><br /><strong><span id="relationship-with-name"></span></strong></h3>
+<div class="row mt-2">
+  <div class="col-sm-11 col-md-8 col-lg-6">
+    <h2 class="rel-search"
+        style="cursor: default"
+        title="Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below."
+    >Create a new relationship</h2>
+
+    <div class="hidden rel-add">
+      <h3 class="text-center">Creating a new relationship between <br /><strong><%= @entity.name %></strong><br /><em>and</em><br /><strong><span id="relationship-with-name"></span></strong></h3>
+    </div>
+
+    <div class="input-group rel-search add-relationship-entity-search-input-group">
+      <input type="text" class="form-control" placeholder="Name" aria-label="Name to search" id="name-to-search">
+      <div class="input-group-append">
+        <button class="btn btn-primary" id="search-button">Search</button>
       </div>
-
-      <div class="row rel-search text-center">
-	<div class="col-sm-6 col-sm-offset-2">
-	  <input type="text" class="form-control" placeholder="Name" id="name-to-search" >
-	</div>
-	<div class="col-sm-2 bottom-1em"><button class="btn btn-primary" id="search-button">Search</button>
-	</div>
-      </div>
     </div>
 
-    <div class="col-md-1"><!-- buffer --></div>
-    <div class="col-sm-4 hidden-xs">
-      <%= profile_image %>
     </div>
+</div>
 
+<div class="row rel-search rel-results hidden" id="search-results-row">
+  <div class="col-sm-12">
+    <table id="results-table" class="compact hover" cellspacing="0" width="100%"></table>
   </div>
+</div>
 
-  <div class="row rel-search rel-results hidden" id="search-results-row">
-    <div class="col-sm-12">
-      <table id="results-table" class="compact hover" cellspacing="0" width="100%"></table>
-    </div>
+<div class="row rel-search rel-results hidden">
+  <div class="col-sm-8">
+    <p>Can't find what you are looking for?  <a href="#" id="cant-find-new-entity-link">Click here to create a new entity</a></p>
   </div>
+</div>
 
-  <div class="row rel-search rel-results hidden">
-    <div class="col-sm-8">
-      <p>Can't find what you are looking for?  <a href="#" id="cant-find-new-entity-link">Click here to create a new entity</a></p>
-    </div>
-  </div>
+<div class="row rel-new-entity hidden mt-4">
 
-<% end %> <!-- end cache -->
-
-<div class="row rel-new-entity hidden">
-  <div class="col-sm-6 col-sm-offset-1">
+  <div class="col-sm-12 col-md-7 col-lg-6">
     <h5><strong>Nothing Found</strong></h5>
     <h6>Try searching again <em>or</em> if you can't find the entity you are looking for, create it now:</h6>
     <%= render partial: 'new_entity_form', locals: { add_relationship: true, form_url: url_for(action: :create) } %>
   </div>
 
-  <div class="col-sm-4 col-md-offset-1 top-1em" id="new-entity-errors">
+  <div class="col-sm-12 col-md-5 col-lg-6 mt-2" id="new-entity-errors">
   </div>
 </div>
 
@@ -71,13 +65,13 @@
   </div>
 
   <div class="col-sm-6 col-sm-offset-1" id="reference">
-    
+
     <div class="row">
       <div class="col-sm-12">
 	<p><strong>Where is this info coming from?</strong></p>
       </div>
       <div class="col-sm-12">
-	<div id="toggle-reference-form" class="btn-group btn-group-toggle"> 
+	<div id="toggle-reference-form" class="btn-group btn-group-toggle">
 	  <button class="btn btn-sm btn-secondary active">Find Reference</button>
 	  <button class="btn btn-sm btn-outline-secondary">Create Reference</button>
 	</div>
@@ -85,7 +79,7 @@
     </div>
 
     <div class="thin-grey-bottom-border top-1em m-bottom-1em"></div>
-    
+
     <div class="row" id="existing-reference-container">
       <div class="col-sm-10">
 	<div id="reference-widget-container"></div>
@@ -115,7 +109,7 @@
 	</span>
       </div>
     </div>
-    
+
   </div> <!-- end of col-sm-6  -->
 
   <!-- errors -->
@@ -127,6 +121,6 @@
 
 <%= javascript_tag do %>
   $(document).ready(function(){
-    addRelationship.init();
+  addRelationship.init();
   });
 <% end  %>

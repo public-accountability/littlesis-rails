@@ -132,20 +132,18 @@ module EntitiesHelper
     options_for_select([['', ''], ['Female', 1], ['Male', 2], ['Other', 3]], selected)
   end
 
-  def default_image_url
-    if @entity.person?
+  def default_image_url(entity = nil)
+    if (entity || @entity).person?
       asset_path('system/anon.png')
     else
       asset_path('system/anons.png')
     end
   end
 
-  def profile_image_url
-    @entity.featured_image ? @entity.featured_image_url : default_image_url
-  end
+  def profile_image(entity)
+    image_src = entity.has_featured_image ? entity.featured_image_path : default_image_url(entity)
 
-  def profile_image
-    image_tag(profile_image_url, alt: @entity.name, class: 'img-rounded img-responsive')
+    image_tag image_src, alt: entity.name, class: 'entity-profile-image'
   end
 
   # input: string, [string], [block]
