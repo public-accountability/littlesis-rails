@@ -780,7 +780,7 @@ describe Entity, :tag_helper do
     let(:image) { create(:image, entity: entity, is_featured: true) }
 
     context 'with no featured image' do
-      it { is_expected.to eql '/images/system/anon.png' }
+      it { is_expected.to be nil }
     end
 
     context 'with a featured image' do
