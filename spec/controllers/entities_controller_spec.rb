@@ -1,4 +1,6 @@
 describe EntitiesController, type: :controller do
+  include EntitiesHelper
+
   it { is_expected.to use_before_action(:authenticate_user!) }
   it { is_expected.to use_before_action(:importers_only) }
   it { is_expected.to use_before_action(:set_entity) }
@@ -122,7 +124,7 @@ describe EntitiesController, type: :controller do
         context 'without errors' do
           it 'redirects to edit url' do
             post :create, params: params
-            expect(response).to redirect_to Routes.edit_entity_path(Entity.last)
+            expect(response).to redirect_to concretize_edit_entity_path(Entity.last)
           end
 
           it 'is_expected.to create a new entity' do
@@ -361,7 +363,7 @@ describe EntitiesController, type: :controller do
 
       it 'redirects to legacy url' do
         patch :update, params: params
-        expect(response).to redirect_to entity_path(org)
+        expect(response).to redirect_to concretize_entity_path(org)
       end
     end
 
@@ -392,7 +394,7 @@ describe EntitiesController, type: :controller do
 
       it 'redirects to legacy url' do
         patch :update, params: params
-        expect(response).to redirect_to entity_path(person)
+        expect(response).to redirect_to concretize_entity_path(person)
       end
     end
 
@@ -414,7 +416,7 @@ describe EntitiesController, type: :controller do
 
         it 'redirects to legacy url' do
           patch :update, params: params
-          expect(response).to redirect_to entity_path(org)
+          expect(response).to redirect_to concretize_entity_path(org)
         end
       end
 
@@ -433,7 +435,7 @@ describe EntitiesController, type: :controller do
 
         it 'redirects to legacy url' do
           patch :update, params: params
-          expect(response).to redirect_to entity_path(org)
+          expect(response).to redirect_to concretize_entity_path(org)
         end
       end
     end
@@ -511,7 +513,7 @@ describe EntitiesController, type: :controller do
 
       it 'redirects to entity url' do
         patch :update, params: params
-        expect(response).to redirect_to entity_path(public_company)
+        expect(response).to redirect_to concretize_entity_path(public_company)
       end
     end
   end # end describe #update

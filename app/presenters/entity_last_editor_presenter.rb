@@ -3,6 +3,8 @@
 # rubocop:disable Rails/OutputSafety
 
 class EntityLastEditorPresenter < SimpleDelegator
+  include EntitiesHelper
+
   attr_reader :last_editor, :last_edited_at, :html
 
   DIV_ID = 'entity-edited-history'
@@ -26,7 +28,7 @@ class EntityLastEditorPresenter < SimpleDelegator
       'Edited by '.html_safe +
         content_tag(:strong, link_to(@last_editor.username, user_page_path(@last_editor))) +
         " #{time_ago_in_words(@last_edited_at)} ago ".html_safe +
-        link_to('History', "#{Routes.entity_path(__getobj__)}/edits")
+        link_to('History', concretize_edit_entity_path(__getobj__))
     end
   end
 

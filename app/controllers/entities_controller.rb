@@ -109,7 +109,7 @@ class EntitiesController < ApplicationController
       if @entity.valid?
         @entity.save!
         return render json: { status: 'OK' } if api_request?
-        return redirect_to entity_path(@entity)
+        return redirect_to concretize_entity_path(@entity)
       end
     end
     set_entity_references
@@ -135,7 +135,7 @@ class EntitiesController < ApplicationController
                             current_user: current_user)
 
     flash[:notice] = "Added to list '#{list.name}'"
-    redirect_to entity_path(@entity)
+    redirect_to concretize_entity_path(@entity)
   end
 
   def references

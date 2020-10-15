@@ -2,7 +2,6 @@ class ListDatatable
   include RelationshipsHelper
   include ApplicationHelper
   include Rails.application.routes.url_helpers
-  include Routes
   include EntitiesHelper
 
   attr_reader :list, :links, :types, :industries, :entities, :interlocks, :list_interlocks

@@ -1,5 +1,4 @@
 module FeatureSharedMacros
-  include Routes
   # h/t: https://makandracards.com/makandra/760-reload-the-page-in-your-cucumber-features
   def refresh_page
     visit [current_path, page.driver.request.env['QUERY_STRING']].reject(&:blank?).join('?')

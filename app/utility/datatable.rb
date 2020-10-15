@@ -11,6 +11,8 @@
 # function `entity_matches` on the model
 
 module Datatable
+  include EntitiesHelper
+
   # Symbol, Hash -> Hash
   def self.json_for(model, params)
     Datatable::Response
@@ -129,7 +131,7 @@ module Datatable
     def entity_match_format(entity)
       return '' if entity.nil?
 
-      ApplicationController.helpers.link_to(entity.name, Routes.entity_url(entity))
+      ApplicationController.helpers.link_to(entity.name, concretize_entity_url(entity))
     end
 
     def record_to_hash

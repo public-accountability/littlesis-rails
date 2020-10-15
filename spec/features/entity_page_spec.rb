@@ -3,7 +3,6 @@
 describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :feature do
   include EntitiesHelper
 
-  # TODO: include Routes (which will force internal handling of /people/..., /orgs/... routes)
   let(:user) { create_basic_user }
   let(:person) do
     with_versioning_for(user) do
@@ -15,7 +14,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       create(:entity_org)
     end
   end
-  let(:visit_page) { proc { visit entity_path(person) } }
+  let(:visit_page) { proc { visit concretize_entity_path(person) } }
   before(:each) do
     allow(Entity).to receive(:search).and_return([])
   end
@@ -68,7 +67,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       before { EntityMerger.new(source: alice, dest: bob).merge! }
 
       it "redirects from alice's profile page to bob's profile page" do
-        should_redirect(entity_path(alice), entity_path(bob))
+        should_redirect(concretize_entity_path(alice), concretize_entity_path(bob))
       end
 
       EntitiesController::TABS.each do |tab|
@@ -86,7 +85,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       it "redirects from alice's profile page to cassie's profile page" do
-        should_redirect(entity_path(alice), entity_path(cassie))
+        should_redirect(concretize_entity_path(alice), concretize_entity_path(cassie))
       end
 
       EntitiesController::TABS.each do |tab|
@@ -105,7 +104,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       it "renders 'not found' when trying to visit alice's page" do
-        visit entity_path(alice)
+        visit concretize_entity_path(alice)
         expect(page.status_code).to eq 404
         expect(page).to have_text "Page Not Found"
       end
@@ -128,7 +127,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       it "renders 'not found' when trying to visit alice's page" do
-        visit entity_path(alice)
+        visit concretize_entity_path(alice)
         expect(page.status_code).to eq 404
         expect(page).to have_text "Page Not Found"
       end
@@ -319,13 +318,13 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       after { logout(user) }
 
       describe 'viewing cmp entity page (in strata)' do
-        before { visit entity_path(entity_in_strata) }
+        before { visit concretize_entity_path(entity_in_strata) }
 
         specify { page_has_selector '#sidebar-data-partner-container' }
       end
 
       describe 'viewing cmp entity page (NOT in strata)' do
-        before { visit entity_path(entity_not_in_strata) }
+        before { visit concretize_entity_path(entity_not_in_strata) }
 
         specify { page_has_no_selector '#sidebar-data-partner-container' }
       end
@@ -383,11 +382,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   describe "navigation tabs" do
     before { visit_page.call }
     let(:subpage_links) do
-      [{ text: 'Relationships',  path: entity_path(person) },
-       { text: 'Interlocks',     path: interlocks_entity_path(person) },
-       { text: 'Giving',         path: giving_entity_path(person) },
-       { text: 'Political',      path: political_entity_path(person) },
-       { text: 'Data',           path: datatable_entity_path(person) }]
+      [{ text: 'Relationships',  path: concretize_entity_path(person) },
+       { text: 'Interlocks',     path: concretize_interlocks_entity_path(person) },
+       { text: 'Giving',         path: concretize_giving_entity_path(person) },
+       { text: 'Political',      path: concretize_political_entity_path(person) },
+       { text: 'Data',           path: concretize_datatable_entity_path(person) }]
     end
 
     it "has tabs for every subpage" do
@@ -397,7 +396,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
 
     it "defaults to relationships tab" do
-      expect(page).to have_current_path entity_path(person)
+      expect(page).to have_current_path concretize_entity_path(person)
       expect(page.find('div.button-tabs span.active'))
         .to have_link('Relationships')
     end
@@ -413,7 +412,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
 
     context 'on entity page with memberships' do
-      before { visit entity_path(org_with_memberships, relationships: 'memberships') }
+      before { visit concretize_entity_path(org_with_memberships, relationships: 'memberships') }
 
       it 'show title Memberships' do
         # expect(page.find('#relationship_tabs_content')).to have_text 'Memberships', count: 1
@@ -422,7 +421,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
 
     context 'on entity page with members' do
-      before { visit entity_path(org_with_members, relationships: 'members') }
+      before { visit concretize_entity_path(org_with_members, relationships: 'members') }
 
       it 'show title Memberships' do
         expect(page.find('#relationship_tabs_content')).to have_text 'Members'
@@ -431,13 +430,13 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe "relationships tab" do
-    before { visit entity_path(person) }
+    before { visit concretize_entity_path(person) }
     context 'with no relationships' do
       it 'shows stub message' do
-        successfully_visits_page entity_path(person)
+        successfully_visits_page concretize_entity_path(person)
         page_has_selector '#entity-without-relationships-message'
         expect(find('#entity-without-relationships-message p a')[:href])
-          .to eql add_relationship_entity_path(person)
+          .to eql concretize_add_relationship_entity_path(person)
       end
     end
 
@@ -446,11 +445,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       before do
         Relationship.create!(category_id: 1, entity: entity, related: create(:entity_org))
         Relationship.create!(category_id: 12, entity: entity, related: create(:entity_org))
-        visit entity_path(entity)
+        visit concretize_entity_path(entity)
       end
 
       scenario 'displays two relationships' do
-        successfully_visits_page entity_path(entity)
+        successfully_visits_page concretize_entity_path(entity)
         expect(page).not_to have_selector '#entity-without-relationships-message'
         page_has_selector 'div.relationship-section', count: 2
         page_has_selector 'div.subsection', text: 'Positions'
@@ -571,13 +570,13 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
         it "displays the most-interlocked org's name as link" do
           expect(subject.find('.connected-entity-cell'))
-            .to have_link(org.name, href: entity_path(orgs[3]))
+            .to have_link(org.name, href: concretize_entity_path(orgs[3]))
         end
 
         it "displays interlocking peoples' names as links in same row as interlocked org" do
           people.each do |person|
             expect(subject.find('.connecting-entities-cell'))
-              .to have_link(person.name, href: entity_path(person))
+              .to have_link(person.name, href: concretize_entity_path(person))
           end
         end
       end
@@ -623,13 +622,13 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
         it "displays the most-connected donor's name as link" do
           expect(subject.find('.connected-entity-cell'))
-            .to have_link(root_entity.name, href: entity_path(donors[3]))
+            .to have_link(root_entity.name, href: concretize_entity_path(donors[3]))
         end
 
         it "displays connecting recipients' names as links in same row as connected donors" do
           recipients.each do |r|
             expect(subject.find('.connecting-entities-cell'))
-              .to have_link(r.name, href: entity_path(r))
+              .to have_link(r.name, href: concretize_entity_path(r))
           end
         end
       end
@@ -682,13 +681,13 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
         it "displays the most-donated-to recipient's name as link" do
           expect(subject.find('.connected-entity-cell'))
-            .to have_link(root_entity.name, href: entity_path(recipients[3]))
+            .to have_link(root_entity.name, href: concretize_entity_path(recipients[3]))
         end
 
         it "displays connecting donors' names as links" do
           donors.each do |d|
             expect(subject.find('.connecting-entities-cell'))
-              .to have_link(d.name, href: entity_path(d))
+              .to have_link(d.name, href: concretize_entity_path(d))
           end
         end
 

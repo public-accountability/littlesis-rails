@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TagableController
   extend ActiveSupport::Concern
 
@@ -24,7 +26,11 @@ module TagableController
   # Override this method in the controller to change
   # the url that the client should be redirected to
   def after_tags_redirect_url(tagable)
-    send("#{self.class.controller_name.classify.downcase}_url", tagable)
+    if tagable.is_a? Entity
+      concretize_entity_url(tagable)
+    else
+      send("#{self.class.controller_name.classify.downcase}_url", tagable)
+    end
   end
 
   # Override this method in the controller

@@ -86,7 +86,7 @@ module Oligrapher
         name: entity.name,
         description: entity.blurb,
         image: entity.featured_image&.image_url('profile'),
-        url: Routes.entity_url(entity)
+        url: ApplicationController.helpers.concretize_entity_url(entity)
       }
     end
   end
@@ -111,7 +111,7 @@ module Oligrapher
       display: {
         name: entity.name,
         image: entity&.featured_image&.image_url("profile"),
-        url: Routes.entity_url(entity)
+        url: ApplicationController.helpers.concretize_entity_url(entity)
       }
     }
   end
