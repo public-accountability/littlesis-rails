@@ -1,6 +1,8 @@
 # rubocop:disable Style/StringLiterals
 
 describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :feature do
+  include EntitiesHelper
+
   # TODO: include Routes (which will force internal handling of /people/..., /orgs/... routes)
   let(:user) { create_basic_user }
   let(:person) do
@@ -497,13 +499,13 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
           it "displays the most-interlocked person's name as link" do
             expect(subject.find('.connected-entity-cell'))
-              .to have_link(person.name, href: entity_path(people[3]))
+              .to have_link(person.name, href: concretize_entity_path(people[3]))
           end
 
           it "displays interlocking orgs' names as links in same row as interlocked people" do
             orgs.each do |org|
               expect(subject.find('.connecting-entities-cell'))
-                .to have_link(org.name, href: entity_path(org))
+                .to have_link(org.name, href: concretize_entity_path(org))
             end
           end
         end

@@ -1,8 +1,8 @@
 <div class="row actions-row mt-3">
   <div id="actions" class="col-md-8 col-sm-8 mt-1">
     <div id="action-buttons">
-      <%= link_to "add relationship", add_relationship_entity_path(entity), class: "action-button" %>
-      <%= link_to "edit", edit_entity_path(entity), class: "action-button" %>
+      <%= link_to "add relationship", concretize_add_relationship_entity_path(entity), class: "action-button" %>
+      <%= link_to "edit", concretize_edit_entity_path(entity), class: "action-button" %>
       <%= link_to "flag", flag_path, class: "action-button" %>
 
       <% if user_signed_in? %>
@@ -20,7 +20,7 @@
 	<%= link_to 'merge', merge_path(mode: :search, source: @entity.id) %>
 
 	<% if current_user.has_ability? 'importer' %>
-          <%= link_to "match donations", match_donations_entity_path(entity), class: "action-button" if entity.person? %>
+          <%= link_to "match donations", concretize_match_donations_entity_path(entity), class: "action-button" if entity.person? %>
 	<% end %>
 
 	<% if show_add_bulk_button(current_user) %>

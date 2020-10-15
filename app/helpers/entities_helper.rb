@@ -72,9 +72,12 @@ module EntitiesHelper
 
   # input: <Entity>, <LinksGroup>
   def link_to_all(entity, links)
-    content_tag :div, class: 'section_meta' do
-      content_tag(:span, "Showing 1-10 of #{links.count} :: ") + link_to('see all', concretize_entity_url(entity, :relationships => links.keyword))
-    end if links.count > 10
+    if links.count > 10
+      content_tag :div, class: 'section_meta' do
+        content_tag(:span, "Showing 1-10 of #{links.count} :: ") +
+          link_to('see all', concretize_entity_url(entity, :relationships => links.keyword))
+      end
+    end
   end
 
   def section_order(entity)
@@ -234,7 +237,7 @@ module EntitiesHelper
   end
 
   def entity_links(entities)
-    safe_join(entities.map { |e| link_to(e.name, e) }, ', ')
+    safe_join(entities.map { |e| link_to(e.name, concretize_entity_path(e)) }, ', ')
   end
 
 
@@ -260,11 +263,11 @@ module EntitiesHelper
 
   def entity_tabs(entity, active_tab)
     tab_contents = [
-      { text: 'Relationships',  path: entity_path(entity) },
-      { text: 'Interlocks',     path: interlocks_entity_path(entity) },
-      { text: 'Giving',         path: giving_entity_path(entity) },
-      { text: 'Political',      path: political_entity_path(entity) },
-      { text: 'Data',           path: datatable_entity_path(entity) }
+      { text: 'Relationships',  path: concretize_entity_path(entity) },
+      { text: 'Interlocks',     path: concretize_interlocks_entity_path(entity) },
+      { text: 'Giving',         path: concretize_giving_entity_path(entity) },
+      { text: 'Political',      path: concretize_political_entity_path(entity) },
+      { text: 'Data',           path: concretize_datatable_entity_path(entity) }
     ]
     content_tag(:div, class: 'button-tabs') do
       tab_contents.map do |tab|

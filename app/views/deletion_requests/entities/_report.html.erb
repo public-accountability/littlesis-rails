@@ -3,7 +3,7 @@
     This deletion will remove the following <%= @entity.primary_ext.downcase %> from the database:
   </div>
   <div class="entity-deletion-name">
-    <div><%= link_to @entity.name, entity_path(@entity) %></div>
+    <div><%= link_to @entity.name, concretize_entity_path(@entity) %></div>
     <div>(<%= @entity.link_count%> relationships)</div>
   </div>
   <div class="entity-deletion-blurb">

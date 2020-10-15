@@ -3,6 +3,7 @@
 class EntitiesController < ApplicationController
   include TagableController
   include ReferenceableController
+  include EntitiesHelper
 
   ERRORS = ActiveSupport::HashWithIndifferentAccess.new(
     create_bulk: {
@@ -78,7 +79,7 @@ class EntitiesController < ApplicationController
                  }
                }
       else
-        redirect_to edit_entity_path(@entity)
+        redirect_to concretize_edit_entity_path(@entity)
       end
 
     else # encounted error
@@ -204,7 +205,7 @@ class EntitiesController < ApplicationController
     end
     @entity.update_fields(fields)
     Field.delete_unused
-    redirect_to fields_entity_path(@entity)
+    redirect_to concretize_fields_entity_path(@entity)
   end
 
   ##
@@ -218,13 +219,13 @@ class EntitiesController < ApplicationController
   def feature_image
     image = Image.find(params[:image_id])
     image.feature
-    redirect_to images_entity_path(@entity)
+    redirect_to concretize_images_entity_path(@entity)
   end
 
   def remove_image
     image = Image.find(params[:image_id])
     image.destroy
-    redirect_to images_entity_path(@entity)
+    redirect_to concretize_images_entity_path(@entity)
   end
 
   def new_image
@@ -248,7 +249,7 @@ class EntitiesController < ApplicationController
                              caption: image_params[:caption])
     if @image.save
       @image.feature if cast_to_boolean(image_params[:is_featured])
-      redirect_to images_entity_path(@entity), notice: 'Image was successfully created.'
+      redirect_to concretize_images_entity_path(@entity), notice: 'Image was successfully created.'
     else
       render action: 'new_image', notice: 'Failed to add the image :('
     end

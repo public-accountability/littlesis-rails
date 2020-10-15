@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class ExternalLinksController < ApplicationController
+  include EntitiesHelper
+
   before_action :authenticate_user!
 
   def create
     el = ExternalLink.create!(external_link_params)
-    redirect_to edit_entity_path(el.entity)
+    redirect_to concretize_edit_entity_path(el.entity)
   end
 
   def update
@@ -15,7 +17,7 @@ class ExternalLinksController < ApplicationController
     else
       el.update!(external_link_params)
     end
-    redirect_to edit_entity_path(el.entity)
+    redirect_to concretize_edit_entity_path(el.entity)
   end
 
   private

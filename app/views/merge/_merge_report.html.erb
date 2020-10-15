@@ -1,8 +1,8 @@
 <div class="row">
   <div class="col-sm-12 nopadding">
-    <h2>You are about to <span class="bg-warning">merge</span> all of <%= link_to "#{@source.name} (#{@source.id})'s", entity_path(@source) %>
-      relationships and information with <%= link_to "#{@dest.name} (#{@dest.id})", entity_path(@dest) %></h2>
-    <h2>It will delete <%= link_to "#{@source.name} (#{@source.id})", entity_path(@source) %> from the database</h2>
+    <h2>You are about to <span class="bg-warning">merge</span> all of <%= link_to "#{@source.name} (#{@source.id})'s", concretize_entity_path(@source) %>
+      relationships and information with <%= link_to "#{@dest.name} (#{@dest.id})", concretize_entity_path(@dest) %></h2>
+    <h2>It will delete <%= link_to "#{@source.name} (#{@source.id})", concretize_entity_path(@source) %> from the database</h2>
   </div>
 </div>
 
@@ -37,7 +37,7 @@
 
       <% unless_em_prop_is_empty :lists  do %>
 	<li>
-	  Add <%= link_to "#{@dest.name} (#{@dest.id})", entity_path(@dest) %> to <strong><%= @entity_merger.lists.count %></strong> lists
+	  Add <%= link_to "#{@dest.name} (#{@dest.id})", concretize_entity_path(@dest) %> to <strong><%= @entity_merger.lists.count %></strong> lists
 	</li>
       <% end  %>
 
@@ -61,7 +61,7 @@
 
       <% unless_em_prop_is_empty :tag_ids  do %>
 	<li>
-	  Add <%= link_to "#{@dest.name} (#{@dest.id})", entity_path(@dest) %> to these tags: <%= em_prop(:tag_ids).map { |t| Tag.find(t).name }.join(', ')%>
+	  Add <%= link_to "#{@dest.name} (#{@dest.id})", concretize_entity_path(@dest) %> to these tags: <%= em_prop(:tag_ids).map { |t| Tag.find(t).name }.join(', ')%>
 	</li>
       <% end %>
 
