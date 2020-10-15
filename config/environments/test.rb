@@ -18,6 +18,11 @@ Rails.application.configure do
   config.eager_load = false
   # config.enable_dependency_loading = true
 
+  Lilsis::Application.default_url_options[:host] = 'test.host'
+  routes.default_url_options[:host] = 'test.host'
+  config.action_controller.default_url_options[:host] = 'test.host'
+  config.action_mailer.default_url_options[:host] = 'test.host'
+
   # Configure static asset server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
   config.public_file_server.headers = { 'Cache-Control' => 'public, max-age=3600' }

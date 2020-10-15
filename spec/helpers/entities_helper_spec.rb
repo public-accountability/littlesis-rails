@@ -13,7 +13,7 @@ describe EntitiesHelper do
       end
 
       it 'generates the correct URL for people' do
-        expect(helper.concretize_entity_url(person)).to eq "http://localhost/person/#{person.id}-Tronald_Dump"
+        expect(helper.concretize_entity_url(person)).to eq "http://test.host/person/#{person.id}-Tronald_Dump"
       end
 
       it 'generates the correct edit path' do
