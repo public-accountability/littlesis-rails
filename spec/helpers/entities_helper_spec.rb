@@ -1,4 +1,31 @@
 describe EntitiesHelper do
+  context 'with a person and an org' do
+    let(:person) { build(:person, name: 'Tronald Dump') }
+    let(:org) { build(:org, name: 'Malwart') }
+
+    describe 'concretizing URL helpers' do
+      it 'generates the correct path for people' do
+        expect(helper.concretize_entity_path(person)).to eq "/person/#{person.id}-Tronald_Dump"
+      end
+
+      it 'generates the correct path for orgs' do
+        expect(helper.concretize_entity_path(org)).to eq "/org/#{org.id}-Malwart"
+      end
+
+      it 'generates the correct URL for people' do
+        expect(helper.concretize_entity_url(person)).to eq "http://localhost/person/#{person.id}-Tronald_Dump"
+      end
+
+      it 'generates the correct edit path' do
+        expect(helper.concretize_edit_entity_path(org)).to eq "/org/#{org.id}-Malwart/edit"
+      end
+
+      it 'handles other arguments' do
+        expect(helper.concretize_political_entity_path(org, format: :json)).to eq "/org/#{org.id}-Malwart/political.json"
+      end
+    end
+  end
+
   describe 'link_to_all' do
     let(:entity) { build(:org) }
 

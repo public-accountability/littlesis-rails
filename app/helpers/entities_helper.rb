@@ -3,6 +3,42 @@
 # rubocop:disable Style/StringLiterals
 
 module EntitiesHelper
+  # So we can use the concretize URL helpers outside of contexts that have access to routing
+  include Rails.application.routes.url_helpers
+  delegate :default_url_options, to: 'Rails.application'
+
+  # Define "concretize" URL helpers for every entity controller route.
+  # These return a version of that route which returns the entity's
+  # primary_ext in the path instead of the generic /entities/....
+  #
+  # ==== Examples
+  #
+  # Assuming entity 1234-Malwart has the primary_ext "Org":
+  #
+  # * supplement entity_path(entity) with concretize_entity_path(entity), which returns
+  # /org/1234-Malwart instead of /entities/1234-Malwart
+  #
+  # * supplement interlocks_entity_url(entity, format: :json) with
+  # concretize_interlocks_entity_url(entity, format: :json), which returns
+  # /org/1234-Malwart/interlocks.json instead of /entities/1234-Malwart/interlocks.json
+  #
+  Rails.application.routes.routes
+    .select { |r| r.defaults[:controller] == 'entities' }
+    .each do |route|
+    next unless route.name&.match?(/entities|entity/)
+
+    suffixes = %w[path url]
+    suffixes.each do |suffix|
+      define_method("concretize_#{route.name}_#{suffix}") do |entity, **args|
+        send(concrete_url_helper_name(route, entity, suffix), entity, **args)
+      end
+    end
+  end
+
+  def concrete_url_helper_name(route, entity, suffix)
+    "#{route.name.gsub(/entity|entities/, entity.primary_ext.downcase)}_#{suffix}"
+  end
+
   def entity_primary_ext_display(entity)
     if entity.org?
       'organization'
@@ -37,7 +73,7 @@ module EntitiesHelper
   # input: <Entity>, <LinksGroup>
   def link_to_all(entity, links)
     content_tag :div, class: 'section_meta' do
-      content_tag(:span, "Showing 1-10 of #{links.count} :: ") + link_to('see all', entity_url(entity, :relationships => links.keyword))
+      content_tag(:span, "Showing 1-10 of #{links.count} :: ") + link_to('see all', concretize_entity_url(entity, :relationships => links.keyword))
     end if links.count > 10
   end
 
