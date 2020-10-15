@@ -104,6 +104,8 @@ Lilsis::Application.routes.draw do
 
   post '/entities/validate' => 'entities#validate'
 
+  match 'person/:id/*remainder', via: :all, constraints: {id: /[0-9]+/}, to: 'entities/routes#redirect_to_canonical'
+  match 'org/:id/*remainder', via: :all, constraints: {id: /[0-9]+/}, to: 'entities/routes#redirect_to_canonical'
 
   # Generate entity routes for the primary extensions so we can humanize them
   %i(entities org person).each do |path_prefix|

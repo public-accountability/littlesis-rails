@@ -41,9 +41,12 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       expect(page.status_code).to eq 404
     end
 
-    it 'rewrites legacy symfony-style urls to rails urls' do
-      should_visit_entity_page "/org/#{org.id}/#{org.name}"
-      should_visit_entity_page "/org/#{org.id}/#{org.name}/interlocks"
+    it 'redirects legacy symfony-style urls to canonical entity urls' do
+      visit "/org/#{org.id}/#{org.name}"
+      expect(page).to have_current_path "http://test.host/org/#{org.id}-org"
+
+      visit "/org/#{org.id}/#{org.name}/interlocks"
+      expect(page).to have_current_path "http://test.host/org/#{org.id}-org"
     end
   end
 

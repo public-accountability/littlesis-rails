@@ -25,4 +25,37 @@ describe 'entities routes', type: :routing do
       id: "#{org.id}-Malwart"
     )
   end
+
+  it 'routes old-style person URLs' do
+    expect(get: "/person/#{person.id}/arbitrary/string").to route_to(
+      controller: 'entities/routes',
+      action: 'redirect_to_canonical',
+      id: person.id.to_s,
+      remainder: 'arbitrary/string'
+    )
+  end
+
+  it 'routes old-style org URLs' do
+    expect(get: "/org/#{org.id}/arbitrary/string").to route_to(
+      controller: 'entities/routes',
+      action: 'redirect_to_canonical',
+      id: org.id.to_s,
+      remainder: 'arbitrary/string'
+    )
+  end
+
+  describe 'redirection of old-style URLs', type: :request do
+    it 'redirects to the canonical person URL' do
+      expect(get "/person/#{person.id}/arbitrary/string").to redirect_to("/person/#{person.id}-Tronald_Dump")
+    end
+
+    it 'redirects to the canonical org URL' do
+      expect(get "/person/#{org.id}/arbitrary/string").to redirect_to("/org/#{org.id}-Malwart")
+    end
+
+    it 'raises a 404 for unrecognised entities' do
+      get '/person/098765432/arbitrary/string'
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end
