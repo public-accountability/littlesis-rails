@@ -26,6 +26,21 @@ describe EntitiesController, type: :controller do
     it { is_expected.to route(:get, '/entities/1/review_donations').to(action: :review_donations, id: 1) }
     it { is_expected.to route(:get, '/entities/1/review_ny_donations').to(action: :review_ny_donations, id: 1) }
     it { is_expected.to route(:post, '/entities/1/tags').to(action: :tags, id: 1) }
+
+    context 'with primary extensions' do
+      let(:org) { build(:org) }
+      let(:person) { build(:person) }
+
+      specify do
+        expect(:get => "/org/#{org.to_param}").to route_to(controller: "entities", action: "show", id: org.to_param)
+        expect(:get => "/person/#{person.to_param}").to route_to(controller: "entities", action: "show", id: person.to_param)
+      end
+    end
+
+    it 'routes names with periods' do
+      org = build(:org, name: "X.Y.Z.")
+      expect(:get => "/entities/#{org.to_param}").to route_to(controller: "entities", action: "show", id: org.to_param)
+    end
   end
 
   describe 'GETs' do
