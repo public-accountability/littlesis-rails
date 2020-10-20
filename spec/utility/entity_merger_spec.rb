@@ -127,7 +127,7 @@ describe 'Merging Entities', :merging_helper do
         before { subject.merge_contact_info }
 
         it 'duplicates address and appends to @contact_info' do
-          verify_contact_info_length_type_and_entity_id(Address, dest_org.id)
+          verify_contact_info_length_type_and_entity_id(LegacyAddress, dest_org.id)
         end
       end
 
@@ -208,7 +208,7 @@ describe 'Merging Entities', :merging_helper do
       it 'removes email, phone, and addresses from source' do
         subject.merge!
         expect(Phone.where(entity_id: source_org.id).exists?).to be false
-        expect(Address.where(entity_id: source_org.id).exists?).to be false
+        expect(LegacyAddress.where(entity_id: source_org.id).exists?).to be false
         expect(Email.where(entity_id: source_org.id).exists?).to be false
       end
     end

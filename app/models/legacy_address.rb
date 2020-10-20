@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-class Address < ApplicationRecord
-  include SingularTable
+class LegacyAddress < ApplicationRecord
+  self.table_name = 'address'
   include SoftDelete
 
   belongs_to :entity, inverse_of: :addresses
   belongs_to :state, class_name: "AddressState", inverse_of: :addresses, optional: true
-  has_many :images, inverse_of: :address, dependent: :destroy
+  # has_many :images, inverse_of: :address, dependent: :destroy
 
   validates_presence_of :city, :country_name
 

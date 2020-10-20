@@ -87,7 +87,7 @@ class Entity < ApplicationRecord
   has_one :cmp_entity, inverse_of: :entity, dependent: :destroy
 
   # Legacy Contact
-  has_many :addresses, inverse_of: :entity, dependent: :destroy
+  has_many :addresses, class_name: 'LegacyAddress', inverse_of: :entity, dependent: :destroy
   has_many :phones, inverse_of: :entity, dependent: :destroy
   has_many :emails, inverse_of: :entity, dependent: :destroy
 
