@@ -108,9 +108,9 @@ Lilsis::Application.routes.draw do
   match 'org/:id/*remainder', via: :all, constraints: {id: /[0-9]+/}, to: 'entities/routes#redirect_to_canonical'
 
   # Generate entity routes for the primary extensions so we can humanize them
-  %i(entities org person).each do |path_prefix|
-    resources path_prefix, controller: 'entities' do
-      constraints(id: /[0-9]+(-[^\/]+)?/) do
+  %i[entities org person].each do |path_prefix|
+    constraints(id: /[0-9]+(-[^\/]+)?/) do
+      resources path_prefix, controller: 'entities' do
         member do
           # profile page
           get 'interlocks'
