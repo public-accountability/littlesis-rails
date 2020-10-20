@@ -86,10 +86,13 @@ class Entity < ApplicationRecord
   # cmp
   has_one :cmp_entity, inverse_of: :entity, dependent: :destroy
 
-  # contact
+  # Legacy Contact
   has_many :addresses, inverse_of: :entity, dependent: :destroy
   has_many :phones, inverse_of: :entity, dependent: :destroy
   has_many :emails, inverse_of: :entity, dependent: :destroy
+
+  # Location and Address
+  has_many :locations, inverse_of: :entity, dependent: :destroy
 
   # OpenSecrets
   has_many :matched_contributions, class_name: 'OsMatch', inverse_of: :donor, foreign_key: 'donor_id'
