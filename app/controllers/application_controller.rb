@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  include Routes
   include ParamsHelper
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -47,9 +46,11 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from Exceptions::MergedEntityError do |e|
-    EntitiesController::TABS.include?(action_name) ?
-      redirect_to(send("#{action_name}_entity_path", e.merged_entity)) :
-      redirect_to(entity_path(e.merged_entity))
+    if EntitiesController::TABS.include?(action_name)
+      redirect_to(send("#{action_name}_entity_path", e.merged_entity))
+    else
+      redirect_to(concretize_entity_path(e.merged_entity))
+    end
   end
 
   def admins_only

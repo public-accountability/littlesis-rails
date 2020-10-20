@@ -628,7 +628,7 @@ class Entity < ApplicationRecord
   end
 
   def url
-    Routes.entity_url(self)
+    ApplicationController.helpers.concretize_entity_url(self)
   end
 
   ##

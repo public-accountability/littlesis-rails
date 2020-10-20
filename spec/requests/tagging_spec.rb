@@ -8,7 +8,7 @@ describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
   let(:lister) { create_basic_user }
   let(:admin) { create_admin_user }
   let(:tags_params) { { tags: { ids: ['1', '2'] } } }
-  let(:creating_entity_tags) {  -> { post "/entities/#{entity.id}/tags", params: tags_params } }
+  let(:creating_entity_tags) {  -> { post "/org/#{entity.to_param}/tags", params: tags_params } }
   let(:creating_list_tags) { -> { post "/lists/#{list.id}/tags", params: tags_params } }
   let(:creating_relationship_tags) { -> { post "/relationships/#{relationship.id}/tags", params: tags_params } }
 

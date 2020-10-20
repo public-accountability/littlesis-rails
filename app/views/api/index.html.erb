@@ -232,7 +232,7 @@
   <% end %>
 
   <div class="col-md-10 col-sm-12"
-    <p>This searches our database for entities. The number of the relationships the entity has is used in the ranking algorithm. For instance, searching for 'Bush' will put <%= link_to 'George Bush', entity_path(Entity.find(28776)) %> before <%= link_to 'Jeb Bush', entity_path(Entity.find(34003)) %> because the former has more relationships in our database than the latter.</p>
+    <p>This searches our database for entities. The number of the relationships the entity has is used in the ranking algorithm. For instance, searching for 'Bush' will put <%= link_to 'George Bush', concretize_entity_path(Entity.find(28776)) %> before <%= link_to 'Jeb Bush', concretize_entity_path(Entity.find(34003)) %> because the former has more relationships in our database than the latter.</p>
 
 
     <p>Example response:</p>

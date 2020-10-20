@@ -1,4 +1,6 @@
 describe 'edit entity page', type: :feature do
+  include EntitiesHelper
+
   let(:user) { create_really_basic_user }
   let(:entity) { create(:public_company_entity, last_user_id: user.id) }
 
@@ -41,7 +43,7 @@ describe 'edit entity page', type: :feature do
           fill_in 'entity_blurb', :with => new_short_description
           click_button 'Update'
 
-          expect(page).to have_current_path entity_path(entity)
+          expect(page).to have_current_path concretize_entity_path(entity)
           expect(entity.reload.blurb).to eql new_short_description
         end
       end
@@ -63,7 +65,7 @@ describe 'edit entity page', type: :feature do
             click_on "edit"
           end
 
-          expect(page).to have_current_path edit_entity_path(entity)
+          expect(page).to have_current_path concretize_edit_entity_path(entity)
           expect(page).to have_field('Market capitalization', with: 123)
           expect(page).to have_field('Assets', with: 432)
           expect(page).to have_field('Net income', with: 999)
@@ -106,7 +108,7 @@ describe 'edit entity page', type: :feature do
         end
 
         def verify_redirect_and_start_date
-          expect(page).to have_current_path entity_path(entity)
+          expect(page).to have_current_path concretize_entity_path(entity)
           expect(entity.reload.start_date).to eql start_date
         end
 
@@ -162,7 +164,7 @@ describe 'edit entity page', type: :feature do
           expect(ExternalLink.count).to eq(external_link_count + 1)
           expect(ExternalLink.last.link_id).to eql wikipedia_name
           expect(ExternalLink.last.entity_id).to eql entity.id
-          expect(page).to have_current_path edit_entity_path(entity)
+          expect(page).to have_current_path concretize_edit_entity_path(entity)
 
           within('#twitter_external_link_form') do
             fill_in 'external_link[link_id]', with: twitter_username
@@ -172,7 +174,7 @@ describe 'edit entity page', type: :feature do
           expect(ExternalLink.count).to eq(external_link_count + 2)
           expect(Entity.find(entity.id).external_links.count).to eq 2
           expect(ExternalLink.last.link_id).to eq twitter_username
-          expect(page).to have_current_path edit_entity_path(entity)
+          expect(page).to have_current_path concretize_edit_entity_path(entity)
 
         end
       end
@@ -192,7 +194,7 @@ describe 'edit entity page', type: :feature do
           expect(ExternalLink.count).to eql external_link_count
           expect(ExternalLink.last.link_id).to eql 'new_page_name'
           expect(ExternalLink.last.entity_id).to eql entity.id
-          expect(page).to have_current_path edit_entity_path(entity)
+          expect(page).to have_current_path concretize_edit_entity_path(entity)
         end
       end
 
@@ -210,7 +212,7 @@ describe 'edit entity page', type: :feature do
             click_button 'Submit'
           end
           expect(ExternalLink.count).to eql(external_link_count - 1)
-          expect(page).to have_current_path edit_entity_path(entity)
+          expect(page).to have_current_path concretize_edit_entity_path(entity)
         end
       end
     end # end external links

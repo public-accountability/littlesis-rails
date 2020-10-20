@@ -104,39 +104,45 @@ Lilsis::Application.routes.draw do
 
   post '/entities/validate' => 'entities#validate'
 
-  constraints(id: /[0-9]+(-[^\/]+)?/) do
-    resources :entities do
-      member do
-        # profile page
-        get 'interlocks'
-        get 'giving'
-        get 'political'
-        #get 'relationships'
-        post 'add_to_list'
-        get 'datatable'
-        get 'match_donations'
-        get 'match_ny_donations'
-        get 'review_donations'
-        get 'review_ny_donations'
-        post 'match_donation'
-        post 'unmatch_donation'
-        get 'contributions'
-        get 'references'
-        get 'potential_contributions'
-        get 'edits' => 'edits#entity'
-        get 'fields'
-        post 'update_fields'
-        get 'images'
-        get 'new_image'
-        post 'upload_image'
-        post 'remove_image'
-        post 'feature_image'
-        get 'add_relationship'
-        post 'tags'
-      end
+  match 'person/:id/*remainder', via: :all, constraints: {id: /[0-9]+/}, to: 'entities/routes#redirect_to_canonical'
+  match 'org/:id/*remainder', via: :all, constraints: {id: /[0-9]+/}, to: 'entities/routes#redirect_to_canonical'
 
-      collection do
-        post 'bulk' => 'entities#create_bulk'
+  # Generate entity routes for the primary extensions so we can humanize them
+  %i(entities org person).each do |path_prefix|
+    resources path_prefix, controller: 'entities' do
+      constraints(id: /[0-9]+(-[^\/]+)?/) do
+        member do
+          # profile page
+          get 'interlocks'
+          get 'giving'
+          get 'political'
+          #get 'relationships'
+          post 'add_to_list'
+          get 'datatable'
+          get 'match_donations'
+          get 'match_ny_donations'
+          get 'review_donations'
+          get 'review_ny_donations'
+          post 'match_donation'
+          post 'unmatch_donation'
+          get 'contributions'
+          get 'references'
+          get 'potential_contributions'
+          get 'edits' => 'edits#entity'
+          get 'fields'
+          post 'update_fields'
+          get 'images'
+          get 'new_image'
+          post 'upload_image'
+          post 'remove_image'
+          post 'feature_image'
+          get 'add_relationship'
+          post 'tags'
+        end
+
+        collection do
+          post 'bulk' => 'entities#create_bulk'
+        end
       end
     end
   end
@@ -280,9 +286,9 @@ Lilsis::Application.routes.draw do
     member do
       get '/edits' => 'tags#edits'
       get '/:tagable_category' => 'tags#show',
-          constraints: {
-            tagable_category: /#{Tagable.categories.join('|')}/
-          }
+        constraints: {
+        tagable_category: /#{Tagable.categories.join('|')}/
+      }
     end
   end
 

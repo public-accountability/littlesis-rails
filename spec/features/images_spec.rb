@@ -1,4 +1,6 @@
 describe 'Images' do
+  include EntitiesHelper
+
   before(:all) do # rubocop:disable RSpec/BeforeAfterAll
     %w[small profile large original square].each do |folder|
       FileUtils.mkdir_p Rails.root.join('tmp', folder)
@@ -24,10 +26,10 @@ describe 'Images' do
     let(:url) { 'https://example.com/example.png' }
     let(:image_data) { File.open(example_png).read }
 
-    before { visit new_image_entity_path(entity) }
+    before { visit concretize_new_image_entity_path(entity) }
 
     scenario 'Uploading an image from a file' do
-      successfully_visits_page new_image_entity_path(entity)
+      successfully_visits_page concretize_new_image_entity_path(entity)
 
       attach_file 'image_file', example_png
       fill_in 'image_caption', with: image_caption
@@ -40,11 +42,11 @@ describe 'Images' do
       expect(images.first.caption).to eql image_caption
       expect(images.first.is_featured).to be true
 
-      successfully_visits_page images_entity_path(entity)
+      successfully_visits_page concretize_images_entity_path(entity)
     end
 
     scenario 'Uploading an image from a URL' do
-      successfully_visits_page new_image_entity_path(entity)
+      successfully_visits_page concretize_new_image_entity_path(entity)
 
       fill_in 'image_caption', with: image_caption
       fill_in 'image_url', with: url
@@ -62,7 +64,7 @@ describe 'Images' do
       expect(images.first.caption).to eql image_caption
       expect(images.first.is_featured).to be true
 
-      successfully_visits_page images_entity_path(entity)
+      successfully_visits_page concretize_images_entity_path(entity)
     end
 
     describe 'visting the crop image page' do

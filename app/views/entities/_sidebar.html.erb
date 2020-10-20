@@ -35,7 +35,7 @@
     <script id="edit-tags-javascript">
      tags.init(
        <%= raw(@entity.tags_for(current_user).to_json) %>,
-       "<%= raw(tags_entity_path(@entity)) %>",
+       "<%= raw(concretize_tags_entity_path(@entity)) %>",
      );
     </script>
   <% end %>
@@ -56,7 +56,7 @@
     <%= profile_page_sidebar('sidebar-advanced-tools-container', 'Advanced tools') do %>
       <% if current_user.importer? || current_user.admin? %>
 	<br />
-	<%= link_to 'Match NY Donations', match_ny_donations_entity_path(@entity) %>
+	<%= link_to 'Match NY Donations', concretize_match_ny_donations_entity_path(@entity) %>
       <% end %>
     <% end %>
   <% end %>
@@ -70,7 +70,7 @@
     <% end %>
 
     <% if user_signed_in? %>
-      <%= form_for @entity, method: 'post', url: add_to_list_entity_path(@entity) do |f| %>
+      <%= form_for @entity, method: 'post', url: concretize_add_to_list_entity_path(@entity) do |f| %>
         <select name='list_id' class='lists-dropdown w-100' />
         <%= f.submit 'add to list', class: 'btn btn-primary' %>
       <% end %>

@@ -19,7 +19,7 @@
     <%= link_to("crop", crop_image_path(image)) %><br>
 
     <% unless image.is_featured %>
-      <%= link_to("feature", feature_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
+      <%= link_to("feature", concretize_feature_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
       <br>
     <% end %>
 
@@ -34,7 +34,7 @@
     <% end %>
 
     <% if current_user.has_ability?('deleter') %>
-      <%= link_to("remove", remove_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
+      <%= link_to("remove", concretize_remove_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
     <% end %>
 
   </td>

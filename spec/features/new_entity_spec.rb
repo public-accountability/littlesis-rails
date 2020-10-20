@@ -17,7 +17,7 @@ describe '/entities/new', type: :feature do
   end
 
   describe 'creating a new entity' do
-    let(:name) { Faker::Name.name }
+    let(:name) { "#{Faker::Name.first_name} #{Faker::Name.last_name}" }
     let(:blurb) { Faker::Quotes::Shakespeare.hamlet_quote.truncate(200) }
 
     context 'when user is confirmed over 10 minutes  ago' do

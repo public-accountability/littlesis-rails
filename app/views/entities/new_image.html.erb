@@ -3,7 +3,7 @@
 
 <h3>Add Image</h3>
 
-<%= form_for(@image, url: upload_image_entity_path(@entity), method: :post) do |f| %>
+<%= form_for(@image, url: concretize_upload_image_entity_path(@entity), method: :post) do |f| %>
   <% if @image.errors.any? %>
     <div id="error_explanation" class="alert alert-warning">
       <%= pluralize(@image.errors.count, "error") %> prohibited this image from being saved:

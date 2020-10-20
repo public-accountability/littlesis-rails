@@ -1,4 +1,6 @@
 feature 'Entity deletion request & review' do
+  include EntitiesHelper
+
   let(:user) {}
   let(:requester) { create_really_basic_user }
   let(:entity) { create :entity_person }
@@ -9,7 +11,7 @@ feature 'Entity deletion request & review' do
   def should_show_deletion_report
     report = page.find("#deletion-report")
     expect(report).to have_text "will remove the following person"
-    expect(report).to have_link entity.name, href: entity_path(entity)
+    expect(report).to have_link entity.name, href: concretize_entity_path(entity)
     expect(report).to have_text entity.description
     expect(report).to have_text "#{entity.link_count} relationships"
   end

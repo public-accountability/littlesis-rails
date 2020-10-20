@@ -871,7 +871,7 @@ describe Entity, :tag_helper do
     describe 'url' do
       specify do
         person = build(:person)
-        expect(person.url).to eql Routes.entity_url(person)
+        expect(person.url).to eql ApplicationController.helpers.concretize_entity_url(person)
       end
     end
 

@@ -40,7 +40,7 @@ describe EntityLastEditorPresenter do
 <div id="entity-edited-history">Edited by <strong>
 <a href="/users/#{user1.username}">#{user1.username}</a></strong>
  less than a minute ago 
-<a href="#{Routes.entity_path(person)}/edits">History</a>
+<a href="#{ApplicationController.helpers.concretize_edit_entity_path(person)}">History</a>
 </div>
         HTML
       end

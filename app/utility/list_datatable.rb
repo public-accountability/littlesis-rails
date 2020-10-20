@@ -2,7 +2,7 @@ class ListDatatable
   include RelationshipsHelper
   include ApplicationHelper
   include Rails.application.routes.url_helpers
-  include Routes
+  include EntitiesHelper
 
   attr_reader :list, :links, :types, :industries, :entities, :interlocks, :list_interlocks
 
@@ -71,7 +71,7 @@ class ListDatatable
       list_entity_id: list_entity.id,
       url: list_entity.entity.url,
       name: list_entity.entity.name,
-      rels_url: datatable_entity_path(list_entity.entity),
+      rels_url: concretize_datatable_entity_path(list_entity.entity),
       remove_url: remove_entity_list_path(list_entity.list, list_entity_id: list_entity.id),
       blurb: list_entity.entity.blurb,
       blurb_excerpt: excerpt(list_entity.entity.blurb, 70 - list_entity.entity.name.length),

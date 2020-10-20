@@ -3,6 +3,42 @@
 # rubocop:disable Style/StringLiterals
 
 module EntitiesHelper
+  # So we can use the concretize URL helpers outside of contexts that have access to routing
+  include Rails.application.routes.url_helpers
+  delegate :default_url_options, to: 'Rails.application'
+
+  # Define "concretize" URL helpers for every entity controller route.
+  # These return a version of that route which returns the entity's
+  # primary_ext in the path instead of the generic /entities/....
+  #
+  # ==== Examples
+  #
+  # Assuming entity 1234-Malwart has the primary_ext "Org":
+  #
+  # * supplement entity_path(entity) with concretize_entity_path(entity), which returns
+  # /org/1234-Malwart instead of /entities/1234-Malwart
+  #
+  # * supplement interlocks_entity_url(entity, format: :json) with
+  # concretize_interlocks_entity_url(entity, format: :json), which returns
+  # /org/1234-Malwart/interlocks.json instead of /entities/1234-Malwart/interlocks.json
+  #
+  Rails.application.routes.routes
+    .select { |r| r.defaults[:controller] == 'entities' }
+    .each do |route|
+    next unless route.name&.match?(/entities|entity/)
+
+    suffixes = %w[path url]
+    suffixes.each do |suffix|
+      define_method("concretize_#{route.name}_#{suffix}") do |entity, **args|
+        send(concrete_url_helper_name(route, entity, suffix), entity, **args)
+      end
+    end
+  end
+
+  def concrete_url_helper_name(route, entity, suffix)
+    "#{route.name.gsub(/entity|entities/, entity.primary_ext.downcase)}_#{suffix}"
+  end
+
   def entity_primary_ext_display(entity)
     if entity.org?
       'organization'
@@ -36,9 +72,12 @@ module EntitiesHelper
 
   # input: <Entity>, <LinksGroup>
   def link_to_all(entity, links)
-    content_tag :div, class: 'section_meta' do
-      content_tag(:span, "Showing 1-10 of #{links.count} :: ") + link_to('see all', entity_url(entity, :relationships => links.keyword))
-    end if links.count > 10
+    if links.count > 10
+      content_tag :div, class: 'section_meta' do
+        content_tag(:span, "Showing 1-10 of #{links.count} :: ") +
+          link_to('see all', concretize_entity_url(entity, :relationships => links.keyword))
+      end
+    end
   end
 
   def section_order(entity)
@@ -198,7 +237,7 @@ module EntitiesHelper
   end
 
   def entity_links(entities)
-    safe_join(entities.map { |e| link_to(e.name, e) }, ', ')
+    safe_join(entities.map { |e| link_to(e.name, concretize_entity_path(e)) }, ', ')
   end
 
 
@@ -224,11 +263,11 @@ module EntitiesHelper
 
   def entity_tabs(entity, active_tab)
     tab_contents = [
-      { text: 'Relationships',  path: entity_path(entity) },
-      { text: 'Interlocks',     path: interlocks_entity_path(entity) },
-      { text: 'Giving',         path: giving_entity_path(entity) },
-      { text: 'Political',      path: political_entity_path(entity) },
-      { text: 'Data',           path: datatable_entity_path(entity) }
+      { text: 'Relationships',  path: concretize_entity_path(entity) },
+      { text: 'Interlocks',     path: concretize_interlocks_entity_path(entity) },
+      { text: 'Giving',         path: concretize_giving_entity_path(entity) },
+      { text: 'Political',      path: concretize_political_entity_path(entity) },
+      { text: 'Data',           path: concretize_datatable_entity_path(entity) }
     ]
     content_tag(:div, class: 'button-tabs') do
       tab_contents.map do |tab|

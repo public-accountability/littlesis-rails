@@ -7,7 +7,7 @@
 
     <div class="col-sm-12" >
 	<span class="link-count">Number of documents: <em class="link-count"><%= @entity.documents_count %></em></span>
-	<span class="link-count"><%= link_to " :: see all", references_entity_path(@entity) %> </span>
+	<span class="link-count"><%= link_to " :: see all", concretize_references_entity_path(@entity) %> </span>
     </div>
 
     <div class="col-sm-12" >

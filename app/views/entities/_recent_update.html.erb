@@ -1,6 +1,6 @@
 <div class="entity_update">
 	<% if entity.person? and entity.has_featured_image %>
-  <a href="<%= entity_path(entity) %>">
+  <a href="<%= concretize_entity_path(entity) %>">
   	<div class="entity_update_image" style="background-image: url('<%= entity.featured_image_url("small") %>');"></div>
   </a>
   <% end %>

@@ -49,7 +49,7 @@ class EntityVersionPresenter < VersionPresenter
     if related_entity.is_deleted
       related_entity.name
     else
-      link_to related_entity.name, entity_path(related_entity)
+      link_to related_entity.name, concretize_entity_path(related_entity)
     end
   end
 

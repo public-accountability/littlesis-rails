@@ -8,7 +8,7 @@ describe EntityDatatablePresenter do
       is_expected.to eql('id' => entity.id,
                          'name'=> entity.name,
                          'blurb' => blurb,
-                         'url' => Routes.entity_url(entity),
+                         'url' => ApplicationController.helpers.concretize_entity_url(entity),
                          'types' => [2])
     end
   end

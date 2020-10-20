@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ListVersionPresenter < VersionPresenter
+  include EntitiesHelper
+
   def render
     "#{user_link} #{action} at <em>#{str_time}</em>"
   end
@@ -26,7 +28,7 @@ class ListVersionPresenter < VersionPresenter
     if entity.is_deleted
       entity.name
     else
-      link_to entity.name, entity_path(entity)
+      link_to entity.name, concretize_entity_path(entity)
     end
   end
 end

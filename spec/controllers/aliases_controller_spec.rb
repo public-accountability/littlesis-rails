@@ -1,4 +1,6 @@
 describe AliasesController, type: :controller do
+  include EntitiesHelper
+
   let(:entity) { create(:entity_org) }
   it { should use_before_action(:authenticate_user!) }
   it { should route(:patch, '/aliases/123').to(action: :update, id: 123) }
@@ -21,7 +23,7 @@ describe AliasesController, type: :controller do
       it 'redirects to edit entity path' do
         new_alias_post.call
         expect(response).to have_http_status 302
-        expect(response).to redirect_to edit_entity_path(entity)
+        expect(response).to redirect_to concretize_edit_entity_path(entity)
         expect(controller).not_to set_flash[:alert]
       end
     end
@@ -58,7 +60,7 @@ describe AliasesController, type: :controller do
 
     it 'redirects to edit entity path' do
       patch :make_primary, params: { id: 123 }
-      expect(response).to redirect_to edit_entity_path(@entity)
+      expect(response).to redirect_to concretize_edit_entity_path(@entity)
     end
   end
 
@@ -77,7 +79,7 @@ describe AliasesController, type: :controller do
 
     it 'redirects to edit entity path' do
       delete :destroy, params: { id: @alias.id }
-      expect(response).to redirect_to edit_entity_path(entity)
+      expect(response).to redirect_to concretize_edit_entity_path(entity)
     end
 
     context 'primary alias' do
