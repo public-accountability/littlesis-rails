@@ -7,5 +7,6 @@ describe Location do
   it { is_expected.to have_db_column(:lng).of_type(:decimal) }
   it { is_expected.to have_db_column(:entity_id).of_type(:integer) }
 
-  it { is_expected.to belong_to(:entity) }
+  it { is_expected.to belong_to(:entity).required }
+  it { is_expected.to have_one(:address) }
 end

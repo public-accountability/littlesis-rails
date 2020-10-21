@@ -121,7 +121,7 @@ describe 'Merging Entities', :merging_helper do
     subject { EntityMerger.new(source: source_org, dest: dest_org) }
 
     describe 'addresses' do
-      let!(:address) { create(:address, entity_id: source_org.id) }
+      let!(:address) { create(:legacy_address, entity_id: source_org.id) }
 
       context 'when source has a new address' do
         before { subject.merge_contact_info }
