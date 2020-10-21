@@ -9,4 +9,10 @@ describe Location do
 
   it { is_expected.to belong_to(:entity).required }
   it { is_expected.to have_one(:address) }
+
+  describe 'region' do
+    specify do
+      expect(Location.new(region: 2).region).to eq 'Asia'
+    end
+  end
 end
