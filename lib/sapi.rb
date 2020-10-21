@@ -15,7 +15,7 @@ module Sapi
       end
     end
 
-    Person = Struct.new(:id, :name, :first_name, :last_name, :jobtitle, :region, :country, :website, :is_current) do
+    Person = Struct.new(:id, :name, :first_name, :last_name, :jobtitle, :location, :website, :is_current) do
       def matches
         @matches ||= EntityMatcher.find_matches_for_person(name)
       end
@@ -55,8 +55,7 @@ module Sapi
   def self.parse_person(row)
     Models::Person.new.tap do |person|
       person.id = row['UniqueIDIndividual']
-      person.country = row['Country']
-      person.region = row['RegionName']
+      person.location = Location.new(nil, nil, handle_null(row['Country']), handle_null(row['RegionName']))
       person.name = row['FullName']
       person.first_name = row['FirstName']
       person.last_name = row['LastName']
@@ -86,13 +85,22 @@ module Sapi
     end
   end
 
-  def self.format_org(org)
+  %i[organizations people relationships].each do |name|
+    instance_eval(<<~RUBY)
+      def self.#{name}
+        @#{name} ||= load_file(:#{name})
+      end
+    RUBY
+  end
+
+  def self.format_organization(org)
     {
       id: org.id,
       name: org.name,
       website: org.website,
       region: org.location.region,
       automatchable: org.matches.automatchable?,
+      match_id: org.matches.first&.entity&.id,
       match_name: org.matches.first&.entity&.name_with_id,
       match_url: org.matches.first&.entity&.url,
       match_criteria: org.matches.first&.values&.to_a&.join(',')
@@ -110,23 +118,75 @@ module Sapi
     }
   end
 
-  def self.save_organization_automatches
-    data = load_file(:organizations)
-             .filter { |org| org.matches.automatchable? }
-             .map! { |org| format_org(org) }
-
-    filepath = Rails.root.join('sapi_organizations_automatchable.csv')
-    ColorPrinter.print_blue "Saving #{data.count} organizations to #{filepath}"
-    Utility.save_hash_array_to_csv(filepath, data)
+  def self.format_relationship(relationship)
+    {}
   end
 
-  def self.save_people_automatches
-    data = load_file(:people)
-             .filter { |p| p.matches.present? }
-             .map! { |p| format_person(p) }
+  def self.import_orgs!
+    organizations.each do |org|
+      next if check_for_external_link?(org)
 
-    filepath = Rails.root.join('sapi_individuals_with_matches.csv')
-    ColorPrinter.print_blue "Saving #{data.count} individuals to #{filepath}"
-    Utility.save_hash_array_to_csv(filepath, data)
+      entity = if org.matches.automatchable?
+                 org.matches.first.entity
+               else
+                 Entity.create!(name: org.name, primary_ext: 'Org')
+               end
+
+      update_littlesis_entity(org, entity)
+    end
+  end
+
+  def self.import_people!
+    people.each do |person|
+      next if check_for_external_link?(person)
+
+      entity = if person.matches.automatchable?
+                 person.matches.first.entity
+               elsif person.name.include?(' ')
+                 Entity.create!(name: person.name, primary_ext: 'Person')
+               else
+                 name = "#{person.first_name} #{person.last_name}"
+                 Entity.create!(name: name, primary_ext: 'Person')
+               end
+
+      update_littlesis_entity(person, entity)
+    end
+  end
+
+  def self.import!
+    import_orgs!
+    import_people!
+    # import_relationships!
+  end
+
+  # Import helpers
+
+  def self.check_for_external_link?(sapi_entity)
+    if ExternalLink.sapi.exists?(link_id: sapi_entity.id)
+      ColorPrinter.print_red "#{sapi_entity.name} has already been imported"
+      true
+    else
+      ColorPrinter.print_blue "Creating #{sapi_entity.name}"
+      false
+    end
+  end
+
+  def self.should_create_location?(sapi_entity, entity)
+    return false if sapi_entity.location.region.blank?
+
+    !entity.locations.pluck(:region).include?(sapi_entity.location.region)
+  end
+
+  def self.update_littlesis_entity(sapi_entity, entity)
+    entity.external_links.create!(link_type: 'sapi', link_id: sapi_entity.id)
+    entity.update!(is_current: sapi_entity.is_current)
+
+    if sapi_entity.website.present? && sapi_entity.website.length <= 100
+      entity.update!(website: sapi_entity.website)
+    end
+
+    if should_create_location?(sapi_entity, entity)
+      entity.locations.create!(region: sapi_entity.location.region)
+    end
   end
 end
