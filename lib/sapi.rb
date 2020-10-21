@@ -3,7 +3,8 @@
 module Sapi
   FILES = {
     organizations: Rails.root.join('data/sapi_organizations.csv').to_s,
-    people: Rails.root.join('data/sapi_individuals.csv').to_s
+    people: Rails.root.join('data/sapi_individuals.csv').to_s,
+    relationships: Rails.root.join('data/sapi_relationships.csv').to_s
   }.freeze
 
   Location = Struct.new(:city, :state, :country, :region)
@@ -13,15 +14,64 @@ module Sapi
       def matches
         @matches ||= EntityMatcher.find_matches_for_org(name)
       end
+
+      def littlesis_entity
+        @littlesis_entity ||= ExternalLink.sapi.find_by(link_id: id)&.entity
+      end
     end
 
     Person = Struct.new(:id, :name, :first_name, :last_name, :jobtitle, :location, :website, :is_current) do
       def matches
         @matches ||= EntityMatcher.find_matches_for_person(name)
       end
+
+      def littlesis_entity
+        @littlesis_entity ||= ExternalLink.sapi.find_by(link_id: id)&.entity
+      end
     end
 
-    Relationship = Struct.new(:id, :person_id, :organization_id)
+    Relationship = Struct.new(:id, :person_id, :organization_id) do
+      def person
+        @person ||= Sapi.find_person(person_id)
+      end
+
+      def org
+        @org ||= Sapi.find_org(organization_id)
+      end
+
+      def category_id
+        if person&.jobtitle&.present?
+          ::Relationship::POSITION_CATEGORY
+        else
+          ::Relationship::GENERIC_CATEGORY
+        end
+      end
+
+      def create_new?
+        unless person&.littlesis_entity.present? && org&.littlesis_entity.present?
+          ColorPrinter.print_red "Missing data for relationship #{id}"
+          return false
+        end
+
+        if (littlesis_r = ::Relationship.find_by(entity: person.littlesis_entity,
+                                                 related: org.littlesis_entity,
+                                                 category_id: category_id))
+
+          ColorPrinter.print_magenta "Relationship (#{littlesis_r.id}) already exists for #{id}"
+          return false
+        end
+
+        true
+      end
+    end
+  end
+
+  def self.find_org(id)
+    organizations.find { |org| org.id == id }
+  end
+
+  def self.find_person(id)
+    people.find { |person| person.id == id }
   end
 
   def self.handle_null(value)
@@ -59,7 +109,8 @@ module Sapi
       person.name = row['FullName']
       person.first_name = row['FirstName']
       person.last_name = row['LastName']
-      person.website = row['Website']
+      person.website = handle_null(row['Website'])
+      person.jobtitle = handle_null(row['JobTitle'])
     end
   end
 
@@ -72,7 +123,7 @@ module Sapi
                :parse_org
              elsif file == :people
                :parse_person
-             elsif fiel == :relatioships
+             elsif file == :relationships
                :parse_relationship
              end
 
@@ -91,35 +142,6 @@ module Sapi
         @#{name} ||= load_file(:#{name})
       end
     RUBY
-  end
-
-  def self.format_organization(org)
-    {
-      id: org.id,
-      name: org.name,
-      website: org.website,
-      region: org.location.region,
-      automatchable: org.matches.automatchable?,
-      match_id: org.matches.first&.entity&.id,
-      match_name: org.matches.first&.entity&.name_with_id,
-      match_url: org.matches.first&.entity&.url,
-      match_criteria: org.matches.first&.values&.to_a&.join(',')
-    }
-  end
-
-  def self.format_person(person)
-    {
-      id: person.id,
-      name: person.name,
-      automatchable: person.matches.automatchable?,
-      match_name: person.matches.first&.entity&.name_with_id,
-      match_url: person.matches.first&.entity&.url,
-      match_criteria: person.matches.first&.values&.to_a&.join(',')
-    }
-  end
-
-  def self.format_relationship(relationship)
-    {}
   end
 
   def self.import_orgs!
@@ -153,10 +175,31 @@ module Sapi
     end
   end
 
+  def self.import_relationships!
+    relationships.each do |r|
+      next unless r.create_new?
+
+      littlesis_relationship = ::Relationship.new(entity: r.person.littlesis_entity,
+                                                  related: r.org.littlesis_entity,
+                                                  category_id: r.category_id)
+
+      if littlesis_relationship.category_id == Relationship::POSITION_CATEGORY
+        if r.person.jobtitle.length > 100
+          littlesis_relationship.description1 = r.person.jobtitle.tr(r.org.name, '').slice(0, 100)
+        else
+          littlesis_relationship.description1 = r.person.jobtitle
+        end
+
+      end
+
+      littlesis_relationship.save!
+    end
+  end
+
   def self.import!
     import_orgs!
     import_people!
-    # import_relationships!
+    import_relationships!
   end
 
   # Import helpers
