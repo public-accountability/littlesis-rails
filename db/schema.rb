@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_07_181953) do
+ActiveRecord::Schema.define(version: 2020_10_21_134506) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -54,6 +54,20 @@ ActiveRecord::Schema.define(version: 2020_10_07_181953) do
     t.bigint "country_id", null: false
     t.index ["country_id"], name: "country_id_idx"
     t.index ["name"], name: "uniqueness_idx", unique: true
+  end
+
+  create_table "addresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.text "street1"
+    t.text "street2"
+    t.text "street3"
+    t.text "city"
+    t.string "state"
+    t.string "country"
+    t.text "normalized_address"
+    t.bigint "location_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["location_id"], name: "index_addresses_on_location_id"
   end
 
   create_table "alias", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
@@ -542,6 +556,20 @@ ActiveRecord::Schema.define(version: 2020_10_07_181953) do
     t.bigint "lda_registrant_id"
     t.bigint "entity_id", null: false
     t.index ["entity_id"], name: "entity_id_idx"
+  end
+
+  create_table "locations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.text "city"
+    t.text "country"
+    t.text "subregion"
+    t.integer "region", limit: 1
+    t.decimal "lat", precision: 10
+    t.decimal "lng", precision: 10
+    t.bigint "entity_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["entity_id"], name: "index_locations_on_entity_id"
+    t.index ["region"], name: "index_locations_on_region"
   end
 
   create_table "ls_list", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
@@ -1325,6 +1353,7 @@ ActiveRecord::Schema.define(version: 2020_10_07_181953) do
 
   add_foreign_key "address", "address_category", column: "category_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "address", "entity", name: "address_ibfk_2", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "addresses", "locations"
   add_foreign_key "alias", "entity", name: "alias_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "article", "article_source", column: "source_id", name: "article_ibfk_1", on_update: :cascade, on_delete: :nullify
   add_foreign_key "business", "entity", name: "business_ibfk_1", on_update: :cascade, on_delete: :cascade

@@ -17,6 +17,7 @@ describe Entity, :tag_helper do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:primary_ext) }
     it { is_expected.to validate_length_of(:blurb).is_at_most(200) }
+    it { is_expected.to have_many(:locations) }
 
     describe 'external links' do
       let(:entity) do

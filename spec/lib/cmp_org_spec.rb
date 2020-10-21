@@ -51,8 +51,8 @@ describe Cmp::CmpOrg do
       end
 
       it 'creates a new address' do
-        expect { subject.import! }.to change { Address.count }.by(1)
-        expect(Address.last.city).to eql attributes.fetch(:city)
+        expect { subject.import! }.to change { LegacyAddress.count }.by(1)
+        expect(LegacyAddress.last.city).to eql attributes.fetch(:city)
       end
 
       it 'creates an extension' do

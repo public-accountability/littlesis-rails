@@ -12,7 +12,7 @@ class Image < ApplicationRecord
 
   belongs_to :entity, inverse_of: :images, optional: true
   belongs_to :user, inverse_of: :image, optional: true
-  belongs_to :address, inverse_of: :images, optional: true
+  # belongs_to :address, inverse_of: :images, optional: true
   has_many :deletion_requests, inverse_of: :image, foreign_key: 'source_id', class_name: 'ImageDeletionRequest'
 
   scope :featured, -> { where(is_featured: true) }

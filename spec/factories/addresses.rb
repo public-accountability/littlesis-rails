@@ -1,7 +1,12 @@
 FactoryBot.define do
   factory :address do
-    street1 { Faker::Address.street_name }
-    city { Faker::Address.city }
-    country_name { Faker::Address.country.slice(0, 50) }
+    street1 { "MyText" }
+    street2 { "MyText" }
+    street3 { "MyText" }
+    city { "MyText" }
+    state { "MyString" }
+    country { "MyString" }
+    normalized_address { "MyText" }
+    location { nil }
   end
 end
