@@ -3,6 +3,9 @@
 # ExternalLink is a unique identifier from another organization
 # Some ExternalLinks, such as twitter handles and wikipedia pages, can be
 # edited by users. Others (editable = false) can only be updated by system bots.
+#
+# `link_id` is the identifier and should be unique (for each type)
+#
 class ExternalLink < ApplicationRecord
   LINK_TYPES = {
     reserved: {
@@ -10,6 +13,7 @@ class ExternalLink < ApplicationRecord
       title: nil,
       url: nil,
       editable: nil,
+      internal: nil,
       multiple: nil
     },
     sec: {
@@ -17,6 +21,7 @@ class ExternalLink < ApplicationRecord
       title: 'Sec - Edgar',
       url: 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={}&output=xml',
       editable: false,
+      internal: false,
       multiple: false
     },
     wikipedia: {
@@ -24,6 +29,7 @@ class ExternalLink < ApplicationRecord
       title: 'Wikipedia: {}',
       url: 'https://en.wikipedia.org/wiki/{}',
       editable: true,
+      internal: false,
       multiple: false
     },
     twitter: {
@@ -31,6 +37,7 @@ class ExternalLink < ApplicationRecord
       title: 'Twitter @{}',
       url: 'https://twitter.com/{}',
       editable: true,
+      internal: false,
       multiple: false
     },
     crd: {
@@ -45,6 +52,7 @@ class ExternalLink < ApplicationRecord
         end
       end,
       editable: false,
+      internal: false,
       multiple: true
     },
     nys_filer: {
@@ -53,7 +61,16 @@ class ExternalLink < ApplicationRecord
       grouped_title: 'NYS Board of Election Filings',
       url: 'https://cfapp.elections.ny.gov/ords/plsql_browser/getfiler2_loaddates?filerid_IN={}',
       editable: false,
+      internal: false,
       multiple: true
+    },
+    sapi: {
+      enum_val: 6,
+      title: 'SAPI Identifier: {}',
+      url: nil,
+      editable: false,
+      internal: true,
+      multiple: false
     }
   }.with_indifferent_access.freeze
 
@@ -80,10 +97,14 @@ class ExternalLink < ApplicationRecord
     LINK_TYPES.dig(link_type, :editable)
   end
 
+  def internal?
+    LINK_TYPES.dig(link_type, :internal)
+  end
+
   def url
     template = LINK_TYPES.dig(link_type, :url)
     template = template.call(self) if template.is_a?(Proc)
-    template.gsub(PLACEHOLDER, link_id)
+    template&.gsub(PLACEHOLDER, link_id)
   end
 
   def title

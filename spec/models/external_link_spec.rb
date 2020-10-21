@@ -39,6 +39,11 @@ describe ExternalLink, type: :model do
     expect(build(:wikipedia_external_link).editable?).to be true
   end
 
+  it 'links can be marked as internal' do
+    expect(build(:sapi_link_org).internal?).to be true
+    expect(build(:sec_external_link).internal?).to be false
+  end
+
   it 'fails to create a link of type "reserved"' do
     expect { ExternalLink.create!(entity_id: 1, link_type: :reserved, link_id: 'foo') }
       .to raise_error(TypeError)
