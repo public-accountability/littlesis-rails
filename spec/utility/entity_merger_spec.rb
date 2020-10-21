@@ -187,7 +187,7 @@ describe 'Merging Entities', :merging_helper do
       before do
         create(:phone, entity_id: source_org.id)
         create(:email, entity_id: source_org.id)
-        create(:address, entity_id: source_org.id)
+        create(:legacy_address, entity_id: source_org.id)
       end
 
       it 'adds addresses to the destination entity' do
