@@ -16,7 +16,7 @@
   </td>
 
   <td>
-    <%= link_to("crop", crop_image_path(image)) %><br>
+    <%= link_to("crop", crop_ls_image_path(image)) %><br>
 
     <% unless image.is_featured %>
       <%= link_to("feature", concretize_feature_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
