@@ -27,6 +27,7 @@ feature "Browsing an entity's references", type: :feature, js: true do
 
     # Click "back" to view the first list
     find('#source-links-left-arrow').click
+    expect(page).to have_css('#source-links-container a', count: 10)
     new_first_source = first('#source-links-container a').text
     expect(new_first_source).to eq first_source
   end
