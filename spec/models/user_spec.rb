@@ -404,6 +404,6 @@ describe User do
   end
 
   describe '#image_url' do
-    specify { expect(build(:user).image_url).to eq '/images/system/anon.png' }
+    specify { expect(build(:user).image_url).to match /\/assets\/system\/anon/ }
   end
 end

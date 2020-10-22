@@ -94,7 +94,7 @@ Lilsis::Application.routes.draw do
     resources :entities, only: :create, controller: 'lists/entities'
   end
 
-  resources :images, only: [] do
+  resources :ls_images, only: [], path: 'images', controller: 'images' do
     member do
       get 'crop'
       post 'crop'

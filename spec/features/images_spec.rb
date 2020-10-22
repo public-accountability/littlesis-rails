@@ -72,16 +72,16 @@ describe 'Images' do
 
       before do
         setup_image_path image
-        visit crop_image_path(image)
+        visit crop_ls_image_path(image)
       end
 
       it 'has crop html elements' do
-        successfully_visits_page crop_image_path(image)
+        successfully_visits_page crop_ls_image_path(image)
 
         page_has_selector 'h3', text: 'Crop Image'
         page_has_selector '#image-wrapper > canvas', count: 1
 
-        expect(page.html).to include "return fetch(\"#{crop_image_path(image)}\""
+        expect(page.html).to include "return fetch(\"#{crop_ls_image_path(image)}\""
       end
     end
   end
@@ -91,7 +91,7 @@ describe 'Images' do
 
     before do
       setup_image_path image
-      visit crop_image_path(image)
+      visit crop_ls_image_path(image)
     end
 
     it 'has fields to edit caption'

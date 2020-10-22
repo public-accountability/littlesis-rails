@@ -102,7 +102,7 @@
    }
 
    function submit() {
-     return fetch("<%= crop_image_path(@image) %>", {
+     return fetch("<%= crop_ls_image_path(@image) %>", {
        method: "POST",
        cache: "no-cache",
        credentials: "include",
