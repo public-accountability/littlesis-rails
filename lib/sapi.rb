@@ -49,7 +49,7 @@ module Sapi
 
       def create_new?
         unless person&.littlesis_entity.present? && org&.littlesis_entity.present?
-          ColorPrinter.print_red "Missing data for relationship #{id}"
+          ColorPrinter.with_logger.print_red "Missing data for relationship #{id}"
           return false
         end
 
