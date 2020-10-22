@@ -31,7 +31,7 @@ export default function ListDatatableLoader({config, data}){
     return new Exporter(element, destination, config, data);
   }
 
-  this.prepareSearch = function(){ return new Search }
+  this.prepareSearch = function(){ return new Search(datatable) }
 
   this.prepareEditor = function(element, editorConstructor){
     return new Editor(element, editorConstructor, config);
