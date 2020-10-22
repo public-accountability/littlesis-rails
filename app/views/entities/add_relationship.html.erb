@@ -119,8 +119,9 @@
 
 </div> <!-- end of add-relationship-row  -->
 
-<%= javascript_tag do %>
+<script>
   $(document).ready(function(){
-  addRelationship.init();
-  });
-<% end  %>
+    let flow = new LittleSis.RelationshipCreationFlow();
+    flow.init();
+  })
+</script>

@@ -1,4 +1,4 @@
-var addRelationship = (function(utility) {
+export default function RelationshipCreationFlow(){
   /*
    .rel-search -> show during selection process
    .rel-results -> table results
@@ -461,5 +461,4 @@ var addRelationship = (function(utility) {
     },
     "_referenceData": referenceData
   };
-
-}(utility));
+}
