@@ -73,7 +73,7 @@ class User < ApplicationRecord
   end
 
   def image_url(type = nil)
-    return '/images/system/anon.png' if image.nil?
+    return ApplicationController.helpers.image_url('system/anon') if image.nil?
 
     type = (image.has_square ? 'square' : 'profile') if type.nil?
     image.image_path(type)
