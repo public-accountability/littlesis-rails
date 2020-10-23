@@ -221,7 +221,12 @@ module Sapi
   end
 
   def self.update_littlesis_entity(sapi_entity, entity)
-    entity.external_links.create!(link_type: 'sapi', link_id: sapi_entity.id)
+    if entity.external_links.sapi.exists?
+      ColorPrinter.with_logger.print_red "#{entity.name_with_id} already has a sapi id"
+    else
+      entity.external_links.sapi.create!(link_id: sapi_entity.id)
+    end
+
     entity.update!(is_current: sapi_entity.is_current)
 
     if sapi_entity.website.present? && sapi_entity.website.length <= 100
