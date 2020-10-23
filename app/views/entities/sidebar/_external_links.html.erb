@@ -1,5 +1,5 @@
 <ul class="list-unstyled">
-  <% @entity.external_links.group_by(&:link_type).each do |(link_type, links)| %>
+  <% @entity.external_links.to_a.delete_if(&:internal?).group_by(&:link_type).each do |(link_type, links)| %>
     <% if links.count == 1 %>
       <li>
         <%= link_to links.first.title, links.first.url, 'target' => '_blank' %>

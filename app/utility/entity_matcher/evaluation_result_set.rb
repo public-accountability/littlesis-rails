@@ -7,7 +7,7 @@ module EntityMatcher
     attr_reader :results
     extend Forwardable
 
-    def_delegators :@results, :each, :first, :second, :map, :size, :count, :empty?
+    def_delegators :@results, :each, :first, :second, :map, :size, :count, :empty?, :last
 
     # input: array of EvaluationResult::Person or EvaluationResult::Org
     def initialize(evaluation_results)
