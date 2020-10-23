@@ -183,7 +183,7 @@ module Sapi
                                                   related: r.org.littlesis_entity,
                                                   category_id: r.category_id)
 
-      if littlesis_relationship.category_id == Relationship::POSITION_CATEGORY
+      if littlesis_relationship.category_id == ::Relationship::POSITION_CATEGORY
         if r.person.jobtitle.length > 100
           littlesis_relationship.description1 = r.person.jobtitle.tr(r.org.name, '').slice(0, 100)
         else
