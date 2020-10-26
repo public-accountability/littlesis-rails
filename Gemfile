@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 
-gem 'rails', '6.0.3.3'
+gem 'rails', '6.0.3.4'
 
 gem 'mysql2', '~> 0.5.2'
-gem 'puma', '>= 4.2.0'
+gem 'puma', '>= 5'
 gem 'redis'
 
 # Reduces boot times through caching; required in config/boot.rb
@@ -14,7 +14,6 @@ gem 'rack-rewrite', '~> 1.5.1'
 
 # users and authentication
 gem 'devise', '~> 4.7'
-gem 'activerecord-session_store'
 
 # Versioning
 gem 'paper_trail', '~> 11'
@@ -74,14 +73,14 @@ group :test, :development do
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
-  gem 'rubocop-rspec', require: false
+  gem 'rubocop-rspec', '>= 2.0.0pre', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '>= 4.0.0'
   gem 'spring'
   gem 'spring-commands-rspec'
 end
 
-gem 'validate_url', :git => 'https://github.com/perfectline/validates_url.git', :branch => 'master'
+gem 'validate_url', '>= 1.0.13'
 
 # used for screenshot capture
 gem 'selenium-webdriver', '>= 3.11.0'
