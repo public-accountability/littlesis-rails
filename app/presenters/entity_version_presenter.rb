@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class EntityVersionPresenter < VersionPresenter
+  include EntitiesHelper
+
   def render
     "#{user_link} #{action} at #{time}"
   end
