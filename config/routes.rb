@@ -128,6 +128,7 @@ Lilsis::Application.routes.draw do
           get 'contributions'
           get 'references'
           get 'potential_contributions'
+          get 'edits' => redirect("/#{path_prefix}/%{id}/history")
           get 'history' => 'edits#entity'
           get 'fields'
           post 'update_fields'

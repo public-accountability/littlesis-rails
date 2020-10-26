@@ -19,8 +19,8 @@ feature 'EntityHistoryPage' do
     after { logout(:user) }
 
     scenario 'viewing the history page' do
-      visit edits_entity_path(entity)
-      successfully_visits_page edits_entity_path(entity)
+      visit history_entity_path(entity)
+      successfully_visits_page history_entity_path(entity)
 
       expect(page).to have_title "Edits: #{entity.name}"
       page_has_selector "#record-history-container"
@@ -40,8 +40,8 @@ feature 'EntityHistoryPage' do
       after { logout(:user) }
 
       scenario 'viewing cavet notice' do
-        visit edits_entity_path(entity)
-        successfully_visits_page edits_entity_path(entity)
+        visit history_entity_path(entity)
+        successfully_visits_page history_entity_path(entity)
         page_has_selector "h4", text: "Revision history for #{entity.name}"
         page_has_selector '#entity-history-date-caveat'
       end
