@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '6.0.3.3'
+gem 'rails', '6.0.3.4'
 
 gem 'mysql2', '~> 0.5.2'
 gem 'puma', '>= 4.2.0'
@@ -74,7 +74,7 @@ group :test, :development do
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
-  gem 'rubocop-rspec', require: false
+  gem 'rubocop-rspec', '>= 2.0.0pre', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '>= 4.0.0'
   gem 'spring'
