@@ -33,18 +33,15 @@ describe EntityLastEditorPresenter do
     specify { expect(subject.last_edited_at.change(usec: 0)).to eq last_edited_at.change(usec: 0) }
 
     describe 'last_edited_link' do
-      subject { EntityLastEditorPresenter.new(person).html }
-
       let(:html) do
-        <<-HTML
-<div id="entity-edited-history">Edited by <strong>
-<a href="/users/#{user1.username}">#{user1.username}</a></strong>
- less than a minute ago 
-<a href="#{ApplicationController.helpers.concretize_edit_entity_path(person)}">History</a>
-</div>
-        HTML
+        "<div id=\"entity-edited-history\">Edited by <strong><a href=\"/users/#{user1.username}\">#{user1.username}</a></strong> less than a minute ago <a href=\"#{ApplicationController.helpers.concretize_history_entity_path(person)}\">History</a></div>"
       end
-      it { is_expected.to eql html.tr("\n", '') }
+
+      specify do
+        expect(EntityLastEditorPresenter.html(person).to_s).to eq html
+      end
+
+      # it { is_expected.to eq html.tr("\n", '') }
     end
   end
 
@@ -71,4 +68,3 @@ describe EntityLastEditorPresenter do
 end
 
 # rubocop:enable RSpec/VerifiedDoubles, RSpec/ExpectInHook, RSpec/NamedSubject
-

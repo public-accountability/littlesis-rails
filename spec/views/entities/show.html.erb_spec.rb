@@ -80,7 +80,7 @@ describe 'entities/show.html.erb' do
             end
 
             it 'links to history' do
-              expect(rendered).to have_css('a[href="/org/' + @e.id.to_s + '-mega_corp/edit"]', :text => 'History')
+              expect(rendered).to have_css('a[href="/org/' + @e.to_param + '/history"]', :text => 'History')
             end
           end
 

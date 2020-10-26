@@ -14,6 +14,10 @@ class EntityLastEditorPresenter < SimpleDelegator
 
   delegate :user_page_path, to: 'Rails.application.routes.url_helpers'
 
+  def self.html(entity)
+    new(entity).html
+  end
+
   def initialize(*args)
     super(*args)
     @last_editor = find_last_editor
@@ -28,7 +32,7 @@ class EntityLastEditorPresenter < SimpleDelegator
       'Edited by '.html_safe +
         content_tag(:strong, link_to(@last_editor.username, user_page_path(@last_editor))) +
         " #{time_ago_in_words(@last_edited_at)} ago ".html_safe +
-        link_to('History', concretize_edit_entity_path(__getobj__))
+        link_to('History', concretize_history_entity_path(__getobj__))
     end
   end
 

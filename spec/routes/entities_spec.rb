@@ -10,6 +10,13 @@ describe 'entities routes', type: :routing do
     )
   end
 
+  it 'routes path to history to edits controller' do
+    expect(get: "#{org.slug}/history").to route_to(
+                                            controller: 'edits',
+                                            action: 'entity',
+                                            id: org.to_param)
+  end
+
   it 'routes /person/ paths to the relevant entities' do
     expect(get: "/person/#{person.id}-Tronald_Dump").to route_to(
       controller: 'entities',

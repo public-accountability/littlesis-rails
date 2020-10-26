@@ -20,6 +20,10 @@ describe EntitiesHelper do
         expect(helper.concretize_edit_entity_path(org)).to eq "/org/#{org.id}-Malwart/edit"
       end
 
+      it 'generates the correct history path' do
+        expect(helper.concretize_history_entity_path(org)).to eq "/org/#{org.id}-Malwart/history"
+      end
+
       it 'handles other arguments' do
         expect(helper.concretize_political_entity_path(org, format: :json)).to eq "/org/#{org.id}-Malwart/political.json"
       end

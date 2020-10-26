@@ -1,4 +1,6 @@
 describe 'Entity Requests', type: :request do
+  include EntitiesHelper
+
   let(:person) { create(:entity_person, start_date: '2000-01-01', blurb: nil) }
   let(:user) { create_basic_user }
 
@@ -264,5 +266,10 @@ describe 'Entity Requests', type: :request do
     it 'creates a new image' do
       expect(&request).to change { Image.count }.by(1)
     end
+  end
+
+  it 'redirects /edits to /history' do
+    get "/person/#{person.to_param}/edits"
+    expect(response).to redirect_to concretize_history_entity_path(person)
   end
 end
