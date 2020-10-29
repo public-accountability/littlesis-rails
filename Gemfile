@@ -6,6 +6,10 @@ gem 'mysql2', '~> 0.5.2'
 gem 'puma', '>= 4.2.0'
 gem 'redis'
 
+# Use SQL views in Rails
+gem 'scenic'
+gem 'scenic-mysql_adapter'
+
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.3', require: false
 
