@@ -3,7 +3,7 @@
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('jQuery'));
+    module.exports = factory(require('jquery'));
   } else {
     root.NewReferenceForm = factory(root.jQuery);
   }

@@ -1,3 +1,4 @@
+const NewReferenceForm = require('./new_reference_form.js');
 const ExistingReferenceWidget = require('./existing_reference_selector.js');
 
 export default function RelationshipCreationFlow(){
