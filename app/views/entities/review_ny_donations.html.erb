@@ -18,7 +18,7 @@
     <div id="match-donations" data-entityid="<%= @entity.id %>">
       <table id="donations-table" class="display" width="100%"></table>
     </div>
-    <script>new NyMatchDonations('unmatch', <%= @entity.id %> ).init();</script>
+    <script>new LittleSis.NyDonationsMatcher('unmatch', <%= @entity.id %> ).init();</script>
   </div>
   <div class="col-md-2 col-sm-2"></div>
 </div>
