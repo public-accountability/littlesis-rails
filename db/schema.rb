@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_29_112637) do
+ActiveRecord::Schema.define(version: 2020_10_29_120903) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1430,5 +1430,8 @@ ActiveRecord::Schema.define(version: 2020_10_29_112637) do
 
   create_view "links_view", sql_definition: <<-SQL
       select `relationship`.`entity1_id` AS `entity1_id`,`relationship`.`entity2_id` AS `entity2_id`,`relationship`.`category_id` AS `category_id`,0 AS `is_reverse`,`relationship`.`id` AS `relationship_id` from `relationship` union select `relationship`.`entity2_id` AS `entity1_id`,`relationship`.`entity1_id` AS `entity2_id`,`relationship`.`category_id` AS `category_id`,1 AS `is_reverse`,`relationship`.`id` AS `relationship_id` from `relationship`
+  SQL
+  create_view "interlocks_views", sql_definition: <<-SQL
+      select `links_view`.`entity1_id` AS `entity_id`,`links_view`.`entity2_id` AS `related_id`,`interlocks`.`entity1_id` AS `interlocked_entity_id` from (`links_view` left join `links_view` `interlocks` on(`interlocks`.`entity2_id` = `links_view`.`entity2_id`))
   SQL
 end
