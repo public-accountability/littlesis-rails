@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_21_134506) do
+ActiveRecord::Schema.define(version: 2020_10_29_112637) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -1427,4 +1427,8 @@ ActiveRecord::Schema.define(version: 2020_10_21_134506) do
   add_foreign_key "transaction", "entity", column: "contact2_id", name: "transaction_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "transaction", "relationship", name: "transaction_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "user_requests", "users"
+
+  create_view "links_view", sql_definition: <<-SQL
+      select `relationship`.`entity1_id` AS `entity1_id`,`relationship`.`entity2_id` AS `entity2_id`,`relationship`.`category_id` AS `category_id`,0 AS `is_reverse`,`relationship`.`id` AS `relationship_id` from `relationship` union select `relationship`.`entity2_id` AS `entity1_id`,`relationship`.`entity1_id` AS `entity2_id`,`relationship`.`category_id` AS `category_id`,1 AS `is_reverse`,`relationship`.`id` AS `relationship_id` from `relationship`
+  SQL
 end
