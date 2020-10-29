@@ -3,11 +3,11 @@
  */
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('jQuery'), require('../common/utility'));
+    module.exports = factory(require('../common/utility'));
   } else {
     root.ExistingReferenceWidget = factory(root.jQuery, root.utility);
   }
-}(this, function ($, utility) {
+}(this, function (utility) {
   // CONSTANTS
   var REFERENCES_PER_PAGE = 75;
   var REQUEST_URL = '/references/recent';
@@ -53,10 +53,10 @@
    */
   ExistingReferenceWidget.prototype._render = function() {
     var self = this;
-    $(this.options.containerDiv).html(this._typeaheadInput());
+    window.$(this.options.containerDiv).html(this._typeaheadInput());
 
     // render the typeahead in to the div
-    $(ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)
+    window.$(ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)
       .typeahead(TYPEAHEAD_OPTIONS, this._typeaheadConfig())
       .on('typeahead:selected', function (e, datum) {
 	// set 'selection' property after picked
@@ -150,7 +150,7 @@
     var url = this._recentReferencesUrl();
     
     return new Promise(function(resolve, reject){
-      $.getJSON(url)
+      window.$.getJSON(url)
 	.done(function(data) {
 	  self.documents = data;
 	  resolve(data);
@@ -167,7 +167,7 @@
    * @returns {String} 
    */
   ExistingReferenceWidget.prototype._recentReferencesUrl = function() {
-    var params =  $.param({
+    var params =  window.$.param({
       "entity_ids":  this.entityIds,
       "per_page": REFERENCES_PER_PAGE,
       "exclude_type": 'fec'
@@ -186,7 +186,7 @@
    * @returns {<input>} 
    */
   ExistingReferenceWidget.prototype._typeaheadInput = function() {
-    return $('<input>', {
+    return window.$('<input>', {
       "type": 'text',
       "placeholder": 'Search recent references',
       "id": ExistingReferenceWidget.TYPEAHEAD_INPUT_ID,
@@ -202,16 +202,13 @@
     '</a></div>'
   ].join('');
 
-  // TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
-  // entity autocomplete has already been switched over
-  var suggestionRender = Hogan.compile(
-    [ '<div class="reference-suggestion" title="{{url}}">',
+  var suggestionRender = [
+      '<div class="reference-suggestion" title="{{url}}">',
       referenceVisitLink,
       '<div class="reference-suggestion-name">{{name}}</div>',
       '<div class="reference-suggestion-url">{{trimUrl}}</div>',
       '</div>'
-    ].join('')
-  );
+    ].join('');
 
   /**
    * 
@@ -220,7 +217,7 @@
    */
     function suggestion(doc) {
       var data = Object.assign({}, doc, {trimUrl: trimUrl(doc.url)});
-      return suggestionRender.render(data);
+      return mustache.render(suggestionRender, data)
   }
 
 

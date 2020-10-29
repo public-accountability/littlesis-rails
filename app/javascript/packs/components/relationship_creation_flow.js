@@ -1,4 +1,6 @@
-var addRelationship = (function(utility) {
+const ExistingReferenceWidget = require('./existing_reference_selector.js');
+
+export default function RelationshipCreationFlow(){
   /*
    .rel-search -> show during selection process
    .rel-results -> table results
@@ -121,7 +123,7 @@ var addRelationship = (function(utility) {
       categoryButtonsSetActiveClass(this);
       lookForSimilarRelationship();
       $('#similar-relationships').addClass('hidden');
-      $('#similar-relationships').popover('destroy');
+      window.$('#similar-relationships').popover('dispose');
     });
   }
 
@@ -139,7 +141,7 @@ var addRelationship = (function(utility) {
   function hasSimilarRelationships(relationships) {
     if (relationships.length == 0) { return; }
     $('#similar-relationships').removeClass('hidden').fadeIn();
-    $('#similar-relationships').popover({
+    window.$('#similar-relationships').popover({
       content: popoverContent(relationships),
       html: true
     });
@@ -278,7 +280,7 @@ var addRelationship = (function(utility) {
     var sd = submissionData();
     if (catchErrors(sd)) {
 
-      $.post('/relationships', sd)
+      $.post('/relationships', sd, null, 'json')
       	.done(function(data, textStatus, jqXHR) {
       	  // redirect to the edit relationship page
       	  window.location.replace("/relationships/" + data.relationship_id + "/edit?new_ref=true");
@@ -461,5 +463,4 @@ var addRelationship = (function(utility) {
     },
     "_referenceData": referenceData
   };
-
-}(utility));
+}

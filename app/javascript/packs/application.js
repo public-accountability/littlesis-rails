@@ -16,6 +16,7 @@ import mustache from 'mustache';
 
 import listDatatableLoader from './list_datatable';
 import entityAutocomplete from './entity_autocomplete';
+import RelationshipCreationFlow from './components/relationship_creation_flow'
 
 window.utility = utility;
 window.utility.delete = utility.del;
@@ -32,3 +33,4 @@ $.typeahead = typeahead;
 window.LittleSis.http = http;
 window.LittleSis.listDatatableLoader = listDatatableLoader;
 window.LittleSis.entityAutocomplete = entityAutocomplete;
+window.LittleSis.RelationshipCreationFlow = RelationshipCreationFlow;
