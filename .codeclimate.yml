@@ -17,7 +17,7 @@ checks:
   return-statements:
     enabled: true
   similar-code:
-    enabled: true
+    enabled: false
   identical-code:
     enabled: true
 plugins:
