@@ -430,6 +430,7 @@ DEPENDENCIES
   web-console
   webpacker (>= 4.0.2)
   whenever (~> 1.0.0)
+  zeitwerk
 
 BUNDLED WITH
    2.1.4

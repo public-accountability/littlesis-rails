@@ -60,6 +60,8 @@ module FEC
       FEC::Database.setup!
       FEC::Importer.run
       FEC::DataCleaner.run
+      FEC::Geocoder.run
+      FEC::NameNormalizer.run
       # FEC::Database.print_report
     end
 

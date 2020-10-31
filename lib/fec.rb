@@ -25,9 +25,9 @@ module FEC
                      Dir.pwd
                    end
     {
-      data_directory: default_root.join('data'),
-      logfile: default_root.join('fec.log'),
-      database: default_root.join('fec.db'),
+      data_directory: default_root.join('data/fec'),
+      logfile: default_root.join('log/fec.log'),
+      database: default_root.join('data/fec.db'),
       recheck: false,
       years: 2016..2020,
       tables: nil

@@ -85,6 +85,7 @@ Style/NumericLiterals:
 Style/StringLiterals:
   Exclude:
     - 'spec/**/*.rb'
+    - 'lib/**/*.rb'
 
 Style/SymbolArray:
   Enabled: false

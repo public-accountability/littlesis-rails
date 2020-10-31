@@ -2,18 +2,23 @@
 
 module FEC
   module Database
+    def self.connection
+      FEC::ApplicationRecord.connection
+    end
+
     def self.establish_connection
-      return if ActiveRecord::Base.connected?
+      return if FEC::ApplicationRecord.connected?
 
       unless File.exist?(FEC.configuration[:database])
         FEC.logger.warn "#{FEC.configuration[:database]} is missing. Creating a new file."
       end
 
-      ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: FEC.configuration[:database])
+      FEC::ApplicationRecord.establish_connection(adapter: 'sqlite3',
+                                                  database: FEC.configuration[:database])
     end
 
     def self.setup!
-      FEC.logger.info "SETUP: creating tables"
+      FEC.logger.info 'SETUP: creating tables'
       execute_sql_file(File.join(__dir__, './schema.sql'))
       execute_sql_file(File.join(__dir__, './index.sql'))
     end
