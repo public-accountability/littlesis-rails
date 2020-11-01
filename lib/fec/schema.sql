@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS candidates_summaries (
+oCREATE TABLE IF NOT EXISTS candidates_summaries (
   CAND_ID TEXT NOT NULL,
   CAND_NAME TEXT,
   CAND_ICI CHAR(1),
@@ -250,3 +250,43 @@ CREATE TABLE IF NOT EXISTS operating_expenditures (
   BACK_REF_TRAN_ID TEXT,
   FEC_YEAR INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS donors (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  city TEXT,
+  state TEXT,
+  zip_code TEXT,
+  employer TEXT,
+  occupation TEXT
+);
+
+CREATE TABLE addresses (
+  id INTEGER PRIMARY KEY,
+  street TEXT,
+  city TEXT,
+  state TEXT,
+  zip_code TEXT
+)
+
+CREATE TABLE IF NOT EXISTS organizations (
+   id INTEGER PRIMARY KEY,
+   name TEXT NOT NULL,
+   address_id INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS donor_individual_contributions (
+   donor_id INTEGER NOT NULL,
+   individual_contribution_sub_id INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS donor_employers (
+   donor_id INTEGER NOT NULL,
+   organization_id INTEGER NOT NULL
+);
+
+
+CREATE TABLE organization_operating_expenditures (
+   organization_id INTEGER NOT NULL,
+   operating_expenditures_sub_id INTEGER NOT NULL
+)

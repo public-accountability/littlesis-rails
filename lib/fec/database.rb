@@ -7,14 +7,23 @@ module FEC
     end
 
     def self.establish_connection
-      return if FEC::ApplicationRecord.connected?
+      return connection if connection&.adapter_name == 'sqlite3'
 
       unless File.exist?(FEC.configuration[:database])
         FEC.logger.warn "#{FEC.configuration[:database]} is missing. Creating a new file."
       end
 
-      FEC::ApplicationRecord.establish_connection(adapter: 'sqlite3',
-                                                  database: FEC.configuration[:database])
+      FEC::ApplicationRecord.establish_connection(adapter: 'sqlite3', database: FEC.configuration[:database])
+    end
+
+    def self.enable_dangerous_sqlite3_settings
+      connection.exec_query "PRAGMA synchronous=NORMAL"
+      connection.exec_query "PRAGMA journal_mode=WAL"
+    end
+
+    def self.disable_dangerous_sqlite3_settings
+      connection.exec_query "PRAGMA synchronous=NORMAL"
+      connection.exec_query "PRAGMA journal_mode=DELETE"
     end
 
     def self.setup!

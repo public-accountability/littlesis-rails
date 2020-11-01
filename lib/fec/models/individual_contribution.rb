@@ -4,8 +4,9 @@ module FEC
   class IndividualContribution < ApplicationRecord
     self.primary_key = 'SUB_ID'
     belongs_to :committee, foreign_key: 'CMTE_ID', class_name: 'Committee', inverse_of: :individual_contributions
+    belongs_to :donor, optional: true, inverse_of: :individual_contributions
 
-    attribute :AMNDT_IND, AMD FEC::Types::AmendmentIndicator.new
+    attribute :AMNDT_IND, FEC::Types::AmendmentIndicator.new
 
     # def to_h
     #   {
