@@ -153,6 +153,8 @@ class HomeController < ApplicationController
   end
 
   def carousel_entities
+    return unless List.exists?(APP_CONFIG.fetch('carousel_list_id'))
+
     Rails.cache.fetch('home_controller_index_carousel_entities', expires_in: 2.hours) do
       List.find(APP_CONFIG.fetch('carousel_list_id')).entities.to_a
     end
