@@ -39,14 +39,11 @@ module FEC
           exit
         end
 
-        opts.on("--run", "--[no-]run", "Create fec sqlite database") do |run|
+        opts.on("--run", "Create fec sqlite database") do
           FEC.logger.info "CONFIGURATION: #{FEC.configuration.inspect}"
-
-          if run
-            FEC.logger.debug "RUN started"
-            FEC::Cli.run
-            FEC.logger.debug "RUN finished"
-          end
+          FEC.logger.debug "RUN started"
+          FEC::Cli.run
+          FEC.logger.debug "RUN finished"
           exit
         end
       end.parse!
