@@ -3,12 +3,13 @@
 module FEC
   class Committee < ApplicationRecord
     self.primary_key = 'rowid'
+    default_scope -> { select("rowid, committees.*") }
 
     attribute :CMTE_TP, FEC::Types::Committee.new
-
     belongs_to :candidate, -> { where(:FEC_YEAR => self.FEC_YEAR) }, foreign_key: 'CAND_ID'
 
     has_many :individual_contributions, foreign_key: 'CMTE_ID', inverse_of: :committee
+
     # has_many :expenditures, foreign_key: 'CMTE_ID', inverse_of: :committee
 
     # def committee_type

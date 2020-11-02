@@ -267,12 +267,11 @@ CREATE TABLE IF NOT EXISTS addresses (
   city TEXT,
   state TEXT,
   zip_code TEXT
-)
+);
 
 CREATE TABLE IF NOT EXISTS organizations (
    id INTEGER PRIMARY KEY,
-   name TEXT NOT NULL,
-   address_id INTEGER
+   name TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS donor_individual_contributions (
@@ -285,7 +284,12 @@ CREATE TABLE IF NOT EXISTS donor_employers (
    organization_id INTEGER NOT NULL
 );
 
-CREATE TABLE organization_operating_expenditures (
+CREATE TABLE IF NOT EXISTS organization_operating_expenditures (
    organization_id INTEGER NOT NULL,
-   operating_expenditures_sub_id INTEGER NOT NULL
-)
+   operating_expenditures_sub_id INTEGER NOT NULL UNIQUE
+);
+
+CRAETE TABLE IF NOT EXISTS committee_connected_organizations (
+   committee_rowid INTEGER NOT NULL UNIQUE,
+   organization_id INTEGER NOT NULL
+);
