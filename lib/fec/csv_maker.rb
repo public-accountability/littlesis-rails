@@ -15,7 +15,7 @@ module FEC
     def self.make_csv(table)
       if File.exist?(table.csv_localpath) && File.stat(table.csv_localpath).size.positive?
         FEC.logger.info "SKIPPING  #{table.csv_localpath}"
-        next
+        return
       else
         FEC.logger.info "CREATING  #{table.csv_localpath}"
       end
