@@ -17,5 +17,4 @@ module FEC
   end
 end
 
-
 # rubocop:enable Rails/SkipsModelValidations

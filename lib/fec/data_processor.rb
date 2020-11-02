@@ -10,8 +10,6 @@ module FEC
   #  - organization_operating_expenditures
   module DataProcessor
     def self.run
-      Database.enable_dangerous_sqlite3_settings
-
       IndividualContribution.find_each do |ic|
         Donor.create_from_individual_contribution(ic)
       end
@@ -38,10 +36,8 @@ module FEC
               [organization.id, expenditure.SUB_ID]
             )
           end
-
         end
       end
-      Database.disable_dangerous_sqlite3_settings
     end
   end
 end

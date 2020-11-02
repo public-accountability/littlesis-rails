@@ -55,12 +55,11 @@ module FEC
       FEC::CsvMaker.run
       FEC::Database.establish_connection
       FEC::Database.setup!
+      Database.enable_dangerous_sqlite3_settings
       FEC::Importer.run
       FEC::DataCleaner.run
       FEC::DataProcessor.run
-      # FEC::Geocoder.run
-      # FEC::NameNormalizer.run
-      # FEC::Database.print_report
+      Database.disable_dangerous_sqlite3_settings
     end
 
     def self.create_directories
