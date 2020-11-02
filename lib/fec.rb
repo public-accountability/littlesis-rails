@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
-require 'active_support'
 require 'active_record'
+require 'active_support'
 require 'csv'
 require 'fileutils'
-require 'uri'
-require 'open3'
 require 'open-uri'
+require 'open3'
 require 'optparse'
-require 'zip'
+require 'parallel'
+require 'uri'
 require 'zeitwerk'
+require 'zip'
+
+require_relative '../app/utility/name_parser'
+require_relative '../app/utility/org_name'
 
 loader = Zeitwerk::Loader.for_gem
 loader.inflector.inflect 'fec' => 'FEC'
@@ -30,7 +34,8 @@ module FEC
       database: File.join(default_root, 'data/fec.db'),
       recheck: false,
       years: 2016..2020,
-      tables: nil
+      tables: nil,
+      parallel: true
     }
   end
 
@@ -61,6 +66,12 @@ module FEC
         yield table
       end
     end
+  end
+
+  def self.tables_with_years
+    @tables_with_years ||= [].tap do |arr|
+      loop_tables { |table| arr << table }
+    end.freeze
   end
 
   def self.default_year

@@ -3,6 +3,7 @@
 # rubocop:disable Rails/SkipsModelValidations
 
 module FEC
+  # Changes data stored as empty string to be null values
   module DataCleaner
     def self.run
       Committee.where(:CAND_ID => '').update_all(:CAND_ID => nil)

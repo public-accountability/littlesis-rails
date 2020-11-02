@@ -261,7 +261,7 @@ CREATE TABLE IF NOT EXISTS donors (
   occupation TEXT
 );
 
-CREATE TABLE addresses (
+CREATE TABLE IF NOT EXISTS addresses (
   id INTEGER PRIMARY KEY,
   street TEXT,
   city TEXT,
@@ -284,7 +284,6 @@ CREATE TABLE IF NOT EXISTS donor_employers (
    donor_id INTEGER NOT NULL,
    organization_id INTEGER NOT NULL
 );
-
 
 CREATE TABLE organization_operating_expenditures (
    organization_id INTEGER NOT NULL,
