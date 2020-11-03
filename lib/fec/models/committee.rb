@@ -10,6 +10,10 @@ module FEC
 
     has_many :individual_contributions, foreign_key: 'CMTE_ID', inverse_of: :committee
 
+    def committee_id
+      self.CMTE_ID
+    end
+
     # has_many :expenditures, foreign_key: 'CMTE_ID', inverse_of: :committee
 
     # def committee_type
@@ -20,9 +24,7 @@ module FEC
     #   attributes['CMTE_NM']
     # end
 
-    # def committee_id
-    #   attributes['CMTE_ID']
-    # end
+
 
     # def name_and_id
     #   { name: name, id: committee_id }

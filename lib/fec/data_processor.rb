@@ -10,10 +10,13 @@ module FEC
   #  - organization_operating_expenditures
   module DataProcessor
     def self.run
+      FEC.logger.info "PROCESSING: Creating donors from individual contributions"
+
       IndividualContribution.find_each do |ic|
         Donor.create_from_individual_contribution(ic)
       end
 
+      FEC.logger.info "PROCESSING: Creating org committee_connected_organizations"
       Committee.all.pluck(:rowid, :CONNECTED_ORG_NM).each do |(committee_id, connected_org_name)|
         if connected_org_name.present?
           organization = FEC::Organization.find_or_create_by!(name: OrgName.parse(connected_org_name).clean)
@@ -25,6 +28,7 @@ module FEC
         end
       end
 
+      FEC.logger.info "PROCESSING: Creating organization_operating_expenditures"
       Expenditure.select(:SUB_ID, :NAME).find_each do |expenditure|
         if expenditure.NAME.present?
           normalized_name = NameNormalizer.parse(str)

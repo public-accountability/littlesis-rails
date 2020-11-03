@@ -2,17 +2,21 @@
 
 module FEC
   class Donor < ApplicationRecord
-    before_create :ensure_nulls
+    before_create :ensure_nulls # , :parse_name
 
     validates :name, presence: true
-    has_many :individual_contributions, through: :donor_individual_contributions
-    has_one :employer, through: :donor_employers
+    # has_many :individual_contributions, through: :donor_individual_contributions
+    # has_one :employer, through: :donor_employers
+
+    def self.search_by_name(name)
+    end
 
     # When fields are fully-filled and not yet in the database this will create:
     #   DonorContribution
     #   Organization
     #   DonorEmployee
     def self.create_from_individual_contribution(ic)
+      # TODO: Are these are individuals?
       donor_name = NameParser.format(ic.NAME)
       employer = OrgName.parse(ic.EMPLOYER).clean if ic.EMPLOYER.present?
 
@@ -33,5 +37,12 @@ module FEC
         write_attribute(attr, nil) if read_attribute(attr) == ''
       end
     end
+
+    # def set_name_fields
+    #   n = NameParser.new(self.name)
+    #   self.name_first = n.first
+    #   self.name_middle = n.middle
+    #   self.name_last = n.last
+    # end
   end
 end
