@@ -45,10 +45,10 @@ module SEC
 
   # A mapping between tickers and CIKs,
   # and, helped by a gratuitous use of `tap` and `defined_singleton_method`,
-  # an easy way to get an examples instance of Sec::Company.
+  # an easy way to get an examples instance of SEC::Company.
   #
   # Example:
-  #   Sec::CIK.JPM --> Sec::Company instance for JP. Morgan Chase.
+  #   SEC::CIK.JPM --> SEC::Company instance for JP. Morgan Chase.
   #
   # it's useful for debugging and exploring the data in the terminal.
   CIKS = {
@@ -60,20 +60,20 @@ module SEC
   }.tap do |h|
     h.keys.each do |ticker|
       h.define_singleton_method(ticker) do
-        Sec.database.company(h[ticker])
+        SEC.database.company(h[ticker])
       end
     end
   end.freeze
 
   def self.database(*args)
-    @database ||= Sec::Database.new(*args)
+    @database ||= SEC::Database.new(*args)
   end
 
   def self.verify_cik!(cik)
     raise InvalidCikNumber unless cik.present? && CIK_REGEX.match?(cik)
   end
 
-  # --> [Sec::Importer]
+  # --> [SEC::Importer]
   def self.top_companies(n = 100)
     Entity
       .joins(:external_links)
@@ -81,7 +81,7 @@ module SEC
       .where(primary_ext: 'Org')
       .order('entity.link_count DESC')
       .limit(n)
-      # .map { |e| Sec::Importer.new(e) }
+    # .map { |e| SEC::Importer.new(e) }
   end
 
   class InvalidCikNumber < StandardError; end

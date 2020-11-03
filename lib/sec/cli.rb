@@ -43,7 +43,7 @@ module SEC
 
       if options[:cik]
         if /\A[A-Z]+\Z/.match?(options[:cik])
-          options[:cik] = Sec::CIKS.fetch(options[:cik])
+          options[:cik] = SEC::CIKS.fetch(options[:cik])
         else
           options[:cik] = options[:cik].rjust(10, '0')
         end
@@ -54,11 +54,11 @@ module SEC
 
     def run(options)
       if options['list-example-ciks']
-        Sec::CIKS.each { |ticker, cik| puts "#{ticker}\t#{cik}" }
+        SEC::CIKS.each { |ticker, cik| puts "#{ticker}\t#{cik}" }
         return
       end
 
-      db = Sec::Database.new(options.slice(:forms, :path))
+      db = SEC::Database.new(options.slice(:forms, :path))
 
       if options['top-companies']
         top_companies db: db, json: options[:json]
@@ -97,10 +97,10 @@ module SEC
       cik = options[:cik]
       entity = ExternalLink.find_by_cik(cik).entity
 
-      relationships = Sec::Importer
+      relationships = SEC::Importer
                         .new(entity, db: db)
                         .relationships
-                        .map { |r| Sec::Relationship.format(r) }
+                        .map { |r| SEC::Relationship.format(r) }
 
       if options[:json]
         puts JSON.pretty_generate(relationships)
@@ -117,18 +117,18 @@ module SEC
 
       ColorPrinter.print_blue "Saving top companies to #{filename}"
 
-      file << Sec::Relationship.csv_headers if format == :csv
+      file << SEC::Relationship.csv_headers if format == :csv
       file << "[\n" if format == :json
 
-      # `Sec.top_companies` returns entities that have CIK numbers
-      Sec.top_companies(amount).each do |company|
+      # `SEC.top_companies` returns entities that have CIK numbers
+      SEC.top_companies(amount).each do |company|
         ColorPrinter.print_gray "processing: #{company.name_with_id}"
         # Calculates an array of relationships for each company. This can take a while
         # because it may have to download documents from the SEC website and/or
         # find matching people using `EntityMatcher`
-        Sec::Importer.new(company, db: db).relationships.each do |relationship|
+        SEC::Importer.new(company, db: db).relationships.each do |relationship|
           # Writes either a CSV row or a JSON string
-          file << Sec::Relationship.public_send(format, relationship)
+          file << SEC::Relationship.public_send(format, relationship)
           file << ",\n" if format == :json
         end
       end

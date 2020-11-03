@@ -5,7 +5,7 @@ module SEC
     attr_reader :cik
 
     def initialize(cik, db: nil)
-      Sec.verify_cik! cik
+      SEC.verify_cik! cik
       @cik = cik
       @database = db if db.present?
     end
@@ -17,7 +17,7 @@ module SEC
     end
 
     def roster
-      @roster ||= Sec::Roster.new(self)
+      @roster ||= SEC::Roster.new(self)
     end
 
     # # without this `select`, #filings will also include
@@ -29,7 +29,7 @@ module SEC
     # end
 
     def database
-      @database ||= Sec.database
+      @database ||= SEC.database
     end
   end
 end

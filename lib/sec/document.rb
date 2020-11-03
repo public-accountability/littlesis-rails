@@ -38,12 +38,12 @@ module SEC
     # helper methods to extract information. Only works on Form 3s and Form 4s
 
     def issuer?(cik)
-      Sec.verify_cik! cik
+      SEC.verify_cik! cik
 
       issuer.fetch('issuerCik') == cik
     end
 
-    # --> [Sec::ReportingOwner]
+    # --> [SEC::ReportingOwner]
     def reporting_owners
       Array
         .wrap(dig('ownershipDocument', 'reportingOwner'))
