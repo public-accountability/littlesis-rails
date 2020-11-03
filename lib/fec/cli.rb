@@ -2,6 +2,19 @@
 
 module FEC
   module Cli
+    def self.run
+      create_directories
+      # FEC::Downloader.run
+      # FEC::CsvMaker.run
+      FEC::Database.establish_connection
+      # FEC::Database.setup!
+      Database.enable_dangerous_sqlite3_settings
+      # FEC::Importer.run
+      # FEC::DataCleaner.run
+      FEC::DataProcessor.run
+      Database.disable_dangerous_sqlite3_settings
+    end
+
     def self.start
       OptionParser.new do |opts|
         opts.banner = "Usage: fec [options]"
@@ -47,19 +60,6 @@ module FEC
           exit
         end
       end.parse!
-    end
-
-    def self.run
-      create_directories
-      FEC::Downloader.run
-      FEC::CsvMaker.run
-      FEC::Database.establish_connection
-      FEC::Database.setup!
-      Database.enable_dangerous_sqlite3_settings
-      FEC::Importer.run
-      FEC::DataCleaner.run
-      FEC::DataProcessor.run
-      Database.disable_dangerous_sqlite3_settings
     end
 
     def self.create_directories

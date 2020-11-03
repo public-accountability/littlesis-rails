@@ -24,8 +24,6 @@ module FEC
     #   attributes['CMTE_NM']
     # end
 
-
-
     # def name_and_id
     #   { name: name, id: committee_id }
     # end
