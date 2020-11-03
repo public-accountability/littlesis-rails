@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Sec
+module SEC
   # owner is a hash that looks like this
   # "reportingOwner": {
   #    "reportingOwnerId": {

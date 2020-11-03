@@ -40,7 +40,7 @@ require_relative 'sec/roster'
 # can retrieve the document (an XML file) from sec.gov and save
 # it to the database.
 #
-module Sec
+module SEC
   CIK_REGEX = /^[[:digit:]]{10}$/.freeze
 
   # A mapping between tickers and CIKs,

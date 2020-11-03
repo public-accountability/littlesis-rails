@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Sec
+module SEC
   # Document attributes
   #
   # data --> string of entire SEC EDGAR document

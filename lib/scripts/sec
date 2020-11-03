@@ -1,5 +1,4 @@
 #!/usr/bin/env -S rails runner
 
-require Rails.root.join('lib', 'sec')
-
-Sec::Cli.new
+require 'sec'
+SEC::Cli.start

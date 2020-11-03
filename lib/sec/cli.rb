@@ -8,8 +8,12 @@
 #     sec --list-example-ciks
 #     sec --cik 0000019617 --relationships
 #     sec --cik 0000019617 --relationships --json
-module Sec
+module SEC
   class Cli
+    def self.start
+      new
+    end
+
     def initialize
       run(parse_options)
     end

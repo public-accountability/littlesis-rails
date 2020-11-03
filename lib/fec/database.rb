@@ -28,7 +28,7 @@ module FEC
     end
 
     def self.disable_dangerous_sqlite3_settings
-      connection.exec_query "PRAGMA synchronous=NORMAL"
+      connection.exec_query "PRAGMA synchronous=FULL"
       connection.exec_query "PRAGMA journal_mode=DELETE"
     end
 

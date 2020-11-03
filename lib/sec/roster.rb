@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Sec
+module SEC
   class Roster
     attr_reader :company, :roster
 

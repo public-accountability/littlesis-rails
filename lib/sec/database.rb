@@ -2,7 +2,7 @@
 
 require 'sqlite3'
 
-module Sec
+module SEC
   class Database
     extend Forwardable
     attr_reader :db
