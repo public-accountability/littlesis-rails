@@ -8,6 +8,10 @@ module FEC
 
     attribute :AMNDT_IND, FEC::Types::AmendmentIndicator.new
 
+    def self.large_transactions
+      where arel_table[:TRANSACTION_AMT].gteq(1_000)
+    end
+
     # def to_h
     #   {
     #     amount: amount,

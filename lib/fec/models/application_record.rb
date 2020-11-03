@@ -8,8 +8,8 @@ module FEC
       default_scope -> { where(:FEC_YEAR => Fec.default_year) }
     end
 
-    def readonly?
-      true
-    end
+    # def readonly?
+    #   true
+    # end
   end
 end

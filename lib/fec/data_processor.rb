@@ -12,7 +12,7 @@ module FEC
     def self.run
       FEC.logger.info "PROCESSING: Creating donors from individual contributions"
 
-      IndividualContribution.find_each do |ic|
+      IndividualContribution.large_transactions.find_each do |ic|
         Donor.create_from_individual_contribution(ic)
       end
 
