@@ -1,4 +1,4 @@
-oCREATE TABLE IF NOT EXISTS candidates_summaries (
+CREATE TABLE IF NOT EXISTS candidates_summaries (
   CAND_ID TEXT NOT NULL,
   CAND_NAME TEXT,
   CAND_ICI CHAR(1),
@@ -289,7 +289,7 @@ CREATE TABLE IF NOT EXISTS organization_operating_expenditures (
    operating_expenditures_sub_id INTEGER NOT NULL UNIQUE
 );
 
-CRAETE TABLE IF NOT EXISTS committee_connected_organizations (
+CREATE TABLE IF NOT EXISTS committee_connected_organizations (
    committee_rowid INTEGER NOT NULL UNIQUE,
    organization_id INTEGER NOT NULL
 );

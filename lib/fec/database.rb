@@ -6,8 +6,14 @@ module FEC
       FEC::ApplicationRecord.connection
     end
 
+    def self.connected?
+      connection&.adapter_name == 'SQLite'
+    rescue Mysql2::Error::ConnectionError
+      false
+    end
+
     def self.establish_connection
-      return connection if connection&.adapter_name == 'sqlite3'
+      return connection if connected?
 
       unless File.exist?(FEC.configuration[:database])
         FEC.logger.warn "#{FEC.configuration[:database]} is missing. Creating a new file."
