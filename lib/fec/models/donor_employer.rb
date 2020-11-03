@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 module FEC
-  class DonorEmployee < ApplicationRecord
+  class DonorEmployer < ApplicationRecord
   end
 end

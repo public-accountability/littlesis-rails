@@ -16,17 +16,21 @@ module FEC
     #   Organization
     #   DonorEmployee
     def self.create_from_individual_contribution(ic)
-      # TODO: Are these are individuals?
+      if ic.NAME.blank?
+        FEC.logger.warn "Name is missing for contribution #{ic.SUB_ID}"
+        return
+      end
+
       donor_name = NameParser.format(ic.NAME)
       employer = OrgName.parse(ic.EMPLOYER).clean if ic.EMPLOYER.present?
 
-      donor = find_or_create_by(name: donor_name, city: ic.CITY, state: ic.STATE, zip_code: ic.ZIP_CODE, employer: employer, occupation: ic.OCCUPATION)
+      donor = find_or_create_by!(name: donor_name, city: ic.CITY, state: ic.STATE, zip_code: ic.ZIP_CODE, employer: employer, occupation: ic.OCCUPATION)
 
       DonorContribution.find_or_create_by!(donor_id: donor.id, individual_contribution_sub_id: ic.id)
 
       if employer
         employer_org = FEC::Organization.find_or_create_by!(name: employer)
-        DonorEmployee.find_or_create_by!(donor_id: donor.id, organization_id: employer_org.id)
+        DonorEmployer.find_or_create_by!(donor_id: donor.id, organization_id: employer_org.id)
       end
     end
 
