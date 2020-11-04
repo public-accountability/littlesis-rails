@@ -35,6 +35,10 @@ module FEC
     def self.setup!
       FEC.logger.info 'SETUP: creating tables'
       execute_sql_file(File.join(__dir__, './schema.sql'))
+    end
+
+    def self.index!
+      FEC.logger.info 'SETUP: creating indexes'
       execute_sql_file(File.join(__dir__, './index.sql'))
     end
 

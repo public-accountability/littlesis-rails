@@ -4,15 +4,17 @@ module FEC
   module Cli
     def self.run
       create_directories
-      # FEC::Downloader.run
-      # FEC::CsvMaker.run
+      FEC::Downloader.run
+      FEC::CsvMaker.run
       FEC::Database.establish_connection
-      # FEC::Database.setup!
+      FEC::Database.setup!
       Database.enable_dangerous_sqlite3_settings
-      # FEC::Importer.run
-      # FEC::DataCleaner.run
+      FEC::Importer.run
+      FEC::DataCleaner.run
       FEC::DataProcessor.run
+      FEC::CsvDataProcessor.run
       Database.disable_dangerous_sqlite3_settings
+      FEC::Database.index!
     end
 
     def self.start
