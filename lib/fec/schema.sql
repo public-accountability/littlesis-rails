@@ -261,35 +261,35 @@ CREATE TABLE IF NOT EXISTS donors (
   occupation TEXT
 );
 
-CREATE TABLE IF NOT EXISTS addresses (
-  id INTEGER PRIMARY KEY,
-  street TEXT,
-  city TEXT,
-  state TEXT,
-  zip_code TEXT
+CREATE TABLE IF NOT EXISTS donor_individual_contributions (
+   donor_id INTEGER NOT NULL,
+   individual_contribution_sub_id INTEGER NOT NULL
 );
+
+-- CREATE TABLE IF NOT EXISTS organization_operating_expenditures (
+--    organization_id INTEGER NOT NULL,
+--    operating_expenditures_sub_id INTEGER NOT NULL UNIQUE
+-- );
+
+-- CREATE TABLE IF NOT EXISTS committee_connected_organizations (
+--    committee_rowid INTEGER NOT NULL UNIQUE,
+--    organization_id INTEGER NOT NULL
+-- );
+
+-- CREATE TABLE IF NOT EXISTS addresses (
+--   id INTEGER PRIMARY KEY,
+--   street TEXT,
+--   city TEXT,
+--   state TEXT,
+--   zip_code TEXT
+-- );
 
 -- CREATE TABLE IF NOT EXISTS organizations (
 --    id INTEGER PRIMARY KEY,
 --    name TEXT NOT NULL UNIQUE
 -- );
 
-CREATE TABLE IF NOT EXISTS donor_individual_contributions (
-   donor_id INTEGER NOT NULL,
-   individual_contribution_sub_id INTEGER NOT NULL
-);
-
 -- CREATE TABLE IF NOT EXISTS donor_employers (
 --    donor_id INTEGER NOT NULL,
 --    organization_id INTEGER NOT NULL
 -- );
-
-CREATE TABLE IF NOT EXISTS organization_operating_expenditures (
-   organization_id INTEGER NOT NULL,
-   operating_expenditures_sub_id INTEGER NOT NULL UNIQUE
-);
-
-CREATE TABLE IF NOT EXISTS committee_connected_organizations (
-   committee_rowid INTEGER NOT NULL UNIQUE,
-   organization_id INTEGER NOT NULL
-);

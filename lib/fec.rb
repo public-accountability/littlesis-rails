@@ -1,19 +1,23 @@
 # frozen_string_literal: true
 
-require 'active_record'
-require 'active_support'
-require 'csv'
-require 'fileutils'
-require 'open-uri'
-require 'open3'
-require 'optparse'
+# FEC data & littlesis
+# To create the sqlite3 with fec data:
+#
+#   bin/rails runner ./lib/scripts/fec --years=2012,2016 --run
+#
+# To populate the external data table:
+#
+#   bin/rails runner ./lib/scripts/fec_import.rb
+#
+
+require 'concurrent'
 require 'parallel'
-require 'uri'
-require 'zeitwerk'
 require 'zip'
 
-require_relative '../app/utility/name_parser'
-require_relative '../app/utility/org_name'
+# require 'open-uri'
+# require 'open3'
+# require 'optparse'
+# require 'zeitwerk'
 
 loader = Zeitwerk::Loader.for_gem
 loader.inflector.inflect 'fec' => 'FEC'

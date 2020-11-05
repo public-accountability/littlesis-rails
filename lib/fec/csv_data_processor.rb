@@ -2,62 +2,62 @@
 
 module FEC
   class CsvDataProcessor
-    DONOR_CSV = File.join(FEC.configuration.fetch(:data_directory), 'donors.csv')
-    DONOR_CONTRIBUTION_CSV = File.join(FEC.configuration.fetch(:data_directory), 'donor_individual_contributions.csv')
+    DONORS_CSV = File.join(FEC.configuration.fetch(:data_directory), 'donors.csv')
+    DONOR_CONTRIBUTIONS_CSV = File.join(FEC.configuration.fetch(:data_directory), 'donor_individual_contributions.csv')
 
     def initialize
-      @donor_id = 0
+      @donor_id = Concurrent::AtonomicFixnum.new
       run
     end
 
-    def generate_donor_id
-      @donor_id += 1
-    end
-
     def with_csvs
-      CSV.open(DONOR_CSV, 'w', col_sep: ',', quote_char: '"') do |donor_csv|
-        CSV.open(DONOR_CONTRIBUTIONS_CSV, 'w', col_sep: ',', quote_char: '"') do |donor_contribution_csv|
-          yield donor_csv, donor_contribution_csv
+      CSV.open(DONORS_CSV, 'w', col_sep: ',', quote_char: '"') do |donors_csv|
+        CSV.open(DONOR_CONTRIBUTIONS_CSV, 'w', col_sep: ',', quote_char: '"') do |donor_contributions_csv|
+          yield donors_csv, donor_contributions_csv
         end
       end
     end
 
     def run
-      digests = {} # MD5(donor_name, city, state, zip_code, employer, occupation) => id
+      digests = Concurrent::Map.new
+      # digests = {} # MD5(donor_name, city, state, zip_code, employer, occupation) => donor_id
 
-      FEC.logger.info "CREATING #{DONOR_CSV} and #{DONOR_CONTRIBUTION_CSV}"
-      with_csvs do |donor_csv, donor_contribution_csv|
-        IndividualContribution.large_transactions.find_each do |ic|
-          next if ic.NAME.blank?
+      FEC.logger.info "CREATING #{DONORS_CSV} and #{DONOR_CONTRIBUTIONS_CSV}"
 
-          donor_name = NameParser.format(ic.NAME)
-          employer = OrgName.parse(ic.EMPLOYER).clean if ic.EMPLOYER.present?
+      with_csvs do |donors_csv, donor_contributions_csv|
+        Parallel.each(IndividualContribution.find_in_batches) do |batch|
+          batch.each do |ic|
+            next if ic.NAME.blank?
 
-          data = [donor_name, ic.CITY, ic.STATE, ic.ZIP_CODE, employer, ic.OCCUPATION]
-          digest = Digest::MD5.digest(data.join(''))
+            donor_name = NameParser.format(ic.NAME)
+            employer = OrgName.parse(ic.EMPLOYER).clean if ic.EMPLOYER.present?
 
-          donor_id = if digests.key?(digest)
-                       digests[digest]
-                     else
-                       generate_donor_id.tap do |id|
-                         donor_csv << [id].concat(data) # save donor to donors.csv
-                       end
-                     end
+            data = [donor_name, ic.CITY, ic.STATE, ic.ZIP_CODE, employer, ic.OCCUPATION]
+            digest = Digest::MD5.digest(data.join(''))
 
-          donor_contribution_csv << [donor_id, ic.SUB_ID]
+            unless digests.key?(digest) # Donor already exists
+              digests.compute(digest) { @donor_id.increment }
+              donors_csv << [digests.fetch(digest)].concat(data) # save donor to donors.csv
+            end
+
+            donor_contributions_csv << [digests.fetch(digest), ic.SUB_ID] # [donor_id, individual_contribution_sub_id]
+          end
         end
       end
 
-      FEC::Database.execute <<~SQL
-        .mode csv
-        .import #{DONOR_CSV} donors
-      SQL
+      FEC.logger.info "IMPORT: donors and donor_individual_contributions"
 
       FEC::Database.execute <<~SQL
-        .mode csv
-        .import #{DONOR_CONTRIBUTIONS_CSV} donor_individual_contributions
-      SQL
+          .mode csv
+          .import #{DONORS_CSV} donors
+        SQL
+
+      FEC::Database.execute <<~SQL
+          .mode csv
+          .import #{DONOR_CONTRIBUTIONS_CSV} donor_individual_contributions
+         SQL
     end
+end
 
     def self.run
       new

@@ -23,13 +23,13 @@ module FEC
     end
 
     def self.enable_dangerous_sqlite3_settings
-      connection.exec_query "PRAGMA synchronous=NORMAL"
-      connection.exec_query "PRAGMA journal_mode=WAL"
+      connection.exec_query "PRAGMA synchronous=OFF"
+      connection.exec_query "PRAGMA journal_mode=OFF"
     end
 
     def self.disable_dangerous_sqlite3_settings
-      connection.exec_query "PRAGMA synchronous=FULL"
-      connection.exec_query "PRAGMA journal_mode=DELETE"
+      connection.exec_query "PRAGMA synchronous=NORMAL"
+      connection.exec_query "PRAGMA journal_mode=WAL"
     end
 
     def self.setup!

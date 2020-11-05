@@ -71,11 +71,18 @@ class ExternalLink < ApplicationRecord
       editable: false,
       internal: true,
       multiple: false
+    },
+    fec_candidate: {
+      enum_val: 7,
+      title: 'FEC Candidate ID: {}',
+      url: 'https://www.fec.gov/data/candidate/{}/',
+      editable: false,
+      internal: false,
+      multiple: true
     }
   }.with_indifferent_access.freeze
 
   enum link_type: LINK_TYPES.transform_values { |x| x[:enum_val] }.freeze
-
   belongs_to :entity
 
   has_paper_trail on:  %i[create destroy update],
