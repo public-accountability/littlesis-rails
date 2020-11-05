@@ -21,7 +21,7 @@ entity.displayErrors = function(attributes){
     var attribute = attributes[i]
 
     for (var value in entity.errors[attribute]){
-      if (entity.errors[attribute].hasOwnProperty(value)){
+      if (Object.prototype.hasOwnProperty.call(entity.errors[attribute], value)){
         template.find("ul").append(
           "<li>" + "<b>" + attribute + ":</b> " + entity.errors[attribute][value] + "</li>"
         )
@@ -38,74 +38,74 @@ entity.displayErrors = function(attributes){
 $(document).ready(function() {
   $('input[type=radio]').on("change", function() {
     if (this.value == "Person") {
-      $("#other-types").show();
-      $("#org-types").hide();
-      $("#person-types").show();
+      $("#other-types").show()
+      $("#org-types").hide()
+      $("#person-types").show()
     } else if (this.value == "Org") {
-      $("#other-types").show();
-      $("#person-types").hide();
-      $("#org-types").show();
+      $("#other-types").show()
+      $("#person-types").hide()
+      $("#org-types").show()
     } else {
-      $("#other-types").hide();
-      $("#person-types").hide();
-      $("#org-types").hide();
+      $("#other-types").hide()
+      $("#person-types").hide()
+      $("#org-types").hide()
     }
-  });
+  })
 
   $('#new_entity input').on("blur", function() {
     entity.validate($('#new_entity'), ["name"])
   })
 
-  var input = $("#entity_name");
-  var typingTimer;
-  var doneTypingInterval = 100;
+  var input = $("#entity_name")
+  var typingTimer
+  var doneTypingInterval = 100
 
   //on keyup, start the countdown
-  input.on('keyup', function () {
-    clearTimeout(typingTimer);
-    typingTimer = setTimeout(findMatches.bind(input[0]), doneTypingInterval);
-  });
+  input.on('keyup', function() {
+    clearTimeout(typingTimer)
+    typingTimer = setTimeout(findMatches.bind(input[0]), doneTypingInterval)
+  })
 
   //on keydown, clear the countdown
-  input.on('keydown', function () {
-    clearTimeout(typingTimer);
-  });
+  input.on('keydown', function() {
+    clearTimeout(typingTimer)
+  })
 
-  var existing = $("#existing")[0];
+  var existing = $("#existing")[0]
 
   var findMatches = function() {
-    var query = $.trim(this.value);
+    var query = $.trim(this.value)
     if (query.length > 2) {
       $.ajax({
         method: "GET",
         url: "/search/entity",
         data: { q: query, num: 5 }
       }).done(function(results) {
-        existing.innerHTML = "";
+        existing.innerHTML = ""
         if (results.length > 0) {
           results.forEach(function(result) {
-            var strong = document.createElement("strong");
-            var em = document.createElement("em");
-            var link = document.createElement("a");
-            link.href = result.url;
-            link.innerHTML = result.name;
-            strong.appendChild(link);
-            existing.appendChild(strong);
+            var strong = document.createElement("strong")
+            var em = document.createElement("em")
+            var link = document.createElement("a")
+            link.href = result.url
+            link.innerHTML = result.name
+            strong.appendChild(link)
+            existing.appendChild(strong)
             if (result.blurb) {
               em.innerHTML = result.blurb
-                $(existing).append(" &nbsp;");
-              existing.appendChild(em);
+                $(existing).append(" &nbsp;")
+              existing.appendChild(em)
             }
-            $(existing).append("<br>");
-          });
-          $("#wait").show();
+            $(existing).append("<br>")
+          })
+          $("#wait").show()
         } else {
-          $("#wait").hide();
+          $("#wait").hide()
         }
-      });
+      })
     } else {
-      $("#wait").hide();
-      existing.innerHTML = "";
+      $("#wait").hide()
+      existing.innerHTML = ""
     }
-  };
-});
+  }
+})
