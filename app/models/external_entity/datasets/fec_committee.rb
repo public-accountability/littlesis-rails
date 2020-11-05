@@ -16,14 +16,21 @@ class ExternalEntity
       end
 
       def unmatch_action
-        Rails.logger.info "No unmatch action defined for #{dataset}"
+        entity.external_links.fec_committee.find_by(link_id: external_data.dataset_id).destroy!
       end
 
       def automatch
-        self
+        return self if matched?
+
+        if ExternalLink.fec_committee.exists?(link_id: external_data.dataset_id)
+          match_with ExternalLink.fec_committee.find_by(link_id: external_data.dataset_id).entity
+        end
       end
 
-      def add_reference; end
+      def add_reference
+        entity.add_reference(url: "https://www.fec.gov/data/committee/#{external_data.dataset_id}/",
+                             title: "fec.gov - committee - #{external_data.dataset_id}/")
+      end
 
       def set_primary_ext
         self.primary_ext = 'Org'

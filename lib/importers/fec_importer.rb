@@ -14,7 +14,7 @@ module FECImporter
         ExternalData.fec_candidate.find_or_initialize_by!(dataset_id: candidate.CAND_ID).tap do |ed|
           if should_update?(candidate, ed)
             ed.merge_data(candidate.attributes).save!
-            ExternalEntity.find_or_create_by!(external_data: ed)
+            ExternalEntity.find_or_create_by!(external_data: ed).automatch
           end
         end
       end
@@ -29,7 +29,7 @@ module FECImporter
         ExternalData.fec_committee.find_or_initialize_by!(dataset_id: committee.committee_id).tap do |ed|
           if should_update?(committee, ed)
             ed.merge_data(committee.attributes).save!
-            ExternalEntity.find_or_create_by!(external_data: ed)
+            ExternalEntity.find_or_create_by!(external_data: ed).automatch
           end
         end
       end

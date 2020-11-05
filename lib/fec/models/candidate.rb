@@ -3,19 +3,28 @@
 module FEC
   class Candidate < ApplicationRecord
     self.primary_key = 'rowid'
+
+    def self.all_candidates
+      find_by_sql <<~SQL
+        SELECT candidates.* FROM candidates
+        GROUP BY CAND_ID
+        HAVING FEC_YEAR = MAX(FEC_YEAR)
+      SQL
+    end
+
     # # belongs_to :pcc, foreign_key: 'CAND_PCC', optional: true, class_name: 'Committee'
 
-    # def incumbent?
-    #   attributes['CAND_ICI'] == 'I'
-    # end
+    def incumbent?
+      self.CAND_ICI == 'I'
+    end
 
-    # def challeneger?
-    #   attributes['CAND_ICI'] == 'C'
-    # end
+    def challeneger?
+      self.CAND_ICI == 'C'
+    end
 
-    # def open_seat?
-    #   attributes['CAND_ICI'] == 'O'
-    # end
+    def open_seat?
+      self.CAND_ICI == 'O'
+    end
 
     # def self.search(name)
     #   where 'CAND_NAME LIKE ?', "%#{name}%"
@@ -44,10 +53,6 @@ module FEC
 
     # def self.senate
     #   where 'CAND_OFFICE' => 'S'
-    # end
-
-    # def self.random
-    #   order('RANDOM()')
     # end
 
     # def self.find_by_id(id)
