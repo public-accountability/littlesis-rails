@@ -3,6 +3,7 @@
 module FEC
   module CsvMaker
     def self.run
+      FEC.logger.info "Making CSVS"
       if FEC.configuration[:parallel]
         Parallel.each(FEC.tables_with_years) do |table|
           make_csv(table)
@@ -33,7 +34,7 @@ module FEC
 
     def self.line_parser_for(table)
       lambda do |line_from_csv|
-        line = CSV.parse_line(line_from_csv, col_sep: '|', quote_char: "\x00")
+        line = CSV.parse_line(line_from_csv.scrub!, col_sep: '|', quote_char: "\x00")
         line = line[0..24] if table.name == 'operating_expenditures'
         line.map! { |v| cast_value(v) }
         line.concat([table.year]) # For column FEC_YEAR

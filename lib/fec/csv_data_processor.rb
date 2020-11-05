@@ -1,17 +1,20 @@
 # frozen_string_literal: true
 
 module FEC
-  module CsvDataProcessor
+  class CsvDataProcessor
     DONOR_CSV = File.join(FEC.configuration.fetch(:data_directory), 'donors.csv')
     DONOR_CONTRIBUTION_CSV = File.join(FEC.configuration.fetch(:data_directory), 'donor_individual_contributions.csv')
 
-    @donor_id = 0
+    def initialize
+      @donor_id = 0
+      run
+    end
 
-    def self.generate_donor_id
+    def generate_donor_id
       @donor_id += 1
     end
 
-    def self.with_csvs
+    def with_csvs
       CSV.open(DONOR_CSV, 'w', col_sep: ',', quote_char: '"') do |donor_csv|
         CSV.open(DONOR_CONTRIBUTIONS_CSV, 'w', col_sep: ',', quote_char: '"') do |donor_contribution_csv|
           yield donor_csv, donor_contribution_csv
@@ -19,7 +22,7 @@ module FEC
       end
     end
 
-    def self.run
+    def run
       digests = {} # MD5(donor_name, city, state, zip_code, employer, occupation) => id
 
       FEC.logger.info "CREATING #{DONOR_CSV} and #{DONOR_CONTRIBUTION_CSV}"
@@ -54,6 +57,10 @@ module FEC
         .mode csv
         .import #{DONOR_CONTRIBUTIONS_CSV} donor_individual_contributions
       SQL
+    end
+
+    def self.run
+      new
     end
   end
 end
