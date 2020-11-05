@@ -12,7 +12,10 @@ module FECImporter
     Parallel.each(FEC::Candidate.order(:FEC_YEAR).find_in_batches) do |candidates|
       candidates.each do |candidate|
         ExternalData.fec_candidate.find_or_initialize_by!(dataset_id: candidate.CAND_ID).tap do |ed|
-          ed.merge_data(candidate.attributes).save! if should_update?(candidate, ed)
+          if should_update?(candidate, ed)
+            ed.merge_data(candidate.attributes).save!
+            ExternalEntity.find_or_create_by!(external_data: ed)
+          end
         end
       end
     end
@@ -24,7 +27,10 @@ module FECImporter
     Parallel.each(FEC::Committee.order(:FEC_YEAR).find_in_batches) do |committees|
       committees.each do |committee|
         ExternalData.fec_committee.find_or_initialize_by!(dataset_id: committee.committee_id).tap do |ed|
-          ed.merge_data(candidate.attributes).save! if should_update?(committee, ed)
+          if should_update?(committee, ed)
+            ed.merge_data(committee.attributes).save!
+            ExternalEntity.find_or_create_by!(external_data: ed)
+          end
         end
       end
     end

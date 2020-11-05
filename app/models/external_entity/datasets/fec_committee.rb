@@ -2,7 +2,7 @@
 
 class ExternalEntity
   module Datasets
-    module FECCandidate
+    module FECCommittee
       def matches
         raise NotImplementedError
       end
@@ -12,7 +12,7 @@ class ExternalEntity
       end
 
       def match_action
-        ExternalLink.fec_candidate.find_or_create_by!(entity_id: entity.id, link_id: external_data.dataset_id)
+        ExternalLink.fec_committee.find_or_create_by!(entity_id: entity.id, link_id: external_data.dataset_id)
       end
 
       def unmatch_action
@@ -20,14 +20,13 @@ class ExternalEntity
       end
 
       def automatch
-        return self unless matched?
-
+        self
       end
 
       def add_reference; end
 
       def set_primary_ext
-        self.primary_ext = 'Person'
+        self.primary_ext = 'Org'
       end
     end
   end

@@ -79,6 +79,14 @@ class ExternalLink < ApplicationRecord
       editable: false,
       internal: false,
       multiple: true
+    },
+    fec_committee: {
+      enum_val: 8,
+      title: 'FEC Committee ID: {}',
+      url: 'https://www.fec.gov/data/committee/{}/',
+      editable: false,
+      internal: false,
+      multiple: false
     }
   }.with_indifferent_access.freeze
 
@@ -87,7 +95,7 @@ class ExternalLink < ApplicationRecord
 
   has_paper_trail on:  %i[create destroy update],
                   meta: { entity1_id: :entity_id },
-                  if: ->(el) { el. editable? }
+                  if: ->(el) { el.editable? }
 
   PLACEHOLDER = '{}'
   WIKIPEDIA_REGEX = Regexp.new 'https?:\/\/en.wikipedia.org\/wiki\/?(.+)', Regexp::IGNORECASE
