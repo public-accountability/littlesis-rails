@@ -35,7 +35,7 @@ module FEC
 
     def self.line_parser_for(table)
       lambda do |line_from_csv|
-        encoded_line = line_from_csv.encode('UTF-8').scrub!
+        encoded_line = line_from_csv.encode('UTF-8', invalid: :replace, undef: :replace).scrub!
         line = CSV.parse_line(encoded_line, col_sep: '|', quote_char: "\x00")
         line = line[0..24] if table.name == 'operating_expenditures'
         line.map! { |v| cast_value(v) }

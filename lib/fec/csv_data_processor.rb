@@ -6,7 +6,7 @@ module FEC
     DONOR_CONTRIBUTIONS_CSV = File.join(FEC.configuration.fetch(:data_directory), 'donor_individual_contributions.csv')
 
     def initialize
-      @donor_id = Concurrent::AtonomicFixnum.new
+      @donor_id = Concurrent::AtomicFixnum.new
       run
     end
 
@@ -19,8 +19,7 @@ module FEC
     end
 
     def run
-      digests = Concurrent::Map.new
-      # digests = {} # MD5(donor_name, city, state, zip_code, employer, occupation) => donor_id
+      digests = Concurrent::Map.new # MD5(donor_name, city, state, zip_code, employer, occupation) => donor_id
 
       FEC.logger.info "CREATING #{DONORS_CSV} and #{DONOR_CONTRIBUTIONS_CSV}"
 
@@ -48,16 +47,15 @@ module FEC
       FEC.logger.info "IMPORT: donors and donor_individual_contributions"
 
       FEC::Database.execute <<~SQL
-          .mode csv
-          .import #{DONORS_CSV} donors
-        SQL
+        .mode csv
+        .import #{DONORS_CSV} donors
+      SQL
 
       FEC::Database.execute <<~SQL
-          .mode csv
-          .import #{DONOR_CONTRIBUTIONS_CSV} donor_individual_contributions
-         SQL
+        mode csv
+        import #{DONOR_CONTRIBUTIONS_CSV} donor_individual_contributions
+      SQL
     end
-end
 
     def self.run
       new
