@@ -17,6 +17,7 @@ import mustache from 'mustache';
 import listDatatableLoader from './list_datatable';
 import entityAutocomplete from './entity_autocomplete';
 import RelationshipCreationFlow from './components/relationship_creation_flow'
+import NyDonationsMatcher from './components/ny_donations_matcher'
 
 window.utility = utility;
 window.utility.delete = utility.del;
@@ -34,3 +35,4 @@ window.LittleSis.http = http;
 window.LittleSis.listDatatableLoader = listDatatableLoader;
 window.LittleSis.entityAutocomplete = entityAutocomplete;
 window.LittleSis.RelationshipCreationFlow = RelationshipCreationFlow;
+window.LittleSis.NyDonationsMatcher = NyDonationsMatcher;

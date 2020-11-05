@@ -1,4 +1,4 @@
-function NyMatchDonations(mode, entity_id) {
+export default function NyDonationsMatcher(mode, entity_id) {
   this.mode = mode; // 'match' or 'unmatch'
   this.entity_id = entity_id;
   this.table = null; // store reference to Datatable object
@@ -125,5 +125,4 @@ function NyMatchDonations(mode, entity_id) {
     }
     
   }.bind(this);
-
 };

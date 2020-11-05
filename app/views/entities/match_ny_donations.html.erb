@@ -20,7 +20,9 @@
     <div id="match-donations" data-entityid="<%= @entity.id %>">
       <table id="donations-table" class="display" width="100%"></table>
     </div>
-    <script>new NyMatchDonations('match', <%= @entity.id %> ).init();</script>
+    <script>
+      new LittleSis.NyDonationsMatcher('match', <%= @entity.id %> ).init();
+    </script>
   </div>
   <%= render partial: 'match_sidebar' %>
 </div>
