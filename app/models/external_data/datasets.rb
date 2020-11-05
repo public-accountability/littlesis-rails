@@ -22,8 +22,12 @@ class ExternalData
         nys_disclosure: 'New Yorak State Campaign Contributions',
         nys_filer: 'New York State Campaign Finance Committees',
         fec_candidate: 'Candidates for US Federal Office',
-        fec_committee: 'Federal Campaign Finance Committees'
+        fec_committee: 'Federal Campaign Finance Committees',
+        fec_contribution: 'Federal Campaign Finance Individual Contributions'
       }.with_indifferent_access.freeze
+    end
+
+    def self.import_fec_individual_discloure(ic)
     end
   end
 end
