@@ -45,14 +45,6 @@ describe Alias, type: :model do
     end
   end
 
-  describe 'name_regex' do
-    it 'returns regex if name parser can generate one' do
-      expect(build(:alias, name: 'xyz', entity: build(:org)).name_regex).to be nil
-      alice = build(:alias, name: 'alice the cat', entity: build(:person))
-      expect(alice.name_regex).to be_a Regexp
-    end
-  end
-
   describe 'paper trail versioning' do
     with_versioning do
       before { org }

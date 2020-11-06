@@ -381,15 +381,6 @@ class Entity < ApplicationRecord
     os_categories.map(&:industry_name).uniq
   end
 
-  def name_regexes(require_first = true)
-    if person?
-      regex = person.name_regex(require_first) rescue nil
-      [regex].concat(aliases.map { |a| a.name_regex(require_first) rescue nil }).uniq.compact
-    else
-      []
-    end
-  end
-
   ##
   # User-related methods
   #
