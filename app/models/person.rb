@@ -30,11 +30,17 @@ class Person < ApplicationRecord
   end
 
   def name_variations
-
-  end
-
-  def last_name_regex_str
-    name_last.gsub(/(\p{Ll})/u) { |m| "[#{m}#{m.upcase}]" }.gsub(/[[[:space:]]-]+/mu, '[[[:space:]]-]+')
+    [
+      [name_first, name_last],
+      [name_first, name_middle, name_last],
+      [name_first, name_nick, name_last],
+      [name_nick, name_last],
+      [name_prefix, name_first, name_middle, name_last],
+      [name_prefix, name_first, name_middle, name_last, name_suffix]
+    ].map { |arr| arr.delete_if(&:blank?) }
+      .delete_if { |arr| arr.length < 2 }
+      .uniq
+      .map { |arr| arr.join(' ') }
   end
 
   def gender
