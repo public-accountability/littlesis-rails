@@ -828,25 +828,20 @@ describe Entity, :tag_helper do
 
     describe 'generate_search_terms' do
       it 'generates list of names for org' do
-        e = build(:org, name: 'one')
-        aliases = [build(:alias, name: 'one', is_primary: true), build(:alias, name: 'two')]
-        expect(e).to receive(:aliases).and_return(aliases)
-        expect(e.send(:generate_search_terms)).to eq "(one) | (two) | (*one*)"
+        entity = create(:entity_org, name: 'one')
+        entity.aliases.create!(name: 'two')
+        expect(entity.send(:generate_search_terms)).to eq "(one) | (two) | (*one*)"
       end
 
       it 'property escapes names with slashes' do
-        e = build(:org, name: 'weird/name')
-        aliases = [build(:alias, name: 'weird/name', is_primary: true), build(:alias, name: 'name')]
-        expect(e).to receive(:aliases).and_return(aliases)
+        e = create(:entity_org, name: 'weird/name')
+        e.aliases.create!(name: 'name')
         expect(e.send(:generate_search_terms)).to eq "(weird\\/name) | (name) | (*weird\\/name*)"
       end
 
-      it 'handles orgs with names that only contain words stripped by Org.strip_name()' do
-        orgname = Org.name_words_to_remove.slice(0, 5).join(" ")
-        e = build(:org, name: orgname)
-        aliases = [build(:alias, name: orgname, is_primary: true)]
-        expect(e).to receive(:aliases).and_return(aliases)
-        expect(e.send(:generate_search_terms)).to eq "(#{orgname}) | (*#{orgname}*)"
+      it 'handles orgs with names that only contain essential words ' do
+        e = create(:entity_org, name: "the school of air")
+        expect(e.send(:generate_search_terms)).to eq "(the school of air) | (*the school of air*)"
       end
     end
   end

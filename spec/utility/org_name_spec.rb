@@ -99,5 +99,9 @@ describe OrgName do
     specify do
       expect(OrgName.essential_words("BAOSHAN IRON & STEEL COMPANY LIMITED")).to eql %w[baoshan iron steel]
     end
+
+    specify do
+      expect(OrgName.essential_words("the school of air")).to be_empty
+    end
   end
 end

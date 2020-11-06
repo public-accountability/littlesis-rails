@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Language
   REGIONS = [
     'Asia',
@@ -13,14 +15,14 @@ class Language
     'Asia Pacific',
     'South Pacific',
     'America'
-  ]
+  ].freeze
 
   GEOGRAPHY = [
     'Southern',
     'Northern',
     'Western',
     'Eastern'
-  ]
+  ].freeze
 
   SCHOOLS = [
     'School',
@@ -32,8 +34,8 @@ class Language
     'Bachelor',
     'Doctorate',
     'State'
-  ]
-  
+  ].freeze
+
   BUSINESS = [
     'American',
     'Board',
@@ -97,6 +99,10 @@ class Language
     'Group',
     'Solutions',
     'Service',
-    'Worldwide' 
-  ]
+    'Worldwide'
+  ].freeze
+
+  def self.schools
+    @schools ||= SCHOOLS.map(&:downcase).to_set.freeze
+  end
 end

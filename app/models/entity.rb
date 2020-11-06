@@ -745,20 +745,25 @@ class Entity < ApplicationRecord
   end
 
   def generate_search_terms
-    ts_escape = ->(x) { LsSearch.escape(x) }
-    ts_surround_escape = ->(x) { '"' + LsSearch.escape(x) + '"' }
+    search_terms = aliases.map(&:name)
 
-    search_terms = []
-    alias_names = aliases.map(&:name)
+    search_terms << "*#{name}*"
 
-    search_terms.concat(alias_names.map(&ts_escape))  #{ |n| ts_escape(n) })
-    search_terms.append(ts_escape.call("#{person.name_first} #{person.name_last}")) if person?
-    search_terms.append(ts_surround_escape.call("#{person.name_first} * #{person.name_last}")) if person?
+    if person?
+      search_terms << "#{person.name_first} #{person.name_last}"
+      search_terms << "#{person.name_first} * #{person.name_last}"
+    elsif org?
+      org.name_variations.map { |n| OrgName.essential_words(n).join(' ') }.filter(&:present?).each do |x|
+        search_terms << x
+      end
+    end
 
-    search_terms.concat(alias_names.map { |n| ts_escape.call(Org.strip_name(n)) }) if org?
-    search_terms.append("*#{ts_escape.call(self.name)}*") if org?
-
-    search_terms.uniq.reject(&:blank?).map { |term| "(#{term})" }.join(' | ')
+    search_terms
+      .uniq
+      .reject(&:blank?)
+      .map { |term| ThinkingSphinx::Query.escape(term) }
+      .map { |term| "(#{term})" }
+      .join(' | ')
   end
 
   # A wrapper around the default
