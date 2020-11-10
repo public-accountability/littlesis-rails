@@ -2,11 +2,16 @@
 
 module FEC
   class CsvDataProcessor
+    BATCH_SIZE = 50_000
     DONORS_CSV = File.join(FEC.configuration.fetch(:data_directory), 'donors.csv')
     DONOR_CONTRIBUTIONS_CSV = File.join(FEC.configuration.fetch(:data_directory), 'donor_individual_contributions.csv')
 
     def initialize
-      @donor_id = Concurrent::AtomicFixnum.new
+      @donor_id = 0
+      @digests = {}
+      @total_count = IndividualContribution.count.to_f
+      @current_count = 0
+      FEC.logger.info "CREATING #{DONORS_CSV} and #{DONOR_CONTRIBUTIONS_CSV}"
       run
     end
 
@@ -19,14 +24,10 @@ module FEC
     end
 
     def run
-      digests = Concurrent::Map.new # MD5(donor_name, city, state, zip_code, employer, occupation) => donor_id
-
-      FEC.logger.info "CREATING #{DONORS_CSV} and #{DONOR_CONTRIBUTIONS_CSV}"
-
       with_csvs do |donors_csv, donor_contributions_csv|
-        Parallel.each(IndividualContribution.find_in_batches) do |batch|
+        IndividualContribution.find_in_batches(batch_size: BATCH_SIZE) do |batch|
           batch.each do |ic|
-            next if ic.NAME.blank?
+            next if ic.nil? || ic.NAME.blank?
 
             donor_name = NameParser.format(ic.NAME)
             employer = OrgName.parse(ic.EMPLOYER).clean if ic.EMPLOYER.present?
@@ -34,13 +35,16 @@ module FEC
             data = [donor_name, ic.CITY, ic.STATE, ic.ZIP_CODE, employer, ic.OCCUPATION]
             digest = Digest::MD5.digest(data.join(''))
 
-            unless digests.key?(digest) # Donor already exists
-              digests.compute(digest) { @donor_id.increment }
-              donors_csv << [digests.fetch(digest)].concat(data) # save donor to donors.csv
+            unless @digests.key?(digest) # Donor already exists
+              @digests.store(digest, @donor_id += 1)
+              # @digests.compute(digest) { @donor_id += 1 }
+              donors_csv << [@digests.fetch(digest)].concat(data) # save donor to donors.csv
             end
 
-            donor_contributions_csv << [digests.fetch(digest), ic.SUB_ID] # [donor_id, individual_contribution_sub_id]
+            donor_contributions_csv << [@digests.fetch(digest), ic.SUB_ID] # [donor_id, individual_contribution_sub_id]
           end
+
+          FEC.logger.debug  "Individual contributions: #{ (@current_count / @total_count.to_f * 100).round(1) }% complete"
         end
       end
 
@@ -52,8 +56,8 @@ module FEC
       SQL
 
       FEC::Database.execute <<~SQL
-        mode csv
-        import #{DONOR_CONTRIBUTIONS_CSV} donor_individual_contributions
+        .mode csv
+        .import #{DONOR_CONTRIBUTIONS_CSV} donor_individual_contributions
       SQL
     end
 
