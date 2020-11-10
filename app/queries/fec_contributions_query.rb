@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module ECContributionsQuery
+module FECContributionsQuery
   def self.run(entity)
     ExternalRelationship
       .include(:external_data)
