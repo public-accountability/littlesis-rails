@@ -10,7 +10,6 @@ namespace :database do
     desc 'Creates development database'
     task development: :environment do
       DevelopmentDb.new(:development).run
-      ddb.run
     end
 
     desc 'Saves open secrets tables'
