@@ -5,7 +5,9 @@ module FEC
     before_create :ensure_nulls # , :parse_name
 
     validates :name, presence: true
-    # has_many :individual_contributions, through: :donor_individual_contributions
+
+    has_many :donor_contributions
+    has_many :individual_contributions, through: :donor_contributions
     # has_one :employer, through: :donor_employers
 
     def self.search_by_name(name)

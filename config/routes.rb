@@ -411,6 +411,13 @@ Lilsis::Application.routes.draw do
   # Table Of ExternalEntites/ExternalRelationships for the given dataset
   get '/datasets/:dataset' => 'datasets#dataset', constraints: DatasetConstraint.new, as: 'dataset'
 
+  namespace :fec do
+    get '/entities/:id/contributions' => 'fec#contributions'
+    get '/entities/:id/match_contributions' => 'fec#match_contributions'
+    post '/donor_match' => 'fec#donor_match'
+    delete '/contribution_unmatch' => 'fec#contribution_unmatch'
+  end
+
   resources :external_entities, only: %i[show update] do
     get 'random', on: :collection, action: :random
     get '/:dataset/random', on: :collection, action: :random, constraints: DatasetConstraint.new
@@ -420,6 +427,7 @@ Lilsis::Application.routes.draw do
   resources :external_relationships, only: %i[show update] do
     get 'random', on: :collection, action: :random
   end
+
 
   match "*path", to: "errors#not_found", via: :all
 

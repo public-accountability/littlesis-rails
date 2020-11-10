@@ -43,7 +43,7 @@ module FEC
     end
 
     def self.fulltext_index!
-      FEC.logger.info 'SETUP: creating FULL TEXT indexes'
+      FEC.logger.info 'SETUP: creating fulltext indexes'
       execute_sql_file(File.join(__dir__, './fulltext.sql'))
     end
 
@@ -58,7 +58,7 @@ module FEC
 
     # Uses ActiveRecord::Base.connection
     def self.exec_query(*args)
-      ActiveRecord::Base.connection.exec_query(*args)
+      connection.exec_query(*args)
     end
 
     def self.execute_sql_file(path)

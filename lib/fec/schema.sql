@@ -263,7 +263,7 @@ CREATE TABLE IF NOT EXISTS donors (
 
 CREATE TABLE IF NOT EXISTS donor_individual_contributions (
    donor_id INTEGER NOT NULL,
-   individual_contribution_sub_id INTEGER NOT NULL
+   individual_contribution_sub_id INTEGER PRIMARY_KEY
 );
 
 -- CREATE TABLE IF NOT EXISTS organization_operating_expenditures (
