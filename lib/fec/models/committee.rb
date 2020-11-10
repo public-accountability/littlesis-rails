@@ -10,6 +10,10 @@ module FEC
 
     has_many :individual_contributions, foreign_key: 'CMTE_ID', inverse_of: :committee
 
+    def name
+      @name ||= OrgName.format(self.CMTE_NM)
+    end
+
     def committee_id
       self.CMTE_ID
     end

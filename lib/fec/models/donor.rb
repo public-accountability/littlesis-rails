@@ -14,13 +14,44 @@ module FEC
       {
         name: name,
         location: [city, state, zip_code].compact.join(', '),
-        employment: [occupation, employer].delete_if(&:blank).join(' @ '),
-        contributions: nil
+        employment: employment,
+        contributions: contributions_summary
       }
     end
 
     def contributions
-      individual_contributions.where(:TRANSACTION_TP => %i[committee earmarked])
+      individual_contributions.where(:TRANSACTION_TP => %i[committee earmarked pacs])
+    end
+
+    def employment
+      if employer == 'retired' || occupation.downcase == 'retired'
+        "Retired"
+      elsif employer == 'none' || employer == 'not employed' || occupation = 'NOT EMPLOYED'
+        "Not employed"
+      elsif employer.present? && occupation.blank?
+        "Works at #{employer}"
+      elsif employer.present? && occupation.present?
+        "#{occupation.titleize} at #{employer}"
+      end
+    end
+
+    def contributions_summary
+      contributions.to_a.group_by(&:CMTE_ID).map do |cmte_id, contributions|
+        {
+          committee_name: contributions.first.committee.name,
+          committee_id: cmte_id,
+          amount: contributions.map(&:amount).sum,
+          date_range: contributions_date_range
+        }
+      end
+    end
+
+    def contributions_date_range
+      Range.new(*contributions
+                   .map(&:TRANSACTION_DT)
+                   .sort
+                   .values_at(0, contributions.length - 1)
+                   .map { |dt|  Date.strptime(dt, "%m%d%Y") })
     end
 
     # When fields are fully-filled and not yet in the database this will create:
