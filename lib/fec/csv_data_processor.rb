@@ -26,6 +26,8 @@ module FEC
     def run
       with_csvs do |donors_csv, donor_contributions_csv|
         IndividualContribution.find_in_batches(batch_size: BATCH_SIZE) do |batch|
+          @current_count += batch.length
+
           batch.each do |ic|
             next if ic.nil? || ic.NAME.blank?
 
