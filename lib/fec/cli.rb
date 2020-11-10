@@ -14,6 +14,7 @@ module FEC
       # FEC::DataProcessor.run
       FEC::CsvDataProcessor.run
       FEC::Database.index!
+      FEC::Database.fulltext_index!
       Database.disable_dangerous_sqlite3_settings
     end
 

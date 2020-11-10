@@ -42,6 +42,11 @@ module FEC
       execute_sql_file(File.join(__dir__, './index.sql'))
     end
 
+    def self.fulltext_index!
+      FEC.logger.info 'SETUP: creating FULL TEXT indexes'
+      execute_sql_file(File.join(__dir__, './fulltext.sql'))
+    end
+
     # Runs sqlite3 as an external program
     def self.execute(sql)
       Open3.popen2e "sqlite3 #{FEC.configuration[:database]}" do |stdin, stdout_and_stderr|
