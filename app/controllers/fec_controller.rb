@@ -25,7 +25,8 @@ class FECController < ApplicationController
   end
 
   def match_contributions
-    @donors = FECDonorQuery.new(@entity)
+    search_term = params[:q] || @entity.name_variations.join(' OR ')
+    @donors = FECDonorQuery.run(search_term)
   end
 
   # required params: donor_id, sub_ids

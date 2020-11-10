@@ -10,7 +10,17 @@ module FEC
     has_many :individual_contributions, through: :donor_contributions
     # has_one :employer, through: :donor_employers
 
-    def self.search_by_name(name)
+    def nice
+      {
+        name: name,
+        location: [city, state, zip_code].compact.join(', '),
+        employment: [occupation, employer].delete_if(&:blank).join(' @ '),
+        contributions: nil
+      }
+    end
+
+    def contributions
+      individual_contributions.where(:TRANSACTION_TP => %i[committee earmarked])
     end
 
     # When fields are fully-filled and not yet in the database this will create:

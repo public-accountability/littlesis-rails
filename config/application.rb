@@ -53,4 +53,10 @@ module Lilsis
     # Make `form_with` generate non-remote forms.
     config.action_view.form_with_generates_remote_forms = false
   end
+
+  def self.setup_fec
+    require 'fec'
+    FEC::Database.establish_connection
+    nil
+  end
 end

@@ -17,13 +17,21 @@ module FEC
       end
 
       def deserialize(value)
-        return if value.empty?
+        return nil if value.blank?
 
         self.class.map.fetch(value)
       end
 
+      def serialize(value)
+        cast(value)
+      end
+
       def cast(value)
-        self.class.reverse_map.fetch(value)
+        if value.is_a? Symbol
+          super(self.class.reverse_map.fetch(value))
+        else
+          super(value)
+        end
       end
     end
   end
