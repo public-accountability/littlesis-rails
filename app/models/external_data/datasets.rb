@@ -24,7 +24,7 @@ class ExternalData
         fec_candidate: 'Candidates for US Federal Office',
         fec_committee: 'Federal Campaign Finance Committees',
         fec_contribution: 'Federal Campaign Finance Individual Contributions',
-        fec_donors: 'Donors extracted from FEC Individual Contributions'
+        fec_donor: 'Donors extracted from FEC Individual Contributions'
       }.with_indifferent_access.freeze
     end
   end
