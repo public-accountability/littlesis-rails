@@ -11,11 +11,16 @@ module FEC
     # has_one :employer, through: :donor_employers
 
     def nice
-      {
+      @nice ||= {
         name: name,
-        location: [city, state, zip_code].compact.join(', '),
-        employment: employment,
-        contributions: contributions_summary
+        city: city,
+        state: state,
+        zip_code: zip_code,
+        employer: employer,
+        total_contributed: contributions.map(&:amount).sum,
+        contributions: contributions_by_committee,
+        sub_ids: contributions.map(&:SUB_ID),
+        md5digest: md5digest
       }
     end
 
@@ -35,23 +40,28 @@ module FEC
       end
     end
 
-    def contributions_summary
+    def contributions_by_committee
       contributions.to_a.group_by(&:CMTE_ID).map do |cmte_id, contributions|
         {
           committee_name: contributions.first.committee.name,
           committee_id: cmte_id,
           amount: contributions.map(&:amount).sum,
+          count: contributions.length,
           date_range: contributions_date_range
         }
       end
     end
 
     def contributions_date_range
-      Range.new(*contributions
-                   .map(&:TRANSACTION_DT)
-                   .sort
-                   .values_at(0, contributions.length - 1)
-                   .map { |dt|  Date.strptime(dt, "%m%d%Y") })
+      contributions
+        .map(&:TRANSACTION_DT)
+        .sort
+        .values_at(0, contributions.length - 1)
+        .map { |dt| Date.strptime(dt, "%m%d%Y") }
+    end
+
+    def md5digest
+      Digest::MD5.hexdigest([name, city, state, zip_code, employer, occupation].join)
     end
 
     # When fields are fully-filled and not yet in the database this will create:

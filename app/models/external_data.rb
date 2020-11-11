@@ -20,7 +20,8 @@ class ExternalData < ApplicationRecord
     nys_filer: 5,
     fec_candidate: 6,
     fec_committee: 7,
-    fec_contribution: 8
+    fec_contribution: 8,
+    fec_donor: 9
   }.freeze
 
   enum dataset: DATASETS

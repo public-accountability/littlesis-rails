@@ -29,7 +29,7 @@ class ExternalEntity
 
       def add_reference
         entity.add_reference(url: "https://www.fec.gov/data/committee/#{external_data.dataset_id}/",
-                             title: "fec.gov - committee - #{external_data.dataset_id}/")
+                             name: "fec.gov - committee - #{external_data.dataset_id}/")
       end
 
       def set_primary_ext

@@ -17,10 +17,6 @@ module FEC
       Committee.find_by(:FEC_YEAR => self.FEC_YEAR, :CMTE_ID => self.CMTE_ID)
     end
 
-    def self.large_transactions
-      where arel_table[:TRANSACTION_AMT].gteq(1_000)
-    end
-
     def import_into_external_data
       unless ExternalData.fec_contribution.exists?(dataset_id: self.SUB_ID)
         ExternalData
@@ -31,5 +27,10 @@ module FEC
           .find_or_create_by!
       end
     end
+
+    def self.large_transactions
+      where arel_table[:TRANSACTION_AMT].gteq(1_000)
+    end
+
   end
 end
