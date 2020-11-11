@@ -18,7 +18,7 @@
 #
 
 class FECController < ApplicationController
-  before_action :set_entity, only: %[contributions match_contributions]
+  before_action :set_entity, only: %i[contributions match_contributions]
 
   def contributions
     @contributions = FECContributionsQuery.run(@entity)

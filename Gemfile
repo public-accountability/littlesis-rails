@@ -95,9 +95,8 @@ end
 # Used by lib/
 
 # Cron
-gem "roo", "~> 2.8.1", require: false
 gem 'parallel', require: false
-gem 'concurrent-ruby', require: false
+gem 'roo', "~> 2.8.1", require: false
 gem 'rubyzip', require: false
 gem 'sqlite3', require: false
 gem 'whenever', '~> 1.0.0', require: false

@@ -7,8 +7,8 @@ module FEC
         FEC.logger.info "IMPORTING #{table.csv_localpath}"
 
         Database.execute <<~SQL
-         .mode csv
-         .import #{table.csv_localpath} #{table.name}
+          .mode csv
+          .import #{table.csv_localpath} #{table.name}
         SQL
       end
     end

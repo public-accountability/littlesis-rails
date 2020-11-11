@@ -12,7 +12,9 @@ class ExternalEntity
       end
 
       def match_action
-        ExternalLink.fec_candidate.find_or_create_by!(entity_id: entity.id, link_id: external_data.dataset_id)
+        ExternalLink
+          .fec_candidate
+          .find_or_create_by!(entity_id: entity.id, link_id: external_data.dataset_id)
       end
 
       def unmatch_action

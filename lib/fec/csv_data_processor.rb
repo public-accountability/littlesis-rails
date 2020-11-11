@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 module FEC
+  # Besides the tables generated directly from FEC data two
+  # additional tables are created used to help LittleSis match donors.
   class CsvDataProcessor
     BATCH_SIZE = 50_000
     DONORS_CSV = File.join(FEC.configuration.fetch(:data_directory), 'donors.csv')
@@ -8,7 +10,7 @@ module FEC
 
     def initialize
       @donor_id = 0
-      @digests = {}
+      @digests = {}  # MD5(name,city,state,zip_code,employer,occupation) ==> donor_id
       @total_count = IndividualContribution.count.to_f
       @current_count = 0
       FEC.logger.info "CREATING #{DONORS_CSV} and #{DONOR_CONTRIBUTIONS_CSV}"
@@ -34,19 +36,20 @@ module FEC
             donor_name = NameParser.format(ic.NAME)
             employer = OrgName.parse(ic.EMPLOYER).clean if ic.EMPLOYER.present?
 
+            # A "Donor" is a unique combination of Name + City + State + Zip_code + Employer + Occupation
             data = [donor_name, ic.CITY, ic.STATE, ic.ZIP_CODE, employer, ic.OCCUPATION]
             digest = Digest::MD5.digest(data.join(''))
 
-            unless @digests.key?(digest) # Donor already exists
+            unless @digests.key?(digest)
               @digests.store(digest, @donor_id += 1)
-              # @digests.compute(digest) { @donor_id += 1 }
-              donors_csv << [@digests.fetch(digest)].concat(data) # save donor to donors.csv
+              donor_row = [@digests.fetch(digest)].concat(data)
+              donors_csv << donor_row
             end
 
             donor_contributions_csv << [@digests.fetch(digest), ic.SUB_ID] # [donor_id, individual_contribution_sub_id]
           end
 
-          FEC.logger.debug  "Individual contributions: #{ (@current_count / @total_count.to_f * 100).round(1) }% complete"
+          FEC.logger.debug "Individual contributions: #{(@current_count / @total_count.to_f * 100).round(1)}% complete"
         end
       end
 

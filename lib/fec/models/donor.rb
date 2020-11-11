@@ -29,9 +29,9 @@ module FEC
     end
 
     def employment
-      if employer == 'retired' || occupation.downcase == 'retired'
+      if employer == 'retired' || occupation.casecmp('retired').zero?
         "Retired"
-      elsif employer == 'none' || employer == 'not employed' || occupation = 'NOT EMPLOYED'
+      elsif employer == 'none' || employer == 'not employed' || occupation == 'NOT EMPLOYED'
         "Not employed"
       elsif employer.present? && occupation.blank?
         "Works at #{employer}"

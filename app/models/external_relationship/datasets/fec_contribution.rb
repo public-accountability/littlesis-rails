@@ -2,7 +2,8 @@
 
 class ExternalRelationship
   module Datasets
-    # This connects to a row in fec.db, corresponding to an individual transaction record from FEC bulk data
+    # This connects to a row in fec.db, corresponding to an individual
+    # transaction record in the FEC bulk data
     module FECContribution
       def relationship_attributes
         raise NotImplementedError

@@ -7,7 +7,9 @@ module FECImporter
     tasks = [:import_candidates, :import_committees, :import_donors]
 
     Parallel.each(tasks, in_processes: tasks.length) do |task|
+      FEC.logger.info "STARTING #{task}"
       public_send(task)
+      FEC.logger.info "FINISHED #{task}"
     end
   end
 
@@ -16,7 +18,7 @@ module FECImporter
       ExternalData.fec_candidate.find_or_initialize_by(dataset_id: candidate.CAND_ID).tap do |ed|
         if should_update?(candidate, ed)
           ed.merge_data(candidate.attributes).save!
-          ExternalEntity.fec_candidate.find_or_create_by!(external_data: ed).automatch
+          ExternalEntity.fec_candidate.find_or_create_by!(external_data: ed)
         end
       end
     end
@@ -27,7 +29,7 @@ module FECImporter
       ExternalData.fec_committee.find_or_initialize_by(dataset_id: committee.committee_id).tap do |ed|
         if should_update?(committee, ed)
           ed.merge_data(committee.attributes).save!
-          ExternalEntity.fec_committee.find_or_create_by!(external_data: ed).automatch
+          ExternalEntity.fec_committee.find_or_create_by!(external_data: ed)
         end
       end
     end
@@ -41,7 +43,7 @@ module FECImporter
         ed.merge_data(donor.nice).save!
       end
 
-      ExternalEntity.fec_donor.find_or_create_by!(external_data: ed).automatch
+      ExternalEntity.fec_donor.find_or_create_by!(external_data: ed)
     end
   end
 

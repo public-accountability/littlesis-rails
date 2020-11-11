@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Rails/SkipsModelValidations
-
 module FEC
   # Changes data stored as empty string to be null values
   module DataCleaner
@@ -13,5 +11,3 @@ module FEC
     end
   end
 end
-
-# rubocop:enable Rails/SkipsModelValidations

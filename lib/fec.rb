@@ -10,18 +10,13 @@
 #   bin/rails runner ./lib/scripts/fec_import.rb
 #
 
-require 'concurrent'
 require 'parallel'
 require 'zip'
 
-# require 'open-uri'
-# require 'open3'
-# require 'optparse'
-# require 'zeitwerk'
-
-loader = Zeitwerk::Loader.for_gem
+loader = Zeitwerk::Loader.new
 loader.inflector.inflect 'fec' => 'FEC'
 loader.inflector.inflect 'pac' => 'PAC'
+loader.push_dir(__dir__)
 loader.collapse("#{__dir__}/fec/models")
 loader.setup
 
@@ -38,8 +33,7 @@ module FEC
       database: File.join(default_root, 'data/fec.db'),
       recheck: false,
       years: 2016..2020,
-      tables: nil,
-      parallel: true
+      tables: nil
     }
   end
 

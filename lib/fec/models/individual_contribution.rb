@@ -21,7 +21,7 @@ module FEC
       unless ExternalData.fec_contribution.exists?(dataset_id: self.SUB_ID)
         ExternalData
           .fec_contribution
-          .create!(dataset_id: self.SUB_ID,data: attributes)
+          .create!(dataset_id: self.SUB_ID, data: attributes)
           .external_relationship
           .fec_contribution
           .find_or_create_by!
@@ -31,6 +31,5 @@ module FEC
     def self.large_transactions
       where arel_table[:TRANSACTION_AMT].gteq(1_000)
     end
-
   end
 end

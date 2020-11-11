@@ -377,7 +377,6 @@ DEPENDENCIES
   bootstrap (>= 4.3.1)
   capybara (>= 3.14.0)
   codecov
-  concurrent-ruby
   daemons
   database_cleaner
   delayed_job (~> 4.1)
