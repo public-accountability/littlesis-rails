@@ -17,6 +17,7 @@ module FEC
         state: state,
         zip_code: zip_code,
         employer: employer,
+        occupation: occupation,
         total_contributed: contributions.map(&:amount).sum,
         contributions: contributions_by_committee,
         sub_ids: contributions.map(&:SUB_ID),
@@ -57,7 +58,7 @@ module FEC
         .map(&:TRANSACTION_DT)
         .sort
         .values_at(0, contributions.length - 1)
-        .map { |dt| Date.strptime(dt, "%m%d%Y") }
+        .map { |dstr| parse_date(dstr) }
     end
 
     def md5digest
@@ -93,6 +94,12 @@ module FEC
       %i[city state zip_code employer occupation].each do |attr|
         write_attribute(attr, nil) if read_attribute(attr) == ''
       end
+    end
+
+    def parse_date(dstr)
+      Date.strptime(dstr, "%m%d%Y")
+    rescue Date::Error
+      nil
     end
 
     # def set_name_fields
