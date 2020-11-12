@@ -12,9 +12,9 @@
 
 # Services/Queries
 #
-# FECDonorQuery.new(entity)
-# FECDonorMatchService.run(donor_id:, sub_ids:)
-# FECContributionsQuery.run
+# FECDonorQuery.run(entity)                       "search for potential donors'
+# FECDonorMatchService.run(donor_id:, sub_ids:)   "do the matching"
+# FECContributionsQuery.run                       "show the matched contributions"
 #
 
 class FECController < ApplicationController

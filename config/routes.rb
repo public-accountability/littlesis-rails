@@ -412,8 +412,8 @@ Lilsis::Application.routes.draw do
   get '/datasets/:dataset' => 'datasets#dataset', constraints: DatasetConstraint.new, as: 'dataset'
 
   namespace :fec do
-    get '/entities/:id/contributions', action: :contributions
-    get '/entities/:id/match_contributions', action: :match_contributions
+    get '/entities/:id/contributions', action: :contributions, as: :entity_contributions
+    get '/entities/:id/match_contributions', action: :match_contributions, as: :entity_match_contributions
     post '/donor_match', action: :donor_match
     delete '/contribution_unmatch', action: :contribution_unmatch
   end

@@ -36,8 +36,8 @@ module FECImporter
   end
 
   def self.import_donors
-    FEC::Donors.find_each do |donor|
-      ed = ExternalData.fec_donor.find_or_initialize_by!(dataset_id: donor.md5digest)
+    FEC::Donor.find_each do |donor|
+      ed = ExternalData.fec_donor.find_or_initialize_by(dataset_id: donor.md5digest)
 
       unless ed.persisted? # remove this to update
         ed.merge_data(donor.nice).save!

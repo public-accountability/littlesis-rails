@@ -29,18 +29,6 @@ module FEC
       individual_contributions.where(:TRANSACTION_TP => %i[committee earmarked pacs])
     end
 
-    def employment
-      if employer == 'retired' || occupation.casecmp('retired').zero?
-        "Retired"
-      elsif employer == 'none' || employer == 'not employed' || occupation == 'NOT EMPLOYED'
-        "Not employed"
-      elsif employer.present? && occupation.blank?
-        "Works at #{employer}"
-      elsif employer.present? && occupation.present?
-        "#{occupation.titleize} at #{employer}"
-      end
-    end
-
     def contributions_by_committee
       contributions.to_a.group_by(&:CMTE_ID).map do |cmte_id, contributions|
         {
