@@ -142,6 +142,14 @@ class Entity < ApplicationRecord
     aliases.where(is_primary: false).map(&:name)
   end
 
+  def name_variations
+    if org?
+      org.name_variations
+    elsif person?
+      person.name_variations
+    end
+  end
+
   def to_param
     # return nil unless persisted?
     "#{id}-#{self.class.parameterize_name(name)}"
