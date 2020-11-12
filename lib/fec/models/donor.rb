@@ -44,7 +44,7 @@ module FEC
     def contributions_by_committee
       contributions.to_a.group_by(&:CMTE_ID).map do |cmte_id, contributions|
         {
-          committee_name: contributions.first.committee.name,
+          committee_name: contributions.first.committee&.name,
           committee_id: cmte_id,
           amount: contributions.map(&:amount).sum,
           count: contributions.length,
