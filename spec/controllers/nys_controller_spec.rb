@@ -67,13 +67,13 @@ describe NYSController, type: :controller do
 
     it 'returns 200' do
       person = build(:person, id: 12_345, name: 'big donor')
-      expect(person).to receive(:aliases).and_return([double(:name => 'Big Donor')])
+      expect(LsSearch).to receive(:generate_search_terms).and_return('Big Donor')
       disclosure = double('NyDisclosure')
       expect(disclosure).to receive(:map)
       expect(Entity).to receive(:find).with(12_345).and_return(person)
       expect(NyDisclosure).to receive(:search)
-                               .with('Big Donor', **search_options)
-                               .and_return(disclosure)
+                                .with('Big Donor', **search_options)
+                                .and_return(disclosure)
       get :potential_contributions, params: { entity: '12345' }
       expect(response.status).to eq(200)
     end

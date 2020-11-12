@@ -11,12 +11,9 @@ class ExternalEntity
         EntityMatcher.find_matches_for_person(search_term)
       end
 
-      # After a user clicks the "match" button on the fec match contributions page,
-      # it creates a match with ExternalEntity.fec_donor
-      # This donor record contains sub_ids (external_data.wrapper.sub_ids) which are
-      # links Individual Contributions records (which the donor dataset aggregates).
-      # So this matches the associated External Relationship for all Individual Contributions
-      # connected to this donor.
+      # When user clicks the "match" button on the fec match contributions page, this method gets called
+      # This matches the associated External Relationship for all Individual Contributions connected to this donor.
+            # external_entity-->external_data.fec_donor.data.sub_ids --> external_data.fec_contribution.dataset_id --> external_relationships
       def match_action
         ExternalData
           .includes(:external_relationships)
