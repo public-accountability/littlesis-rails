@@ -16,15 +16,11 @@ type ReferenceErrors = { ['name'|'url']: [String] }
 
 type SpinnerElement = 'top' | 'bottom'
 
- *********************************************************/
+*********************************************************/
+export default function ListBulkEntityAdder () {
 
-(function (root, factory) {
-  if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('jQuery'), require('../common/utility'));
-  } else {
-    root.bulkTable = factory(root.jQuery, root.utility);
-  }
-}(this, function ($, util) {
+  const $ = window.$
+  const util = window.utility
 
   var self = {}; // returned at bottom of file
 
@@ -51,7 +47,7 @@ type SpinnerElement = 'top' | 'bottom'
     'SampleOrg,Org,Description of SampleOrg\n' +
     'Sample Person,Person,Description of Sample Person';
 
-  self.init = function(args){
+  self.init = function (args){
     state = Object.assign(state, {
       // id of the dom node to which this module will be appended on render
       domId: args.domId, // String
@@ -1033,8 +1029,8 @@ type SpinnerElement = 'top' | 'bottom'
   }
 
 
-  ACCEPTABLE_PERSON_VALUES = ['p', 'per', 'person'];
-  ACCEPTABLE_ORG_VALUES = ['o', 'org', 'organization'];
+  const ACCEPTABLE_PERSON_VALUES = ['p', 'per', 'person'];
+  const ACCEPTABLE_ORG_VALUES = ['o', 'org', 'organization'];
 
   // Anything -> String
   function cleanPrimaryExt(primary_ext) {
@@ -1157,4 +1153,4 @@ type SpinnerElement = 'top' | 'bottom'
 
   // RETURN
   return self;
-}));
+}

@@ -3,15 +3,15 @@
 </h1>
 <div id="bulk-add-container">
   <script>
-   bulkTable.init({
-     domId:        "bulk-add-container",
-     resourceId:   "<%= raw(@list.id) %>",
-     resourceType: "lists",
-     api: {
-       searchEntity:       api.searchEntity,
-       createEntities:     api.createEntities,
-       createAssociations: api.addEntitiesToList
-     }
-   });
+    LittleSis.ListBulkEntityAdder().init({
+      domId:        "bulk-add-container",
+      resourceId:   "<%= raw(@list.id) %>",
+      resourceType: "lists",
+      api: {
+        searchEntity:       api.searchEntity,
+        createEntities:     api.createEntities,
+        createAssociations: api.addEntitiesToList
+      }
+    });
   </script>
 </div>
