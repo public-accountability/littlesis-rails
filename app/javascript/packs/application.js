@@ -16,9 +16,9 @@ import mustache from 'mustache';
 
 import listDatatableLoader from './list_datatable';
 import entityAutocomplete from './entity_autocomplete';
-import RelationshipCreationFlow from './components/relationship_creation_flow'
-import NyDonationsMatcher from './components/ny_donations_matcher'
-import EntityMatcher from './components/entity_matcher'
+import RelationshipCreationFlow from './components/relationship_creation_flow';
+import NyDonationsMatcher from './components/ny_donations_matcher';
+import EntityMatcher from './components/entity_matcher';
 
 window.utility = utility;
 window.utility.delete = utility.del;
