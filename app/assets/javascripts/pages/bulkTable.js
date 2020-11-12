@@ -542,7 +542,6 @@ type SpinnerElement = 'top' | 'bottom'
       $('<input>', {
         id:    "upload-button",
         type:  "file",
-        style: "display:none",
         change: function() { handleUploadThen(ingestEntities, this); }
       })
     );
