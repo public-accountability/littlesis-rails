@@ -395,6 +395,7 @@ DEPENDENCIES
   mysql2 (~> 0.5.2)
   nokogiri
   paper_trail (~> 11)
+  parallel
   pry (>= 0.12.0)
   pry-byebug
   pry-doc
@@ -430,6 +431,7 @@ DEPENDENCIES
   web-console
   webpacker (>= 4.0.2)
   whenever (~> 1.0.0)
+  zeitwerk
 
 BUNDLED WITH
    2.1.4

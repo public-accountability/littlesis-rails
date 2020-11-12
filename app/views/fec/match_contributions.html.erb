@@ -1,0 +1,48 @@
+<% content_for(:page_title, "Match FEC Contributions: #{@entity.name}") %>
+<%= render partial: 'entities/header', locals: { entity: @entity } %>
+
+<%
+
+mock_data = Struct.new(:name, :location, :employment, :contributions)
+mock_fec_donor = Struct.new(:wrapper)
+create_mock_donor = ->(*args) { mock_fec_donor.new(mock_data.new(*args)) }
+
+mock_donors = [create_mock_donor.call('foo', 'earth', 'retired', '$125'),
+               create_mock_donor.call('bar', 'mars', 'student at planetary U', '$8') ]
+
+
+
+
+fec_donors = @donors # mock_donors
+
+%>
+
+<div class="row mt-4 bg-light">
+  <div class="col p-2">
+    <p>Help expand the LittleSis database by finding matching donors in the FEC's bulk dataset.</p>
+    <%= form_with url: fec_entity_match_contributions_path(@entity), method: :get, class: 'input-group' do |form| %>
+      <%= form.text_field "q",  class: "form-control", placeholder: @entity.name %>
+      <div class="input-group-append">
+        <%= form.submit "Search", class: 'btn btn-outline-secondary' %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col mt-4 p-1">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Employment</th>
+          <th>Contributions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'fec_donor', collection: fec_donors %>
+      </tbody>
+    </table>
+  </div>
+</div>

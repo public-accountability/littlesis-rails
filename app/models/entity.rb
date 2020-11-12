@@ -142,6 +142,14 @@ class Entity < ApplicationRecord
     aliases.where(is_primary: false).map(&:name)
   end
 
+  def name_variations
+    if org?
+      org.name_variations
+    elsif person?
+      person.name_variations
+    end
+  end
+
   def to_param
     # return nil unless persisted?
     "#{id}-#{self.class.parameterize_name(name)}"
@@ -379,15 +387,6 @@ class Entity < ApplicationRecord
 
   def industries
     os_categories.map(&:industry_name).uniq
-  end
-
-  def name_regexes(require_first = true)
-    if person?
-      regex = person.name_regex(require_first) rescue nil
-      [regex].concat(aliases.map { |a| a.name_regex(require_first) rescue nil }).uniq.compact
-    else
-      []
-    end
   end
 
   ##
@@ -745,20 +744,25 @@ class Entity < ApplicationRecord
   end
 
   def generate_search_terms
-    ts_escape = ->(x) { LsSearch.escape(x) }
-    ts_surround_escape = ->(x) { '"' + LsSearch.escape(x) + '"' }
+    search_terms = aliases.map(&:name)
 
-    search_terms = []
-    alias_names = aliases.map(&:name)
+    search_terms << "*#{name}*"
 
-    search_terms.concat(alias_names.map(&ts_escape))  #{ |n| ts_escape(n) })
-    search_terms.append(ts_escape.call("#{person.name_first} #{person.name_last}")) if person?
-    search_terms.append(ts_surround_escape.call("#{person.name_first} * #{person.name_last}")) if person?
+    if person?
+      search_terms << "#{person.name_first} #{person.name_last}"
+      search_terms << "#{person.name_first} * #{person.name_last}"
+    elsif org?
+      org.name_variations.map { |n| OrgName.essential_words(n).join(' ') }.filter(&:present?).each do |x|
+        search_terms << x
+      end
+    end
 
-    search_terms.concat(alias_names.map { |n| ts_escape.call(Org.strip_name(n)) }) if org?
-    search_terms.append("*#{ts_escape.call(self.name)}*") if org?
-
-    search_terms.uniq.reject(&:blank?).map { |term| "(#{term})" }.join(' | ')
+    search_terms
+      .uniq
+      .reject(&:blank?)
+      .map { |term| ThinkingSphinx::Query.escape(term) }
+      .map { |term| "(#{term})" }
+      .join(' | ')
   end
 
   # A wrapper around the default

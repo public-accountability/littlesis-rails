@@ -37,11 +37,6 @@ class Alias < ApplicationRecord
     false
   end
 
-  def name_regex(require_first = true)
-    person = NameParser.parse_to_person(name)
-    return person.name_regex(require_first) if person.valid?
-  end
-
   private
 
   def trim_name_whitespace

@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-module Sec
+module SEC
   class Filing
     class MissingDocumentError < StandardError; end
 
     # Input: string (url)
     # output: string OR nil
     def self.download(url)
-      Rails.logger.debug('Sec::Filing') { "Downloading #{url}" }
+      Rails.logger.debug('SEC::Filing') { "Downloading #{url}" }
       res = HTTParty.get(url, headers: { 'User-Agent' => '' })
       if res.success?
         res.body
       else
-        Rails.logger.warn('Sec::Filing') { "failed to download #{url}" }
+        Rails.logger.warn('SEC::Filing') { "failed to download #{url}" }
         nil
       end
     end
@@ -70,7 +70,7 @@ module Sec
         set_document
 
         if db.nil?
-          Rails.logger.warn('Sec::Filing') { 'Missing Database; not saving sec filing' }
+          Rails.logger.warn('SEC::Filing') { 'Missing Database; not saving sec filing' }
         else
           db.insert_document(filename: @metadata[:filename], data: @data)
         end
@@ -82,7 +82,7 @@ module Sec
     def set_document
       return unless @data
 
-      @document = Sec::Document.new(@data)
+      @document = SEC::Document.new(@data)
     end
   end
 end

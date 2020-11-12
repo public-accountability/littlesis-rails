@@ -2,7 +2,7 @@
 
 require 'sqlite3'
 
-module Sec
+module SEC
   class Database
     extend Forwardable
     attr_reader :db
@@ -38,7 +38,7 @@ module Sec
     #    "data" => nil}
     #
     #  "data" is from the documents table and, if present, contains the document (usually HTML or XML).
-    #  The rest of the fields are considered "metadata" by Sec::Filing
+    #  The rest of the fields are considered "metadata" by SEC:Filing
     def forms(cik: nil, form_types: nil, limit: 20, offset: 0)
       form_types_sql = case form_types
                        when Array
@@ -63,9 +63,9 @@ module Sec
     end
 
     # input: string (cik)
-    # output: [Sec::Filing]
+    # output: [SEC::Filing]
     def filings_for(cik, **kwargs)
-      Sec.verify_cik! cik
+      SEC.verify_cik! cik
 
       forms(cik: cik, limit: 10_000, **kwargs).map do |row|
         Filing.new(data: row.delete('data'),
@@ -84,9 +84,9 @@ module Sec
     end
 
     # convenience method for:
-    #   Sec::Company.new(cik, db: db)
+    #   SEC::Company.new(cik, db: db)
     def company(cik)
-      Sec::Company.new(cik, db: self)
+      SEC::Company.new(cik, db: self)
     end
   end
 end

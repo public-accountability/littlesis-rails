@@ -17,7 +17,11 @@ class ExternalData < ApplicationRecord
     iapd_schedule_a: 2,
     nycc: 3,
     nys_disclosure: 4,
-    nys_filer: 5
+    nys_filer: 5,
+    fec_candidate: 6,
+    fec_committee: 7,
+    fec_contribution: 8,
+    fec_donor: 9
   }.freeze
 
   enum dataset: DATASETS
@@ -102,7 +106,7 @@ class ExternalData < ApplicationRecord
   # Some datasets use Manticore (ExternalDataSphinxQuery), others use mysql (ExternalDataMysqlQuery)
   # Datatables::Params --> Datatables::Response
   def self.datatables_query(params)
-    if params.dataset == 'nys_disclosure'
+    if params.dataset == 'nys_disclosure' || (params.dataset == 'fec_donor' && params.search_requested?)
       ExternalDataSphinxQuery.run(params)
     else
       ExternalDataMysqlQuery.run(params)

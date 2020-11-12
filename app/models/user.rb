@@ -202,6 +202,6 @@ class User < ApplicationRecord
   private
 
   def set_default_network_id
-    self.default_network_id = APP_CONFIG['default_network_id'] if default_network_id.nil?
+    self.default_network_id = APP_CONFIG.fetch('default_network_id', 79) if default_network_id.nil?
   end
 end

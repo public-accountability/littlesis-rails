@@ -1,0 +1,50 @@
+---
+- name: candidates_summaries
+  filename: weball
+  header: nil
+  description: https://www.fec.gov/campaign-finance-data/all-candidates-file-description
+
+- name: candidates
+  filename: cn
+  header: https://www.fec.gov/files/bulk-downloads/data_dictionaries/cn_header_file.csv
+  description: https://www.fec.gov/campaign-finance-data/candidate-master-file-description/
+
+- name: candidate_committee_linkages
+  filename: ccl
+  header: https://www.fec.gov/files/bulk-downloads/data_dictionaries/ccl_header_file.csv
+  description: https://www.fec.gov/campaign-finance-data/candidate-committee-linkage-file-description/
+
+- name: congress_current_campaigns
+  filename:  webl
+  header: nil
+  description: https://www.fec.gov/campaign-finance-data/current-campaigns-house-and-senate-file-description/
+
+- name: committees
+  filename: cm
+  header: https://www.fec.gov/files/bulk-downloads/data_dictionaries/cm_header_file.csv
+  description: https://www.fec.gov/campaign-finance-data/committee-master-file-description/
+
+- name: pac_summaries
+  filename: webk
+  header: nil
+  description: https://www.fec.gov/campaign-finance-data/pac-and-party-summary-file-description/
+
+- name: individual_contributions
+  filename: indiv
+  header: https://www.fec.gov/files/bulk-downloads/data_dictionaries/indiv_header_file.csv
+  description:  https://www.fec.gov/campaign-finance-data/contributions-individuals-file-description/
+
+- name: committee_contributions
+  filename: pas2
+  header: https://www.fec.gov/files/bulk-downloads/data_dictionaries/pas2_header_file.csv
+  description: https://www.fec.gov/campaign-finance-data/contributions-committees-candidates-file-description/
+
+- name: transactions
+  filename: oth
+  header: https://www.fec.gov/files/bulk-downloads/data_dictionaries/oth_header_file.csv
+  description: https://www.fec.gov/campaign-finance-data/any-transaction-one-committee-another-file-description/
+
+- name: operating_expenditures
+  filename: oppexp
+  header: https://www.fec.gov/files/bulk-downloads/data_dictionaries/oppexp_header_file.csv
+  description: https://www.fec.gov/campaign-finance-data/candidate-master-file-description/

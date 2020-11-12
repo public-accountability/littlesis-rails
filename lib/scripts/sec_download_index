@@ -6,7 +6,11 @@ START_YEAR = 2014
 STR_HEADERS = 'CIK|Company Name|Form Type|Date Filed|Filename'
 HEADERS = %w[CIK company_name form_fype date_filed filename].freeze
 
-INDEX_FILE = File.expand_path("./sec_index_#{START_YEAR}-#{Time.current.to_date}.csv")
+INDEX_FILENAME = "sec_index_#{START_YEAR}-#{Time.current.to_date}.csv"
+
+INDEX_FILEPATH = Rails.root.join('data/sec', INDEX_FILENAME).to_s
+
+FileUtils.mkdir_p Rails.root.join('data/sec')
 
 def quarters_for(year)
   return %w[QTR1 QTR2 QTR3 QTR4] unless year == Time.current.year
@@ -40,10 +44,10 @@ end
 
 # String --> String
 def get_index(url)
-  response = HTTParty.get(url)
+  response = Net::HTTP.get(URI(url))
 
   Zlib::GzipReader
-    .new(StringIO.new(response.body))
+    .new(StringIO.new(response))
     .read
     .encode('UTF-8', :invalid => :replace)
 end
@@ -67,12 +71,12 @@ def parse_index(url)
     .map { |line| parse_line(line) }
 end
 
-File.open(INDEX_FILE, 'w') { |f| f.truncate(0) }
+File.open(INDEX_FILEPATH, 'w') { |f| f.truncate(0) }
 
 index_urls.each do |url|
   ColorPrinter.print_blue("Parsing #{url}")
 
-  File.open(INDEX_FILE, 'a') do |file|
+  File.open(INDEX_FILEPATH, 'a') do |file|
     parse_index(url).each do |row|
       file.write row.to_csv
     end

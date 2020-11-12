@@ -1,6 +1,6 @@
 require 'sec'
 
-describe Sec do
+describe SEC do
   # The test database was built from this sample csv:
   #
   # 886982,GOLDMAN SACHS GROUP INC,4,2014-02-03,edgar/data/886982/0000769993-14-000084.txt
@@ -14,7 +14,7 @@ describe Sec do
   end
 
   let(:test_db) do
-    Sec::Database.new(path: test_db_path, readonly: true)
+    SEC::Database.new(path: test_db_path, readonly: true)
   end
 
   let(:form4_xml) do
@@ -31,25 +31,25 @@ describe Sec do
 
   describe 'verify_cik!' do
     specify do
-      expect { Sec.verify_cik!('') }.to raise_error(Sec::InvalidCikNumber)
+      expect { SEC.verify_cik!('') }.to raise_error(SEC::InvalidCikNumber)
     end
 
     specify do
-      expect { Sec.verify_cik!('123') }.to raise_error(Sec::InvalidCikNumber)
+      expect { SEC.verify_cik!('123') }.to raise_error(SEC::InvalidCikNumber)
     end
 
     specify do
-      expect { Sec.verify_cik!('0000886982') }.not_to raise_error
+      expect { SEC.verify_cik!('0000886982') }.not_to raise_error
     end
   end
 
-  describe Sec::Database do
+  describe SEC::Database do
     it 'setups db' do
       expect(SQLite3::Database).to receive(:new)
                                      .with('/tmp/db',
                                            readonly: false,
                                            results_as_hash: true).once
-      Sec::Database.new(path: '/tmp/db')
+      SEC::Database.new(path: '/tmp/db')
     end
 
     describe '#forms' do
@@ -66,7 +66,7 @@ describe Sec do
       end
 
       it 'retrieves filings for Goldman Sachs' do
-        expect(test_db.forms(cik: Sec::CIKS.fetch('GS')).length).to eq(3)
+        expect(test_db.forms(cik: SEC::CIKS.fetch('GS')).length).to eq(3)
       end
 
       it 'retrieves filings for Netflix' do
@@ -76,7 +76,7 @@ describe Sec do
       it 'filters by form type' do
         expect(
           test_db.forms(
-            cik: Sec::CIKS.fetch('GS'),
+            cik: SEC::CIKS.fetch('GS'),
             form_types: ['3']
           ).length
         ).to eq 1
@@ -84,7 +84,7 @@ describe Sec do
     end
   end
 
-  describe Sec::Filing do
+  describe SEC::Filing do
     context 'with form 4' do
       let(:metadata) do
          { "cik" => "886982",
@@ -95,11 +95,11 @@ describe Sec do
       end
 
       let(:filing_with_data) do
-        Sec::Filing.new(metadata: metadata, data: form4_xml)
+        SEC::Filing.new(metadata: metadata, data: form4_xml)
       end
 
       let(:filing_without_data) do
-        Sec::Filing.new(metadata: metadata, data: nil)
+        SEC::Filing.new(metadata: metadata, data: nil)
       end
 
       specify do
@@ -108,19 +108,19 @@ describe Sec do
 
       it 'raises error if download fails' do
         filing_without_data.download = true
-        expect(Sec::Filing).to receive(:download)
+        expect(SEC::Filing).to receive(:download)
                                  .once
                                  .with("https://www.sec.gov/Archives/edgar/data/886982/0000769993-14-000090.txt")
                                  .and_return(nil)
 
-        expect { filing_without_data.to_h }.to raise_error(Sec::Filing::MissingDocumentError)
+        expect { filing_without_data.to_h }.to raise_error(SEC::Filing::MissingDocumentError)
       end
     end
   end
 
-  describe Sec::Document do
+  describe SEC::Document do
     context 'with form 4 document' do
-      let(:document) { Sec::Document.new(form4_xml) }
+      let(:document) { SEC::Document.new(form4_xml) }
 
       it 'set @data' do
         expect(document.data).to eq form4_xml
@@ -149,7 +149,7 @@ describe Sec do
     end
 
     context 'with form 8k' do
-      let(:document) { Sec::Document.new(form8k_xml) }
+      let(:document) { SEC::Document.new(form8k_xml) }
 
       it 'set @data' do
         expect(document.data).to eq form8k_xml
@@ -176,7 +176,7 @@ describe Sec do
       end
 
       let(:filing) do
-        Sec::Filing.new(metadata: metadata, data: avantor_xml)
+        SEC::Filing.new(metadata: metadata, data: avantor_xml)
       end
 
       specify do
@@ -208,14 +208,14 @@ describe Sec do
     end
   end
 
-  describe Sec::Company do
+  describe SEC::Company do
     it 'has 3 goldman filings' do
-      expect(test_db.company(Sec::CIKS.fetch('GS')).filings.length).to eq 3
+      expect(test_db.company(SEC::CIKS.fetch('GS')).filings.length).to eq 3
     end
   end
 
-  describe Sec::ReportingOwner do
-    subject(:reporting_owner) { Sec::ReportingOwner.new(reporting_owner_hash) }
+  describe SEC::ReportingOwner do
+    subject(:reporting_owner) { SEC::ReportingOwner.new(reporting_owner_hash) }
 
     let(:document_hash) do
       JSON.load(File.read(Rails.root.join('spec', 'testdata', 'sec', 'eep_document.json').to_s))
@@ -235,7 +235,7 @@ describe Sec do
     specify { expect(reporting_owner.officer_title).to eq "Vice President" }
   end
 
-  describe Sec::Roster do
+  describe SEC::Roster do
     let(:netflix_cik) { '0001065280' }
 
     let(:roster_hash) do

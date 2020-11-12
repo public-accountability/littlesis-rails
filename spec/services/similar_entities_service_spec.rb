@@ -5,7 +5,7 @@ describe SimilarEntitiesService do
     end
   end
 
-  let(:search_terms) { "(Human Being) | (\"Human * Being\")" }
+  let(:search_terms) { "(*Human Being*) | (Human Being) | (Human * Being)" }
   let(:search_query) { "@!summary #{search_terms}" }
 
   it 'sets per_page by default' do

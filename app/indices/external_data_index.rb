@@ -36,3 +36,21 @@ ThinkingSphinx::Index.define(
     )
   SQL
 end
+
+ThinkingSphinx::Index.define(
+  :external_data, :name => 'external_data_fec_donor', :with => :active_record
+) do
+
+  where 'external_data.dataset = 9'
+
+  join external_entity
+
+  # Is the external entity matched?
+  has 'IF(external_entities.entity_id is NULL, FALSE, TRUE)', as: :matched, type: :boolean
+
+  has "JSON_VALUE(external_data.data, '$.city')", as: :city, type: :string
+  has "JSON_VALUE(external_data.data, '$.state')", as: :state, type: :string
+  has "JSON_VALUE(external_data.data, '$.zip_code')", as: :zip_code, type: :string
+
+  indexes "JSON_VALUE(external_data.data, '$.name')", as: :name, type: :string
+end

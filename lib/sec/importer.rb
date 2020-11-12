@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-module Sec
+module SEC
   class Importer
     attr_reader :entity, :company
 
     def initialize(entity, db: nil)
       @entity = entity
       @cik = cik_from_entity(@entity)
-      @company = Sec::Company.new(@cik, db: db)
+      @company = SEC::Company.new(@cik, db: db)
     end
 
     def relationships
       # Roster is a hash where the key = the owner CIK, and the values = [Hash]
-      # The Hash contains the data from Sec::ReportingOwner, which are selected
+      # The Hash contains the data from SEC::ReportingOwner, which are selected
       # fields from SEC form 3/4. See lib/sec/roaster.rb
       @company.roster.map do |(reporting_owner_cik, documents)|
         reporting_owner_entity = find_or_initialize_reporting_owner(reporting_owner_cik, documents)

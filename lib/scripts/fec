@@ -1,0 +1,4 @@
+#!/usr/bin/env -S rails runner
+
+require 'fec'
+FEC::Cli.start

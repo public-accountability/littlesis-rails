@@ -103,6 +103,13 @@ describe Person do
     end
   end
 
+  describe 'name_variations' do
+    specify do
+      p = Person.new(name_first: 'Foo', name_last: 'Bar', name_prefix: "Ms.")
+      expect(p.name_variations).to eq ["Foo Bar", "Ms. Foo Bar"]
+    end
+  end
+
   describe 'gender_to_id' do
     specify { expect(Person.gender_to_id('F')).to eql 1 }
     specify { expect(Person.gender_to_id(1)).to eql 1 }

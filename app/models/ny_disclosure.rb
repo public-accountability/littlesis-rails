@@ -64,25 +64,7 @@ class NyDisclosure < ApplicationRecord
   # <Entity> -> String
   # Creates variations on an entity's name and aliases for improved matching with sphinx
   def self.search_terms(entity)
-    search_terms = Set.new
-
-    entity.aliases.each do |a|
-      search_terms << a.name
-
-      if entity.person?
-        name_h = NameParser.parse_to_hash(a.name)                         # get parsed name
-        search_terms << (name_h[:name_first] + ' ' + name_h[:name_last])  # Add only first + last
-        search_terms << (name_h[:name_nick] + ' ' + name_h[:name_last]) if name_h[:name_nick].present?
-      end
-
-      search_terms << Org.strip_name(a.name) if entity.org?
-    end
-
-    if search_terms.length > 1
-      search_terms.to_a.map { |t| "(#{t})" }.join(' | ')
-    else
-      search_terms.to_a[0]
-    end
+    LsSearch.generate_search_terms(entity)
   end
 
   def self.update_delta_flag(ids)

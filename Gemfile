@@ -8,6 +8,8 @@ gem 'redis'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.3', require: false
+gem 'nokogiri'
+gem 'zeitwerk'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
@@ -40,11 +42,21 @@ gem 'webpacker', '>= 4.0.2'
 gem 'thinking-sphinx', '~> 4.4'
 gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_delta'
 
-# Cron
-gem 'whenever', '~> 1.0.0', :require => false
-
 # handle currencies etc
 gem 'money'
+
+# used by Pages and Toolkit for Markdown->Html
+gem 'redcarpet', '>= 3.4.0'
+
+gem 'validate_url', '>= 1.0.13'
+
+# used for screenshot capture
+gem 'selenium-webdriver', '>= 3.11.0'
+
+# Used by StringSimilarity
+gem 'text', '>= 1.3.1'
+
+gem 'httparty', '>= 0.16.2'
 
 group :test do
   gem 'codecov', :require => false
@@ -80,22 +92,11 @@ group :test, :development do
   gem 'spring-commands-rspec'
 end
 
-gem 'validate_url', '>= 1.0.13'
+# Used by lib/
 
-# used for screenshot capture
-gem 'selenium-webdriver', '>= 3.11.0'
-
-# used by Pages and Toolkit for Markdown->Html
-gem 'redcarpet', '>= 3.4.0'
-
-# Used by `lib/cmp`
-gem "roo", "~> 2.8.1", :require => false
-
-# Used by StringSimilarity
-gem 'text', '>= 1.3.1'
-
-gem 'httparty', '>= 0.16.2'
-
-gem 'nokogiri'
-gem 'rubyzip', :require => false
-gem 'sqlite3', :require => false
+# Cron
+gem 'parallel', require: false
+gem 'roo', "~> 2.8.1", require: false
+gem 'rubyzip', require: false
+gem 'sqlite3', require: false
+gem 'whenever', '~> 1.0.0', require: false

@@ -85,6 +85,7 @@ Style/NumericLiterals:
 Style/StringLiterals:
   Exclude:
     - 'spec/**/*.rb'
+    - 'lib/**/*.rb'
 
 Style/SymbolArray:
   Enabled: false
@@ -112,6 +113,10 @@ Layout/EmptyLinesAroundBlockBody:
   Exclude:
     - 'spec/**/*.rb'
     - 'lib/scripts/*.rb'
+
+Layout/HashAlignment:
+  Exclude:
+    - 'lib/fec/**/*.rb'
 
 Rails/FilePath:
   Enabled: false

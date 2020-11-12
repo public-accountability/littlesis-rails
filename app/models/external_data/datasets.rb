@@ -20,7 +20,11 @@ class ExternalData
         iapd_schedule_a: 'Owners and board members of investor advisors',
         nycc: 'New York City Council Members',
         nys_disclosure: 'New Yorak State Campaign Contributions',
-        nys_filer: 'New York State Campaign Finance Committees'
+        nys_filer: 'New York State Campaign Finance Committees',
+        fec_candidate: 'Candidates for US Federal Office',
+        fec_committee: 'Federal Campaign Finance Committees',
+        fec_contribution: 'Federal Campaign Finance Individual Contributions',
+        fec_donor: 'Donors extracted from FEC Individual Contributions'
       }.with_indifferent_access.freeze
     end
   end

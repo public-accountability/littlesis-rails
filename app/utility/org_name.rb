@@ -95,6 +95,7 @@ module OrgName
   ALL_COMMON_WORDS = (GRAMMAR_WORDS + COMMON_SUFFIXES + COMMON_WORDS).map(&:downcase).to_set
 
   Name = Struct.new(:original, :clean, :root, :suffix, :essential_words)
+
   # String ---> String
   def self.format(name)
     name
@@ -103,6 +104,10 @@ module OrgName
       .join(' ')
       .gsub(/\w{3,}-\w{3,}/) { |x| x.split('-').map(&:capitalize).join('-') }
       .gsub(SUFFIX_ACRONYMS_REGEX) { |x| x.upcase }
+  end
+
+  def self.clean(str)
+    parse(str).clean
   end
 
   # String ---> OrgName::Name
@@ -148,6 +153,7 @@ module OrgName
       .keep_if { |word| word.size > 1 }
       .map(&:downcase)
       .to_set
+      .difference(Language.schools)
       .difference(ALL_COMMON_WORDS)
       .to_a
   end

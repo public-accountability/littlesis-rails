@@ -4,7 +4,7 @@
 
 require 'csv'
 
-module Sec
+module SEC
   module Relationship
     FIELDS = %i[owner owner_cik owner_url company company_cik company_url is_board is_executive start_date is_current].freeze
 
