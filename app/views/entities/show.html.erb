@@ -8,6 +8,7 @@
 <%= render partial: 'shared/notice_or_alert' %>
 <%= render partial: 'header', locals: { entity: @entity } %>
 <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
+<%= javascript_pack_tag 'components/entity_page' %>
 
 <div class="row top-1em" id="entity-page-container">
 

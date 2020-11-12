@@ -1,3 +1,6 @@
+const $ = window.$
+import utility from '../common/utility'
+
 var entity = {}
 
 // Toggles visibility of entity summary
@@ -8,10 +11,22 @@ entity.summaryToggle = function(){
   $('.summary-show-less').toggle()
 }
 
+$(document).ready(function() {
+  $('.summary-show-more, .summary-show-less').on('click', function(){
+    entity.summaryToggle()
+  })
+})
+
 // Toggles visibility of a related entity's additional relationships on a profile page
 entity.relationshipsToggle = function(e) {
   $(e.target).closest('.relationship-section').find('.collapse').collapse('toggle')
 }
+
+$(document).ready(function() {
+  $('.related_entity_relationship .toggle').on('click', function(event){
+    entity.relationshipsToggle(event)
+  })
+})
 
 /* Editable blurb */
 
@@ -35,9 +50,7 @@ entity._editableBlurbInput = function(text) {
   }
 
   return $('<input>', { "val": text, "keyup": handleKeyup })
-
 }
-
 
 entity.editableBlurb = function() {
   $("#editable-blurb").hover(
@@ -61,39 +74,11 @@ entity.editableBlurb = function() {
   })
 }
 
-// Validates an entity form via an AJAX call
-entity.validate = function(form, attributes){
-  entity.form = form
-  $.post("/entities/validate", entity.form.serialize(), function(errors) {
-    entity.errors = errors
-    entity.displayErrors(attributes)
-  })
-}
+$(document).ready(function() {
+  entity.editableBlurb()
+})
 
-// Display any validation errors in the entity form
-entity.displayErrors = function(attributes){
-  entity.form.find("#error_explanation").remove()
-  var template = $(document.importNode(document.getElementById("validation_errors").content, true))
-  var displayableErrors = false
-
-  for (var i in attributes) {
-    var attribute = attributes[i]
-
-    for (var value in entity.errors[attribute]){
-      if (entity.errors[attribute].hasOwnProperty(value)){
-        template.find("ul").append(
-          "<li>" + "<b>" + attribute + ":</b> " + entity.errors[attribute][value] + "</li>"
-        )
-        displayableErrors = true
-      }
-    }
-  }
-
-  if (displayableErrors) {
-    entity.form.prepend(template)
-  }
-}
-
+// Sets up searchable list of lists
 $(document).ready(function() {
   $('.lists-dropdown').select2({
     placeholder: 'Search for a list',
@@ -101,5 +86,5 @@ $(document).ready(function() {
       url: '/lists?editable=true',
       dataType: 'json'
     }
-  });
+  })
 })
