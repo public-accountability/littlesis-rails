@@ -598,13 +598,13 @@ export default function ListBulkEntityAdder() {
       '<td>',
       col.attr,
       errors,
-      inputWithErrorAlerts(
-        'cell-input',
-        col.label,
-        util.get(entity, col.attr),
-        errors,
-        handleCellEditOf(entity, col.attr)
-      )
+      inputWithErrorAlerts({
+        className: 'cell-input',
+        label: col.label,
+        value: util.get(entity, col.attr),
+        errors: errors,
+        handleChange: handleCellEditOf(entity, col.attr)
+      })
       .attr('disabled', idx > 0 && state.isChosenMatch(entity))
     )
       .append(maybeMatchResolver(entity, col, idx))
@@ -619,7 +619,7 @@ export default function ListBulkEntityAdder() {
   }
 
   // String, String, [String], Function -> JQueryNode
-  function inputWithErrorAlerts(className, label, value, errors, handleChange){
+  function inputWithErrorAlerts({className, label, value, errors, handleChange}={}){
     return errorAnchorOf(
       $('<input>', {
         class: className,
@@ -794,13 +794,13 @@ export default function ListBulkEntityAdder() {
       '<div>',
       attr,
       errors,
-      inputWithErrorAlerts(
-        'reference-input',
-        util.capitalize(attr),
-        state.getIn(['reference', attr]),
-        errors,
-        handleReferenceInputOf(attr)
-      )
+      inputWithErrorAlerts({
+        className: 'reference-input',
+        label: util.capitalize(attr),
+        value: state.getIn(['reference', attr]),
+        errors: errors,
+        handleChange: handleReferenceInputOf(attr)
+      })
     )
   }
 
