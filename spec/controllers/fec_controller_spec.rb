@@ -2,11 +2,19 @@ describe FECController, type: :controller do
   describe 'routes' do
 
     it do
-      is_expected.to route(:get, '/fec/entities/123/donations').to(action: :entity_donations)
+      is_expected.to route(:get, '/fec/entities/123/contributions').to(action: :contributions, id: 123)
     end
 
     it do
-      is_expected.to route(:get, '/fec/entities/123/potential_donations').to(action: :entity_potential_donations)
+      is_expected.to route(:get, '/fec/entities/123/match_contributions').to(action: :match_contributions, id: 123)
+    end
+
+    it do
+      is_expected.to route(:post, '/fec/donor_match').to(action: :donor_match)
+    end
+
+    it do
+      is_expected.to route(:delete, '/fec/contribution_unmatch').to(action: :contribution_unmatch)
     end
   end
 end
