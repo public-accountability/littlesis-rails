@@ -30,7 +30,9 @@ class FECController < ApplicationController
 
   # required params: donor_id, sub_ids
   def donor_match
-    FECDonorMatchService.run(donor_id: params[:donor_id], sub_ids: params[:sub_ids])
+    ExternalEntity.find(params[:external_entity_id]).match_with @entity
+
+    # FECDonorMatchService.run(entity: @entity, external_entity: ExternalEntity.find(params[:external_entity_id]))
   end
 
   def contribution_unmatch

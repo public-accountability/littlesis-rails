@@ -414,7 +414,7 @@ Lilsis::Application.routes.draw do
   namespace :fec do
     get '/entities/:id/contributions', action: :contributions, as: :entity_contributions
     get '/entities/:id/match_contributions', action: :match_contributions, as: :entity_match_contributions
-    post '/donor_match', action: :donor_match
+    post '/entities/:id/donor_match', action: :donor_match, as: :entity_donor_match
     delete '/contribution_unmatch', action: :contribution_unmatch
   end
 

@@ -10,6 +10,10 @@ class ExternalData
                     'contributions' => contributions }
       end
 
+      def sub_ids
+        self['sub_ids']
+      end
+
       def location
         values_at('city', 'state', 'zip_code').join(', ')
       end
