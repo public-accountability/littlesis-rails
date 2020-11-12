@@ -14,4 +14,14 @@ module LsSearch
       .escape(query)
       .gsub('\\"', '"')
   end
+
+  def self.generate_search_terms(entity)
+    terms = entity.name_variations.map { |x| ThinkingSphinx::Query.escape(x) }
+
+    if entity.person?
+      terms << "#{ThinkingSphinx::Query.escape(entity.person.name_first)} * #{ThinkingSphinx::Query.escape(entity.person.name_last)}"
+    end
+
+    terms.map { |x| '(' + x + ')' }.join(' | ')
+  end
 end

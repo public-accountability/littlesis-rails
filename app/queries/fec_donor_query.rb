@@ -1,12 +1,18 @@
 # frozen_string_literal: true
 
 module FECDonorQuery
-  def self.run(search_term)
-    FEC::Donor.find_by_sql(<<~SQL)
-      SELECT donors.*
-      FROM donor_names
-      INNER JOIN donors ON donor_names.rowid = donors.id
-      WHERE donor_names MATCH '#{search_term}'
-    SQL
+  # str or entity --> [Donors]
+  def self.run(search_term, matched: false)
+    query = if search_term.is_a?(Entity)
+              LsSearch.generate_search_terms(search_term)
+            else
+              search_term
+            end
+
+    ExternalData.search(query, {
+                          indices: ['external_data_fec_donor_core'],
+                          per_page: 1_000,
+                          with: { matched: matched }
+                        })
   end
 end
