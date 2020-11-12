@@ -223,6 +223,11 @@ h1#bulk-add-header {
             width: 20em;
         }
     }
+
+    #upload-button {
+      margin-left: 1rem;
+    }
+
     #bulk-submit-button{
         @extend .btn;
         @extend .btn-primary;
