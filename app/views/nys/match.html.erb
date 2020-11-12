@@ -3,13 +3,13 @@
 <table id="entity-match-table"></table>
 
 <script>
- var columns = [
-   { "data": 'name', "title": 'Name', "name": 'name'},
-   { "data": 'filer_id', "title": 'Filer ID', "name": 'filer_id' },
-   { "data": 'id', "visible": false, "name": 'id' }
- ];
+  var columns = [
+    { "data": 'name', "title": 'Name', "name": 'name'},
+    { "data": 'filer_id', "title": 'Filer ID', "name": 'filer_id' },
+    { "data": 'id', "visible": false, "name": 'id' }
+  ];
 
-  var dt = new EntityMatcher({
+  var dt = new LittleSis.EntityMatcher({
     "rootElement": '#entity-match-table',
     "columns": columns,
     "endpoint": '/nys/datatable',
