@@ -53,6 +53,14 @@
         <th>Amount</th>
         <th>Date</th>
       </tr>
+
+    <% elsif @dataset == 'fec_donor' %>
+      <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Employment</th>
+        <th>Contributions</h>
+      </tr>
     <% else %>
       <% raise NotImplementedError %>
     <%end %>

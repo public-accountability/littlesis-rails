@@ -3,6 +3,13 @@
 class ExternalData
   module Datasets
     class FECDonor < SimpleDelegator
+      def nice
+        @nice ||= { 'name' => name,
+                    'location' => location,
+                    'employment' => employment,
+                    'contributions' => contributions }
+      end
+
       def location
         values_at('city', 'state', 'zip_code').join(', ')
       end
@@ -20,7 +27,7 @@ class ExternalData
       end
 
       def employment
-        if employer == 'retired' || occupation.casecmp('retired').zero?
+        if employer == 'retired' || occupation&.casecmp('retired')&.zero?
           'Retired'
         elsif employer == 'none' || employer == 'not employed' || occupation == 'NOT EMPLOYED'
           'Not employed'

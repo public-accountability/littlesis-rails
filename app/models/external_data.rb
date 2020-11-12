@@ -106,7 +106,7 @@ class ExternalData < ApplicationRecord
   # Some datasets use Manticore (ExternalDataSphinxQuery), others use mysql (ExternalDataMysqlQuery)
   # Datatables::Params --> Datatables::Response
   def self.datatables_query(params)
-    if params.dataset == 'nys_disclosure'
+    if params.dataset == 'nys_disclosure' || (params.dataset == 'fec_donor' && params.search_requested?)
       ExternalDataSphinxQuery.run(params)
     else
       ExternalDataMysqlQuery.run(params)

@@ -1,0 +1,24 @@
+[
+  {
+    "data": "id",
+    "orderable": false,
+    "render": function(data, type, row) {
+      return row.nice.name;
+    }
+  },
+  {
+    "data": "nice.location",
+  },
+  {
+    "data": "nice.employment",
+    "orderable": false,
+    "render": function(data, type, row) {
+      return row.nice.employment;
+    }
+
+  },
+  {
+    "data": "nice.contributions",
+    "orderable": false,
+  }
+]
