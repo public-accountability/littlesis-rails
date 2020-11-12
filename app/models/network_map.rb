@@ -55,8 +55,8 @@ class NetworkMap < ApplicationRecord
   end
 
   def set_defaults
-    self.width = APP_CONFIG['netmap_default_width'] if width.blank?
-    self.height = APP_CONFIG['netmap_default_height'] if height.blank?
+    self.width = 960 if width.blank?
+    self.height = 550 if height.blank?
     self.zoom = '1' if zoom.blank?
   end
 
