@@ -142,9 +142,9 @@ describe User do
                username: random_username)
     end
 
-    it 'sets default network id to be the app config default' do
+    it 'sets default network id to be the magic number 79' do
       user.valid?
-      expect(user.default_network_id).to eql APP_CONFIG.fetch('default_network_id')
+      expect(user.default_network_id).to eq 79
     end
   end
 
