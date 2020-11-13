@@ -1,10 +1,17 @@
 # frozen_string_literal: true
 
+# Transfers FEC data from the sqlite3 fec database to mysql
+#   FEC::Candidate --> ExternalData.fec_candidate
+#   FEC::Committee --> ExternalData.fec_committee
+#   FEC::Donor --> ExternalData.fec_donor
+#   FEC::IndividualContribution --> ExternalData.fec_contribution
+#
+# Importing is done in parallel
 module FECImporter
   def self.run
     FEC::Database.establish_connection
 
-    tasks = [:import_candidates, :import_committees, :import_donors]
+    tasks = [:import_candidates, :import_committees, :import_donors, :import_contributions]
 
     Parallel.each(tasks, in_processes: tasks.length) do |task|
       FEC.logger.info "STARTING #{task}"
@@ -44,6 +51,12 @@ module FECImporter
       end
 
       ExternalEntity.fec_donor.find_or_create_by!(external_data: ed)
+    end
+  end
+
+  def self.import_contributions
+    FEC::IndividualContribution.importable_transactions.find_each do |ic|
+      ic.import_into_external_data
     end
   end
 

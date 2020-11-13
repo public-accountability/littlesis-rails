@@ -14,13 +14,13 @@ class ExternalData < ApplicationRecord
   DATASETS = {
     reserved: 0,
     iapd_advisors: 1,
-    iapd_schedule_a: 2,
+    iapd_schedule_a: 2, # relationship
     nycc: 3,
-    nys_disclosure: 4,
+    nys_disclosure: 4, # relationship
     nys_filer: 5,
     fec_candidate: 6,
     fec_committee: 7,
-    fec_contribution: 8,
+    fec_contribution: 8, # relationship
     fec_donor: 9
   }.freeze
 
