@@ -12,9 +12,6 @@ describe 'Matching Donors and Updating Relationships, Candidates, and Committees
   # 2 Donor --> bar committee
   # 3.Donor --> pac committee
   let!(:contributions) do
-
-
-
   end
 
   # ExternalRelationship.fec_contribution

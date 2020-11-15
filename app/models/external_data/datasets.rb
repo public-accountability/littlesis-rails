@@ -27,5 +27,16 @@ class ExternalData
         fec_donor: 'Donors extracted from FEC Individual Contributions'
       }.with_indifferent_access.freeze
     end
+
+    mattr_reader :column_names do
+      {
+        nycc: %w[Name District Party],
+        iapd_advisors: ['Name', 'Assets Under Management', 'CRD Number'],
+        iapd_schedule_a: %w[Title Executive/Owner Advisor Acquired],
+        nys_filer: %w[Name Type Office],
+        nys_disclosure: %w[Disclosure Recipient Amount Date],
+        fec_donor: %w[Name Location Employment Contributions]
+      }
+    end
   end
 end
