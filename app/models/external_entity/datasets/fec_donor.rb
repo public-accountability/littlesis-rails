@@ -13,7 +13,7 @@ class ExternalEntity
 
       # When user clicks the "match" button on the fec match contributions page, this method gets called
       # This matches the associated External Relationship for all Individual Contributions connected to this donor.
-            # external_entity-->external_data.fec_donor.data.sub_ids --> external_data.fec_contribution.dataset_id --> external_relationships
+      # external_entity-->external_data.fec_donor.data.sub_ids --> external_data.fec_contribution.dataset_id --> external_relationships
       def match_action
         ExternalData
           .includes(:external_relationships)

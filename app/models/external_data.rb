@@ -87,6 +87,27 @@ class ExternalData < ApplicationRecord
 
   alias wrapper data_wrapper
 
+  def update_fec_donor_data!
+    raise TypeError, 'called on invalid dataset type' unless dataset == 'fec_donor'
+
+    aggregator = proc do |cmte_id, arr|
+      { committee_name: arr.first.committee&.name,
+        committee_id: cmte_id,
+        amount: arr.map(&:amount).sum,
+        count: arr.length,
+        date_range: date_range(arr.map(&:TRANSACTION_DT)) }
+    end
+
+    merge_data('contributions' => ExternalData
+                                    .fec_contributions
+                                    .where(dataset_id: data['sub_ids'])
+                                    .pluck(&:data)
+                                    .group_by(&:CMTE_ID)
+                                    .map(&aggregator))
+  end
+
+  #------------- class methods --------------------------------------------------------------------------
+
   def self.dataset_count
     @enum_lookup ||= DATASETS.invert.freeze
 
@@ -127,6 +148,10 @@ class ExternalData < ApplicationRecord
     else
       joins(:external_entity).where('external_entities.entity_id IS NULL')
     end
+  end
+
+  def self.common_fec_contributions
+    fec_contribution.where(:TRANSACTION_TP => %i[committee earmarked pacs])
   end
 
   # Object to hold information about each dataset. Used on the overview page  (/datasets)

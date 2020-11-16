@@ -12,9 +12,9 @@ module FEC
       Importer.run
       DataCleaner.run
       # DataProcessor.run
-      CsvDataProcessor.run
+      # CsvDataProcessor.run
       Database.index!
-      Database.fulltext_index!
+      # Database.fulltext_index!
       Database.disable_dangerous_sqlite3_settings
     end
 

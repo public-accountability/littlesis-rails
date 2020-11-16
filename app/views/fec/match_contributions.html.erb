@@ -1,22 +1,6 @@
 <% content_for(:page_title, "Match FEC Contributions: #{@entity.name}") %>
 <%= render partial: 'entities/header', locals: { entity: @entity } %>
 
-<%
-
-mock_data = Struct.new(:name, :location, :employment, :contributions)
-mock_fec_donor = Struct.new(:wrapper)
-create_mock_donor = ->(*args) { mock_fec_donor.new(mock_data.new(*args)) }
-
-mock_donors = [create_mock_donor.call('foo', 'earth', 'retired', '$125'),
-               create_mock_donor.call('bar', 'mars', 'student at planetary U', '$8') ]
-
-
-
-
-fec_donors = @donors # mock_donors
-
-%>
-
 <div class="row mt-4 bg-light">
   <div class="col p-2">
     <p>Help expand the LittleSis database by finding matching donors in the FEC's bulk dataset.</p>
@@ -41,7 +25,7 @@ fec_donors = @donors # mock_donors
         </tr>
       </thead>
       <tbody>
-        <%= render partial: 'fec_donor', collection: fec_donors %>
+        <%= render partial: 'fec_donor', collection: @donors %>
       </tbody>
     </table>
   </div>
