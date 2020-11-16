@@ -9,10 +9,10 @@ module FECImporter
 
   def self.run
     FEC::Database.establish_connection
-    # log 'Importing Candidates'
-    # import_candidates
-    # log 'Importing Committees'
-    # import_committees
+    log 'Importing Candidates'
+    import_candidates
+    log 'Importing Committees'
+    import_committees
     log 'Importing Contributions'
     import_contributions
     log 'Creating FEC Donors'
@@ -59,7 +59,7 @@ module FECImporter
   end
 
   def self.create_fec_donors
-    ExternalData::CreateFECDonorsServivce.run
+    ExternalData::CreateFECDonorsService.run
   end
 
   private_class_method def self.should_update?(fec_model, external_data)

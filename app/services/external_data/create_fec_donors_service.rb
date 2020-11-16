@@ -1,12 +1,32 @@
 # frozen_string_literal: true
 
+# donor = unique combination of Name + City + State + Zip_code + Employer + Occupation
 class ExternalData
   module CreateFECDonorsService
+    THREAD_COUNT = 5
+
     def self.run
       Rails.logger.info 'Create FEC Donors'
 
-      # ExternalData.common_fec_contributionsfec_contribution.where(:TRANSACTION_TP => %i[committee earmarked pacs]).find_each do |ic|
-      next if ic.NAME.blank?
+      Parallel.each(ExternalData.fec_contribution.find_in_batches, in_threads: THREAD_COUNT) do |batch|
+        ExternalData.connection_pool.with_connection do
+          batch.each { |ic| convert_contribution_to_donor(ic) }
+        end
+      end
+
+      ExternalData.connection.reconnect!
+
+      Rails.logger.info 'Updating FEC Donor data'
+
+      Parallel.each(ExternalData.fec_donor.find_each, in_threads: THREAD_COUNT) do |fec_donor|
+        ExternalData.connection_pool.with_connection do
+          fec_donor.update_fec_donor_data!
+        end
+      end
+    end
+
+    def self.convert_contribution_to_donor(ic)
+      return if ic.NAME.blank?
 
       donor_name = NameParser.format(ic.NAME)
       employer = OrgName.parse(ic.EMPLOYER).clean if ic.EMPLOYER.present?
@@ -25,14 +45,10 @@ class ExternalData
       end
 
       fec_donor.save!
-      end
-
-      Rails.logger.info "Updating FEC Donor data"
-
-      ExternalData.fec_donor.find_each(&:update_fec_donor_data!)
     end
 
-      # A "Donor" is a unique combination of Name + City + State + Zip_code + Employer + Occupation
+
+    # {name, city, state, zip_code, employer, occupation} ==> ExternalData.fec_donor
     def self.find_or_build_donor(attributes)
       data = attributes.values_at(*%w[name, city, state, zip_code, employer, occupation])
       digest = Digest::MD5.digest(data.join(''))
