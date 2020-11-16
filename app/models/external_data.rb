@@ -87,24 +87,49 @@ class ExternalData < ApplicationRecord
 
   alias wrapper data_wrapper
 
+  # updates data['contributions'] by querying ExternalData.fec_contribution
   def update_fec_donor_data!
-    raise TypeError, 'called on invalid dataset type' unless dataset == 'fec_donor'
+    verify_dataset 'fec_donor'
 
     aggregator = proc do |cmte_id, arr|
-      { committee_name: arr.first.committee&.name,
+      {
+        committee_name: ExternalData.fec_committee.find_by(dataset_id: cmte_id)&.wrapper&.name,
         committee_id: cmte_id,
-        amount: arr.map(&:amount).sum,
+        amount: arr.lazy.map(&:wrapper).map(&:amount).sum,
         count: arr.length,
-        date_range: date_range(arr.map(&:TRANSACTION_DT)) }
+        date_range: arr.lazy.map(&:wrapper).map(&:date).sort.values_at(0, arr.length - 1)
+      }
     end
 
     merge_data('contributions' => ExternalData
-                                    .fec_contributions
-                                    .where(dataset_id: data['sub_ids'])
-                                    .pluck(&:data)
-                                    .group_by(&:CMTE_ID)
+                                    .fec_contribution
+                                    .where(dataset_id: wrapper.sub_ids)
+                                    .to_a
+                                    .group_by { |contribution| contribution.wrapper.committee_id }
                                     .map(&aggregator))
   end
+
+  def create_donor_from_self
+    verify_dataset 'fec_contribution'
+
+    return if wrapper.name.blank? || wrapper.sub_id.blank?
+
+    fec_donor = ExternalData.fec_donor.find_or_initialize_by(dataset_id: wrapper.digest)
+
+    if fec_donor.persisted? && !fec_donor.wrapper.sub_ids.include?(wrapper.sub_id)
+      fec_donor.data['sub_ids'] << wrapper.sub_id
+    else
+      fec_donor.data = wrapper.donor_attributes.merge({ 'sub_ids' => [], 'contributions' => nil, 'total_contributed' => nil })
+    end
+
+    fec_donor.save!
+  end
+
+  def verify_dataset(expected)
+    raise TypeError, 'called on invalid dataset type' unless dataset == expected
+  end
+
+  private :verify_dataset
 
   #------------- class methods --------------------------------------------------------------------------
 
@@ -154,17 +179,6 @@ class ExternalData < ApplicationRecord
     fec_contribution.where(:TRANSACTION_TP => %i[committee earmarked pacs])
   end
 
-  # Object to hold information about each dataset. Used on the overview page  (/datasets)
-  Stats = Struct.new(:name, :description, :total, :matched, :unmatched, keyword_init: true) do
-    def percent_matched
-      ((matched / total.to_f) * 100).round(1)
-    end
-
-    def url
-      Rails.application.routes.url_helpers.dataset_path(dataset: name, matched: 'unmatched')
-    end
-  end
-
   def self.stats(dataset)
     verify_dataset!(dataset)
 
@@ -180,4 +194,4 @@ class ExternalData < ApplicationRecord
       raise Exceptions::LittleSisError # , "Invalid Dataset: #{x}"
     end
   end
-end
+  end

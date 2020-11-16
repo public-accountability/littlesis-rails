@@ -3,6 +3,9 @@
 class ExternalData
   module Datasets
     class FECCommittee < SimpleDelegator
+      def name
+        self['CMTE_NM']
+      end
     end
   end
 end
