@@ -3,6 +3,12 @@ describe ExternalData, type: :model do
   it { is_expected.to have_db_column(:dataset_id).of_type(:string) }
   it { is_expected.to have_db_column(:data).of_type(:text) }
 
+  specify 'has constants' do
+    expect(ExternalData::Datasets.const_defined?('NYCC')).to be true
+    expect(ExternalData::Datasets.const_defined?('FECContribution')).to be true
+    expect(ExternalData::Datasets.const_defined?('FECDonor')).to be true
+  end
+
   specify 'dataset?' do
     expect(ExternalData.dataset?('nycc')).to be true
     expect(ExternalData.dataset?('NYCC')).to be true

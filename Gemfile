@@ -6,11 +6,12 @@ gem 'mysql2', '~> 0.5.2'
 gem 'puma', '>= 5'
 gem 'redis'
 
-# Reduces boot times through caching; required in config/boot.rb
+# Utilities
 gem 'bootsnap', '>= 1.4.3', require: false
-gem 'nokogiri'
-gem 'zeitwerk'
 gem 'concurrent-ruby', require: 'concurrent'
+gem 'nokogiri'
+gem 'parallel'
+gem 'zeitwerk'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
@@ -96,7 +97,6 @@ end
 # Used by lib/
 
 # Cron
-gem 'parallel', require: false
 gem 'roo', "~> 2.8.1", require: false
 gem 'rubyzip', require: false
 gem 'sqlite3', require: false

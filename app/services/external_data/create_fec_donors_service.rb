@@ -24,11 +24,10 @@ class ExternalData
       ApplicationRecord.connection.reconnect!
     end
 
-
     def self.parallel_in_groups(batch)
       Parallel.each(batch.in_groups(THREAD_COUNT), in_threads: THREAD_COUNT) do |batch_part|
         ApplicationRecord.connection_pool.with_connection do
-          yield batch_part
+          yield batch_part.compact
         end
       end
     end

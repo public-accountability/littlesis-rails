@@ -5,13 +5,13 @@ class ExternalData
     class FECContribution < SimpleDelegator
       def donor_attributes
         {
-          name: name,
-          city: self['CITY'],
-          state: self['STATE'],
-          zip_code: self['ZIP_CODE'],
-          employer: employer,
-          occupation: self['OCCUPATION'],
-          md5digest: md5digest
+          'name' => name,
+          'city' => self['CITY'],
+          'state' => self['STATE'],
+          'zip_code' => self['ZIP_CODE'],
+          'employer' => employer,
+          'occupation' => self['OCCUPATION'],
+          'md5digest' => md5digest
         }
       end
 

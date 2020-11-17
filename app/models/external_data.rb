@@ -79,7 +79,7 @@ class ExternalData < ApplicationRecord
     return @data_wrapper if defined?(@data_wrapper)
 
     begin
-      @data_wrapper = Datasets.const_get(dataset.classify).new(data)
+      @data_wrapper = ExternalData::Datasets.const_get(dataset.classify).new(data)
     rescue NameError
       @data_wrapper = data
     end
@@ -107,6 +107,8 @@ class ExternalData < ApplicationRecord
                                     .to_a
                                     .group_by { |contribution| contribution.wrapper.committee_id }
                                     .map(&aggregator))
+
+    merge_data('total_contributed' => data['contributions'].map { |x| x['amount'] }.sum)
   end
 
   def create_donor_from_self
@@ -119,7 +121,7 @@ class ExternalData < ApplicationRecord
     if fec_donor.persisted? && !fec_donor.wrapper.sub_ids.include?(wrapper.sub_id)
       fec_donor.data['sub_ids'] << wrapper.sub_id
     else
-      fec_donor.data = wrapper.donor_attributes.merge({ 'sub_ids' => [], 'contributions' => nil, 'total_contributed' => nil })
+      fec_donor.data = wrapper.donor_attributes.merge({ 'sub_ids' => [wrapper.sub_id], 'contributions' => nil, 'total_contributed' => nil })
     end
 
     fec_donor.save!
