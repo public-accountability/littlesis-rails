@@ -42,17 +42,12 @@ module FECImporter
   end
 
   def self.import_contributions
-    dataset_ids = Concurrent::Set.new ExternalData.fec_contribution.pluck(:dataset_id).map(&:to_i)
+    # dataset_ids = Concurrent::Set.new ExternalData.fec_contribution.pluck(:dataset_id).map(&:to_i)
 
     FEC::IndividualContribution.importable_transactions.find_in_batches(batch_size: 10_000) do |batch|
       Parallel.each(batch, in_threads: THREAD_COUNT) do |ic|
-        next if dataset_ids.include?(ic.SUB_ID)
-
         ExternalData.connection_pool.with_connection do
-          ExternalData
-            .fec_contribution
-            .create!(dataset_id: ic.SUB_ID, data: ic.attributes)
-            .create_external_relationship!(dataset: :fec_contribution, category_id: Relationship::DONATION_CATEGORY)
+          ExternalData::Datasets::FECContribution.import_or_update(ic)
         end
       end
     end

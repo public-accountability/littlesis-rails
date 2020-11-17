@@ -3,6 +3,17 @@
 class ExternalData
   module Datasets
     class FECContribution < SimpleDelegator
+      # This find and updates or creates a new record in ExternalData
+      # ic = FEC::IndividualContribution
+      # output = ExternalData.fec_contributions
+      def self.import_or_update(ic)
+        ed = ExternalData.fec_contribution.find_or_initialize_by(dataset_id: ic.SUB_ID)
+        ed.merge_data(ic.attributes)
+        ed.save!
+        ed.external_relationship || ed.create_external_relationship!(dataset: ed.dataset, category_id: Relationship::DONATION_CATEGORY)
+        ed
+      end
+
       def donor_attributes
         {
           'name' => name,

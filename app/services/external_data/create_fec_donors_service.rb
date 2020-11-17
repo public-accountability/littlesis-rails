@@ -17,9 +17,7 @@ class ExternalData
 
       ExternalData.fec_donor.find_in_batches(batch_size: BATCH_SIZE) do |batch|
         parallel_in_groups(batch) do |donors|
-          donors.each do |donor|
-            donor.update_fec_donor_data!
-          end
+          donors.each(&:update_fec_donor_data!)
         end
       end
 
