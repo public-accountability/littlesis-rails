@@ -74,7 +74,7 @@ class ExternalLink < ApplicationRecord
     },
     fec_candidate: {
       enum_val: 7,
-      title: 'FEC Candidate ID: {}',
+      title: 'FEC Candidate: {}',
       url: 'https://www.fec.gov/data/candidate/{}/',
       editable: false,
       internal: false,
@@ -82,7 +82,7 @@ class ExternalLink < ApplicationRecord
     },
     fec_committee: {
       enum_val: 8,
-      title: 'FEC Committee ID: {}',
+      title: 'FEC Committee: {}',
       url: 'https://www.fec.gov/data/committee/{}/',
       editable: false,
       internal: false,

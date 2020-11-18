@@ -23,6 +23,10 @@ class ExternalEntity
         self
       end
 
+      def automatch_or_create
+        raise NotImplementedError
+      end
+
       def add_reference; end
 
       def set_primary_ext; end

@@ -10,7 +10,9 @@ class ExternalRelationship
       end
 
       def automatch
-        raise NotImplementedError
+        cid = external_data.wrapper.committee_id
+        entity = ExternalLink.fec_committee.find_by(link_id: cid).try(:entity)
+        match_entity2_with(entity) if entity
       end
 
       def find_existing

@@ -32,12 +32,7 @@ module FECImporter
 
   def self.import_committees
     FEC::Committee.order(:FEC_YEAR).find_each do |committee|
-      ExternalData.fec_committee.find_or_initialize_by(dataset_id: committee.committee_id).tap do |ed|
-        if should_update?(committee, ed)
-          ed.merge_data(committee.attributes).save!
-          ExternalEntity.fec_committee.find_or_create_by!(external_data: ed)
-        end
-      end
+      ExternalData::Datasets::FECCommittee.import_or_update(committee)
     end
   end
 

@@ -29,9 +29,27 @@ class ExternalEntity
         end
       end
 
+      def automatch_or_create
+        automatch
+        return self if matched?
+
+        committee_id = external_data.wrapper.committee_id
+        committee_name = OrgName.format(external_data.wrapper.name)
+
+        Entity.transaction do
+          Entity.create!(name: committee_name, primary_ext: 'Org').tap do |entity|
+            entity.add_extension('PoliticalFundraising')
+            entity.aliases.create!(name: committee_id)
+            match_with(entity)
+          end
+        end
+      end
+
       def add_reference
-        entity.add_reference(url: "https://www.fec.gov/data/committee/#{external_data.dataset_id}/",
-                             name: "fec.gov - committee - #{external_data.dataset_id}/")
+        entity.add_reference(
+          url: "https://www.fec.gov/data/committee/#{external_data.dataset_id}/",
+          name: "fec.gov - committee - #{external_data.dataset_id}/"
+        )
       end
 
       def set_primary_ext
