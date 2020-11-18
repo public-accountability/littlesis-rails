@@ -176,9 +176,9 @@ describe 'Matching Donors and Updating Relationships, Candidates, and Committees
     create(:entity_person)
   end
 
-  let(:entity_foo_committee) do
-    create(:entity_org)
-  end
+  # let(:entity_foo_committee) do
+  #   create(:entity_org)
+  # end
 
   let(:entity_foo_candidate) do
     create(:entity_person)
@@ -188,6 +188,7 @@ describe 'Matching Donors and Updating Relationships, Candidates, and Committees
   # let(:entity_pac_committee)
 
   before do
+    entity_donor
     committees
     contributions
     ExternalData::CreateFECDonorsService.run
@@ -207,7 +208,6 @@ describe 'Matching Donors and Updating Relationships, Candidates, and Committees
   #   - Donations between the same donor and recipient are groupped together into a single relationship
   #   - When the recipient committee is connected to a candidate, a second relationship is maintained between the donor and the candidate directly
   specify 'Matching Donations and Modifying LittleSis Relationships ' do
-    expect(Relationship.exists?(entity: entity_donor, related: entity_foo_committee)).to be false
     expect(contributions[0].external_relationship.matched?).to be false
     expect(Relationship.exists?(entity: entity_donor, related: entity_foo_candidate)).to be false
 
@@ -216,11 +216,13 @@ describe 'Matching Donors and Updating Relationships, Candidates, and Committees
     expect { ExternalRelationship::FECContributionAutomatchService.run }
       .to change { contributions[0].external_relationship.reload.entity2_matched? }.from(false).to(true)
 
-    # expect(contributions[0].external_relationship.matched?).to be_false
+    expect(contributions[0].external_relationship.matched?).to be false
+    contributions[0].external_relationship.match_entity1_with(entity_donor)
+    expect(contributions[0].external_relationship.reload.matched?).to be true
+    expect(contributions[0].external_relationship.entity1).to eq entity_donor
+    expect(contributions[0].external_relationship.relationship.amount).to eq 1_000
+    expect(contributions[0].external_relationship.relationship.entity).to eq entity_donor
 
-    # contributions[0].external_relationship.match_entity1_with entity_donor
-
-    # expect(contributions[0].external_relationship.matched?).to be_true
     # expect(Relationship.exist?(entity: entity_donor, related: foo_fec_committee)).to be_true
     # expect(Relationship.find_by(entity: entity_donor, related: foo_fec_candidate).amount).to eq 100
 

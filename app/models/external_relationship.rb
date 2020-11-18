@@ -109,19 +109,15 @@ class ExternalRelationship < ApplicationRecord
   def match_action
     raise MissingMatchedEntityError unless entity1_id.present? || entity2_id.present?
 
+    if !matched? && (existing_relationship = find_existing)
+      update!(relationship: existing_relationship)
+    end
+
     if matched?
-      log "updating relationship #{relationship_id}"
       relationship.update!(relationship_attributes)
-    elsif (existing_relationship = find_existing)
-      log "updating relationship #{existing_relationship.id}"
-      ApplicationRecord.transaction do
-        update!(relationship: existing_relationship)
-        relationship.update!(relationship_attributes)
-      end
     else
-      log 'creating a new relationship'
-      create_relationship! relationship_attributes
-                               .merge!(attributes.slice('entity1_id', 'entity2_id', 'category_id'))
+      create_relationship!(attributes.slice('entity1_id', 'entity2_id', 'category_id'))
+      relationship.update!(relationship_attributes(is_new: true))
     end
   end
 
