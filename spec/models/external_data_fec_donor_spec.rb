@@ -213,8 +213,8 @@ describe 'Matching Donors and Updating Relationships, Candidates, and Committees
 
     expect { committees.first.external_entity.automatch_or_create }.to change(Entity, :count).by(1)
 
-    # entity_donor.id
-
+    expect { ExternalRelationship::FECContributionAutomatchService.run }
+      .to change { contributions[0].external_relationship.reload.entity2_matched? }.from(false).to(true)
 
     # expect(contributions[0].external_relationship.matched?).to be_false
 
