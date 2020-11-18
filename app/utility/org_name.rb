@@ -54,7 +54,10 @@ module OrgName
   ].freeze
 
   SUFFIX_ACRONYMS = %w[LLP LLC LP PLC PA SA].freeze
-  SUFFIX_ACRONYMS_REGEX = Regexp.new "(?<=[ ])(#{SUFFIX_ACRONYMS.join('|')})$", Regexp::IGNORECASE
+  CAPITALIZED_ACRONYMS = %w[PAC NYC].freeze
+  ALL_ACRONYMS = (SUFFIX_ACRONYMS + CAPITALIZED_ACRONYMS).freeze
+
+  ACRONYMS_REGEX = Regexp.new "(?<=[ ])(#{ALL_ACRONYMS.join('|')})$", Regexp::IGNORECASE
 
   SUFFIX_REGEX = Regexp.new "(?<=[ ])(#{COMMON_SUFFIXES.join('|')})(?:[,\.]*)$", Regexp::IGNORECASE
 
@@ -103,7 +106,7 @@ module OrgName
       .map(&:capitalize)
       .join(' ')
       .gsub(/\w{3,}-\w{3,}/) { |x| x.split('-').map(&:capitalize).join('-') }
-      .gsub(SUFFIX_ACRONYMS_REGEX) { |x| x.upcase }
+      .gsub(ACRONYMS_REGEX) { |x| x.upcase }
   end
 
   def self.clean(str)

@@ -16,6 +16,10 @@ describe OrgName do
     specify do
       expect(OrgName.format("no suffix, here")).to eql "No Suffix, Here"
     end
+
+    specify do
+      expect(OrgName.format("hallmark cards pac")).to eql "Hallmark Cards PAC"
+    end
   end
 
   describe 'parse' do
