@@ -392,22 +392,24 @@ export default function RelationshipBulkAdder() {
   // generates <td> for new row
   // [] -> Element
   function td(col) {
+    let td
     if (col[2] === 'boolean') {  // boolean column
-      return $('<td>').append('<input type="checkbox">')  // include checkbox
+      td = $('<td>').append('<input type="checkbox">')  // include checkbox
     } else if (col[2] === 'triboolean') { // tri-boolean column
-      return $('<td class="tri-boolean">').append(triBooleanButtonSet())
+      td = $('<td class="tri-boolean">').append(triBooleanButtonSet())
     } else if (col[1] === 'name') { // autocomplete for entity
-      return autocompleteTd()
-        //return $('<td>', autocomplete);
+      td = autocompleteTd()
+        //td = $('<td>', autocomplete);
     } else if (col[1] === 'primary_ext') {
-      return $('<td>').append(primaryExtRadioButtons())
+      td = $('<td>').append(primaryExtRadioButtons())
     } else if (col[1] === 'currency') {
-      return $('<td>').append(currencySelect())
+      td = $('<td>').append(currencySelect())
     } else if (col[1] === 'notes') {
-      return $('<td>', { css: cssForNotesColumn(col), contenteditable: 'true' })
+      td = $('<td>', { css: cssForNotesColumn(col), contenteditable: 'true' })
     } else {
-      return $('<td>', { contenteditable: 'true'}) // return editable column
+      td = $('<td>', { contenteditable: 'true'}) // editable column
     }
+    return td
   }
 
   // Adds a new blank row to the table
@@ -433,22 +435,26 @@ export default function RelationshipBulkAdder() {
   // Most types simply need to return the text inside the element.
   // Three exceptions: checkboxes, "tribooleans", and <select>'s
   function extractCellData(cell, rowInfo) {
+    let data
+
     if (rowInfo.type === 'boolean') {
       // Technically we should allow three values for this field: true, false, and null.
       // However, to keep things simple, right now the false/un-checked state defaults to null
       // So in this tool there is no way of saying that a person is NOT a board member.
-      return cell.find('input').is(':checked') ? true : null
+      data = cell.find('input').is(':checked') ? true : null
     } else if (rowInfo.type === 'triboolean' ) {
-      return triBooleanButton.value(cell)
+      data = triBooleanButton.value(cell)
     } else if (rowInfo.type === 'select') {
       var selectpickerArr = cell.find('.selectpicker').selectpicker('val')
-        return selectpickerArr ? selectpickerArr : null
+        data = selectpickerArr ? selectpickerArr : null
     } else if (rowInfo.key === 'name' && Boolean(cell.data('entityid'))) {
       // If the entity was selected using the search there will be an entityid field in the cell's dataset
-      return cell.data('entityid')
+      data = cell.data('entityid')
     } else {
-      return (cell.text() === '') ? null : cell.text()
+      data = (cell.text() === '') ? null : cell.text()
     }
+
+    return data
   }
 
   var YES_VALUES = [ 1, '1', 'yes', 'Yes', 'YES', 'y', 'Y', true, 'true', 't', 'T', 'True', 'TRUE']
