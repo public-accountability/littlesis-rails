@@ -329,9 +329,7 @@ class Entity < ApplicationRecord
     Link.where(entity1_id: entity2_id, entity2_id: related_ids).pluck(:entity2_id).uniq - [entity1_id, entity2_id].map(&:to_i)
   end
 
-  ##
-  # utilities
-  #
+  # Utilities - Class Methods #
 
   # A type checker for definition id and names
   # input: String or Integer
@@ -367,6 +365,8 @@ class Entity < ApplicationRecord
     return Entity.find(entity_or_id.to_i) if entity_or_id.is_a?(String) || entity_or_id.is_a?(Integer)
     raise ArgumentError, "Accepted types: Entity, Integer, or String"
   end
+
+  # Utilities - Instance Methods #
 
   def update_link_count
     update(link_count: links.count)

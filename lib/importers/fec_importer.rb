@@ -1,56 +1,47 @@
 # frozen_string_literal: true
 
+# Transfers FEC data from the sqlite3 fec database to mysql
+#   FEC::Candidate --> ExternalData.fec_candidate
+#   FEC::Committee --> ExternalData.fec_committee
+#   FEC::IndividualContribution --> ExternalData.fec_contribution
 module FECImporter
+  BATCH_SIZE = 10_000
+  THREAD_COUNT = 6
+
   def self.run
     FEC::Database.establish_connection
-
-    tasks = [:import_candidates, :import_committees, :import_donors]
-
-    Parallel.each(tasks, in_processes: tasks.length) do |task|
-      FEC.logger.info "STARTING #{task}"
-      public_send(task)
-      FEC.logger.info "FINISHED #{task}"
-    end
+    Parallel.each(%i[import_candidates import_committees], in_processes: 2) { |m| public_send(m) }
+    import_contributions
+    create_fec_donors
   end
 
   def self.import_candidates
+    Rails.logger.info 'Importing Candidates'
     FEC::Candidate.all_candidates.each do |candidate|
-      ExternalData.fec_candidate.find_or_initialize_by(dataset_id: candidate.CAND_ID).tap do |ed|
-        if should_update?(candidate, ed)
-          ed.merge_data(candidate.attributes).save!
-          ExternalEntity.fec_candidate.find_or_create_by!(external_data: ed)
-        end
-      end
+      ExternalData::Datasets::FECCandidate.import_or_update(candidate)
     end
   end
 
   def self.import_committees
+    Rails.logger.info 'Importing Committees'
     FEC::Committee.order(:FEC_YEAR).find_each do |committee|
-      ExternalData.fec_committee.find_or_initialize_by(dataset_id: committee.committee_id).tap do |ed|
-        if should_update?(committee, ed)
-          ed.merge_data(committee.attributes).save!
-          ExternalEntity.fec_committee.find_or_create_by!(external_data: ed)
+      ExternalData::Datasets::FECCommittee.import_or_update(committee)
+    end
+  end
+
+  def self.import_contributions
+    Rails.logger.info 'Importing Contributions'
+    FEC::IndividualContribution.importable_transactions.find_in_batches(batch_size: 10_000) do |batch|
+      Parallel.each(batch, in_threads: THREAD_COUNT) do |ic|
+        ExternalData.connection_pool.with_connection do
+          ExternalData::Datasets::FECContribution.import_or_update(ic)
         end
       end
     end
   end
 
-  def self.import_donors
-    FEC::Donor.find_each do |donor|
-      ed = ExternalData.fec_donor.find_or_initialize_by(dataset_id: donor.md5digest)
-
-      unless ed.persisted? # remove this to update
-        ed.merge_data(donor.nice).save!
-      end
-
-      ExternalEntity.fec_donor.find_or_create_by!(external_data: ed)
-    end
-  end
-
-  private_class_method def self.should_update?(fec_model, external_data)
-    return true unless external_data.persisted?
-    return true if external_data.data['FEC_YEAR'].blank?
-
-    fec_model.FEC_YEAR >= external_data['FEC_YEAR'].to_i
+  def self.create_fec_donors
+    Rails.logger.info 'Creating FEC Donors'
+    ExternalData::CreateFECDonorsService.run
   end
 end

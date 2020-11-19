@@ -16,6 +16,7 @@
 #  - handle relationship soft_delete
 #  - handle entity soft_delete
 class ExternalRelationship < ApplicationRecord
+  include Datasets::Interface
   enum dataset: ExternalData::DATASETS
 
   belongs_to :external_data
@@ -27,29 +28,6 @@ class ExternalRelationship < ApplicationRecord
 
   after_initialize do
     extend "ExternalRelationship::Datasets::#{dataset.classify}".constantize
-  end
-
-  ##
-  # Interface
-  #
-  def relationship_attributes
-    raise NotImplementedError
-  end
-
-  def automatch
-    raise NotImplementedError
-  end
-
-  def find_existing
-    raise NotImplementedError
-  end
-
-  def potential_matches_entity1
-    raise NotImplementedError
-  end
-
-  def potential_matches_entity2
-    raise NotImplementedError
   end
 
   def matched?
@@ -104,25 +82,26 @@ class ExternalRelationship < ApplicationRecord
   end
 
   # If the ExternalRelationship is already matched, it will update the existing relationship
-  # When a matching relationship can be found, it will use one that's already in our database,
-  # otherwise a new relationship is created
+  # When a matching relationship can be found, it will use one that's already in our database, otherwise a new relationship is created
   def match_action
     raise MissingMatchedEntityError unless entity1_id.present? || entity2_id.present?
 
+    if !matched? && (existing_relationship = find_existing)
+      update!(relationship: existing_relationship)
+    end
+
     if matched?
-      log "updating relationship #{relationship_id}"
       relationship.update!(relationship_attributes)
-    elsif (existing_relationship = find_existing)
-      log "updating relationship #{existing_relationship.id}"
-      ApplicationRecord.transaction do
-        update!(relationship: existing_relationship)
+    else
+      create_relationship!(attributes.slice('entity1_id', 'entity2_id', 'category_id'))
+      if dataset == 'fec_contribution'
+        relationship.update!(relationship_attributes(is_new: true))
+      else
         relationship.update!(relationship_attributes)
       end
-    else
-      log 'creating a new relationship'
-      create_relationship! relationship_attributes
-                               .merge!(attributes.slice('entity1_id', 'entity2_id', 'category_id'))
     end
+
+    after_match_action
   end
 
   def presenter

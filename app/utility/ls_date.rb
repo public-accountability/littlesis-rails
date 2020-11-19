@@ -196,6 +196,13 @@ class LsDate # rubocop:disable Metrics/ClassLength
     parse(date)
   end
 
+  # FEC dates are MMDDYYYY
+  def self.parse_fec_date(dstr)
+    Date.strptime(dstr, "%m%d%Y")
+  rescue Date::Error
+    nil
+  end
+
   def self.today
     new(Time.zone.today.iso8601)
   end

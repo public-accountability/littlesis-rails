@@ -10,7 +10,7 @@ module FEC
     attribute :TRANSACTION_TP, FEC::Types::Transaction.new
 
     def amount
-      self.TRANSACTION_AMT
+      self.TRANSACTION_AMT.round
     end
 
     def committee
@@ -18,18 +18,20 @@ module FEC
     end
 
     def import_into_external_data
-      unless ExternalData.fec_contribution.exists?(dataset_id: self.SUB_ID)
-        ExternalData
-          .fec_contribution
-          .create!(dataset_id: self.SUB_ID, data: attributes)
-          .external_relationship
-          .fec_contribution
-          .find_or_create_by!
-      end
+      return if ExternalData.fec_contribution.exists?(dataset_id: self.SUB_ID)
+
+      ExternalData
+        .fec_contribution
+        .create!(dataset_id: self.SUB_ID, data: attributes)
+        .create_external_relationship!(dataset: :fec_contribution, category_id: Relationship::DONATION_CATEGORY)
     end
 
     def self.large_transactions
       where arel_table[:TRANSACTION_AMT].gteq(1_000)
+    end
+
+    def self.importable_transactions
+      where(:TRANSACTION_TP => %i[pacs committee earmarked])
     end
   end
 end

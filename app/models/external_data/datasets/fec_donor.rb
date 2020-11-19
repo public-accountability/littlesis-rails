@@ -33,6 +33,8 @@ class ExternalData
       def employment
         if employer == 'retired' || occupation&.casecmp('retired')&.zero?
           'Retired'
+        elsif /self[- ]employed/.match?(employer)
+          occupation.presence || 'Self-employed'
         elsif employer == 'none' || employer == 'not employed' || occupation == 'NOT EMPLOYED'
           'Not employed'
         elsif employer.present? && occupation.blank?

@@ -1,120 +1,32 @@
 <% content_for :page_title, "#{@dataset.titleize} - Datasets" %>
-
-<table id="dataset-table" class="table">
-  <thead>
-    <% if @dataset == 'nycc' %>
-      <tr>
-        <th>
-          <span class="pr-1">Name</span>
-          <%= render partial: 'match_toggle' %>
-        </th>
-        <th>District</th>
-        <th>Party</th>
-      </tr>
-
-    <% elsif @dataset == 'iapd_advisors' %>
-      <tr>
-        <th>
-          <span class="pr-1">Name</span>
-          <%= render partial: 'match_toggle' %>
-        </th>
-        <th>Assets Under Management</th>
-        <th>CRD Number</th>
-      </tr>
-
-    <% elsif @dataset == 'iapd_schedule_a' %>
-      <tr>
-        <th>
-          <span class="pr-1">Title</span>
-          <%= render partial: 'match_toggle' %>
-        </th>
-        <th>Executive/Owner</th>
-        <th>Advisor</th>
-        <th>Acquired</th>
-      </tr>
-
-    <% elsif @dataset == 'nys_filer' %>
-      <tr>
-        <th>
-          <span class="pr-1">Name</span>
-          <%= render partial: 'match_toggle' %>
-        </th>
-        <th>Type</th> <%# committee_type %>
-        <th>Office</th>
-      </tr>
-
-    <% elsif @dataset == 'nys_disclosure' %>
-      <tr>
-        <th>
-          <span class="pr-1">Disclosure</span>
-          <%= render partial: 'nys_disclosure_header' %>
-        </th>
-        <th>Recipient</th>
-        <th>Amount</th>
-        <th>Date</th>
-      </tr>
-
-    <% elsif @dataset == 'fec_donor' %>
-      <tr>
-        <th>Name</th>
-        <th>Location</th>
-        <th>Employment</th>
-        <th>Contributions</h>
-      </tr>
-    <% else %>
-      <% raise NotImplementedError %>
-    <%end %>
-  </thead>
-</table>
+<% content_for :head, javascript_pack_tag('external_data') %>
 
 <script>
- $(function(){
-
-   $('#dataset-table').DataTable({
-     "processing": true,
-     "serverSide": true,
-     "dom": 'frtip<"clearfix">l',
-     "pageLength": 10,
-
-     <% if @dataset == 'nys_disclosure' %>
-     "order": [ [ 2, "desc" ] ],
-     <% end %>
-
-     "ajax": {
-       "url":  "/external_data/<%= @dataset %>",
-       "dataSrc": "data",
-       "data": function(d) {
-
-         // adds field matched to the request (from the button group toggle)
-         if ($('#external-entities-match-toggle').length) {
-           var toggleStatus = $('#external-entities-match-toggle input:checked').val()
-           d.matched = toggleStatus
-         } else  {
-           console.error('#external-entities-match-toggle not found')
-         }
-
-         <% if @dataset == 'nys_disclosure' %>
-         if ($('#nys-disclosure-schedule-transaction-code').length) {
-           d.transaction_codes = $('#nys-disclosure-schedule-transaction-code').select2('data').map(x => x.id)
-         }
-         <% end %>
-
-       }
-     },
-     "columns": <%= render_columns_js(@dataset) %>
-   });
-
-   if ($('#external-entities-match-toggle').length) {
-     $("#external-entities-match-toggle input").change(function() {
-       $('#dataset-table').DataTable().draw()
-     });
-   }
-
-   if ($('#nys-disclosure-schedule-transaction-code').length) {
-     $('#nys-disclosure-schedule-transaction-code').change(function() {
-       $('#dataset-table').DataTable().draw()
-     })
-   }
-
+ $(function() {
+   LittleSis.start_dataset_table("<%= @dataset %>")
  })
 </script>
+
+<div class="row">
+  <% if %w[nycc iapd_advisors iapd_schedule_a nys_filer].include?(@dataset) %>
+    <%= render partial: 'match_toggle' %>
+  <% end %>
+
+  <% if @dataset == 'nys_disclosure' %>
+    <%= render partial: 'nys_disclosure_header' %>
+  <% end %>
+</div>
+
+<% raise NotImplementedError unless ExternalData::Datasets.column_names.key?(@dataset.to_sym) %>
+
+<div class="row">
+  <table id="dataset-table" class="table">
+    <thead>
+      <tr>
+        <% ExternalData::Datasets.column_names.fetch(@dataset.to_sym).each do |column_name| %>
+          <th><%= column_name %></th>
+        <% end %>
+      </tr>
+    </thead>
+  </table>
+</div>

@@ -14,13 +14,13 @@ class ExternalData < ApplicationRecord
   DATASETS = {
     reserved: 0,
     iapd_advisors: 1,
-    iapd_schedule_a: 2,
+    iapd_schedule_a: 2, # relationship
     nycc: 3,
-    nys_disclosure: 4,
+    nys_disclosure: 4, # relationship
     nys_filer: 5,
     fec_candidate: 6,
     fec_committee: 7,
-    fec_contribution: 8,
+    fec_contribution: 8, # relationship
     fec_donor: 9
   }.freeze
 
@@ -79,13 +79,80 @@ class ExternalData < ApplicationRecord
     return @data_wrapper if defined?(@data_wrapper)
 
     begin
-      @data_wrapper = Datasets.const_get(dataset.classify).new(data)
+      @data_wrapper = ExternalData::Datasets.const_get(dataset.classify).new(data)
     rescue NameError
       @data_wrapper = data
     end
   end
 
   alias wrapper data_wrapper
+
+
+  # Dataset Methods
+  # TODO: organize these into modules or refactor into modules in Datasets
+
+  # updates data['contributions'] by querying ExternalData.fec_contribution
+  def update_fec_donor_data!
+    verify_dataset 'fec_donor'
+
+    aggregator = proc do |cmte_id, arr|
+      {
+        committee_name: ExternalData.fec_committee.find_by(dataset_id: cmte_id)&.wrapper&.name,
+        committee_id: cmte_id,
+        amount: arr.lazy.map(&:wrapper).map(&:amount).sum,
+        count: arr.length,
+        date_range: arr.lazy.map(&:wrapper).map(&:date).sort.values_at(0, arr.length - 1)
+      }
+    end
+
+    merge_data('contributions' => ExternalData
+                                    .fec_contribution
+                                    .where(dataset_id: wrapper.sub_ids)
+                                    .to_a
+                                    .group_by { |contribution| contribution.wrapper.committee_id }
+                                    .map(&aggregator))
+
+    merge_data('total_contributed' => data['contributions'].map { |x| x['amount'] }.sum)
+  end
+
+  def create_donor_from_self
+    verify_dataset 'fec_contribution'
+
+    return if wrapper.name.blank? || wrapper.sub_id.blank?
+
+    fec_donor = ExternalData.fec_donor.find_or_initialize_by(dataset_id: wrapper.digest)
+
+    if fec_donor.persisted? && !fec_donor.wrapper.sub_ids.include?(wrapper.sub_id)
+      fec_donor.data['sub_ids'] << wrapper.sub_id
+    else
+      fec_donor.data = wrapper.donor_attributes.merge({ 'sub_ids' => [wrapper.sub_id], 'contributions' => nil, 'total_contributed' => nil })
+    end
+
+    fec_donor.save!
+  end
+
+  # --> ExternalData.fec_committee
+  def associated_committees
+    verify_dataset 'fec_candidate'
+    ExternalData.fec_committee.where("JSON_VALUE(data, '$.CAND_ID') = ?", dataset_id)
+  end
+
+  # --> ExternalData.fec_contribution
+  def associated_contributions
+    verify_dataset 'fec_candidate'
+
+    ExternalData.fec_contribution.reduce do |relation|
+      associated_committees.each { |c| relation.where("JSON_VALUE(data, '$.CMTE_ID') = ?", c.dataset_id) }
+    end
+  end
+
+  def verify_dataset(expected)
+    raise TypeError, 'called on invalid dataset type' unless dataset == expected
+  end
+
+  private :verify_dataset
+
+  #------------- class methods --------------------------------------------------------------------------
 
   def self.dataset_count
     @enum_lookup ||= DATASETS.invert.freeze
@@ -99,6 +166,10 @@ class ExternalData < ApplicationRecord
 
   def self.dataset?(x)
     Datasets.names.include? x.to_s.downcase
+  end
+
+  def self.services
+    Services
   end
 
   # This is the backend for a datatables.js table.
@@ -129,15 +200,8 @@ class ExternalData < ApplicationRecord
     end
   end
 
-  # Object to hold information about each dataset. Used on the overview page  (/datasets)
-  Stats = Struct.new(:name, :description, :total, :matched, :unmatched, keyword_init: true) do
-    def percent_matched
-      ((matched / total.to_f) * 100).round(1)
-    end
-
-    def url
-      Rails.application.routes.url_helpers.dataset_path(dataset: name, matched: 'unmatched')
-    end
+  def self.common_fec_contributions
+    fec_contribution.where(:TRANSACTION_TP => %i[committee earmarked pacs])
   end
 
   def self.stats(dataset)
@@ -155,4 +219,4 @@ class ExternalData < ApplicationRecord
       raise Exceptions::LittleSisError # , "Invalid Dataset: #{x}"
     end
   end
-end
+  end

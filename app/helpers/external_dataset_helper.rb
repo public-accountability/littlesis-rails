@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 module ExternalDatasetHelper
-  def render_columns_js(dataset)
-    render partial: "datasets/dataset_columns/#{dataset}", formats: [:js]
-  end
-
   def nys_disclosure_transaction_code_options
     container = NYSCampaignFinance::TRANSACTION_CODE_OPTIONS.keys.map do |name|
       [name.to_s.tr('_', ' ').titleize, name]

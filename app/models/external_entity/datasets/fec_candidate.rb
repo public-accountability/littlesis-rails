@@ -29,6 +29,10 @@ class ExternalEntity
         end
       end
 
+      # MAYBE TODO: implement this w/ EntityMatcher and automatically match?
+      # def automatch_or_create
+      # end
+
       def add_reference
         entity.add_reference(url: "https://www.fec.gov/data/candidate/#{external_data.dataset_id}/",
                              name: "fec.gov - candidate - #{external_data.dataset_id}/")

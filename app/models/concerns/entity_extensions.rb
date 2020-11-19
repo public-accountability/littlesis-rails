@@ -3,6 +3,65 @@
 module EntityExtensions
   extend ActiveSupport::Concern
 
+  ALL_EXTENSION_NAMES = [
+    'None',
+    'Person',
+    'Org',
+    'PoliticalCandidate',
+    'ElectedRepresentative',
+    'Business',
+    'GovernmentBody',
+    'School',
+    'MembershipOrg',
+    'Philanthropy',
+    'NonProfit',
+    'PoliticalFundraising',
+    'PrivateCompany',
+    'PublicCompany',
+    'IndustryTrade',
+    'LawFirm',
+    'LobbyingFirm',
+    'PublicRelationsFirm',
+    'IndividualCampaignCommittee',
+    'Pac',
+    'OtherCampaignCommittee',
+    'MediaOrg',
+    'ThinkTank',
+    'Cultural',
+    'SocialClub',
+    'ProfessionalAssociation',
+    'PoliticalParty',
+    'LaborUnion',
+    'Gse',
+    'BusinessPerson',
+    'Lobbyist',
+    'Academic',
+    'MediaPersonality',
+    'ConsultingFirm',
+    'PublicIntellectual',
+    'PublicOfficial',
+    'Lawyer',
+    'Couple',
+    'ResearchInstitute',
+    'GovernmentAdvisoryBody',
+    'EliteConsensus'
+  ].freeze
+
+  ALL_EXTENSION_NAMES_WITH_FIELDS = [
+    'Person',
+    'Org',
+    'PoliticalCandidate',
+    'ElectedRepresentative',
+    'Business',
+    'School',
+    'PublicCompany',
+    'GovernmentBody',
+    'BusinessPerson',
+    'Lobbyist',
+    'PoliticalFundraising',
+    'Couple'
+  ].freeze
+
   included do
     # extensions
     has_one :person, inverse_of: :entity, dependent: :destroy
@@ -32,70 +91,15 @@ module EntityExtensions
     # Can be used as a look up table. For instance
     # Entity.all_extension_names[27] => LaborUnion
     def all_extension_names
-      [
-        'None',
-        'Person',
-        'Org',
-        'PoliticalCandidate',
-        'ElectedRepresentative',
-        'Business',
-        'GovernmentBody',
-        'School',
-        'MembershipOrg',
-        'Philanthropy',
-        'NonProfit',
-        'PoliticalFundraising',
-        'PrivateCompany',
-        'PublicCompany',
-        'IndustryTrade',
-        'LawFirm',
-        'LobbyingFirm',
-        'PublicRelationsFirm',
-        'IndividualCampaignCommittee',
-        'Pac',
-        'OtherCampaignCommittee',
-        'MediaOrg',
-        'ThinkTank',
-        'Cultural',
-        'SocialClub',
-        'ProfessionalAssociation',
-        'PoliticalParty',
-        'LaborUnion',
-        'Gse',
-        'BusinessPerson',
-        'Lobbyist',
-        'Academic',
-        'MediaPersonality',
-        'ConsultingFirm',
-        'PublicIntellectual',
-        'PublicOfficial',
-        'Lawyer',
-        'Couple',
-        'ResearchInstitute',
-        'GovernmentAdvisoryBody',
-        'EliteConsensus'
-      ]
+      ALL_EXTENSION_NAMES
     end
 
     def all_extension_names_with_fields
-      [
-        'Person',
-        'Org',
-        'PoliticalCandidate',
-        'ElectedRepresentative',
-        'Business',
-        'School',
-        'PublicCompany',
-        'GovernmentBody',
-        'BusinessPerson',
-        'Lobbyist',
-        'PoliticalFundraising',
-        'Couple'
-      ]
+      ALL_EXTENSION_NAMES_WITH_FIELDS
     end
 
     def extension_with_field?(name_or_id)
-      all_extension_names_with_fields.include? ext_name_or_id_to_name(name_or_id)
+      ALL_EXTENSION_NAMES_WITH_FIELDS.include? ext_name_or_id_to_name(name_or_id)
     end
   end
 
