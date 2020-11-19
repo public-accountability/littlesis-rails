@@ -94,7 +94,11 @@ class ExternalRelationship < ApplicationRecord
       relationship.update!(relationship_attributes)
     else
       create_relationship!(attributes.slice('entity1_id', 'entity2_id', 'category_id'))
-      relationship.update!(relationship_attributes(is_new: true))
+      if dataset == 'fec_contribution'
+        relationship.update!(relationship_attributes(is_new: true))
+      else
+        relationship.update!(relationship_attributes)
+      end
     end
 
     after_match_action

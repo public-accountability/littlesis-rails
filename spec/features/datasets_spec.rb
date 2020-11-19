@@ -18,7 +18,7 @@ describe 'Datasets' do
     it 'shows datatables' do
       expect(page.status_code).to eq 200
       page_has_selector 'table#dataset-table'
-      expect(page.html).to match /DataTable\({/
+      expect(page.html).to match /LittleSis\.start_dataset_table/
     end
   end
 end
