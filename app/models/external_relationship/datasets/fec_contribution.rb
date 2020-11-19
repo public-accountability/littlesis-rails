@@ -18,10 +18,13 @@ class ExternalRelationship
 
           ed_contributions = ExternalData
                                .fec_contribution
-                               .joins('external_relationships')
+                               .joins(:external_relationship)
                                .where('external_relationships.entity1_id' => entity1_id)
+                               .to_a
 
-          raise Exceptions::LittleSisError, "Could not find contributions" if ed_contributions.length.zero?
+          if ed_contributions.length.zero?
+            raise Exceptions::LittleSisError, 'Could not find contributions'
+          end
 
           {
             description1: 'Campaign Contribution',
@@ -34,6 +37,8 @@ class ExternalRelationship
       end
 
       def automatch
+        return if matched?
+
         cid = external_data.wrapper.committee_id
         entity = ExternalLink.fec_committee.find_by(link_id: cid).try(:entity)
         match_entity2_with(entity) if entity
@@ -46,12 +51,24 @@ class ExternalRelationship
           .find { |r| r.description1 == 'Campaign Contribution' }
       end
 
+      def after_match_action
+        ExternalData.services.synchronize_donor_candidate_relationship(self)
+      end
+
+      alias synchronize_donor_candidate_relationship after_match_action
+
       def potential_matches_entity1
         raise NotImplementedError
       end
 
       def potential_matches_entity2
         raise NotImplementedError
+      end
+
+      def associated_fec_committee
+        return @associated_fec_committee if defined?(@associated_fec_committee)
+
+        @associated_fec_committee = ExternalData.fec_committee.find_by(dataset_id: external_data.wrapper.committee_id)
       end
     end
   end

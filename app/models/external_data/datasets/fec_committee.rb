@@ -11,6 +11,7 @@ class ExternalData
 
           ed.save!
           ed.external_entity || ed.create_external_entity!(dataset: ed.dataset)
+          ed.external_entity.automatch_or_create
         end
       end
 

@@ -8,6 +8,7 @@ class ExternalData
           ed.merge_data(fec_candidate.attributes)
           ed.save!
           ed.external_entity || ed.create_external_entity!(dataset: ed.dataset)
+          ed.external_entity.automatch
         end
       end
     end

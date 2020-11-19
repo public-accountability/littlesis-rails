@@ -87,6 +87,10 @@ class ExternalData < ApplicationRecord
 
   alias wrapper data_wrapper
 
+
+  # Dataset Methods
+  # TODO: organize these into modules or refactor into modules in Datasets
+
   # updates data['contributions'] by querying ExternalData.fec_contribution
   def update_fec_donor_data!
     verify_dataset 'fec_donor'
@@ -127,6 +131,21 @@ class ExternalData < ApplicationRecord
     fec_donor.save!
   end
 
+  # --> ExternalData.fec_committee
+  def associated_committees
+    verify_dataset 'fec_candidate'
+    ExternalData.fec_committee.where("JSON_VALUE(data, '$.CAND_ID') = ?", dataset_id)
+  end
+
+  # --> ExternalData.fec_contribution
+  def associated_contributions
+    verify_dataset 'fec_candidate'
+
+    ExternalData.fec_contribution.reduce do |relation|
+      associated_committees.each { |c| relation.where("JSON_VALUE(data, '$.CMTE_ID') = ?", c.dataset_id) }
+    end
+  end
+
   def verify_dataset(expected)
     raise TypeError, 'called on invalid dataset type' unless dataset == expected
   end
@@ -147,6 +166,10 @@ class ExternalData < ApplicationRecord
 
   def self.dataset?(x)
     Datasets.names.include? x.to_s.downcase
+  end
+
+  def self.services
+    Services
   end
 
   # This is the backend for a datatables.js table.

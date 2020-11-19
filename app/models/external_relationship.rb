@@ -16,6 +16,7 @@
 #  - handle relationship soft_delete
 #  - handle entity soft_delete
 class ExternalRelationship < ApplicationRecord
+  include Datasets::Interface
   enum dataset: ExternalData::DATASETS
 
   belongs_to :external_data
@@ -27,29 +28,6 @@ class ExternalRelationship < ApplicationRecord
 
   after_initialize do
     extend "ExternalRelationship::Datasets::#{dataset.classify}".constantize
-  end
-
-  ##
-  # Interface
-  #
-  def relationship_attributes
-    raise NotImplementedError
-  end
-
-  def automatch
-    raise NotImplementedError
-  end
-
-  def find_existing
-    raise NotImplementedError
-  end
-
-  def potential_matches_entity1
-    raise NotImplementedError
-  end
-
-  def potential_matches_entity2
-    raise NotImplementedError
   end
 
   def matched?
@@ -104,8 +82,7 @@ class ExternalRelationship < ApplicationRecord
   end
 
   # If the ExternalRelationship is already matched, it will update the existing relationship
-  # When a matching relationship can be found, it will use one that's already in our database,
-  # otherwise a new relationship is created
+  # When a matching relationship can be found, it will use one that's already in our database, otherwise a new relationship is created
   def match_action
     raise MissingMatchedEntityError unless entity1_id.present? || entity2_id.present?
 
@@ -119,6 +96,8 @@ class ExternalRelationship < ApplicationRecord
       create_relationship!(attributes.slice('entity1_id', 'entity2_id', 'category_id'))
       relationship.update!(relationship_attributes(is_new: true))
     end
+
+    after_match_action
   end
 
   def presenter
