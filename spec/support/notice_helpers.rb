@@ -13,6 +13,12 @@ module Features
         expect(actual).to have_css(".alert.alert-warning", text: expected)
       end
     end
+
+    matcher :show_danger do |expected|
+      match do |actual|
+        expect(actual).to have_css(".alert.alert-danger", text: expected)
+      end
+    end
   end
 end
 

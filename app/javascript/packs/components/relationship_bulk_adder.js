@@ -667,9 +667,9 @@ export default function RelationshipBulkAdder() {
     $('.result-mode').hide()
     $('.create-mode').show()
     createTable()
-    // collect all the errors messages
-    // TODO: display these somewhere
-    var errorMessages = errors.map(function(err) { return err.errorMessage })
+
+    errors.map(function(err) { showAlert(err.errorMessage, 'alert-danger') })
+
     // remove the errors messages
     var relationships = errors.map(function(err) {
       delete err.errorMessage
@@ -733,16 +733,17 @@ export default function RelationshipBulkAdder() {
       if (data.errors.length === 0) {
         showAlert('The request was successful!', 'alert-success')
       } else if (data.relationships.length === 0) {
-        showAlert('something went wrong :(', 'alert-danger')
+        data.errors.map(function(err) { showAlert(err.errorMessage, 'alert-danger') })
       } else {
         showAlert('Some relationships could not be created', 'alert-warning')
+        data.errors.map(function(err) { showAlert(err.errorMessage, 'alert-danger') })
       }
-        afterRequest.display(data)
+      afterRequest.display(data)
     },
 
     error: function() {
       $('#spin-me-round-like-a-record').hide()
-        alert('something went wrong :(')
+      alert('something went wrong :(')
     }
   }
 

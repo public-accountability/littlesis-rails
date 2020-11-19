@@ -103,6 +103,7 @@ feature 'Bulk-adding relationships', type: :feature, js: true do
 
       click_button 'Upload Data'
 
+      expect(page).to show_danger('Failed to find or create entity')
       expect(page).to have_css('h4', text: '0 Relationships were created / 1 Errors occured')
       expect(page).to have_text 'click here to repopulate the table with the relationships that failed'
       find('#results .cursor-pointer').click
