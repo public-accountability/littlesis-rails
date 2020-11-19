@@ -7,14 +7,13 @@
  TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
  entity autocomplete has already been switched over
 */
+export default function RelationshipBulkAdder() {
 
-(function (root, factory) {
-  if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('jQuery'), require('../common/utility'));
-  } else {
-    root.bulkAdd = factory(root.jQuery, root.utility);
-  }
-}(this, function ($, utility) {
+  const $ = window.$
+  const utility = window.utility
+  const Papa = window.Papa
+  const saveAs = window.saveAs
+
   // Does the user have bulk permissions?
   // All users may submit up to 8
   var USER_HAS_BULK_PERMISSIONS = null;
@@ -1083,5 +1082,4 @@
     toggleNotes: toggleNotes,
     init: init
   };
-
-}));
+}
