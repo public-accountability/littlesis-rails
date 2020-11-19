@@ -48,7 +48,7 @@ jobs:
         mariadb: '10.5'
         chrome: stable
       before_script:
-        - curl -L "https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip" > chromedriver.zip
+        - curl -L "https://chromedriver.storage.googleapis.com/87.0.4280.20/chromedriver_linux64.zip" > chromedriver.zip
         - sudo unzip chromedriver.zip chromedriver -d /usr/bin
         - chromedriver --version
         - bin/travis-setup
