@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_05_184710) do
+ActiveRecord::Schema.define(version: 2020_11_20_010809) do
 
   create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
@@ -370,7 +370,7 @@ ActiveRecord::Schema.define(version: 2020_11_05_184710) do
     t.index ["last_user_id"], name: "last_user_id_idx"
   end
 
-  create_table "external_data", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "external_data", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "dataset", limit: 1, null: false
     t.string "dataset_id", null: false
     t.text "data", size: :long, null: false
@@ -628,34 +628,6 @@ ActiveRecord::Schema.define(version: 2020_11_05_184710) do
     t.bigint "relationship_id", null: false
     t.text "elected_term"
     t.index ["relationship_id"], name: "relationship_id_idx"
-  end
-
-  create_table "modification", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.string "object_name", limit: 100
-    t.integer "user_id", default: 1, null: false
-    t.boolean "is_create", default: false, null: false
-    t.boolean "is_delete", default: false, null: false
-    t.boolean "is_merge", default: false, null: false
-    t.bigint "merge_object_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "object_model", limit: 50, null: false
-    t.bigint "object_id", null: false
-    t.index ["is_create"], name: "is_create_idx"
-    t.index ["is_delete"], name: "is_delete_idx"
-    t.index ["object_id"], name: "object_id_idx"
-    t.index ["object_model", "object_id"], name: "object_idx"
-    t.index ["object_model"], name: "object_model_idx"
-    t.index ["user_id", "is_create", "object_model"], name: "points_summary_idx"
-    t.index ["user_id"], name: "user_id_idx"
-  end
-
-  create_table "modification_field", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.bigint "modification_id", null: false
-    t.string "field_name", limit: 50, null: false
-    t.text "old_value", size: :long
-    t.text "new_value", size: :long
-    t.index ["modification_id"], name: "modification_id_idx"
   end
 
   create_table "network_map", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
@@ -1336,19 +1308,21 @@ ActiveRecord::Schema.define(version: 2020_11_05_184710) do
     t.index ["whodunnit"], name: "index_versions_on_whodunnit"
   end
 
-  create_table "web_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "web_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "remote_address"
     t.datetime "time"
     t.string "host"
     t.string "http_method"
-    t.text "uri", size: :medium
+    t.text "uri"
     t.integer "status", limit: 2
     t.integer "body_bytes"
     t.float "request_time"
-    t.text "referer", size: :medium
-    t.text "user_agent", size: :medium
+    t.text "referer"
+    t.text "user_agent"
     t.string "request_id", null: false
     t.index ["request_id"], name: "index_web_requests_on_request_id", unique: true
+    t.index ["time"], name: "idx_web_requests_time"
+    t.index ["time"], name: "index_web_requests_on_time"
   end
 
   add_foreign_key "address", "address_category", column: "category_id", on_update: :cascade, on_delete: :nullify
@@ -1395,7 +1369,6 @@ ActiveRecord::Schema.define(version: 2020_11_05_184710) do
   add_foreign_key "ls_list_entity", "entity", name: "ls_list_entity_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "ls_list_entity", "ls_list", column: "list_id", name: "ls_list_entity_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "membership", "relationship", name: "membership_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "modification_field", "modification", name: "modification_field_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "object_tag", "tag", name: "object_tag_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "org", "entity", name: "org_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "os_entity_category", "entity", name: "os_entity_category_ibfk_1", on_update: :cascade, on_delete: :cascade
@@ -1412,7 +1385,6 @@ ActiveRecord::Schema.define(version: 2020_11_05_184710) do
   add_foreign_key "position", "relationship", name: "position_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "professional", "relationship", name: "professional_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "public_company", "entity", name: "public_company_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "reference_excerpt", "reference", name: "reference_excerpt_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "relationship", "entity", column: "entity1_id", name: "relationship_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "relationship", "entity", column: "entity2_id", name: "relationship_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "relationship", "relationship_category", column: "category_id", name: "relationship_ibfk_3", on_update: :cascade

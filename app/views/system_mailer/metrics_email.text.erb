@@ -1,0 +1,16 @@
+Littlesis Request Metrics
+<%= @metrics.then.to_s(:short) %> to <%= @metrics.now.to_s(:short) %>
+
+Total Requests: <%=  number_with_delimiter(@metrics.total_requests) %>
+Success rate: <%=  "#{ (@metrics.success_rate  * 100).round(1)}%" %>
+Unique IP Addresses:  <%= number_with_delimiter(@metrics.uniq_ips) %>
+
+Popular Pages:
+<% @metrics.popular_pages.each.with_index do |page, i| %>
+  <%= "#{i + 1}. #{page}" %>
+<% end %>
+
+Popular errors:
+<% @metrics.popular_errors.each.with_index do |page, i| %>
+  <%= "#{i + 1}. #{page}" %>
+<% end %>
