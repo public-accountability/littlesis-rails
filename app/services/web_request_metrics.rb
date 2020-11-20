@@ -13,7 +13,7 @@ class WebRequestMetrics
     # there can be a delay between requests being generated.
     # running logrotate -f /etc/logrotate.d/nginx before this
     # can help ensure the logs are up to date.
-    @now = WebRequest.last.time
+    @now = WebRequest.order(time: :desc).first.time
     @then = @now - time
     @limit = limit
   end
