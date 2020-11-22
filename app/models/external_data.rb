@@ -139,10 +139,15 @@ class ExternalData < ApplicationRecord
 
   # --> ExternalData.fec_contribution
   def associated_contributions
-    verify_dataset 'fec_candidate'
-
-    ExternalData.fec_contribution.reduce do |relation|
-      associated_committees.each { |c| relation.where("JSON_VALUE(data, '$.CMTE_ID') = ?", c.dataset_id) }
+    case dataset
+    when 'fec_candidate'
+      ExternalData.fec_contribution.reduce do |relation|
+        associated_committees.each { |c| relation.where("JSON_VALUE(data, '$.CMTE_ID') = ?", c.dataset_id) }
+      end
+    when 'fec_committee'
+      ExternalData.fec_contribution.where("JSON_VALUE(data, '$.CMTE_ID') = ?", c.dataset_id)
+    else
+      raise TypeError, 'invalid dataset type'
     end
   end
 
@@ -200,23 +205,26 @@ class ExternalData < ApplicationRecord
     end
   end
 
+  # FEC
+
   def self.common_fec_contributions
     fec_contribution.where(:TRANSACTION_TP => %i[committee earmarked pacs])
   end
+
 
   def self.stats(dataset)
     verify_dataset!(dataset)
 
     Stats.new(name: dataset,
               description: Datasets.descriptions.fetch(dataset),
-              total: public_send(dataset).count,
-              matched: public_send(dataset).matched(dataset).count,
-              unmatched: public_send(dataset).unmatched(dataset).count)
-  end
-
-  private_class_method def self.verify_dataset!(x)
-    unless dataset?(x)
-      raise Exceptions::LittleSisError # , "Invalid Dataset: #{x}"
+                total: public_send(dataset).count,
+                matched: public_send(dataset).matched(dataset).count,
+                unmatched: public_send(dataset).unmatched(dataset).count)
     end
-  end
-  end
+
+    private_class_method def self.verify_dataset!(x)
+      unless dataset?(x)
+        raise Exceptions::LittleSisError # , "Invalid Dataset: #{x}"
+      end
+    end
+end

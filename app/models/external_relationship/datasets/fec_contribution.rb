@@ -53,6 +53,9 @@ class ExternalRelationship
 
       def after_match_action
         ExternalData.services.synchronize_donor_candidate_relationship(self)
+        if external_data.wrapper.image_number.present?
+          relationship.add_reference(external_data.wrapper.document_attributes).save!
+        end
       end
 
       alias synchronize_donor_candidate_relationship after_match_action

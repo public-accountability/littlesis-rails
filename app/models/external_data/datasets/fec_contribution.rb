@@ -3,6 +3,7 @@
 class ExternalData
   module Datasets
     class FECContribution < SimpleDelegator
+
       # This find and updates or creates a new record in ExternalData
       # ic = FEC::IndividualContribution
       # output = ExternalData.fec_contributions
@@ -74,6 +75,17 @@ class ExternalData
 
       def committee_id
         self['CMTE_ID']
+      end
+
+      def image_number
+        self['IMAGE_NUM']
+      end
+
+      def document_attributes
+        {
+          name: "FEC Filing #{image_number}",
+          url: "https://docquery.fec.gov/cgi-bin/fecimg/?#{image_number}"
+        }
       end
     end
   end
