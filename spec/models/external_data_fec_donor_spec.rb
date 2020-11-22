@@ -213,7 +213,7 @@ describe 'Matching Donors and Updating Relationships, Candidates, and Committees
     committees
     candidates
     contributions
-    ExternalData::CreateFECDonorsService.run
+    ExternalData.services.create_fec_donors
   end
 
   specify 'FEC Donors, and External relationships are created after importing' do

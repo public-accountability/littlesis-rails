@@ -12,6 +12,11 @@ class ExternalData
       ExternalRelationship.fec_contribution.find_each(&:synchronize_donor_candidate_relationship)
     end
 
+    def self.create_fec_donors
+      ExternalData.fec_contribution.find_each(&:create_donor_from_self)
+      ExternalData.fec_donor.find_each(&:update_fec_donor_data!)
+    end
+
     # Acts on individual models
 
     # Creates or updates the relationship between the donor and the candidate.
