@@ -112,6 +112,7 @@ class ExternalData < ApplicationRecord
                                     .map(&aggregator))
 
     merge_data('total_contributed' => data['contributions'].map { |x| x['amount'] }.sum)
+    create_external_entity!(dataset: 'fec_donor') if external_entity.nil?
     save!
   end
 
