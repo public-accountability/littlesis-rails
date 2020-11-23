@@ -3,6 +3,18 @@
 class ExternalData
   module Datasets
     class FECContribution < SimpleDelegator
+      def self.calculate_date_range(contributions)
+        dates = contributions.lazy.map(&:wrapper).map(&:date).compact.sort
+
+        case dates.length
+        when 0
+          nil
+        when 1
+          [dates.first, dates.first]
+        else
+          dates.values_at(0, dates.length - 1)
+        end
+      end
 
       # This find and updates or creates a new record in ExternalData
       # ic = FEC::IndividualContribution

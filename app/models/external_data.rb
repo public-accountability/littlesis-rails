@@ -100,7 +100,7 @@ class ExternalData < ApplicationRecord
         committee_id: cmte_id,
         amount: arr.lazy.map(&:wrapper).map(&:amount).sum,
         count: arr.length,
-        date_range: arr.lazy.map(&:wrapper).map(&:date).sort.values_at(0, arr.length - 1)
+        date_range: calculate_date_range(arr)&.map(&:iso8601)
       }
     end
 
