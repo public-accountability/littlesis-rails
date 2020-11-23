@@ -88,29 +88,14 @@ class ExternalData < ApplicationRecord
   alias wrapper data_wrapper
 
   # Dataset Methods
-  # TODO: organize these into modules or refactor into modules in Datasets
+  # organize these into modules or refactor into modules in Datasets?
 
-  # updates data['contributions'] by querying ExternalData.fec_contribution
+  # Updates the contributions and total_contributed fields on the data attribute and
+  # creates the associated ExternalEntity if it does not exist.
   def update_fec_donor_data!
     verify_dataset 'fec_donor'
 
-    aggregator = proc do |cmte_id, arr|
-      {
-        committee_name: ExternalData.fec_committee.find_by(dataset_id: cmte_id)&.wrapper&.name,
-        committee_id: cmte_id,
-        amount: arr.lazy.map(&:wrapper).map(&:amount).sum,
-        count: arr.length,
-        date_range: calculate_date_range(arr)&.map(&:iso8601)
-      }
-    end
-
-    merge_data('contributions' => ExternalData
-                                    .fec_contribution
-                                    .where(dataset_id: wrapper.sub_ids)
-                                    .to_a
-                                    .group_by { |contribution| contribution.wrapper.committee_id }
-                                    .map(&aggregator))
-
+    merge_data('contributions' => ExternalData.queries.aggregate_fec_contributions(wrapper.sub_ids))
     merge_data('total_contributed' => data['contributions'].map { |x| x['amount'] }.sum)
     create_external_entity!(dataset: 'fec_donor') if external_entity.nil?
     save!
@@ -129,8 +114,9 @@ class ExternalData < ApplicationRecord
       fec_donor.data = wrapper.donor_attributes.merge({ 'sub_ids' => [wrapper.sub_id], 'contributions' => nil, 'total_contributed' => nil })
     end
 
-    fec_donor.create_external_entity!(dataset: 'fec_donor') unless fec_donor.external_entity
     fec_donor.save!
+    fec_donor.create_external_entity!(dataset: 'fec_donor') unless fec_donor.external_entity
+    fec_donor
   end
 
   # --> ExternalData.fec_committee
@@ -179,6 +165,14 @@ class ExternalData < ApplicationRecord
 
   def self.services
     Services
+  end
+
+  def self.queries
+    Queries
+  end
+
+  def self.datasets
+    Datasets
   end
 
   # This is the backend for a datatables.js table.

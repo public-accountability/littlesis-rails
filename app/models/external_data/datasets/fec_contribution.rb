@@ -4,7 +4,7 @@ class ExternalData
   module Datasets
     class FECContribution < SimpleDelegator
       def self.calculate_date_range(contributions)
-        dates = contributions.lazy.map(&:wrapper).map(&:date).compact.sort
+        dates = contributions.map { |c| c.wrapper.date }.compact.sort
 
         case dates.length
         when 0
