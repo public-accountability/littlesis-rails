@@ -12,7 +12,8 @@ class ExternalRelationship
             description2: 'Campaign Contribution',
             start_date: external_data.wrapper.date&.iso8601,
             end_date: external_data.wrapper.date&.iso8601,
-            amount: external_data.wrapper.amount
+            amount: external_data.wrapper.amount,
+            filings: 1
           }
         else
 
@@ -20,6 +21,7 @@ class ExternalRelationship
                                .fec_contribution
                                .joins(:external_relationship)
                                .where('external_relationships.entity1_id' => entity1_id)
+                               .where('external_relationships.entity2_id' => entity2_id)
                                .to_a
 
           if ed_contributions.length.zero?
@@ -33,7 +35,8 @@ class ExternalRelationship
             description2: 'Campaign Contribution',
             start_date: dates.min&.iso8601,
             end_date: dates.max&.iso8601,
-            amount: ed_contributions.map { |ed| ed.wrapper.amount }.sum
+            amount: ed_contributions.map { |ed| ed.wrapper.amount }.sum,
+            filings: ed_contributions.length
           }
         end
       end
