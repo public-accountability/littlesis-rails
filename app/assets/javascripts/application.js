@@ -34,7 +34,6 @@
 //= require FileSaver.min.js
 //= require select2.full.min.js
 //= require_tree ./common
-//= require_tree ./pages
 
 $(document).ready(function() {
   $('button[data-dismiss-id]').on("click", function() {
