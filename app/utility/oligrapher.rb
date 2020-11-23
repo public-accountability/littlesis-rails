@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
-  VERSION = '2338926eec4a78fbf503a5c101471745b98a3105'
+  VERSION = 'be9276994f1d31f71a98e0750f66ad8ec344da0c'
 
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
