@@ -21,6 +21,7 @@ import NyDonationsMatcher from './components/ny_donations_matcher';
 import EntityMatcher from './components/entity_matcher';
 import ListBulkEntityAdder from './components/list_bulk_entity_adder';
 import RelationshipBulkAdder from './components/relationship_bulk_adder';
+import DonationMatcher from './components/donation_matcher';
 
 window.utility = utility;
 window.utility.delete = utility.del;
@@ -42,3 +43,4 @@ window.LittleSis.NyDonationsMatcher = NyDonationsMatcher;
 window.LittleSis.EntityMatcher = EntityMatcher;
 window.LittleSis.ListBulkEntityAdder = ListBulkEntityAdder;
 window.LittleSis.RelationshipBulkAdder = RelationshipBulkAdder;
+window.LittleSis.DonationMatcher = DonationMatcher;
