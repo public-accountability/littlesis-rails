@@ -5,7 +5,7 @@
   <td><%= fec_donor.wrapper.contributions  %></td>
   <td>
     <% if fec_donor.external_entity.matched? %>
-      <button class="btn btn-outline-danger"></button>
+      <button class="btn btn-outline-danger">unmatch</button>
     <% else  %>
       <%= form_with url: fec_entity_donor_match_path(@entity), method: :post do |form| %>
         <%= form.hidden_field "external_entity_id", value: fec_donor.external_entity.id %>

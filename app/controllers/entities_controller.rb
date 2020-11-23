@@ -147,6 +147,7 @@ class EntitiesController < ApplicationController
   # ------------------------------ #
 
   def match_donations
+    redirect_to fec_entity_match_contributions_path(@entity)
   end
 
   def review_donations

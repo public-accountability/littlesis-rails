@@ -87,7 +87,6 @@ class ExternalData < ApplicationRecord
 
   alias wrapper data_wrapper
 
-
   # Dataset Methods
   # TODO: organize these into modules or refactor into modules in Datasets
 
@@ -113,6 +112,7 @@ class ExternalData < ApplicationRecord
                                     .map(&aggregator))
 
     merge_data('total_contributed' => data['contributions'].map { |x| x['amount'] }.sum)
+    save!
   end
 
   def create_donor_from_self
@@ -128,6 +128,7 @@ class ExternalData < ApplicationRecord
       fec_donor.data = wrapper.donor_attributes.merge({ 'sub_ids' => [wrapper.sub_id], 'contributions' => nil, 'total_contributed' => nil })
     end
 
+    fec_donor.create_external_entity!(dataset: 'fec_donor') unless fec_donor.external_entity
     fec_donor.save!
   end
 
@@ -145,9 +146,11 @@ class ExternalData < ApplicationRecord
         associated_committees.each { |c| relation.where("JSON_VALUE(data, '$.CMTE_ID') = ?", c.dataset_id) }
       end
     when 'fec_committee'
-      ExternalData.fec_contribution.where("JSON_VALUE(data, '$.CMTE_ID') = ?", c.dataset_id)
+      ExternalData.fec_contribution.where("JSON_VALUE(data, '$.CMTE_ID') = ?", dataset_id)
+    when 'fec_donor'
+      ExternalData.includes(:external_relationship).fec_contribution.where(dataset_id: wrapper.sub_ids)
     else
-      raise TypeError, 'invalid dataset type'
+      raise TypeError, "invalid dataset #{dataset}"
     end
   end
 
@@ -211,20 +214,19 @@ class ExternalData < ApplicationRecord
     fec_contribution.where(:TRANSACTION_TP => %i[committee earmarked pacs])
   end
 
-
   def self.stats(dataset)
     verify_dataset!(dataset)
 
     Stats.new(name: dataset,
               description: Datasets.descriptions.fetch(dataset),
-                total: public_send(dataset).count,
-                matched: public_send(dataset).matched(dataset).count,
-                unmatched: public_send(dataset).unmatched(dataset).count)
-    end
+              total: public_send(dataset).count,
+              matched: public_send(dataset).matched(dataset).count,
+              unmatched: public_send(dataset).unmatched(dataset).count)
+  end
 
-    private_class_method def self.verify_dataset!(x)
-      unless dataset?(x)
-        raise Exceptions::LittleSisError # , "Invalid Dataset: #{x}"
-      end
+  private_class_method def self.verify_dataset!(x)
+    unless dataset?(x)
+      raise Exceptions::LittleSisError # , "Invalid Dataset: #{x}"
     end
+  end
 end

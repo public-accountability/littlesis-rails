@@ -26,11 +26,13 @@ class ExternalRelationship
             raise Exceptions::LittleSisError, 'Could not find contributions'
           end
 
+          dates = ed_contributions.map { |ed| ed.wrapper.date }.delete_if(&:nil?)
+
           {
             description1: 'Campaign Contribution',
             description2: 'Campaign Contribution',
-            start_date: ed_contributions.map { |ed| ed.wrapper.date }.min&.iso8601,
-            end_date: ed_contributions.map { |ed| ed.wrapper.date }.min&.iso8601,
+            start_date: dates.min&.iso8601,
+            end_date: dates.max&.iso8601,
             amount: ed_contributions.map { |ed| ed.wrapper.amount }.sum
           }
         end

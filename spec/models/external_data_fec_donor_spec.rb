@@ -11,8 +11,7 @@
 # 1 ExternalData/ExternalEntity.fec_donor
 # 3 ExternalLinks (2 fec_comittee, 1 fec_candidate)
 # 4 Entities: 2 committees, 1 candidate, 1 donor
-# 5 Relationships: donor->committee, donor->committee, donor->candidate, committee->candidate, committee->candidate
-
+# 3 Relationships: donor->committee, donor->committee, donor->candidate
 describe 'Matching Donors and Updating Relationships, Candidates, and Committees From FEC Data' do
   MockFECIndividualContribution = Struct.new(:SUB_ID, :attributes)
   MockFECCommittee = Struct.new(:CMTE_ID, :FEC_YEAR, :attributes)
@@ -272,7 +271,7 @@ describe 'Matching Donors and Updating Relationships, Candidates, and Committees
     expect { contributions[3].external_relationship.match_entity1_with(entity_donor) }
       .to change { contributions[3].external_relationship.matched? }.from(false).to(true)
 
-    # Matching candidate[1]
+    # Matching candidate[1] Bar Candidate
     expect(candidates.second.external_entity.matched?).to be false
     expect(Relationship.exists?(entity: entity_donor, related: entity_bar_candidate)).to be false
     candidates.second.external_entity.match_with entity_bar_candidate
