@@ -27,9 +27,11 @@ feature 'Bulk-adding relationships', type: :feature, js: true do
 
     scenario 'I can upload a CSV' do
       expect(page).to have_css('h1', text: 'Bulk Add Relationships for Oedipa Maas')
-      expect(page).to have_css('#relationship-cat-select', visible: :visible)
+      expect(page).to have_css('#relationship-cat-select')
 
-      select 'Generic', from: 'relationship-cat-select'
+      find('button[data-id="relationship-cat-select"]').click
+      find('span', text: 'Generic').click
+
       fill_in 'reference-url', with: Faker::Internet.url
       fill_in 'reference-name', with: 'The Crying of Lot 49'
 
@@ -56,9 +58,10 @@ feature 'Bulk-adding relationships', type: :feature, js: true do
 
     scenario 'I can delete rows' do
       expect(page).to have_css('h1', text: 'Bulk Add Relationships for Oedipa Maas')
-      expect(page).to have_css('#relationship-cat-select', visible: :visible)
 
-      select 'Generic', from: 'relationship-cat-select'
+      find('button[data-id="relationship-cat-select"]').click
+      find('span', text: 'Generic').click
+
       fill_in 'reference-url', with: Faker::Internet.url
       fill_in 'reference-name', with: 'The Crying of Lot 49'
 
@@ -87,9 +90,11 @@ feature 'Bulk-adding relationships', type: :feature, js: true do
 
     scenario 'I can correct the data' do
       expect(page).to have_css('h1', text: 'Bulk Add Relationships for Oedipa Maas')
-      expect(page).to have_css('#relationship-cat-select', visible: :visible)
+      expect(page).to have_css('#relationship-cat-select')
 
-      select 'Generic', from: 'relationship-cat-select'
+      find('button[data-id="relationship-cat-select"]').click
+      find('span', text: 'Generic').click
+
       fill_in 'reference-url', with: Faker::Internet.url
       fill_in 'reference-name', with: 'The Crying of Lot 49'
 

@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :web_request do
-    remote_address { Faker::Internet.ip_v4_address }
+    remote_address { Faker::Internet.unique.ip_v4_address }
     time { Time.zone.now }
     host { 'littlesis.org' }
     http_method { 'GET' }

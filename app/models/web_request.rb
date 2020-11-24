@@ -14,12 +14,12 @@
 #  - http_user_agent
 #  - request_id
 class WebRequest < ApplicationRecord
-  # We only keep ip addresses and user agents in our database for 1 week
+  # We only keep ip addresses and user agents in our database for 8 days
   def self.nullify_identifying_data
     execute_sql <<~SQL
       UPDATE web_requests
       SET remote_address = NULL, user_agent = NULL
-      WHERE remote_address IS NOT NULL AND `time` <= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)
+      WHERE remote_address IS NOT NULL AND `time` <= DATE_SUB(CURRENT_DATE, INTERVAL 8 DAY)
     SQL
   end
 end
