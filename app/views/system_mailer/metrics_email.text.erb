@@ -1,16 +1,22 @@
 Littlesis Request Metrics
-<%= @metrics.then.to_s(:short) %> to <%= @metrics.now.to_s(:short) %>
+<%= @request_metrics.then.to_s(:short) %> to <%= @request_metrics.now.to_s(:short) %>
 
-Total Requests: <%=  number_with_delimiter(@metrics.total_requests) %>
-Success rate: <%=  "#{ (@metrics.success_rate  * 100).round(1)}%" %>
-Unique IP Addresses:  <%= number_with_delimiter(@metrics.uniq_ips) %>
+Total Requests: <%=  number_with_delimiter(@request_metrics.total_requests) %>
+Success rate: <%=  "#{ (@request_metrics.success_rate  * 100).round(1)}%" %>
+Unique IP Addresses:  <%= number_with_delimiter(@request_metrics.uniq_ips) %>
 
 Popular Pages:
-<% @metrics.popular_pages.each.with_index do |page, i| %>
+<% @request_metrics.popular_pages.each.with_index do |page, i| %>
   <%= "#{i + 1}. #{page}" %>
 <% end %>
 
 Popular errors:
-<% @metrics.popular_errors.each.with_index do |page, i| %>
+<% @request_metrics.popular_errors.each.with_index do |page, i| %>
   <%= "#{i + 1}. #{page}" %>
 <% end %>
+
+
+New Entities: <%= @record_metrics.entity  %>
+New Relationships: <%= @record_metrics.relationship  %>
+New Lists: <%= @record_metrics.list  %>
+New Maps: <%= @record_metrics.network_map  %>
