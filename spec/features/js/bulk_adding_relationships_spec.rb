@@ -27,7 +27,7 @@ feature 'Bulk-adding relationships', type: :feature, js: true do
 
     scenario 'I can upload a CSV' do
       expect(page).to have_css('h1', text: 'Bulk Add Relationships for Oedipa Maas')
-      expect(page).to have_css('#relationship-cat-select', visible: :visible)
+      expect(page).to have_css('#relationship-cat-select')
 
       select 'Generic', from: 'relationship-cat-select'
       fill_in 'reference-url', with: Faker::Internet.url
@@ -56,7 +56,7 @@ feature 'Bulk-adding relationships', type: :feature, js: true do
 
     scenario 'I can delete rows' do
       expect(page).to have_css('h1', text: 'Bulk Add Relationships for Oedipa Maas')
-      expect(page).to have_css('#relationship-cat-select', visible: :visible)
+      expect(page).to have_css('#relationship-cat-select')
 
       select 'Generic', from: 'relationship-cat-select'
       fill_in 'reference-url', with: Faker::Internet.url
@@ -87,7 +87,7 @@ feature 'Bulk-adding relationships', type: :feature, js: true do
 
     scenario 'I can correct the data' do
       expect(page).to have_css('h1', text: 'Bulk Add Relationships for Oedipa Maas')
-      expect(page).to have_css('#relationship-cat-select', visible: :visible)
+      expect(page).to have_css('#relationship-cat-select')
 
       select 'Generic', from: 'relationship-cat-select'
       fill_in 'reference-url', with: Faker::Internet.url
