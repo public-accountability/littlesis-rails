@@ -5,8 +5,8 @@ class WebRequestMetrics
 
   PAGE_FILTERS = [%r{/oligrapher/[[:digit:]]+/lock}i,
                   %r{/home/dashboard},
-                 %r{/login},
-                 %r{/entities/validate}].freeze
+                  %r{/login},
+                  %r{/entities/validate}].freeze
 
   def initialize(time: 1.day, limit: 20)
     # Because WebRequest is generated daily via logrotate

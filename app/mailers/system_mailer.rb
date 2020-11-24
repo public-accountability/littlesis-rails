@@ -5,6 +5,6 @@ class SystemMailer < ApplicationMailer
 
   def metrics_email(time = 1.day)
     @metrics = WebRequestMetrics.new(time: time)
-    mail(subject: "LittleSis Request Metrics")
+    mail(subject: 'LittleSis Request Metrics')
   end
 end
