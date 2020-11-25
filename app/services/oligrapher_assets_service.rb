@@ -46,16 +46,16 @@ class OligrapherAssetsService
 
       build_cmd = [
         'yarn run webpack',
-        "--env.output_path=#{ASSET_DIR}",
-        "--env.filename=#{oligrapher_filename}"
+        "--env output_path=#{ASSET_DIR}",
+        "--env filename=#{oligrapher_filename}"
       ]
 
       if @development
-        build_cmd << '--env.development'
-        build_cmd << '--env.api_url=http://127.0.0.1:8081'
+        build_cmd << '--env development'
+        build_cmd << '--env api_url=http://127.0.0.1:8081'
       else
-        build_cmd << '--env.production'
-        build_cmd << '--env.public_path=/oligrapher/'
+        build_cmd << '--env production'
+        build_cmd << '--env public_path=/oligrapher/'
       end
 
       system(build_cmd.join(' ')) || error("Failed to build for commit #{@commit}")
