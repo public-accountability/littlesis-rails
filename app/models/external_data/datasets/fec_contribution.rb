@@ -25,6 +25,8 @@ class ExternalData
           ed.save!
           ed.external_relationship || ed.create_external_relationship!(dataset: ed.dataset, category_id: Relationship::DONATION_CATEGORY)
         end
+      rescue ActiveRecord::ActiveRecordError => e
+        Rails.logger.warn "Failed to import #{ic.SUB_ID}. Error: #{e.message}"
       end
 
       def donor_attributes
