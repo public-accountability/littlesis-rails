@@ -24,7 +24,6 @@ describe EntityConnectionsQuery do
     expect(result.first.relationship_category_id).to eq 5
   end
 
-
   describe 'filtering by category' do
     specify do
       expect(
@@ -42,6 +41,28 @@ describe EntityConnectionsQuery do
       expect(
         query.category(Relationship::DONATION_CATEGORY).page(1).run.size
       ).to eq 1
+    end
+  end
+
+  describe 'excluding entities by id' do
+    specify do
+      expect(EntityConnectionsQuery.new(entity1).page(1).run.size).to eq 3
+      expect(EntityConnectionsQuery.new(entity1).exclude([1_000_000]).page(1).run.size).to eq 3
+      expect(EntityConnectionsQuery.new(entity1).exclude([entity2.id]).page(1).run.size).to eq 2
+      expect(EntityConnectionsQuery.new(entity1).exclude([entity2.id, entity3.id]).page(1).run.size).to eq 1
+    end
+
+    specify do
+      expect(
+        query.exclude(entity3.id).category(Relationship::SOCIAL_CATEGORY).page(1).run.size
+      ).to eq 1
+
+    end
+
+    specify do
+      expect(
+        query.category(Relationship::SOCIAL_CATEGORY).exclude([entity2.id, entity3.id]).page(1).run.size
+      ).to eq 0
     end
   end
 

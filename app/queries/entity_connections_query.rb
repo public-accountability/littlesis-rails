@@ -8,6 +8,7 @@ class EntityConnectionsQuery
     @category_id = nil
     @page = 1
     @per_page = PER_PAGE
+    @excluded_ids = nil
   end
 
   def category(category_id)
@@ -18,6 +19,11 @@ class EntityConnectionsQuery
       raise Exceptions::InvalidRelationshipCategoryError
     end
 
+    self
+  end
+
+  def exclude(entityIds)
+    @excluded_ids = Array.wrap(entityIds)
     self
   end
 
@@ -32,11 +38,17 @@ class EntityConnectionsQuery
   end
 
   def run
-    Entity
-      .joins(:links)
-      .select('entity.*, link.relationship_id, link.category_id as relationship_category_id')
-      .where('link.entity2_id = ?', @entity.id)
-      .where(@category_id ? "link.category_id = #{@category_id}" : nil)
+    query = Entity
+              .joins(:links)
+              .select('entity.*, link.relationship_id, link.category_id as relationship_category_id')
+              .where('link.entity2_id = ?', @entity.id)
+              .where(@category_id ? "link.category_id = #{@category_id}" : nil)
+
+    if @excluded_ids.present?
+      query = query.where('link.entity1_id NOT IN (?)', @excluded_ids)
+    end
+
+    query
       .order(link_count: :desc)
       .page(@page)
       .per(@per_page)
