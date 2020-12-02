@@ -35,6 +35,7 @@ class ExternalData
         iapd_schedule_a: %w[Title Executive/Owner Advisor Acquired],
         nys_filer: %w[Name Type Office],
         nys_disclosure: %w[Disclosure Recipient Amount Date],
+        fec_committee: ['Match', 'Name', 'Type', 'Address', 'Party', 'Connected Org'],
         fec_donor: %w[Name Location Employment Contributions]
       }
     end

@@ -9,10 +9,10 @@ export default function (dataset) {
   if ($('#external-entities-match-toggle').length) {
      $("#external-entities-match-toggle input").change(function() {
        $('#dataset-table').DataTable().draw()
-     });
+     })
   }
 
-  if ($('#nys-disclosure-schedule-transaction-code').length) {
+  if (dataset === 'nys_disclosure' && $('#nys-disclosure-schedule-transaction-code').length) {
     $('#nys-disclosure-schedule-transaction-code').change(function() {
       $('#dataset-table').DataTable().draw()
     })

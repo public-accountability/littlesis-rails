@@ -15,6 +15,15 @@ class ExternalData
         end
       end
 
+      def self.search(params)
+        ExternalData
+          .fec_committee
+          .where("JSON_VALUE(data, '$.CMTE_NM') like ?", params.query_string)
+          .or(ExternalData.fec_committee.where("JSON_VALUE(data, '$.CMTE_ST1') like ?", params.query_string))
+          .or(ExternalData.fec_committee.where("JSON_VALUE(data, '$.CONNECTED_ORG_NM') like ?", params.query_string))
+        # .order(params.order_hash)
+      end
+
       def name
         self['CMTE_NM']
       end

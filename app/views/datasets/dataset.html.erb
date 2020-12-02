@@ -17,7 +17,7 @@
   <% end %>
 </div>
 
-<% raise NotImplementedError unless ExternalData::Datasets.column_names.key?(@dataset.to_sym) %>
+<% raise NotImplementedError, "ExternalData::Datasets.column_names.#{@dataset} is missing" unless ExternalData::Datasets.column_names.key?(@dataset.to_sym) %>
 
 <div class="row">
   <table id="dataset-table" class="table">
