@@ -23,7 +23,7 @@ class EntityConnectionsQuery
   end
 
   def exclude(entityIds)
-    @excluded_ids = Array.wrap(entityIds)
+    @excluded_ids = Array.wrap(entityIds) if entityIds
     self
   end
 
@@ -52,5 +52,19 @@ class EntityConnectionsQuery
       .order(link_count: :desc)
       .page(@page)
       .per(@per_page)
+  end
+
+  def to_oligrapher_nodes
+    entities = run.to_a
+    relationships = Relationship.lookup_table_for(entities.map(&:relationship_id))
+
+    entities.each_with_object({}) do |e, obj|
+      unless obj[e.id]
+        obj[e.id] = Oligrapher::Node.from_entity(e)
+        obj[e.id][:edges] = []
+      end
+
+      obj[e.id][:edges].push(Oligrapher.rel_to_edge(relationships[e.relationship_id]))
+    end.values
   end
 end
