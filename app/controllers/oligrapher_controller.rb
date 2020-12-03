@@ -167,6 +167,9 @@ class OligrapherController < ApplicationController
     query.page = 1
     query.per_page = params.fetch(:num, 10)
     query.excluded_ids = params[:excluded_ids]
+    if %w[link_count current amount updated].include?(params[:order])
+      query.order = params[:order].to_sym
+    end
 
     render json: query.to_oligrapher_nodes
   end
