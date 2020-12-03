@@ -37,14 +37,12 @@ class Api::EntitiesController < Api::ApiController
   end
 
   def connections
-    entities = EntityConnectionsQuery
-                 .new(@entity)
-                 .category(params[:category_id])
-                 .page(page_requested)
-                 .per(params[:per_page] || 15)
-                 .run
-
-    render json: Api.as_api_json(entities)
+    query = EntityConnectionsQuery.new(@entity)
+    query.page = page_requested
+    query.category_id = params[:category_id]
+    query.per_page = params[:per_page] || 15
+    query.order = :link_count # expose this to the API?
+    render json: Api.as_api_json(query.run)
   end
 
   private
