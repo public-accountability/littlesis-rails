@@ -33,7 +33,7 @@
 	  <% if user_signed_in?  %>
 	    <script id="tags-init-js">
 	     $(function(){
-	       tags.init(
+	       LittleSis.tags().init(
 		 <%= raw(@relationship.tags_for(current_user).to_json) %>,
 		 "<%= raw(tags_relationship_path(@relationship)) %>",
 	       );

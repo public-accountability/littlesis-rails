@@ -71,6 +71,60 @@ feature 'Entity page', type: :feature, js: true do
       end
     end
 
+    context 'with some existing tags' do
+      before do
+        create(:finance_tag)
+        create(:real_estate_tag)
+      end
+
+      scenario 'user adds tags to an entity' do
+        visit person_path(person)
+
+        within '#profile-page-sidebar' do
+          find('#tags-edit-button').click
+
+          %w[finance real-estate].each do |tag|
+            click_on 'Pick a tag...'
+            find('.text', text: tag).click
+            expect(page).to have_css('#tags-edit-list li', text: tag)
+          end
+
+          expect(page).to have_css('#tags-edit-list li', count: 2)
+
+          first('#tags-edit-list .tag-remove-icon').click
+
+          expect(page).to have_css('#tags-edit-list li', count: 1)
+
+          find('#tags-save-button').click
+        end
+      end
+
+      context 'with a tagged entity' do
+        before do
+          person.add_tag('finance')
+          person.add_tag('real-estate')
+        end
+
+        scenario 'user removes a tag from the entity' do
+          visit person_path(person)
+
+          within '#profile-page-sidebar' do
+            expect(page).to have_css('#tags-list li', text: 'finance')
+            expect(page).to have_css('#tags-list li', text: 'real-estate')
+
+            find('#tags-edit-button').click
+
+            within('li', text: 'finance') { find('.tag-remove-icon').click }
+
+            expect(page).not_to have_css('#tags-edit-list li', text: 'finance')
+            expect(page).to have_css('#tags-edit-list li', text: 'real-estate')
+
+            find('#tags-save-button').click
+          end
+        end
+      end
+    end
+
     context 'with a list', :sphinx do
       let!(:list) { create(:list, name: 'Objectified people') }
 
