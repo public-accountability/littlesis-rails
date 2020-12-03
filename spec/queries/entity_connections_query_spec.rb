@@ -13,43 +13,67 @@ describe EntityConnectionsQuery do
 
   before { relationship1; relationship2; relationship3; }
 
-  it 'produces a paginatable result set' do
-    result = EntityConnectionsQuery.new(entity1).category(Relationship::SOCIAL_CATEGORY).page(1).run
-    expect(Api.send(:paginatable_collection?, result)).to be true
-  end
-
   it 'includes fields "relationship_id" and "relationship_category_id"' do
-    result = EntityConnectionsQuery.new(entity1).category(Relationship::DONATION_CATEGORY).page(1).run
-    expect(result.first.relationship_id).to eq relationship3.id
-    expect(result.first.relationship_category_id).to eq 5
-  end
+    query.category_id = Relationship::DONATION_CATEGORY
+    query.order = :updated
+    query.run
 
+    expect(query.results.first.connected_relationship_ids).to eq "[#{relationship3.id}]"
+    expect(query.results.first.connected_category_id).to eq 5
+  end
 
   describe 'filtering by category' do
     specify do
-      expect(
-        query.category(Relationship::SOCIAL_CATEGORY).page(1).run.size
-      ).to eq 2
+      query.category_id = Relationship::SOCIAL_CATEGORY
+      expect(query.run.size).to eq 2
     end
 
     specify do
-      expect(
-        query.category(Relationship::SOCIAL_CATEGORY).page(2).run.size
-      ).to eq 0
+      query.category_id = Relationship::SOCIAL_CATEGORY
+      query.page = 2
+      expect(query.run.size).to eq 0
     end
 
     specify do
-      expect(
-        query.category(Relationship::DONATION_CATEGORY).page(1).run.size
-      ).to eq 1
+      query.category_id = Relationship::DONATION_CATEGORY
+      query.order = :amount
+      expect(query.run.size).to eq 1
+    end
+  end
+
+  describe 'excluding entities by id' do
+    specify do
+      query.excluded_ids = [100_000_000]
+      expect(query.run.size).to eq 3
+    end
+
+    specify do
+      query.excluded_ids = [entity2.id]
+      expect(query.run.size).to eq 2
+    end
+
+    specify do
+      query.excluded_ids = [entity2.id, entity3.id]
+      expect(query.run.size).to eq 1
+    end
+
+    specify do
+      query.excluded_ids = [entity3.id]
+      query.category_id = Relationship::SOCIAL_CATEGORY
+      expect(query.run.size).to eq 1
+    end
+
+    specify do
+      query.excluded_ids = [entity2.id, entity3.id]
+      query.category_id = Relationship::SOCIAL_CATEGORY
+      expect(query.run.size).to eq 0
     end
   end
 
   describe 'accepts category ids as strings' do
     specify do
-      expect(
-        query.category(Relationship::DONATION_CATEGORY.to_s).page(1).run.size
-      ).to eq 1
+      query.category_id = Relationship::DONATION_CATEGORY.to_s
+      expect(query.run.size).to eq 1
     end
   end
 end

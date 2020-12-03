@@ -162,22 +162,16 @@ class OligrapherController < ApplicationController
   def find_connections
     return head :bad_request if params[:entity_id].blank?
 
-    entity = Entity.find(params[:entity_id])
-    nodes = {}
+    query = EntityConnectionsQuery.new(Entity.find(params[:entity_id]))
+    query.category_id = category_id_param
+    query.page = 1
+    query.per_page = params.fetch(:num, 10)
+    query.excluded_ids = params[:excluded_ids]
+    if %w[link_count current amount updated].include?(params[:order])
+      query.order = params[:order].to_sym
+    end
 
-    EntityConnectionsQuery
-      .new(entity)
-      .category(params[:category_id])
-      .page(1)
-      .per(params.fetch(:num, 10))
-      .run
-      .each { |e|
-      nodes[e.id] = Oligrapher::Node.from_entity(e) unless nodes[e.id]
-      nodes[e.id][:edges] = [] unless nodes[e.id][:edges].present?
-      nodes[e.id][:edges].push(Oligrapher.rel_to_edge(Relationship.find(e.relationship_id)))
-    }
-
-    render json: nodes.values
+    render json: query.to_oligrapher_nodes
   end
 
   def get_edges
@@ -247,6 +241,12 @@ class OligrapherController < ApplicationController
 
     if @map.title.present? && !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
       redirect_to oligrapher_path(@map)
+    end
+  end
+
+  def category_id_param
+    if params[:category_id] && (1..12).cover?(params[:category_id].to_i)
+      params[:category_id].to_i
     end
   end
 end
