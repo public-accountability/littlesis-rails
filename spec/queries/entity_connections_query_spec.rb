@@ -18,7 +18,7 @@ describe EntityConnectionsQuery do
     query.order = :updated
     query.run
 
-    expect(query.results.first.connected_relationship_ids).to eq "[#{relationship3.id}]"
+    expect(query.results.first.connected_relationship_ids).to eq "#{relationship3.id}"
     expect(query.results.first.connected_category_id).to eq 5
   end
 
