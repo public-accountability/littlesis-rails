@@ -207,34 +207,36 @@ export default function RelationshipsDatatableLoader(){
    * @returns {String|Null} 
    */
   function renderDate(data, type, row) {
+    let date = null
+
     if (row.start_date && row.end_date) {
       if (row.start_date.slice(0, 4) === row.end_date.slice(0, 4)) {
-        return row.start_date.slice(0, 4)
+        date = row.start_date.slice(0, 4)
       } else {
-        return row.start_date.slice(0, 4) + ' - ' + row.end_date.slice(0, 4)
+        date = row.start_date.slice(0, 4) + ' - ' + row.end_date.slice(0, 4)
       }
     }
 
     if (row.start_date && !row.end_date) {
       if (row.is_current === false) {
-        return row.start_date.slice(0, 4) + ' (past)'
+        date = row.start_date.slice(0, 4) + ' (past)'
       } else {
-        return row.start_date.slice(0, 4) + ' - ?'
+        date = row.start_date.slice(0, 4) + ' - ?'
       }
     }
     
     if (row.end_date) {
-      return '? - ' + row.end_date.slice(0, 4)
+      date = '? - ' + row.end_date.slice(0, 4)
     }
 
     if (row.is_current === true) {
-      return "(current)"
+      date = "(current)"
     }
 
     if (row.is_current === false) {
-      return "(past)"
+      date = "(past)"
     }
-    return null
+    return date
   }
 
 
