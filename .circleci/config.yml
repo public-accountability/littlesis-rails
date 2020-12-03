@@ -30,12 +30,12 @@ jobs:
 
       - run: bundle exec rake db:structure:load
       - run: bundle exec rake db:seed
+      - run: bundle exec rake tmp:clear
       - run: bundle exec rake assets:precompile
       - run: bundle exec rspec
 
 
   mocha:
-    resource_class: small
     machine:
       image: ubuntu-2004:202010-01
     steps:
