@@ -16,13 +16,13 @@ class EntityConnectionsQuery
   end
 
   def to_oligrapher_nodes
-    relationship_ids = run.map(&:connected_relationship_ids).map(&JSON.method(:parse)).flatten
+    relationship_ids = run.map(&:connected_relationship_ids).map { |ids| ids.split(',') }.flatten
     relationships = Relationship.lookup_table_for(relationship_ids)
 
     run.map do |entity|
       Oligrapher::Node.from_entity(entity).tap do |node|
         node[:edges] = relationships
-                         .values_at(*JSON.parse(entity.connected_relationship_ids))
+                         .values_at(*entity.connected_relationship_ids.split(',').map(&:to_i))
                          .map(&Oligrapher.method(:rel_to_edge))
       end
     end
@@ -39,7 +39,7 @@ class EntityConnectionsQuery
         SELECT link.entity2_id AS entity_id,
               MIN(link.category_id) AS category_id,
               MAX(connected_entity.link_count) AS entity_link_count,
-              JSON_ARRAYAGG(link.relationship_id) AS relationship_ids,
+              GROUP_CONCAT(link.relationship_id) AS relationship_ids,
               MAX(relationship.amount) AS relationship_amount,
               MAX(relationship.is_current) AS relationship_is_current,
               MAX(relationship.start_date) AS relationship_start_date,
