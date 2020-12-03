@@ -4,17 +4,16 @@ jobs:
   rspec:
     docker:
       - image: ruby:2.7.2-buster
+        environment:
+          RAILS_ENV: test
       - image: circleci/mariadb:10.5-focal
         environment:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_USER: littlesis
-          MYSQL_PASSWORD: littlesis
     steps:
       - checkout
       - run: bin/ci_setup.sh
       - run: bin/docker_setup.sh
       - run: bin/wait_for_mariadb.sh
-      - run: mysql -P 3306 -h 127.0.0.1 --user=littlesis --password=littlesis -e "select now()"
       - run: bin/mariadb_setup.sh
       - run: bundle install
       - run: bundle exec rake db:structure:load
