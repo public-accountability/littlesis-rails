@@ -286,8 +286,8 @@ describe Api, :pagination_helper do
       get connections_api_entity_path(entity1)
       expect(json['data'].length).to eq 1
       expect(json['data'][0]["id"]).to eq entity2.id
-      expect(json['meta']['currentPage']).to eq 1
-      expect(json['meta']['pageCount']).to eq 1
+      expect(json['meta']['currentPage']).to eq nil
+      expect(json['meta']['pageCount']).to eq nil
     end
   end
 
