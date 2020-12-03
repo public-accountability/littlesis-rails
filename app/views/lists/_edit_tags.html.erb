@@ -5,7 +5,7 @@
 
 <script>
  $(function(){
-   tags.init(
+   LittleSis.tags().init(
      <%= raw(@list.tags_for(current_user).to_json) %>,
      "<%= raw(tags_list_path(@list)) %>",
      true

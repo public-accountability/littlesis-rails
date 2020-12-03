@@ -33,7 +33,7 @@
 
   <% if user_signed_in? %>
     <script id="edit-tags-javascript">
-     tags.init(
+     LittleSis.tags().init(
        <%= raw(@entity.tags_for(current_user).to_json) %>,
        "<%= raw(concretize_tags_entity_path(@entity)) %>",
      );

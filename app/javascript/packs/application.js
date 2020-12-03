@@ -9,6 +9,7 @@
 
 import utility from './common/utility';
 import http from './common/http';
+import tags from './common/tags';
 import clipboardjs from 'clipboard';
 import datatable from 'datatables.net';
 import typeahead from 'typeahead.js';
@@ -37,6 +38,7 @@ if (!window.LittleSis) {
 $.typeahead = typeahead;
 
 window.LittleSis.http = http;
+window.LittleSis.tags = tags;
 window.LittleSis.listDatatableLoader = listDatatableLoader;
 window.LittleSis.entityAutocomplete = entityAutocomplete;
 window.LittleSis.RelationshipCreationFlow = RelationshipCreationFlow;

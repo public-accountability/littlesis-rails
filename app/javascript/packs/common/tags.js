@@ -1,10 +1,5 @@
-(function (root, factory) {
-  if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('jQuery'));
-  } else {
-    root.tags = factory(root.jQuery);
-  }
-}(this, function ($) {
+export default function tags(){
+  const $ = window.$;
 
   // IMPORTANT: views MUST supply divs with the below ids for this module to function
   var DIVS = {
@@ -219,6 +214,4 @@
   }
 
   return t;
-  
-}));
- 
+}
