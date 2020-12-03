@@ -1,0 +1,66 @@
+version: 2.1
+
+jobs:
+  rspec:
+    environment:
+      RAILS_ENV: test
+    resource_class: medium
+    docker:
+      - image: ruby:2.7.2-buster
+        environment:
+          RAILS_ENV: test
+
+      - image: circleci/mariadb:10.5-focal
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+    steps:
+      - checkout
+      - run: bin/ci_setup.sh
+      - run: bin/docker_setup.sh
+      - run: bin/wait_for_mariadb.sh
+      - run: bin/mariadb_setup.sh
+
+      - restore_cache:
+          keys:
+            - gem-cache-v1-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+
+      - run: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: gem-cache-v1-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - run: bundle exec rake db:structure:load
+      - run: bundle exec rake db:seed
+      - run: bundle exec rake tmp:clear
+      - run: bundle exec rake yarn:install
+      - run: bundle exec rake webpacker:compile
+      - run: bundle exec rake assets:precompile
+      - run: bundle exec rspec
+
+
+  mocha:
+    machine:
+      image: ubuntu-2004:202010-01
+    steps:
+      - run: curl -o- -L https://yarnpkg.com/install.sh | bash
+      - checkout
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+
+      - run: yarn install --immutable
+
+      - save_cache:
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
+      - run: yarn test
+
+workflows:
+  rspec:
+    jobs:
+      - rspec
+      - mocha
