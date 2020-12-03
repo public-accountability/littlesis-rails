@@ -56,7 +56,7 @@ export default function ListBulkEntityAdder() {
       // id of base resource with which we wish to associate many entities:
       resourceId: args.resourceId, // String
       resourceType: args.resourceType, // String (must be plural to match rails path conventions)
-      api: args.api, // { [String]: (*String) -> Promise[ApiJson] }
+      api: api, // { [String]: (*String) -> Promise[ApiJson] }
       entities: args.entities || { // expose to `#init` for unit testing seam
         byId: {},  // { [String]: Entity }
         order: []  // [String] (order corresponds to row order of entities stored in `.byId`)
@@ -485,7 +485,7 @@ export default function ListBulkEntityAdder() {
   // () -> Promise[State]
   state.createAssociations = function(){
     return state.api
-      .createAssociations(state.resourceId, state.getEntityIds(), state.reference)
+      .addEntitiesToList(state.resourceId, state.getEntityIds(), state.reference)
       .then(function(){ return state })
   }
 
