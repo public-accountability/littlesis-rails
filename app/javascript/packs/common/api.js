@@ -1,6 +1,6 @@
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('jQuery'), require('../common/utility'));
+    module.exports = factory(require('jquery'), require('../common/utility'));
   } else {
     root.api = factory(root.jQuery, root.utility);
   }

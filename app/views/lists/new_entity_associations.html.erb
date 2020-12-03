@@ -6,12 +6,7 @@
     LittleSis.ListBulkEntityAdder().init({
       domId:        "bulk-add-container",
       resourceId:   "<%= raw(@list.id) %>",
-      resourceType: "lists",
-      api: {
-        searchEntity:       api.searchEntity,
-        createEntities:     api.createEntities,
-        createAssociations: api.addEntitiesToList
-      }
+      resourceType: "lists"
     });
   </script>
 </div>
