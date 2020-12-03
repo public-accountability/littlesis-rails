@@ -1,10 +1,6 @@
 <% content_for(:page_title, raw(@entity.name + ' - relationships')) %>
 <%= render partial: 'header', locals: { entity: @entity } %>
 
-<% content_for :head do %>
-  <%= javascript_include_tag 'relationships_datatable' %>
-<% end %>
-
 <h3 class="section mt-3">Relationships</h3>
 
 <div id="relationships-datatable-container">
@@ -12,6 +8,6 @@
 
 <script>
  window.onload = function() {
-   RelationshipsDatatable.start(<%= @entity.id %>);
+   LittleSis.RelationshipsDatatable().start(<%= @entity.id %>);
  }
 </script>

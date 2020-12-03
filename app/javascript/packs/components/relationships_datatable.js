@@ -1,10 +1,4 @@
-(function (root, factory) {
-  if (typeof module === 'object' && module.exports) {
-    module.exports = factory(require('jQuery'));
-  } else {
-    root.RelationshipsDatatable = factory(root.jQuery, root.utility);
-  }
-}(this, function ($, utility) {
+export default function RelationshipsDatatableLoader(){
 
   // DOM HELPERS:
   var createElement = document.createElement.bind(document); // javascript! what a language!
@@ -542,4 +536,4 @@
     "data": function() { return DATA_STORE; }
   };
   
-}));
+}
