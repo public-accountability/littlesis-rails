@@ -11,9 +11,9 @@ jobs:
           MYSQL_PASSWORD: littlesis
     steps:
       - checkout
-      - run: sh bin/ci_setup.sh
-      - run: sh bin/docker_setup.sh
-      - run: sh bin/mariadb_setup.sh
+      - run: bin/ci_setup.sh
+      - run: bin/docker_setup.sh
+      - run: bin/mariadb_setup.sh
       - run: bundle install
       - run: bundle exec rake db:structure:load
       - run: bundle exec rake db:seed

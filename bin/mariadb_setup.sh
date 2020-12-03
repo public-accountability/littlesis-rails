@@ -2,7 +2,7 @@
 set -e
 
 mysql_exec () {
-    mysql --user=littlesis --password=littlesis -e "$1"
+    mysql -P 3306 -h 127.0.0.1 --user=littlesis --password=littlesis -e "$1"
 }
 
 mysql_exec 'CREATE DATABASE littlesis;'
