@@ -33,7 +33,29 @@ jobs:
       - run: bundle exec rake assets:precompile
       - run: bundle exec rspec
 
+
+  mocha:
+    resource_class: small
+    machine:
+      image: ubuntu-2004:202010-01
+    steps:
+      - run: curl -o- -L https://yarnpkg.com/install.sh | bash
+      - checkout
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+
+      - run: yarn install --immutable
+
+      - save_cache:
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+
+      - run: yarn test
+
 workflows:
   rspec:
     jobs:
       - rspec
+      - mocha
