@@ -4,7 +4,7 @@ jobs:
   rspec:
     environment:
       RAILS_ENV: test
-    resource_class: small
+    resource_class: medium
     docker:
       - image: ruby:2.7.2-buster
         environment:
@@ -34,8 +34,9 @@ jobs:
       - run: bundle exec rake db:structure:load
       - run: bundle exec rake db:seed
       - run: bundle exec rake tmp:clear
-      # - run: bundle exec bin/yarn
-      # - run: bundle exec rake assets:precompile
+      - run: bundle exec rake yarn:install
+      - run: bundle exec rake webpacker:compile
+      - run: bundle exec rake assets:precompile
       - run: bundle exec rspec
 
 
