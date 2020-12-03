@@ -2,6 +2,7 @@ version: 2.1
 
 jobs:
   rspec:
+    resource_class: small
     docker:
       - image: ruby:2.7.2-buster
         environment:
@@ -15,7 +16,18 @@ jobs:
       - run: bin/docker_setup.sh
       - run: bin/wait_for_mariadb.sh
       - run: bin/mariadb_setup.sh
-      - run: bundle install
+
+      - restore_cache:
+          keys:
+            - gem-cache-v1-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+
+      - run: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: gem-cache-v1-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
       - run: bundle exec rake db:structure:load
       - run: bundle exec rake db:seed
       - run: bundle exec rake assets:precompile
