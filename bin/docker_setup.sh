@@ -15,6 +15,7 @@ apt-get update && apt-get upgrade -y && apt-get -y install \
 	                                        iproute2 \
 	                                        libmagickwand-dev \
 	                                        lsof \
+                                                netcat \
 	                                        redis-tools \
 	                                        software-properties-common \
 	                                        sqlite3 \

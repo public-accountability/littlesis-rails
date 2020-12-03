@@ -13,6 +13,8 @@ jobs:
       - checkout
       - run: bin/ci_setup.sh
       - run: bin/docker_setup.sh
+      - run: bin/wait_for_mariadb.sh
+      - run: mysql -P 3306 -h 127.0.0.1 --user=littlesis --password=littlesis -e "select now()"
       - run: bin/mariadb_setup.sh
       - run: bundle install
       - run: bundle exec rake db:structure:load
