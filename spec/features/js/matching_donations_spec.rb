@@ -1,4 +1,4 @@
-feature 'Matching donations', type: :feature, js: true do
+xfeature 'Matching donations', type: :feature, js: true do
   let(:user) { create_admin_user }
   let(:oedipa) { create(:entity_person, name: 'Oedipa Maas') }
 

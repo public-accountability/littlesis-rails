@@ -80,19 +80,20 @@ describe EntitiesController, type: :controller do
     end
 
     describe '#match_donations and reivew donations' do
+      let(:org) { build(:org) }
+
       context 'with match permissions' do
         login_user([:edit, :bulk])
 
         before do
-          expect(Entity).to receive(:find_with_merges).and_return(build(:entity_org))
+          expect(Entity).to receive(:find_with_merges).and_return(org)
           expect(controller).to receive(:check_permission).with('importer').and_call_original
         end
 
         describe 'match_donations' do
           before { get(:match_donations, params: { id: rand(100) }) }
 
-          it { is_expected.to render_template(:match_donations) }
-          it { is_expected.to respond_with(200) }
+          it { is_expected.to redirect_to fec_entity_match_contributions_path(org) }
         end
 
         describe 'review_donations' do
