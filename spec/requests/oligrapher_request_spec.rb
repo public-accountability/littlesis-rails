@@ -512,13 +512,17 @@ describe "Oligrapher", type: :request do
       get '/oligrapher/find_connections', params: { entity_id: entity1.id }
       expect(response).to have_http_status 200
       expect(json.length).to eq 1
-      expect(json.first['id']).to eq entity2.id.to_s
-      expect(json.first['edges'].first['id']).to eq rel.id.to_s
-      expect(json.first['edges'].first['dash']).to eq true
-      expect(json.first['edges'].first['arrow']).to eq '1->2'
-      expect(json.first['edges'].second['id']).to eq rel2.id.to_s
-      expect(json.first['edges'].second['dash']).to eq false
-      expect(json.first['edges'].second['arrow']).to eq nil
+      expect(json[0]['edges'].length).to eq 2
+
+      expect(json[0]['edges'].map { |e| e['id'] }.to_set).to eq [rel, rel2].map(&:id).map(&:to_s).to_set
+
+      if json[0]['edges'][0]['id'] == rel.id.to_s
+        expect(json[0]['edges'][0]['dash']).to eq true
+        expect(json[0]['edges'][0]['arrow']).to eq '1->2'
+      else
+        expect(json[0]['edges'][0]['dash']).to eq false
+        expect(json[0]['edges'][0]['arrow']).to eq nil
+      end
     end
   end
 
