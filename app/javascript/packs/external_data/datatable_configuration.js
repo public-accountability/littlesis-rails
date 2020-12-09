@@ -1,6 +1,6 @@
 import Columns from './columns'
 
-export default function (dataset) {
+export default function(dataset) {
   function modifyPayloadBeforeSubmit(d) {
     // If present, include the field "matched" along the other values sent to ther server by databases.
     if ($('#external-entities-match-toggle').length) {
@@ -19,9 +19,9 @@ export default function (dataset) {
     "serverSide": true,
     "dom": 'frtip<"clearfix">l',
     "pageLength": 10,
-    "order" : dataset === 'nys_dislcosure' ? [ [ 2, "desc" ] ] : undefined,
+    "order": dataset === 'nys_dislcosure' ? [ [ 2, "desc" ] ] : undefined,
     "ajax": {
-      "url":  `/external_data/${dataset}`,
+      "url": `/external_data/${dataset}`,
       "dataSrc": "data",
       "data": modifyPayloadBeforeSubmit,
     },

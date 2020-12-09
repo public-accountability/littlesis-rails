@@ -1,6 +1,7 @@
 <% content_for(:page_title, "Match Donations: #{@entity.name}") %>
 <%= render partial: 'header', locals: { entity: @entity } %>
 <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
+
 <div class="row mt-3 mb-3">
   <div class="col-12">
     <h2>Match Donations From OpenSecrets.org</h2>

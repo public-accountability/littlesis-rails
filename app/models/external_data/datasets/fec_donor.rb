@@ -45,7 +45,12 @@ class ExternalData
       end
 
       def contributions
-        "Contributed $#{self['total_contributed']} to #{self['contributions'].count} committees"
+        if self['contributions'].nil?
+          Rails.logger.warn "missing contribution data for #{self['md5digest']}"
+          nil
+        else
+          "Contributed $#{self['total_contributed']} to #{self['contributions'].count} committees"
+        end
       end
     end
   end

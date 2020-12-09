@@ -355,6 +355,8 @@ class Entity < ApplicationRecord
   # Input: <Entity> | String | Integer
   # Output: Integer
   def self.entity_id_for(entity)
+    raise ArgumentError if entity.nil? || entity == 0
+
     entity.is_a?(Entity) ? entity.id : entity.to_i
   end
 

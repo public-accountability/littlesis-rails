@@ -3,6 +3,19 @@
 class ExternalData
   module Datasets
     class FECContribution < SimpleDelegator
+      def self.calculate_date_range(contributions)
+        dates = contributions.map { |c| c.wrapper.date }.compact.sort
+
+        case dates.length
+        when 0
+          nil
+        when 1
+          [dates.first, dates.first]
+        else
+          dates.values_at(0, dates.length - 1)
+        end
+      end
+
       # This find and updates or creates a new record in ExternalData
       # ic = FEC::IndividualContribution
       # output = ExternalData.fec_contributions
@@ -12,6 +25,8 @@ class ExternalData
           ed.save!
           ed.external_relationship || ed.create_external_relationship!(dataset: ed.dataset, category_id: Relationship::DONATION_CATEGORY)
         end
+      rescue ActiveRecord::ActiveRecordError => e
+        Rails.logger.warn "Failed to import #{ic.SUB_ID}. Error: #{e.message}"
       end
 
       def donor_attributes
@@ -74,6 +89,17 @@ class ExternalData
 
       def committee_id
         self['CMTE_ID']
+      end
+
+      def image_number
+        self['IMAGE_NUM']
+      end
+
+      def document_attributes
+        {
+          name: "FEC Filing #{image_number}",
+          url: "https://docquery.fec.gov/cgi-bin/fecimg/?#{image_number}"
+        }
       end
     end
   end

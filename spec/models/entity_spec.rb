@@ -1211,4 +1211,20 @@ describe Entity, :tag_helper do
       end
     end
   end
+
+  describe 'Entity.entity_id_for' do
+    it 'returns integers and strings' do
+      expect(Entity.entity_id_for(1)).to eq 1
+      expect(Entity.entity_id_for('1')).to eq 1
+    end
+
+    it 'calls .id on entity' do
+      expect(Entity.entity_id_for(build(:person, id: 1))).to eq 1
+    end
+
+    it 'raises error if nil or zero' do
+      expect { Entity.entity_id_for(nil) }.to raise_error(ArgumentError)
+      expect { Entity.entity_id_for(0) }.to raise_error(ArgumentError)
+    end
+  end
 end

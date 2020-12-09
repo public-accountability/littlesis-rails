@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Most other External Entity datasets have a one-to-one
+# mapping with LittleSis Entities, usually linked via an ExternalLink.
+# An FECDonor represents a grouped collection of FECContributions,
+# The match action can trigger the Match action of ExternalRelationship.fec_contribution
 class ExternalEntity
   module Datasets
     module FECDonor
@@ -15,21 +19,19 @@ class ExternalEntity
       # This matches the associated External Relationship for all Individual Contributions connected to this donor.
       # external_entity-->external_data.fec_donor.data.sub_ids --> external_data.fec_contribution.dataset_id --> external_relationships
       def match_action
-        ExternalData
-          .includes(:external_relationships)
-          .fec_contribution
-          .where(dataset_id: external_data.wrapper.sub_ids)
-          .map(&:external_relationships)
-          .flatten
-          .each { |er| er.match_entity1_with(entity) } # entity == ExternalEntity#entity
+        Rails.logger.info "Matching ExternalEntity.fec_donor \##{id}. FEC transactions: #{external_data.wrapper.sub_ids.join(', ')}"
+
+        external_data
+          .associated_contributions
+          .map(&:external_relationship)
+          .delete_if(&:entity1_matched?)
+          .each { |er| er.match_entity1_with(self.entity_id) } # entity == ExternalEntity#entity
       end
 
       def unmatch_action
-        ExternalData
-          .includes(:external_relationships)
-          .fec_contribution
-          .where(dataset_id: external_data.wrapper.sub_ids)
-          .map(&:external_relationships)
+        external_data
+          .associated_contributions
+          .map(&:external_relationship)
           .flatten
           .each do |er|
 

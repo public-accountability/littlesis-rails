@@ -36,6 +36,11 @@ class ExternalEntity
         committee_id = external_data.wrapper.committee_id
         committee_name = OrgName.format(external_data.wrapper.name)
 
+        if committee_name.blank?
+          Rails.logger.warn "cannot create Entity for FEC committee #{committee_id} because the committee name is blank"
+          return self
+        end
+
         Entity.transaction do
           Entity.create!(name: committee_name, primary_ext: 'Org').tap do |entity|
             entity.add_extension('PoliticalFundraising')

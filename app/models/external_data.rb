@@ -87,32 +87,18 @@ class ExternalData < ApplicationRecord
 
   alias wrapper data_wrapper
 
-
   # Dataset Methods
-  # TODO: organize these into modules or refactor into modules in Datasets
+  # organize these into modules or refactor into modules in Datasets?
 
-  # updates data['contributions'] by querying ExternalData.fec_contribution
+  # Updates the contributions and total_contributed fields on the data attribute and
+  # creates the associated ExternalEntity if it does not exist.
   def update_fec_donor_data!
     verify_dataset 'fec_donor'
 
-    aggregator = proc do |cmte_id, arr|
-      {
-        committee_name: ExternalData.fec_committee.find_by(dataset_id: cmte_id)&.wrapper&.name,
-        committee_id: cmte_id,
-        amount: arr.lazy.map(&:wrapper).map(&:amount).sum,
-        count: arr.length,
-        date_range: arr.lazy.map(&:wrapper).map(&:date).sort.values_at(0, arr.length - 1)
-      }
-    end
-
-    merge_data('contributions' => ExternalData
-                                    .fec_contribution
-                                    .where(dataset_id: wrapper.sub_ids)
-                                    .to_a
-                                    .group_by { |contribution| contribution.wrapper.committee_id }
-                                    .map(&aggregator))
-
+    merge_data('contributions' => ExternalData.queries.aggregate_fec_contributions(wrapper.sub_ids))
     merge_data('total_contributed' => data['contributions'].map { |x| x['amount'] }.sum)
+    create_external_entity!(dataset: 'fec_donor') if external_entity.nil?
+    save!
   end
 
   def create_donor_from_self
@@ -129,6 +115,8 @@ class ExternalData < ApplicationRecord
     end
 
     fec_donor.save!
+    fec_donor.create_external_entity!(dataset: 'fec_donor') unless fec_donor.external_entity
+    fec_donor
   end
 
   # --> ExternalData.fec_committee
@@ -139,10 +127,17 @@ class ExternalData < ApplicationRecord
 
   # --> ExternalData.fec_contribution
   def associated_contributions
-    verify_dataset 'fec_candidate'
-
-    ExternalData.fec_contribution.reduce do |relation|
-      associated_committees.each { |c| relation.where("JSON_VALUE(data, '$.CMTE_ID') = ?", c.dataset_id) }
+    case dataset
+    when 'fec_candidate'
+      ExternalData.fec_contribution.reduce do |relation|
+        associated_committees.each { |c| relation.where("JSON_VALUE(data, '$.CMTE_ID') = ?", c.dataset_id) }
+      end
+    when 'fec_committee'
+      ExternalData.fec_contribution.where("JSON_VALUE(data, '$.CMTE_ID') = ?", dataset_id)
+    when 'fec_donor'
+      ExternalData.includes(:external_relationship).fec_contribution.where(dataset_id: wrapper.sub_ids)
+    else
+      raise TypeError, "invalid dataset #{dataset}"
     end
   end
 
@@ -170,6 +165,10 @@ class ExternalData < ApplicationRecord
 
   def self.services
     Services
+  end
+
+  def self.queries
+    Queries
   end
 
   # This is the backend for a datatables.js table.
@@ -200,6 +199,8 @@ class ExternalData < ApplicationRecord
     end
   end
 
+  # FEC
+
   def self.common_fec_contributions
     fec_contribution.where(:TRANSACTION_TP => %i[committee earmarked pacs])
   end
@@ -219,4 +220,4 @@ class ExternalData < ApplicationRecord
       raise Exceptions::LittleSisError # , "Invalid Dataset: #{x}"
     end
   end
-  end
+end
