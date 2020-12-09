@@ -25,7 +25,7 @@ class FECController < ApplicationController
   end
 
   def match_contributions
-    @donors = FECDonorQuery.run(params[:q] || @entity)
+    # @donors = FECDonorQuery.run(params[:q] || @entity)
   end
 
   # required params: donor_id, sub_ids
