@@ -225,6 +225,31 @@ describe Document, :pagination_helper, type: :model do
       expect { document.save! }.to have_enqueued_job.with(document.url)
     end
   end
+
+  describe Document::DocumentAttributes do
+    specify do
+      dattrs = Document::DocumentAttributes.new({'url' => 'https://example.com', 'name' => 'example website'})
+      expect(dattrs.url).to eq 'https://example.com'
+      expect(dattrs.name).to eq 'example website'
+      expect(dattrs.valid?).to be true
+      expect(dattrs.error_message).to be nil
+      expect(dattrs.to_h).to eq(name: 'example website', url: 'https://example.com')
+    end
+
+    specify do
+      dattrs = Document::DocumentAttributes.new(url: 'https://example.com')
+      expect(dattrs.url).to eq 'https://example.com'
+      expect(dattrs.name).to eq 'https://example.com'
+      expect(dattrs.valid?).to be true
+    end
+
+    specify do
+      expect(Document::DocumentAttributes.new(url: 'file:///important').valid?).to be false
+      long_name = Document::DocumentAttributes.new(url: 'https://littlesis.org', name: ('x' * 256))
+      expect(long_name.valid?).to be false
+      expect(long_name.error_message).to eq 'Name is too long'
+    end
+  end
 end
 
 # rubocop:enable Rails/DynamicFindBy
