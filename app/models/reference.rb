@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Reference < ApplicationRecord
   include Api::Serializable
   belongs_to :referenceable, polymorphic: true

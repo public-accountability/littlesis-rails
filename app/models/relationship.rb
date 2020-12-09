@@ -113,7 +113,7 @@ class Relationship < ApplicationRecord
 
   before_validation :set_last_user_id
 
-  after_create :create_category, :create_links, :update_entity_links
+  after_create :after_create_tasks
 
   before_save :update_is_current_according_to_end_date
 
@@ -122,10 +122,15 @@ class Relationship < ApplicationRecord
   # associated entities for the relationship
   after_save :update_entity_timestamps
 
-  ##############
-  # CATEGORIES #
-  ##############
+  def after_create_tasks
+    create_category
+    create_links
+    update_entity_links
+  end
 
+  # Some relationship categories contain additional fields stored in other tables
+  # For instance, when a new donation relationship is created,  this method will create <Donation>.
+  # When a generic relationship is created, this method becomes a noop.
   def create_category
     if category_has_fields? && get_category.nil?
       ALL_CATEGORIES
