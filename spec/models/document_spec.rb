@@ -1,14 +1,17 @@
+# rubocop:disable Rails/DynamicFindBy
+
 describe Document, :pagination_helper, type: :model do
   let(:url) { Faker::Internet.unique.url }
-  describe 'validations' do
-    subject { Document.new(url: url, name: 'a website') }
 
-    it { should have_many(:references) }
-    it { should validate_presence_of(:url) }
-    it { should validate_length_of(:name).is_at_most(255) }
+  describe 'validations' do
+    subject(:document) { Document.new(url: url, name: 'a website') }
+
+    it { is_expected.to have_many(:references) }
+    it { is_expected.to validate_presence_of(:url) }
+    it { is_expected.to validate_length_of(:name).is_at_most(255) }
 
     it 'checks uniqueness of url_hash' do
-      subject.save!
+      document.save!
       new_doc_with_same_url = Document.new(url: url)
       expect(new_doc_with_same_url.valid?).to be false
       expect(new_doc_with_same_url.errors[:url_hash]).to eql ['has already been taken']
@@ -20,11 +23,13 @@ describe Document, :pagination_helper, type: :model do
     end
 
     describe 'before validation callbacks: trims whitespace and creates url hash' do
-      let(:subject) { Document.new(url: '   https://littlesis.org  ', name: '  LittleSis  ') }
-      before { subject.valid? }
-      specify { expect(subject.url).to eql 'https://littlesis.org' }
-      specify { expect(subject.name).to eql 'LittleSis' }
-      specify { expect(subject.url_hash).to eql Digest::SHA1.hexdigest('https://littlesis.org') }
+      let(:document) { Document.new(url: '   https://littlesis.org  ', name: '  LittleSis  ') }
+
+      before { document.valid? }
+
+      specify { expect(document.url).to eql 'https://littlesis.org' }
+      specify { expect(document.name).to eql 'LittleSis' }
+      specify { expect(document.url_hash).to eql Digest::SHA1.hexdigest('https://littlesis.org') }
     end
 
     it 'converts blank string publication dates into nil' do
@@ -52,6 +57,7 @@ describe Document, :pagination_helper, type: :model do
 
     describe 'ref_type_options' do
       subject { Document.ref_type_options }
+
       it { is_expected.to eql [['Generic', 1], ['Newspaper', 3], ['Government Document', 4]] }
     end
   end
@@ -103,43 +109,41 @@ describe Document, :pagination_helper, type: :model do
       }
     end
 
-    context 'retriving page 1' do
+    context 'when retriving page 1' do
       before do
         create(:document) # create a random document unrelated to this query
         add_3_documents.call
         relationships.third.references.first.update_column(:updated_at, 10.minutes.from_now)
       end
 
-      subject { Document.documents_for_entity(entity: entity, page: 1) }
+      subject(:document) { Document.documents_for_entity(entity: entity, page: 1) }
 
       it 'returns 3 documents' do
-        expect(subject.length).to eql 3
+        expect(document.length).to eq 3
       end
 
       it 'sorts by updated at date' do
-        expect(subject.first).to eq fec_document
+        expect(document.first).to eq fec_document
       end
 
-      context 'excluding documents by type' do
+      describe 'excluding documents by type' do
         it 'can exclude fec documents (using a symbol)' do
-          expect(Document.documents_for_entity(entity: entity, page: 1, exclude_type: :fec).length)
-            .to eql 2
+          expect(Document.documents_for_entity(entity: entity, page: 1, exclude_type: :fec).length).to eq 2
         end
 
         it 'can exclude fec documents (using an integer)' do
-          expect(Document.documents_for_entity(entity: entity, page: 1, exclude_type: 2).length)
-            .to eql 2
+          expect(Document.documents_for_entity(entity: entity, page: 1, exclude_type: 2).length).to eq 2
         end
 
         it 'raises error if given a incorrect ref type' do
-          expect {
+          expect do
             Document.documents_for_entity(entity: entity, page: 1, exclude_type: 1000)
-          }.to raise_error(ArgumentError)
+          end.to raise_error(ArgumentError)
         end
       end
     end
 
-    context 'pagination' do
+    describe 'pagination' do
       stub_page_limit Document, limit: 2
 
       before do
@@ -147,17 +151,17 @@ describe Document, :pagination_helper, type: :model do
       end
 
       it 'page one contains 2 documents' do
-        expect(Document.documents_for_entity(entity: entity, page: 1).length).to eql 2
+        expect(Document.documents_for_entity(entity: entity, page: 1).length).to eq 2
       end
 
       it 'page two contains 1 documents' do
-        expect(Document.documents_for_entity(entity: entity, page: 2).length).to eql 1
+        expect(Document.documents_for_entity(entity: entity, page: 2).length).to eq 1
         expect(Document.documents_for_entity(entity: entity, page: 1).map(&:url).to_set)
           .not_to include Document.documents_for_entity(entity: entity, page: 2).first.url
       end
     end
 
-    context 'retrives documents for multiple entities at once' do
+    describe 'retriving documents for multiple entities at once' do
       # add a second entity, a relationship, and a reference + document for each
       # the query for both should return 5
       let(:second_entity) { create(:entity_person) }
@@ -175,7 +179,7 @@ describe Document, :pagination_helper, type: :model do
 
       it 'returns 5 documents' do
         expect(Document.documents_for_entity(entity: [entity.id, second_entity.id], page: 1).length)
-          .to eql 5
+          .to eq 5
       end
     end
   end
@@ -194,9 +198,9 @@ describe Document, :pagination_helper, type: :model do
       other_entity.add_reference(attributes_for(:document))
     end
 
-    subject { Document.documents_count_for_entity(entity) }
-
-    it { is_expected.to eql 3 }
+    specify do
+      expect(Document.documents_count_for_entity(entity)).to eq 3
+    end
   end
 
   describe 'recording history with paper trail' do
@@ -207,9 +211,9 @@ describe Document, :pagination_helper, type: :model do
 
       it 'records update events' do
         d = create(:document)
-        expect(d.versions.count).to eql 0
+        expect(d.versions.count).to eq 0
         d.update!(name: Faker::Creature::Cat.registry)
-        expect(d.versions.count).to eql 1
+        expect(d.versions.count).to eq 1
       end
     end
   end
@@ -217,11 +221,10 @@ describe Document, :pagination_helper, type: :model do
   describe 'Saving to internet archive' do
     let(:document) { build(:document) }
 
-    context 'creating a new document' do
-      specify do
-        expect { document.save! }
-          .to have_enqueued_job.with(document.url)
-      end
+    it 'enqueues jobs after creating a new document' do
+      expect { document.save! }.to have_enqueued_job.with(document.url)
     end
   end
 end
+
+# rubocop:enable Rails/DynamicFindBy

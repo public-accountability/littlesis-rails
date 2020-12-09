@@ -49,7 +49,8 @@ class Document < ApplicationRecord
   # output: <Document> | nil
   def self.find_by_url(url)
     raise Exceptions::InvalidUrlError if url.blank? || !valid_url?(url)
-    find_by_url_hash url_to_hash(url)
+
+    find_by url_hash: url_to_hash(url)
   end
 
   def self.valid_url?(url)
@@ -58,9 +59,8 @@ class Document < ApplicationRecord
     false
   end
 
-  # The number of documents for the entity (and it's relationships)_
-  # Effectively, this is the total count for the
-  # query `documents_for_entity`
+  # The number of documents for the entity (and it's relationships)
+  # Effectively, this is the total count for the query `documents_for_entity`
   # <Entity> | Integer -> Integer
   def self.documents_count_for_entity(entity)
     entity_id = Entity.entity_id_for(entity)
@@ -142,9 +142,9 @@ class Document < ApplicationRecord
   end
 
   def self.fetch_ref_type(type)
-    if REF_TYPES.keys.include?(type)
+    if REF_TYPES.key?(type)
       type
-    elsif REF_TYPE_LOOKUP.keys.include?(type)
+    elsif REF_TYPE_LOOKUP.key?(type)
       REF_TYPE_LOOKUP.fetch(type)
     else
       raise ArgumentError, "#{type} is an invalid ref_type"
@@ -164,19 +164,15 @@ class Document < ApplicationRecord
 
   private_class_method :url_to_hash, :fetch_ref_type, :entity_where
 
-  #--------------------------#
-  # PRIVATE INSTANCE METHODS #
-  #--------------------------#
-
   private
 
   def trim_whitespace
-    self.url.strip! unless url.nil?
-    self.name.strip! unless name.nil?
+    url&.strip!
+    name&.strip!
   end
 
   def set_hash
-    self.url_hash = url_to_hash unless url.blank?
+    self.url_hash = url_to_hash if url.present?
   end
 
   def convert_date
