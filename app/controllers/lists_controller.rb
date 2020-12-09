@@ -72,11 +72,12 @@ class ListsController < ApplicationController
     @list.creator_user_id = current_user.id
     @list.last_user_id = current_user.id
 
-    @list.validate_reference(reference_params)
+    ref_params = params.permit(ref: [:url, :name])[:ref]&.to_h&.keep_if { |_, v| v.present? }.presence
+    @list.validate_reference(ref_params) if ref_params
 
     if @list.valid?
       @list.save!
-      @list.add_reference(reference_params)
+      @list.add_reference(ref_params) if ref_params
       redirect_to @list, notice: 'List was successfully created.'
     else
       render action: 'new'
@@ -105,15 +106,23 @@ class ListsController < ApplicationController
   # POST /lists/:id/associations/entities
   # only handles json
   def create_entity_associations
-
     payload = create_entity_associations_payload
-    return render json: ERRORS[:entity_associations_bad_format], status: 400 unless payload
+    return render json: ERRORS[:entity_associations_bad_format], status: :bad_request unless payload
 
-    reference = @list.add_entities(payload['entity_ids']).save_with_reference(payload['reference_attrs'])
-    return render json: ERRORS[:entity_associations_invalid_reference], status: 400 unless reference
+    dattrs = Document::DocumentAttributes.new(payload['reference_attrs'])
 
-    render json: Api.as_api_json(@list.list_entities.to_a).merge('included' => Array.wrap(reference.api_data)),
-           status: 200
+    unless dattrs.valid?
+      return render json: ERRORS[:entity_associations_invalid_reference], status: :bad_request
+    end
+
+    @list
+      .add_entities(payload['entity_ids'])
+      .add_reference(dattrs)
+      .save!
+
+    json = Api.as_api_json(@list.list_entities.to_a).merge!('included' => Array.wrap(@list.last_reference.api_data))
+
+    render json: json, status: :ok
   end
 
   def destroy
@@ -263,9 +272,9 @@ class ListsController < ApplicationController
       )
   end
 
-  def reference_params
-    params.require(:ref).permit(:url, :name)
-  end
+  # def reference_params
+  #   @reference_params ||= params.require(:ref).permit(:url, :name).to_h
+  # end
 
   def create_entity_associations_payload
     payload = params.require('data').map { |x| x.permit('type', 'id', { 'attributes' => ['url', 'name'] }) }

@@ -105,7 +105,7 @@ describe Document, :pagination_helper, type: :model do
         # give the first relationship a reference with the same url as the entity
         relationships.first.add_reference(url: url, name: 'a url')
         relationships.second.add_reference(attributes_for(:document))
-        relationships.third.add_reference_by_document_id(fec_document.id)
+        relationships.third.references.create!(document_id: fec_document.id)
       }
     end
 
@@ -233,7 +233,7 @@ describe Document, :pagination_helper, type: :model do
       expect(dattrs.name).to eq 'example website'
       expect(dattrs.valid?).to be true
       expect(dattrs.error_message).to be nil
-      expect(dattrs.to_h).to eq(name: 'example website', url: 'https://example.com')
+      expect(dattrs.to_h).to eq ({ name: 'example website', url: 'https://example.com' }).with_indifferent_access
     end
 
     specify do
@@ -244,10 +244,16 @@ describe Document, :pagination_helper, type: :model do
     end
 
     specify do
+      invalid_url = Document::DocumentAttributes.new(url: 'file:///important')
+      expect(invalid_url.valid?).to be false
+      expect(invalid_url.error_message).to eq '"file:///important" is not a valid url'
+    end
+
+    specify do
       expect(Document::DocumentAttributes.new(url: 'file:///important').valid?).to be false
       long_name = Document::DocumentAttributes.new(url: 'https://littlesis.org', name: ('x' * 256))
       expect(long_name.valid?).to be false
-      expect(long_name.error_message).to eq 'Name is too long'
+      expect(long_name.error_message).to eq 'Name is too long (maximum is 255 characters)'
     end
   end
 end

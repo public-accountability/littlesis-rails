@@ -534,7 +534,7 @@ class Relationship < ApplicationRecord
     update(is_deleted: false)
     if association_data.present? && association_data['document_ids'].present?
       association_data['document_ids'].each do |doc_id|
-        add_reference_by_document_id(doc_id)
+        references.find_or_create_by(document_id: doc_id)
       end
     end
   end

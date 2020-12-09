@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/DynamicFindBy
+
 class Document < ApplicationRecord
   has_many :references
 
@@ -36,6 +38,10 @@ class Document < ApplicationRecord
   #---------------#
   # CLASS METHODS #
   #---------------#
+
+  def self.find_or_create!(attrs)
+    find_by_url(attrs.fetch(:url)) || Document.create!(attrs)
+  end
 
   # Returns the reference types as an array: [ [name, number], ... ]
   # Removes the FEC filings option
@@ -183,3 +189,5 @@ class Document < ApplicationRecord
     Document.send(:url_to_hash, url)
   end
 end
+
+# rubocop:enable Rails/DynamicFindBy
