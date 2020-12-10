@@ -7,7 +7,18 @@ class EditablePagesController < ApplicationController
 
   helper_method :markdown, :editable_page_path
 
-  MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
+  class RenderWithTableClass < Redcarpet::Render::HTML
+    def table(thead, tbody)
+      <<~HTML
+        <table class='table'>
+          <thead>#{thead}</thead>
+          <tbody>#{tbody}</tbody>
+        </table>
+      HTML
+    end
+  end
+
+  MARKDOWN = Redcarpet::Markdown.new(RenderWithTableClass,
                                      autolink: true, fenced_code_blocks: true, tables: true)
 
   # GET /NAMESAPCE/:page_name
@@ -20,11 +31,12 @@ class EditablePagesController < ApplicationController
   # GET /NAMESPACE
   def index
     @page = self.class.page_model.find_by(name: 'index')
-    if @page && !@page.markdown.nil?
-      @markdown = markdown(@page.markdown)
-    else
-      @markdown = markdown("The #{self.class.namespace} page named 'index' will be used as the front page.")
-    end
+    @markdown =
+      if @page && !@page.markdown.nil?
+        markdown(@page.markdown)
+      else
+        markdown("The #{self.class.namespace} page named 'index' will be used as the front page.")
+      end
   end
 
   # GET /NAMESPACE/new
@@ -36,7 +48,8 @@ class EditablePagesController < ApplicationController
   # Note: this returns all pages in (using the .all method)
   # By default this will render the template editable_pages/pages.html.erb
   def pages
-    @pages = self.class.page_model.select('name, title, id, updated_at, created_at, last_user_id').all
+    @pages = self.class.page_model
+      .select('name, title, id, updated_at, created_at, last_user_id').all
   end
 
   # POST /NAMESPACE
