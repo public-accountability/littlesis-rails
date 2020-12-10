@@ -67,7 +67,7 @@ class RelationshipsController < ApplicationController
   def update
     @relationship.assign_attributes relationship_params
     # If user has not checked the 'just cleaning up' or selected an existing reference
-    # then a  new reference must be created
+    # then a new reference must be created
     @relationship.validate_reference(reference_params) if need_to_create_new_reference
     if @relationship.valid?
       ApplicationRecord.transaction do

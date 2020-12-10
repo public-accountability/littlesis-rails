@@ -31,7 +31,7 @@ module Referenceable
   end
 
   def last_reference
-    return @_last_reference if defined?(@_last_reference)
+    return @_last_reference if @_last_reference
 
     references.last
   end
@@ -41,9 +41,10 @@ module Referenceable
 
     dattrs = Document::DocumentAttributes.new(attrs)
     dattrs.validate!
-    ApplicationRecord.transaction do
-      @_last_reference = references.find_or_create_by!(document: dattrs.find_or_create_document)
+    @_last_reference = ApplicationRecord.transaction do
+      references.find_or_create_by!(document: dattrs.find_or_create_document)
     end
+
     self
   end
 
@@ -76,10 +77,4 @@ module Referenceable
 
   # Required by `validate :valid_new_reference? `
   def valid_new_reference?; end
-
-  private
-
-  def reference_optional?
-    self.class.respond_to?(:reference_optional?) && self.class.reference_optional?
-  end
 end

@@ -31,7 +31,7 @@ class EntityMerger
       @lists.each { |list_id| ListEntity.create!(list_id: list_id, entity_id: dest.id) }
       @images.each(&:save!)
       @aliases.each(&:save!)
-      @document_ids.each { |doc_id| dest.add_reference_by_document_id(doc_id) }
+      @document_ids.each { |doc_id| @dest.references.find_or_create_by(document_id: doc_id) }
       @tag_ids.each { |tag_id| dest.add_tag(tag_id) }
       @articles.each(&:save!)
       @child_entities.each(&:merge!)
@@ -217,7 +217,7 @@ class EntityMerger
   MergedRelationship = Struct.new(:relationship, :docs) do
     def merge!
       relationship.save!
-      docs.each { |doc_id| relationship.add_reference_by_document_id(doc_id) }
+      docs.each { |doc_id| relationship.references.find_or_create_by(document_id: doc_id) }
     end
   end
 
