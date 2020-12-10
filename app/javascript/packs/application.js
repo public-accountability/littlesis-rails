@@ -7,6 +7,9 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
+import 'popper.js'
+import 'bootstrap'
+
 import utility from './common/utility';
 import http from './common/http';
 import tags from './common/tags';
