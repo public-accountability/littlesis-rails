@@ -100,8 +100,11 @@ class EntitiesController < ApplicationController
   def update
     # assign new attributes to the entity
     @entity.assign_attributes(prepare_params(update_entity_params))
-    # if those attributes are valid
-    # update the entity extension records  and save the reference
+
+    if need_to_create_new_reference
+      @entity.validate_reference(reference_params)
+    end
+
     if @entity.valid?
       @entity.update_extension_records(extension_def_ids)
       @entity.add_reference(reference_params) if need_to_create_new_reference

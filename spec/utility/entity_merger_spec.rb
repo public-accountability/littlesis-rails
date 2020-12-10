@@ -703,7 +703,7 @@ describe 'Merging Entities', :merging_helper do
 
       before do
         rel = create(:generic_relationship, entity: other_org, related: source_org)
-        documents.each { |d| rel.add_reference_by_document_id(d.id) }
+        documents.each { |d| rel.references.find_or_create_by(document_id: d.id) }
         subject.merge!
       end
 

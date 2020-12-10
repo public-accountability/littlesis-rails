@@ -11,50 +11,41 @@ module Referenceable
     validate :valid_new_reference?
   end
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
-  # invalides the model if the reference url or name is invalid
-  def validate_reference(attrs)
-    self.document_attributes = attrs
-
-    return if document_url.blank? && reference_optional?
-
-    if document_url.blank?
-      reference_error 'A source URL is required'
-    elsif !Document.valid_url?(document_url)
-      reference_error "\"#{document_url}\" is not a valid url"
-    elsif name_too_long?
-      reference_error 'name is too long (maximum is 255 characters)'
-    else
-      define_singleton_method(:valid_new_reference?) { nil }
-    end
-  end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
-
+  # validate_reference will invalidate the instance. Many edit actions on LittleSis
+  # require a valid source url, and this hacks into ActiveModel validation so that
+  # entity.validate_reference(url: 'foobar').valid? returns false even though url
+  # is not an attribute of Entity and no field on Entity was changed.
   # Hash -> self
-  def add_reference(document_attributes)
-    unless persisted?
-      raise ActiveRecord::RecordNotSaved, "Can't create a reference for an unpersisted record"
-    end
+  def validate_reference(attrs)
+    document_attributes = Document::DocumentAttributes.new(attrs)
 
-    validate_reference(document_attributes)
-
-    if valid?
-      return if document_url.blank? && reference_optional?
-
-      create_document_reference
+    if document_attributes.valid?
+      define_singleton_method(:valid_new_reference?) { nil }
+    else
+      define_singleton_method(:valid_new_reference?) do
+        errors.add :base, document_attributes.error_message
+      end
     end
 
     self
   end
 
-  def add_reference_by_document_id(document_id)
-    if Document.find_by(id: document_id).blank?
-      raise ArgumentError, "No document found with id: #{document_id}"
+  def last_reference
+    return @_last_reference if @_last_reference
+
+    references.last
+  end
+
+  def add_reference(attrs)
+    raise ActiveRecord::RecordNotSaved, "#{self} is not saved" unless persisted?
+
+    dattrs = Document::DocumentAttributes.new(attrs)
+    dattrs.validate!
+    @_last_reference = ApplicationRecord.transaction do
+      references.find_or_create_by!(document: dattrs.find_or_create_document)
     end
 
-    references.create(document_id: document_id) unless references.exists?(document_id: document_id)
+    self
   end
 
   def documents_count
@@ -82,68 +73,8 @@ module Referenceable
     end
   end
 
-  # Hash -> ?Reference
-  def save_with_reference(reference_attrs)
-    # TODO: @aepyornis would like to think about
-    #   if we want to yield to a block here for entities
-    #   b/c of need to update their extension records
-    validate_reference(reference_attrs)
-    if valid?
-      save!
-      add_reference(reference_attrs)
-      return find_reference_by_url(reference_attrs[:url])
-    end
-    return nil
-  end
+  protected
 
-  def find_reference_by_url(document_url)
-    # find references associating *this* particular referenceable with a document with a given url
-    # (this method is not a class method on `Reference` because we don't want all references)
-    references.find_by(document_id: Document.find_by(url: document_url).id)
-  end
-
-  private
-
-  # Required by ` validate :valid_new_reference? `
+  # Required by `validate :valid_new_reference? `
   def valid_new_reference?; end
-
-  # The modules adds a validation check that executes the method `valid_new_reference?`
-  # By default the method is empty, but if the URL is invalid
-  # this will change the method's definition to append an error on the referenceable.
-  def reference_error(msg)
-    define_singleton_method(:valid_new_reference?) do
-      errors.add :base, msg
-    end
-  end
-
-  def reference_optional?
-    self.class.respond_to?(:reference_optional?) && self.class.reference_optional?
-  end
-
-  def document_attributes=(attrs)
-    @document_attributes = attrs
-  end
-
-  def document_name
-    @document_attributes[:name] || @document_attributes['name']
-  end
-
-  def document_url
-    @document_attributes[:url] || @document_attributes['url']
-  end
-
-  def find_or_create_document
-    Document.find_by(url: document_url) || Document.create!(@document_attributes)
-  end
-
-  def name_too_long?
-    document_name.present? && document_name.length > 255
-  end
-
-  def create_document_reference
-    document = find_or_create_document
-    return if references.exists?(document_id: document.id)
-
-    references.create(document_id: document.id)
-  end
 end
