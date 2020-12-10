@@ -14,13 +14,19 @@ also see controllers/reference_widget_controller.js
       <% if local_assigns.fetch(:show_just_cleaning_up, true) %>
         <div>
           <label class="pr-1">Just Cleaning Up: </label>
-          <input type="checkbox" data-action="change->reference-widget#toggleJustCleaningUp" />
+          <input
+            type="checkbox"
+            data-action="change->reference-widget#toggleJustCleaningUp"
+            data-reference-widget-target="justCleaningUp"
+            name="reference[just_cleaning_up]"
+
+            required="required" />
         </div>
       <% end %>
 
       <div>
         <label class="pr-1">Existing Source: </label>
-        <select data-reference-widget-target="select">
+        <select data-reference-widget-target="select" name="reference[document_id]">
           <option></option>
           <%= documents.each do |d| %>
             <%= tag.option truncate(d.name), value: d.id, title: d.url %>
@@ -32,22 +38,20 @@ also see controllers/reference_widget_controller.js
         <button class="btn btn-info"
                 type="button"
                 data-action="reference-widget#toggleNewDocument"
-                data-reference-widget-target="newReferenceButton"
-        >Create new reference</button>
+                data-reference-widget-target="newReferenceButton">Create new reference</button>
       </div>
     </div>
 
     <div class="card-body new-document" style="display: none;" data-reference-widget-target="newDocument">
       <div>
         <label>url: </label>
-        <input type="url" />
+        <input type="url" data-reference-widget-target="newDocumentInput" />
       </div>
 
       <div>
         <label>name: </label>
-        <input type="text" />
+        <input type="text"  data-reference-widget-target="newDocumentInput" />
       </div>
-
 
       <div>
         <button class="btn btn-info" type="button" data-action="reference-widget#toggleExistingSource">Use existing source</button>

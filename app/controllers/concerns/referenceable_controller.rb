@@ -4,7 +4,8 @@ module ReferenceableController
   private
 
   def need_to_create_new_reference
-    existing_reference_params['reference_id'].blank? && existing_reference_params['just_cleaning_up'].blank?
+    (existing_reference_params['reference_id'] || existing_reference_params['document_id']).blank? &&
+      existing_reference_params['just_cleaning_up'].blank?
   end
 
   def existing_document_id
