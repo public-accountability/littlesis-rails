@@ -16,6 +16,9 @@ import 'tinycarousel'
 import 'bootstrap-select'
 import 'jquery-typeahead'
 
+// TODO: replace Hogan with mustache
+import 'hogan.js'
+
 import utility from './common/utility';
 import http from './common/http';
 import tags from './common/tags';
