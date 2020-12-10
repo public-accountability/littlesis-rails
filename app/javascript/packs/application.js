@@ -7,6 +7,7 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
+import jquery from 'jquery'
 import 'popper.js'
 import 'bootstrap'
 import 'jquery-ui/ui/widgets/autocomplete'
@@ -31,6 +32,7 @@ import RelationshipBulkAdder from './components/relationship_bulk_adder';
 import DonationMatcher from './components/donation_matcher';
 import RelationshipsDatatable from './components/relationships_datatable';
 
+window.$ = jquery
 window.utility = utility;
 window.utility.delete = utility.del;
 window.datatable = datatable;
