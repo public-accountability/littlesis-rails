@@ -21,6 +21,8 @@ import 'hogan.js'
 
 import 'd3'
 import 'papaparse'
+import 'filesaver'
+import 'select2'
 
 import utility from './common/utility';
 import http from './common/http';
