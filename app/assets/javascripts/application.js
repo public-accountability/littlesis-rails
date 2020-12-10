@@ -34,16 +34,3 @@
 //= require FileSaver.min.js
 //= require select2.full.min.js
 //= require_tree ./common
-
-$(document).ready(function() {
-  $('button[data-dismiss-id]').on("click", function() {
-    var id = $(this).attr('data-dismiss-id');
-    $.ajax("/home/dismiss", {
-      data: { id: id },
-      type: 'POST',
-      success: function(data) {
-        $('#' + data.id).hide('blind');
-      }
-    });
-  });
-});
