@@ -19,6 +19,9 @@ import 'jquery-typeahead'
 // TODO: replace Hogan with mustache
 import 'hogan.js'
 
+import 'd3'
+import 'papaparse'
+
 import utility from './common/utility';
 import http from './common/http';
 import tags from './common/tags';
