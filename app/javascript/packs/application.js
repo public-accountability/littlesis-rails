@@ -11,6 +11,7 @@ import 'popper.js'
 import 'bootstrap'
 import 'jquery-ui/ui/widgets/autocomplete'
 import Shuffle from 'shufflejs'
+import 'tinycarousel'
 
 import utility from './common/utility';
 import http from './common/http';
