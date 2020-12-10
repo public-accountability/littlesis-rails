@@ -48,3 +48,5 @@ window.LittleSis.ListBulkEntityAdder = ListBulkEntityAdder;
 window.LittleSis.RelationshipBulkAdder = RelationshipBulkAdder;
 window.LittleSis.DonationMatcher = DonationMatcher;
 window.LittleSis.RelationshipsDatatable = RelationshipsDatatable;
+
+import "controllers"
