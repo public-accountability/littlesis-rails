@@ -1,5 +1,8 @@
-var nys = (function($, utility){
-  
+export default function nysSearch() {
+  const $ = window.$;
+  const utility = window.utility;
+  let nys = {};
+
   function td(v){
     return "<td>" + v + "</td>";
   }
@@ -33,7 +36,7 @@ var nys = (function($, utility){
   }
 
   // input: 'Org' or 'Person'
-  function entitySearch(primaryExt) {
+  nys.entitySearch = function(primaryExt) {
     if (!['Person', 'Org'].includes(primaryExt)) {
       var msg  = "nys.entitySearch must be called with 'Org' or 'Person'. It was called with " + primaryExt;
       throw msg;
@@ -54,7 +57,7 @@ var nys = (function($, utility){
     return "/nys/" + primaryExtToType(primaryExt) + "/new?entity=" + entityId + "&query=" + encodeURIComponent(query);
   }
 
-  function filerSearch() {
+  nys.filerSearch = function() {
     $('#custom-search-btn').click(function(e){
       var entityId = utility.entityInfo('entityid');
       var primaryExt = utility.entityInfo('entitytype');
@@ -62,11 +65,6 @@ var nys = (function($, utility){
       window.location.href = newFilerUrl(entityId, primaryExt, query);
     });
   }
-  
-  return {
-    entitySearch: entitySearch,
-    filerSearch: filerSearch
-  };
 
-
-})(jQuery, utility);
+  return nys;
+}
