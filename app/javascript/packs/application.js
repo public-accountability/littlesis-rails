@@ -10,7 +10,6 @@
 import utility from './common/utility';
 import http from './common/http';
 import tags from './common/tags';
-import clipboardjs from 'clipboard';
 import datatable from 'datatables.net';
 import typeahead from 'typeahead.js';
 import mustache from 'mustache';
@@ -28,7 +27,6 @@ import RelationshipsDatatable from './components/relationships_datatable';
 
 window.utility = utility;
 window.utility.delete = utility.del;
-window.clipboardjs = clipboardjs;
 window.datatable = datatable;
 window.mustache = mustache;
 

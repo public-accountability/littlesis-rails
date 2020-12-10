@@ -27,7 +27,6 @@
     "@rails/webpacker": "^5.1.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "chai": "^4.2.0",
-    "clipboard": "^2.0.6",
     "core-js": "3.6.5",
     "datatables.net": "^1.10.21",
     "datatables.net-dt": "^1.10.21",
