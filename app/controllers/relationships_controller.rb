@@ -68,6 +68,7 @@ class RelationshipsController < ApplicationController
     @relationship.assign_attributes relationship_params
     # If user has not checked the 'just cleaning up' or selected an existing reference
     # then a  new reference must be created
+    @relationship.validate_reference(reference_params) if need_to_create_new_reference
     if @relationship.valid?
       ApplicationRecord.transaction do
         @relationship.add_reference(reference_params) if need_to_create_new_reference
@@ -88,12 +89,12 @@ class RelationshipsController < ApplicationController
   # Returns status code 201 if successful or a json of errors with status code 400
   def create
     @relationship = Relationship.new(relationship_params)
-    @relationship.validate_reference(reference_params) if !existing_document_id
+    @relationship.validate_reference(reference_params) unless existing_document_id
 
     if @relationship.valid?
       @relationship.save!
       if existing_document_id
-        @relationship.add_reference_by_document_id(existing_document_id)
+        @relationship.references.find_or_create_by(document_id: existing_document_id)
       else
         @relationship.add_reference(reference_params)
       end

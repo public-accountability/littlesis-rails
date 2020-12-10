@@ -340,15 +340,16 @@ describe RelationshipsController, type: :controller do
         end
       end
 
-      context 'invalid reference' do
+      describe 'invalid reference' do
         let(:params) do
           { id: relationship.id,
             relationship: { 'start_date' => '2001-01-01' },
             reference: { 'url' => '', 'name' => '' } }
         end
+
         before { patch :update, params: params }
 
-        it { should render_template(:edit) }
+        it { is_expected.to render_template(:edit) }
 
         it 'does not update the relationship' do
           expect(Relationship.find(relationship.id).start_date).to be nil
