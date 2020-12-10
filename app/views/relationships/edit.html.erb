@@ -5,6 +5,16 @@
 <%= render partial: 'header' %>
 
 <%= form_for @relationship, method: 'patch', html: { class: 'edit-relationship-form' } do |f| %>
+
+  <div class="row mt-4 mb-4">
+    <%#  locals: { documents:  @relationship.documents.to_a %>
+    <div class="col-sm-6">
+      <%= render partial: 'shared/editing/reference_widget',
+                 locals: { documents:  Document.order('rand()').limit(50).to_a }
+      %>
+    </div>
+  </div>
+
   <div class="row mt-4">
     <%= render partial: 'shared/editing/edit_references_panel', locals: {references: @relationship.references, selected_ref: @selected_ref} %>
     <div class="col-4 offset-sm-1">

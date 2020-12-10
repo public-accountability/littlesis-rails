@@ -1,0 +1,57 @@
+<%#
+locals: documents: [<Document>]
+
+also see controllers/reference_widget_controller.js
+%>
+
+<div data-controller="reference-widget">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Where is this information coming from?</span>
+    </div>
+
+    <div class="card-body existing-source" data-reference-widget-target="existingSource">
+      <% if local_assigns.fetch(:show_just_cleaning_up, true) %>
+        <div>
+          <label class="pr-1">Just Cleaning Up: </label>
+          <input type="checkbox" data-action="change->reference-widget#toggleJustCleaningUp" />
+        </div>
+      <% end %>
+
+      <div>
+        <label class="pr-1">Existing Source: </label>
+        <select data-reference-widget-target="select">
+          <option></option>
+          <%= documents.each do |d| %>
+            <%= tag.option truncate(d.name), value: d.id, title: d.url %>
+          <% end %>
+        </select>
+      </div>
+
+      <div>
+        <button class="btn btn-info"
+                type="button"
+                data-action="reference-widget#toggleNewDocument"
+                data-reference-widget-target="newReferenceButton"
+        >Create new reference</button>
+      </div>
+    </div>
+
+    <div class="card-body new-document" style="display: none;" data-reference-widget-target="newDocument">
+      <div>
+        <label>url: </label>
+        <input type="url" />
+      </div>
+
+      <div>
+        <label>name: </label>
+        <input type="text" />
+      </div>
+
+
+      <div>
+        <button class="btn btn-info" type="button" data-action="reference-widget#toggleExistingSource">Use existing source</button>
+      </div>
+    </div>
+  </div>
+</div>
