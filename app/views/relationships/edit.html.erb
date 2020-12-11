@@ -1,5 +1,3 @@
-
-
 <% label_class = 'form-label' %>
 
 <% content_for(:page_title, 'Edit: ' + @relationship.name ) %>
@@ -9,13 +7,13 @@
 <%= form_for @relationship, method: 'patch', html: { class: 'edit-relationship-form' } do |f| %>
 
   <div class="row mt-4 mb-4">
-    <%#  locals: { documents:  @relationship.documents.to_a %>
-    <div class="col-sm-6">
+    <div class="col-md-6 col-sm-8 col-xs-12">
       <%= render partial: 'shared/editing/reference_widget',
-                 locals: { documents:  Document.order('rand()').limit(50).to_a }
+                 locals: { documents: @relationship.documents.to_a }
       %>
     </div>
   </div>
+
 
   <% if [1, 2, 3, 5, 7, 10, 11].include? @relationship.category_id %>
     <%= render partial: 'description_fields_display' %>
@@ -26,7 +24,7 @@
 
   <!-- Postion, Membership, Ownership, Donation -->
   <% if d1_is_title || @relationship.is_donation? %>
-    <div class="form-row">f
+    <div class="form-row">
       <%= relationship_form_tag(d1_label(f, @relationship), f.text_field(:description1, oninput: 'description1Validation(this)', pattern: '(.{1}){0,100}') ) %>
     </div>
   <% end %>

@@ -12,8 +12,7 @@ export default class extends Controller {
                     "newDocument",
                     "newDocumentInput",
                     "newReferenceButton",
-                    "justCleaningUp"
-                   ]
+                    "justCleaningUp"]
 
   connect() {
     window.$(this.selectTarget).select2(select2Configuration)
