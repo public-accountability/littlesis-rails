@@ -16,16 +16,11 @@
 # FECDonorMatchService.run(donor_id:, sub_ids:)   "do the matching"
 # FECContributionsQuery.run                       "show the matched contributions"
 #
-
 class FECController < ApplicationController
   before_action :set_entity, only: %i[contributions match_contributions donor_match]
 
-  def contributions
-    @contributions = FECContributionsQuery.run(@entity)
-  end
-
   def match_contributions
-    # @donors = FECDonorQuery.run(params[:q] || @entity)
+    @donors = FECDonorQuery.run(params[:q] || @entity)
   end
 
   # required params: donor_id, sub_ids
@@ -34,12 +29,16 @@ class FECController < ApplicationController
     redirect_to action: :match_contributions
   end
 
-  def contribution_unmatch
-  end
+  # def contributions
+  #   @contributions = FECContributionsQuery.run(@entity)
+  # end
 
-  def committee
-  end
+  # def contribution_unmatch
+  # end
 
-  def candidate
-  end
+  # def committee
+  # end
+
+  # def candidate
+  # end
 end

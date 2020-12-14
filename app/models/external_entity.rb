@@ -42,7 +42,7 @@ class ExternalEntity < ApplicationRecord
 
   # Performs a match between the external data and an entity.
   # If already matched, an error is raised.
-  # There are dataset-specific side effects of matching. see #match_action
+  # calls #match_action to perform the dataset-specific side-effects of matching.
   def match_with(entity_or_id)
     raise AlreadyMatchedError, "ExternalEntity (#{id}) is already matched" if matched?
 

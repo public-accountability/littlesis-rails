@@ -2,7 +2,7 @@
   <div class="col p-2">
     <p>Help expand the LittleSis database by finding matching donors in the FEC's bulk dataset.</p>
     <%= form_with url: fec_entity_match_contributions_path(@entity), method: :get, class: 'input-group' do |form| %>
-      <%= form.text_field "q",  class: "form-control", placeholder: @entity.name %>
+      <%= form.text_field "q", class: "form-control", placeholder: @entity.name %>
       <div class="input-group-append">
         <%= form.submit "Search", class: 'btn btn-outline-secondary' %>
       </div>
