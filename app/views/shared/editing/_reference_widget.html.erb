@@ -1,16 +1,15 @@
 <%#
 locals: documents: [<Document>]
-
-also see controllers/reference_widget_controller.js
+Also see controllers/reference_widget_controller.js
 %>
 
-<div data-controller="reference-widget">
+<div data-controller="reference-widget" id="reference-widget">
   <div class="card">
     <div class="card-header">
       <span class="card-title">Where is this information coming from?</span>
     </div>
 
-    <div class="card-body existing-source" data-reference-widget-target="existingSource">
+    <div class="card-body" data-reference-widget-target="existingSource">
       <% if local_assigns.fetch(:show_just_cleaning_up, true) %>
         <div class="form-group">
           <label class="pr-1">
@@ -27,7 +26,7 @@ also see controllers/reference_widget_controller.js
 
       <div class="form-group">
         <label class="pr-2">Existing Source:</label>
-        <select style="width: 70%" data-reference-widget-target="select" name="reference[document_id]"  class="form-control">
+        <select style="width: 50%" data-reference-widget-target="select" name="reference[document_id]"  class="form-control">
           <option></option>
           <%= documents.each do |d| %>
             <%= tag.option truncate(d.name), value: d.id, title: d.url %>
@@ -38,25 +37,16 @@ also see controllers/reference_widget_controller.js
       <div class="form-group">
         <button class="btn btn-primary"
                 type="button"
+                id="reference-widget-create-new-reference"
                 data-action="reference-widget#toggleNewDocument"
                 data-reference-widget-target="newReferenceButton">Create new reference</button>
       </div>
     </div>
 
     <div class="card-body new-document" style="display: none;" data-reference-widget-target="newDocument">
-      <div>
-        <label>
-          url:
-          <input type="url" data-reference-widget-target="newDocumentInput" />
-        </label>
-      </div>
-
-      <div>
-        <label>
-          name:
-          <input type="text"  data-reference-widget-target="newDocumentInput" />
-        </label>
-      </div>
+      <% d = { reference_widget_target: 'newDocumentInput' }  %>
+      <%= bootstrap_form_group_input 'Url:', type: 'url', size: 3, input_name: 'reference[url]', label_data: d %>
+      <%= bootstrap_form_group_input 'Name:', type: 'text', size: 3, input_name: 'reference[name]', label_data: d %>
 
       <div>
         <button class="btn btn-primary" type="button" data-action="reference-widget#toggleExistingSource">Use existing source</button>
