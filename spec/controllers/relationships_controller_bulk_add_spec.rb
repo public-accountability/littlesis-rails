@@ -70,9 +70,9 @@ describe RelationshipsController, type: :controller do
           expect { post :bulk_add!, params: params }.to change(Donation, :count).by(2)
         end
 
-        it 'creates two References' do
-          expect { post :bulk_add!, params: params }.to change(Reference, :count).by(2)
-          expect(Reference.last(2).map(&:document).map(&:url)).to eql [url] * 2
+        it 'creates 5 References - 2 for relationships, 3 for associated entities ' do
+          expect { post :bulk_add!, params: params }.to change(Reference, :count).by(5)
+          expect(Reference.last(2).map(&:document).map(&:url)).to eq [url] * 2
         end
 
         it 'creates one Document' do

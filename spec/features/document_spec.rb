@@ -3,23 +3,24 @@ feature 'Editing documents' do
   let(:new_attrs) { attributes_for(:document) }
   let(:user) { create_basic_user }
 
-  context 'as an anon user' do
+  context 'when not logged in' do
     before { visit edit_document_path(document) }
+
     redirects_to_login_page
   end
 
-  context 'as a signed-in user' do
+  context 'when logged in' do
     before do
       login_as(user, scope: :user)
       visit edit_document_path(document)
     end
+
     after { logout(:user) }
 
     scenario 'shows a page with a form to edit the document' do
       successfully_visits_page edit_document_path(document)
       page_has_selector 'form.edit_document', count: 1
       expect(page).to have_text document.url
-      page_has_selector 'select#document_ref_type option', count: 3
       page_has_selector "input\#document_name[value='#{document.name}']"
     end
 

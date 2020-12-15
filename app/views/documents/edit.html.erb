@@ -27,19 +27,6 @@
   </div>
 
   <div class="form-group form-group-sm">
-    <b><%= label_tag(:ref_type, "Type") %></b>
-    <% if @document.ref_type == 2 %>
-      <div>
-        FEC Filing
-      </div>
-    <% else %>
-      <div>
-        <%= f.select(:ref_type, options_for_select(Document.ref_type_options, @document.ref_type) ) %>
-      </div>
-    <% end %>
-  </div>
-
-  <div class="form-group form-group-sm">
     <b><%= label_tag(:excerpt, "Excerpt") %></b>
     <div>
       <%= f.text_area(:excerpt, size: "40x6") %>

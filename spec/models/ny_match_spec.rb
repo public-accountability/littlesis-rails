@@ -1,4 +1,4 @@
-# rubocop:disable RSpec/VerifiedDoubles, RSpec/MultipleExpectations
+# rubocop:disable RSpec/VerifiedDoubles
 
 describe NyMatch, type: :model do
   it { is_expected.to validate_presence_of(:ny_disclosure_id) }
@@ -190,7 +190,7 @@ describe NyMatch, type: :model do
     it 'creates a new reference' do
       disclosure = create(:ny_disclosure, amount1: 50)
       match = NyMatch.create(ny_disclosure_id: disclosure.id, donor: donor, recipient: elected)
-      expect { match.create_or_update_relationship }.to change(Reference, :count).by(1)
+      expect { match.create_or_update_relationship }.to change(Reference, :count).by(3)
       expect(Reference.last.document.url).to eq disclosure.reference_link
       expect(Reference.last.document.name).to eq disclosure.reference_name
     end
@@ -234,7 +234,7 @@ describe NyMatch, type: :model do
     it 'adds the ny disclosure referece link' do
       expect(disclosure).to receive(:reference_link).and_return(url)
       match = create(:ny_match, ny_disclosure: disclosure, donor: donor, recipient: elected)
-      expect { match.send(:create_reference, rel) }.to change(Reference, :count).by(1)
+      expect { match.send(:create_reference, rel) }.to change(Reference, :count).by(3)
       expect(Reference.last.document.url).to eql url
     end
 
@@ -243,9 +243,9 @@ describe NyMatch, type: :model do
       expect(disclosure).to receive(:reference_link).and_return('http://ny_state_ref_link_2.gov')
       match = create(:ny_match, ny_disclosure: disclosure, donor: donor, recipient: elected)
 
-      expect { match.send(:create_reference, rel) }.to change(Reference, :count).by(1)
+      expect { match.send(:create_reference, rel) }.to change(Reference, :count).by(3)
       expect(Reference.last.document.url).to eq 'http://ny_state_ref_link_1.gov'
-      expect { match.send(:create_reference, rel) }.to change(Reference, :count).by(1)
+      expect { match.send(:create_reference, rel) }.to change(Reference, :count).by(3)
       expect(Reference.last.document.url).to eq 'http://ny_state_ref_link_2.gov'
     end
 
@@ -253,10 +253,10 @@ describe NyMatch, type: :model do
       expect(disclosure).to receive(:reference_link).twice.and_return(url)
       match = create(:ny_match, ny_disclosure: disclosure, donor: donor, recipient: elected)
 
-      expect { match.send(:create_reference, rel) }.to change(Reference, :count).by(1)
+      expect { match.send(:create_reference, rel) }.to change(Reference, :count).by(3)
       expect { match.send(:create_reference, rel) }.not_to change(Reference, :count)
     end
   end
 end
 
-# rubocop:enable RSpec/VerifiedDoubles, RSpec/MultipleExpectations
+# rubocop:enable RSpec/VerifiedDoubles
