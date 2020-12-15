@@ -1,49 +1,58 @@
 <%= render partial: 'header', locals: { entity: @entity } %>
 <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 
+<% documents = @entity.all_documents(@page, 25) %>
 
-<div class="row mt-3">
-  <h3 class="w-100">The sources documenting <%= @entity.name %></h3>
-    <% if user_signed_in? %>
-      <p><a href="#add-reference-modal" data-toggle="modal">Add a new reference</a></p>
-    <% end %>
+<div class="row mt-1">
+  <div class="col">
+    <h5>Source Documents for <%= entity_link(@entity) %></h5>
+    <div class="mb-1 pb-1">
+      Total: <code><%= number_with_delimiter(@entity.documents_count) %></code>
+      <% if user_signed_in? %>
+        <a class="pl-2" href="#add-reference-modal" data-toggle="modal">Add a new reference</a>
+      <% end %>
+      <span class="d-inline-block">
+        <ul class="pagination pagination-sm">
+          <li class="page-item">
+            <a class="page-link" href="<%= path_to_prev_page(documents) %>" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item" >
+            <a class="page-link" href="<%= path_to_next_page(documents) %>" aria-label="Previous">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </span>
+    </div>
+
+    <table class="table table-hover">
+      <tbody>
+        <% documents.each do |doc| %>
+          <tr>
+            <td>
+              <%= link_to doc.name, doc.url, 'target' => '_blank', 'rel' => 'noopener', 'title' => doc.url %>
+              <% if user_signed_in? %>
+                <%= link_to edit_document_path(doc) do %>
+	          <span class="glyphicon glyphicon-edit ml-1"></span></td>
+	        <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th>
+            <%= paginate documents %>
+          </th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
 
-<% cache ['entity_references', @page, @entity.cache_key_with_version ] do  %>
-
-  <div class="row">
-    <table class="table table-hover">
-      <caption>Total Number of Documents: <code><%= @entity.documents_count %></code></caption>
-      <thead>
-	<tr>
-	  <th>Name</th>
-	  <th>Url</th>
-	  <th>type</th>
-	</tr>
-      </thead>
-      <tbody>
-	<% documents = @entity.all_documents(@page, 25) %>
-	<% documents.each do |doc| %>
-	  <tr>
-	    <% if user_signed_in? %>
-	      <td>
-		<%= link_to edit_document_path(doc) do %>
-	          <span class="glyphicon glyphicon-edit"></span>  <span><%= doc.name %></span>
-	        <% end %>
-	      </td>
-	    <% else %>
-	      <td><%= doc.name %></td>
-	    <% end %>
-	    <td><%= link_to doc.url, doc.url, '_target' => 'blank' %></td>
-	    <td><%= doc.ref_types_display %></td>
-	  </tr>
-	<% end %>
-      </tbody>
-    </table>
-    <%= paginate documents %>
-  </div>
-
-<% end %>
 
 <% if user_signed_in? %>
   <%= render partial: 'shared/reference_new', locals: {model: @entity, reference: nil} %>
