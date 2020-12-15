@@ -92,13 +92,7 @@ describe Referenceable, type: :model do
   # end
 
   describe 'documents count' do
-    it 'calls Document.documents_count_for_entity for entiteis' do
-      entity = build(:org)
-      expect(Document).to receive(:documents_count_for_entity).once.with(entity)
-      entity.documents_count
-    end
-
-    it 'calls documents.count for other referenceables' do
+    it 'calls documents.count for referenceables' do
       list = build(:list)
       documents_double = double('documents')
       expect(documents_double).to receive(:count).once
@@ -111,25 +105,12 @@ describe Referenceable, type: :model do
     let(:entity) { build(:org) }
     let(:list) { build(:list) }
 
-    it 'uses Document.documents_for_entity for entities' do
-      expect(Document).to receive(:documents_for_entity)
-                            .with(entity: entity, page: 1, per_page: 20)
-                            .and_return([build(:document)])
-
-      expect(Document).to receive(:documents_count_for_entity)
-                            .with(entity).and_return(1)
-
-      all_documents = entity.all_documents(1)
-      expect(all_documents).to be_a Kaminari::PaginatableArray
-    end
-
     it 'uses the regular pagination (.page) methods for other models' do
       mock_documents = spy('documents')
       expect(mock_documents).to receive(:page).with(1)
                                   .and_return(double(:per => nil))
 
-      expect(list).to receive(:documents)
-                        .and_return(mock_documents)
+      expect(list).to receive(:documents).and_return(mock_documents)
 
       list.all_documents(1)
     end
