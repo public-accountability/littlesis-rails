@@ -142,7 +142,11 @@ class EntitiesController < ApplicationController
   end
 
   def references
-    @page = params[:page].present? ? params[:page] : 1
+    @documents = @entity
+                   .documents
+                   .order(created_at: :desc)
+                   .page(params[:page] || 1)
+                   .per(20)
   end
 
   # ------------------------------ #

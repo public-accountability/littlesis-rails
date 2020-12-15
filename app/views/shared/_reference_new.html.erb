@@ -8,14 +8,14 @@
 	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
       <div class="modal-body">
-        
+
         <!-- Error Alert -->
         <div id="reference-error-alert" class="alert alert-warning" role="alert" style="display:none;">
           <p class="text-center"><strong>We're sorry!</strong>
             <p>The LittleSis database had issues with the following fields:</p>
             <div id="reference-errors"></div>
         </div>
-        
+
         <!-- Loading -->
         <div id="reference-loading" style="display: none;">
           <h3 class="text-center">Adding a new reference ... </h3>
@@ -31,14 +31,14 @@
 
           <%= hidden_field(:data, :referenceable_id, value: model.id) %>
           <%= hidden_field(:data, :referenceable_type, value: model.class.name) %>
-          
+
           <div class="form-group form-group-sm">
             <%= label_tag(:data_url, "Source URL*", class: "col-sm-2 control-label") %>
             <div class="col-sm-10">
               <%= url_field(:data, :url, required: true) %>
             </div>
           </div>
-          
+
           <div class="form-group form-group-sm">
             <%= label_tag(:data_name, "Display Name*", class: "col-sm-2 control-label") %>
             <div class="col-sm-10">
@@ -54,27 +54,20 @@
           </div>
 
           <div class="form-group form-group-sm">
-            <%= label_tag(:data_ref_type, "Type", class: "col-sm-2 control-label") %>
-            <div class="col-sm-4">
-              <%= select('data', 'ref_type', Document.ref_type_options )%>
-            </div>
-          </div>
-
-          <div class="form-group form-group-sm">
             <%= label_tag(:data_excerpt, "Excerpt", class: "col-sm-2 control-label") %>
             <div class="col-sm-10">
               <%= text_area(:data, :excerpt, size: "40x6")  %>
             </div>
           </div>
-          
+
         <% end %>
       </div>
-      
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <input class="btn btn-primary" type="submit" value="Submit" form="reference-form">
       </div>
-      
+
     </div>
   </div>
 </div>
