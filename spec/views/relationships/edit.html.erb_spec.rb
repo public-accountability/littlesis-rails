@@ -1,7 +1,5 @@
 describe 'relationships/edit.html.erb', type: :view do
-  before(:all) do
-    @user = build(:user)
-  end
+  let(:user) { build(:user) }
 
   def has_common_fields
     css 'label', text: 'Start date'
@@ -15,14 +13,15 @@ describe 'relationships/edit.html.erb', type: :view do
   end
 
   describe 'Position Relationship' do
-    before(:all) do
-      @rel = build(:relationship, category_id: 1, description1: 'boss', id: 123, updated_at: Time.now)
-      @rel.position = build(:position, is_board: false)
-      @rel.last_user = @user
+    let(:rel) do
+      build(:relationship, category_id: 1, description1: 'boss', id: 123, updated_at: Time.current).tap do |rel|
+        rel.position = build(:position, is_board: false)
+        rel.last_user = user
+      end
     end
 
     before do
-      assign(:relationship, @rel)
+      assign(:relationship, rel)
       render
     end
 
@@ -30,8 +29,8 @@ describe 'relationships/edit.html.erb', type: :view do
       expect(view).to render_template(partial: '_header', count: 1)
     end
 
-    it 'renders edit references partial' do
-      expect(view).to render_template(partial: '_edit_references_panel', count: 1)
+    it 'renders references widget' do
+      expect(view).to render_template(partial: 'shared/editing/_reference_widget', count: 1)
     end
 
     it 'has title' do
@@ -43,7 +42,9 @@ describe 'relationships/edit.html.erb', type: :view do
       not_css 'label', text: 'Type'
     end
 
-    it 'has common fields' do  has_common_fields end
+    it 'has common fields' do
+      has_common_fields
+    end
 
     it 'has is board radio buttons' do
       css 'label', text: 'Board member'
@@ -55,7 +56,7 @@ describe 'relationships/edit.html.erb', type: :view do
       css 'input[name="relationship[position_attributes][is_executive]"]', count: 3
     end
 
-    it 'has is executive radio buttons' do
+    it 'has is employee radio buttons' do
       css 'label', text: 'Employee'
       css 'input[name="relationship[position_attributes][is_employee]"]', count: 3
     end
@@ -109,10 +110,10 @@ describe 'relationships/edit.html.erb', type: :view do
 
   describe 'Education relationship' do
     before do
-      @rel = build(:relationship, category_id: 2, description1: 'Graduate', id: rand(100), updated_at: Time.now)
-      @rel.education = build :education
-      @rel.last_user = @user
-      assign(:relationship, @rel)
+      rel = build(:relationship, category_id: 2, description1: 'Graduate', id: rand(100), updated_at: Time.current)
+      rel.education = build :education
+      rel.last_user = user
+      assign(:relationship, rel)
       render
     end
 
@@ -122,7 +123,7 @@ describe 'relationships/edit.html.erb', type: :view do
 
     it 'has degree select' do
       css 'label', text: 'Degree'
-      css 'select#relationship_education_attributes_degree_id', count: 1 
+      css 'select#relationship_education_attributes_degree_id', count: 1
     end
 
     it 'has field input' do
@@ -134,7 +135,7 @@ describe 'relationships/edit.html.erb', type: :view do
       css 'label', text: 'Dropout'
       css 'input[name="relationship[education_attributes][is_dropout]"]', count: 3
     end
-    
+
     it 'has no error divs' do
       not_css 'div.alert'
     end
@@ -142,10 +143,10 @@ describe 'relationships/edit.html.erb', type: :view do
 
   describe 'Membership relationship' do
     before do
-      @rel = build(:relationship, category_id: 3, description1: 'member', id: rand(100), updated_at: Time.now)
-      @rel.membership = build :membership
-      @rel.last_user = @user
-      assign(:relationship, @rel)
+      rel = build(:relationship, category_id: 3, description1: 'member', id: rand(100), updated_at: Time.now)
+      rel.membership = build :membership
+      rel.last_user = user
+      assign(:relationship, rel)
       render
     end
 
@@ -163,20 +164,19 @@ describe 'relationships/edit.html.erb', type: :view do
     end
   end
 
-
   describe 'Transaction relationship' do
     before do
-      @rel = build(:relationship, category_id: 6, description1: 'buyer', id: rand(100), updated_at: Time.now)
-      @rel.trans = build :transaction
-      @rel.last_user = @user
-      assign(:relationship, @rel)
+      rel = build(:relationship, category_id: 6, description1: 'buyer', updated_at: Time.current)
+      rel.trans = build :transaction
+      rel.last_user = user
+      assign(:relationship, rel)
       render
     end
-    
+
     it 'has common fields' do
       has_common_fields
     end
-    
+
     it 'has description fields' do
       css 'div#description-fields'
     end
@@ -188,10 +188,10 @@ describe 'relationships/edit.html.erb', type: :view do
 
   describe 'Ownership relationship' do
     before do
-      @rel = build(:relationship, category_id: 10, description1: 'owner', id: rand(100), updated_at: Time.now)
-      @rel.ownership = build :ownership
-      @rel.last_user = @user
-      assign(:relationship, @rel)
+      rel = build(:relationship, category_id: 10, description1: 'owner', updated_at: Time.current)
+      rel.ownership = build :ownership
+      rel.last_user = user
+      assign(:relationship, rel)
       render
     end
 
@@ -222,9 +222,9 @@ describe 'relationships/edit.html.erb', type: :view do
 
   describe 'hierarchy relationship' do
     before do
-      @rel = build(:relationship, category_id: 11, id: rand(100), updated_at: Time.now)
-      @rel.last_user = @user
-      assign(:relationship, @rel)
+      rel = build(:relationship, category_id: 11, id: rand(100), updated_at: Time.current)
+      rel.last_user = user
+      assign(:relationship, rel)
       render
     end
 
@@ -234,47 +234,6 @@ describe 'relationships/edit.html.erb', type: :view do
 
     it 'has switch icon' do
       css 'span.glyphicon-retweet', count: 1
-    end
-   end
- 
-  xdescribe 'Reference error' do
-    before do
-      @rel = build(:relationship, category_id: 12, id: rand(100), updated_at: Time.now)
-      @ref = build(:ref, name: 'name')
-      @ref.valid?
-      @rel.last_user = @user
-      assign(:relationship, @rel)
-      assign(:reference, @ref)
-      render
-    end
-
-    it 'has common fields' do
-      has_common_fields
-    end
-
-    it 'has two error divs' do
-      css 'div.alert', count: 2
-    end
-  end
-  
-  describe 'Relationship error' do
-    before do
-      @rel = build(:relationship, category_id: 12, id: rand(100), updated_at: Time.now)
-      @rel.last_user = @user
-      @rel.valid?
-      assign(:relationship, @rel)
-      render
-    end
-
-    it 'has common fields' do
-      has_common_fields
-    end
-
-    
-
-    # TODO: Relationship error div is not showing up
-    xit 'has two error divs' do
-      css 'div.alert', count: 2
     end
   end
 end
