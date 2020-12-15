@@ -45,6 +45,8 @@ module Referenceable
       references.find_or_create_by!(document: dattrs.find_or_create_document)
     end
 
+    after_add_reference if respond_to?(:after_add_reference)
+
     self
   end
 
