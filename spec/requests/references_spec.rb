@@ -1,5 +1,6 @@
 describe 'references requests', type: :request do
   let(:user) { create_basic_user }
+
   before { login_as(user, scope: :user) }
   after(:each) { logout(:user) }
 
@@ -14,14 +15,14 @@ describe 'references requests', type: :request do
       get '/references/recent', params: { 'entity_ids' => entities.map(&:id).join(',') }
     end
 
-    it 'returns the references for the entity plus the recent reference' do
-      expect(response).to have_http_status 200
+    it 'returns the references for the entity' do
+      expect(response).to have_http_status :ok
       json = JSON.parse(response.body)
 
-      expect(json.length).to eql 3
+      expect(json.length).to eq 2
 
       expect(json.map { |d| d['id'] }.to_set)
-        .to eql (entities.map { |e| e.documents.map(&:id) }.flatten + non_requested_entity.documents.map(&:id)).to_set
+        .to eq (entities.map { |e| e.documents.map(&:id) }.flatten).to_set
     end
   end
 
