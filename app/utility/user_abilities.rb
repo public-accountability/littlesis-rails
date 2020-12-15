@@ -4,20 +4,18 @@
 # It holds the abilities (formally known as permissions) that the user can do.
 # It's a wrapper around a `Set`.
 #
-# There are currently 6 abilities (plus admin)
+# There are currently 7 abilities (plus admin)
 #
 #    edit -> basic editing opertions. All users have this by default
 #    delete -> ability to delete entities, relationships, and lists
 #    merge -> ability to merge entities together
 #    bulk -> ability to bulk add unlmited entities, relationships, and lists
 #    match -> ability to use the match donors tools
-#    list  -> ability to add/remove entitie from open lists
-#
+#    list  -> ability to add/remove entities from open lists
+#    upload -> ability to upload documents
 # Admins can do all of those plus use any admin-only features
 #
 class UserAbilities
-  ALL_ABILITIES = %I[admin edit delete merge bulk match list].to_set.freeze
-
   ABILITY_MAPPING = {
     :admin => :admin?,
     :edit => :editor?,
@@ -25,8 +23,11 @@ class UserAbilities
     :merge => :merger?,
     :bulk => :bulker?,
     :match => :matcher?,
-    :list => :lister?
+    :list => :lister?,
+    :upload => :uploader?
   }.freeze
+
+  ALL_ABILITIES = ABILITY_MAPPING.keys.to_set.freeze
 
   DESCRIPTIONS = {
     :admin => 'Site administrator. Only staff should have this ability.',
@@ -35,7 +36,8 @@ class UserAbilities
     :merge => 'Ability to merge two entities together',
     :bulk => 'Ability to bulk import an unlimited # of entities and relationships',
     :match => 'Ability to match New York and federal donations',
-    :list => 'Can add entities to any open list'
+    :list => 'Can add entities to any open list',
+    :upload => 'Ability to upload primary source documents'
   }.freeze
 
   extend Forwardable

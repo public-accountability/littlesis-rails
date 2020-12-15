@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe UserAbilities do
   it 'can be initialized nothing' do
     expect { UserAbilities.new }.not_to raise_error
@@ -53,6 +52,7 @@ describe UserAbilities do
       specify { expect(user_abilities.merger?).to be true }
       specify { expect(user_abilities.bulker?).to be true }
       specify { expect(user_abilities.matcher?).to be true }
+      specify { expect(user_abilities.uploader?).to be true }
     end
 
     context 'when an editor, deleter, and matcher' do
@@ -65,12 +65,19 @@ describe UserAbilities do
       specify { expect(user_abilities.bulker?).to be false }
       specify { expect(user_abilities.lister?).to be false }
       specify { expect(user_abilities.matcher?).to be true }
+      specify { expect(user_abilities.uploader?).to be false }
     end
 
     context 'when an lister' do
       let(:abilities) { [:edit, :list] }
 
       specify { expect(user_abilities.lister?).to be true }
+    end
+
+    context 'when an uploader' do
+      let(:abilities) { [:edit, :list, :upload] }
+
+      specify { expect(user_abilities.uploader?).to be true }
     end
   end
 
