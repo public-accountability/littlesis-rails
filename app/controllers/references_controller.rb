@@ -5,8 +5,6 @@ class ReferencesController < ApplicationController
   before_action :authenticate_user!, except: [:entity]
   before_action :set_referenceable, only: [:create]
 
-  ENTITY_DEFAULTS = ActiveSupport::HashWithIndifferentAccess.new(page: 1, per_page: 10).freeze
-
   def create
     if params[:data][:url].blank?
       return render json: { errors: { url: ["can't be blank"] } }, status: :bad_request
@@ -40,23 +38,16 @@ class ReferencesController < ApplicationController
   # GET '/references/recent'
   #
   # Required params: entity_ids
-  # Optional params: per_page, page, exclude_type
+  # Optional params: per_page, page,
   # Defaults:
   #    per_page: 10
   #    page: 1
-  #    exclude_type: fec
-  #
-  # Takes a list of Entity ids and gathers the most recent
-  # refences for those entities and their relationships
-  # It also includes the most recent references regardless if they are
-  # associated with the entities or not
-  # This is used on the add relationship page
   def recent
-    per_page = value_for_param(:per_page, 10, :to_i)
-    page = value_for_param(:page, 1, :to_i)
-    exclude_type = value_for_param(:exclude_type, :fec, :to_sym)
-    docs = Reference.last(2).map(&:document) + Document.documents_for_entity(entity: entity_ids, page: page, per_page: per_page, exclude_type: exclude_type)
-    render json: docs.uniq.map { |d| d.slice(:id, :name, :url, :publication_date, :excerpt) }
+    render json: RecentEntityReferencesQuery
+             .run(entity_ids,
+                  page: value_for_param(:page, 1, :to_i),
+                  per_page: value_for_param(:per_page, 10, :to_i))
+             .map { |d| d.slice(:id, :name, :url, :publication_date, :excerpt) }
   end
 
   # Returns recent source links for the given entity
@@ -65,24 +56,14 @@ class ReferencesController < ApplicationController
   def entity
     return head :bad_request unless params[:entity_id]
 
-    @entity = Entity.find(params[:entity_id])
-    render json: cached_recent_source_links
+    render json: RecentEntityReferencesQuery
+             .run([params[:entity_id].to_i],
+                  page: value_for_param(:page, 1, :to_i),
+                  per_page: value_for_param(:per_page, 10, :to_i))
+             .map { |doc| doc.slice(:name, :url) }
   end
 
   private
-
-  def cached_recent_source_links
-    cache_key = "#{@entity.cache_key_with_version}/recent_source_links/#{source_link_params[:page]}/#{source_link_params[:per_page]}"
-    Rails.cache.fetch(cache_key, expires_in: 2.weeks) do
-      Document
-        .documents_for_entity(entity: @entity, page: source_link_params[:page].to_i, per_page: source_link_params[:per_page].to_i, exclude_type: :fec)
-        .map { |doc| doc.slice(:name, :url) }
-    end
-  end
-
-  def source_link_params
-    @_source_link_params ||= ENTITY_DEFAULTS.merge(params.permit(:page, :per_page, :entity_id).to_h)
-  end
 
   def set_referenceable
     @referenceable = params[:data][:referenceable_type].constantize.find(params[:data][:referenceable_id].to_i)

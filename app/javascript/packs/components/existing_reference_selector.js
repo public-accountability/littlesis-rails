@@ -16,7 +16,7 @@
     highlight: true,
     limit: 8
   };
-    
+
   /**
    * Reference Widget
    * Use:  new ReferenceWidget([entity_ids], { options })
@@ -42,12 +42,12 @@
   };
 
   /**
-   * Initalize the ExistingReferenceWidget 
+   * Initalize the ExistingReferenceWidget
    */
   ExistingReferenceWidget.prototype.init = function() {
     this.getDocs().then(this.render);
   };
-  
+
   /**
    * Replaces contents of container with a typeahead
    */
@@ -67,7 +67,7 @@
 	// 'unselect' if suggestion is re-rendered
 	self.selection = null;
       });
-    
+
     this.options.afterRender();
   };
 
@@ -78,7 +78,7 @@
   /**
    * Prepares Bloodhound search with provided references data
    * @param {Array[References]} data
-   * @returns {Bloodhound} 
+   * @returns {Bloodhound}
    */
   function documentBloodhound(data) {
     return new Bloodhound({
@@ -98,12 +98,12 @@
       }
     });
   }
-  
+
   /**
-   * Returns function to be used as the 'source' of typeahead 
+   * Returns function to be used as the 'source' of typeahead
    * see https://typeahead.js.org/examples/#default-suggestions for docs on default suggestions
    * @param {Array[References]} data
-   * @returns {Function} 
+   * @returns {Function}
    */
   function referenceSource(data) {
     var bloodhound = documentBloodhound(data);
@@ -121,13 +121,13 @@
    * Provides a configuartion object for typeahead
    * Requires `this.documents` to be set
    * @param {Array} references
-   * @returns {Object} Configuration for typeahead 
+   * @returns {Object} Configuration for typeahead
    */
   ExistingReferenceWidget.prototype._typeaheadConfig = function() {
     if (!Array.isArray(this.documents)) {
       throw 'Documents are missing or invalid :(';
     }
-    
+
     return {
       name: 'references',
       source: referenceSource(this.documents),
@@ -138,7 +138,7 @@
       }
     };
   };
-  
+
 
   /**
    * Retrives recent documents via an ajax call to /references/recent
@@ -148,7 +148,7 @@
   ExistingReferenceWidget.prototype.getDocs = function() {
     var self = this;
     var url = this._recentReferencesUrl();
-    
+
     return new Promise(function(resolve, reject){
       window.$.getJSON(url)
 	.done(function(data) {
@@ -164,11 +164,11 @@
 
   /**
    * Url for request
-   * @returns {String} 
+   * @returns {String}
    */
   ExistingReferenceWidget.prototype._recentReferencesUrl = function() {
     var params =  window.$.param({
-      "entity_ids":  this.entityIds,
+      "entity_ids": this.entityIds,
       "per_page": REFERENCES_PER_PAGE,
       "exclude_type": 'fec'
     });
@@ -180,10 +180,10 @@
   ///////////////////
   // DOM ELEMENTS ///
   //////////////////
-    
+
   /**
    * Input with id ref-widget-typeahead
-   * @returns {<input>} 
+   * @returns {<input>}
    */
   ExistingReferenceWidget.prototype._typeaheadInput = function() {
     return window.$('<input>', {
@@ -193,7 +193,7 @@
       "class": 'reference-typeahead'
     });
   };
-  
+
 
   var referenceVisitLink = [
     '<div class="reference-visit-link">',
@@ -211,7 +211,7 @@
     ].join('');
 
   /**
-   * 
+   *
    * @param {Object} doc
    * @returns {String} html for suggestion
    */
