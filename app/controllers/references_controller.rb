@@ -6,10 +6,6 @@ class ReferencesController < ApplicationController
   before_action :set_referenceable, only: [:create]
 
   def create
-    if params[:data][:url].blank?
-      return render json: { errors: { url: ["can't be blank"] } }, status: :bad_request
-    end
-
     @referenceable.add_reference(reference_params(:data).to_h)
 
     if @referenceable.valid?
@@ -18,9 +14,18 @@ class ReferencesController < ApplicationController
       # an edit not show up on the modifications page.
       # This is why the system user is being used.
       @referenceable.touch_by(APP_CONFIG['system_user_id'])
-      head :created
+
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: after_create_reference_fallback_location) }
+        format.json { head :created }
+      end
     else
-      render json: { errors: @referenceable.errors }, status: :bad_request
+      respond_to do |format|
+        format.html do
+          format.html { redirect_back(fallback_location: after_create_reference_fallback_location) }
+          format.json { render json: { errors: @referenceable.errors }, status: :bad_request }
+        end
+      end
     end
   end
 
@@ -74,6 +79,15 @@ class ReferencesController < ApplicationController
       params[:entity_ids].split(",").map(&:to_i).uniq
     else
       params[:entity_ids].map(&:to_i).uniq
+    end
+  end
+
+  def after_create_reference_fallback_location
+    case @referenceable
+    when Entity
+      references_entity_path(@referenceable)
+    else
+      home_dashboard_path
     end
   end
 end

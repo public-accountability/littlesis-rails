@@ -17,7 +17,7 @@ module ReferenceableController
   def reference_params(param_key = :reference)
     params
       .require(param_key)
-      .permit(:name, :url, :excerpt, :publication_date)
+      .permit(:name, :url, :excerpt, :publication_date, :primary_source_document)
       .to_h
   end
 

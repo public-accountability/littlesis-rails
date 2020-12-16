@@ -37,6 +37,8 @@
 /public/oligrapher/*
 # Ignore image files
 /public/images
+# ActiveStorage
+/public/storage
 
 
 # Misc files
