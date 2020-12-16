@@ -1,4 +1,4 @@
-feature 'Adding a new references to entities', type: :feature, js: :true do
+feature 'Adding references to entities', type: :feature, js: :true do
   let(:user) do
     create_basic_user.tap { |user| user.add_ability!(:upload) }
   end
@@ -37,6 +37,10 @@ feature 'Adding a new references to entities', type: :feature, js: :true do
       click_on 'Submit'
     end
 
-    # expect(entity.reload.documents.last.url).to eq url
+    entity.reload.documents.last.tap do |document|
+      expect(document.name).to eq 'field notes'
+      expect(document.ref_type).to eq 'primary_source'
+      expect(document.primary_source_document.attached?).to be true
+    end
   end
 end

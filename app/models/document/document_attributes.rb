@@ -20,7 +20,7 @@ class Document
     def find_or_create_document
       if primary_source?
         Document.create!(ref_type: 'primary_source',
-                         primary_source_document: attrs['primary_source_document'],
+                         primary_source_document: primary_source_document,
                          name: name)
       else
         Document.find_or_create!(@attributes)
@@ -33,6 +33,10 @@ class Document
 
     def name
       @attributes[:name]
+    end
+
+    def primary_source_document
+      @attributes[:primary_source_document]
     end
 
     def valid?
@@ -60,7 +64,7 @@ class Document
     private
 
     def primary_source?
-      @attributes['primary_source_document'].is_a?(IO)
+      primary_source_document.is_a?(IO) || primary_source_document.is_a?(ActionDispatch::Http::UploadedFile)
     end
   end
 end
