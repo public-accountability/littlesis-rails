@@ -12,6 +12,8 @@ describe Referenceable, type: :model do
     end
   end
 
+  let(:io) { File.open(Rails.root.join('spec/testdata/example.png')) }
+
   describe 'validate_reference' do
     let(:referenceable) { test_referenceable_class.new }
 
@@ -40,13 +42,18 @@ describe Referenceable, type: :model do
       expect(referenceable.valid?).to be true
     end
 
-    it 'does NOT invalidate the model if the refrence has a valid url and valid name' do
+    it 'does NOT invalidate the model if the reference has a valid url and valid name' do
       referenceable.validate_reference(url: Faker::Internet.url, name: 'good url')
       expect(referenceable.valid?).to be true
     end
 
-    it 'does NOT invalidate the model if the refrence has a valid url and empty name' do
+    it 'does NOT invalidate the model if the reference has a valid url and empty name' do
       referenceable.validate_reference(url: Faker::Internet.url)
+      expect(referenceable.valid?).to be true
+    end
+
+    it 'does NOT invalidate the model when a file is included' do
+      referenceable.validate_reference(name: 'foobar', primary_source_document: io)
       expect(referenceable.valid?).to be true
     end
   end

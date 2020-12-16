@@ -10,7 +10,7 @@ class Document
     def initialize(attrs)
       @attributes = attrs.to_h.with_indifferent_access
 
-      if @attributes[:name].blank?
+      if @attributes[:name].blank? && !primary_source?
         @attributes[:name] = @attributes[:url]&.slice(0, 255)
       end
 
@@ -18,7 +18,13 @@ class Document
     end
 
     def find_or_create_document
-      Document.find_or_create!(@attributes)
+      if primary_source?
+        Document.create!(ref_type: 'primary_source',
+                         primary_source_document: attrs['primary_source_document'],
+                         name: name)
+      else
+        Document.find_or_create!(@attributes)
+      end
     end
 
     def url
@@ -30,7 +36,9 @@ class Document
     end
 
     def valid?
-      url.present? && Document.valid_url?(url) && name.length <= 255
+      return false unless name.length <= 255
+
+      primary_source? || (url.present? && Document.valid_url?(url))
     end
 
     def validate!
@@ -48,5 +56,11 @@ class Document
     end
 
     class InvalidDocumentError < Exceptions::LittleSisError; end
+
+    private
+
+    def primary_source?
+      @attributes['primary_source_document'].is_a?(IO)
+    end
   end
 end
