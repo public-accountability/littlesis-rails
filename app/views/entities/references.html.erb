@@ -7,7 +7,7 @@
     <div class="mb-1 pb-1">
       Total: <code><%= number_with_delimiter(@documents.total_count) %></code>
       <% if user_signed_in? %>
-        <a class="pl-2" href="#add-reference-modal" data-toggle="modal">Add a new reference</a>
+        <a class="pl-2" href="#add-reference-modal" data-toggle="modal" id="add-new-refernce-link">Add a new reference</a>
       <% end %>
       <span class="d-inline-block">
         <ul class="pagination pagination-sm">

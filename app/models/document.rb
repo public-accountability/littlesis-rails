@@ -5,7 +5,7 @@
 class Document < ApplicationRecord
   has_many :references
 
-  # has_one_attached :primary_source_document
+  has_one_attached :primary_source_document
 
   validates :url, presence: true, url: true
   validates :url_hash, presence: true, uniqueness: { case_sensitive: true }
@@ -18,6 +18,8 @@ class Document < ApplicationRecord
   has_paper_trail on: [:update, :destroy]
 
   PER_PAGE = 20
+
+  ACCEPTED_MIME_TYPES = ['application/pdf', 'text/html', 'image/png', 'image/jpeg', 'text/csv']
 
   enum ref_type: { generic: 1,
                    fec: 2,
