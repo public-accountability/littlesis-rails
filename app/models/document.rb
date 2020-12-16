@@ -7,8 +7,18 @@ class Document < ApplicationRecord
 
   has_one_attached :primary_source_document
 
-  validates :url, presence: true, url: true
-  validates :url_hash, presence: true, uniqueness: { case_sensitive: true }
+  validates :primary_source_document, presence: true, if: :primary_source?
+
+  validates :url,
+            url: true,
+            presence: true,
+            unless: :primary_source?
+
+  validates :url_hash,
+            presence: true,
+            uniqueness: { case_sensitive: true },
+            unless: :primary_source?
+
   validates :name, length: { maximum: 255 }
   validates :publication_date, date: true
 

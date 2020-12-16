@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_15_221700) do
+ActiveRecord::Schema.define(version: 2020_12_16_170621) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -275,8 +275,8 @@ ActiveRecord::Schema.define(version: 2020_12_15_221700) do
 
   create_table "documents", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
-    t.text "url", null: false
-    t.string "url_hash", limit: 40, null: false
+    t.text "url"
+    t.string "url_hash", limit: 40
     t.string "publication_date", limit: 10
     t.integer "ref_type", default: 1, null: false
     t.text "excerpt", size: :medium

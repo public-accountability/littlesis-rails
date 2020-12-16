@@ -1,6 +1,10 @@
 describe Document, type: :model do
   let(:url) { Faker::Internet.unique.url }
 
+  let(:io) do
+    File.open(Rails.root.join('spec/testdata/example.png'))
+  end
+
   describe 'validations' do
     subject(:document) { Document.new(url: url, name: 'a website') }
 
@@ -18,6 +22,13 @@ describe Document, type: :model do
     it 'checks the validitity of urls' do
       expect(Document.new(url: url).valid?).to be true
       expect(Document.new(url: 'not-a-complete-url.com').valid?).to be false
+    end
+
+    it 'validates primary_source_document' do
+      d = Document.new(name: 'example.png', ref_type: 'primary_source')
+      expect(d.valid?).to be false
+      d.primary_source_document.attach(io: io, filename: 'example.png')
+      expect(d.valid?).to be true
     end
 
     describe 'before validation callbacks: trims whitespace and creates url hash' do
