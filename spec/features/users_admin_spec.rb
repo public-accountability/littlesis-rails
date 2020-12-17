@@ -1,13 +1,10 @@
 describe 'Users Admin Pages', :type => :feature do
-  let(:admin_user) { create_admin_user }
-  let(:current_user) { admin_user }
+  let!(:admin_user) { create_admin_user }
+  let!(:current_user) { admin_user }
+  let!(:restricted_user) { create_user(username: 'restricted', is_restricted: true) }
+  let!(:not_restricted_user) { create_user(username: 'not_restricted', is_restricted: false) }
 
-  before do
-    @restricted_user = create_user(username: 'restricted', is_restricted: true)
-    @not_restricted_user = create_user(username: 'not_restricted', is_restricted: false)
-    login_as(current_user, :scope => :user)
-  end
-
+  before { login_as(current_user, :scope => :user) }
   after { logout(:user) }
 
   describe 'viewing all users' do
@@ -30,17 +27,17 @@ describe 'Users Admin Pages', :type => :feature do
     end
 
     it 'will allow restriction to be removed' do
-      expect(User.find(@restricted_user.id).restricted?).to be true
-      page.find("form#restrict_#{@restricted_user.id} button").click
-      expect(User.find(@restricted_user.id).restricted?).to be false
+      expect(User.find(restricted_user.id).restricted?).to be true
+      page.find("form#restrict_#{restricted_user.id} button").click
+      expect(User.find(restricted_user.id).restricted?).to be false
       expect(page).to have_selector 'button', text: 'Restrict this user', count: 2
       expect(page).to have_selector 'div.alert', count: 1
     end
 
     it 'will allow restriction to be added' do
-      expect(User.find(@not_restricted_user.id).restricted?).to be false
-      page.find("form#restrict_#{@not_restricted_user.id} button").click
-      expect(User.find(@not_restricted_user.id).restricted?).to be true
+      expect(User.find(not_restricted_user.id).restricted?).to be false
+      page.find("form#restrict_#{not_restricted_user.id} button").click
+      expect(User.find(not_restricted_user.id).restricted?).to be true
       expect(page).to have_selector 'button', text: 'Remove restriction', count: 2
       expect(page).to have_selector 'div.alert', count: 1
     end
@@ -69,8 +66,8 @@ describe 'Users Admin Pages', :type => :feature do
     it 'shows table with abilities' do
       successfully_visits_page edit_permissions_url
 
-      page_has_selector 'table#users-edit-permissions-table tbody tr', count: 7
-      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'ADD', count: 6
+      page_has_selector 'table#users-edit-permissions-table tbody tr', count: 8
+      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'ADD', count: 7
       page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'DELETE', count: 1
     end
 
@@ -95,7 +92,7 @@ describe 'Users Admin Pages', :type => :feature do
       find('.delete-user-ability-edit').click
 
       successfully_visits_page edit_permissions_url
-      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'ADD', count: 7
+      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'ADD', count: 8
       expect(page).to have_text 'Permission was successfully deleted.'
       expect(test_user.reload.abilities.include?(:edit)).to be false
     end
