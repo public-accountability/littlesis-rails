@@ -24,11 +24,11 @@
         <td><%= l permission_pass.valid_to %></td>
         <td><%= permission_pass.abilities.to_a.join(', ') %></td>
         <td><%= permission_pass.creator.user_profile&.full_name %></td>
-        <td data-controller='clipboard'>
+        <td data-controller='clipboard tooltip'>
           <input class='pass-url' type='text' data-clipboard-target='source' value='<%= permission_pass_apply_url(permission_pass) %>' readonly/>
           <%= button_tag data: {
-            action: 'clipboard#copy',
-            toggle: :tooltip,
+            action: 'click->clipboard#copy',
+            tooltip_target: 'trigger',
             placement: :top,
             title: 'copy pass link to clipboard'
           }, class: 'copy-button' do %>
