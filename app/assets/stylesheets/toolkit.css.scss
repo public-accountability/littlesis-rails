@@ -23,7 +23,7 @@ $navbar-height: 130px;
 /* Import bootstrap */
 @import "bootstrap";
 @import "bootstrap-markdown.scss";
-
+@import "base/bootstrap-migrate.scss";
 
 body {
     font-family: 'Montserrat', sans-serif;
