@@ -1221,4 +1221,32 @@ describe Entity, :tag_helper do
       expect { Entity.entity_id_for(0) }.to raise_error(ArgumentError)
     end
   end
+
+  describe 'Region methods' do
+    let(:entity) { create(:entity_org) }
+
+    it 'adds region' do
+      expect { entity.add_region('Middle East') }.to change { entity.reload.locations.count }.from(0).to(1)
+    end
+
+    it 'adds region, skipping duplicates' do
+      expect { 2.times { entity.add_region('Middle East') } }.to change { entity.reload.locations.count }.from(0).to(1)
+    end
+
+    it 'raises error for invalid region' do
+      expect { entity.add_region('pluto') }.to raise_error(ArgumentError)
+    end
+
+    it 'removes region' do
+      expect { entity.add_region('Middle East') }.to change { entity.reload.locations.count }.from(0).to(1)
+      expect { entity.remove_region('Middle East') }.to change { entity.reload.locations.count }.from(1).to(0)
+    end
+
+    it 'does not remove regions associated with addresses' do
+      entity.add_region('Middle East')
+      entity.reload.locations.public_send('Middle East').first.create_address!(city: "بيروت")
+      expect { entity.remove_region('Middle East') }.not_to change { entity.reload.locations.count }
+    end
+  end
+
 end

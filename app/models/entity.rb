@@ -391,6 +391,24 @@ class Entity < ApplicationRecord
     os_categories.map(&:industry_name).uniq
   end
 
+  def add_region(region)
+    raise ArgumentError, "invalid region: #{region}" unless Location.regions.key?(region)
+
+    locations.create!(region: region) unless locations.exists?(region: region)
+  end
+
+  def remove_region(region)
+    raise ArgumentError, "invalid region: #{region}" unless Location.regions.key?(region)
+
+    if (location_for_region = locations.find_by(region: region))
+      if location_for_region.address
+        Rails.logger.warn "cannot remove location with address for #{name_with_id}."
+      else
+        location_for_region.destroy
+      end
+    end
+  end
+
   ##
   # User-related methods
   #
