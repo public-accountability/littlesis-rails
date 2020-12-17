@@ -40,7 +40,7 @@ class Document
     end
 
     def valid?
-      return false unless name.length <= 255
+      return false if name && name.length >= 255
 
       primary_source? || (url.present? && Document.valid_url?(url))
     end

@@ -16,6 +16,7 @@ describe ReferencesController, type: :controller do
     let(:relationship) do
       create(:generic_relationship, entity: create(:entity_person), related: create(:entity_org))
     end
+
     let(:post_data) do
       { data: { referenceable_id: relationship.id,
                 url: Faker::Internet.unique.url,
@@ -23,37 +24,31 @@ describe ReferencesController, type: :controller do
                 referenceable_type: "Relationship",
                 excerpt: "so and so said blah blah blah" } }
     end
-    let(:post_request) { proc { post(:create, params: post_data) } }
 
-    it 'responds with created' do
-      post_request.call
+    it 'responds with created for forms' do
+      post(:create, params: post_data)
+      expect(response).to have_http_status :found
+    end
+
+    it 'responds with created for json' do
+      post(:create, params: post_data, as: :json)
       expect(response).to have_http_status(:created)
     end
 
     it 'creates a 3 new references' do
-      expect { post_request.call }.to change(Reference, :count).by(3)
+      expect { post(:create, params: post_data) }.to change(Reference, :count).by(3)
       expect(relationship.references.count).to eq 1
     end
 
     it 'creates a new document' do
-      expect { post_request.call }.to change(Document, :count).by(1)
+      expect { post(:create, params: post_data) }.to change(Document, :count).by(1)
     end
 
     it 'updates the updated_at and last_user_id field of the relationship' do
       relationship.update_column(:updated_at, 1.year.ago)
-      post_request.call
+      post(:create, params: post_data)
       expect(relationship.reload.updated_at.strftime('%F')).to eq Time.current.strftime('%F')
       expect(relationship.last_user_id).to eql APP_CONFIG['system_user_id']
-    end
-
-    it 'returns json of errors if reference is not valid' do
-      post(:create, params: { data: { referenceable_id: relationship.id,
-                                      referenceable_type: "Relationship",
-                                      ref_type: 1 } })
-
-      body = JSON.parse(response.body)
-      expect(response).to have_http_status :bad_request
-      expect(body['errors']['url']).to eql ["can't be blank"]
     end
   end
 

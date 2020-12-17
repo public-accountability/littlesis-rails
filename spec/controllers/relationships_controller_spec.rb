@@ -1,5 +1,5 @@
 describe RelationshipsController, type: :controller do
-  let(:user) { create(:user) }
+  let(:user) { create_basic_user }
   let(:e1) { create(:entity_person, last_user_id: user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
   let(:e2) { create(:entity_org, last_user_id: user.id, created_at: 1.day.ago, updated_at: 1.day.ago) }
 
@@ -67,11 +67,11 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'creates a new relationship' do
-        expect { post_request }.to change(Relationship, :count).by(1)
+        expect(&post_request).to change(Relationship, :count).by(1)
       end
 
       it 'creates 3 references' do
-        expect { post_request }.to change(Reference, :count).by(3)
+        expect(&post_request).to change(Reference, :count).by(3)
         Reference.last(3).map { |r| r.document.url }.each do |url|
           expect(url).to eq 'http://example.com'
         end
@@ -146,24 +146,24 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'creates a new reference, associated with the relationship' do
-        expect { post :create, params: params }.to change { Reference.count }.by(1)
+        expect { post :create, params: params }.to change(Reference, :count).by(1)
       end
 
       it 'does not create a document' do
-        expect { post :create, params: params }.not_to change { Document.count }
+        expect { post :create, params: params }.not_to change(Document, :count)
       end
     end
 
-    context 'submitting relationship with is_current values' do
-      it 'should create a new relationship with given a yes value' do
+    describe 'submitting relationship with is_current values' do
+      it '"yes" sets is_current' do
         expect do
           post :create, params: example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'YES' }
-        end.to change { Relationship.count }.by(1)
+        end.to change(Relationship, :count).by(1)
         id_of_created_relationship = JSON.parse(response.body)['relationship_id']
         expect(Relationship.find(id_of_created_relationship).is_current).to eq true
       end
 
-      it 'should create a new relationship with given a NO value' do
+      it '"no" sets is_current to false' do
         expect do
           post :create, params: example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'NO' }
         end.to change(Relationship, :count).by(1)
@@ -171,7 +171,7 @@ describe RelationshipsController, type: :controller do
         expect(Relationship.find(id_of_created_relationship).is_current).to eq false
       end
 
-      it 'should create a new relationship with given a NULL value' do
+      it '"NULL" set is_current to nil' do
         expect do
           post :create, params: example_params(e1.id, e2.id).tap { |x| x[:relationship][:is_current] = 'NULL' }
         end.to change(Relationship, :count).by(1)
@@ -185,9 +185,9 @@ describe RelationshipsController, type: :controller do
     login_user
     let(:relationship) { build :relationship }
 
-    context 'editing a reference' do
+    describe 'viewing the edit relationship page' do
       before do
-        expect(Relationship).to receive(:find).with('1').and_return(build(:relationship))
+        allow(Relationship).to receive(:find).with('1').and_return(build(:relationship))
         get :edit, params: { id: 1 }
       end
 
@@ -206,7 +206,7 @@ describe RelationshipsController, type: :controller do
         it { is_expected.to render_template(:edit) }
 
         it 'sets @selected_ref to be nil' do
-          expect(assigns(:selected_ref)).to eql nil
+          expect(assigns(:selected_ref)).to be nil
         end
       end
 
@@ -219,8 +219,8 @@ describe RelationshipsController, type: :controller do
           get :edit, params: { id: 1, new_ref: 'true' }
         end
 
-        it { should respond_with(:success) }
-        it { should render_template(:edit) }
+        it { is_expected.to respond_with(:success) }
+        it { is_expected.to render_template(:edit) }
 
         it 'sets @selected_ref' do
           expect(assigns(:selected_ref)).to eql reference.id
@@ -265,7 +265,9 @@ describe RelationshipsController, type: :controller do
 
       context "when request is valid request" do
         let(:params) do
-          { id: relationship.id, relationship: {'start_date' => '2012-12-12'}, reference: {'reference_id' => '123'} }
+          { id: relationship.id,
+            relationship: { 'start_date' => '2012-12-12' },
+            reference: { 'reference_id' => '123' } }
         end
 
         before { patch :update, params: params }
@@ -360,12 +362,12 @@ describe RelationshipsController, type: :controller do
         end
 
         it 'updates db' do
-          expect { patch_request.call }
+          expect(&patch_request)
             .to change { Relationship.find(relationship.id).end_date }.from(nil).to('2001-01-01')
         end
 
         it 'updates last user id' do
-          expect { patch_request.call }
+          expect(&patch_request)
             .to change { Relationship.find(relationship.id).last_user_id }
                   .to(controller.current_user.id)
         end
@@ -375,7 +377,7 @@ describe RelationshipsController, type: :controller do
         end
 
         it 'creates a new document' do
-          expect { patch_request.call }.to change(Document, :count).by(1)
+          expect(&patch_request).to change(Document, :count).by(1)
           expect(Document.last.url).to eql document_attributes[:url]
           expect(Document.last.name).to eql document_attributes[:name]
         end
@@ -440,9 +442,9 @@ describe RelationshipsController, type: :controller do
     end
 
     it 'returns json with one similar relationships' do
-      org = create :org
-      person = create :person
-      rel = Relationship.create!(entity: person, related: org, category_id: 1, description1: 'influence')
+      org = create(:entity_org)
+      person = create(:entity_person)
+      rel = create(:position_relationship, entity: person, related: org, description1: 'influence')
 
       get :find_similar, params: { entity1_id: person.id, entity2_id: org.id, category_id: 1 }
 
