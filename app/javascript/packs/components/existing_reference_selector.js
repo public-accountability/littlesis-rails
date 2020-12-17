@@ -53,10 +53,10 @@
    */
   ExistingReferenceWidget.prototype._render = function() {
     var self = this;
-    window.$(this.options.containerDiv).html(this._typeaheadInput());
+    $(this.options.containerDiv).html(this._typeaheadInput());
 
     // render the typeahead in to the div
-    window.$(ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)
+    $(ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)
       .typeahead(TYPEAHEAD_OPTIONS, this._typeaheadConfig())
       .on('typeahead:selected', function (e, datum) {
 	// set 'selection' property after picked
@@ -150,7 +150,7 @@
     var url = this._recentReferencesUrl();
 
     return new Promise(function(resolve, reject){
-      window.$.getJSON(url)
+      $.getJSON(url)
 	.done(function(data) {
 	  self.documents = data;
 	  resolve(data);
@@ -167,8 +167,8 @@
    * @returns {String}
    */
   ExistingReferenceWidget.prototype._recentReferencesUrl = function() {
-    var params =  window.$.param({
-      "entity_ids": this.entityIds,
+    var params =  $.param({
+      "entity_ids":  this.entityIds,
       "per_page": REFERENCES_PER_PAGE,
       "exclude_type": 'fec'
     });
@@ -186,7 +186,7 @@
    * @returns {<input>}
    */
   ExistingReferenceWidget.prototype._typeaheadInput = function() {
-    return window.$('<input>', {
+    return $('<input>', {
       "type": 'text',
       "placeholder": 'Search recent references',
       "id": ExistingReferenceWidget.TYPEAHEAD_INPUT_ID,

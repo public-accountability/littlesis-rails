@@ -1,8 +1,8 @@
-export default function RelationshipsDatatableLoader(){
-  const utility = window.utility
-  const Papa = window.Papa
-  const saveAs = window.saveAs
+import Papa from 'papaparse'
+import { saveAs } from 'file-saver'
+import utility from '../common/utility'
 
+export default function RelationshipsDatatableLoader(){
   // DOM HELPERS:
   var createElement = document.createElement.bind(document) // javascript! what a language!
 

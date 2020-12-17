@@ -1,4 +1,3 @@
-const $ = window.$
 import utility from '../common/utility'
 
 var entity = {}

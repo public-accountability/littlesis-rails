@@ -1,6 +1,6 @@
+import utility from '../common/utility'
+
 export default function nysSearch() {
-  const $ = window.$;
-  const utility = window.utility;
   let nys = {};
 
   function td(v){

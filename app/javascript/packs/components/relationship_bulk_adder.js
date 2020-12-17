@@ -1,3 +1,7 @@
+import Hogan from 'hogan.js'
+import Papa from 'papaparse'
+import { saveAs } from 'file-saver'
+import utility from '../common/utility'
 /**
 
   Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
@@ -8,13 +12,6 @@
   entity autocomplete has already been switched over
   */
 export default function RelationshipBulkAdder() {
-
-  const $ = window.$
-  const utility = window.utility
-  const Papa = window.Papa
-  const saveAs = window.saveAs
-  const Hogan = window.Hogan
-
   // Does the user have bulk permissions?
   // All users may submit up to 8
   var USER_HAS_BULK_PERMISSIONS = null
