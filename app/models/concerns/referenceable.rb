@@ -30,12 +30,6 @@ module Referenceable
     self
   end
 
-  def last_reference
-    return @_last_reference if @_last_reference
-
-    references.last
-  end
-
   def add_reference(attrs)
     raise ActiveRecord::RecordNotSaved, "#{self} is not saved" unless persisted?
 
@@ -45,32 +39,23 @@ module Referenceable
       references.find_or_create_by!(document: dattrs.find_or_create_document)
     end
 
+    after_add_reference if respond_to?(:after_add_reference)
+
     self
   end
 
-  def documents_count
-    if is_a?(Entity)
-      Document.documents_count_for_entity(self)
-    else
-      documents.count
-    end
+  def last_reference
+    return @_last_reference if @_last_reference
+
+    references.last
   end
 
-  # For an entity `all_documents` includes the documents
-  # for it's relationships as well (via Document.documents_for_entity)
-  # If called on another type of references, it simply paginates documents
-  # Int | Int -> KimainariArray
+  def documents_count
+    documents.count
+  end
+
   def all_documents(page, per_page = 20)
-    if is_a?(Entity)
-      paginate(
-        page,
-        per_page,
-        Document.documents_for_entity(entity: self, page: page, per_page: per_page),
-        Document.documents_count_for_entity(self)
-      )
-    else
-      documents.page(page).per(per_page)
-    end
+    documents.page(page).per(per_page)
   end
 
   protected

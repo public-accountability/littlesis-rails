@@ -1,12 +1,4 @@
-describe OsMatch, type: :model do
-  before(:all) do
-    Entity.skip_callback(:create, :after, :create_primary_ext)
-  end
-
-  after(:all) do
-    Entity.set_callback(:create, :after, :create_primary_ext)
-  end
-
+xdescribe OsMatch, type: :model do
   it { should validate_presence_of(:os_donation_id) }
   it { should validate_presence_of(:donor_id) }
   it { should belong_to(:os_donation) }
@@ -207,35 +199,20 @@ describe OsMatch, type: :model do
     end
 
     describe '#create_reference' do
-      before(:all) do
-        DatabaseCleaner.start
-        @ref_count = Reference.count
-        @os_match.create_reference
-        @ref = Reference.last
-      end
-
-      after(:all) { DatabaseCleaner.clean }
-
-      it 'creates a new reference' do
-        expect(Reference.count).to eql(@ref_count + 1)
-        expect(@ref.referenceable_type).to eql "Relationship"
-        expect(@ref.referenceable_id).to eql @os_match.relationship.id
+      it 'creates 3 references' do
+        expect { @os_match.create_reference }.to change(Reference, :count).by(3)
       end
 
       it 'document has correct info' do
-        doc = @ref.document
+        expect { @os_match.create_reference }.to change(Document, :count).by(1)
+        doc = Document.last
         expect(doc.name).to eql "FEC Filing 11020480483"
         expect(doc.url).to eql "http://docquery.fec.gov/cgi-bin/fecimg/?11020480483"
-        expect(doc.ref_type).to eql 2
-      end
-
-      it 'sets reference on associated relationship' do
-        expect(@os_match.relationship.references.first).to eql @ref
+        expect(doc.ref_type).to eq 'fec'
       end
 
       it 'can be run twice without creating a new reference' do
-        @os_match.create_reference
-        expect(Reference.count).to eql(@ref_count + 1)
+        expect { 2.times { @os_match.create_reference } }.to change(Reference, :count).by(3)
       end
     end
   end
@@ -364,8 +341,8 @@ describe OsMatch, type: :model do
       end
 
       it 'creates new references' do
-        expect { create_match.call(os_donation.id) }.to change { Reference.count }.by(1)
-        expect { create_match.call(os_donation_two.id) }.to change { Reference.count }.by(1)
+        expect { create_match.call(os_donation.id) }.to change { Reference.count }.by(3)
+        expect { create_match.call(os_donation_two.id) }.to change { Reference.count }.by(3)
       end
     end
 

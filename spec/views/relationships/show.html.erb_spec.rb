@@ -13,13 +13,13 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
     allow(view).to receive(:user_admin?).and_return(true)
   end
 
-
   def mock_current_user_permissions
     permissions = double('permisions')
     allow(permissions).to receive(:relationship_permissions)
                             .and_return({deleteable: false})
-    
+
     allow(permissions).to receive(:tag_permissions).and_return({})
+    allow(permissions).to receive(:uploader?).and_return(false)
 
     allow(view).to receive(:current_user)
                      .and_return(double('user',
@@ -104,7 +104,7 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
         mock_current_user_permissions
         render
       end
-      
+
       context 'relationship has tags' do
         it 'has tags-controls' do
           css '#tags-controls'
@@ -135,8 +135,12 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
   end
 
   describe 'Add Reference Modal' do
+    let(:relationship) do
+      build(:relationship, category_id: 1, description1: 'boss', updated_at: Time.current)
+    end
+
     before do
-      assign(:relationship, @rel)
+      assign(:relationship, relationship)
       mock_current_user_permissions
       allow(view).to receive(:user_signed_in?).and_return(true)
       render
@@ -160,18 +164,13 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
       css 'input[type="text"]', :count => 2
     end
 
-    it 'has select field with 3 options' do
-      css 'select', :count => 1
-      css 'option', :count => 3
-    end
-
     it 'has text area' do
       css 'textarea', :count => 1
     end
 
     it 'has close and submit buttons' do
       css 'button', :text => 'Close'
-      css 'input[type="submit"]', :count => 1
+      css 'button[type="submit"]', :text => 'Submit', :count => 1
     end
   end
 end

@@ -24,7 +24,7 @@ describe 'Relationships Requests' do
 
     context 'valid position relationship' do
       it { is_expected.to change { Relationship.count }.by(1) }
-      it { is_expected.to change { Reference.count }.by(1) }
+      it { is_expected.to change { Reference.count }.by(3) }
 
       it do
         is_expected.to change { person.reload.last_user_id }.to(user.id)
@@ -141,7 +141,7 @@ describe 'Relationships Requests' do
       let(:patch_request) { proc { patch relationship_path(position_relationship), params: params } }
 
       context 'updating relationship fields' do
-        
+
         it 'redirects to relationship page' do
           patch_request.call
           redirects_to_path relationship_path(position_relationship)

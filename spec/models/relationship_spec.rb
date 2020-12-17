@@ -30,6 +30,25 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'adding references to entities' do
+    let(:document_attrs) { attributes_for(:document) }
+    let(:entity1) { create(:entity_person) }
+    let(:entity2) { create(:entity_person) }
+    let!(:relationship) { create(:generic_relationship, entity: entity1, related: entity2) }
+
+    it 'adds document to entity' do
+      expect { relationship.add_reference(document_attrs) }
+        .to change { entity1.reload.references.count }.from(0).to(1)
+      expect(entity1.references.last.document.url).to eq document_attrs[:url]
+    end
+
+    it 'adds document to related' do
+      expect { relationship.add_reference(document_attrs) }
+        .to change { entity2.reload.references.count }.from(0).to(1)
+      expect(entity2.references.last.document.url).to eq document_attrs[:url]
+    end
+  end
+
   describe 'methods from concerns' do
     it 'has description_sentence' do
       expect(Relationship.new.respond_to?(:description_sentence)).to be true

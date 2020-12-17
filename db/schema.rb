@@ -10,9 +10,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_20_010809) do
+ActiveRecord::Schema.define(version: 2020_12_16_170621) do
 
-  create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "address", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "entity_id", null: false
     t.string "street1", limit: 100
     t.string "street2", limit: 100
@@ -57,13 +78,13 @@ ActiveRecord::Schema.define(version: 2020_11_20_010809) do
   end
 
   create_table "addresses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.text "street1"
-    t.text "street2"
-    t.text "street3"
-    t.text "city"
+    t.text "street1", size: :medium
+    t.text "street2", size: :medium
+    t.text "street3", size: :medium
+    t.text "city", size: :medium
     t.string "state"
     t.string "country"
-    t.text "normalized_address"
+    t.text "normalized_address", size: :medium
     t.bigint "location_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -254,8 +275,8 @@ ActiveRecord::Schema.define(version: 2020_11_20_010809) do
 
   create_table "documents", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.string "name"
-    t.text "url", null: false
-    t.string "url_hash", limit: 40, null: false
+    t.text "url"
+    t.string "url_hash", limit: 40
     t.string "publication_date", limit: 10
     t.integer "ref_type", default: 1, null: false
     t.text "excerpt", size: :medium
@@ -559,9 +580,9 @@ ActiveRecord::Schema.define(version: 2020_11_20_010809) do
   end
 
   create_table "locations", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.text "city"
-    t.text "country"
-    t.text "subregion"
+    t.text "city", size: :medium
+    t.text "country", size: :medium
+    t.text "subregion", size: :medium
     t.integer "region", limit: 1
     t.decimal "lat", precision: 10
     t.decimal "lng", precision: 10
@@ -1048,34 +1069,6 @@ ActiveRecord::Schema.define(version: 2020_11_20_010809) do
     t.index ["entity_id"], name: "entity_id_idx"
   end
 
-  create_table "reference", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
-    t.string "fields", limit: 200
-    t.string "name", limit: 100
-    t.string "source", limit: 1000, null: false
-    t.string "source_detail"
-    t.string "publication_date", limit: 10
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "object_model", limit: 50, null: false
-    t.bigint "object_id", null: false
-    t.integer "last_user_id"
-    t.integer "ref_type", default: 1, null: false
-    t.index ["last_user_id"], name: "last_user_id_idx"
-    t.index ["name"], name: "name_idx"
-    t.index ["object_model", "object_id", "ref_type"], name: "index_reference_on_object_model_and_object_id_and_ref_type"
-    t.index ["object_model", "object_id", "updated_at"], name: "object_idx"
-    t.index ["source"], name: "source_idx", length: 191
-    t.index ["updated_at"], name: "updated_at_idx"
-  end
-
-  create_table "reference_excerpt", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
-    t.bigint "reference_id", null: false
-    t.text "body", size: :long, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["reference_id"], name: "reference_id_idx"
-  end
-
   create_table "references", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci", force: :cascade do |t|
     t.bigint "document_id", null: false
     t.bigint "referenceable_id", null: false
@@ -1325,6 +1318,7 @@ ActiveRecord::Schema.define(version: 2020_11_20_010809) do
     t.index ["time"], name: "index_web_requests_on_time"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "address", "address_category", column: "category_id", on_update: :cascade, on_delete: :nullify
   add_foreign_key "address", "entity", name: "address_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "addresses", "locations"

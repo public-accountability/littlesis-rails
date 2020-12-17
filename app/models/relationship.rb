@@ -128,6 +128,12 @@ class Relationship < ApplicationRecord
     update_entity_links
   end
 
+  # called in referenceable#add_reference
+  def after_add_reference
+    entity.references.find_or_create_by(document_id: @_last_reference.document.id)
+    related.references.find_or_create_by(document_id: @_last_reference.document.id)
+  end
+
   # Some relationship categories contain additional fields stored in other tables
   # For instance, when a new donation relationship is created,  this method will create <Donation>.
   # When a generic relationship is created, this method becomes a noop.
