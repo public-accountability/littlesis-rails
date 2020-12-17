@@ -29,7 +29,7 @@
     "chai": "^4.2.0",
     "clipboard": "^2.0.6",
     "core-js": "3.6.5",
-    "datatables.net": "^1.10.21",
+    "datatables.net": "^1.10.22",
     "datatables.net-dt": "^1.10.21",
     "immutable": "^4.0.0-rc.12",
     "install": "^0.13.0",
