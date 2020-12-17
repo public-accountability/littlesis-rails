@@ -8,13 +8,13 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
- *= require jquery-ui/core
- *= require jquery-ui/theme
- *= require jquery-ui/autocomplete
+ *= require jquery-ui/themes/base/core
+ *= require jquery-ui/themes/base/theme
+ *= require jquery-ui/themes/base/autocomplete
  *= require_self
- *= require bootstrap-select
- *= require jquery.dataTables
+ *= require bootstrap-select/dist/css/bootstrap-select
+ *= require datatables.net-dt/css/jquery.dataTables
  *= require dataTables.bootstrap4.min.css
- *= require select2.min.css
+ *= require select2/dist/css/select2
  *= require main
  */
