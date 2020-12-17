@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe Entity, :tag_helper do
-  before(:all) {  DatabaseCleaner.start }
-  after(:all)  {  DatabaseCleaner.clean }
   seed_tags
 
   def public_company
@@ -188,14 +186,12 @@ describe Entity, :tag_helper do
         end
 
         describe 'association data' do
-          before do
-            @public_company = public_company
-          end
+          let(:company) { public_company }
 
           it 'saves and stores association data' do
-            @public_company.soft_delete
-            expect(@public_company.versions.last.association_data).not_to be nil
-            data = YAML.safe_load(@public_company.versions.last.association_data)
+            company.soft_delete
+            expect(company.versions.last.association_data).not_to be nil
+            data = YAML.safe_load(company.versions.last.association_data)
             expect(data['extension_ids']).to eql [2, 13]
             expect(data['relationship_ids'].length).to eq 1
             expect(data['aliases']).to eql ['another name']
@@ -1182,8 +1178,6 @@ describe Entity, :tag_helper do
         expect(alice.resolve_merges).to eql cassie
       end
     end
-
-
   end
 
   describe "parent/child relationships" do

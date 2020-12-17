@@ -3,24 +3,24 @@ FactoryBot.define do
     n + 100
   end
 
-  factory :random_entity, class: Entity do
+  factory :random_entity, class: 'Entity' do
     sequence(:id)
     sequence(:name) { Faker::Name.unique.name }
     primary_ext { ['Org', 'Person'].sample }
   end
 
-  factory :org, class: Entity do
+  factory :org, class: 'Entity' do
     name { 'org' }
     primary_ext { 'Org' }
     id { generate(:entity_id) }
   end
 
-  factory :entity_org, class: Entity do
+  factory :entity_org, class: 'Entity' do
     name { 'org' }
     primary_ext { 'Org' }
   end
 
-  factory :public_company_entity, class: Entity do
+  factory :public_company_entity, class: 'Entity' do
     name { 'org' }
     primary_ext { 'Org' }
     after :create do |entity|
@@ -29,19 +29,19 @@ FactoryBot.define do
     end
   end
 
-  factory :elected, class: Entity do
+  factory :elected, class: 'Entity' do
     name { 'Elected Representative' }
     primary_ext { 'Person' }
     id { generate(:entity_id) }
   end
 
-  factory :person, class: Entity do
+  factory :person, class: 'Entity' do
     name { 'Human Being' }
     primary_ext { 'Person' }
     id { generate(:entity_id) }
   end
 
-  factory :entity_person, class: Entity do
+  factory :entity_person, class: 'Entity' do
     name { 'Human Being' }
     primary_ext { 'Person' }
   end
@@ -55,14 +55,14 @@ FactoryBot.define do
       Relationship.create!(category_id: 1, entity: person, related: create(:entity_org))
     end
   end
-  
-  factory :corp, class: Entity do
+
+  factory :corp, class: 'Entity' do
     name { 'corp' }
     primary_ext { 'Org' }
     id { generate(:entity_id) }
   end
 
-  factory :mega_corp_inc, class: Entity do
+  factory :mega_corp_inc, class: 'Entity' do
     name { 'mega corp INC' }
     blurb { 'mega corp is having an existential crisis' }
     primary_ext { 'Org' }
@@ -70,37 +70,37 @@ FactoryBot.define do
     id { generate(:entity_id) }
   end
 
-  factory :mega_corp_llc, class: Entity do
+  factory :mega_corp_llc, class: 'Entity' do
     name { 'mega corp LLC' }
     primary_ext { 'Org' }
     id { generate(:entity_id) }
   end
 
-  factory :us_house, class: Entity do
+  factory :us_house, class: 'Entity' do
     name { 'U.S. House' }
     primary_ext { 'Org' }
     id { 12_884 }
   end
 
-  factory :us_senate, class: Entity do
+  factory :us_senate, class: 'Entity' do
     name { 'U.S. Senate' }
     primary_ext { 'Org' }
     id { 12_885 }
   end
 
-  factory :democratic_party, class: Entity do
+  factory :democratic_party, class: 'Entity' do
     name { 'Democratic Party' }
     primary_ext { 'Org' }
     id { 12_886 }
   end
 
-  factory :republican_party, class: Entity do
+  factory :republican_party, class: 'Entity' do
     name { 'Republican Party' }
     primary_ext { 'Org' }
     id { 12_901 }
   end
 
-  factory :pac, class: Entity do
+  factory :pac, class: 'Entity' do
     name { 'PAC' }
     blurb { 'Ruining our democracy one dollar at a time' }
     primary_ext { 'Org' }
