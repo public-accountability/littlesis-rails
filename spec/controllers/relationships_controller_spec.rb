@@ -51,26 +51,24 @@ describe RelationshipsController, type: :controller do
     end
 
     context 'with valid params' do
-      def post_request
-        post :create, params: example_params(e1.id, e2.id)
-      end
-
       it 'responds with 201' do
-        post_request
+        post :create, params: example_params(e1.id, e2.id)
         expect(response.status).to eq 201
       end
 
       it 'sends back json with relationship_id' do
-        post_request
+        post :create, params: example_params(e1.id, e2.id)
         expect(JSON.parse(response.body))
           .to eql('relationship_id' => Relationship.last.id)
       end
 
       it 'creates a new relationship' do
+        post_request = -> { post :create, params: example_params(e1.id, e2.id) }
         expect(&post_request).to change(Relationship, :count).by(1)
       end
 
       it 'creates 3 references' do
+        post_request = -> { post :create, params: example_params(e1.id, e2.id) }
         expect(&post_request).to change(Reference, :count).by(3)
         Reference.last(3).map { |r| r.document.url }.each do |url|
           expect(url).to eq 'http://example.com'
@@ -78,7 +76,7 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'creates or finds a document with the correct fields' do
-        post_request
+        post :create, params: example_params(e1.id, e2.id)
         doc = Reference.last.document
         expect(doc.name).to eql 'Interesting website'
         expect(doc.publication_date).to eql '2016-01-01'
@@ -88,13 +86,13 @@ describe RelationshipsController, type: :controller do
       it 'changes updated_at of entities' do
         e1.update_column(:updated_at, 1.day.ago)
         e2.update_column(:updated_at, 1.day.ago)
-        post_request
+        post :create, params: example_params(e1.id, e2.id)
         expect(Entity.find(e1.id).updated_at).to be > 1.minute.ago
         expect(Entity.find(e2.id).updated_at).to be > 1.minute.ago
       end
 
       it 'updates last_user_id' do
-        post_request
+        post :create, params: example_params(e1.id, e2.id)
         expect(Entity.find(e1.id).last_user_id).not_to eql user.id
         expect(Entity.find(e2.id).last_user_id).not_to eql user.id
       end

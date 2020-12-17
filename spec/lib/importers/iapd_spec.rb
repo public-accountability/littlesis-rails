@@ -1,5 +1,5 @@
 require 'sqlite3'
-require Rails.root.join('lib/importers/iapd_importer.rb')
+require 'importers'
 
 describe 'Iapd Dataset' do
   let(:db) do
