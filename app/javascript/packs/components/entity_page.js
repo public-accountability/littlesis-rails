@@ -1,3 +1,4 @@
+import 'select2'
 import utility from '../common/utility'
 
 var entity = {}
