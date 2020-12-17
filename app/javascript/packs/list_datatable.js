@@ -1,6 +1,5 @@
 import { Exporter } from './list_datatable/exporter.js';
 import { Search } from './list_datatable/search.js';
-import { Editor } from './list_datatable/editor.js';
 
 import { BasicColumn } from './list_datatable/columns/basic_column.js';
 import { RankedTableColumns } from './list_datatable/columns/ranked_table_columns.js';
@@ -32,10 +31,6 @@ export default function ListDatatableLoader({config, data}){
   }
 
   this.prepareSearch = function(){ return new Search(datatable) }
-
-  this.prepareEditor = function(element, editorConstructor){
-    return new Editor(element, editorConstructor, config);
-  }
 
   const columnConfigs = function(){
     return [].concat(

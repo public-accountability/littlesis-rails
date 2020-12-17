@@ -52,15 +52,6 @@
     });
     loader.table($('#datatable-table'));
 
-    /*
-      The current version of dataTable.Editor doesn't have a real npm package, apparently
-      to push users onto a new paid license, so for now we use our old version by passing
-      the constructor to our listDatatableLoader pack.
-    */
-    let editorConstructor = $.fn.dataTable.Editor;
-
-    loader.prepareEditor($('#datatable-table'), editorConstructor);
-
     loader.prepareExporter($('#csv_exporter'), $('.buttons')[0]);
 
     loader.prepareSearch();
