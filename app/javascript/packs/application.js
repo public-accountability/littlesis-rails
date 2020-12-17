@@ -23,7 +23,7 @@ import 'hogan.js'
 
 import 'd3'
 import 'papaparse'
-import 'filesaver'
+import 'file-saver'
 import 'select2'
 
 import utility from './common/utility';

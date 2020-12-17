@@ -36,6 +36,7 @@
     "datatables.net-dt": "^1.10.21",
     "eslint-plugin-mocha": "^8.0.0",
     "eslint-plugin-react": "^7.21.2",
+    "file-saver": "^2.0.5",
     "hogan.js": "^3.0.2",
     "immutable": "^4.0.0-rc.12",
     "install": "^0.13.0",
