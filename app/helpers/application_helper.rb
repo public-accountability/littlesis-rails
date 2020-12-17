@@ -38,7 +38,7 @@ module ApplicationHelper
     tag.div(msg, class: "alert alert-#{style}")
   end
 
-  def dismissable_alert(id, class_name = 'alert-info', &block) # rubocop:disable Metrics/MethodLength
+  def dismissable_alert(id, class_name = 'alert-info', &block) # rubocop:disable Metrics/MethodLength Metrics/AbcSize
     session[:dismissed_alerts] = [] unless session[:dismissed_alerts].is_a?(Array)
 
     unless session[:dismissed_alerts].include? id
