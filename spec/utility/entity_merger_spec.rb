@@ -354,6 +354,18 @@ describe 'Merging Entities', :merging_helper do
     end
   end
 
+  describe 'locations' do
+    let(:entity_merger) { EntityMerger.new(source: source_person, dest: dest_person) }
+
+    before do
+      source_person.locations.create!(region: 'Latin America and Caribbean')
+    end
+
+    it 'transfers locations' do
+      expect { entity_merger.merge! }.to change { dest_person.locations.count }.from(0).to(1)
+    end
+  end
+
   describe 'references/documents' do
     subject { EntityMerger.new(source: source_person, dest: dest_person) }
 
