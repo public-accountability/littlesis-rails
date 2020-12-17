@@ -2,7 +2,8 @@ describe 'references requests', type: :request do
   let(:user) { create_basic_user }
 
   before { login_as(user, scope: :user) }
-  after(:each) { logout(:user) }
+
+  after { logout(:user) }
 
   describe 'retriving recent references for a set of entities' do
     let(:entities) { Array.new(2) { create(:entity_org) } }
@@ -46,7 +47,7 @@ describe 'references requests', type: :request do
       }
     end
 
-    let(:create_new_reference) { -> { post '/references', params: post_data } }
+    let(:create_new_reference) { -> { post '/references', params: post_data, as: :json } }
 
     it 'returns "created"' do
       create_new_reference.call
