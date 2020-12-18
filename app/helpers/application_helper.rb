@@ -72,7 +72,7 @@ module ApplicationHelper
   def facebook_meta
     raw(%i[url type title description image]
           .map { |key| [key, content_for(:"facebook_#{key}")] }
-          .delete_if { |(key, val)| val.empty? }
+          .delete_if { |(key, val)| val.blank? }
           .map { |(key, val)| "<meta property=\"og:#{key}\" content=\"#{val}\" />" }
           .join("\n"))
   end
