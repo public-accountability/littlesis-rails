@@ -139,15 +139,14 @@
     <% end %>
   <% end %>
 
-  <%# Location %>
-
+  <%# Regions %>
   <div class="<%= input_div_wrapper_class %>">
-    <label class="<%= label_class %>">Location: </label>
+    <label for="region-select" class="<%= label_class %>">Location: </label>
     <div class="col-sm-4">
-      <select multiple="multiple" id="region-select">
-        <option></option>
-        <%= options_for_select(Location.regions.to_a) %>
-      </select>
+      <%= f.select(:regions,
+                   options_for_select(Location.regions.to_a, selected: @entity.regions),
+                   { include_blank: true},
+                   { multiple: true }) %>
     </div>
   </div>
 
@@ -159,19 +158,19 @@
     </div>
   </div>
 <% end  # end form-for %>
+
 <hr>
 
 <%= render partial: 'edit_aliases' %>
 <hr>
 <%= render partial: 'edit_external_links' %>
 
-
 <script>
  $(function(){
    $('.type-checkbox').click(function() {
      $(this).toggleClass(['glyphicon-check', 'glyphicon-unchecked']);
 
-     // The definition id of the type is stored in the HTML5 dataset of the icon
+     // Store checked type boxes (entity extention definition ids) in a hidden field
      $('#entity_extension_def_ids').val(
        $('.type-checkbox.glyphicon-check')
          .map(function(){ return $(this).data().definitionId } )
@@ -180,8 +179,7 @@
      )
    })
 
-   $('#region-select').select2()
-
+   $('#entity_regions').select2()
  });
 
 </script>

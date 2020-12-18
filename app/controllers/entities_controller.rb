@@ -264,7 +264,8 @@ class EntitiesController < ApplicationController
   end
 
   def validate
-    entity = Entity.new(validate_entity_params)
+    essential_entity_attributes = params.require(:entity).permit(:name, :blurb, :primary_ext).to_h
+    entity = Entity.new(essential_entity_attributes)
     entity.valid?
     render json: entity.errors.to_json
   end
@@ -284,35 +285,20 @@ class EntitiesController < ApplicationController
   end
 
   def update_entity_params
-    params.require(:entity).permit(
-      :name, :blurb, :summary, :website, :start_date, :end_date, :is_current,
-      person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender_id, :id ],
-      public_company_attributes: [:ticker, :id],
-      school_attributes: [:is_private, :id],
-      business_attributes: [:id, :annual_profit, :assets, :marketcap, :net_income]
-    )
+    Entity::Parameters.new(params).update_entity
   end
 
-  # output: [Int] or nil
   def extension_def_ids
-    if params.require(:entity).key?(:extension_def_ids)
-      return params.require(:entity).fetch(:extension_def_ids).split(',').map(&:to_i)
-    end
+    Entity::Parameters.new(params).extension_def_ids
   end
 
   def new_entity_params
-    LsHash.new(params.require(:entity).permit(:name, :blurb, :primary_ext).to_h)
-      .with_last_user(current_user)
-      .nilify_blank_vals
-  end
-
-  def validate_entity_params
-    params.require(:entity)
-      .permit(:name, :blurb, :primary_ext)
+    Entity::Parameters.new(params).new_entity(current_user)
   end
 
   def create_bulk_payload
-    params.require('data')
+    params
+      .require('data')
       .map { |r| r.permit('attributes' => %w[name blurb primary_ext])['attributes'] }
   end
 
