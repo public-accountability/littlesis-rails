@@ -409,6 +409,18 @@ class Entity < ApplicationRecord
     end
   end
 
+  def regions
+    locations.pluck(:region)
+  end
+
+  def add_regions(*regions)
+    regions.each(&method(:add_region))
+  end
+
+  def remove_regions(*regions)
+    regions.each(&method(:remove_region))
+  end
+
   ##
   # User-related methods
   #

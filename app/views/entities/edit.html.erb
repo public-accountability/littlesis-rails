@@ -12,7 +12,7 @@
 <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 
 <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder  do |f| %>
-  
+
   <div class="row top-1em mb-2">
     <%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
     <div class="col-sm-4 col-sm-offset-1">
@@ -27,7 +27,7 @@
     <%= render partial: 'type_checkboxes_org', locals: { f: f } %>
   <% end  %>
 
-  
+
   <% input_div_wrapper_class = 'entity-form-group' %>
   <% label_class = 'entity-edit-label' %>
 
@@ -44,7 +44,7 @@
       <%= f.text_area(:summary, class: 'form-control', size: '40x6') %>
     </div>
   </div>
-  
+
   <% start_date_text = { 'Org' => 'Start date:', 'Person' => 'Birth date' } %>
   <% end_date_text = { 'Org' => 'End date:', 'Person' => 'Death date' } %>
 
@@ -139,6 +139,19 @@
     <% end %>
   <% end %>
 
+  <%# Location %>
+
+  <div class="<%= input_div_wrapper_class %>">
+    <label class="<%= label_class %>">Location: </label>
+    <div class="col-sm-4">
+      <select multiple="multiple" id="region-select">
+        <option></option>
+        <%= options_for_select(Location.regions.to_a) %>
+      </select>
+    </div>
+  </div>
+
+
   <div class="<%= input_div_wrapper_class %>">
     <div class="col-sm-3 nopadding">
       <%= f.submit 'Update', class: 'btn btn-primary' %>
@@ -155,29 +168,20 @@
 
 <script>
  $(function(){
-   
-   const checked_class = 'glyphicon-check';
-   const unchecked_class = 'glyphicon-unchecked';
+   $('.type-checkbox').click(function() {
+     $(this).toggleClass(['glyphicon-check', 'glyphicon-unchecked']);
 
-   $('.type-checkbox').click(function(){
-     $(this).toggleClass(checked_class);
-     $(this).toggleClass(unchecked_class);
-     updateSelectedTypeIds();
-   });
+     // The definition id of the type is stored in the HTML5 dataset of the icon
+     $('#entity_extension_def_ids').val(
+       $('.type-checkbox.glyphicon-check')
+         .map(function(){ return $(this).data().definitionId } )
+         .toArray()
+         .join(',')
+     )
+   })
 
-   function updateSelectedTypeIds() {
-     $('#entity_extension_def_ids').val(selectedTypeIds());
-   }
-
-   // The definition id of the type is stored in the HTML5 dataset of the icon
-   // -> string
-   function selectedTypeIds() {
-     return $('.type-checkbox.' + checked_class).map(function(){
-       return $(this).data().definitionId; 
-     }).toArray().join(',');
-   }
+   $('#region-select').select2()
 
  });
- 
+
 </script>
-  
