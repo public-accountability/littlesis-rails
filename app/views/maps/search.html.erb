@@ -1,7 +1,5 @@
 <% content_for(:page_title, 'Network Maps') %>
 
-<%= centered_content do %>
-
 <h1>
   Network Maps
   <%= link_to 'featured maps', featured_maps_path, class: 'btn btn-secondary btn-sm' %>
@@ -24,5 +22,3 @@
 <br>
 
 <%= render partial: 'maps/table', locals: { maps: @maps } %>
-
-<% end %>
