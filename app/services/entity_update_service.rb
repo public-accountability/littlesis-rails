@@ -12,8 +12,17 @@ module EntityUpdateService
 
     if entity.valid?
       ApplicationRecord.transaction do
-        entity.update_extension_records(entity_params.extension_def_ids)
-        entity.add_reference(entity_params.document_attributes) if entity_params.need_to_create_new_reference?
+        if entity_params.need_to_create_new_reference?
+          entity.add_reference(entity_params.document_attributes)
+        end
+
+        if entity_params.submitted_with_regions?
+          current_regions = entity.region_numbers.to_set
+          proposed_regions = entity_params.region_numbers.to_set
+          entity.add_regions(*proposed_regions.difference(current_regions))
+          entity.remove_regions(*current_regions.difference(proposed_regions))
+        end
+
         entity.save!
       end
     end

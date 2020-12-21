@@ -147,7 +147,7 @@
     <label for="region-select" class="<%= label_class %>">Location: </label>
     <div class="col-sm-4">
       <%= f.select(:regions,
-                   options_for_select(Location.regions.to_a, selected: @entity.regions),
+                   options_for_select(Location.regions.to_a, selected: @entity.region_numbers),
                    { include_blank: true},
                    { multiple: true }) %>
     </div>

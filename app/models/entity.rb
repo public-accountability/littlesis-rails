@@ -392,13 +392,17 @@ class Entity < ApplicationRecord
   end
 
   def add_region(region)
-    raise ArgumentError, "invalid region: #{region}" unless Location.regions.key?(region)
+    unless Location.regions.key?(region) || Location.regions.values.include?(region)
+      raise ArgumentError, "invalid region: #{region}"
+    end
 
     locations.create!(region: region) unless locations.exists?(region: region)
   end
 
   def remove_region(region)
-    raise ArgumentError, "invalid region: #{region}" unless Location.regions.key?(region)
+    unless Location.regions.key?(region) || Location.regions.values.include?(region)
+      raise ArgumentError, "invalid region: #{region}"
+    end
 
     if (location_for_region = locations.find_by(region: region))
       if location_for_region.address
@@ -411,6 +415,10 @@ class Entity < ApplicationRecord
 
   def regions
     locations.pluck(:region)
+  end
+
+  def region_numbers
+    regions.map { |r| Location.regions[r] }
   end
 
   def add_regions(*regions)
