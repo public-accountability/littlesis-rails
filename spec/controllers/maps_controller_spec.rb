@@ -14,77 +14,8 @@ describe MapsController, type: :controller do
     it { is_expected.to route(:get, '/maps/node_with_edges').to(action: :node_with_edges) }
     it { is_expected.to route(:get, '/maps/edges_with_nodes').to(action: :edges_with_nodes) }
     it { is_expected.to route(:get, '/maps/interlocks').to(action: :interlocks) }
+    it { is_expected.to route(:get, '/users/example_user/maps').to(action: :user, username: 'example_user') }
   end
-
-  # describe '#show' do
-  #   let(:get_request) do
-  #     proc do |map|
-  #       allow(controller).to receive(:user_signed_in?).and_return(true)
-  #       allow(NetworkMap).to receive(:find).once.with("10-a-map").and_return(map)
-  #       get :show, params: { id: '10-a-map' }
-  #     end
-  #   end
-
-  #   it 'has three links if cloneable' do
-  #     map = build(:network_map, is_private: false, title: 'a map', is_cloneable: true)
-  #     get_request.call(map)
-  #     expect(assigns(:links).length).to eq 3
-  #   end
-
-  #   it 'has two links if not cloneable' do
-  #     map = build(:network_map, is_private: false, title: 'a map', is_cloneable: false)
-  #     get_request.call(map)
-  #     expect(assigns(:links).length).to eq 2
-  #   end
-
-  #   describe 'viewing a regular map' do
-  #     before do
-  #       map = build(:network_map, is_private: false, title: 'a map')
-  #       get_request.call(map)
-  #     end
-
-  #     it { is_expected.to respond_with :success }
-  #     it { is_expected.to render_template 'story_map' }
-
-  #     it 'does not set dev_version' do
-  #       expect(assigns(:dev_version)).to be_nil
-  #     end
-  #   end
-
-  #   describe 'private map - anon user' do
-  #     before do
-  #       map = build(:network_map, is_private: true, title: 'a map')
-  #       get_request.call(map)
-  #     end
-
-  #     it { is_expected.to respond_with 403 }
-  #   end
-
-  #   describe 'does not call cache when user is logged in' do
-  #     login_user
-
-  #     let(:map) { build(:network_map, title: 'a map') }
-
-  #     before do
-  #       allow(NetworkMap).to receive(:find).with('10-a-map').once.and_return(map)
-  #       get :show, params: { id: '10-a-map' }
-  #     end
-
-  #     it { is_expected.to respond_with :success }
-  #     it { is_expected.to render_template 'story_map' }
-
-  #     it 'sets cacheable to be nil' do
-  #       expect(assigns(:cacheable)).to be_nil
-  #     end
-  #   end
-
-  #   it 'redirects if no slug is provided' do
-  #     map = build(:network_map, is_private: false, title: 'a map')
-  #     allow(NetworkMap).to receive(:find).with('10').once.and_return(map)
-  #     get :show, params: { id: '10' }
-  #     expect(response.status).to eq 302
-  #   end
-  # end
 
   describe '#raw' do
     let(:map) { build(:network_map, title: 'a map') }
