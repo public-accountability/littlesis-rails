@@ -417,6 +417,10 @@ class Entity < ApplicationRecord
     locations.pluck(:region)
   end
 
+  def primary_region
+    locations.order(region: :asc).first
+  end
+
   def region_numbers
     regions.map { |r| Location.regions[r] }
   end
