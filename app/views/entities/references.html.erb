@@ -30,7 +30,8 @@
         <% @documents.each do |doc| %>
           <tr>
             <td>
-              <%= link_to doc.name, doc.url, 'target' => '_blank', 'rel' => 'noopener', 'title' => doc.url %>
+              <% url = doc.primary_source? ? url_for(doc.primary_source_document) : doc.url %>
+              <%= link_to doc.name, url, 'target' => '_blank', 'rel' => 'noopener', 'title' => url.to_s %>
               <% if user_signed_in? %>
                 <%= link_to edit_document_path(doc) do %>
 	          <span class="glyphicon glyphicon-edit ml-1"></span></td>
