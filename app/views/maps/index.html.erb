@@ -1,35 +1,45 @@
 <% content_for(:page_title, 'Network Maps') %>
 
-<%= centered_content do %>
+<div class="row mt-4">
+  <div class="col">
+    <h1><%= @featured ?  'Featured Maps' : 'Network Maps' %></h1>
+  </div>
+</div>
 
-  <h1 class="mb-4 mt-4">
-    <% if @featured %>
-      Featured Maps
-      <%= link_to 'All', all_maps_path, class: 'btn btn-clear btn-sm' %>
-    <% else %>
-      Network Maps
-      <%= link_to 'Featured', featured_maps_path, class: 'btn btn-clear btn-sm' %>
-    <% end %>
-    <% if current_user && controller_name != 'home' %>
-      <%= link_to 'Your Maps', home_maps_path, class: 'btn btn-clear btn-sm' %>
-    <% end %>
-    <%= link_to 'Create', new_map_path, class: 'btn btn-clear btn-sm' %>
-  </h1>
+<div class="row">
+  <div class="col">
+    <div class="row">
+      <div class="col">
+        <% if @featured %>
+          <%= link_to 'Featured', featured_maps_path, class: 'btn btn-clear btn-sm mr-1' %>
+        <% else  %>
+          <%= link_to 'All', all_maps_path, class: 'btn btn-clear btn-sm mr-1' %>
+        <% end  %>
 
-  <% unless @featured %>
-    <%= form_tag search_maps_path, method: :get do %>
-      <div class="input-group col-xs-4 maps_search">
-	<%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search maps" %>
-	<span class="input-group-btn">
-	  <button type="submit" class="btn btn-clear">
-            <span class="glyphicon glyphicon-search"></span>
-      </input>
-	</span>
+        <% if current_user && controller_name != 'home' %>
+          <%= link_to 'Your Maps', home_maps_path, class: 'btn btn-clear btn-sm mr-1' %>
+          <%= link_to 'Create', new_map_path, class: 'btn btn-clear btn-sm mr-1' %>
+        <% end %>
       </div>
-    <% end %>
-    <br>
-  <% end %>
 
-  <%= render partial: 'maps/table', locals: { maps: @maps } %>
+      <div class="col-sm-4 mr-auto">
+        <% unless @featured %>
+          <%= form_tag search_maps_path, method: :get do %>
+            <div class="input-group mb-3">
+              <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search maps", 'aria-label' => 'Search maps' %>
+              <div class="input-group-append">
+                <button type="submit" class="btn" type="button" style="border-color: #ccc;"><span class="glyphicon glyphicon-search"></span></button>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
 
-<% end %>
+<div class="row">
+  <div class="col">
+    <%= render partial: 'maps/table', locals: { maps: @maps } %>
+  </div>
+</div>

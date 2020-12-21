@@ -33,7 +33,7 @@ class MapsController < ApplicationController
               .page(params[:page].presence || 1)
               .per(20)
     @featured = false
-    render 'index'
+    render :index
   end
 
   def featured
@@ -45,16 +45,18 @@ class MapsController < ApplicationController
               .per(20)
 
     @featured = true
-    render 'index'
+    render :index
   end
 
   def search
-    page = params[:page].presence || 1
     @maps = NetworkMap
               .search(LsSearch.escape(params.fetch(:q, '')),
                       order: 'updated_at DESC, id DESC',
                       with: { is_private: false })
-              .page(page).per(20)
+              .page(params[:page].presence || 1)
+              .per(20)
+
+    render :index
   end
 
   def embedded_v2
