@@ -5,7 +5,7 @@
       <th>Author</th>
       <th>Updated</th>
       <% if current_user&.admin? %>
-	<th>Feature</th>
+	<th></th>
       <% end %>
     </tr>
   </thead>
@@ -21,10 +21,14 @@
 
 	<% if current_user&.admin? %>
 	  <td>
-	    <% unless map.is_private %>
-	      <%= network_map_feature_btn(map) %>
-	    <% end %>
-	  </td>
+	    <%= network_map_feature_btn(map) %>
+            <%= link_to(tag.span,
+                        map_path(map),
+                        class: 'delete-map-button',
+                        title: 'Permanently delete this map',
+                        method: :delete,
+                        confirm: "Are you sure?") %>
+          </td>
 	<% end %>
       </tr>
     <% end %>

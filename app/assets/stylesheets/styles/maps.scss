@@ -8,7 +8,7 @@
 
 .featured-map-star-button {
     @extend .empty-button;
-    
+
     > span {
 	@extend .glyphicon;
 	font-size: 15px;
@@ -35,6 +35,20 @@
     @extend .glyphicon-star-empty;
 }
 
+a.delete-map-button {
+    color: black;
+
+    &:hover > span {
+	color: $link_blue_hover;
+    }
+
+    > span {
+	@extend .glyphicon;
+        @extend .glyphicon-trash;
+        @extend .ml-1;
+    }
+
+}
 
 /* map pages */
 
@@ -135,7 +149,7 @@
       margin-right: 0px;
       margin-left: 5px;
       opacity: 1;
-    }    
+    }
   }
 
   #oligrapherGraphAnnotation {
