@@ -690,7 +690,7 @@ describe Entity, :tag_helper do
   end
 
   describe 'basic_info' do
-    context 'is a person' do
+    describe 'person' do
       let(:person_with_female_gender) { build(:person, person: build(:a_person, gender_id: 1), end_date: '2001-12-01') }
       let(:person_with_unknown_gender) { build(:person, person: build(:a_person, gender_id: nil)) }
 
@@ -709,6 +709,18 @@ describe Entity, :tag_helper do
 
       it 'does not contain gender if person does not have a gender_id' do
         expect(person_with_unknown_gender.basic_info).not_to have_key :gender
+      end
+    end
+
+    describe 'Org with Region' do
+      let(:org) do
+        create(:entity_org).tap do |entity|
+          entity.add_region('Latin America and Caribbean')
+        end
+      end
+
+      it 'set region' do
+        expect(org.basic_info[:region]).to eq 'Latin America and Caribbean'
       end
     end
   end
@@ -794,7 +806,7 @@ describe Entity, :tag_helper do
     it 'calls Entity.search and generate_search_terms' do
       expect(entity).to receive(:generate_search_terms).once.and_return("(search terms)")
       expect(Entity).to receive(:search)
-                         .with("@!summary (search terms)", any_args).and_return(['response'])
+                          .with("@!summary (search terms)", any_args).and_return(['response'])
       expect(entity.similar_entities).to eq ['response']
     end
 
@@ -1248,5 +1260,4 @@ describe Entity, :tag_helper do
       expect { entity.remove_region('Middle East') }.not_to change { entity.reload.locations.count }
     end
   end
-
 end

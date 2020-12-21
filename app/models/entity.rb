@@ -418,7 +418,7 @@ class Entity < ApplicationRecord
   end
 
   def primary_region
-    locations.order(region: :asc).first
+    locations.order(region: :asc).pick(:region)
   end
 
   def region_numbers
@@ -667,9 +667,9 @@ class Entity < ApplicationRecord
       info[:revenue] = ActiveSupport::NumberHelper.number_to_human(org.revenue) unless org.revenue.blank?
     end
     info[:website] = website if website.present?
-    #info[:industries] = industries.join(', ') unless industries.empty?
     info[:aliases] = also_known_as.join(', ') unless also_known_as.empty?
-    # TODO: address
+    info[:region] = primary_region if primary_region
+
     info
   end
 
