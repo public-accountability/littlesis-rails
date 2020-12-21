@@ -1,4 +1,4 @@
-describe 'edit entity page', type: :feature do
+describe 'edit entity page', type: :feature, js: true do
   include EntitiesHelper
 
   let(:user) { create_really_basic_user }
@@ -23,7 +23,7 @@ describe 'edit entity page', type: :feature do
 
     feature 'viewing the edit entity page' do
       scenario 'displays header, action buttons, and edit references panel' do
-        expect(page.status_code).to eq 200
+        # expect(page.status_code).to eq 200
         expect(page).to have_current_path edit_entity_path(entity)
         page_has_selectors '#actions',
                            '#action-buttons',
@@ -93,7 +93,7 @@ describe 'edit entity page', type: :feature do
         end
       end
 
-      context 'when adding a new reference' do
+      describe 'when adding a new reference', js: false do
         let(:url) { Faker::Internet.unique.url }
         let(:ref_name) { 'reference-name' }
         let(:start_date) { '1950-01-01' }
@@ -147,7 +147,7 @@ describe 'edit entity page', type: :feature do
       end # end context adding a new reference
     end # end updating an entity's fields
 
-    describe 'external links' do
+    describe 'external links', js: false do
       let(:user) { create_basic_user }
       let(:wikipedia_name) { 'example_page' }
       let(:twitter_username) { Faker::Internet.unique.username }
