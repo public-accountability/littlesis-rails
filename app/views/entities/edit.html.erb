@@ -14,9 +14,12 @@
 <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder  do |f| %>
 
   <div class="row top-1em mb-2">
-    <%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
-    <div class="col-sm-4 col-sm-offset-1">
-      <%= render partial: 'shared/editing/reference_errors' %>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <%= render partial: 'shared/editing/reference_widget',
+                 locals: { documents: RecentEntityReferencesQuery.run(@entity) } %>
+    </div>
+
+    <div class="col-sm-4 col-sm-offset-1 col-xs-12">
       <%= render partial: 'edit_errors' %>
     </div>
   </div>
