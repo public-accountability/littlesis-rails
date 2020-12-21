@@ -64,6 +64,7 @@ Lilsis::Application.routes.draw do
 
   get '/users/:username' => 'users#show', as: :user_page
   get '/users/:username/edits' => 'users#edits', as: :user_edits
+  get '/users/:username/maps' => 'maps#user', as: :user_maps
 
   resources :lists do
     member do
@@ -215,9 +216,9 @@ Lilsis::Application.routes.draw do
   end
 
   get "/maps/:id/share/:secret",
-    controller: 'maps',
-    action: 'show',
-    as: 'share_map'
+      controller: 'maps',
+      action: 'show',
+      as: 'share_map'
 
   resources :oligrapher, only: [:new, :show, :create, :update, :destroy], controller: 'oligrapher' do
     collection do
