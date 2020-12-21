@@ -98,25 +98,17 @@ class EntitiesController < ApplicationController
   end
 
   def update
-    # assign new attributes to the entity
-    @entity.assign_attributes(prepare_params(update_entity_params))
-
-    if need_to_create_new_reference
-      @entity.validate_reference(reference_params)
-    end
+    EntityUpdateService.run(entity: @entity,
+                            params: params,
+                            current_user: current_user)
 
     if @entity.valid?
-      @entity.update_extension_records(extension_def_ids)
-      @entity.add_reference(reference_params) if need_to_create_new_reference
-      # Add_reference will make the entity invalid if the reference is invalid
-      if @entity.valid?
-        @entity.save!
-        return render json: { status: 'OK' } if api_request?
-        return redirect_to concretize_entity_path(@entity)
-      end
+      return render json: { status: 'OK' } if api_request?
+      return redirect_to concretize_entity_path(@entity)
+    else
+      set_entity_references
+      render :edit
     end
-    set_entity_references
-    render :edit
   end
 
   def destroy
@@ -282,14 +274,6 @@ class EntitiesController < ApplicationController
 
   def image_params
     params.require(:image).permit(:file, :caption, :url, :is_free, :is_featured)
-  end
-
-  def update_entity_params
-    Entity::Parameters.new(params).update_entity
-  end
-
-  def extension_def_ids
-    Entity::Parameters.new(params).extension_def_ids
   end
 
   def new_entity_params
