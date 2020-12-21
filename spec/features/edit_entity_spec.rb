@@ -5,7 +5,7 @@ describe 'edit entity page', type: :feature, js: true do
   let(:entity) { create(:public_company_entity, last_user_id: user.id) }
 
   context 'when user is not logged in' do
-    before { visit edit_entity_path(entity) }
+    before { visit concretize_edit_entity_path(entity) }
 
     redirects_to_login_page
   end
@@ -16,7 +16,7 @@ describe 'edit entity page', type: :feature, js: true do
     before do
       setup.call
       login_as(user, scope: :user)
-      visit edit_entity_path(entity)
+      visit concretize_edit_entity_path(entity)
     end
 
     after { logout(user) }
@@ -24,7 +24,7 @@ describe 'edit entity page', type: :feature, js: true do
     feature 'viewing the edit entity page' do
       scenario 'displays header, action buttons, and edit references panel' do
         # expect(page.status_code).to eq 200
-        expect(page).to have_current_path edit_entity_path(entity)
+        expect(page).to have_current_path concretize_edit_entity_path(entity)
         page_has_selectors '#actions',
                            '#action-buttons',
                            '#edit-references-panel',
