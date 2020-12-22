@@ -35,10 +35,24 @@ jobs:
       - run: bundle exec rake db:structure:load
       - run: bundle exec rake db:seed
       - run: bundle exec rake tmp:clear
+
+      - restore_cache:
+          keys:
+            - node-modules-cache-v1-{{ checksum "yarn.lock" }}
+
       - run: bundle exec rake yarn:install
+
+      - save_cache:
+          key: node-modules-cache-v1-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+
       - run: bundle exec rake webpacker:compile
       - run: bundle exec rake assets:precompile
-      - run: bundle exec rspec
+      - run: bundle exec rspec --format progress --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
+
+      - store_test_results:
+          path: tmp/rspec
 
       - store_artifacts:
           path: coverage

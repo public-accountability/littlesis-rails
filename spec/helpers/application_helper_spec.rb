@@ -31,27 +31,6 @@ describe ApplicationHelper, :type => :helper do
     end
   end
 
-  describe 'facebook_meta' do
-    it 'generates one meta tag' do
-      expect(helper).to receive(:content_for).with(:facebook_url)
-      expect(helper).to receive(:content_for).with(:facebook_type)
-      expect(helper).to receive(:content_for).with(:facebook_title).and_return('page title')
-      expect(helper).to receive(:content_for).with(:facebook_description)
-      expect(helper).to receive(:content_for).with(:facebook_image)
-      expect(helper.facebook_meta).to eq '<meta property="og:title" content="page title" />'
-    end
-
-    it 'generates two meta tags' do
-      expect(helper).to receive(:content_for).with(:facebook_url).and_return('http://example.com')
-      expect(helper).to receive(:content_for).with(:facebook_type)
-      expect(helper).to receive(:content_for).with(:facebook_title).and_return('page title')
-      expect(helper).to receive(:content_for).with(:facebook_description)
-      expect(helper).to receive(:content_for).with(:facebook_image)
-      expect(helper.facebook_meta)
-        .to eq '<meta property="og:url" content="http://example.com" /><meta property="og:title" content="page title" />'
-    end
-  end
-
   describe 'references_select' do
     let(:references) { Array.new(2) { build(:reference) } }
     let(:selected_id) { nil }

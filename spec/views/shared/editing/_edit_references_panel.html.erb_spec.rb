@@ -3,7 +3,7 @@ describe 'shared/editing/_edit_references_panel.html.erb', type: :view do
   let(:selected_ref) { nil }
   let(:locals) { { references: references, selected_ref: selected_ref } }
   let(:partial_render) do
-    render partial: 'shared/editing/edit_references_panel.html.erb', locals: locals
+    render partial: 'shared/editing/edit_references_panel', locals: locals
   end
 
   context 'without a selected_ref' do

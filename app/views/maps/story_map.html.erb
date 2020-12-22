@@ -1,11 +1,8 @@
 <% content_for(:page_title, raw(@map.name)) %>
-<% content_for(:facebook_title, @map.name) %>
-<% content_for(:facebook_image, @map.thumbnail) %>
-<% content_for(:facebook_type, "website") %>
-<% content_for(:facebook_url, map_url(@map)) %>
 
 <%= content_for(:head) do %>
   <%= oligrapher_js_tags %>
+  <%= og_tags(title: @map.name, image: asset_path('netmap-org.png'), url: oligrapher_url(@map)) %>
 <% end %>
 
 <%= content_for(:body) do %>

@@ -1,5 +1,9 @@
 <% content_for(:page_title, "LittleSis - Profiling the powers that be") %>
 <% content_for(:skip_page_title_suffix, true) %>
+<% content_for(:head) do  %>
+  <%= og_tags(title: 'LittleSis', url: 'https://littlesis.org', image: 'https://littlesis.org/images/system/lilsis-logo-trans-200.png') %>
+  <meta property="og:description" content="LittleSis is a free database of who-knows-who at the heights of business and government">
+<% end  %>
 
 <div class="row mt-5" id="first-homepage-row">
   <div class="col-sm-7">
@@ -11,7 +15,7 @@
         We're a grassroots watchdog network connecting the dots between the world's most powerful people and organizations.
       </div>
     </div>
-    
+
     <div class="row position-relative">
       <div class="col-6 nopadding">
 	<% if @newsletter_thankyou %>
@@ -20,11 +24,11 @@
 	  <%= render partial: 'newsletter_signup_form' %>
 	<% end %>
       </div>
-      
+
       <div class="col-6 double-left-padding">
 	<%= render partial: 'social_media_buttons' %>
       </div>
-      
+
     </div>
   </div>
   <div class="col-sm-1"></div>

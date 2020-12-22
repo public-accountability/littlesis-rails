@@ -1,44 +1,34 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= raw(page_title) %></title>
     <%= stylesheet_link_tag    "application", media: "all" %>
     <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag "application" %>
-    <%= csrf_meta_tags %>
-    <%= facebook_meta %>
 
-    <% if content_for?(:head) %>
-      <%= yield :head %>
-    <% end %>
+    <%= csrf_meta_tags %>
+    <%= content_for(:head) if content_for?(:head) %>
   </head>
+
   <body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
 
     <% unless content_for? :hide_top %>
       <%= render partial: 'shared/nav_menu' %>
     <% end %>
 
-    <% if content_for? :title %>
-      <div id="header">
-	<div id="header_content">
-	  <div id="title">
-	    <%= yield :title %>
-	  </div>
-	</div>
+    <div id="container-wrapper" class="mt-1">
+      <div id="container" class="container-fluid">
+	<%= yield %>
       </div>
-    <% end %>
+    </div>
 
     <% if content_for? :body %>
       <%= yield :body %>
     <% end %>
 
-    <% if yield.strip.present?  %>
-      <div id="container-wrapper">
-	<div id="container">
-	  <%= yield %>
-	</div>
-      </div>
-    <% end %>
+
 
     <% unless content_for? :hide_footer %>
       <div id="footer_clear"></div>

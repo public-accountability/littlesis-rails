@@ -69,12 +69,11 @@ module ApplicationHelper
     current_user && current_user.has_ability?(permission)
   end
 
-  def facebook_meta
-    raw(%i[url type title description image]
-          .map { |key| [key, content_for(:"facebook_#{key}")] }
-          .delete_if { |(key, val)| val.blank? }
-          .map { |(key, val)| "<meta property=\"og:#{key}\" content=\"#{val}\" />" }
-          .join(""))
+  def og_tags(title:, image:, url:, type: 'website')
+    tag.meta(proeprty: 'og:type', content: type) +
+      tag.meta(property: 'og:title', content: title) +
+      tag.meta(property: 'og:url', content: url) +
+      tag.meta(property: 'og:image', content: image)
   end
 
   def paginate_preview(ary, num, path)

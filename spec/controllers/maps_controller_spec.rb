@@ -105,15 +105,4 @@ describe MapsController, type: :controller do
       expect(response.location[-5..-1]).to eq maps_path
     end
   end
-
-  describe '#embedded' do
-    before do
-      allow(NetworkMap).to receive(:find).with('10-a-map').and_return(build(:network_map))
-      allow(controller).to receive(:user_signed_in?).and_return(true)
-      get :embedded, params: { id: '10-a-map' }
-    end
-
-    it { is_expected.to render_template('embedded') }
-    it { is_expected.to render_with_layout('fullscreen') }
-  end
 end
