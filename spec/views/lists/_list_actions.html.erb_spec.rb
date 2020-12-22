@@ -3,7 +3,7 @@ describe 'lists/list_actions', :type => :view do
     before do
       assign(:list, create(:list))
       assign(:permissions, { :editable => false })
-      render partial: 'lists/list_actions.html.erb', locals: { list: build(:list) }
+      render partial: 'lists/list_actions', locals: { list: build(:list) }
     end
 
     it 'renders only the removal button' do
@@ -18,7 +18,7 @@ describe 'lists/list_actions', :type => :view do
     before do
       assign(:list, create(:list))
       assign(:permissions, { :editable => true, :configurable => false })
-      render partial: 'lists/list_actions.html.erb', locals: { list: build(:list) }
+      render partial: 'lists/list_actions', locals: { list: build(:list) }
     end
 
     it 'has list-actions div' do

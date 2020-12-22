@@ -20,7 +20,7 @@ describe "partial: sidebar", :tag_helper do
   describe 'layout' do
     before do
       assign(:entity, org)
-      render partial: 'entities/sidebar.html.erb'
+      render partial: 'entities/sidebar'
     end
 
     it 'renders partial sidebar/image' do
@@ -47,7 +47,7 @@ describe "partial: sidebar", :tag_helper do
         org.add_tag('oil')
         org.add_tag('nyc')
         assign(:entity, org)
-        render partial: 'entities/sidebar.html.erb'
+        render partial: 'entities/sidebar'
       end
 
       it 'has #tags-container' do
@@ -67,7 +67,7 @@ describe "partial: sidebar", :tag_helper do
                                            :merger? =>     false,
                                            :permissions => double(:tag_permissions => {})))
 
-        render partial: 'entities/sidebar.html.erb'
+        render partial: 'entities/sidebar'
       end
 
       it 'has Advanced tools' do
@@ -89,7 +89,7 @@ describe "partial: sidebar", :tag_helper do
                                            :merger? =>     false,
                                            :permissions => double(:tag_permissions => {})))
 
-        render partial: 'entities/sidebar.html.erb'
+        render partial: 'entities/sidebar'
       end
 
       it 'has Match NY Donations' do
@@ -107,7 +107,7 @@ describe "partial: sidebar", :tag_helper do
                                            :merger? =>     true,
                                            :permissions => double(:tag_permissions => {})))
 
-        render partial: 'entities/sidebar.html.erb'
+        render partial: 'entities/sidebar'
       end
     end
   end

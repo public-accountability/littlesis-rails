@@ -15,25 +15,25 @@ class RelationshipValidator < ActiveModel::Validator
     if rel.entity.person? && rel.related.person?
 
       unless self.class.person_to_person.include?(rel.category_id)
-        rel.errors[:category] << error_msg(rel.category_id, 'Person to Person')
+        rel.errors.add :category, error_msg(rel.category_id, 'Person to Person')
       end
 
     elsif rel.entity.person? && rel.related.org?
 
       unless self.class.person_to_org.include?(rel.category_id)
-        rel.errors[:category] << error_msg(rel.category_id, 'Person to Org')
+        rel.errors.add :category, error_msg(rel.category_id, 'Person to Org')
       end
 
     elsif rel.entity.org? && rel.related.org?
 
       unless self.class.org_to_org.include?(rel.category_id)
-        rel.errors[:category] << error_msg(rel.category_id, 'Org to Org')
+        rel.errors.add :category, error_msg(rel.category_id, 'Org to Org')
       end
 
     elsif rel.entity.org? && rel.related.person?
 
       unless self.class.org_to_person.include?(rel.category_id)
-        rel.errors[:category] << error_msg(rel.category_id, 'Org to Person')
+        rel.errors.add :category, error_msg(rel.category_id, 'Org to Person')
       end
 
     end
