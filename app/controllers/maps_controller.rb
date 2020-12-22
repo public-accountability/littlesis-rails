@@ -118,12 +118,7 @@ class MapsController < ApplicationController
     @links.push({ text: 'share link', url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private && is_owner
     @links.push(text: 'disclaimer', url: '#disclaimer') # see views/maps/_disclaimer_modal for the disclaimer modal
 
-    if params[:embed]
-      response.headers.delete('X-Frame-Options')
-      render action: 'story_map', layout: 'fullscreen'
-    else
-      render 'story_map', layout: 'oligrapher'
-    end
+    render 'story_map', layout: 'oligrapher'
   end
 
   def raw
