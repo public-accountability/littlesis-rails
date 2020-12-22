@@ -63,7 +63,8 @@ class PagesController < ApplicationController
   def donate
   end
 
-  def rats
+  def swamped
+    render layout: 'fullscreen'
     # admins_only
   end
 

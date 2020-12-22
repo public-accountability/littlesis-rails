@@ -390,8 +390,7 @@ Lilsis::Application.routes.draw do
   # Other Pages
   get "/oligrapher" => "pages#oligrapher"
   get "/donate" => "pages#donate"
-  get "/rats" => "pages#rats"
-
+  get "/swamped" => "pages#swamped"
 
   ############
   # Partners #
