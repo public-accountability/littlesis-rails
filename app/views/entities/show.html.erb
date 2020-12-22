@@ -1,14 +1,13 @@
 <% content_for(:page_title, @entity.name) %>
-<% content_for(:facebook_url, entity_url(@entity)) %>
-<% content_for(:facebook_title, "LittleSis: #{@entity.name}") %>
-<% content_for(:facebook_type, "website") %>
-<% content_for(:facebook_image, @entity.featured_image_url) %>
+<% content_for(:head) do %>
+  <%= og_tags(title: "LittleSis: #{@entity.name}", url: entity_url(@entity), image: @entity.featured_image_url) %>
+  <%= javascript_pack_tag 'components/entity_page' %>
+<% end %>
 
 <%= render partial: 'shared/entity_info', locals: {entity: @entity}  %>
 <%= render partial: 'shared/notice_or_alert' %>
 <%= render partial: 'header', locals: { entity: @entity } %>
 <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
-<%= javascript_pack_tag 'components/entity_page' %>
 
 <div class="row top-1em" id="entity-page-container">
 

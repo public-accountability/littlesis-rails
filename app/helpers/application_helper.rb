@@ -69,6 +69,13 @@ module ApplicationHelper
     current_user && current_user.has_ability?(permission)
   end
 
+  def og_tags(title:, image:, url:, type: 'website')
+    tag.meta(proeprty: 'og:type', content: type) +
+      tag.meta(property: 'og:title', content: title) +
+      tag.meta(property: 'og:url', content: url) +
+      tag.meta(property: 'og:image', content: image)
+  end
+
   def facebook_meta
     raw(%i[url type title description image]
           .map { |key| [key, content_for(:"facebook_#{key}")] }

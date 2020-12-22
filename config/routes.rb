@@ -383,16 +383,15 @@ Lilsis::Application.routes.draw do
   # Pages #
   #########
 
-  get "/partypolitics" => "pages#partypolitics"
-  get "/oligrapher" => "pages#oligrapher"
-  get "/oligrapher_old" => "pages#oligrapher_splash"
-  get "/donate" => "pages#donate"
-  get "/graph" => "graph#all"
-
+  # Editable Pages
   get "/pages/:page/edit" => "pages#edit_by_name", constraints: { page: /[A-z]+[^\/]+/ }
   resources :pages, only: [:new, :create, :edit, :update, :index, :show]
-
   get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
+  # Other Pages
+  get "/oligrapher" => "pages#oligrapher"
+  get "/donate" => "pages#donate"
+  get "/rats" => "pages#rats"
+
 
   ############
   # Partners #

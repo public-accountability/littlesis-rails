@@ -55,10 +55,16 @@ class PagesController < ApplicationController
     end
   end
 
+  # misc pages
+
   def oligrapher
   end
 
   def donate
+  end
+
+  def rats
+    # admins_only
   end
 
   private

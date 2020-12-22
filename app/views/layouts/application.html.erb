@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= raw(page_title) %></title>
     <%= stylesheet_link_tag    "application", media: "all" %>
     <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag "application" %>
     <%= csrf_meta_tags %>
-    <%= facebook_meta %>
-
-    <% if content_for?(:head) %>
-      <%= yield :head %>
-    <% end %>
+    <%= content_for(:head) if content_for?(:head) %>
   </head>
+
   <body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
 
     <% unless content_for? :hide_top %>

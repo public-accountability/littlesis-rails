@@ -1,5 +1,3 @@
-<%= render 'shared/facebook_sdk' %>
-
 <%= content_for(:head) do %>
   <%= oligrapher_js_tags %>
 <% end %>
@@ -7,15 +5,13 @@
 <%= cache_if !user_signed_in?, [ 'embedded', @map, @start_index ] do %>
 
     <% content_for(:page_title, raw(@map.name)) %>
-    <% content_for(:facebook_title, @map.name) %>
-    <% content_for(:facebook_image, @map.thumbnail) %>
     <% content_for(:hide_footer, true) %>
 
     <div id="oligrapher"></div>
     <script>
      var graph = <%= raw(@map.graph_data.to_json) %>;
      graph.id = <%= @map.id %>;
-     
+
      var annotations = <%= raw(@map.annotations_data || '[]') %>;
      var startIndex = <%= @start_index %>;
 

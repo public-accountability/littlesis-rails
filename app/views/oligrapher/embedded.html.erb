@@ -1,4 +1,5 @@
-<%= render 'shared/facebook_sdk' %>
+<% content_for(:page_title, raw(@map.name)) %>
+<% content_for(:hide_footer, true) %>
 
 <%= content_for(:head) do %>
   <% if Rails.env == "development" %>
@@ -7,21 +8,14 @@
   <% else %>
     <script src="<%= "/oligrapher/oligrapher-#{@oligrapher_version}.js"  %>"></script>
   <% end %>
+
+  <%= og_tags(title: @map.name, image: asset_path('netmap-org.png'), url: oligrapher_url(@map)) %>
 <% end %>
 
-<%= cache_if !user_signed_in?, [ 'embedded_v3', @map ] do %>
+<div id="oligrapher"></div>
 
-  <% content_for(:page_title, raw(@map.name)) %>
-  <% content_for(:facebook_title, @map.name) %>
-  <% content_for(:facebook_image, @map.thumbnail) %>
-  <% content_for(:hide_footer, true) %>
-
-  <div id="oligrapher"></div>
-
-  <script>
-    var oli = new Oligrapher(
-      <%= JSON.generate(@configuration).html_safe %>
-    )
-  </script>
-  
-<% end %>
+<script>
+ var oli = new Oligrapher(
+   <%= JSON.generate(@configuration).html_safe %>
+ )
+</script>

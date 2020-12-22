@@ -1,6 +1,5 @@
 describe PagesController, type: :controller do
   it { is_expected.to route(:get, '/oligrapher').to(action: :oligrapher) }
-  it { is_expected.to route(:get, '/partypolitics').to(action: :partypolitics) }
   it { is_expected.to route(:get, '/donate').to(action: :donate) }
   it { is_expected.to route(:get, '/about').to(action: :display, page: 'about') }
   it { is_expected.not_to route(:post, '/about').to(action: :display, page: 'about') }
