@@ -15,15 +15,6 @@ describe 'edit entity page', type: :feature, js: true do
 
   after { logout(:user) }
 
-  describe 'when user is not logged in' do
-    before do
-      logout(:user)
-      visit concretize_edit_entity_path(entity)
-    end
-
-    redirects_to_login_page
-  end
-
   feature "updating an entity's fields" do
     let(:new_short_description) { Faker::Lorem.sentence }
 
