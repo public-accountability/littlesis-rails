@@ -429,8 +429,10 @@ Lilsis::Application.routes.draw do
     get 'random', on: :collection, action: :random
   end
 
-
-  match "*path", to: "errors#not_found", via: :all
+  match "*path",
+        to: "errors#not_found",
+        via: :all,
+        constraints: ->(req) { req.path.exclude? 'rails/active_storage' }
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
