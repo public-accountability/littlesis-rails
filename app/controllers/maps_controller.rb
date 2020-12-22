@@ -85,11 +85,7 @@ class MapsController < ApplicationController
   end
 
   def embedded
-    return redirect_to(embedded_oligrapher_path(@map)) if @map.version3?
-
-    check_private_access
-    response.headers.delete('X-Frame-Options')
-    render layout: 'fullscreen'
+    redirect_to(embedded_oligrapher_path(@map))
   end
 
   def map_json
