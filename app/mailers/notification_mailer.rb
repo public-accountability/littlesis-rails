@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class NotificationMailer < ApplicationMailer
-  add_template_helper(ApplicationHelper)
   DEFAULT_TO = APP_CONFIG['notification_to']
 
   def contact_email(params)

@@ -80,7 +80,7 @@ describe NotificationMailer, type: :mailer do
       let(:map_the_power) { true }
 
       it 'interested in map the power' do
-        expect(mail.encoded).to include "<strong>Interested in Map the Power:</strong> yes"
+        expect(mail.encoded).to include "<strong>Interested in Map the Power:</strong> true"
       end
     end
 
@@ -88,7 +88,7 @@ describe NotificationMailer, type: :mailer do
       let(:map_the_power) { false }
 
       it 'interested in map the power' do
-        expect(mail.encoded).to include "<strong>Interested in Map the Power:</strong> no"
+        expect(mail.encoded).to include "<strong>Interested in Map the Power:</strong> false"
       end
     end
 
