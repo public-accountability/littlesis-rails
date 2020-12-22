@@ -102,7 +102,7 @@ class RelationshipsController < ApplicationController
       update_entity_last_user
       render json: { 'relationship_id' => @relationship.id }, status: :created
     else
-      render json: @relationship.errors.to_h, status: :bad_request
+      render json: @relationship.errors.to_hash, status: :bad_request
     end
   end
 

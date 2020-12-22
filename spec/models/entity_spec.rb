@@ -1256,7 +1256,7 @@ describe Entity, :tag_helper do
 
     it 'does not remove regions associated with addresses' do
       entity.add_region('Middle East')
-      entity.reload.locations.public_send('Middle East').first.create_address!(city: "بيروت")
+      entity.reload.locations.where(region: 'Middle East').first.create_address!(city: "بيروت")
       expect { entity.remove_region('Middle East') }.not_to change { entity.reload.locations.count }
     end
   end
