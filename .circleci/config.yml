@@ -4,6 +4,7 @@ jobs:
   rspec:
     environment:
       RAILS_ENV: test
+      COVERAGE: yes
     resource_class: medium
     docker:
       - image: ruby:2.7.2-buster
@@ -39,6 +40,8 @@ jobs:
       - run: bundle exec rake assets:precompile
       - run: bundle exec rspec
 
+      - store_artifacts:
+          path: coverage
 
   mocha:
     machine:

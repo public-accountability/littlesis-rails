@@ -5,11 +5,6 @@ if ENV["COVERAGE"]
     add_filter 'lib/tasks'
     add_filter 'lib/scripts'
   end
-
-  if ENV['TRAVIS']
-    require 'codecov'
-    SimpleCov.formatter = SimpleCov::Formatter::Codecov
-  end
 end
 
 ENV['RAILS_ENV'] ||= 'test'
@@ -109,7 +104,6 @@ RSpec.configure do |config|
       ActiveRecord::Tasks::DatabaseTasks.load_seed
     end
   end
-
 
   config.around(:each, :caching) do |example|
     caching = ActionController::Base.perform_caching
