@@ -76,14 +76,6 @@ module ApplicationHelper
       tag.meta(property: 'og:image', content: image)
   end
 
-  def facebook_meta
-    raw(%i[url type title description image]
-          .map { |key| [key, content_for(:"facebook_#{key}")] }
-          .delete_if { |(key, val)| val.blank? }
-          .map { |(key, val)| "<meta property=\"og:#{key}\" content=\"#{val}\" />" }
-          .join(""))
-  end
-
   def paginate_preview(ary, num, path)
     raw("1-#{num} of #{ary.count} :: " + link_to("see all", path))
   end
