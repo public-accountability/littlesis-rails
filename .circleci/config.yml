@@ -38,7 +38,10 @@ jobs:
       - run: bundle exec rake yarn:install
       - run: bundle exec rake webpacker:compile
       - run: bundle exec rake assets:precompile
-      - run: bundle exec rspec
+      - run: bundle exec rspec --format progress --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
+
+      - store_test_results:
+          path: tmp/rspec
 
       - store_artifacts:
           path: coverage
