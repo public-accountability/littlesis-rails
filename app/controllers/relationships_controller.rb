@@ -77,12 +77,16 @@ class RelationshipsController < ApplicationController
           @relationship.save!
           @relationship.reverse_direction! if reverse_direction?
           update_entity_last_user
-          # successful response
-          return redirect_to relationship_path(@relationship)
+
         end
       end
     end
-    return render :edit
+
+    if @relationship.valid?
+      return redirect_to relationship_path(@relationship)
+    else
+      return render :edit
+    end
   end
 
   # Creates a new Relationship and a Reference
