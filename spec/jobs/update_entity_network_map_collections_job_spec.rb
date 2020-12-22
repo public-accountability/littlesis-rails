@@ -28,26 +28,31 @@ describe UpdateEntityNetworkMapCollectionsJob, type: :job do
     assert_network_map_collection_equals e1, Set.new
     assert_network_map_collection_equals e2, Set.new
     network_map.graph_data = graph_data
-    perform_enqueued_jobs { network_map.save! }
+    network_map.save!
+    perform_enqueued_jobs
     assert_network_map_collection_equals e1, [network_map.id].to_set
     assert_network_map_collection_equals e2, [network_map.id].to_set
   end
 
   it 'when an entity is removed, it removes it from the associated entity' do
     network_map.graph_data = graph_data
-    perform_enqueued_jobs { network_map.save! }
+    network_map.save!
+    perform_enqueued_jobs
     assert_network_map_collection_equals e2, [network_map.id].to_set
     network_map.graph_data = graph_data_missing_node_two
-    perform_enqueued_jobs { network_map.save! }
+    network_map.save!
+    perform_enqueued_jobs
     assert_network_map_collection_equals e2, Set.new
   end
 
   it 'removes from all collection after network map is soft deleted' do
     network_map.graph_data = graph_data
-    perform_enqueued_jobs { network_map.save! }
+    network_map.save!
+    perform_enqueued_jobs
     assert_network_map_collection_equals e1, [network_map.id].to_set
     assert_network_map_collection_equals e2, [network_map.id].to_set
-    perform_enqueued_jobs { network_map.soft_delete }
+    network_map.soft_delete
+    perform_enqueued_jobs
     assert_network_map_collection_equals e1, Set.new
     assert_network_map_collection_equals e2, Set.new
   end

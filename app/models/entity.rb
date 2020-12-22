@@ -391,6 +391,48 @@ class Entity < ApplicationRecord
     os_categories.map(&:industry_name).uniq
   end
 
+  def add_region(region)
+    unless Location.regions.key?(region) || Location.regions.values.include?(region)
+      raise ArgumentError, "invalid region: #{region}"
+    end
+
+    locations.create!(region: region) unless locations.exists?(region: region)
+  end
+
+  def remove_region(region)
+    unless Location.regions.key?(region) || Location.regions.values.include?(region)
+      raise ArgumentError, "invalid region: #{region}"
+    end
+
+    if (location_for_region = locations.find_by(region: region))
+      if location_for_region.address
+        Rails.logger.warn "cannot remove location with address for #{name_with_id}."
+      else
+        location_for_region.destroy
+      end
+    end
+  end
+
+  def regions
+    locations.pluck(:region)
+  end
+
+  def primary_region
+    locations.order(region: :asc).pick(:region)
+  end
+
+  def region_numbers
+    regions.map { |r| Location.regions[r] }
+  end
+
+  def add_regions(*regions)
+    regions.each(&method(:add_region))
+  end
+
+  def remove_regions(*regions)
+    regions.each(&method(:remove_region))
+  end
+
   ##
   # User-related methods
   #
@@ -625,9 +667,9 @@ class Entity < ApplicationRecord
       info[:revenue] = ActiveSupport::NumberHelper.number_to_human(org.revenue) unless org.revenue.blank?
     end
     info[:website] = website if website.present?
-    #info[:industries] = industries.join(', ') unless industries.empty?
     info[:aliases] = also_known_as.join(', ') unless also_known_as.empty?
-    # TODO: address
+    info[:region] = primary_region if primary_region
+
     info
   end
 

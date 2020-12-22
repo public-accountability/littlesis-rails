@@ -108,14 +108,10 @@ class UsersController < ApplicationController
   private
 
   def set_user
-    if params[:id].present?
-      @user = User.find(params[:id])
+    if params[:id].present? || params[:username]&.scan(/^[0-9]+$/).present?
+      @user = User.find(params[:id] || params[:username])
     elsif params[:username].present?
-      if params[:username].scan(/^[0-9]+$/).present?
-        @user = User.find(params[:username])
-      else
-        @user = User.find_by_username!(params[:username])
-      end
+      @user = User.find_by!(username: params[:username])
     else
       raise Exceptions::NotFoundError
     end

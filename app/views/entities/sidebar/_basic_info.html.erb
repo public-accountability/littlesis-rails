@@ -1,14 +1,14 @@
 <table class="table table-sm table-hover basic-info-table">
-    <tbody>
-	<% basic_info.each_pair do |key, val| %>
-	    <tr>
-		<td><strong><%= key.to_s.capitalize.tr('_', ' ') %></strong></td>
-		<% if key == :website %>
-		    <td><%= sanitize link_to val, val, 'target' => '_blank' %></td>
-		<% else %>
-		    <td><%= val %></td>
-		<% end %>
-	    </tr>
+  <tbody>
+    <% basic_info.each_pair do |key, val| %>
+      <tr>
+	<td><strong><%= key.to_s.capitalize.tr('_', ' ') %></strong></td>
+	<% if key == :website %>
+	  <td><%= sanitize link_to val, val, 'target' => '_blank' %></td>
+	<% else %>
+	  <td><%= val %></td>
 	<% end %>
-    </tbody>
+      </tr>
+    <% end %>
+  </tbody>
 </table>

@@ -19,9 +19,10 @@ class Document
 
     def find_or_create_document
       if primary_source?
-        Document.create!(ref_type: 'primary_source',
-                         primary_source_document: primary_source_document,
-                         name: name)
+        Document.new(ref_type: 'primary_source', name: name).tap do |document|
+          document.primary_source_document.attach(@attributes[:primary_source_document])
+          document.save!
+        end
       else
         Document.find_or_create!(@attributes)
       end

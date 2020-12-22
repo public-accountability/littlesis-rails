@@ -24,7 +24,7 @@ describe "entities/link", type: :view do
   let(:links_group) { LinksGroup.new([link1, link2], 'miscellaneous', 'Other Affiliations') }
 
   before do
-    render partial: 'entities/link.html.erb', locals: { link: links_group.links[1] }
+    render partial: 'entities/link', locals: { link: links_group.links[1] }
   end
 
   it 'has correct div layout' do

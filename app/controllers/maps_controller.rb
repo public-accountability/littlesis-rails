@@ -4,7 +4,7 @@ class MapsController < ApplicationController
   include MapsHelper
 
   before_action :set_map,
-                except: [:featured, :all, :new, :create, :search, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
+                except: [:featured, :all, :new, :create, :search, :user, :find_nodes, :node_with_edges, :edges_with_nodes, :interlocks]
   before_action :authenticate_user!,
                 except: [:featured, :all, :show, :raw, :search, :collection, :find_nodes, :node_with_edges, :share, :edges_with_nodes, :embedded, :embedded_v2, :interlocks]
   before_action :enforce_slug, only: [:show]
@@ -33,7 +33,7 @@ class MapsController < ApplicationController
               .page(params[:page].presence || 1)
               .per(20)
     @featured = false
-    render 'index'
+    render :index
   end
 
   def featured
@@ -45,16 +45,32 @@ class MapsController < ApplicationController
               .per(20)
 
     @featured = true
-    render 'index'
+    render :index
   end
 
   def search
-    page = params[:page].presence || 1
     @maps = NetworkMap
               .search(LsSearch.escape(params.fetch(:q, '')),
                       order: 'updated_at DESC, id DESC',
                       with: { is_private: false })
-              .page(page).per(20)
+              .page(params[:page].presence || 1)
+              .per(20)
+
+    render :index
+  end
+
+  def user
+    @maps_user = User.find_by!(username: params[:username])
+
+    raise Exceptions::PermissionError unless current_user.admin? || current_user == @maps_user
+
+    @maps = NetworkMap
+              .where(user: @maps_user)
+              .order(created_at: :desc)
+              .page(params[:page].presence || 1)
+              .per(20)
+
+    render :index
   end
 
   def embedded_v2
@@ -82,8 +98,8 @@ class MapsController < ApplicationController
     to_hash_if = lambda { |k,v| ["graph_data", "annotations_data"].include?(k) ?  ActiveSupport::JSON.decode(v) : v }
 
     render json: @map.attributes
-            .select { |k,v| attributes_to_return.include?(k) }
-            .map { |k,v| [k, to_hash_if.call(k,v) ]  }.to_h
+             .select { |k,v| attributes_to_return.include?(k) }
+             .map { |k,v| [k, to_hash_if.call(k,v) ]  }.to_h
   end
 
   def show
@@ -248,9 +264,9 @@ class MapsController < ApplicationController
     entity = Entity.find(params[:node_id])
     entity_ids = params[:node_ids]
     relateds = entity.relateds
-      .where("link.category_id = #{params[:category_id]}")
-      .where.not(link: { entity2_id: entity_ids })
-      .limit(params[:num].to_i)
+                 .where("link.category_id = #{params[:category_id]}")
+                 .where.not(link: { entity2_id: entity_ids })
+                 .limit(params[:num].to_i)
     nodes = relateds.map { |related| Oligrapher.legacy_entity_to_node(related) }
     all_ids = entity_ids.concat(relateds.map(&:id))
     rel_ids = Link.where(entity1_id: all_ids, entity2_id: relateds.map(&:id)).pluck(:relationship_id).uniq

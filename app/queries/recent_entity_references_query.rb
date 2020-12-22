@@ -2,7 +2,13 @@
 
 # Takes a list of Entity ids and gathers the most recent   references for those entities
 module RecentEntityReferencesQuery
-  def self.run(entity_ids, page: 1, per_page: 10)
+  def self.run(input, page: 1, per_page: 10)
+    entity_ids = if input.is_a?(Entity)
+                   [input.id]
+                 else
+                   input
+                 end
+
     Document.find_by_sql Reference
                            .select('documents.*')
                            .joins(:document)

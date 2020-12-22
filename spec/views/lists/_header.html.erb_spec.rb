@@ -10,7 +10,7 @@ describe 'lists/header', :tag_helper, type: :view do
 
   before(:each) do
     allow(view).to receive(:user_admin?).and_return(true)
-    render partial: 'lists/header.html.erb', locals: { list: list }
+    render partial: 'lists/header', locals: { list: list }
   end
 
   context 'list has no tags' do

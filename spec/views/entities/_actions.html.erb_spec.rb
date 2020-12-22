@@ -21,7 +21,7 @@ describe "entities/actions" do
     before do
       expect(view).to receive(:user_signed_in?).and_return(true)
       assign(:entity, entity)
-      render partial: 'entities/actions.html.erb', locals: { entity: entity, current_user: user }
+      render partial: 'entities/actions', locals: { entity: entity, current_user: user }
     end
 
     context 'org page' do
@@ -42,7 +42,7 @@ describe "entities/actions" do
     before do
       expect(view).to receive(:user_signed_in?).and_return(false)
       assign(:entity, entity)
-      render partial: 'entities/actions.html.erb', locals: { entity: entity, current_user: nil }
+      render partial: 'entities/actions', locals: { entity: entity, current_user: nil }
     end
 
     specify { css 'a', text: 'add relationship' }

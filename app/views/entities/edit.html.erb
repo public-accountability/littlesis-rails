@@ -12,11 +12,14 @@
 <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 
 <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder  do |f| %>
-  
+
   <div class="row top-1em mb-2">
-    <%= render partial: 'shared/editing/edit_references_panel', locals: { references: @references, selected_ref: nil } %>
-    <div class="col-sm-4 col-sm-offset-1">
-      <%= render partial: 'shared/editing/reference_errors' %>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <%= render partial: 'shared/editing/reference_widget',
+                 locals: { documents: RecentEntityReferencesQuery.run(@entity) } %>
+    </div>
+
+    <div class="col-sm-4 col-sm-offset-1 col-xs-12">
       <%= render partial: 'edit_errors' %>
     </div>
   </div>
@@ -27,7 +30,7 @@
     <%= render partial: 'type_checkboxes_org', locals: { f: f } %>
   <% end  %>
 
-  
+
   <% input_div_wrapper_class = 'entity-form-group' %>
   <% label_class = 'entity-edit-label' %>
 
@@ -44,7 +47,7 @@
       <%= f.text_area(:summary, class: 'form-control', size: '40x6') %>
     </div>
   </div>
-  
+
   <% start_date_text = { 'Org' => 'Start date:', 'Person' => 'Birth date' } %>
   <% end_date_text = { 'Org' => 'End date:', 'Person' => 'Death date' } %>
 
@@ -139,6 +142,18 @@
     <% end %>
   <% end %>
 
+  <%# Regions %>
+  <div class="<%= input_div_wrapper_class %>">
+    <label for="region-select" class="<%= label_class %>">Location: </label>
+    <div class="col-sm-4">
+      <%= f.select(:regions,
+                   options_for_select(Location.regions.to_a, selected: @entity.region_numbers),
+                   { include_blank: true},
+                   { multiple: true }) %>
+    </div>
+  </div>
+
+
   <div class="<%= input_div_wrapper_class %>">
     <div class="col-sm-3 nopadding">
       <%= f.submit 'Update', class: 'btn btn-primary' %>
@@ -146,38 +161,28 @@
     </div>
   </div>
 <% end  # end form-for %>
+
 <hr>
 
 <%= render partial: 'edit_aliases' %>
 <hr>
 <%= render partial: 'edit_external_links' %>
 
-
 <script>
  $(function(){
-   
-   const checked_class = 'glyphicon-check';
-   const unchecked_class = 'glyphicon-unchecked';
+   $('.type-checkbox').click(function() {
+     $(this).toggleClass(['glyphicon-check', 'glyphicon-unchecked']);
 
-   $('.type-checkbox').click(function(){
-     $(this).toggleClass(checked_class);
-     $(this).toggleClass(unchecked_class);
-     updateSelectedTypeIds();
-   });
+     // Store checked type boxes (entity extention definition ids) in a hidden field
+     $('#entity_extension_def_ids').val(
+       $('.type-checkbox.glyphicon-check')
+         .map(function(){ return $(this).data().definitionId } )
+         .toArray()
+         .join(',')
+     )
+   })
 
-   function updateSelectedTypeIds() {
-     $('#entity_extension_def_ids').val(selectedTypeIds());
-   }
-
-   // The definition id of the type is stored in the HTML5 dataset of the icon
-   // -> string
-   function selectedTypeIds() {
-     return $('.type-checkbox.' + checked_class).map(function(){
-       return $(this).data().definitionId; 
-     }).toArray().join(',');
-   }
-
+   $('#entity_regions').select2()
  });
- 
+
 </script>
-  

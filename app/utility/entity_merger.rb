@@ -39,6 +39,7 @@ class EntityMerger
       @cmp_entity&.save!
       @os_categories.each(&:save!)
       @relationships.each(&:merge!)
+      @locations.each(&:save!)
       merge_os_donations!
       merge_ny_donations!
       transfer_ny_filer_entity!
@@ -84,6 +85,10 @@ class EntityMerger
     unless @tag_ids.length.zero?
       puts cp.cyan("Transfering ") + cp.red(@tag_ids.count.to_s) + cp.cyan(" tags: ") + cp.blue(@tag_ids.map { |t| Tag.find(t).name }.join(', '))
     end
+
+    unless @locations.length.zero?
+      puts cp.cyan("Transfering ") + cp.red(@locations.count) + cp.cyan(" locations")
+    end
   end
 
   def merge
@@ -101,6 +106,7 @@ class EntityMerger
     merge_party_members
     merge_cmp_entity
     merge_relationships
+    merge_locations
     self
   end
 
@@ -332,6 +338,12 @@ class EntityMerger
     end
   end
 
+  def merge_locations
+    @locations = source.locations.map do |location|
+      location.tap { |l| l.entity = @dest }
+    end
+  end
+
   ## ERRORS ##
 
   class ExtensionMismatchError < ArgumentError
@@ -379,6 +391,7 @@ class EntityMerger
     @os_match_relationships = []
     @ny_match_relationships = []
     @external_links = []
+    @locations = []
   end
 
   def check_input_validity

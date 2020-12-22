@@ -1,0 +1,52 @@
+<div class="row mt-4">
+  <div class="col">
+    <h1>
+      <% if @featured %>
+        Featured Maps
+      <% elsif @maps_user %>
+        <% if @maps_user == current_user %>
+          Your maps
+        <% else %>
+          <em><%=  @maps_user.username%>'s</em> maps
+        <% end %>
+      <% else  %>
+        Network Maps
+      <% end %>
+    </h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <div class="row">
+      <div class="col">
+        <%= link_to 'All', all_maps_path, class: 'btn btn-clear btn-sm mr-1' %>
+
+        <% unless @featured%>
+          <%= link_to 'Featured', featured_maps_path, class: 'btn btn-clear btn-sm mr-1' %>
+        <% end  %>
+
+        <% if current_user && @maps_user && @maps_user != current_user %>
+          <%= link_to 'Your Maps', home_maps_path, class: 'btn btn-clear btn-sm mr-1' %>
+        <% end %>
+
+        <% if current_user %>
+          <%= link_to 'Create', new_map_path, class: 'btn btn-clear btn-sm mr-1' %>
+        <% end %>
+      </div>
+
+      <% unless  controller_name == 'home' %>
+        <div class="col-sm-4 mr-auto">
+          <%= form_tag search_maps_path, method: :get do %>
+            <div class="input-group input-group-sm mb-3">
+              <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search maps", 'aria-label' => 'Search maps' %>
+              <div class="input-group-append">
+                <button type="submit" class="btn" type="button" style="border-color: #ccc;"><span class="glyphicon glyphicon-search"></span></button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

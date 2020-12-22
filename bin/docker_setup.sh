@@ -1,9 +1,6 @@
 #!/bin/sh
 set -e
 
-# This is roughly the same as littlesis-main/litltesis.docker,
-# except written as a script
-
 apt-get update && apt-get upgrade -y && apt-get -y install \
 	                                        build-essential \
 	                                        coreutils \

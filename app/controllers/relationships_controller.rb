@@ -77,12 +77,16 @@ class RelationshipsController < ApplicationController
           @relationship.save!
           @relationship.reverse_direction! if reverse_direction?
           update_entity_last_user
-          # successful response
-          return redirect_to relationship_path(@relationship)
+
         end
       end
     end
-    return render :edit
+
+    if @relationship.valid?
+      return redirect_to relationship_path(@relationship)
+    else
+      return render :edit
+    end
   end
 
   # Creates a new Relationship and a Reference
@@ -102,7 +106,7 @@ class RelationshipsController < ApplicationController
       update_entity_last_user
       render json: { 'relationship_id' => @relationship.id }, status: :created
     else
-      render json: @relationship.errors.to_h, status: :bad_request
+      render json: @relationship.errors.to_hash, status: :bad_request
     end
   end
 

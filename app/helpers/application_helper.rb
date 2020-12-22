@@ -1,84 +1,28 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def page_title
-    if content_for?(:page_title)
-      return content_for(:page_title) if content_for?(:skip_page_title_suffix)
-      return "#{content_for(:page_title)} - LittleSis"
-    end
-    return '' if content_for?(:skip_page_title_suffix)
-    'LittleSis'
-  end
+    title = content_for?(:page_title) ? content_for(:page_title) : ''
 
-  def centered_content(id=nil, &block)
-    content_id = (id.nil? ? nil : id.to_s + "_content")
-    str = content_tag("div",
-		      content_tag("div",
-				  "\n" + capture(&block) + "\n",
-				  { :class => "centered_content", :id => content_id },
-				  false
-			         ),
-		      { :class => "centered", :id => id },
-		      false
-		     )
-    raw str
+    if content_for?(:skip_page_title_suffix)
+      title
+    elsif title.blank?
+      'LittleSis'
+    else
+      "#{title} - LittleSis"
+    end
   end
 
   def excerpt(text, length=30)
     if text
-      break_point = text.index(/[\s.,:;!?-]/, length-5)
-      break_point = break_point ? break_point : length + 1
-      text[0..break_point-1] + (text.length > break_point - 1 ? "..." : "")
+      break_point = text.index(/[\s.,:;!?-]/, length - 5) || length + 1
+
+      text[0..(break_point - 1)] + (text.length > break_point - 1 ? "..." : "")
     end
-  end
-
-  def more_link(content, max=nil, id=nil, make_raw=true)
-  	splitter = "<!-- more -->"
-  	if content.include? splitter or max.present?
-	  	id = SecureRandom.hex(8) if id.blank?
-
-      if content.include? splitter
-    		preview, remainder = content.split(splitter)
-      else
-        full = strip_tags(content)
-        preview = truncate(full, length: max, separator: ' ', escape: false, omission: '')
-        remainder = full.gsub(preview, "")
-      end
-
-      if remainder.present?
-    		str = "<span id='#{id}_preview'>"
-    		str << preview
-    		str << "</span><span style='display: none;' id='#{id}_remainder'>"
-    		str << remainder
-    		str << "</span>"
-    		str << " <a class='more_link' data-target='#{id}' href='javascript:void(0);'>more &raquo;</a>"
-      else
-        str = preview
-      end
-    else
-      str = content
-  	end
-
-    make_raw ? raw(str) : str
-  end
-
-  def show_link(content, id=nil)
-    str = "<span id='#{id}_preview'>"
-    str << "</span><span style='display: none;' id='#{id}_remainder'>"
-    str << content
-    str << "</span>"
-    str << " <a class='more_link' data-target='#{id}' href='javascript:void(0);'>more &raquo;</a>"
   end
 
   def yes_or_no(value)
     value ? "yes" : "no"
-  end
-
-  # I don't think this is used anywhere... (ziggy - 26 Apr 2017)
-  def check_mark(value = true)
-    value ? raw("&#x2713;") : nil
-  end
-
-  def header_action(text, path)
-    raw "<span class='btn btn-link btn-sm'>#{link_to text, path}</span>"
   end
 
   def notice_if_notice
@@ -113,38 +57,24 @@ module ApplicationHelper
     end
   end
 
-  def home_groups_path
-    "/home/groups"
-  end
-
-  def home_edits_path
-    "/home/edits"
-  end
-
-  def home_settings_path
-    "/home/settings"
-  end
-
   def contact_path
     "/contact"
   end
 
   def current_username
-    return nil if current_user.nil?
-    current_user.username
+    current_user&.username
   end
 
   def has_ability?(permission)
-    current_user and current_user.has_ability?(permission)
+    current_user && current_user.has_ability?(permission)
   end
 
   def facebook_meta
-    str = ""
-    %w(url type title description image).each do |key|
-      value = content_for(:"facebook_#{key}")
-      str += "<meta property=\"og:#{key}\" content=\"#{value}\" />" if value
-    end
-    raw(str)
+    raw(%i[url type title description image]
+          .map { |key| [key, content_for(:"facebook_#{key}")] }
+          .delete_if { |(key, val)| val.blank? }
+          .map { |(key, val)| "<meta property=\"og:#{key}\" content=\"#{val}\" />" }
+          .join(""))
   end
 
   def paginate_preview(ary, num, path)

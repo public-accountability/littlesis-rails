@@ -97,9 +97,9 @@ feature 'List deletion request & review' do
           it 'raises a validation error' do
             expect { click_on 'Request Deletion' }
               .to raise_error(
-                ActionController::ParameterMissing,
-                'param is missing or the value is empty: justification'
-              )
+                    ActionController::ParameterMissing,
+                    /justification/
+                  )
           end
         end
       end

@@ -98,25 +98,17 @@ class EntitiesController < ApplicationController
   end
 
   def update
-    # assign new attributes to the entity
-    @entity.assign_attributes(prepare_params(update_entity_params))
-
-    if need_to_create_new_reference
-      @entity.validate_reference(reference_params)
-    end
+    EntityUpdateService.run(entity: @entity,
+                            params: params,
+                            current_user: current_user)
 
     if @entity.valid?
-      @entity.update_extension_records(extension_def_ids)
-      @entity.add_reference(reference_params) if need_to_create_new_reference
-      # Add_reference will make the entity invalid if the reference is invalid
-      if @entity.valid?
-        @entity.save!
-        return render json: { status: 'OK' } if api_request?
-        return redirect_to concretize_entity_path(@entity)
-      end
+      return render json: { status: 'OK' } if api_request?
+      return redirect_to concretize_entity_path(@entity)
+    else
+      set_entity_references
+      render :edit
     end
-    set_entity_references
-    render :edit
   end
 
   def destroy
@@ -264,7 +256,8 @@ class EntitiesController < ApplicationController
   end
 
   def validate
-    entity = Entity.new(validate_entity_params)
+    essential_entity_attributes = params.require(:entity).permit(:name, :blurb, :primary_ext).to_h
+    entity = Entity.new(essential_entity_attributes)
     entity.valid?
     render json: entity.errors.to_json
   end
@@ -283,36 +276,13 @@ class EntitiesController < ApplicationController
     params.require(:image).permit(:file, :caption, :url, :is_free, :is_featured)
   end
 
-  def update_entity_params
-    params.require(:entity).permit(
-      :name, :blurb, :summary, :website, :start_date, :end_date, :is_current,
-      person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender_id, :id ],
-      public_company_attributes: [:ticker, :id],
-      school_attributes: [:is_private, :id],
-      business_attributes: [:id, :annual_profit, :assets, :marketcap, :net_income]
-    )
-  end
-
-  # output: [Int] or nil
-  def extension_def_ids
-    if params.require(:entity).key?(:extension_def_ids)
-      return params.require(:entity).fetch(:extension_def_ids).split(',').map(&:to_i)
-    end
-  end
-
   def new_entity_params
-    LsHash.new(params.require(:entity).permit(:name, :blurb, :primary_ext).to_h)
-      .with_last_user(current_user)
-      .nilify_blank_vals
-  end
-
-  def validate_entity_params
-    params.require(:entity)
-      .permit(:name, :blurb, :primary_ext)
+    Entity::Parameters.new(params).new_entity(current_user)
   end
 
   def create_bulk_payload
-    params.require('data')
+    params
+      .require('data')
       .map { |r| r.permit('attributes' => %w[name blurb primary_ext])['attributes'] }
   end
 

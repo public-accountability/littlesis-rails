@@ -6,4 +6,5 @@
 
 LittleSis.org is operated by the [Public Accountability Initiative](https://public-accountability.org), an independent non-profit organization. The project is currently maintained by [ziggy](mailto:ziggy@littlesis.org).
 
-This repository, [littlesis-rails](https://github.com/public-accountability/littlesis-rails), is the core ruby-on-rails application for the project. Besides rails other important software this application relies on inclues MariaDB, Redis, Manticore, Sqlite, and Nginx. Visit [public-accountability/littlesis-main](https://github.com/public-accountability/littlesis-main) for installation instructions. [public-accountability/oligrapher](https://github.com/public-accountability/oligrapher) contains the code for our javascript/react mapping tool.
+
+This repository, [littlesis-rails](https://github.com/public-accountability/littlesis-rails), is our core application. Visit [public-accountability/littlesis-main](https://github.com/public-accountability/littlesis-main) for installation instructions and [public-accountability/oligrapher](https://github.com/public-accountability/oligrapher) for our javascript/react mapping tool.

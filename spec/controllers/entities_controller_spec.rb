@@ -332,12 +332,20 @@ describe EntitiesController, type: :controller do
     it { is_expected.to respond_with(200) }
   end
 
+  describe 'when user is not logged in' do
+    let(:org) { create(:entity_org) }
+
+    before { get :edit, params: { id: org.id } }
+
+    it { is_expected.to respond_with 302 }
+  end
+
   describe '#update' do
     let(:user) { create(:user) }
     login_user
 
     describe 'Updating an Org without a reference' do
-      let(:org)  { create(:entity_org, last_user_id: user.id) }
+      let(:org) { create(:entity_org, last_user_id: user.id) }
       let(:params) do
         { id: org.id, entity: { 'website' => 'http://example.com' }, reference: { 'just_cleaning_up' => '1' } }
       end
