@@ -17,19 +17,21 @@
       <%= render partial: 'shared/nav_menu' %>
     <% end %>
 
-    <div class="container">
+    <div class="container mt-3">
       <%= yield %>
     </div>
 
     <%# if content_for? :body %>
-      <%#= yield :body %>
+    <%#= yield :body %>
     <%# else %>
 
     <% unless content_for? :hide_footer %>
-      <div id="footer" class="container">
-	A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>.
-	More <%= link_to('about LittleSis', '/about') %>.
-	Read the <%= link_to('disclaimer', '/disclaimer') %>.
+      <div class="container mt-3">
+        <div id="footer">
+	  A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>.
+	  More <%= link_to('about LittleSis', '/about') %>.
+	  Read the <%= link_to('disclaimer', '/disclaimer') %>.
+        </div>
       </div>
     <% end %>
   </body>

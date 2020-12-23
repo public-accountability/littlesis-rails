@@ -3,11 +3,10 @@ Main Littlesis Top Navigation Menu
 
 shared/_bootstrap_nav_menu renders the dropdown menu options
 shared/_nav_menu_search renders the search box
-
 %>
 
 <nav class="navbar navbar-expand-md sticky-top">
-  <div class="container">
+  <div class="<%= @fullscreen ? 'container-fluid' : 'container'  %>">
     <div class="mr-auto">
       <%= link_to(image_tag("lilsis-logo-trans-200.png"), signed_in? ? home_dashboard_path : root_path) %>
     </div>
