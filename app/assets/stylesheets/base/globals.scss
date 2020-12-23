@@ -6,10 +6,9 @@ $user_image_size: 48px;
 $link_blue: #008;
 $link_blue_hover: #2a6496;
 $left_column_width: 640px;
-$big_column_width: $left_column_width;
 $right_column_width: 310px;
 $small_column_width: $right_column_width;
-$navbar_height: 55px;
+$big_column_width: $left_column_width;
 $border_grey: #e7e7e7;
 $small_header_image_size: 80px;
 $red: #CC5454;
@@ -17,11 +16,15 @@ $red_light: #CC8585;
 $red_lighter: rgba(204,133,133,0.4);
 $gray: #555;
 $light_gray: #f4f4f4;
+$light_gray2: #f8f9fa;
 $tiny_image_size: 35px;
 $small_image_size: 50px;
 $old_blue: rgb(51, 122, 183);
 
 // customize bootstrap variables:
-$primary: $old_blue !default;
-    
-$font-size-base: 0.9rem;
+//$primary: $old_blue !default;
+$primary: $logo_blue_light !default;
+
+//$font-size-base: 0.9rem;
+// $navbar_height: 55px;
+$header_color: $light_gray2;

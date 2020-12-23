@@ -6,60 +6,38 @@ shared/_nav_menu_search renders the search box
 
 %>
 
-<%
-navbar_container_classes = +'navbar navbar-expand-md fixed-top navbar-light bg-light'
-navbar_container_classes << ' donation-banner' if show_donation_banner?
+<nav class="navbar navbar-expand-md sticky-top">
+  <div class="container">
+    <div class="mr-auto">
+      <%= link_to(image_tag("lilsis-logo-trans-200.png"), signed_in? ? home_dashboard_path : root_path) %>
+    </div>
 
-navbar_wrapper_classes = +''
-navbar_wrapper_classes << ' navbar-full-width' if local_assigns[:full_width].present?
-navbar_wrapper_classes << ' donation-banner' if show_donation_banner?
-%>
-
-<div id="top">
-
-  <% if show_donation_banner? %>
-    <%= render partial: 'shared/donation_banner' %>
-  <% end %>
-
-  <nav class="<%= navbar_container_classes %>" id="main-navbar-container">
-
-    <div id="navbar-content-wrapper" class="<%= navbar_wrapper_classes %>">
-
-      <div id="navbar-content">
-        <div id="brand mr-auto">
-	  <%= link_to(image_tag("lilsis-logo-trans-200.png"), signed_in? ? home_dashboard_path : root_path) %>
-        </div>
-
-        <div class="collapse navbar-collapse">
-          <div class="mr-auto nav">
-	    <%= render partial: 'shared/bootstrap_nav_menu' %>
-          </div>
-
-          <div id="navbar-notice" class="navbar-right-menu-item">
-            <% if content_for? :navbar_notice %>
-              <%= yield :navbar_notice %>
-            <% end  %>
-          </div>
-
-          <% if APP_CONFIG['beta'] %>
-            <div id="navbar-beta-notice" class="navbar-right-menu-item mr-2">
-              <span>
-                <abbr title="This is a beta version of LittleSis used for testing.&#10;Changes are not synced with our regular site.">
-                  <strong>⚠ <%= Utility.current_git_commit %></strong></span>
-              </abbr>
-            </div>
-          <% else %>
-              <div id="top_donate_link" class="navbar-right-menu-item">
-	        <span><strong><%= link_to('Donate', '/donate', id: 'donate-link-button')%></strong></span>
-	      </div>
-          <% end %>
-
-          <div class="navbar-right-menu-item">
-	    <%= render partial: 'shared/nav_menu_search' %>
-          </div>
-        </div>
+    <div class="collapse navbar-collapse">
+      <div class="mr-auto nav">
+        <%= render partial: 'shared/bootstrap_nav_menu' %>
       </div>
 
+      <div id="navbar-notice" class="navbar-right-menu-item">
+        <% if content_for? :navbar_notice %>
+          <%= yield :navbar_notice %>
+        <% end  %>
+      </div>
+
+      <% if APP_CONFIG['beta'] %>
+        <div id="navbar-beta-notice" class="navbar-right-menu-item mr-2">
+          <span>
+            <abbr title="This is a beta version of LittleSis used for testing.&#10;Changes are not synced with our regular site.">
+              <strong>⚠ <%= Utility.current_git_commit %></strong></span>
+            </abbr>
+        </div>
+      <% else %>
+        <div id="top_donate_link" class="navbar-right-menu-item">
+	  <span><strong><%= link_to('Donate', '/donate', id: 'donate-link-button')%></strong></span>
+        </div>
+      <% end %>
+
+      <div class="navbar-right-menu-item">
+        <%= render partial: 'shared/nav_menu_search' %>
+      </div>
     </div>
-  </nav>
-</div>
+</nav>
