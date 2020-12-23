@@ -1,13 +1,10 @@
 @import "base/globals";
-
 @import "bootstrap";
-
 @import "base/bootstrap-migrate";
 @import "base/helpers";
 @import "base/layout";
 @import "base/hover";
 @import "base/spin";
-
 @import "styles/bulk-table";
 @import "styles/carousel";
 @import "styles/cover";
@@ -15,8 +12,6 @@
 @import "styles/deletion-requests";
 @import "styles/edits";
 @import "styles/entities";
-@import "styles/entity_small";
-@import "styles/groups";
 @import "styles/help_pages";
 @import "styles/home";
 @import "styles/lists";
@@ -34,5 +29,4 @@
 @import "styles/admin";
 @import "styles/donation_banner";
 @import "styles/permission_passes";
-
 @import "styles/entity_matcher";
