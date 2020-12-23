@@ -9,7 +9,7 @@
     <%= stylesheet_link_tag 'oligrapher', media: 'all' %>
     <%= yield :head if content_for?(:head) %>
 
-    <% if false && Rails.env.development? %>
+    <% if Rails.env.development? %>
       <script src="http://localhost:8090/webpack-dev-server.js"></script>
       <script src="http://localhost:8090/oligrapher-dev.js"></script>
     <% else %>
