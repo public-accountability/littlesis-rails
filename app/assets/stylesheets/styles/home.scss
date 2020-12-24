@@ -204,13 +204,6 @@ div#donate-button-container  {
 }
 
 #explore-row {
-    @extend .d-none;
-    @extend .d-sm-flex;
-    @extend .row;
-    @extend .text-center;
-
-    padding-bottom: 1em;
-
     .explore-col {
 	@extend .col-sm-4;
 	height: 180px;
@@ -221,23 +214,7 @@ div#donate-button-container  {
 	&:hover {
 	    color: $link_blue;
 	    text-decoration: none;
-
 	}
-    }
-
-    .oligrapher {
-	@extend .big-text;
-	position: relative;
-	top: 71px;
-	left: -14px;
-    }
-
-    #eyes-on-ties-homepage-img {
-	@extend .img-responsive;
-	padding-left: 0.7em;
-	display: inline-block;
-	position: relative;
-	top: 100px;
     }
 }
 

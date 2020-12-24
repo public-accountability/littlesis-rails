@@ -5,7 +5,7 @@
   <meta property="og:description" content="LittleSis is a free database of who-knows-who at the heights of business and government">
 <% end  %>
 
-<div class="row mt-5" id="first-homepage-row">
+<div class="row mt-5" id="d">
   <div class="col-sm-7">
     <div class="row no-gutters">
       <h1>LittleSis<span style="color: #cc5454;">*</span> is a free database of who-knows-who at the heights of business and government.</h1>
@@ -17,7 +17,7 @@
     </div>
 
     <div class="row position-relative">
-      <div class="col-6 nopadding">
+      <div class="col-6">
 	<% if @newsletter_thankyou %>
 	  <%= render partial: 'newsletter_thankyou' %>
 	<% else %>
@@ -25,7 +25,7 @@
 	<% end %>
       </div>
 
-      <div class="col-6 double-left-padding">
+      <div class="col-6">
 	<%= render partial: 'social_media_buttons' %>
       </div>
 
@@ -43,21 +43,27 @@
   </div>
 </div>
 
-<div id="explore-row">
+<div id="explore-row" class="row d-done d-sm-flex text-center pb-2">
   <div class="explore-col">
     <%= link_to toolkit_path do %>
       <%= image_tag "map_the_power_RGB.gif",  class: 'img-responsive center-block' %>
     <% end %>
   </div>
   <div class="explore-col">
-    <%= link_to "https://news.littlesis.org" do %>
-      <%= image_tag "eye-on-ties.png", id: 'eyes-on-ties-homepage-img' %>
-    <% end %>
+    <div class="d-flex h-100 flex-column align-items-center justify-content-center">
+      <%= link_to "https://news.littlesis.org" do %>
+        <%= image_tag "eye-on-ties.png", id: 'eyes-on-ties-homepage-img', class: 'img-responsive w-100' %>
+      <% end %>
+    </div>
   </div>
   <div class="explore-col">
-    <%= link_to "https://littlesis.org/oligrapher", class: 'oligrapher-link' do %>
-      <h1 class="oligrapher" style="font-weight: 300"><strong>Oligrapher</strong></h1>
-    <% end %>
+    <div class="d-flex w-100 h-100 flex-column align-items-center justify-content-center">
+      <div>
+        <%= link_to "https://littlesis.org/oligrapher", class: 'oligrapher-link' do %>
+          <h1 class="oligrapher big-text position-relative p-3" style="font-weight: 300"><strong>Oligrapher</strong></h1>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>
 
