@@ -21,12 +21,8 @@
       <%= yield %>
     </div>
 
-    <%# if content_for? :body %>
-    <%#= yield :body %>
-    <%# else %>
-
     <% unless content_for? :hide_footer %>
-      <div class="container mt-3">
+      <div class="container mt-3 mb-3">
         <div id="footer">
 	  A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>.
 	  More <%= link_to('about LittleSis', '/about') %>.
