@@ -7,36 +7,33 @@
     <%= stylesheet_link_tag    "application", media: "all" %>
     <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag "application" %>
-
     <%= csrf_meta_tags %>
-    <%= content_for(:head) if content_for?(:head) %>
+    <%= yield :head if content_for?(:head) %>
   </head>
 
-  <body class="<%= yield(:static_navbar).present? ? 'static' : '' %>">
+  <body>
 
     <% unless content_for? :hide_top %>
       <%= render partial: 'shared/nav_menu' %>
     <% end %>
 
-    <div id="container-wrapper" class="mt-1">
-      <div id="container" class="container-fluid">
-	<%= yield %>
-      </div>
+    <div class="container mt-3">
+      <%= yield %>
     </div>
 
-    <% if content_for? :body %>
-      <%= yield :body %>
-    <% end %>
-
-
+    <%# if content_for? :body %>
+    <%#= yield :body %>
+    <%# else %>
 
     <% unless content_for? :hide_footer %>
-      <div id="footer_clear"></div>
-      <div id="footer">
-	A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>.
-	More <%= link_to('about LittleSis', '/about') %>.
-	Read the <%= link_to('disclaimer', '/disclaimer') %>.
+      <div class="container mt-3">
+        <div id="footer">
+	  A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>.
+	  More <%= link_to('about LittleSis', '/about') %>.
+	  Read the <%= link_to('disclaimer', '/disclaimer') %>.
+        </div>
       </div>
     <% end %>
   </body>
+
 </html>

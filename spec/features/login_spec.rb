@@ -9,7 +9,7 @@ describe 'Login', type: :feature do
     scenario 'user clicks login and is taken to the dashboard' do
       visit org_path(entity)
 
-      within '#main-navbar-container' do
+      within 'nav' do
         click_on 'Login'
       end
 

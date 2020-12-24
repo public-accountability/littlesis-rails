@@ -1,12 +1,13 @@
-<%= content_for(:page_title, raw(@map.name)) %>
+<%= content_for(:page_title, @map.name) %>
+<% content_for(:head) do %>
+  <%= og_tags(title: @map.name, url: oligrapher_url(@map), image: asset_path('netmap-org.png')) %>
+<% end %>
 
 <% if user_signed_in? && @map.can_edit?(current_user) %>
   <% content_for(:navbar_notice) do %>
     <%= render partial: 'oligrapher_update' %>
   <% end %>
 <% end %>
-
-<%= content_for(:body) do %>
 
 <% if @is_pending_editor %>
   <div class="oligrapher-pending-editor-notice">
@@ -16,12 +17,16 @@
   </div>
 <% end %>
 
-<div id="oligrapher"></div>
+<div id="oligrapher">
+</div>
 
 <script>
-  var oli = new Oligrapher(
-    <%= JSON.generate(@configuration).html_safe %>
-  )
-</script>
+ var oli;
 
-<% end %>
+ window.addEventListener('DOMContentLoaded', function() {
+   oli = new Oligrapher(
+     <%= JSON.generate(@configuration).html_safe %>
+   )
+ })
+
+</script>

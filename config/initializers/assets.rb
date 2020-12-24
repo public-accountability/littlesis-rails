@@ -10,7 +10,6 @@ Rails.application.config.assets.precompile += [
   'oligrapher-dev.js.map',
   'toolkit.js',
   'toolkit.scss',
-  'splash.scss',
   'extension.js',
   'markdown_editor.js',
   'markdown_editor.scss',

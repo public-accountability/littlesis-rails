@@ -5,25 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= page_title %></title>
     <%= stylesheet_link_tag "application", media: "all" %>
-    <%  javascript_pack_tag 'application' %>
-    <%  javascript_include_tag "application" %>
-    <%= content_for(:head) if content_for?(:head) %>
+    <%= javascript_pack_tag 'application' %>
+    <%= javascript_include_tag "application" %>
+    <%= yield :head if content_for?(:head) %>
   </head>
 
   <body>
+    <% @fullscreen = true %>
     <%= render partial: 'shared/nav_menu' %>
 
-    <div id="container-wrapper">
-      <div id="container">
-        <%= yield %>
-      </div>
+    <div class="container-fluid">
+      <%= yield %>
     </div>
 
-
-    <div id="footer_clear"></div>
-
-    <div id="footer">
-    </div>
-    <%= yield %>
   </body>
 </html>

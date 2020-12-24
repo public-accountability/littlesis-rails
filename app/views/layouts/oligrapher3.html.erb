@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= page_title %></title>
     <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag 'application' %>
     <%= stylesheet_link_tag 'oligrapher', media: 'all' %>
-    <%= csrf_meta_tags %>
+    <%= yield :head if content_for?(:head) %>
 
-    <% if content_for?(:head) %>
-      <%= yield :head %>
-    <% end %>
-
-    <% if Rails.env == "development" %>
+    <% if Rails.env.development? %>
       <script src="http://localhost:8090/webpack-dev-server.js"></script>
       <script src="http://localhost:8090/oligrapher-dev.js"></script>
     <% else %>
@@ -20,11 +18,11 @@
   </head>
 
   <body>
-    <%= render partial: 'shared/nav_menu',
-               locals: { full_width: true } %>
+    <% @fullscreen = true %>
+    <%= render partial: 'shared/nav_menu' %>
 
-    <% if content_for? :body %>
-      <%= yield :body %>
-    <% end %>
+    <div class="container-fluid">
+      <%= yield %>
+    </div>
   </body>
 </html>

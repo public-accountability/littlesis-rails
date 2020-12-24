@@ -1,29 +1,3 @@
-#container-wrapper {
-    max-width: $page_width;
-    min-height: 500px;
-    margin: 0 auto;
-}
-
-#container {
-
-}
-
-.fullscreen {
-  height: 100%;
-  width: 100%;
-}
-
-body {
-  margin: 0;
-  /* font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif; */
-  /* needed for bootstrap's fixed navbar */
-  padding-top: $navbar_height;
-
-  &.static {
-    padding-top: 0;
-  }
-}
-
 a {
     text-decoration: none;
     color: $link_blue;
@@ -34,55 +8,15 @@ a {
     }
 }
 
-/*
-#top
-  nav#main-navbar-container.navbar
-    div#navbar-content-wrapper
-      div#navbar-content
-        div.brand --> image
-        div.collapse.navbar-collapse
-          div                 --> bootstrap menu
-          div#navbar-notice   --> optional notice
-          div#top_donate_link --> donate button
-          div                 --> search box
-            form#navbar-search
-*/
+nav.navbar  {
+    margin: 0 auto;
+    font-size: 14px;
 
-#top {
-    .navbar, #navbar-content-wrapper {
-	height: $navbar_height;
-    }
+    background-color: $header_color;
 
-    #donation-banner-wrapper, #navbar-content-wrapper {
-	width: $page_width;
-	margin: 0 auto;
-	display: inherit;
-	padding-left: 0px;
-	padding-right: 0px;
-
-	@include media-breakpoint-up(md) {
-	    padding-left: 15px;
-	}
-
-    }
-
-    // change above style when full width
-    #navbar-content-wrapper.navbar-full-width {
-	width: 100%;
-	padding-left: 0;
-	padding-right: 2px;
-    }
-
-    #navbar-content {
-	width: 100%;
-	display: inherit;
-
-	font-size: 14px;
-
-	img {
-	    margin-top: 12px;
-	    max-width: 180px;
-	}
+    img {
+        background-color: $header_color;
+	max-width: 180px;
     }
 
     .nav-link {
@@ -114,9 +48,7 @@ a {
 	input {
 	    max-width: 200px;
 	}
-	margin-top: 6px;
     }
-
 
     #top_donate_link {
 	margin-right: 0.6em;
@@ -131,53 +63,9 @@ a {
 	    }
 	}
     }
-
-    #oligrapher-update-notice {
-        @extend .mr-3;
-        span {
-            font-weight: 800;
-            font-size: 11px;
-        }
-
-        span:hover {
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    }
 }
 
-#top_content_full {
-    margin: 0;
-    margin-left: 20px;
-    margin-right: 20px;
-}
-
-
-#brand {
-  margin-top: 12px;
-  margin-right: 1em;
-  img {
-    width: 180px;
-    cursor: pointer;
-  }
-}
-
-#header {
-  background-color: #eee;
-}
-
-#header_content {
-  width: $page_width;
-  margin: 0 auto;
-}
-
-#title {
-  font-size: 2em;
-  font-weight: bold;
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
-}
-
+/* is this used? */
 .helper {
   padding: 1.3em;
   background-color: #eee;
@@ -187,27 +75,22 @@ a {
   margin-bottom: 2em;
 }
 
-.header_action {
-  margin-left: 5px;
-  font-size: 12px;
-}
+/* nav.pagination { */
+/*   margin: 0; */
 
-nav.pagination {
-  margin: 0;
-
-  .page.current {
-    font-weight: bold;
-  }
-}
+/*   .page.current { */
+/*     font-weight: bold; */
+/*   } */
+/* } */
 
 div.spacer {
   height: 1em;
 }
 
-#footer_clear {
-  clear:both;
-  margin-bottom: 2em;
-}
+/* #footer_clear { */
+/*   clear:both; */
+/*   margin-bottom: 2em; */
+/* } */
 
 #footer {
   width: $page_width;
@@ -237,7 +120,6 @@ div.pagination {
     }
 
 }
-
 // .input-group  { margin-bottom: 5px; }
 
 .alert {
@@ -276,4 +158,17 @@ h3.section {
 
 div.form-group .btn {
     vertical-align: initial;
+}
+
+#oligrapher-update-notice {
+    @extend .mr-3;
+    span {
+        font-weight: 800;
+        font-size: 11px;
+    }
+
+    span:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
 }

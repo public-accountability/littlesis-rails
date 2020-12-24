@@ -1,29 +1,39 @@
 <% content_for(:page_title, "Recent Edits") %>
 
-<h3>Recent Edits</h3>
+<div class="row">
+  <div class="col">
+    <h3>Recent Edits</h3>
+  </div>
+</div>
+
 
 <% cache( [ 'edits/index', @page ], expires_in: 5.minutes) do %>
-  <% edits = EntityHistory.recently_edited_entities(page: @page) %>
-  
-  <table class="table no-top-border" id="recent-edits-table">
-    <thead>
-      <tr>
-        <th>Edited By</th>
-        <th>Entity</th>
-        <th>Details</th>
-      </tr>
-    </thead>
+  <div class="row" id="recent-edits-row">
+    <div class="col">
 
-    <tbody>
-      <% edits.each do |edited_entity| %>
-        <tr>
-          <td><%= user_link(edited_entity.user) %> <%= time_ago_in_words(edited_entity.created_at) %> ago</td>
-          <td><%= entity_link(edited_entity.entity) %></td>
-          <td><em><%= edited_entity.entity.blurb %></em></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+      <% edits = EntityHistory.recently_edited_entities(page: @page) %>
 
-  <%= paginate edits %>
+      <table class="table no-top-border" id="recent-edits-table">
+        <thead>
+          <tr>
+            <th>Edited By</th>
+            <th>Entity</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% edits.each do |edited_entity| %>
+            <tr>
+              <td><%= user_link(edited_entity.user) %> <%= time_ago_in_words(edited_entity.created_at) %> ago</td>
+              <td><%= entity_link(edited_entity.entity) %></td>
+              <td><em><%= edited_entity.entity.blurb %></em></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <%= paginate edits %>
+    </div>
+  </div>
 <% end %>
