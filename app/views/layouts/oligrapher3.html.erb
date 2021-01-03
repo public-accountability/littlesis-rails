@@ -7,6 +7,7 @@
     <%= javascript_pack_tag 'application' %>
     <%= javascript_include_tag 'application' %>
     <%= stylesheet_link_tag 'oligrapher', media: 'all' %>
+    <%= csrf_meta_tags %>
     <%= yield :head if content_for?(:head) %>
 
     <% if Rails.env.development? %>
