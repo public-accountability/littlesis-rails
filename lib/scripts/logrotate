@@ -2,7 +2,14 @@
 
 log = ARGV.first
 
-if log.include? 'access'
-  Rails.logger.info "Rotating log #{log}"
-  NginxLogService.insert_file log
-end
+exit unless log.include?('access')
+
+column_list = %w[remote_address time host http_method uri status body_bytes request_time referer user_agent request_id].join(',')
+
+ApplicationRecord.execute_sql <<~SQL
+  LOAD DATA LOCAL INFILE '#{log}'
+  IGNORE INTO TABLE web_requests
+  FIELDS TERMINATED BY ' '
+  OPTIONALLY ENCLOSED BY '"'
+  (#{column_list})
+SQL
