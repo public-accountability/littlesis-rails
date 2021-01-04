@@ -1,3 +1,5 @@
+import Bloodhound from 'bloodhound-js'
+
 export default function EntityAutocomplete({config}){
 
   this.prepare = function(){
