@@ -48,6 +48,7 @@
     "json-loader": "^0.5.7",
     "lodash": "^4.17.19",
     "mustache": "^4.0.1",
+    "node-fetch": "^2.6.1",
     "papaparse": "^5.3.0",
     "popper.js": "^1.16.1",
     "prop-types": "^15.7.2",
