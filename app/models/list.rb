@@ -8,6 +8,8 @@ class List < ApplicationRecord
   include Tagable
   include Api::Serializable
 
+  ThinkingSphinx::Callbacks.append(self, :behaviours => [:sql, :deltas])
+
   IGNORE_FIELDS = %i[is_admin is_featured last_user_id delta access featured_list_id].freeze
 
   has_paper_trail ignore: IGNORE_FIELDS, on: %i[create destroy update]

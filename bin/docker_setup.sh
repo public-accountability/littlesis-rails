@@ -28,8 +28,9 @@ add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitaloce
 apt-get update && apt-get -y install mariadb-client libmariadb-dev
 
 # Manticore
-curl -sSL https://github.com/manticoresoftware/manticoresearch/releases/download/3.4.2/manticore_3.4.2-200410-69033058-release.buster_amd64-bin.deb > /tmp/manticore.deb
-echo '2e0af4aaf7b96934c9c71bffb83db2a51999b50ce463fb0c624b722ad489f07e /tmp/manticore.deb' | sha256sum -c -
+curl -sSL https://repo.manticoresearch.com/GPG-KEY-manticore > /etc/apt/trusted.gpg.d/manticore.gpg
+curl -sSL https://repo.manticoresearch.com/repository/manticoresearch_buster/pool/m/manticore/manticore_3.5.4-201211-13f8d08d_amd64.deb > /tmp/manticore.deb
+echo 'cb7d8105067fa5822aa7e85d11ab4208db1f1976793c1f31b621f0b148b48ee8  /tmp/manticore.deb' | sha256sum -c -
 apt-get install -y /tmp/manticore.deb
 
 # Node
