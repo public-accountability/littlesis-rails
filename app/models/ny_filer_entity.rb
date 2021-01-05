@@ -12,6 +12,8 @@ class NyFilerEntity < ApplicationRecord
   after_create :delete_from_unmatched_ny_filers
   before_destroy :add_to_unmatched_ny_filers
 
+  ThinkingSphinx::Callbacks.append(self, :behaviours => [:sql])
+
   def rematch_existing_matches
     NyMatch.joins(:ny_filer_entity).where('ny_filer_entities.id = ?', id).find_each do |ny_match|
       ny_match.rematch

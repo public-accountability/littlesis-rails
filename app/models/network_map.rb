@@ -6,6 +6,8 @@ class NetworkMap < ApplicationRecord
   include SingularTable
   include SoftDelete
 
+  ThinkingSphinx::Callbacks.append(self, :behaviours => [:sql, :deltas])
+
   LS_DATA_SOURCE_BASE_URL = "#{Rails.application.default_url_options[:protocol]}://#{Rails.application.default_url_options[:host]}"
 
   OLIGRAPHER_VERSION = APP_CONFIG['oligrapher_version']
