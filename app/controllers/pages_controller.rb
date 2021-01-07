@@ -64,8 +64,8 @@ class PagesController < ApplicationController
   end
 
   def swamped
+    admins_only
     render layout: 'fullscreen'
-    # admins_only
   end
 
   private
