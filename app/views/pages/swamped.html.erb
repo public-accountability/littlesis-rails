@@ -81,7 +81,7 @@
     <div class="tracker">
       <div class="crawl-wrapper">
         <div class="crawl">
-          <% JSON.load_file(Rails.root.join('data/revolvers.json')).each do |rat| %>
+          <% JSON.parse(File.read(Rails.root.join('data/revolvers.json'))).each do |rat| %>
             <p><%= link_to rat['name'], rat['url'], target: '_blank'  %> left on <%= rat['date'] %> and now works for <%= rat['company'] %></p>
           <% end %>
         </div>
