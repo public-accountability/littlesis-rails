@@ -1,7 +1,60 @@
+<% content_for :head do %>
+<style>
+ .swamped-top {
+   background-color: lightgray;
+   height: 300px;
+ }
+
+ .swamped-content {
+   height: 100%;
+   min-height: 500px;
+
+ }
+
+ .rat-img {
+   width: 100px;
+ }
+
+ .tracker {
+   min-width: 300px;
+   height: 100%;
+   background-color: lightyellow;
+ }
+
+</style>
+<% end %>
+
+<div class="row swamped-top">
+  <div class="col align-items-center">
+    <p class="text-center">swamped</p>
+  </div>
+</div>
+
 <div class="row">
   <div class="col">
-    <p>
-      As the Trump administration comes to an end, staffers are exiting via the revolving door to jobs at influential corporations. LittleSis is watching as the swamp fills up with Trump’s minions
+    <p class="text-center">
+      As the Trump administration comes to an end, staffers are exiting via the revolving door to jobs at influential corporations. <br /> LittleSis is watching as the swamp fills up with Trump’s minions.
     </p>
   </div>
+</div>
+
+
+
+<div class="row swamped-content">
+  <div class="col-md-4">
+    <p class="d-inline">Got a tip? Tell us about a Trump Rat on the loose</p>
+    <%= image_tag('rat.png', class: 'rat-img') %>
+    <div class="input-group mb-3">
+      <input type="text" class="form-control">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" id="button-addon2">send</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col offset-md-1 mr-2">
+    <div class="tracker">
+    </div>
+  </div>
+
 </div>
