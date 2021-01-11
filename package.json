@@ -47,6 +47,7 @@
     "jsdom": "^16.4.0",
     "json-loader": "^0.5.7",
     "lodash": "^4.17.19",
+    "marked": "^1.2.7",
     "mustache": "^4.0.1",
     "node-fetch": "^2.6.1",
     "papaparse": "^5.3.0",

@@ -1,6 +1,7 @@
 import 'bootstrap-markdown/js/bootstrap-markdown'
 
 import { Controller } from 'stimulus'
+import marked from 'marked'
 
 export default class extends Controller {
   /*
@@ -11,12 +12,15 @@ export default class extends Controller {
   this to every page load with Stimulus, for efficiency we only
   initialize on elements contained by the element that connects to this
   controller, when it connects.
-  */
+    */
   connect() {
     this.init()
   }
 
   init(event) {
-    $(this.element).find('[data-markdown-target="field"]').markdown({autofocus: false})
+    $(this.element).find('[data-markdown-target="field"]').markdown({
+      autofocus: false,
+      onPreview: function (e) { return marked(e.getContent()) }
+    })
   }
 }
