@@ -1,63 +1,20 @@
 <% content_for :head do %>
-  <style>
-   .swamped-top {
-     background-color: lightgray;
-     height: 250px;
-   }
-
-   .rat-img {
-     height: 21px;
-   }
-
-   .tracker {
-     height: 100%;
-     width: 100%;
-     overflow: hidden;
-   }
-
-   .crawl-wrapper {
-     height: 100%;
-     display: flex;
-     justify-content: center;
-     perspective: 400px;
-     height: 600px;
-     font-size: 18x;
-     font-weight: 600;
-     /* letter-spacing: 6px; */
-     line-height: 150%;
-     text-align: justify;
-   }
-
-   .crawl {
-     position: relative;
-     top: -100px;
-     transform-origin: 50% 100%;
-     animation: crawl 240s linear;
-   }
-
-   @keyframes crawl {
-     0% {
-       top: 0;
-       transform: rotateX(20deg) translateZ(0);
-     }
-     100% {
-       top: -8000px;
-       transform: rotateX(25deg) translateZ(-2500px);
-     }
-   }
-
-   .rat-report {
-     margin-top: 10px;
-     max-width: 400px;
-     margin: 0 auto;
-   }
-
-  </style>
+  <%= stylesheet_link_tag "swamped" %>
 <% end %>
 
-<div class="row swamped-top">
-  <div class="col align-items-center">
-    <p class="text-center">swamped</p>
+<% content_for(:hide_top, true) %>
+
+<div class="row">
+  <div class="col">
+    <div class="header-image">
+      <div class="header-text">SWAMPED</div>
+      <div class="header-subtext">
+        Trump administration staffers are fleeing via the revolving door to jobs on Wall Street, K Street, and at influential corporations.
+      </div>
+    </div>
+
+    <%#  image_tag , class: "img-fluid" %>
+    <!-- <p class="text-center">swamped</p> -->
   </div>
 </div>
 
@@ -82,7 +39,16 @@
       <div class="crawl-wrapper">
         <div class="crawl">
           <% JSON.parse(File.read(Rails.root.join('data/revolvers.json'))).each do |rat| %>
-            <p><%= link_to rat['name'], rat['url'], target: '_blank'  %> left on <%= rat['date'] %> and now works for <%= rat['company'] %></p>
+            <p>
+              <%= rat['position'] %>,
+              <%= link_to rat['name'], rat['url'], target: '_blank'  %>
+              left on <%= rat['date'] %> and now works for
+              <% if rat['org_url'].present? %>
+                <%= link_to rat['where_to'], rat['org_url'] %>
+              <% else  %>
+                <%= rat['where_to'] %>
+              <% end %>
+            </p>
           <% end %>
         </div>
       </div>
