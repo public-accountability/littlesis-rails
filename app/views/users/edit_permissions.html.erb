@@ -19,9 +19,9 @@
 	<td><%= UserAbilities::DESCRIPTIONS.fetch(ability) %></td>
 	<% if @user.abilities.include?(ability) %>
 	  <td></td>
-	  <td><%= link_to "DELETE", delete_permission_user_path(@user.id, permission: ability), :method => :delete, class: "delete-user-ability-#{ability}" %></td>
+	  <td><%= button_to "DELETE", delete_permission_user_path(@user.id, permission: ability), :method => :delete, class: "delete-user-ability-#{ability}" %></td>
 	<% else  %>
-	  <td><%= link_to "ADD", add_permission_user_path(@user.id, permission: ability), :method => :post, class: "add-user-ability-#{ability}" %></td>
+	  <td><%= button_to "ADD", add_permission_user_path(@user.id, permission: ability), :method => :post, class: "add-user-ability-#{ability}" %></td>
 	  <td></td>
 	<% end %>
       </tr>
