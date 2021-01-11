@@ -55,7 +55,6 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "select2": "^4.0.13",
-    "shufflejs": "^5.2.3",
     "stimulus": "^2.0.0",
     "tinycarousel": "^2.1.8",
     "typeahead.js": "^0.11.1",
