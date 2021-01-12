@@ -21,7 +21,7 @@ class ExternalData < ApplicationRecord
     fec_candidate: 6,
     fec_committee: 7,
     fec_contribution: 8, # relationship
-    fec_donor: 9
+    fec_donor: 9         # entity, derived from fec_contribution
   }.freeze
 
   enum dataset: DATASETS

@@ -207,23 +207,6 @@ describe RelationshipsController, type: :controller do
           expect(assigns(:selected_ref)).to be nil
         end
       end
-
-      context 'when there is a reference' do
-        let(:reference) { build(:reference) }
-
-        before do
-          expect(relationship).to receive(:references).and_return(double(:last => reference))
-          expect(Relationship).to receive(:find).with('1').and_return(relationship)
-          get :edit, params: { id: 1, new_ref: 'true' }
-        end
-
-        it { is_expected.to respond_with(:success) }
-        it { is_expected.to render_template(:edit) }
-
-        it 'sets @selected_ref' do
-          expect(assigns(:selected_ref)).to eql reference.id
-        end
-      end
     end
   end
 

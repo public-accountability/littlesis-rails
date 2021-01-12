@@ -65,7 +65,12 @@ class PagesController < ApplicationController
 
   def swamped
     admins_only
-    render layout: 'fullscreen'
+    if request.post?
+      SwampTip.create!(content: params[:tip])
+      redirect_to :swamped
+    else
+      render layout: 'fullscreen'
+    end
   end
 
   private

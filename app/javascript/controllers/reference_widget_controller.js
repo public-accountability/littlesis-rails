@@ -17,9 +17,10 @@ export default class extends Controller {
   connect() {
     window.$(this.selectTarget).select2(select2Configuration)
     window.$(this.selectTarget).on('change', this.selectExistingSource.bind(this))
+    this.selectExistingSource()
   }
 
-  toggleJustCleaningUp(event) {
+  togglejustcleaningup(event) {
     if (event.target.checked) {
       this.selectTarget.disabled = true
       this.newReferenceButtonTarget.disabled = true

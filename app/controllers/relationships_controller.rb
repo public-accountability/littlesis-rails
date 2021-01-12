@@ -57,7 +57,7 @@ class RelationshipsController < ApplicationController
 
   # GET /relationships/:id/edit
   def edit
-    @selected_ref = params[:new_ref].present? ? @relationship.references.try(:last).try(:id) : nil
+    @selected_document_id = params[:new_ref].present? ? @relationship.documents.last&.id : nil
   end
 
   # PATCH /relationships/:id
