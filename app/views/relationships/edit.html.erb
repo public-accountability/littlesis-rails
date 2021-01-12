@@ -9,7 +9,10 @@
   <div class="row mt-4 mb-4">
     <div class="col-md-6 col-sm-8 col-xs-12">
       <%= render partial: 'shared/editing/reference_widget',
-                 locals: { documents: @relationship.documents.to_a }
+                 locals: {
+                   documents: @relationship.documents.to_a,
+                   selected: @selected_document_id
+                 }
       %>
     </div>
   </div>

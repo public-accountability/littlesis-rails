@@ -1,5 +1,5 @@
 <%#
-locals: documents: [<Document>]
+locals: documents: [<Document>], selected
 Also see controllers/reference_widget_controller.js
 %>
 
@@ -28,8 +28,9 @@ Also see controllers/reference_widget_controller.js
         <label class="pr-2">Existing Source:</label>
         <select style="width: 50%" data-reference-widget-target="select" name="reference[document_id]"  class="form-control">
           <option></option>
+          <% selected_document_id = local_assigns.fetch(:selected, nil) %>
           <%= documents.each do |d| %>
-            <%= tag.option truncate(d.name), value: d.id, title: d.url %>
+            <%= tag.option truncate(d.name), value: d.id, title: d.url, selected: d.id == selected_document_id %>
           <% end %>
         </select>
       </div>
