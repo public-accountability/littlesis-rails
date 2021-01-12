@@ -1,56 +1,55 @@
+<% content_for(:page_title, 'SWAMPED: Fleeing Trump Officials head back to Wall Street') %>
+<% content_for(:hide_top, true) %>
 <% content_for :head do %>
   <%= stylesheet_link_tag "swamped" %>
 <% end %>
 
-<% content_for(:hide_top, true) %>
-
-<div class="row">
-  <div class="col">
-    <div class="header-image">
-      <div class="header-text">SWAMPED</div>
-      <div class="header-subtext">
-        Trump administration staffers are fleeing via the revolving door to jobs on Wall Street, K Street, and at influential corporations.
+<div id="tip-box">
+  <div class="inner">
+    <p class="text">
+      Trump administration staffers are fleeing via the revolving door to jobs on Wall Street, K Street, and at influential corporations. LittleSis is tracking these rats are they try to make their way back to the private sector.
+    </p>
+    <div class="tip">
+      <div class="tip-inner">
+        <p class="d-inline">Got a tip? <br/> Tell us about a Trump Rat on the loose</p>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control">
+          <div class="input-group-append">
+            <button class="btn btn-outline btn-rat" type="button"><%= image_tag('rat.png', class: 'rat-img') %></button>
+          </div>
+        </div>
       </div>
     </div>
-
-    <%#  image_tag , class: "img-fluid" %>
-    <!-- <p class="text-center">swamped</p> -->
   </div>
 </div>
 
-<div class="row">
-  <div class="col-sm-6 col-md-4 mt-4">
-    <p class="text-center text-bold">
-      As the Trump administration comes to an end, <br /> staffers are exiting via the revolving door to jobs at influential corporations. <br /> LittleSis is watching as the swamp fills up with Trump’s minions.
-    </p>
-    <div class="text-center">
-      <p class="d-inline">Got a tip? Tell us about a Trump Rat on the loose</p>
-      <div class="input-group mb-3 rat-report">
-        <input type="text" class="form-control">
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button" id="button-addon2"><%= image_tag('rat.png', class: 'rat-img') %></button>
+<div class="container-fluid">
+  <div class="row image-row sticky-top">
+    <div class="col">
+      <div class="header-image">
+        <div class="header-text">SWAMPED</div>
+        <div class="header-subtext">
+          Trump administration staffers are fleeing via the revolving door to jobs on Wall Street, K Street, and at influential corporations.
         </div>
       </div>
     </div>
   </div>
 
-  <div class="col-sm-5 col-md-8  ml-2mr-2">
-    <div class="tracker">
-      <div class="crawl-wrapper">
-        <div class="crawl">
-          <% JSON.parse(File.read(Rails.root.join('data/revolvers.json'))).each do |rat| %>
-            <p>
-              <%= rat['position'] %>,
-              <%= link_to rat['name'], rat['url'], target: '_blank'  %>
-              left on <%= rat['date'] %> and now works for
-              <% if rat['org_url'].present? %>
-                <%= link_to rat['where_to'], rat['org_url'] %>
-              <% else  %>
-                <%= rat['where_to'] %>
-              <% end %>
-            </p>
-          <% end %>
-        </div>
+  <div class="row content-row">
+    <div class="col rats-col">
+      <div class="rats p-4">
+        <% JSON.parse(File.read(Rails.root.join('data/revolvers.json'))).each do |rat| %>
+          <p>
+            <%= rat['position'] %>,
+            <%= link_to rat['name'], rat['url'], target: '_blank'  %>
+            left on <%= rat['date'] %> and now works for
+            <% if rat['org_url'].present? %>
+              <%= link_to rat['where_to'], rat['org_url'] %>
+            <% else  %>
+              <%= rat['where_to'] %>
+            <% end %>
+          </p>
+        <% end %>
       </div>
     </div>
   </div>

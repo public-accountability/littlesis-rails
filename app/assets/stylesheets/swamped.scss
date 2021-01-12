@@ -3,13 +3,14 @@
     src: font_url('GiveYouGlory-Regular.ttf');
 }
 
-.swamped-top {
-    background-color: lightgray;
-    height: 250px;
+@font-face {
+    font-family: 'Voltaire';
+    src: font_url('Voltaire-Regular.ttf');
 }
 
 .header-image {
     position: relative;
+    font-family: 'Voltaire';
     background: asset_url("IMG_1387.jpg");
     background-size: cover;
     width: 100%;
@@ -33,13 +34,54 @@
     left: 40px;
 }
 
+.image-row {
+}
+
+.content-row {
+    font-family: 'Voltaire';
+}
+
+#tip-box {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    bottom: 200px;
+    right: 75px;
+    font-size: 12px;
+    font-family: 'Voltaire';
+
+    .inner {
+        padding: 15px;
+        border-radius: 10px;
+        background-color: #fff;
+        width: 320px;
+    }
+
+    .tip-inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.btn-rat {
+
+}
+.rat-img {
+    height: 21px;
+}
+
+
+
+.rats {
+    font-size: 12px;
+}
+
 
 @media (min-width: 666px) {
     .header-image {
         height: 320px;
     }
-
-
 
 }
 
@@ -51,9 +93,14 @@
     .header-subtext {
         display: block;
         font-size: 12px;
-        max-width: 200px;
+        max-width: 215px;
+        left: 30px;
     }
 
+    #tip-box {
+        font-size: 12px;
+        display: block;
+    }
 }
 
 @media (min-width: 1000px) {
@@ -67,11 +114,20 @@
         left: 25px;
     }
 
+    .rats {
+        font-size: 14px;
+    }
+
     .header-subtext {
         font-size: 14px;
         max-width: 250px;
     }
 
+    #tip-box {
+        font-size: 14px;
+        // display: block;
+        // bottom: 100px;
+    }
 }
 
 @media (min-width: 1200px) {
@@ -84,11 +140,21 @@
         left: 35px;
     }
 
+    .rats {
+        font-size: 15px;
+    }
+
+
     .header-subtext {
-        font-size: 14px;
+        font-size: 15px;
         max-width: 300px;
     }
 
+    #tip-box {
+        font-size: 14px;
+        // bottom: 120px;
+        // right: 150px;
+    }
 }
 
 @media (min-width: 1400px) {
@@ -101,21 +167,4 @@
     .header-image {
         height: 750px;
     }
-}
-
-
-.rat-img {
-    height: 21px;
-}
-
-.tracker {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-}
-
-.rat-report {
-    margin-top: 10px;
-    max-width: 400px;
-    margin: 0 auto;
 }
