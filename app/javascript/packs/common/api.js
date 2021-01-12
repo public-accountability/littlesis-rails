@@ -91,12 +91,7 @@
   };
 
   // String, Integer -> Promise
-  self.addBlurbToEntity = function (blurb, entityId) {
-    return patch("/entities/" + entityId, {
-      "entity": { "blurb": blurb },
-      "reference": { "just_cleaning_up": 1 }
-    });
-  };
+
 
   // helpers
 
