@@ -13,6 +13,8 @@ describe PagesController, type: :controller do
   it { is_expected.to route(:patch, '/pages/666').to(action: :update, id: '666') }
   it { is_expected.to route(:post, '/pages').to(action: :create) }
   it { is_expected.to route(:get, '/pages').to(action: :index) }
+  it { is_expected.to route(:get, '/swamped').to(action: :swamped) }
+  it { is_expected.to route(:post, '/swamped').to(action: :swamped) }
 
   it 'has MARKDOWN constant' do
     expect(ToolkitController::MARKDOWN).to be_a(Redcarpet::Markdown)

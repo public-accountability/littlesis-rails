@@ -12,12 +12,14 @@
     <div class="tip">
       <div class="tip-inner">
         <p class="d-inline">Got a tip? <br/> Tell us about a Trump Rat on the loose</p>
-        <div class="input-group mb-3">
-          <input type="text" class="form-control">
-          <div class="input-group-append">
-            <button class="btn btn-outline btn-rat" type="button"><%= image_tag('rat.png', class: 'rat-img') %></button>
+        <%= form_with url: '/swamped' do |f|  %>
+          <div class="input-group mb-3">
+            <%= f.text_field :tip, class: 'form-control' %>
+            <div class="input-group-append">
+              <button class="btn btn-outline btn-rat"><%= image_tag('rat.png', class: 'rat-img') %></button>
+            </div>
           </div>
-        </div>
+        <% end %>
       </div>
     </div>
   </div>
