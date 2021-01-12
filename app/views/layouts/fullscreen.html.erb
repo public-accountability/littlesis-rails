@@ -12,11 +12,11 @@
 
   <body>
     <% @fullscreen = true %>
-    <%= render partial: 'shared/nav_menu' %>
+    <% unless content_for? :hide_top %>
+      <%= render partial: 'shared/nav_menu' %>
+    <% end %>
 
-    <div class="container-fluid">
-      <%= yield %>
-    </div>
+    <%= yield %>
 
   </body>
 </html>

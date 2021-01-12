@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_21_234822) do
+ActiveRecord::Schema.define(version: 2021_01_12_023923) do
 
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -1159,6 +1159,12 @@ ActiveRecord::Schema.define(version: 2020_12_21_234822) do
 
   create_table "sphinx_index", primary_key: "name", id: { type: :string, limit: 50 }, charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.datetime "updated_at", null: false
+  end
+
+  create_table "swamp_tips", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.text "content"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "tag", charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
