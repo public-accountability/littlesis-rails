@@ -39,12 +39,7 @@
     background: linear-gradient(#fff, rgba(0, 0, 0, -1));
 }
 
-.spacer-row {
-    height: 20px;
-}
-
-.image-row {
-}
+.image-row {}
 
 .content-row {
     font-family: 'Voltaire';
@@ -76,22 +71,19 @@
 .btn-rat {
 
 }
+
 .rat-img {
     height: 21px;
 }
-
-
 
 .rats {
     font-size: 12px;
 }
 
-
 @media (min-width: 666px) {
     .header-image {
         height: 320px;
     }
-
 }
 
 @media (min-width: 800px) {
@@ -161,8 +153,8 @@
 
     #tip-box {
         font-size: 14px;
-        // bottom: 120px;
-        // right: 150px;
+        bottom: 120px;
+        right: 150px;
     }
 }
 
