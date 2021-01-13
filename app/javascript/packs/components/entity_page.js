@@ -11,7 +11,7 @@ function EditableBlurb() {
         'Content-Type': 'application/json',
         'X-CSRF-Token': $("meta[name='csrf-token']").attr("content") || ""
       },
-      method: 'POST',
+      method: 'PATCH',
       credentials: 'include',
       body: JSON.stringify({
         "entity": { "blurb": blurb },
