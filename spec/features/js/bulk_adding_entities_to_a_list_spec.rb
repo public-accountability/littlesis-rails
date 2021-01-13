@@ -90,7 +90,7 @@ feature 'Bulk-adding entities to a list', type: :feature, js: true do
       allow(Entity).to receive(:search).and_return(entities.each(&:save))
     end
 
-    scenario 'I am asked to resolve duplications' do
+    xscenario 'I can resolve duplications' do
       expect(page).to have_css('#bulk-add-header', text: "Add entities to #{list.name}")
 
       within '#upload-container' do
@@ -114,6 +114,19 @@ feature 'Bulk-adding entities to a list', type: :feature, js: true do
       end
 
       expect(page).to have_css('.alert-icon[title="resolve duplicates"]')
+      duplicate_count = all('.alert-icon[title="resolve duplicates"]').count
+
+      first('.alert-icon[title="resolve duplicates"]').click
+
+      expect(page).to have_css('.popover-header', text: 'Similar entities already exist')
+
+      within '.resolver-popover' do
+        find('.filter-option-inner-inner', text: 'Pick an existing entity...').click
+        first('.dropdown-item').click
+        find('.resolver-picker-btn').click
+      end
+
+      expect(all('.alert-icon[title="resolve duplicates"]').count).to eq duplicate_count - 1
     end
   end
 

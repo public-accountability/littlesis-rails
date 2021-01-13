@@ -1,6 +1,7 @@
 <script>
  $(function(){
-   nys.entitySearch("<%= primary_ext %>");
+   let search = LittleSis.nysSearch();
+   search.entitySearch("<%= primary_ext %>");
  });
 </script>
 <style>

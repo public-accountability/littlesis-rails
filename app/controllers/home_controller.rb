@@ -36,7 +36,6 @@ class HomeController < ApplicationController
 
   def dismiss
     dismiss_alert(params[:id])
-    render json: { id: params[:id] }
   end
 
   def maps

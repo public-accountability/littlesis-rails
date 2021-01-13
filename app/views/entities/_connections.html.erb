@@ -6,7 +6,7 @@
 
   <%= entity_connections_header(connection_type, @entity)  %>
 
-  <table class="table no-top-border" id="entity-connections-table">
+  <table class="table no-top-border" id="entity-connections-table" data-controller="tooltip">
 
     <%= entity_connections_table_headers(connection_type, @entity) %>
     <tbody>
@@ -14,7 +14,7 @@
         <tr>
           <td class="connected-entity-cell">
             <% connected_entity =  connected_entity_hash['connected_entity'] %>
-            <%= link_to connected_entity.name, concretize_entity_path(connected_entity), data: {toggle: :tooltip, placement: :top, title: connected_entity.blurb} %>
+            <%= link_to connected_entity.name, concretize_entity_path(connected_entity), data: {tooltip_target: "trigger", placement: :top, title: connected_entity.blurb} %>
           </td>
 
           <% if has_stat %>

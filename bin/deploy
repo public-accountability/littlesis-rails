@@ -71,4 +71,4 @@ echo "Restarting delayed job"
 bin/delayed_job -n 2 restart
 
 echo "Restarting LittleSis"
-bundle exec pumactl -P tmp/puma.pid phased-restart
+bundle exec pumactl -P tmp/puma.pid restart

@@ -32,12 +32,9 @@ gem 'delayed_job_active_record', '>= 4.1.3'
 
 # Assets and images
 gem 'bootstrap', '>= 4.3.1'
-gem 'jquery-rails'
-gem 'jquery-ui-rails', '~> 6.0.0'
 gem 'mini_magick'
 gem 'sassc-rails'
 gem 'sprockets', '~> 3.0'
-gem 'uglifier', '>= 4.1'
 gem 'webpacker', '>= 4.0.2'
 
 # Search

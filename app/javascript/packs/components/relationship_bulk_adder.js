@@ -1,28 +1,19 @@
+import Mustache from 'mustache'
+import Papa from 'papaparse'
+import { saveAs } from 'file-saver'
+import utility from '../common/utility'
+
 /**
 
-  Helpful Inspiration: https://codepen.io/ashblue/pen/mCtuA
+  Inspiration: https://codepen.io/ashblue/pen/mCtuA
 
-  External requirements: jQuery, utility.js, Hogan, jQuery UI Autocomplete
-
-  TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
-  entity autocomplete has already been switched over
-  */
+*/
 export default function RelationshipBulkAdder() {
-
-  const $ = window.$
-  const utility = window.utility
-  const Papa = window.Papa
-  const saveAs = window.saveAs
-  const Hogan = window.Hogan
-
   // Does the user have bulk permissions?
   // All users may submit up to 8
   var USER_HAS_BULK_PERMISSIONS = null
-
   var AUTOCOMPLETE_MODE = true
-
   var NOTES_MODE = false
-
   var MATCHING_MODE = false
   var MATCHING_INDEX = null
 
@@ -44,12 +35,12 @@ export default function RelationshipBulkAdder() {
     }
   }
 
-  // This is the structure of table. The number and types of columns vary by
+  // Creates table structure based on category id. The number and types of columns vary by
   // relationship type. See utility.js for more information
   // -> [[]]
   function relationshipDetails() {
     var entityColumns = [ [ 'Name', 'name', 'text'], ['Blurb', 'blurb', 'text'], ['Entity type', 'primary_ext', 'select'] ]
-    var notes = [ ['Notes', 'notes', 'text' ] ] 
+    var notes = [ ['Notes', 'notes', 'text' ] ]
     return entityColumns.concat(utility.relationshipDetails(realCategoryId())).concat(notes)
   }
 
@@ -70,6 +61,10 @@ export default function RelationshipBulkAdder() {
   function cssForNotesColumn(col) {
     if (col[1] === 'notes' && !NOTES_MODE) {
       return { display: 'none' }
+    } else if (col[1] === 'name') {
+      return {
+        "min-width": '175px'
+      }
     } else {
       return {}
     }
@@ -131,7 +126,7 @@ export default function RelationshipBulkAdder() {
           return [ 'Example Person', 'One Sentence about them', 'Person', 'Undergraduate', '1985-01-01', '1990-12-01', 'BA', 'physics', '', '']
         }
       case 3:
-        return [ "Oil Company", "The largest oil company in the world", "Org", "", '', '', '', '1000000', '' ] 
+        return [ "Oil Company", "The largest oil company in the world", "Org", "", '', '', '', '1000000', '' ]
       case 4:
         return [ 'Jane Doe', 'About Jane...', 'Person', '', '', '', '' ]
       case 5:
@@ -143,9 +138,9 @@ export default function RelationshipBulkAdder() {
       case 9:
         return [ 'Jane Doe', 'About Jane...', 'Person', 'Business Partner', 'Business Partner', '2000-01-01', '2015-04-15', 'NO', '' ]
       case 10:
-        return [ 'Company X', '', 'Org', '', '1968', '2015', 'N', '25', '', '']  
+        return [ 'Company X', '', 'Org', '', '1968', '2015', 'N', '25', '', '']
       case 11:
-        return [ 'Company X', '', 'Org', 'Child Company', 'Parent Company', '1996-01-01', '', 'Y', ''] 
+        return [ 'Company X', '', 'Org', 'Child Company', 'Parent Company', '1996-01-01', '', 'Y', '']
       case 12:
         return [ 'Jane Doe', 'About Jane...', 'Person', "Entity1 is X of Jane", "Jane is Y of entity1", '2000', '2001', '', '']
       default:
@@ -177,7 +172,9 @@ export default function RelationshipBulkAdder() {
     return $('<caption>')
       .append(addRowIcon())
       .append( $('<input>', {id: 'csv-file'}).attr('type', 'file'))
-      .append( $('<div>', {class: 'float-right'}).append(entityMatchBtn()).append(sampleCSVLink()) )
+      .append( $('<div>', {class: 'float-right'}).append(sampleCSVLink()) )
+                         // .append(entityMatchBtn())
+
   }
 
   function createTableHeader() {
@@ -185,7 +182,7 @@ export default function RelationshipBulkAdder() {
     $('#table thead tr').append('<th>Delete</th>')
   }
 
-  // Creates empty table based on the selected category
+  // Creates empty table based o the selected category
   function createTable() {
     $('#table table')
       .empty()
@@ -199,11 +196,9 @@ export default function RelationshipBulkAdder() {
 
   /* FIND SIMILAR RELATIONSHIPS */
 
-  // TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
-  // entity autocomplete has already been switched over
-  var relationshipAlertContent =  Hogan.compile('<p>A similar relationship was found in the littlesis database. Are you <em>sure</em> you want to create another one?</p><p><a href="{{url}}" target="_blank">Click here</a> to view the relationship.</p>')
+  var relationshipAlertTemplate = '<p>A similar relationship was found in the littlesis database. Are you <em>sure</em> you want to create another one?</p><p><a href="{{url}}" target="_blank">Click here</a> to view the relationship.</p>'
 
-  // input: [] -> <Span>
+  // input: [] -> <div>
   function similarRelationshipAlert(relationships) {
     return $('<div>', { "style": "position: relative" })
       .append(
@@ -213,7 +208,7 @@ export default function RelationshipBulkAdder() {
           "aria-hidden": true,
           "fadeIn": { duration: 500 },
           "popover": {
-            content: relationshipAlertContent.render(relationships[0]),
+            content: Mustache.render(relationshipAlertTemplate, relationships[0]),
             container: 'body',
             trigger: 'click',
             placement: 'auto',
@@ -223,8 +218,8 @@ export default function RelationshipBulkAdder() {
       )
   }
 
-  // Submipts ajax request to /relationships/find_similar
-  // and displays alert if similar relationship is found
+  // http request to /relationships/find_similar and
+  // displays an alert if a similar relationship is found
   // Input: <td>, Int
   function lookForSimilarRelationship(cell, entity2_id) {
     var selectedCategoryId = Number($('#relationship-cat-select option:selected').val())
@@ -248,8 +243,9 @@ export default function RelationshipBulkAdder() {
 
   /* ENTITY SEARCH AUTOCOMPLETE */
 
-  // AJAX request route: /search/entity
-  // str, function -> callback([{}])
+  // http request to /search/entity
+  // query, callback
+  // results: [{}]
   function searchRequest(text, callback) {
     $.getJSON('/search/entity', {
       num: 10,
@@ -267,7 +263,7 @@ export default function RelationshipBulkAdder() {
     })
   }
 
-  // Aftering selecting an entity from the autocomplete or via the matching table:
+  // After selecting an entity from the autocomplete or via the matching table:
   //  - adds name and link to cell
   //  - stores entityid in dataset
   //  - sets blurb and type
@@ -276,13 +272,13 @@ export default function RelationshipBulkAdder() {
   //  - searches for similar relationships via ajax
   function entitySelect( event, ui ) {
     if (event) { event.preventDefault() }
-  
+
     var cell = $(this)
     //  requires order of table to be: name -> blurb -> entityType
     var blurb = cell.next()
     var entityType = blurb.next()
     // add link to cell
-    cell.html( $('<a>', { href: ui.item.url, text: ui.item.name, target: '_blank' })) 
+    cell.html( $('<a>', { href: ui.item.url, text: ui.item.name, target: '_blank' }))
     cell.attr('contenteditable', 'false')
     // store entity id in dataset
     cell.data('entityid', ui.item.id)
@@ -307,36 +303,33 @@ export default function RelationshipBulkAdder() {
 
     blurb.text(ui.item.description ? ui.item.description : '')
     blurb.attr('contenteditable', 'false') // disable editing of blurb
-    entityType.find('select').selectpicker('val', ui.item.primary_ext)
+    entityType.find('select').val(ui.item.primary_ext)
     lookForSimilarRelationship(cell, ui.item.id)
   }
 
-  // options for the entity search autocomplete <td>
-  // ouput: {}
-  function autocompleteOptions() {
-    return {
-      source: function(request, response) {
-        searchRequest(request.term, response)
+
+  var entityAutocompleteSelect2Configuration = {
+    allowClear: true,
+    minimumInputLength: 3,
+    placeholder: "Example Person",
+    ajax: {
+      dataType: 'json',
+      url: '/search/entity',
+      data: function(params) {
+        return { q: params.term, num: 10 }
       },
-      select: entitySelect,
-      disabled: !AUTOCOMPLETE_MODE
+      processResults: function(data) {
+        return {
+          results: data.map(function(entity) {
+            return {
+              id: entity.id,
+              text: entity.name,
+              entity: entity
+            }
+          })
+        }
+      }
     }
-  }
-
-  // TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
-  // entity autocomplete has already been switched over
-  var entitySuggestion = Hogan.compile('<div class="entity-search-name">{{name}}</div><div class="entity-search-blurb">{{blurb}}</div>')
-
-  var autocompleteRenderItem = function(ul, item) {
-    return $( "<li>" )
-      .append( entitySuggestion.render(item) )
-      .appendTo( ul )
-  }
-
-  function autocompleteTd() {
-    var td = $('<td>', {contenteditable: 'true'}).autocomplete(autocompleteOptions())
-    td.autocomplete("instance")._renderItem = autocompleteRenderItem
-    return td
   }
 
   /* ROW ELEMENTS */
@@ -345,8 +338,6 @@ export default function RelationshipBulkAdder() {
     // Using selectpicker with multiple and max-options 1 in order to get the
     // 'Nothing selected' message displayed.
     return $('<select>', {
-      'class': 'selectpicker',
-      'data-width': 'fit'
     }).append('<option></option><option>Org</option><option>Person</option>')
   }
 
@@ -397,9 +388,12 @@ export default function RelationshipBulkAdder() {
       td = $('<td>').append('<input type="checkbox">')  // include checkbox
     } else if (col[2] === 'triboolean') { // tri-boolean column
       td = $('<td class="tri-boolean">').append(triBooleanButtonSet())
-    } else if (col[1] === 'name') { // autocomplete for entity
-      td = autocompleteTd()
-        //td = $('<td>', autocomplete);
+    } else if (col[1] === 'name') {
+      if (AUTOCOMPLETE_MODE) {
+        td = '<td><select class="entity-autocomplete" style="width: 100%"></select></td>'
+      } else {
+        td = $('<td>', { contenteditable: 'true'})
+      }
     } else if (col[1] === 'primary_ext') {
       td = $('<td>').append(primaryExtRadioButtons())
     } else if (col[1] === 'currency') {
@@ -423,8 +417,14 @@ export default function RelationshipBulkAdder() {
       var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>')
       var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd))
       $('#table tbody').append(row)
-      // Because we create the selectpicker after the dom has loaded, we must initialize it here:
-      $('#table .selectpicker').selectpicker()
+      // Because we create the select after the dom has loaded, we must initialize it here:
+      $('select.entity-autocomplete').select2(entityAutocompleteSelect2Configuration)
+      $('select.entity-autocomplete').on('change', function(){
+        var selection = $(this).select2('data')[0]
+        if (selection) {
+          $(this).closest('td').next().next().find('select').val(selection.entity.primary_ext)
+        }
+      })
       return row
     }
   }
@@ -445,11 +445,19 @@ export default function RelationshipBulkAdder() {
     } else if (rowInfo.type === 'triboolean' ) {
       data = triBooleanButton.value(cell)
     } else if (rowInfo.type === 'select') {
-      var selectpickerArr = cell.find('.selectpicker').selectpicker('val')
-        data = selectpickerArr ? selectpickerArr : null
-    } else if (rowInfo.key === 'name' && Boolean(cell.data('entityid'))) {
-      // If the entity was selected using the search there will be an entityid field in the cell's dataset
-      data = cell.data('entityid')
+      var val = cell.find('select').val()
+      data = val ? val : null
+    } else if (rowInfo.key === 'name') {
+      if (cell.find('select').length) {
+        var selection = cell.find('select').select2('data')[0]
+        if (selection) {
+          data = selection.id  // use entity id
+        } else {
+          data = null // no entity selected
+        }
+      } else {
+        data = (cell.text() === '') ? null : cell.text()
+      }
     } else {
       data = (cell.text() === '') ? null : cell.text()
     }
@@ -488,9 +496,9 @@ export default function RelationshipBulkAdder() {
 
       if (rowInfo.key === 'primary_ext') {
         if (ORG_VALUES.includes(value)) {
-          cell.find('.selectpicker').selectpicker('val', 'Org')
+          cell.find('select').val('Org')
         } else if (PERSON_VALUES.includes(value)) {
-          cell.find('.selectpicker').selectpicker('val', 'Person')
+          cell.find('select').val('Person')
         }
       }
 
@@ -611,8 +619,8 @@ export default function RelationshipBulkAdder() {
   }
 
   function showAlert(message, alertType) {
-    var html = '<div class="alert alert-dismissible !!TYPE!!" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>!!MESSAGE!!</div>'
-      .replace('!!MESSAGE!!', message).replace('!!TYPE!!', alertType)
+    var template = '<div class="alert alert-dismissible {{alertType}}" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{message}}</div>'
+    var html = Mustache.render(template, { "alertType": alertType, "message": message })
     $('#alert-container').html(html)
   }
 
@@ -879,16 +887,8 @@ export default function RelationshipBulkAdder() {
   // Compiled template for table row
   // see bulk_relationships.html.erb for template
 
-  // TODO: drop Hogan and use this instead: https://github.com/janl/mustache.js
-  // entity autocomplete has already been switched over
-  var entityMatchTableRow
-  $(function(){
-    if ($('#entityMatchTableRow').html()) {
-      entityMatchTableRow = Hogan.compile($('#entityMatchTableRow').html())
-    }
-  })
+  var entityMatchTableRowTemplate = '<td>{{ name }}</td><td>{{ blurb }}</td><td class="profile-link"><a href="{{ url }}" target="_blank">View profile</a></td>'
 
-  // searches for matching entity
   // and appends results to the table
   // input: <tr>
   function searchAndDisplay(row) {
@@ -912,7 +912,7 @@ export default function RelationshipBulkAdder() {
                   entityMatch()
               }
             }
-          }).append(entityMatchTableRow.render(entity))
+          }).append(Mustache.render(entityMatchTableRowTemplate, entity))
 
           // add row to table
           $('#match-results-table tbody').append(tr)
@@ -1047,13 +1047,7 @@ export default function RelationshipBulkAdder() {
       $(this).find('.btn').toggleClass('active')
       $(this).find('.btn').toggleClass('btn-primary')
       var status = $(this).find('button.btn.active').text()
-      if (status === 'ON') {
-        AUTOCOMPLETE_MODE = true
-        $('td.ui-autocomplete-input').autocomplete('option', 'disabled', false)
-      } else {
-        AUTOCOMPLETE_MODE = false
-        $('td.ui-autocomplete-input').autocomplete('option', 'disabled', true)
-      }
+      AUTOCOMPLETE_MODE = status === 'ON'
     })
   }
 

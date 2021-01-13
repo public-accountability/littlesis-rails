@@ -1,3 +1,6 @@
+import Papa from 'papaparse'
+import { saveAs } from 'file-saver'
+import utility from '../common/utility'
 /** TYPES **********************************************
 
 (in Flow notation: https://flow.org/en/docs/types/objects))
@@ -18,12 +21,6 @@ type SpinnerElement = 'top' | 'bottom'
 
 *********************************************************/
 export default function ListBulkEntityAdder() {
-
-  const $ = window.$
-  const util = window.utility
-  const Papa = window.Papa
-  const saveAs = window.saveAs
-
   var self = {} // returned at bottom of file
 
   // STATE MANAGEMENT
@@ -90,12 +87,12 @@ export default function ListBulkEntityAdder() {
 
   // String -> Object
   self.get = function(attr){
-    return util.get(state, attr)
+    return utility.get(state, attr)
   }
 
   // [String] -> Object
   self.getIn = function(path){
-    return util.getIn(state, path)
+    return utility.getIn(state, path)
   }
 
   // we expose below functions for testing  seams...
@@ -141,7 +138,7 @@ export default function ListBulkEntityAdder() {
   }
 
   state.getMatch = function(entity, matchId){
-    return util.get(state.getMatches(entity), matchId)
+    return utility.get(state.getMatches(entity), matchId)
   }
 
   state.getSelectedMatch = function(entity){
@@ -202,12 +199,12 @@ export default function ListBulkEntityAdder() {
 
   // () -> Boolean
   state.hasRows = function(){
-    return !util.isEmpty(state.entities.order)
+    return !utility.isEmpty(state.entities.order)
   }
 
   // Entity -> Boolean
   state.hasMatches = function(entity){
-    return !util.isEmpty(state.getMatches(entity))
+    return !utility.isEmpty(state.getMatches(entity))
   }
 
   // Entity -> Boolean
@@ -229,20 +226,20 @@ export default function ListBulkEntityAdder() {
   state.entitiesValid = function(){
     return Object.values(state.entities.byId)
       .every(function(entity){
-        return util.isEmpty(state.getEntityErrors(entity))
+        return utility.isEmpty(state.getEntityErrors(entity))
       })
   }
 
   // () -> Boolean
   state.referenceValid = function(){
-    return util.isEmpty(state.getReferenceErrors())
+    return utility.isEmpty(state.getReferenceErrors())
   }
 
   // () -> Boolean
   state.isResolved = function(){
     return Object.values(state.entities.byId)
       .every(function(entity){
-        return util.isEmpty(state.getMatches(entity))
+        return utility.isEmpty(state.getMatches(entity))
       })
   }
 
@@ -255,19 +252,19 @@ export default function ListBulkEntityAdder() {
 
   // String, Object -> State
   state.set = function(key, value){
-    state = util.set(state, key, value)
+    state = utility.set(state, key, value)
     return state
   }
 
   // [String], Object -> State
   state.setIn = function(path, value){
-    state = util.setIn(state, path, value)
+    state = utility.setIn(state, path, value)
     return state
   }
 
   // [String] -> State
   state.deleteIn = function(path){
-    state = util.deleteIn(state, path)
+    state = utility.deleteIn(state, path)
     return state
   }
 
@@ -295,7 +292,7 @@ export default function ListBulkEntityAdder() {
     return state.setIn(
       ['matches', 'byEntityId', entity.id],
       {
-        byId: util.normalize(matches),
+        byId: utility.normalize(matches),
         order: matches.map(function(match){ return match.id }),
         selected: null
       }
@@ -388,7 +385,7 @@ export default function ListBulkEntityAdder() {
 
   // Entity, String -> State
   state.spliceNewEntityId = function(entity, newId){
-    var newEntity = util.set(entity, 'id', newId)
+    var newEntity = utility.set(entity, 'id', newId)
     return state.replaceEntity(entity, newEntity)
   }
 
@@ -401,7 +398,7 @@ export default function ListBulkEntityAdder() {
 
   // () -> State
   state.setUploadSupport = function(){
-    return util.browserCanOpenFiles() ?
+    return utility.browserCanOpenFiles() ?
       state :
       state
       .disableUpload()
@@ -475,7 +472,7 @@ export default function ListBulkEntityAdder() {
   // () -> Promise[State]
   state.createEntities = function(){
     var newEntities = state.getNewEntities()
-    return util.isEmpty(newEntities) ?
+    return utility.isEmpty(newEntities) ?
       Promise.resolve(state) :
       state.api
       .createEntities(newEntities)
@@ -492,7 +489,7 @@ export default function ListBulkEntityAdder() {
   // () -> Promise[Void]
   state.redirectIfNoErrors = function(){
     if (state.notification === '') {
-      util.redirectTo(state.getResourcePath())
+      utility.redirectTo(state.getResourcePath())
     }
   }
 
@@ -523,7 +520,7 @@ export default function ListBulkEntityAdder() {
 
   function topSpinner(){
     return state.hasSpinner('top') &&
-      util.appendSpinner($('<div>', { id: 'top-spinner' }))
+      utility.appendSpinner($('<div>', { id: 'top-spinner' }))
   }
 
   function uploadContainer(){
@@ -601,7 +598,7 @@ export default function ListBulkEntityAdder() {
       inputWithErrorAlerts({
         className: 'cell-input',
         label: col.label,
-        value: util.get(entity, col.attr),
+        value: utility.get(entity, col.attr),
         errors: errors,
         handleChange: handleCellEditOf(entity, col.attr)
       })
@@ -651,7 +648,7 @@ export default function ListBulkEntityAdder() {
   function errorList(errors, label){
     return errors.map(function(err){
       var text = '[ ! ] ' + label + ' ' + err
-      var div = util.createElementWithText('div', text)
+      var div = utility.createElementWithText('div', text)
       return div.outerHTML
     }).join('')
   }
@@ -677,7 +674,7 @@ export default function ListBulkEntityAdder() {
 
 
   function matchResolver(entity) {
-    var anchorId = "popover" + util.randomDigitStringId()
+    var anchorId = "popover" + utility.randomDigitStringId()
 
     return $('<div>', {
       "class": 'resolver-anchor',
@@ -796,7 +793,7 @@ export default function ListBulkEntityAdder() {
       errors,
       inputWithErrorAlerts({
         className: 'reference-input',
-        label: util.capitalize(attr),
+        label: utility.capitalize(attr),
         value: state.getIn(['reference', attr]),
         errors: errors,
         handleChange: handleReferenceInputOf(attr)
@@ -811,7 +808,7 @@ export default function ListBulkEntityAdder() {
   }
 
   function bottomSpinner(){
-    return util.appendSpinner(
+    return utility.appendSpinner(
       $('<div>', { id: 'bottom-spinner' })
     )
   }
@@ -844,7 +841,7 @@ export default function ListBulkEntityAdder() {
   // [Entities] -> EntitiesErrors
   function validateEntities(entities){
     return entities.reduce(function(acc, entity){
-      return util.set(
+      return utility.set(
         acc,
         entity.id,
         validateResource(
@@ -872,19 +869,19 @@ export default function ListBulkEntityAdder() {
         resource,
         attr,
         validations,
-        util.get(resourceErrorsAcc, attr)
+        utility.get(resourceErrorsAcc, attr)
       )
-      return util.isEmpty(attrErrors) ?
+      return utility.isEmpty(attrErrors) ?
         resourceErrorsAcc : // don't store an entry in errors accumulator for an empty errors array
-        util.set(resourceErrorsAcc, attr, attrErrors)
+        utility.set(resourceErrorsAcc, attr, attrErrors)
     }, {})
   }
 
   // Entity, EntityAttr, EntityAttrErrors -> [String]
   function validateAttr(resource, attr, validations, attrErrors){
-    return (util.get(validations, attr) || []).reduce(  
+    return (utility.get(validations, attr) || []).reduce(  
       function(attrErrorsAcc, validation){
-        return validation.isValid(util.get(resource, attr)) ?
+        return validation.isValid(utility.get(resource, attr)) ?
           attrErrorsAcc :
           attrErrorsAcc.concat(validation.message)
       },
@@ -913,11 +910,11 @@ export default function ListBulkEntityAdder() {
     },
     personName: {
       message: 'must have a first and last name with no numbers',
-      isValid: function(attr){ return util.validPersonName(attr) }
+      isValid: function(attr){ return utility.validPersonName(attr) }
     },
     validUrl: {
       message: 'must be a valid ip address',
-      isValid: function(attr){ return util.validURL(attr) }
+      isValid: function(attr){ return utility.validURL(attr) }
     }
   }
 
@@ -957,7 +954,7 @@ export default function ListBulkEntityAdder() {
   function mergeValidations(v1, v2){
     return Object.keys(v1).reduce(
       function(acc, attr){
-        return util.set(acc, attr, util.get(v1, attr).concat(util.get(v2, attr)))
+        return utility.set(acc, attr, utility.get(v1, attr).concat(utility.get(v2, attr)))
       },
       v1
     )
@@ -1004,7 +1001,7 @@ export default function ListBulkEntityAdder() {
   // String -> MaybeEntities
   function parse(csv){
     var result = Papa.parse(csv, { header: true, skipEmptyLines: true, transform: function(val){ return val.trim() } })
-    return util.isEmpty(result.errors) ?
+    return utility.isEmpty(result.errors) ?
       { result: result, error: null } :
       { result: null,   error: parseErrorMsg(result.errors[0], result.data) }
   }
@@ -1012,7 +1009,7 @@ export default function ListBulkEntityAdder() {
   // Error, [Object] -> String
   function parseErrorMsg(error, rows){
     return "CSV format error: " + error.message +
-      (util.exists(error.row) && " in row: '" + Object.values(rows[error.row]).join(",")) + "'"
+      (utility.exists(error.row) && " in row: '" + Object.values(rows[error.row]).join(",")) + "'"
   }
 
   // MaybeEntities -> MaybeEntities
@@ -1112,7 +1109,7 @@ export default function ListBulkEntityAdder() {
 
   // Entity, String, String -> Promise[State]
   function handleCellEdit(entity, attr, value){
-    var newEntity = util.set(entity, attr, value)
+    var newEntity = utility.set(entity, attr, value)
     return state
       .setIn(['entities', 'byId', entity.id], newEntity)
       .maybeReidentifyEntity(newEntity, attr)

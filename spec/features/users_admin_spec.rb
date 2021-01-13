@@ -65,10 +65,9 @@ describe 'Users Admin Pages', :type => :feature do
 
     it 'shows table with abilities' do
       successfully_visits_page edit_permissions_url
-
       page_has_selector 'table#users-edit-permissions-table tbody tr', count: 8
-      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'ADD', count: 7
-      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'DELETE', count: 1
+      page_has_selector 'table#users-edit-permissions-table tbody tr td input[value="ADD"]', count: 7
+      page_has_selector 'table#users-edit-permissions-table tbody tr td input[value="DELETE"]', count: 1
     end
 
     it 'adding the bulk permisison permisison' do
@@ -79,7 +78,7 @@ describe 'Users Admin Pages', :type => :feature do
       find('.add-user-ability-bulk').click
 
       successfully_visits_page edit_permissions_url
-      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'DELETE', count: 2
+      page_has_selector 'table#users-edit-permissions-table tbody tr td input[value="DELETE"]', count: 2
       expect(page).to have_text 'Permission was successfully added.'
       expect(test_user.reload.abilities.include?(:bulk)).to be true
     end
@@ -92,7 +91,7 @@ describe 'Users Admin Pages', :type => :feature do
       find('.delete-user-ability-edit').click
 
       successfully_visits_page edit_permissions_url
-      page_has_selector 'table#users-edit-permissions-table tbody tr td a', text: 'ADD', count: 8
+      page_has_selector 'table#users-edit-permissions-table tbody tr td input[value="ADD"]', count: 8
       expect(page).to have_text 'Permission was successfully deleted.'
       expect(test_user.reload.abilities.include?(:edit)).to be false
     end

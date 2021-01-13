@@ -2,7 +2,7 @@
   <a class="buttons prev" href="#"><%= image_tag("carousel_left_semi.png"); %></a>
   <div class="viewport">
       <ul class="overview">
-      <% entities.each do |entity| %>
+      <% entities.shuffle!.each do |entity| %>
         <li>
           <% cache([entity.cache_key_with_version, 'partial/carousel']) do %>
             <%= render partial: "entities/carousel", locals: { entity: entity } %>
@@ -16,7 +16,6 @@
 
 <script type="text/javascript">         
     $(document).ready(function(){               
-        $(".littlesis_carousel li").shuffle();              
         $(".littlesis_carousel").tinycarousel({ 
           pager: true, 
           start: 1, 

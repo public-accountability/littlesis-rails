@@ -1,12 +1,12 @@
-const util = window.utility
+import utility from '../common/utility'
 
 var matchExistsAndIsDisplay = function(row, type) {
   return row.entity_matches && row.entity_matches.length > 0 && type === 'display'
 }
 
 var entityLink = function(entityData) {
-  return util.createLink(
-      util.entityLink(entityData[0].id, entityData[0].name, entityData[0].primary_ext),
+  return utility.createLink(
+      utility.entityLink(entityData[0].id, entityData[0].name, entityData[0].primary_ext),
       entityData[0].name
       ).outerHTML 
 }
@@ -55,7 +55,7 @@ var renders = {
 
   "matchButtons": function(data, type, row) {
     if (matchExistsAndIsDisplay(row, type)) {
-      return util.createElement({
+      return utility.createElement({
         "tag": 'button',
         "text": "Match this row",
         "class": 'match-button'

@@ -35,17 +35,28 @@ module ApplicationHelper
     msg = flash[:alert] || flash[:notice]
     style = flash[:alert].present? ? 'danger' : 'success'
 
-    content_tag(:div, msg, class: "alert alert-#{style}")
+    tag.div(msg, class: "alert alert-#{style}")
   end
 
-  def dismissable_alert(id, class_name = 'alert-info', &block)
-    session[:dismissed_alerts] = [] unless session[:dismissed_alerts].kind_of?(Array)
+  def dismissable_alert(id, class_name = 'alert-info', &block) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    session[:dismissed_alerts] = [] unless session[:dismissed_alerts].is_a?(Array)
 
     unless session[:dismissed_alerts].include? id
-      content_tag('div', id: id, class: "alert #{class_name} alert-dismissable") do
-        content_tag('button', raw('&times;'),
-                    'class' => 'ml-2 close',
-                    'data-dismiss-id' => id) + capture(&block)
+      tag.div(
+        id: id,
+        class: "alert #{class_name} alert-dismissable",
+        data: { controller: 'alert', alert_target: 'alert' }
+      ) do
+        tag.button(
+          raw('&times;'),
+          class: 'ml-2 close',
+          data: {
+            dismiss_id: id,
+            dismiss_url: dismiss_helper_path,
+            action: 'alert#dismiss',
+            alert_target: 'dismisser'
+          }
+        ) + capture(&block)
       end
     end
   end

@@ -1,8 +1,6 @@
+import utility from '../common/utility'
+
 export default function DonationMatcher() {
-
-  const $ = window.$
-  const utility = window.utility
-
   var matchDonations = {
     table: null,
     entity_id: null,

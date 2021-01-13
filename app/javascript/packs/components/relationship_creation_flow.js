@@ -124,7 +124,7 @@ export default function RelationshipCreationFlow(){
       categoryButtonsSetActiveClass(this);
       lookForSimilarRelationship();
       $('#similar-relationships').addClass('hidden');
-      window.$('#similar-relationships').popover('dispose');
+      $('#similar-relationships').popover('dispose');
     });
   }
 
@@ -142,7 +142,7 @@ export default function RelationshipCreationFlow(){
   function hasSimilarRelationships(relationships) {
     if (relationships.length == 0) { return; }
     $('#similar-relationships').removeClass('hidden').fadeIn();
-    window.$('#similar-relationships').popover({
+    $('#similar-relationships').popover({
       content: popoverContent(relationships),
       html: true
     });

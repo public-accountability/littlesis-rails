@@ -15,7 +15,11 @@
 }
 
 table#permission-passes {
-  button {
+  .pass-url {
+    width: 0;
+    opacity: 0;
+  }
+  .copy-button {
     padding: 0;
     border: none;
   }

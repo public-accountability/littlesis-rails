@@ -1,5 +1,3 @@
-const $ = window.$
-
 let entity = {}
 
 // Validates an entity form via an AJAX call
