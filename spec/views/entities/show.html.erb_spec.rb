@@ -104,7 +104,7 @@ describe 'entities/show.html.erb' do
         expect(rendered).not_to have_css '.button-tabs span.active a', :text => 'Interlocks'
         expect(rendered).to have_css '.button-tabs span a', :text => 'Interlocks', :count => 1
         expect(rendered).to have_css '.button-tabs span a', :text => 'Giving', :count => 1
-        expect(rendered).to have_css '.button-tabs span a', :text => 'Political', :count => 1
+        # expect(rendered).to have_css '.button-tabs span a', :text => 'Political', :count => 1
         expect(rendered).to have_css '.button-tabs span a', :text => 'Data', :count => 1
       end
     end

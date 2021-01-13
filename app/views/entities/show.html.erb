@@ -1,7 +1,11 @@
 <% content_for(:page_title, @entity.name) %>
 <% content_for(:head) do %>
   <%= og_tags(title: "LittleSis: #{@entity.name}", url: entity_url(@entity), image: @entity.featured_image_url) %>
-  <%= javascript_pack_tag 'components/entity_page' %>
+  <script>
+   window.addEventListener('DOMContentLoaded', function() {
+     LittleSis.EntityPage.start()
+   })
+  </script>
 <% end %>
 
 <%= render partial: 'shared/entity_info', locals: {entity: @entity}  %>

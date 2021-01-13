@@ -385,7 +385,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       [{ text: 'Relationships',  path: concretize_entity_path(person) },
        { text: 'Interlocks',     path: concretize_interlocks_entity_path(person) },
        { text: 'Giving',         path: concretize_giving_entity_path(person) },
-       { text: 'Political',      path: concretize_political_entity_path(person) },
+       # { text: 'Political',      path: concretize_political_entity_path(person) },
        { text: 'Data',           path: concretize_datatable_entity_path(person) }]
     end
 
@@ -591,7 +591,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       setup_donations.call
       visit giving_entity_path(root_entity)
     end
-    
+
     describe "for a person" do
       let(:donors) { Array.new(4) { create(:entity_person, :with_last_user_id) } }
       let(:recipients) { Array.new(3) { create(%i[entity_org entity_person].sample) } }
