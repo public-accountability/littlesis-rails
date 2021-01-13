@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '6.1.0'
+gem 'rails', '6.1.1'
 
 gem 'mysql2', '~> 0.5.2'
 gem 'puma', '>= 5'
@@ -58,7 +58,6 @@ gem 'text', '>= 1.3.1'
 gem 'httparty', '>= 0.16.2'
 
 group :test do
-  gem 'codecov', :require => false
   gem 'simplecov', :require => false
 end
 

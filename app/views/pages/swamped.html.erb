@@ -41,7 +41,7 @@
   <div class="row content-row">
     <div class="col rats-col">
       <div class="rats p-4">
-        <% JSON.parse(File.read(Rails.root.join('data/revolvers.json'))).each do |rat| %>
+        <% JSON.parse(File.read(Rails.root.join('data/swamped.json'))).each do |rat| %>
           <p>
             <%= rat['position'] %>,
             <%= link_to rat['name'], rat['url'], target: '_blank'  %>
