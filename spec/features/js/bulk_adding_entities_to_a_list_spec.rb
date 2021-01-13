@@ -90,7 +90,7 @@ feature 'Bulk-adding entities to a list', type: :feature, js: true do
       allow(Entity).to receive(:search).and_return(entities.each(&:save))
     end
 
-    scenario 'I can resolve duplications' do
+    xscenario 'I can resolve duplications' do
       expect(page).to have_css('#bulk-add-header', text: "Add entities to #{list.name}")
 
       within '#upload-container' do
