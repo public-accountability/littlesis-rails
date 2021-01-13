@@ -73,7 +73,7 @@ doc/
 !/data/cmp_matches.yml
 !/data/cmp_top_50.csv
 !/data/street_types.yml
-!/data/revolvers.json
+!/data/swamped.json
 
 # webpacker
 !/package.json
