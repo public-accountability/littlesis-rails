@@ -266,7 +266,7 @@ module EntitiesHelper
       { text: 'Relationships',  path: concretize_entity_path(entity) },
       { text: 'Interlocks',     path: concretize_interlocks_entity_path(entity) },
       { text: 'Giving',         path: concretize_giving_entity_path(entity) },
-      { text: 'Political',      path: concretize_political_entity_path(entity) },
+      # { text: 'Political',      path: concretize_political_entity_path(entity) },
       { text: 'Data',           path: concretize_datatable_entity_path(entity) }
     ]
     content_tag(:div, class: 'button-tabs') do
