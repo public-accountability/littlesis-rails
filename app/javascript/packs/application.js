@@ -67,4 +67,4 @@ window.LittleSis.DonationMatcher = DonationMatcher
 window.LittleSis.RelationshipsDatatable = RelationshipsDatatable
 window.LittleSis.EntityPage = EntityPage
 
-// import "controllers"
+import "controllers"

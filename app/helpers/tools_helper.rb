@@ -11,7 +11,7 @@ module ToolsHelper
   # 30 represents "Memberships" where the selected entity is entity1
   # 31 represents "Members" where the selected entity is entity2
   def relationship_select_builder(entity)
-    content_tag(:select, class: 'selectpicker', id: 'relationship-cat-select') do
+    content_tag(:select, id: 'relationship-cat-select') do
       Relationship
         .categories_for(entity.primary_ext)
         .reject { |c| c == 5 || c == 3 }
