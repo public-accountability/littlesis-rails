@@ -7,25 +7,20 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
-import './polyfill'
 import jquery from 'jquery'
 import 'bootstrap'
-import 'jquery-ui/ui/widgets/autocomplete'
 import 'tinycarousel'
 import 'bootstrap-select'
 import 'jquery-typeahead'
-
-// TODO: replace Hogan with mustache
-import 'hogan.js'
 
 import 'd3'
 import 'papaparse'
 import 'file-saver'
 import 'select2'
 
-import utility from './common/utility';
-import http from './common/http';
-import tags from './common/tags';
+import utility from './common/utility'
+import http from './common/http'
+import tags from './common/tags'
 import datatable from 'datatables.net'
 import typeahead from 'typeahead.js'
 import mustache from 'mustache'
