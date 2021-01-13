@@ -8,31 +8,96 @@
     src: font_url('Voltaire-Regular.ttf');
 }
 
+$swamped_max_width: 1400px;
+$swamped_padding: 20px;
+$swamped_purple: #9E8ECD;
+$swamped_orange: #DAAB8F;
+$swamped_green: #689A74;
+$swamped_blue: #A8BEEF;
+
+#swamped {
+    max-width: $swamped_max_width;
+    padding-left: $swamped_padding;
+    padding-right: $swamped_padding;
+    margin: 0 auto;
+}
+
+footer {
+    max-width: $swamped_max_width;
+    padding-left: $swamped_padding;
+    padding-right: $swamped_padding;
+    margin: 0 auto;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: right;
+    color: black;
+
+    p {
+        background-color: #fff;
+        float: right;
+        padding: 2px;
+        border-radius: 5px;
+    }
+
+    a {
+        font-family: 'Give You Glory';
+        color: black;
+        font-size: 28px;
+
+        &:hover {
+            color: $swamped_purple;
+            text-decoration: none;
+        }
+    }
+}
+
+
+
 .header-image {
     position: relative;
-    font-family: 'Voltaire';
-    background: asset_url("IMG_1387.jpg");
-    background-size: cover;
-    width: 100%;
-    height: 300px;
+    img {
+        width: 100%;
+        max-height: 500px;
+    }
 }
 
 .header-text {
-    font-size: 55px;
+    font-size: 52px;
     font-family: 'Give You Glory';
-    position: relative;
+    position: absolute;
     top: 20px;
     left: 20px;
 }
 
 .header-subtext {
+    font-family: 'Voltaire';
+    font-size: 12px;
     display: none;
     max-width: 300px;
-    position: relative;
+    position: absolute;
     text-align: center;
-    top: 20px;
+    top: 85px;
     left: 40px;
 }
+
+.header-buttons {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+
+    button {
+        border: 0;
+        background-color: $swamped_purple;
+        &:hover {
+            background-color: $swamped_orange;
+        }
+
+        color: black;
+    }
+
+}
+
 
 .header-spacer {
     height: 20px;
@@ -45,127 +110,79 @@
     font-family: 'Voltaire';
 }
 
-#tip-box {
-    display: none;
-    position: fixed;
-    z-index: 2000;
-    bottom: 200px;
-    right: 75px;
-    font-size: 12px;
-    font-family: 'Voltaire';
-
-    .inner {
-        padding: 15px;
-        border-radius: 10px;
-        background-color: #fff;
-        width: 320px;
-    }
-
-    .tip-inner {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-}
-
 .btn-rat {
-
+    &:hover {
+        background-color: #FFF;
+        .rat-img {
+             animation-name: ratspin;
+             animation-duration: 1000ms;
+             animation-iteration-count: infinite;
+             animation-timing-function: linear;
+        }
+    }
 }
 
 .rat-img {
     height: 21px;
 }
 
-.rats {
-    font-size: 12px;
+.rat-unknown {
+    color: $swamped_orange;
+    border-bottom: 1px dashed $swamped_blue;
 }
 
+.rats {
+    font-size: 18px;
+    text-align: center;
+
+    p {
+        line-height: 3em;
+    }
+
+    a {
+        color: $swamped_purple;
+
+        &:hover {
+            color: $swamped_orange;
+            text-decoration: underline dashed $swamped_blue;
+        }
+    }
+}
+
+
+
+@keyframes ratspin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
+
+
 @media (min-width: 666px) {
-    .header-image {
-        height: 320px;
+    .header-text {
+        font-size: 60px;
     }
 }
 
 @media (min-width: 800px) {
-    .header-image {
-        height: 360px;
-    }
-
     .header-subtext {
         display: block;
-        font-size: 12px;
-        max-width: 215px;
-        left: 30px;
-    }
-
-    #tip-box {
-        font-size: 12px;
-        display: block;
+        max-width: 175px;
     }
 }
 
 @media (min-width: 1000px) {
-    .header-image {
-        height: 445px;
-    }
-
-    .header-text {
-        font-size: 70px;
-        top: 25px;
-        left: 25px;
-    }
-
-    .rats {
-        font-size: 14px;
-    }
-
     .header-subtext {
+        display: block;
         font-size: 14px;
-        max-width: 250px;
-    }
-
-    #tip-box {
-        font-size: 14px;
-        // display: block;
-        // bottom: 100px;
+        max-width: 264px;
+        left: 30px;
     }
 }
 
 @media (min-width: 1200px) {
-    .header-image {
-        height: 575px;
-    }
-
-    .header-text {
-        top: 35px;
-        left: 35px;
-    }
-
-    .rats {
-        font-size: 15px;
-    }
-
-
-    .header-subtext {
-        font-size: 15px;
-        max-width: 300px;
-    }
-
     #tip-box {
         font-size: 14px;
         bottom: 120px;
         right: 150px;
-    }
-}
-
-@media (min-width: 1400px) {
-    .header-image {
-        height: 650px;
-    }
-}
-
-@media (min-width: 1600px) {
-    .header-image {
-        height: 750px;
     }
 }
