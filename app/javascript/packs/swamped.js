@@ -6,7 +6,7 @@ function scrollAnimation() {
     scrollTop: $('.rats p').last().offset().top - $('.header-image').first().height()
   }
 
-  const duration = 22000
+  const duration = 20_000
 
   const onComplete = () => $('#btn-scroll').removeClass('ratspin').prop('disabled', false)
 

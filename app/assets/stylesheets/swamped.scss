@@ -187,10 +187,14 @@ footer {
     }
 }
 
-@media (min-width: 1200px) {
-    #tip-box {
-        font-size: 14px;
-        bottom: 120px;
-        right: 150px;
+@media (max-height: 800px) {
+    .header-image {
+        img {
+            max-height: 425px;
+        }
+    }
+
+    #swamped {
+        max-width: $swamped_max_width - 200;
     }
 }
