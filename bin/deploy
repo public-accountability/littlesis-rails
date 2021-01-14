@@ -13,7 +13,7 @@ cd /var/www/littlesis
 
 git remote update
 
-read -p 'Which branch? ' -e -i 'master' branch
+read -p 'Which branch? ' -e -i 'main' branch
 
 echo "Deploying ${branch}"
 
