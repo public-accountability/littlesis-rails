@@ -37,8 +37,9 @@ import DonationMatcher from './components/donation_matcher'
 import RelationshipsDatatable from './components/relationships_datatable'
 import EntityPage from './components/entity_page'
 
+jquery.typeahead = typeahead
 window.$ = jquery
-$.typeahead = typeahead
+window.jQuery = jquery
 window.utility = utility
 window.utility.delete = utility.del
 window.datatable = datatable

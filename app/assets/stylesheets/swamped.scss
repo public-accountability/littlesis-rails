@@ -52,8 +52,6 @@ footer {
     }
 }
 
-
-
 .header-image {
     position: relative;
     img {
@@ -98,7 +96,6 @@ footer {
 
 }
 
-
 .header-spacer {
     height: 20px;
     background: linear-gradient(#fff, rgba(0, 0, 0, -1));
@@ -119,6 +116,17 @@ footer {
              animation-iteration-count: infinite;
              animation-timing-function: linear;
         }
+    }
+}
+
+#btn-scroll.ratspin {
+    color: $swamped_green;
+
+    svg {
+        animation-name: ratspin;
+        animation-duration: 1000ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
     }
 }
 
@@ -179,10 +187,14 @@ footer {
     }
 }
 
-@media (min-width: 1200px) {
-    #tip-box {
-        font-size: 14px;
-        bottom: 120px;
-        right: 150px;
+@media (max-height: 800px) {
+    .header-image {
+        img {
+            max-height: 425px;
+        }
+    }
+
+    #swamped {
+        max-width: $swamped_max_width - 200;
     }
 }
