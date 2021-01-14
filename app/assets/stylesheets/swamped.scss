@@ -23,7 +23,7 @@ $swamped_blue: #A8BEEF;
 }
 
 footer {
-    max-width: $swamped_max_width;
+    /* max-width: $swamped_max_width; */
     padding-left: $swamped_padding;
     padding-right: $swamped_padding;
     margin: 0 auto;
@@ -46,8 +46,8 @@ footer {
         font-size: 28px;
 
         &:hover {
-            color: $swamped_purple;
-            text-decoration: none;
+            color: $swamped_green;
+            text-decoration: underline dashed $swamped_blue;
         }
     }
 }

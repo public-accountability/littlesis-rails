@@ -4,20 +4,27 @@
   <%= stylesheet_link_tag "swamped" %>
 
   <script>
-   function scrollTo(element) {
+   function scrollToTop(element) {
      $('html, body').stop()
-     $('html, body').animate({ scrollTop: $(element).offset().top }, 25000)
+     $('html, body').animate({ scrollTop: $('#scroll-top').offset().top }, 5000)
    }
 
+   function scrollToBottom() {
+     $('html, body').scrollTop(0)
+
+     $('html, body').animate({
+       scrollTop: $('.rats p').last().offset().top - $('.header-image').first().height()
+     }, 20000)
+   }
 
    window.addEventListener('DOMContentLoaded', function() {
-     $("#btn-scroll").click(function() { scrollTo('#scroll-top') })
+     $("#btn-scroll").click(function() { scrollToTop() })
      $("#btn-about").click(function() { $('#modal-about').modal() })
      $("#btn-tip").click(function() { $('#modal-tip').modal() })
    })
 
    window.addEventListener('load', function() {
-     scrollTo('#scroll-bottom')
+     scrollToBottom()
    })
 
   </script>
@@ -127,9 +134,6 @@
     </div>
   </div>
 </div>
-
-
-<div id="scroll-bottom"></div>
 
 <footer>
   <p><a href="https://littlesis.org">by littlesis.org</a></p>
