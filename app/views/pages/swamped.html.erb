@@ -1,28 +1,34 @@
-<% content_for(:page_title, 'SWAMPED: Fleeing Trump Officials head back to Wall Street') %>
+<% content_for(:page_title, 'SWAMPED: Trump officials exit through the revolving door') %>
 <% content_for(:hide_top, true) %>
 <% content_for :head do %>
+  <%= og_tags(title: 'SWAMPED: Trump officials exit through the revolving door', url: 'https://littlesis.org/swamped', image: asset_url("IMG_1387.jpg")) %>
+  <meta property="og:description" content="Trump administration staffers are fleeing the White House, LittleSis is tracking them as they make their way back to the private sector">
+  <link rel="icon" href="<%= asset_url("rat_icon.png") %>" type="image/png">
   <%= stylesheet_link_tag 'swamped' %>
   <%= javascript_pack_tag 'swamped' %>
 <% end %>
-<div id="scroll-top"></div>
 
 <div id="modal-about" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">About Swamped</h5>
+        <h5 class="modal-title">About SWAMPED</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
 
       <div class="modal-body">
-        <p>Trump administration staffers are taking a spin through the revolving door and landing cushy jobs on Wall St, K Street, and at influential corporations. </p>
-        <p>Revoling door information ... </p>
-
+        <p>
+          Trump administration staffers are taking a spin through the revolving door and landing cushy jobs on Wall St, K Street, and at influential corporations.
+        </p>
+        <p>
+          The special knowledge and relationships that elected representatives, government regulators, and other public officials develop in government is frequently of high value to industries seeking to influence policy. Public officials leave public service to take positions in the private sector, and often move back and forth between the spheres. This phenomenon – called the “revolving door” – raises serious ethical concerns as people entrusted with safeguarding the public welfare face competing incentives from the private sector. As the Trump administration leaves the White House, LittleSis is tracking Trump administration officials that pass through the revolving door and the private firms that hire them.
+        </p>
       </div>
+
       <div class="modal-footer">
-        Illustration by Carl Copeland Insta: @carlcodesign
+        Illustration by Carl Copeland <a href="https://instagram.com/carlcodesign">@carlcodesign</a>
       </div>
     </div>
   </div>
@@ -39,12 +45,12 @@
       </div>
 
       <div class="modal-body">
-        <p class="d-inline">Tell us about a Trump Rat on the loose</p>
+        <p class="d-inline">Got a tip about where they landed? Let us know about it.</p>
         <%= form_with url: '/swamped' do |f|  %>
           <div class="input-group mb-3">
             <%= f.text_field :tip, class: 'form-control' %>
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary btn-rat"><%= image_tag('rat.png', class: 'rat-img') %></button>
+              <button class="btn btn-outline-secondary btn-rat"><%= image_tag('rat_small.png', class: 'rat-img') %></button>
             </div>
           </div>
         <% end %>
@@ -61,22 +67,22 @@
         <img src="<%= asset_url("IMG_1387.jpg") %>" />
         <div class="header-text">SWAMPED</div>
         <div class="header-subtext">
-          Trump administration staffers are fleeing via the revolving door to jobs on Wall Street, K Street, and at influential corporations.
+          Trump administration staffers are fleeing the White&#160House<br/>LittleSis is tracking them as they make their way back to the private sector
         </div>
 
         <div class="header-buttons">
-          <button id="btn-scroll" type="button" class="btn btn-sm btn-primary" title="Scroll">
+          <button id="btn-scroll" type="button" class="btn btn-primary" title="Scroll">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
               <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
               <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
             </svg>
           </button>
-          <button id="btn-about" type="button" class="btn btn-sm btn-primary" title="About">
+          <button id="btn-about" type="button" class="btn btn-primary" title="About">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question" viewBox="0 0 16 16">
               <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
             </svg>
           </button>
-          <button id="btn-tip" type="button" class="btn btn-sm btn-primary" title="Got a tip?">
+          <button id="btn-tip" type="button" class="btn btn-primary" title="Got a tip?">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-dots" viewBox="0 0 16 16">
               <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
               <path d="M2.165 15.803l.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2z"/>
@@ -91,20 +97,20 @@
   <div class="row content-row">
     <div class="col rats-col">
       <div class="rats p-4">
-        <% JSON.parse(File.read(Rails.root.join('data/swamped.json'))).each do |rat| %>
-          <p>
-            <%= rat['position'] %>,
-            <%= link_to rat['name'], rat['url'], target: '_blank'  %>
-            left on <%= rat['date'] %> and now works for
-            <% if rat['org_url'].present? %>
-              <%= link_to rat['where_to'], rat['org_url'] %>
-            <% elsif  rat['where_to'] == 'Unknown' %>
-              <span class="rat-unknown">unknown</span>
-            <% else %>
-              <%= rat['where_to'] %>
-            <% end %>
-          </p>
-        <% end %>
+          <% JSON.parse(File.read(Rails.root.join('data/swamped.json'))).reverse.each do |rat| %>
+            <p>
+              <%= rat['position'] %>,
+              <%= link_to rat['name'], rat['url'], target: '_blank'  %>
+              left on <%= rat['date'] %> and now works for
+              <% if rat['org_url'].present? %>
+                <%= link_to rat['where_to'], rat['org_url'] %>
+              <% elsif  rat['where_to'] == 'Unknown' %>
+                <span class="rat-unknown">unknown</span>
+              <% else %>
+                <%= rat['where_to'] %>
+              <% end %>
+            </p>
+          <% end %>
       </div>
     </div>
   </div>
