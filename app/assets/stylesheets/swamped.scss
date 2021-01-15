@@ -23,7 +23,6 @@ $swamped_blue: #A8BEEF;
 }
 
 footer {
-    /* max-width: $swamped_max_width; */
     padding-left: $swamped_padding;
     padding-right: $swamped_padding;
     margin: 0 auto;
@@ -72,7 +71,7 @@ footer {
     font-family: 'Voltaire';
     font-size: 12px;
     display: none;
-    max-width: 300px;
+    max-width: 330px;
     position: absolute;
     text-align: center;
     top: 85px;
@@ -186,6 +185,16 @@ footer {
         left: 30px;
     }
 }
+
+@media (min-width: 1300px) {
+    .header-subtext {
+        display: block;
+        font-size: 14px;
+        max-width: 300px;
+        left: 25px;
+    }
+}
+
 
 @media (max-height: 800px) {
     .header-image {
