@@ -51,6 +51,16 @@ footer {
     }
 }
 
+.modal-title {
+    font-family: 'Give You Glory';
+    color: black;
+    font-size: 25px;
+}
+
+.modal-body, .modal-footer {
+    font-family: 'Voltaire';
+}
+
 .header-image {
     position: relative;
     img {
