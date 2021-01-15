@@ -97,7 +97,6 @@
   <div class="row content-row">
     <div class="col rats-col">
       <div class="rats p-4">
-        <%= cache('pages/swamped/list', expires_in: 1.hour) do %>
           <% JSON.parse(File.read(Rails.root.join('data/swamped.json'))).reverse.each do |rat| %>
             <p>
               <%= rat['position'] %>,
@@ -112,7 +111,6 @@
               <% end %>
             </p>
           <% end %>
-        <% end %>
       </div>
     </div>
   </div>
