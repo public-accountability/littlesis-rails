@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env -S rails runner
 
 unless Rails.env.development?
   raise "#{__FILE__} should only be run in the development environment"
