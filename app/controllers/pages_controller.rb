@@ -64,11 +64,11 @@ class PagesController < ApplicationController
   end
 
   def swamped
-    admins_only
     if request.post?
       SwampTip.create!(content: params[:tip])
       redirect_to :swamped
     else
+      expires_in 30.minutes, public: true
       render layout: 'fullscreen'
     end
   end
