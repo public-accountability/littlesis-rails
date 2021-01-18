@@ -18,7 +18,7 @@ class TagsController < ApplicationController
     if tag.save
       flash[:notice] = "Tag successfully created"
     else
-      flash[:alert] = "Error: #{tag.errors.full_messages.join('. ')}"
+      flash[:errors] = tag.errors.full_messages
     end
     redirect_to admin_tags_path
   end

@@ -30,7 +30,7 @@ describe HomeController, type: :controller do
 
       before { post :contact, params: params }
 
-      it { is_expected.to set_flash.now[:alert] }
+      it { is_expected.to set_flash.now[:errors] }
       it { is_expected.to render_template('contact') }
     end
 
@@ -39,7 +39,7 @@ describe HomeController, type: :controller do
 
       before { post :contact, params: params }
 
-      it { is_expected.to set_flash.now[:alert] }
+      it { is_expected.to set_flash.now[:errors] }
       it { is_expected.to render_template('contact') }
     end
 
@@ -48,7 +48,7 @@ describe HomeController, type: :controller do
 
       before { post :contact, params: params }
 
-      it { is_expected.to set_flash.now[:alert] }
+      it { is_expected.to set_flash.now[:errors] }
       it { is_expected.to render_template('contact') }
 
       it ' assigns given name to @name' do

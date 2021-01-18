@@ -1,80 +1,78 @@
 <script>
- function validateForm(){
-   if (!document.getElementById('terms_of_use').checked) {
-     alert("Unfortunately, you have to accept the terms first");
-     return false;
-   }
-   var password = document.getElementsByName("user[password]")[0].value;
-   var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
+function validateForm(){
+  if (!document.getElementById('terms_of_use').checked) {
+    alert("Unfortunately, you have to accept the terms first");
+    return false;
+  }
+  var password = document.getElementsByName("user[password]")[0].value;
+  var confirmation = document.getElementsByName("user[password_confirmation]")[0].value;
 
-   if (password.length < 8) {
-     alert('Please ensure that your password is 8 or more characters long!');
-     return false;
-   } else if (password !== confirmation) {
-     alert('Your password and password confirmation do not match :(');
-     return false;
-   } else {
-     return true;
-   }
- }
+  if (password.length < 8) {
+    alert('Please ensure that your password is 8 or more characters long!');
+    return false;
+  } else if (password !== confirmation) {
+    alert('Your password and password confirmation do not match :(');
+        return false;
+        } else {
+          return true;
+        }
+        }
 
- $(function() {
-   var aboutYouInput = document.getElementById('about-you-input');
-   aboutYouInput.setCustomValidity("Don't forget to fill out this field");
+        $(function() {
+          var aboutYouInput = document.getElementById('about-you-input');
+          aboutYouInput.setCustomValidity("Don't forget to fill out this field");
 
-   aboutYouInput.addEventListener("input", function(e){
-     if (this.value === '') {
-       this.setCustomValidity("Don't forget to fill out this field");
-     } else if (this.value.split(' ').length <= 2) {
-       this.setCustomValidity("Please include more details")
-     } else {
-       this.setCustomValidity("")
-     }
-   });
+          aboutYouInput.addEventListener("input", function(e){
+            if (this.value === '') {
+              this.setCustomValidity("Don't forget to fill out this field");
+            } else if (this.value.split(' ').length <= 2) {
+              this.setCustomValidity("Please include more details")
+            } else {
+              this.setCustomValidity("")
+            }
+          });
 
-   /*
-      This validates the username input field by checking:
-        - the minium charachter requirement
-        - It's availablity, via requests to /users/check_username
-    */
-   var usernameTimeout = null;
-   var INPUT_DELAY = 500;
-   var usernameRegex = new RegExp('^[A-Za-z]{1}\\w{2,}$')
+          /*
+             This validates the username input field by checking:
+             - the minium charachter requirement
+             - It's availablity, via requests to /users/check_username
+           */
+          var usernameTimeout = null;
+          var INPUT_DELAY = 500;
+          var usernameRegex = new RegExp('^[A-Za-z]{1}\\w{2,}$')
 
-   $('#user_username').on('input', function() {
-     if (usernameTimeout !== null) {
-       clearTimeout(usernameTimeout);
-     }
+            $('#user_username').on('input', function() {
+              if (usernameTimeout !== null) {
+                clearTimeout(usernameTimeout);
+              }
 
-     var inputElement = this;
+              var inputElement = this;
 
-     var validateInput = function() {
-       var val = $(inputElement).val();
+              var validateInput = function() {
+                var val = $(inputElement).val();
 
-       if (usernameRegex.test(val)) {
-	 $.getJSON('/users/check_username', { "username": val })
-	  .done(function(res) {
-	    if (res.valid) {
-	      inputElement.setCustomValidity('');
-	    } else {
-	      inputElement.setCustomValidity('Username is taken. Please pick a new username.');
-	    }
-	  })
-	  .fail(function() {
-	    console.error("request to check username failed");
-	    inputElement.setCustomValidity('');
-	  })
-       } else {
-	 inputElement.setCustomValidity("Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed.")
-       }
-     };
+                if (usernameRegex.test(val)) {
+                  $.getJSON('/users/check_username', { "username": val })
+                    .done(function(res) {
+                      if (res.valid) {
+                        inputElement.setCustomValidity('');
+                      } else {
+                        inputElement.setCustomValidity('Username is taken. Please pick a new username.');
+                      }
+                    })
+                  .fail(function() {
+                    console.error("request to check username failed");
+                    inputElement.setCustomValidity('');
+                  })
+                } else {
+                  inputElement.setCustomValidity("Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed.")
+                }
+              };
 
-     usernameTimeout = setTimeout(validateInput, INPUT_DELAY);
-   });
+              usernameTimeout = setTimeout(validateInput, INPUT_DELAY);
+            });
 
- });
-
-
+        });
 </script>
 
 <% column_class = 'col-sm-8' %>
@@ -83,7 +81,7 @@
   <div class="<%= column_class %>">
     <div class="thin-grey-bottom-border">
       <h2>Get Involved!</h2>
-      </div>
+    </div>
   </div>
 </div>
 
@@ -117,24 +115,10 @@
 <% input_class = 'form-control' %>
 
 <%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {:onsubmit => 'return validateForm();', data: {controller: 'tooltip'}}) do |f| %>
-  <%#% render "devise/shared/error_messages", resource: resource %>
-
   <%= f.fields_for :user_profile do |profile_fields| %>
-
-    <% if @signup_errors.present? %>
-      <%= registrations_form_group do %>
-      	  <div class="alert alert-danger" role="alert" id="signup-errors-alert">
-	    <h5><strong>Sorry!</strong> We could not create your account for the following reasons:</h5>
-	    <% @signup_errors.each do |msg| %>
-	      <p><%= msg %></p>
-	    <% end %>
-	  </div>
-      <% end %>
-    <% end %>
-
     <%= registrations_form_group do %>
-	<%= profile_fields.label :name_first, "First Name", :class => label_class   %>
-	<%= profile_fields.text_field :name_first, :required => true, :class => input_class %>
+      <%= profile_fields.label :name_first, "First Name", :class => label_class   %>
+      <%= profile_fields.text_field :name_first, :required => true, :class => input_class %>
     <% end %>
 
     <%= registrations_form_group do %>
@@ -145,72 +129,72 @@
 
     <%= registrations_form_group do %>
       <%= f.label :email,
-      "Email",
-      :class => label_class,
-      :title => 'We do not share your email with anyone. Email verification is required to use LittleSis, and a confirmation will be sent out after you submit this form',
-	:data => {tooltip_target: 'trigger', placement: 'left' } %>
-    	<%= f.email_field :email, autofocus: true, :required => true, :class => input_class %>
+        "Email",
+        :class => label_class,
+        :title => 'We do not share your email with anyone. Email verification is required to use LittleSis, and a confirmation will be sent out after you submit this form',
+        :data => {tooltip_target: 'trigger', placement: 'left' } %>
+      <%= f.email_field :email, autofocus: true, :required => true, :class => input_class %>
     <% end %>
 
     <%= registrations_form_group do %>
       <%= f.label :username, "Username",
-      :class => label_class,
-      :title => 'This is your public username. Any edits you do will be recorded with this name and visible to other LittleSis users',
-	:data => {tooltip_target: 'trigger', placement: 'left' } %>
+        :class => label_class,
+        :title => 'This is your public username. Any edits you do will be recorded with this name and visible to other LittleSis users',
+        :data => {tooltip_target: 'trigger', placement: 'left' } %>
       <%= f.text_field :username, autofocus: true,
-      :required => true,
-      :class => input_class,
-      :id => 'user_username'
+        :required => true,
+        :class => input_class,
+        :id => 'user_username'
       %>
-    <% end %>
-
-    <%= registrations_form_group do %>
-      <%= f.label :password, "Password (Minimum 8 letters)", :class => label_class %>
-      <%= f.password_field :password, autocomplete: "off", :required => true, :class => input_class  %>
-    <% end %>
-
-    <%= registrations_form_group do %>
-      <%= f.label :password_confirmation, :class => label_class  %>
-      <%= f.password_field :password_confirmation, autocomplete: "off", :required => true, :class => input_class  %>
-    <% end %>
-
-    <%= registrations_form_group do %>
-      <%= label_tag 'terms_of_use', "Terms of use", :class => label_class %>
-      <div class="bg-info p-3">
-	<p>I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith.</p>
-	<%= check_box_tag 'terms_of_use' %><small> I accept the above terms of use </small>
-      </div>
-    <% end %>
-
-    <%= registrations_form_group do %>
-      <%= label_tag 'newsletter', "Newsletter?", :class => label_class %>
-      <%= f.check_box :newsletter, checked: true, :class => 'ml-1' %>
-      <small class="pl-2">Send me your newsletter (we send one every 1-2 months)</small>
-    <% end %>
-
-    <%= registrations_form_group do %>
-      <%= label_tag 'map_the_power', "Map the Power", :class => label_class %>
-      <%= f.check_box :map_the_power, :class => 'ml-1' %>
-      <small class="pl-2">Tell me more about Map the Power!</small>
-    <% end %>
-
-    <%= registrations_form_group do %>
-      <%= label_tag 'location', "Location", :class => label_class %>
-      <%= profile_fields.text_field :location, :class => input_class %>
-    <% end %>
-
-    <%= registrations_form_group do %>
-      <%= profile_fields.label :reason, raw("What are your research interests? <br> What are you hoping to use LittleSis for?*"), :class => label_class  %>
-      <%= profile_fields.text_area :reason, :class => input_class, :rows => 5, :id => 'about-you-input' %>
-    <% end %>
-
-    <%= registrations_form_group do %>
-      <%= math_captcha_fields(math_captcha, label_class: label_class) %>
-    <% end %>
-
-    <%= registrations_form_group(column_class: 'col-4') do %>
-      <%= f.submit "Sign up", class: 'btn btn-primary' %>
-      <p class="mt-3"><small><%= render "users/shared/links" %></small></p>
-    <% end %>
   <% end %>
+
+  <%= registrations_form_group do %>
+    <%= f.label :password, "Password (Minimum 8 letters)", :class => label_class %>
+    <%= f.password_field :password, autocomplete: "off", :required => true, :class => input_class  %>
+  <% end %>
+
+  <%= registrations_form_group do %>
+    <%= f.label :password_confirmation, :class => label_class  %>
+    <%= f.password_field :password_confirmation, autocomplete: "off", :required => true, :class => input_class  %>
+  <% end %>
+
+  <%= registrations_form_group do %>
+    <%= label_tag 'terms_of_use', "Terms of use", :class => label_class %>
+    <div class="bg-info p-3">
+      <p>I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith.</p>
+      <%= check_box_tag 'terms_of_use' %><small> I accept the above terms of use </small>
+    </div>
+  <% end %>
+
+  <%= registrations_form_group do %>
+    <%= label_tag 'newsletter', "Newsletter?", :class => label_class %>
+    <%= f.check_box :newsletter, checked: true, :class => 'ml-1' %>
+    <small class="pl-2">Send me your newsletter (we send one every 1-2 months)</small>
+  <% end %>
+
+  <%= registrations_form_group do %>
+    <%= label_tag 'map_the_power', "Map the Power", :class => label_class %>
+    <%= f.check_box :map_the_power, :class => 'ml-1' %>
+    <small class="pl-2">Tell me more about Map the Power!</small>
+  <% end %>
+
+  <%= registrations_form_group do %>
+    <%= label_tag 'location', "Location", :class => label_class %>
+    <%= profile_fields.text_field :location, :class => input_class %>
+  <% end %>
+
+  <%= registrations_form_group do %>
+    <%= profile_fields.label :reason, raw("What are your research interests? <br> What are you hoping to use LittleSis for?*"), :class => label_class  %>
+    <%= profile_fields.text_area :reason, :class => input_class, :rows => 5, :id => 'about-you-input' %>
+  <% end %>
+
+  <%= registrations_form_group do %>
+    <%= math_captcha_fields(math_captcha, label_class: label_class) %>
+  <% end %>
+
+  <%= registrations_form_group(column_class: 'col-4') do %>
+    <%= f.submit "Sign up", class: 'btn btn-primary' %>
+    <p class="mt-3"><small><%= render "users/shared/links" %></small></p>
+  <% end %>
+<% end %>
 <% end %>

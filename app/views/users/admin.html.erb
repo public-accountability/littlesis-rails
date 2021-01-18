@@ -1,7 +1,5 @@
 <h1>Users Admin</h1>
 
-<%= notice_if_notice %>
-
 <%= form_tag admin_users_path, method: :get do %>
   <div class="input-group col-xs-4 maps_search">
     <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search users" %>
