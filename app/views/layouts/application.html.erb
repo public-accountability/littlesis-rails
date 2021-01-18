@@ -17,6 +17,20 @@
     <% end %>
 
     <div class="container mt-3">
+      <section class="flash-messages">
+        <% flash.each do |type, content| %>
+          <% if content.is_a? Array %>
+            <% content.each do |message| %>
+              <%= render partial: 'flash', locals: {message: message, type: type} %>
+            <% end %>
+          <% else %>
+            <%= render partial: 'flash', locals: {message: content, type: type} %>
+          <% end %>
+        <% end %>
+      </section>
+    </div>
+
+    <div class="container mt-3">
       <%= yield %>
     </div>
 

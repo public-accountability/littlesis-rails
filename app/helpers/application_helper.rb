@@ -61,6 +61,14 @@ module ApplicationHelper
     end
   end
 
+  def flash_class(key)
+    {
+      'notice' => 'alert-success',
+      'alert' => 'alert-warning',
+      'errors' => 'alert-danger'
+    }[key]
+  end
+
   def dashboard_panel(heading: '', color: 'rgba(0, 0, 0, 0.03)', &block)
     content_tag('div', class: 'card') do
       content_tag('div', heading, class: 'card-header', style: "background-color: #{color}") +
