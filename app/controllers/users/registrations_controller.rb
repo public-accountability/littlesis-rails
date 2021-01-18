@@ -17,14 +17,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     if verify_math_captcha
       super do |user|
-        @signup_errors = if user.persisted? && user.valid?
-                           []
-                         else
-                           user.errors.full_messages
-                         end
+        flash.now[:errors] = user.errors.full_messages unless user.persisted? && user.valid?
       end
     else
-      @signup_errors = ['Failed to solve the math problem']
+      flash.now[:errors] = ['Failed to solve the math problem']
       self.resource = resource_class.new sign_up_params
       respond_with_navigational(resource) { render :new }
     end

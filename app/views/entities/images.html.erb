@@ -1,25 +1,11 @@
 <% content_for(:page_title, raw(@entity.name + ' - images')) %>
 
-<% if flash.present? %>
-  <div class="row no-gutters" style="padding-top: 1.5em;">
-    <div class="col-sm-12">
-      <% if flash[:alert] %>
-        <div class="alert alert-warning"><%= flash[:alert] %></div>
-      <% end %>
-      <% if flash[:notice] %>
-        <div class="alert alert-success"><%= flash[:notice] %></div>
-      <% end %>
-    </div>
-  </div>
-<% end %>
-
 <%= render partial: 'header', locals: { entity: @entity } %>
 
 <h3>
   Images
   &nbsp;<%= link_to('add', concretize_new_image_entity_path(@entity), class: "btn btn-secondary btn-sm") %>
 </h3>
-
 
 <table class="table entity-images-table">
   <% @entity.images.each do |image| %>
