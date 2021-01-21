@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_12_023923) do
+ActiveRecord::Schema.define(version: 2021_01_21_184537) do
 
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -406,6 +406,23 @@ ActiveRecord::Schema.define(version: 2021_01_12_023923) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["dataset", "dataset_id"], name: "index_external_data_on_dataset_and_dataset_id", unique: true
     t.index ["dataset"], name: "index_external_data_on_dataset"
+  end
+
+  create_table "external_data_nycc", primary_key: "district", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "personid", limit: 2, null: false
+    t.text "council_district"
+    t.text "last_name"
+    t.text "first_name"
+    t.text "full_name"
+    t.text "photo_url"
+    t.text "twitter"
+    t.text "email"
+    t.text "party"
+    t.text "website"
+    t.text "gender"
+    t.text "title"
+    t.text "district_office"
+    t.text "legislative_office"
   end
 
   create_table "external_entities", charset: "latin1", force: :cascade do |t|
