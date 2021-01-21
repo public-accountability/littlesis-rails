@@ -20,6 +20,28 @@ module ExternalDataset
       Rails.logger.info sql
       ApplicationRecord.connection.exec_query(Arel.sql(sql))
     end
+
+    # interface
+
+    def self.download
+      raise NotImplementedError
+    end
+
+    def self.extract
+      raise NotImplementedError
+    end
+
+    def self.load
+      raise NotImplementedError
+    end
+
+    def self.export
+      raise NotImplementedError
+    end
+
+    def self.report
+      puts "There are #{count} rows in #{table_name}"
+    end
   end
 
   class IapdAdvisor < Base
@@ -74,11 +96,44 @@ module ExternalDataset
   end
 
   class NYSDisclosure < Base
-   self.dataset = :nys_disclosures
+    self.dataset = :nys_disclosures
+
+    def self.download
+    end
+
+    def self.extract
+    end
+
+    def self.load
+    end
   end
 
   class NYSFfiler < Base
     self.dataset = :nys_filers
+    self.source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
+    self.csv_file = ROOT_DIR.join('csv').join('nys_filers.csv')
+    @zip_file = ROOT_DIR.join('original').join('commcand.zip')
+    @columns = "(" + %w[filer_id name filer_type status committee_type office district treas_first_name treas_last_name address city state zip].join(',') + ")"
+
+    def self.download
+      Utility.stream_file_if_not_exists(url: source_url, path: @zip_file)
+    end
+
+    def self.extract
+      CSV.open(csv_file, 'w') do |csv_writer|
+        CommcandExtractor.run(@zip_file) do |row|
+          csv_writer << row
+        end
+      end
+    end
+
+    def self.load
+      run_query "LOAD DATA LOCAL INFILE '#{csv_file}'
+                 REPLACE
+                 INTO TABLE #{table_name}
+                 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
+                 #{@columns}"
+    end
   end
 
   class FECCandidate < Base

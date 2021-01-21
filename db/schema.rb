@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_21_184537) do
+ActiveRecord::Schema.define(version: 2021_01_21_223749) do
 
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -423,6 +423,21 @@ ActiveRecord::Schema.define(version: 2021_01_21_184537) do
     t.text "title"
     t.text "district_office"
     t.text "legislative_office"
+  end
+
+  create_table "external_data_nys_filers", primary_key: "filer_id", id: :string, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.text "name"
+    t.string "filer_type"
+    t.string "status"
+    t.string "committee_type"
+    t.string "office"
+    t.string "district"
+    t.text "treas_first_name"
+    t.text "treas_last_name"
+    t.text "address"
+    t.text "city"
+    t.string "state"
+    t.string "zip"
   end
 
   create_table "external_entities", charset: "latin1", force: :cascade do |t|

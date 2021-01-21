@@ -60,7 +60,9 @@ case $command in
         run_ruby "ExternalDataset.public_send('$dataset').load"
         ;;
     export)
+        run_ruby "ExternalDataset.public_send('$dataset').export"
         ;;
     report)
+        run_ruby "ExternalDataset.public_send('$dataset').report"
         ;;
 esac
