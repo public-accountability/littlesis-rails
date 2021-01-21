@@ -6,65 +6,72 @@ module ExternalDataset
   mattr_accessor :datasets
   self.datasets = {}
 
-  class Base < ::ApplicationRecord
-    self.abstract_class = true
-    mattr_accessor :dataset_name, :source_url, :csv_file
+  module DatasetInterface
+    # setup
 
-    def self.dataset=(dataset)
-      self.table_name = "#{TABLE_PREFIX}_#{dataset}"
+    def dataset=(dataset)
+      mattr_accessor :dataset_name
       self.dataset_name = dataset
+      self.table_name = "#{TABLE_PREFIX}_#{dataset}"
       ExternalDataset.datasets[dataset] = self
-    end
-
-    def self.run_query(sql)
-      Rails.logger.info sql
-      ApplicationRecord.connection.exec_query(Arel.sql(sql))
     end
 
     # interface
 
-    def self.download
+    def download
       raise NotImplementedError
     end
 
-    def self.extract
+    def extract
       raise NotImplementedError
     end
 
-    def self.load
+    def load
       raise NotImplementedError
     end
 
-    def self.export
+    def export
       raise NotImplementedError
     end
 
-    def self.report
+    def report
       puts "There are #{count} rows in #{table_name}"
+    end
+
+    # utility
+
+    def run_query(sql)
+      Rails.logger.info sql
+      ApplicationRecord.connection.exec_query(Arel.sql(sql))
     end
   end
 
-  class IapdAdvisor < Base
+  class IapdAdvisor < ApplicationRecord
+    extend DatasetInterface
     self.dataset = :iapd_advisors
   end
 
-  class IapdScheduleA < Base
+  class IapdScheduleA < ApplicationRecord
+    extend DatasetInterface
     self.dataset = :iapd_schedule_a
   end
 
-  class NYCC < Base
+  class NYCC < ApplicationRecord
+    extend DatasetInterface
     self.dataset = :nycc
     self.primary_key = :district
-    self.source_url = 'https://raw.githubusercontent.com/NewYorkCityCouncil/districts/master/district_data/council_members/members.json'
-    self.csv_file = ROOT_DIR.join('csv').join('nycc.csv')
+
+    @source_url = 'https://raw.githubusercontent.com/NewYorkCityCouncil/districts/master/district_data/council_members/members.json'
+    @json_file = ROOT_DIR.join('original').join('nycc.json')
+    @csv_file = ROOT_DIR.join('csv').join('nycc.csv')
 
     def self.download
-      Utility.download_file(url: source_url, path: ROOT_DIR.join('original').join('nycc.json'))
+      Utility.download_file(url: @source_url, path: @json_file)
     end
 
     def self.extract
       Utility.save_hash_array_to_csv(csv_file,
-                                     JSON.parse(File.read(ROOT_DIR.join('original').join('nycc.json'))).map do |x|
+                                     JSON.parse(File.read(@json_file)).map do |x|
                                        {
                                          district: x['District'].to_i,
                                          personid: x['PersonId'].to_i,
@@ -86,7 +93,7 @@ module ExternalDataset
     end
 
     def self.load
-      run_query "LOAD DATA LOCAL INFILE '#{csv_file}'
+      run_query "LOAD DATA LOCAL INFILE '#{@csv_file}'
                  REPLACE
                  INTO TABLE #{table_name}
                  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
@@ -95,32 +102,50 @@ module ExternalDataset
     end
   end
 
-  class NYSDisclosure < Base
+  class NYSDisclosure < ApplicationRecord
+    extend DatasetInterface
     self.dataset = :nys_disclosures
 
-    def self.download
-    end
-
-    def self.extract
-    end
-
-    def self.load
-    end
-  end
-
-  class NYSFfiler < Base
-    self.dataset = :nys_filers
-    self.source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
-    self.csv_file = ROOT_DIR.join('csv').join('nys_filers.csv')
-    @zip_file = ROOT_DIR.join('original').join('commcand.zip')
-    @columns = "(" + %w[filer_id name filer_type status committee_type office district treas_first_name treas_last_name address city state zip].join(',') + ")"
+    @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/ALL_REPORTS.zip'
+    @csv_file = ROOT_DIR.join('csv').join('nys_disclosures.csv')
+    @zip_file = ROOT_DIR.join('original').join('ALL_REPORTS.zip')
+    @columns = NYSDisclosureExtractor::HEADERS.dup.concat(['dataset_id']).freeze
 
     def self.download
-      Utility.stream_file_if_not_exists(url: source_url, path: @zip_file)
+      Utility.stream_file_if_not_exists(url: @source_url, path: @zip_file)
     end
 
     def self.extract
       CSV.open(csv_file, 'w') do |csv_writer|
+        NYSDisclosureExtractor.new(@zip_file).each do |row|
+          csv_writer << row
+        end
+      end
+    end
+
+    def self.load
+      run_query "LOAD DATA LOCAL INFILE '#{@csv_file}'
+                 IGNORE
+                 INTO TABLE #{table_name}
+                 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
+                 (#{@columns.join(',')})"
+    end
+  end
+
+  class NYSFfiler < ApplicationRecord
+    extend DatasetInterface
+    self.dataset = :nys_filers
+    @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
+    @csv_file = ROOT_DIR.join('csv').join('nys_filers.csv')
+    @zip_file = ROOT_DIR.join('original').join('commcand.zip')
+    @columns = %w[filer_id name filer_type status committee_type office district treas_first_name treas_last_name address city state zip].freeze
+
+    def self.download
+      Utility.stream_file_if_not_exists(url: @source_url, path: @zip_file)
+    end
+
+    def self.extract
+      CSV.open(@csv_file, 'w') do |csv_writer|
         CommcandExtractor.run(@zip_file) do |row|
           csv_writer << row
         end
@@ -128,27 +153,31 @@ module ExternalDataset
     end
 
     def self.load
-      run_query "LOAD DATA LOCAL INFILE '#{csv_file}'
+      run_query "LOAD DATA LOCAL INFILE '#{@csv_file}'
                  REPLACE
                  INTO TABLE #{table_name}
                  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
-                 #{@columns}"
+                 (#{@columns.join(',')})"
     end
   end
 
-  class FECCandidate < Base
+  class FECCandidate < ApplicationRecord
+    extend DatasetInterface
     self.dataset = :fec_candidates
   end
 
-  class FECCommittee < Base
+  class FECCommittee < ApplicationRecord
+    extend DatasetInterface
     self.dataset = :fec_committees
   end
 
-  class FECContribution < Base
+  class FECContribution < ApplicationRecord
+    extend DatasetInterface
     self.dataset = :fec_contributions
   end
 
   datasets.each_key do |dataset|
+    extend DatasetInterface
     define_singleton_method(dataset) { datasets[dataset] }
   end
 end
