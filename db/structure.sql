@@ -630,6 +630,89 @@ CREATE TABLE `external_data` (
   KEY `index_external_data_on_dataset` (`dataset`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `external_data_nycc`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_data_nycc` (
+  `district` bigint(20) NOT NULL AUTO_INCREMENT,
+  `personid` smallint(6) NOT NULL,
+  `council_district` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `first_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `full_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `photo_url` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `twitter` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `party` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `website` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gender` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `district_office` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `legislative_office` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`district`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `external_data_nys_disclosures`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_data_nys_disclosures` (
+  `filer_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `freport_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `transaction_code` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `e_year` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `t3_trid` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `date1_10` date DEFAULT NULL,
+  `date2_12` date DEFAULT NULL,
+  `contrib_code_20` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `contrib_type_code_25` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `corp_30` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `first_name_40` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mid_init_42` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_name_44` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `addr_1_50` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city_52` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `state_54` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `zip_56` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `check_no_60` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `check_date_62` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `amount_70` float DEFAULT NULL,
+  `amount2_72` float DEFAULT NULL,
+  `description_80` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `other_recpt_code_90` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `purpose_code1_100` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `purpose_code2_1` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `explanation_110` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `xfer_type_120` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `chkbox_130` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `crerec_uid` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `crerec_date` datetime DEFAULT NULL,
+  `dataset_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`dataset_id`),
+  KEY `index_external_data_nys_disclosures_on_filer_id` (`filer_id`),
+  KEY `index_external_data_nys_disclosures_on_date1_10` (`date1_10`),
+  KEY `index_external_data_nys_disclosures_on_dataset_id` (`dataset_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `external_data_nys_filers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_data_nys_filers` (
+  `filer_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filer_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `committee_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `office` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `district` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `treas_first_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `treas_last_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `state` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `zip` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`filer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `external_entities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2331,6 +2414,9 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20201216170621'),
 ('20201221234821'),
 ('20201221234822'),
-('20210112023923');
+('20210112023923'),
+('20210121184537'),
+('20210121223749'),
+('20210121234418');
 
 

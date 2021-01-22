@@ -4,6 +4,7 @@ module ExternalDataset
   TABLE_PREFIX = 'external_data'
   ROOT_DIR = Rails.root.join('data/external_data')
   mattr_accessor :datasets
+
   self.datasets = {}
 
   module DatasetInterface
@@ -44,16 +45,6 @@ module ExternalDataset
       Rails.logger.info sql
       ApplicationRecord.connection.exec_query(Arel.sql(sql))
     end
-  end
-
-  class IapdAdvisor < ApplicationRecord
-    extend DatasetInterface
-    self.dataset = :iapd_advisors
-  end
-
-  class IapdScheduleA < ApplicationRecord
-    extend DatasetInterface
-    self.dataset = :iapd_schedule_a
   end
 
   class NYCC < ApplicationRecord
@@ -116,9 +107,9 @@ module ExternalDataset
     end
 
     def self.extract
-      CSV.open(csv_file, 'w') do |csv_writer|
+      CSV.open(@csv_file.to_s, 'w') do |csv_writer|
         NYSDisclosureExtractor.new(@zip_file).each do |row|
-          csv_writer << row
+          csv_writer.puts row.values_at(*@columns)
         end
       end
     end
@@ -146,7 +137,7 @@ module ExternalDataset
 
     def self.extract
       CSV.open(@csv_file, 'w') do |csv_writer|
-        CommcandExtractor.run(@zip_file) do |row|
+        CommcandExtractor.each(@zip_file) do |row|
           csv_writer << row
         end
       end
@@ -181,3 +172,13 @@ module ExternalDataset
     define_singleton_method(dataset) { datasets[dataset] }
   end
 end
+
+# class IapdAdvisor < ApplicationRecord
+#   extend DatasetInterface
+#   self.dataset = :iapd_advisors
+# end
+
+# class IapdScheduleA < ApplicationRecord
+#   extend DatasetInterface
+#   self.dataset = :iapd_schedule_a
+# end

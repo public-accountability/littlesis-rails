@@ -2,7 +2,7 @@
 
 module ExternalDataset
   module CommcandExtractor
-    def self.run(filepath)
+    def self.each(filepath)
       errors = 0
       Utility.zip_entry_each_line(zip: filepath, file: 'COMMCAND.txt') do |line|
         parsed_line = parse_line(line.encode('ASCII', invalid: :replace, undef: :replace, replace: ''))

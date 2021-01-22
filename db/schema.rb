@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_21_223749) do
+ActiveRecord::Schema.define(version: 2021_01_21_234418) do
 
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -423,6 +423,42 @@ ActiveRecord::Schema.define(version: 2021_01_21_223749) do
     t.text "title"
     t.text "district_office"
     t.text "legislative_office"
+  end
+
+  create_table "external_data_nys_disclosures", primary_key: "dataset_id", id: :string, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "filer_id", null: false
+    t.string "freport_id"
+    t.string "transaction_code"
+    t.string "e_year"
+    t.string "t3_trid"
+    t.date "date1_10"
+    t.date "date2_12"
+    t.string "contrib_code_20"
+    t.string "contrib_type_code_25"
+    t.string "corp_30"
+    t.string "first_name_40"
+    t.string "mid_init_42"
+    t.string "last_name_44"
+    t.string "addr_1_50"
+    t.string "city_52"
+    t.string "state_54"
+    t.string "zip_56"
+    t.string "check_no_60"
+    t.string "check_date_62"
+    t.float "amount_70"
+    t.float "amount2_72"
+    t.string "description_80"
+    t.string "other_recpt_code_90"
+    t.string "purpose_code1_100"
+    t.string "purpose_code2_1"
+    t.string "explanation_110"
+    t.string "xfer_type_120"
+    t.string "chkbox_130"
+    t.string "crerec_uid"
+    t.datetime "crerec_date"
+    t.index ["dataset_id"], name: "index_external_data_nys_disclosures_on_dataset_id"
+    t.index ["date1_10"], name: "index_external_data_nys_disclosures_on_date1_10"
+    t.index ["filer_id"], name: "index_external_data_nys_disclosures_on_filer_id"
   end
 
   create_table "external_data_nys_filers", primary_key: "filer_id", id: :string, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|

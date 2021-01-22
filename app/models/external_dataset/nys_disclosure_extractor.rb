@@ -13,13 +13,16 @@ module ExternalDataset
       loop_rows do |row|
         # This dataset has no unique identifier per row
         # We create one by joining 5 fields: filer id, report id, transaction code, election year, and transaction id (T3_TRID)
-        dataset_id = row.values_at('filer_id', 'freport_id', 'transaction_code', 'e_year', 't3_trid').map(&:strip).join('-')
-        yield row.concat([dataset_id])
+        row['dataset_id'] = row.values_at('filer_id', 'freport_id', 'transaction_code', 'e_year', 't3_trid').map(&:strip).join('-')
+        # format date columns
+        row['date1_10'] = LsDate.parse_us_date(row['date1_10'])&.strftime('%F')
+        row['date2_12'] = LsDate.parse_us_date(row['date2_12'])&.strftime('%F')
+        row['crerec_date'] = LsDate.parse_us_datetime(row['crerec_date'])&.strftime('%FT%T')
+        yield row
       rescue NoMethodError => e
         # A few rows have null values for fields that compose the dataset_id
         if e.message.include?('strip')
           Rails.logger.warn "[NYSDisclosure] Failed to import row: #{row}"
-          next
         else
           raise
         end
@@ -28,15 +31,20 @@ module ExternalDataset
 
     private
 
+    # yields {}
     def loop_rows
       errors = 0
       Utility.zip_entry_each_line(zip: @filepath, file: 'ALL_REPORTS.out') do |line|
-        line_encoded = line.encode('ASCII', invalid: :replace, undef: :replace, replace: '')
-        yield HEADERS.zip(CSV.parse_line(line_encoded, liberal_parsing: true)).to_h
-      rescue CSV::MalformedCSVError
-        errors += 1
-        Rails.logger.warn "[NYSDisclosure] Failed to parse line: #{line}"
+        begin
+          line_encoded = line.encode('ASCII', invalid: :replace, undef: :replace, replace: '')
+          yield HEADERS.zip(CSV.parse_line(line_encoded, liberal_parsing: true)).to_h
+        rescue CSV::MalformedCSVError
+          errors += 1
+          Rails.logger.warn "[NYSDisclosure] Failed to parse line: #{line}"
+          next
+        end
       end
+
       unless errors.zero?
         Rails.logger.warn("[NYSDisclosure] skipped #{errors} lines with errors")
       end
