@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
-  include SpamHelper
-  helper_method :math_captcha
-
   # before_action :configure_sign_up_params, only: [:create]
   before_action :configure_account_update_params, only: [:update]
 
@@ -15,7 +12,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def create
-    if verify_math_captcha
+    if NewUserForm.new(math_captcha_params).valid?
       super do |user|
         flash.now[:errors] = user.errors.full_messages unless user.persisted? && user.valid?
       end
@@ -114,6 +111,17 @@ class Users::RegistrationsController < Devise::RegistrationsController
       .require(:settings)
       .permit(*UserSettings::DEFAULTS.keys)
       .to_h
+  end
+
+  def math_captcha_params
+    params
+      .require(:math_captcha)
+      .permit(
+        :math_captcha_first,
+        :math_captcha_second,
+        :math_captcha_operation,
+        :math_captcha_answer
+    )
   end
 
   # If you have extra params to permit, append them to the sanitizer.

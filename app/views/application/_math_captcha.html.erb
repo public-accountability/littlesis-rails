@@ -1,4 +1,4 @@
-<% math_captcha = math_captcha || f.object.math_captcha %>
+<% math_captcha = MathCaptcha.new %>
 
 <%= f.label('spam_test', :class => label_class) do %>
   Please solve the following math problem: <b><%= math_captcha.question %></b>

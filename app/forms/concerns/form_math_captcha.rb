@@ -8,10 +8,6 @@ module FormMathCaptcha
     validate :correct_captcha
   end
 
-  def math_captcha
-    @math_captcha ||= MathCaptcha.new
-  end
-
   private
 
   def correct_captcha
