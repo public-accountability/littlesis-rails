@@ -26,9 +26,7 @@ class HomeController < ApplicationController
   # Sends CSRF token to browser extension
   def token
     if user_signed_in?
-      render :inline => "<%= csrf_meta_tags %>"
-    elsif Rails.env.development?
-      render :inline => '<meta name="csrf-param" content="authenticity_token" /><meta name="csrf-token" content="CSRF-TOKEN-FOR-TESTING" />'
+      render inline: csrf_meta_tags
     else
       head :unauthorized
     end
@@ -69,7 +67,7 @@ class HomeController < ApplicationController
         flash.now[:notice] = 'Your message has been sent. Thank you!'
       end
     else
-      @referrer = request.referrer
+      @referrer = request.referer
     end
   end
 
@@ -127,9 +125,7 @@ class HomeController < ApplicationController
   end
 
   def redirect_to_dashboard_if_signed_in
-    if user_signed_in?
-      return redirect_to home_dashboard_path
-    end
+    return redirect_to home_dashboard_path if user_signed_in?
   end
 
   def carousel_entities
