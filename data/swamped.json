@@ -16,6 +16,14 @@
     "org_url": null
   },
   {
+    "name": "Keith Kellogg",
+    "url": "https://littlesis.org/person/315012-Keith_Kellogg",
+    "position": "Chief of Staff and Executive Secretary, NSC",
+    "date": "2/13/2017",
+    "where_to": "Unknown",
+    "org_url": null
+  },
+  {
     "name": "Dina Powell",
     "url": "https://littlesis.org/person/113268-Dina_Powell",
     "position": "Assistant to the President (AP) and Senior Counselor for Economic Initiatives",
@@ -32,12 +40,36 @@
     "org_url": "https://littlesis.org/org/28778-Republican_National_Committee"
   },
   {
+    "name": "KT McFarland",
+    "url": "https://littlesis.org/person/28844-KT_McFarland",
+    "position": "Deputy National Security Adviser",
+    "date": "5/19/2017",
+    "where_to": "Unknown",
+    "org_url": null
+  },
+  {
     "name": "Michael Dubke",
     "url": "https://littlesis.org/person/68723-Michael_Dubke",
     "position": "AP and Communications Director",
     "date": "5/30/2017",
     "where_to": "Black Rock Group",
     "org_url": "https://littlesis.org/org/68726-Black_Rock_Group"
+  },
+  {
+    "name": "Sean Spicer",
+    "url": "https://littlesis.org/person/235219-Sean_Spicer",
+    "position": "Press Secretary",
+    "date": "7/21/2017",
+    "where_to": "Newsmax",
+    "org_url": "https://littlesis.org/org/262450-Newsmax_Media"
+  },
+  {
+    "name": "Sarah Huckabee Sanders",
+    "url": "https://littlesis.org/person/338111-Sarah_Huckabee_Sanders",
+    "position": "Press Secretary",
+    "date": "7/21/2017",
+    "where_to": "AR Gubernatorial Candidate",
+    "org_url": null
   },
   {
     "name": "Josh Pitcock",
@@ -48,6 +80,14 @@
     "org_url": "https://littlesis.org/org/138-Oracle_Corporation"
   },
   {
+    "name": "John F. Kelly",
+    "url": "https://littlesis.org/person/255429-John_Kelly",
+    "position": "Secretary of Homeland Security",
+    "date": "7/28/2017",
+    "where_to": "Unknown",
+    "org_url": null
+  },
+  {
     "name": "Reince Priebus",
     "url": "https://littlesis.org/person/73402-Reince_Priebus",
     "position": "Trump Chief of Staff",
@@ -56,12 +96,28 @@
     "org_url": "https://littlesis.org/org/73403-Michael_Best_&_Friedrich_LLP"
   },
   {
+    "name": "Tate Bennett",
+    "url": "https://littlesis.org/person/316672-Tate_Bennett",
+    "position": "Special Assistant overseeing Coronavirus Food Assistance Program",
+    "date": "January 2021",
+    "where_to": "Forbes Tate",
+    "org_url": "https://littlesis.org/org/334657-Forbes_Tate_Partners"
+  },
+  {
     "name": "George Sifakis",
     "url": "https://littlesis.org/person/254779-George_Sifakis",
     "position": "AP and Director of Public Liaison",
     "date": "8/18/2017",
     "where_to": "Ideagen",
     "org_url": "https://littlesis.org/org/254780-Ideagen"
+  },
+  {
+    "name": "Steve Bannon",
+    "url": "https://littlesis.org/person/213424-Steve_Bannon",
+    "position": "AP and Chief Strategist and Senior Counselor to the President",
+    "date": "8/18/2017",
+    "where_to": "Unknown",
+    "org_url": null
   },
   {
     "name": "George Gigicos",
@@ -88,6 +144,14 @@
     "org_url": "https://littlesis.org/org/361966-KS_Global_Group_LLC"
   },
   {
+    "name": "Tom Price",
+    "url": "https://littlesis.org/person/13529-Tom_Price",
+    "position": "Secretary of Health and Human Services",
+    "date": "9/29/2017",
+    "where_to": "Jackson Healthcare",
+    "org_url": "https://littlesis.org/org/143494-Jackson_Healthcare"
+  },
+  {
     "name": "Omarosa Manigault",
     "url": "https://littlesis.org/person/326184-Omarosa_Manigault",
     "position": "AP and Director of Communications, Office of Public Liaison",
@@ -112,6 +176,14 @@
     "org_url": "https://littlesis.org/org/198586-Mindset"
   },
   {
+    "name": "Rob Porter",
+    "url": "https://littlesis.org/person/398003-Rob_Porter",
+    "position": "AP and Staff Secretary",
+    "date": "2/7/2018",
+    "where_to": "Unknown",
+    "org_url": null
+  },
+  {
     "name": "John DeStefano",
     "url": "https://littlesis.org/person/261450-Johnny_DeStefano",
     "position": "AP and Director of Presidential Personnel",
@@ -132,96 +204,16 @@
     "url": "https://littlesis.org/person/1346-Gary_Cohn",
     "position": "AP and Director of the National Economic Council",
     "date": "3/6/2018",
+    "where_to": "IBM",
+    "org_url": "https://littlesis.org/org/15-IBM"
+  },
+  {
+    "name": "Rex Tillerson",
+    "url": "https://littlesis.org/person/1045-Rex_Tillerson",
+    "position": "Secretary of State",
+    "date": "3/13/2018",
     "where_to": "Unknown",
     "org_url": null
-  },
-  {
-    "name": "Neomi Rao",
-    "url": "https://littlesis.org/person/263209-Neomi_Rao",
-    "position": "Administrator, OIRA",
-    "date": "3/13/2019",
-    "where_to": "US Court of Appeals, DC Circuit",
-    "org_url": "https://littlesis.org/org/69358-U.S._Court_of_Appeals_for_the_District_of_Columbia_Circuit"
-  },
-  {
-    "name": "Richard Burkhauser",
-    "url": "https://littlesis.org/person/96882-Richard_V_Burkhauser",
-    "position": "Member, White House Council of Economic Advisers",
-    "date": "May 2019",
-    "where_to": "Cornell University",
-    "org_url": "https://littlesis.org/org/15057-Cornell_University"
-  },
-  {
-    "name": "William McGinley",
-    "url": "https://littlesis.org/person/399906-William_McGinley",
-    "position": "DAP and Cabinet Secretary",
-    "date": "6/28/2019",
-    "where_to": "Vogel Group",
-    "org_url": "https://littlesis.org/org/401916-The_Vogel_Group"
-  },
-  {
-    "name": "Fiona Hill",
-    "url": "https://littlesis.org/person/151045-Fiona_Hill",
-    "position": "Senior Director for Europe and Russia, NSC",
-    "date": "6/17/2019",
-    "where_to": "Brookings Institution",
-    "org_url": "https://littlesis.org/org/33171-Brookings_Institution"
-  },
-  {
-    "name": "Dan Coats",
-    "url": "https://littlesis.org/person/13934-Dan_Coats",
-    "position": "Director of National Intelligence",
-    "date": "7/28/2019",
-    "where_to": "King and Spalding",
-    "org_url": "https://littlesis.org/org/15687-King_&_Spalding_LLP"
-  },
-  {
-    "name": "Jason Greenblatt",
-    "url": "https://littlesis.org/person/265876-Jason_D._Greenblatt",
-    "position": "AP and Special Representative for International Negotiations",
-    "date": "9/5/2019",
-    "where_to": "OurCrowd",
-    "org_url": "https://littlesis.org/org/398604-OurCrowd"
-  },
-  {
-    "name": "Jessica Ditto",
-    "url": "https://littlesis.org/person/328743-Jessica_Ditto",
-    "position": "DAP and Deputy Communications Director",
-    "date": "3/30/2020",
-    "where_to": "Unknown",
-    "org_url": null
-  },
-  {
-    "name": "Lindsay Reynolds",
-    "url": "https://littlesis.org/person/399904-Lindsay_Reynolds",
-    "position": "AP and Chief of Staff to the First Lady",
-    "date": "4/6/2020",
-    "where_to": "Unknown",
-    "org_url": null
-  },
-  {
-    "name": "Tom Price",
-    "url": "https://littlesis.org/person/13529-Tom_Price",
-    "position": "Secretary of Health and Human Services",
-    "date": "9/29/2017",
-    "where_to": "Jackson Healthcare",
-    "org_url": "https://littlesis.org/org/143494-Jackson_Healthcare"
-  },
-  {
-    "name": "Jim Mattis",
-    "url": "https://littlesis.org/person/189620-Jim_Mattis",
-    "position": "Secretary of Defense",
-    "date": "12/20/2018",
-    "where_to": "General Dynamics",
-    "org_url": "https://littlesis.org/org/88-General_Dynamics_Corporation"
-  },
-  {
-    "name": "Ryan Zinke",
-    "url": "https://littlesis.org/person/216662-Ryan_Zinke",
-    "position": "Secretary of Interior",
-    "date": "12/15/2018",
-    "where_to": "Artillery One",
-    "org_url": "https://littlesis.org/org/401917-Artillery_One"
   },
   {
     "name": "David Shulkin",
@@ -230,14 +222,6 @@
     "date": "3/28/2018",
     "where_to": "Shulkin Solutions LLC",
     "org_url": "https://littlesis.org/org/401918-Shulkin_Solutions_LLC"
-  },
-  {
-    "name": "Rick Perry",
-    "url": "https://littlesis.org/person/34415-Rick_Perry",
-    "position": "Secretary of Energy",
-    "date": "10/17/2019",
-    "where_to": "Pipeline Company LE GP LLC ",
-    "org_url": "https://littlesis.org/org/250988-LE_GP_LLC"
   },
   {
     "name": "Everett Eissenstat",
@@ -264,30 +248,6 @@
     "org_url": "https://littlesis.org/org/28485-Jones_Day"
   },
   {
-    "name": "Justin Clark",
-    "url": "https://littlesis.org/person/362442-Justin_Clark",
-    "position": "Director, White House Office of Public Liaison; Trump campaign",
-    "date": "12/1/2020",
-    "where_to": "National Public Affairs",
-    "org_url": "https://littlesis.org/org/396962-National_Public_Affairs"
-  },
-  {
-    "name": "Andrea Thompson",
-    "url": "https://littlesis.org/person/256947-Andrea_Thompson",
-    "position": "Under Secretary of State, State Department",
-    "date": "9/20/2019",
-    "where_to": "Northrop Grumman",
-    "org_url": "https://littlesis.org/org/77-Northrop_Grumman_Corporation"
-  },
-  {
-    "name": "Rex Tillerson",
-    "url": "https://littlesis.org/person/1045-Rex_Tillerson",
-    "position": "Secretary of State",
-    "date": "3/13/2018",
-    "where_to": "Unknown",
-    "org_url": null
-  },
-  {
     "name": "Jeff Sessions",
     "url": "https://littlesis.org/person/13581-Jeff_Sessions",
     "position": "Attorney General",
@@ -296,12 +256,68 @@
     "org_url": null
   },
   {
+    "name": "Ryan Zinke",
+    "url": "https://littlesis.org/person/216662-Ryan_Zinke",
+    "position": "Secretary of Interior",
+    "date": "12/15/2018",
+    "where_to": "Artillery One",
+    "org_url": "https://littlesis.org/org/401917-Artillery_One"
+  },
+  {
+    "name": "Jim Mattis",
+    "url": "https://littlesis.org/person/189620-Jim_Mattis",
+    "position": "Secretary of Defense",
+    "date": "12/20/2018",
+    "where_to": "General Dynamics",
+    "org_url": "https://littlesis.org/org/88-General_Dynamics_Corporation"
+  },
+  {
+    "name": "Neomi Rao",
+    "url": "https://littlesis.org/person/263209-Neomi_Rao",
+    "position": "Administrator, OIRA",
+    "date": "3/13/2019",
+    "where_to": "US Court of Appeals, DC Circuit",
+    "org_url": "https://littlesis.org/org/69358-U.S._Court_of_Appeals_for_the_District_of_Columbia_Circuit"
+  },
+  {
     "name": "Kirstjen Nielsen",
     "url": "https://littlesis.org/person/256948-Kirstjen_Nielsen",
     "position": "Secretary of Homeland Security",
     "date": "4/7/2019",
-    "where_to": "Unknown",
-    "org_url": null
+    "where_to": "Lighthouse Strategies",
+    "org_url": "https://littlesis.org/org/402759-Lighthouse_Strategies"
+  },
+  {
+    "name": "Richard Burkhauser",
+    "url": "https://littlesis.org/person/96882-Richard_V_Burkhauser",
+    "position": "Member, White House Council of Economic Advisers",
+    "date": "May 2019",
+    "where_to": "Cornell University",
+    "org_url": "https://littlesis.org/org/15057-Cornell_University"
+  },
+  {
+    "name": "Kevin Hassett",
+    "url": "https://littlesis.org/person/81844-Kevin_A_Hassett",
+    "position": "Chair, White House Council of Economic Advisers",
+    "date": "6/2/2019",
+    "where_to": "Hoover Institution",
+    "org_url": "https://littlesis.org/org/33541-Hoover_Institution"
+  },
+  {
+    "name": "Fiona Hill",
+    "url": "https://littlesis.org/person/151045-Fiona_Hill",
+    "position": "Senior Director for Europe and Russia, NSC",
+    "date": "6/17/2019",
+    "where_to": "Brookings Institution",
+    "org_url": "https://littlesis.org/org/33171-Brookings_Institution"
+  },
+  {
+    "name": "William McGinley",
+    "url": "https://littlesis.org/person/399906-William_McGinley",
+    "position": "DAP and Cabinet Secretary",
+    "date": "6/28/2019",
+    "where_to": "Vogel Group",
+    "org_url": "https://littlesis.org/org/401916-The_Vogel_Group"
   },
   {
     "name": "Alex Acosta",
@@ -312,66 +328,50 @@
     "org_url": null
   },
   {
-    "name": "Mark Esper",
-    "url": "https://littlesis.org/person/143609-Mark_Esper",
-    "position": "Secretary of Defense",
-    "date": "11/9/2020",
+    "name": "Dan Coats",
+    "url": "https://littlesis.org/person/13934-Dan_Coats",
+    "position": "Director of National Intelligence",
+    "date": "7/28/2019",
+    "where_to": "King and Spalding",
+    "org_url": "https://littlesis.org/org/15687-King_&_Spalding_LLP"
+  },
+  {
+    "name": "Jason Greenblatt",
+    "url": "https://littlesis.org/person/265876-Jason_D._Greenblatt",
+    "position": "AP and Special Representative for International Negotiations",
+    "date": "9/5/2019",
+    "where_to": "OurCrowd",
+    "org_url": "https://littlesis.org/org/398604-OurCrowd"
+  },
+  {
+    "name": "Andrea Thompson",
+    "url": "https://littlesis.org/person/256947-Andrea_Thompson",
+    "position": "Under Secretary of State, State Department",
+    "date": "9/20/2019",
+    "where_to": "Northrop Grumman",
+    "org_url": "https://littlesis.org/org/77-Northrop_Grumman_Corporation"
+  },
+  {
+    "name": "Rick Perry",
+    "url": "https://littlesis.org/person/34415-Rick_Perry",
+    "position": "Secretary of Energy",
+    "date": "10/17/2019",
+    "where_to": "Pipeline Company LE GP LLC ",
+    "org_url": "https://littlesis.org/org/250988-LE_GP_LLC"
+  },
+  {
+    "name": "Jessica Ditto",
+    "url": "https://littlesis.org/person/328743-Jessica_Ditto",
+    "position": "DAP and Deputy Communications Director",
+    "date": "3/30/2020",
     "where_to": "Unknown",
     "org_url": null
   },
   {
-    "name": "Bill Barr",
-    "url": "https://littlesis.org/person/1291-William_Barr",
-    "position": "Attorney General",
-    "date": "12/14/2020",
-    "where_to": "Unknown",
-    "org_url": null
-  },
-  {
-    "name": "Keith Kellogg",
-    "url": "https://littlesis.org/person/315012-Keith_Kellogg",
-    "position": "Chief of Staff and Executive Secretary, NSC",
-    "date": "2/13/2017",
-    "where_to": "Unknown",
-    "org_url": null
-  },
-  {
-    "name": "KT McFarland",
-    "url": "https://littlesis.org/person/28844-KT_McFarland",
-    "position": "Deputy National Security Adviser",
-    "date": "5/19/2017",
-    "where_to": "Unknown",
-    "org_url": null
-  },
-  {
-    "name": "Sean Spicer",
-    "url": "https://littlesis.org/person/235219-Sean_Spicer",
-    "position": "Press Secretary",
-    "date": "7/21/2017",
-    "where_to": "Unknown",
-    "org_url": null
-  },
-  {
-    "name": "Sarah Huckabee Sanders",
-    "url": "https://littlesis.org/person/338111-Sarah_Huckabee_Sanders",
-    "position": "Press Secretary",
-    "date": "7/21/2017",
-    "where_to": "Unknown",
-    "org_url": null
-  },
-  {
-    "name": "Ezra Cohen-Watnick",
-    "url": "https://littlesis.org/person/268871-Ezra_Cohen-Watnick",
-    "position": "Senior Intelligence Director, NSC",
-    "date": "8/2/2017",
-    "where_to": "Unknown",
-    "org_url": null
-  },
-  {
-    "name": "Steve Bannon",
-    "url": "https://littlesis.org/person/213424-Steve_Bannon",
-    "position": "AP and Chief Strategist and Senior Counselor to the President",
-    "date": "8/18/2017",
+    "name": "Lindsay Reynolds",
+    "url": "https://littlesis.org/person/399904-Lindsay_Reynolds",
+    "position": "AP and Chief of Staff to the First Lady",
+    "date": "4/6/2020",
     "where_to": "Unknown",
     "org_url": null
   },
@@ -384,26 +384,26 @@
     "org_url": null
   },
   {
-    "name": "John F. Kelly",
-    "url": "https://littlesis.org/person/255429-John_Kelly",
-    "position": "Secretary of Homeland Security",
-    "date": "7/28/2017",
+    "name": "Mark Esper",
+    "url": "https://littlesis.org/person/143609-Mark_Esper",
+    "position": "Secretary of Defense",
+    "date": "11/9/2020",
     "where_to": "Unknown",
     "org_url": null
   },
   {
-    "name": "Rob Porter",
-    "url": "https://littlesis.org/person/398003-Rob_Porter",
-    "position": "AP and Staff Secretary",
-    "date": "2/7/2018",
-    "where_to": "Unknown",
-    "org_url": null
+    "name": "Justin Clark",
+    "url": "https://littlesis.org/person/362442-Justin_Clark",
+    "position": "Director, White House Office of Public Liaison; Trump campaign",
+    "date": "12/1/2020",
+    "where_to": "National Public Affairs",
+    "org_url": "https://littlesis.org/org/396962-National_Public_Affairs"
   },
   {
-    "name": "Kevin Hassett",
-    "url": "https://littlesis.org/person/81844-Kevin_A_Hassett",
-    "position": "Chair, White House Council of Economic Advisers",
-    "date": "6/2/2019",
+    "name": "Bill Barr",
+    "url": "https://littlesis.org/person/1291-William_Barr",
+    "position": "Attorney General",
+    "date": "12/14/2020",
     "where_to": "Unknown",
     "org_url": null
   },
