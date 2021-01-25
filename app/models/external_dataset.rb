@@ -152,23 +152,32 @@ module ExternalDataset
     end
   end
 
+  module FECData
+    # use FEC::Cli to download and extract FEC data
+    def load
+      FECLoader.run(self)
+    end
+  end
+
   class FECCandidate < ApplicationRecord
     extend DatasetInterface
+    extend FECData
     self.dataset = :fec_candidates
   end
 
   class FECCommittee < ApplicationRecord
     extend DatasetInterface
+    extend FECData
     self.dataset = :fec_committees
   end
 
   class FECContribution < ApplicationRecord
     extend DatasetInterface
+    extend FECData
     self.dataset = :fec_contributions
   end
 
   datasets.each_key do |dataset|
-    extend DatasetInterface
     define_singleton_method(dataset) { datasets[dataset] }
   end
 end

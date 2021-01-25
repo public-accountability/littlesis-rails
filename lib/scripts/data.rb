@@ -1,7 +1,7 @@
 command = ARGV[0]&.to_sym
 dataset = ARGV[1]&.to_sym
 
-help = <<HELP
+puts(<<HELP) if command == :help
 littlesis data <command> <dataset>
 
  download | downloads original dataset
@@ -9,13 +9,19 @@ littlesis data <command> <dataset>
  load     | loads data into the littlesis database
  export   | creates sql archives
  report   | table statistics
+ list     | print list of datasets
 HELP
 
-unless %i[download extract load export report].include? command
+unless %i[download extract load export report list].include? command
   abort "invalid command: #{command}"
 end
 
-unless ExternalDataset.datasets.include?(dataset)
+if command == :list
+  ExternalDataset.datasets.each_key { |k| puts k }
+  exit
+end
+
+unless ExternalDataset.datasets.include? dataset
   abort "invalid dataset: #{dataset}"
 end
 
