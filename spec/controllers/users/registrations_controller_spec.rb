@@ -17,6 +17,15 @@ describe Users::RegistrationsController, type: :controller do
     }
   end
 
+  let(:math_captcha_params) do
+    {
+      math_captcha_first: 1,
+      math_captcha_second: 2,
+      math_captcha_operation: '+',
+      math_captcha_answer: 3
+    }
+  end
+
   let(:invalid_user_data) do
     user_data.deep_merge('user_profile_attributes' => {
                            'name_first' => 'firstname',
@@ -46,7 +55,7 @@ describe Users::RegistrationsController, type: :controller do
   end
 
   def post_create(data)
-    post :create, params: { 'user' => data }
+    post :create, params: { user: data, math_captcha: math_captcha_params }
   end
 
   describe 'Creating new users' do
@@ -98,10 +107,10 @@ describe Users::RegistrationsController, type: :controller do
     describe 'generating api tokens' do
       it 'generates api_token' do
         expect(controller.current_user.api_token.present?).to be false
-        expect { post_api_token('generate') }.to change { ApiToken.count }.by(1)
+        expect { post_api_token('generate') }.to change(ApiToken, :count).by(1)
         expect(controller.current_user.api_token.present?).to be true
         # doesn't generate one if user already has one
-        expect { post_api_token('generate') }.not_to change { ApiToken.count }
+        expect { post_api_token('generate') }.not_to change(ApiToken, :count)
       end
 
       it 'renders template edit' do

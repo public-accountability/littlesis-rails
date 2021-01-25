@@ -1,9 +1,9 @@
-<%= form_tag('/home/newsletter_signup', id: 'newsletter-signup-form') do %>
-  <%= very_important_wink_wink %>
+<%= form_for(@newsletter_signup, url: home_newsletter_signup_path, id: 'newsletter-signup-form') do |f| %>
+  <%= render partial: '/application/honeypot', locals: {f: f} %>
 
   <div class="input-group">
 
-    <%= email_field_tag 'email', nil,
+    <%= f.email_field :email,
       class: 'form-control',
       placeholder: 'Your email',
       required: true,

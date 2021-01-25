@@ -22,8 +22,6 @@ Lilsis::Application.routes.draw do
 
   root to: 'home#index'
   get '/home' => 'home#index'
-  get '/contact' => 'home#contact'
-  post '/contact' => 'home#contact'
   get '/flag' => 'home#flag'
   post '/flag' => 'home#flag'
   post '/home/newsletter_signup' => 'home#newsletter_signup'
@@ -31,6 +29,8 @@ Lilsis::Application.routes.draw do
 
   get '/bug_report' => 'errors#bug_report'
   post '/bug_report' => 'errors#file_bug_report'
+
+  resources :contact, only: [:index, :create]
 
   #########
   # ADMIN #

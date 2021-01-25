@@ -1,0 +1,41 @@
+<div class="row no-gutters">
+  <h1>Contact Us</h1>
+</div>
+
+<%= render partial: 'contact_header' %>
+
+<div class="row no-gutters">
+  <%= form_for(@contact, url: contact_path, multipart: true, id: 'contact-us-form') do |f| %>
+
+    <div class="form-group">
+      <%= f.label :name %>
+      <%= f.text_field(:name, class: 'form-control') %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :email %>
+      <%= f.email_field(:email, required: true, readonly: user_signed_in?, class: 'form-control') %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :subject %>
+      <%select_options = ["", "Something's Broken", "Innacurate Data", "Feature request", "I want to contribute", "Press inquiry", "Other"] %>
+      <%= f.select :subject, options_for_select(select_options), class: 'form-control' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :message %>
+      <%= f.text_area :message, size: '40x8', class: 'form-control'  %>
+    </div>
+
+    <div class="form-group">
+      <%= render partial: '/application/honeypot', locals: {f: f} %>
+    </div>
+
+    <div class="form-group">
+      <%= render partial: '/application/math_captcha', locals: {f: f, input_class: 'form-control', label_class: '' } unless user_signed_in? %>
+    </div>
+
+    <%= f.submit("submit", class: 'btn btn-primary') %>
+  <% end %>
+</div>

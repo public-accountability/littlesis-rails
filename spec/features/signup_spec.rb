@@ -28,7 +28,7 @@ feature "Signing up for an account", type: :feature do
     fill_in 'user_username', :with => user_info.username
     fill_in 'user_password', :with => user_info.password
     fill_in 'user_password_confirmation', :with => user_info.password
-    fill_in 'math_answer', :with => page.find('#math_number_one').value.to_i.public_send(page.find('#math_operation').value, page.find('#math_number_two').value.to_i)
+    fill_in_math_captcha('math_captcha')
     find(:css, "#terms_of_use").set(true)
     fill_in 'about-you-input', :with => user_info.about_you
 
@@ -56,8 +56,7 @@ feature "Signing up for an account", type: :feature do
     find(:css, "#terms_of_use").set(true)
     fill_in 'about-you-input', :with => user_info.about_you
     fill_in 'user_user_profile_attributes_location', :with => location
-
-    fill_in 'math_answer', :with => page.find('#math_number_one').value.to_i.public_send(page.find('#math_operation').value, page.find('#math_number_two').value.to_i)
+    fill_in_math_captcha('math_captcha')
 
     find(:css, "#user_map_the_power").set(true)
 
@@ -88,7 +87,8 @@ feature "Signing up for an account", type: :feature do
       fill_in 'user_password_confirmation', :with => user_info.password
       find(:css, "#terms_of_use").set(true)
       fill_in 'about-you-input', :with => user_info.about_you
-      fill_in 'math_answer', :with => page.find('#math_number_one').value.to_i.public_send(page.find('#math_operation').value, page.find('#math_number_two').value.to_i)
+      fill_in_math_captcha('math_captcha')
+
       click_button 'Sign up'
 
       expect([User.count, UserProfile.count]).to eq counts
@@ -111,8 +111,8 @@ feature "Signing up for an account", type: :feature do
     fill_in 'user_username', :with => user_info.username
     fill_in 'user_password', :with => user_info.password
     fill_in 'user_password_confirmation', :with => user_info.password
-    answer = page.find('#math_number_one').value.to_i.public_send(page.find('#math_operation').value, page.find('#math_number_two').value.to_i)
-    fill_in 'math_answer', :with => answer - 1
+    fill_in 'math_captcha[math_captcha_answer]', with: 10_000
+
     find(:css, "#terms_of_use").set(true)
     fill_in 'about-you-input', :with => user_info.about_you
 

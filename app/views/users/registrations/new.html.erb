@@ -200,8 +200,8 @@ function validateForm(){
     <%= profile_fields.text_area :reason, :class => input_class, :rows => 5, :id => 'about-you-input' %>
   <% end %>
 
-  <%= registrations_form_group do %>
-    <%= math_captcha_fields(math_captcha, label_class: label_class) %>
+  <%= fields_for :math_captcha do |f2| %>
+    <%= render partial: 'math_captcha', locals: {f: f2, label_class: label_class, input_class: input_class} %>
   <% end %>
 
   <%= registrations_form_group(column_class: 'col-4') do %>
