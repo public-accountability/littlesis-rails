@@ -1,0 +1,10 @@
+<% math_captcha = math_captcha || f.object.math_captcha %>
+
+<%= f.label('spam_test', :class => label_class) do %>
+  Please solve the following math problem: <b><%= math_captcha.question %></b>
+<% end %>
+
+<%= f.hidden_field(:math_captcha_first, value: math_captcha.number_one) %>
+<%= f.hidden_field(:math_captcha_second, value: math_captcha.number_two) %>
+<%= f.hidden_field(:math_captcha_operation, value: math_captcha.operation) %>
+<%= f.number_field(:math_captcha_answer, min: -20, max: 40, class: input_class) %>

@@ -61,4 +61,13 @@ module FeatureExampleMacros
   def subject_has_selector(*args)
     expect(subject).to have_selector(*args)
   end
+
+  def fill_in_math_captcha(form_name)
+    first_number = find("##{form_name}_math_captcha_first").value.to_i
+    second_number = find("##{form_name}_math_captcha_second").value.to_i
+    operation = find("##{form_name}_math_captcha_operation").value
+    answer = first_number.public_send(operation, second_number)
+
+    find("##{form_name}_math_captcha_answer").fill_in(with: answer)
+  end
 end

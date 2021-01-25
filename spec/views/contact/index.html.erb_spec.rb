@@ -1,8 +1,8 @@
-describe 'home/contact.html.erb', type: :view do
+describe 'contact/index.html.erb', type: :view do
   context 'when user signed in' do
     before do
       allow(view).to receive(:user_signed_in?).and_return(true)
-      allow(view).to receive(:current_user).and_return(double(email: 'email@email.com'))
+      assign(:contact, ContactForm.new(email: 'email@email.com'))
       render
     end
 
@@ -11,12 +11,15 @@ describe 'home/contact.html.erb', type: :view do
     end
 
     it 'does not have math captcha_answer' do
-      not_css '#math_answer'
+      not_css '#contact_form_math_captcha_answer'
     end
   end
 
   context 'when user not signed in' do
-    before { render }
+    before do
+      assign(:contact, ContactForm.new)
+      render
+    end
 
     it 'has title' do
       css 'h1'
@@ -40,11 +43,11 @@ describe 'home/contact.html.erb', type: :view do
     end
 
     it 'has text area' do
-      css 'textarea#message', count: 1
+      css 'textarea#contact_form_message', count: 1
     end
 
     it 'has math captcha_answer' do
-      css '#math_answer'
+      css '#contact_form_math_captcha_answer'
     end
   end
 end

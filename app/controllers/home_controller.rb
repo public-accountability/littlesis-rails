@@ -4,7 +4,7 @@ class HomeController < ApplicationController
   include SpamHelper
 
   before_action :authenticate_user!,
-                except: [:dismiss, :index, :contact, :flag, :token, :newsletter_signup, :pai_signup]
+                except: [:dismiss, :index, :flag, :token, :newsletter_signup, :pai_signup]
 
   skip_before_action :verify_authenticity_token, only: [:pai_signup]
 
@@ -50,30 +50,6 @@ class HomeController < ApplicationController
     @dots_connected = dots_connected
     @carousel_entities = carousel_entities
     @stats = ExtensionRecord.data_summary
-  end
-
-  def contact
-    if request.post?
-      if contact_params[:name].blank?
-        flash.now[:errors] = ['Please enter in your name']
-        @message = params[:message]
-      elsif contact_params[:email].blank?
-        flash.now[:errors] = ['Please enter in your email']
-        @message = params[:message]
-      elsif contact_params[:message].blank?
-        flash.now[:errors] = ["Don't forget to write a message!"]
-        @name = params[:name]
-      else
-        if likely_a_spam_bot || SpamDetector.mostly_cyrillic?(params[:message])
-          flash.now[:errors] = ErrorsController::YOU_ARE_SPAM
-        elsif user_signed_in? || verify_math_captcha
-          NotificationMailer.contact_email(contact_params).deliver_later # send_mail
-          flash.now[:notice] = 'Your message has been sent. Thank you!'
-        else
-          flash.now[:errors] = ['Incorrect solution to the math problem. Please try again.']
-        end
-      end
-    end
   end
 
   def flag
