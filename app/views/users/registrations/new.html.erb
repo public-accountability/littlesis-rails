@@ -75,6 +75,8 @@ function validateForm(){
         });
 </script>
 
+<% content_for(:page_title, "Join") %>
+
 <% column_class = 'col-sm-8' %>
 
 <div class="row no-gutters">
@@ -161,8 +163,18 @@ function validateForm(){
   <%= registrations_form_group do %>
     <%= label_tag 'terms_of_use', "Terms of use", :class => label_class %>
     <div class="bg-info p-3">
-      <p>I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith.</p>
-      <%= check_box_tag 'terms_of_use' %><small> I accept the above terms of use </small>
+      <p class="text-justify">I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith. LittleSis staff can revoke my editing privileges and remove any edits, maps, or lists that I create that are in violation of these terms of use including:</p>
+      <ul class="text-justify">
+        <li>Contributions that promote violence or hate against a marginalized group or use hate speech</li>
+        <li>Contributions that fall outside the purview of our mission to track people and groups with inordinate wealth and influence</li>
+        <li>Contributions that spam the database</li>
+      </ul>
+      <p class="text-justify">I understand that if I am in violation of any of these terms of use my account will be restricted from editing while LittleSis staff investigate and delete any data that is inappropriate for the site. If the violation occurred by accident I can appeal to have my editing restrictions lifted, however this is at the discretion of LittleSis staff. Repeated violations will result in a suspension of my LittleSis account.</p>
+      <div class="d-flex">
+        <%= check_box_tag 'terms_of_use' %><small class="ml-2 font-weight-bold"> I accept the above terms of use </small>
+      </div>
+
+
     </div>
   <% end %>
 
