@@ -50,6 +50,7 @@ class HomeController < ApplicationController
     @dots_connected = dots_connected
     @carousel_entities = carousel_entities
     @stats = ExtensionRecord.data_summary
+    @newsletter_signup = NewsletterSignupForm.new(email: current_user&.email)
   end
 
   def flag
@@ -77,9 +78,10 @@ class HomeController < ApplicationController
   # POST /home/newsletter_signup
   #
   def newsletter_signup
-    unless likely_a_spam_bot || Rails.env.development?
-      NewsletterSignupJob.perform_later params.fetch('email'), 'newsletter'
-    end
+    form = NewsletterSignupForm.new(newsletter_signup_params)
+
+    NewsletterSignupJob.perform_later(form.email, 'newsletter') if form.valid?
+
     redirect_to root_path(nlty: 'yes')
   end
 
@@ -94,7 +96,10 @@ class HomeController < ApplicationController
 
     signup_type = params[:tag]&.downcase.eql?('press') ? 'press' : 'pai'
 
-    NewsletterSignupJob.perform_later params.fetch('email'), signup_type unless Rails.env.development?
+    unless Rails.env.development?
+      NewsletterSignupJob.perform_later params.fetch('email'),
+                                        signup_type
+    end
 
     if request.headers['referer'].blank?
       redirect_to 'https://news.littlesis.org'
@@ -147,5 +152,9 @@ class HomeController < ApplicationController
 
   def flag_params
     params.permit(:email, :url, :name, :message)
+  end
+
+  def newsletter_signup_params
+    params.require(:newsletter_signup_form).permit(:email, :very_important_wink_wink)
   end
 end

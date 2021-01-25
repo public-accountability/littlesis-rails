@@ -1,15 +1,15 @@
 describe 'home/index.html.erb', type: :view do
   let(:stats) do
     [
-      [3492870, "Citation"],
-      [1196877, "Relationship"],
-      [189255, "Person"],
-      [70732, "Organization"],
-      [63684, "Business Person"],
-      [23833, "Business"],
-      [16309, "Political Fundraising Committee"],
-      [12091, "Academic"],
-      [11943, "Lobbyist"],
+      [3_492_870, "Citation"],
+      [1_196_877, "Relationship"],
+      [189_255, "Person"],
+      [70_732, "Organization"],
+      [63_684, "Business Person"],
+      [23_833, "Business"],
+      [16_309, "Political Fundraising Committee"],
+      [12_091, "Academic"],
+      [11_943, "Lobbyist"],
       [8683, "Political Candidate"],
       [7547, "Lawyer"],
       [6558, "Public Official"],
@@ -47,9 +47,12 @@ describe 'home/index.html.erb', type: :view do
     assign(:dots_connected, rand(100_000).to_s.split(''))
     assign(:carousel_entities, Array.new(4) { build(:org) })
     assign(:stats, stats)
-    HomeController::DOTS_CONNECTED_LISTS.each do |l|
-      expect(List).to receive(:find).with(l[0]).and_return(Faker::Internet.url)
+    assign(:newsletter_signup, NewsletterSignupForm.new)
+
+    HomeController::DOTS_CONNECTED_LISTS.each do |_l|
+      allow(List).to receive(:find).and_return(Faker::Internet.url)
     end
+
     render template: "home/index", layout: "layouts/application"
   end
 
