@@ -6,6 +6,10 @@ class DatasetsController < ApplicationController
   def index
   end
 
+  def show
+    @dataset = ExternalData.datasets.fetch(params[:dataset].to_sym)
+  end
+
   def dataset
     @dataset = params.require(:dataset)
     @matched = params[:matched]&.to_sym || :all

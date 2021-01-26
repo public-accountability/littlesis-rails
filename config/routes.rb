@@ -410,7 +410,8 @@ Lilsis::Application.routes.draw do
   # Overview page
   get '/datasets' => 'datasets#index'
   # Table Of ExternalEntites/ExternalRelationships for the given dataset
-  get '/datasets/:dataset' => 'datasets#dataset', constraints: DatasetConstraint.new, as: 'dataset'
+  # get '/datasets/:dataset' => 'datasets#dataset', constraints: DatasetConstraint.new, as: 'dataset'
+  get '/datasets/:dataset' => 'datasets#show', constraints: DatasetConstraint.new, as: 'dataset'
 
   namespace :fec do
     get '/entities/:id/contributions', action: :contributions, as: :entity_contributions

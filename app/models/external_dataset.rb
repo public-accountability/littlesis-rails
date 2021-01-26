@@ -3,9 +3,23 @@
 module ExternalDataset
   TABLE_PREFIX = 'external_data'
   ROOT_DIR = Rails.root.join('data/external_data')
-  mattr_accessor :datasets
+  mattr_accessor :datasets do
+    {}
+  end
 
-  self.datasets = {}
+  mattr_reader :descriptions do
+    {
+      iapd_advisors: 'Investor Advisor corporations registered with the SEC',
+      iapd_schedule_a: 'Owners and board members of investor advisors',
+      nycc: 'New York City Council Members',
+      nys_disclosure: 'New Yorak State Campaign Contributions',
+      nys_filer: 'New York State Campaign Finance Committees',
+      fec_candidate: 'Candidates for US Federal Office',
+      fec_committee: 'Federal Campaign Finance Committees',
+      fec_contribution: 'Federal Campaign Finance Individual Contributions',
+      fec_donor: 'Donors extracted from FEC Individual Contributions'
+    }.with_indifferent_access.freeze
+  end
 
   module DatasetInterface
     # setup
@@ -40,6 +54,10 @@ module ExternalDataset
     end
 
     # utility
+
+    def description
+      ExternalDataset.descriptions[dataset_name]
+    end
 
     def run_query(sql)
       Rails.logger.info sql
