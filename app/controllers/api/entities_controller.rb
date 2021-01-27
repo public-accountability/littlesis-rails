@@ -32,7 +32,7 @@ class Api::EntitiesController < Api::ApiController
   def search
     return head :bad_request if params[:q].blank?
 
-    entities = Entity::Search.search(params[:q]).per(ENTITY_SEARCH_PER_PAGE).page(page_requested)
+    entities = Entity::Search.search(params[:q], search_options).per(ENTITY_SEARCH_PER_PAGE).page(page_requested)
     render json: Api.as_api_json(entities)
   end
 
@@ -61,6 +61,14 @@ class Api::EntitiesController < Api::ApiController
   def set_entity
     @entity = Entity.unscoped.find(params[:id])
     raise Entity::EntityDeleted if @entity.is_deleted?
+  end
+
+  def search_options
+    {}.tap do |h|
+      h[:tags] = params[:tags] if params[:tags]
+      h[:regions] = Array.wrap(params[:region]) if params[:region]
+      h[:regions] = params[:regions] if params[:regions]
+    end
   end
 
   def category_id_query

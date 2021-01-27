@@ -66,14 +66,6 @@
 	  <td class="content">Missing required param</td>
 	</tr>
 	<tr>
-	  <td>401</td>
-	  <td class="content">Missing Authorization Header</td>
-	</tr>
-	<tr>
-	  <td>403</td>
-	  <td class="content">Invalid Authorization Header</td>
-	</tr>
-	<tr>
 	  <td>404</td>
 	  <td class="content">Resource is missing or never existed</td>
 	</tr>
@@ -81,7 +73,10 @@
 	  <td>410</td>
 	  <td class="content">Resource has been deleted (but once existed)</td>
 	</tr>
-
+        <tr>
+	  <td>503</td>
+	  <td class="content">Rate Limit Exceeded</td>
+	</tr>
       </tbody>
     </table>
   <% end %>
@@ -110,12 +105,6 @@
       <%= attribute_line('types', 'An array of types (also known as extensions) associated with the entity. i.e. Business, Lawyer') %>
       <%= attribute_line('aliases', 'An array of other names the entity is known as') %>
     </ul>
-  <% end %>
-
-  <%= api_column do %>
-    <p>To include additional information that's contained within the extensions, set the url query parameter <code>details=TRUE</code></p>
-    <p>example: <pre><code>curl https://littlesis.org/api/entities/1?details=TRUE </code></pre></p>
-    <p>However, this may not have useful information for every entity as some extensions do have additional fields.</p>
   <% end %>
 
   <%= api_column do %>
@@ -160,6 +149,9 @@
   "meta": {...}
 }
     </code></pre>
+
+
+    <p> add <code>details=TRUE</code> to include additional information that's contained within the extension (not all extensions have additional fields)</p>
   <% end %>
 
   <%= api_column do %>
@@ -184,7 +176,7 @@
   "meta": {
     "copyright": "LittleSis CC BY-SA 3.0",
     "license": "https://creativecommons.org/licenses/by-sa/3.0/us/",
-    "apiVersion": "2.0-beta"
+    "apiVersion": "2.0"
   },
   "data": [
     {
@@ -249,13 +241,21 @@
 	"pageCount": 3,
 	"copyright": "LittleSis CC BY-SA 3.0",
 	"license": "https://creativecommons.org/licenses/by-sa/3.0/us/",
-	"apiVersion": "2.0-beta"
+	"apiVersion": "2.0"
     }
 }
 
     </code></pre>
 
     <p>It will return at most <strong>10</strong> entities at a time. If there are more than 10 results, you can request additional pages by including the param page (<code>page=NUMBER</code>) to the request. Leaving out the param page is the same as requesting page 1</p>
+
+    <%= api_column do %>
+      <h4>optional parameters</h4>
+      <ul>
+        <li><strong>regions</strong> (<code>regions=3</code>) filters search search by region</li>
+        <li><strong>tags</strong> (<code>regions=oil</code>) fitlers search results by tags</li>
+      </ul>
+    <% end %>
 
 
   </div>
@@ -291,7 +291,7 @@
   "meta": {
     "copyright": "LittleSis CC BY-SA 3.0",
     "license": "https://creativecommons.org/licenses/by-sa/3.0/us/",
-    "apiVersion": "2.0-beta"
+    "apiVersion": "2.0"
   },
   "data": {
     "type": "relationships",
