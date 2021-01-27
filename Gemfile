@@ -44,6 +44,8 @@ gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_del
 # handle currencies etc
 gem 'money'
 
+gem 'datagrid'
+
 # used by Pages and Toolkit for Markdown->Html
 gem 'redcarpet', '>= 3.4.0'
 
@@ -93,7 +95,6 @@ end
 
 # Used by lib/
 
-# Cron
 gem 'roo', "~> 2.8.1", require: false
 gem 'rubyzip', require: false
 gem 'sqlite3', require: false

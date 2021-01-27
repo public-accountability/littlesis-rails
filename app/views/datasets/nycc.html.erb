@@ -1,0 +1,17 @@
+<% content_for :page_title, @dataset.dataset_name %>
+<% content_for :head do %>
+  <%= stylesheet_link_tag "external_datasets" %>
+<% end %>
+
+<div class="row">
+  <div class="col">
+    <%= datagrid_form_for @grid, :method => :get, :url => "/datasets/#{@dataset.dataset_name}" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= datagrid_table @grid %>
+    <%= paginate(@grid.assets) %>
+  </div>
+</div>

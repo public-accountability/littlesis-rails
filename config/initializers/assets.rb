@@ -17,7 +17,8 @@ Rails.application.config.assets.precompile += [
   'entity_matcher.css.scss',
   'cmp.scss',
   'oligrapher.scss',
-  'swamped.scss'
+  'swamped.scss',
+  'external_datasets.scss'
 ]
 
 Rails.application.config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif *.svg *.eot *.woff *.woff2 *.ttf)
