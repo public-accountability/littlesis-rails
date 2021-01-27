@@ -1,14 +1,23 @@
-import { Exporter } from './list_datatable/exporter.js';
-import { Search } from './list_datatable/search.js';
+import jquery from 'jquery'
 
-import { BasicColumn } from './list_datatable/columns/basic_column.js';
-import { RankedTableColumns } from './list_datatable/columns/ranked_table_columns.js';
-import { NameColumn } from './list_datatable/columns/name_column.js';
-import { DonationsColumn } from './list_datatable/columns/donations_column.js';
-import { LinkCountColumn } from './list_datatable/columns/link_count_column.js';
-import { ActionsColumn } from './list_datatable/columns/actions_column.js';
-import { IdColumn } from './list_datatable/columns/id_column.js';
-import { MasterSearchColumn } from './list_datatable/columns/master_search_column.js';
+import { Exporter } from './list_datatable/exporter.js'
+import { Search } from './list_datatable/search.js'
+import { BasicColumn } from './list_datatable/columns/basic_column.js'
+import { RankedTableColumns } from './list_datatable/columns/ranked_table_columns.js'
+import { NameColumn } from './list_datatable/columns/name_column.js'
+import { DonationsColumn } from './list_datatable/columns/donations_column.js'
+import { LinkCountColumn } from './list_datatable/columns/link_count_column.js'
+import { ActionsColumn } from './list_datatable/columns/actions_column.js'
+import { IdColumn } from './list_datatable/columns/id_column.js'
+import { MasterSearchColumn } from './list_datatable/columns/master_search_column.js'
+
+
+export function removeListEntity(url) {
+  if (confirm('Are you sure you want to remove this entity from this list?')) {
+    jquery.post(url).then(() => window.location.reload())
+  }
+}
+
 
 export default function ListDatatableLoader({config, data}){
   const PAGE_LENGTH = 100;
@@ -45,7 +54,7 @@ export default function ListDatatableLoader({config, data}){
         MasterSearchColumn(),
         BasicColumn('interlock_ids'),
         BasicColumn('list_interlock_ids')
-      ).filter(col => col !== undefined);
+    ).filter(col => col !== undefined);
   }
 
   const sortOrder = function(){
