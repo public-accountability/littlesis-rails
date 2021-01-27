@@ -7,7 +7,8 @@ export function ActionsColumn(config) {
       sortable: false,
       className: 'context',
       render: function(data, type, row) {
-        return $('#entity_remover').html().replace(/XYZ/, row.list_entity_id);
+        const js = `LittleSis.removeListEntity('${row.remove_url}')`
+        return '<a onclick="' + js + '"><span class="glyphicon glyphicon-remove"></span></a>'
       }
     }
   }

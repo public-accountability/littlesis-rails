@@ -25,7 +25,7 @@ import datatable from 'datatables.net'
 import typeahead from 'typeahead.js'
 import mustache from 'mustache'
 
-import listDatatableLoader from './list_datatable'
+import listDatatableLoader, { removeListEntity } from './list_datatable'
 import entityAutocomplete from './entity_autocomplete'
 import RelationshipCreationFlow from './components/relationship_creation_flow'
 import NyDonationsMatcher from './components/ny_donations_matcher'
@@ -52,6 +52,7 @@ if (!window.LittleSis) {
 window.LittleSis.http = http
 window.LittleSis.tags = tags
 window.LittleSis.listDatatableLoader = listDatatableLoader
+window.LittleSis.removeListEntity = removeListEntity
 window.LittleSis.entityAutocomplete = entityAutocomplete
 window.LittleSis.RelationshipCreationFlow = RelationshipCreationFlow
 window.LittleSis.NyDonationsMatcher = NyDonationsMatcher
