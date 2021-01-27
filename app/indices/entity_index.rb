@@ -11,4 +11,5 @@ ThinkingSphinx::Index.define :entity, :with => :active_record, :delta => Thinkin
   has updated_at
   has link_count
   has taggings.tag_id, as: :tag_ids, facet: true
+  has locations.region, as: :regions, facet: true
 end

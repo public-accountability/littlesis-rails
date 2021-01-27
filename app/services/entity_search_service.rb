@@ -9,6 +9,7 @@ class EntitySearchService
     num: 15,
     page: 1,
     tags: nil,
+    regions: nil,
     exclude_list: nil
   }.freeze
 
@@ -23,6 +24,7 @@ class EntitySearchService
 
     @search_options = {
       with: @options[:with],
+      with_all: {},
       per_page: @options[:num].to_i,
       page: @options[:page].to_i,
       select: '*, weight() * (link_count + 1) AS link_weight',
@@ -32,7 +34,10 @@ class EntitySearchService
     @search_query = "@(#{@options[:fields].join(',')}) #{@query}"
 
     parse_tags
+    parse_regions
     parse_exclude_list
+
+    @search_options.delete(:with_all) if @search_options[:with_all].empty?
 
     # If the query is an integer, assume that it is the ID of an entity
     if ONLY_NUMBERS.match? query.strip
@@ -79,7 +84,15 @@ class EntitySearchService
     @options[:tags].map!(&:id)
 
     if @options[:tags]&.length&.positive?
-      @search_options[:with_all] = { tag_ids: @options[:tags] }
+      @search_options[:with_all][:tag_ids] =  @options[:tags]
     end
+  end
+
+  def parse_regions
+    return if @options[:regions].blank?
+
+    @options[:regions] = @options[:regions].split(',') if @options[:regions].is_a?(String)
+
+    @search_options[:with_all][:regions] = @options[:regions].map(&:to_i)
   end
 end
