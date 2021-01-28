@@ -19,4 +19,9 @@ class AdminController < ApplicationController
 
   def entity_matcher
   end
+
+  def tracker
+    expires_in 20.minutes, public: false
+    render file: Rails.root.join('data/tracker/index.html'), layout: false
+  end
 end
