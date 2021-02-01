@@ -50,6 +50,7 @@
     "mustache": "^4.0.1",
     "node-fetch": "^2.6.1",
     "papaparse": "^5.3.0",
+    "parsleyjs": "^2.9.2",
     "popper.js": "^1.16.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
