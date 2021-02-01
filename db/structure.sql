@@ -684,7 +684,7 @@ DROP TABLE IF EXISTS `external_data_fec_contributions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `external_data_fec_contributions` (
-  `sub_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `sub_id` bigint(20) NOT NULL,
   `cmte_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `amndt_ind` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `rpt_tp` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -705,9 +705,18 @@ CREATE TABLE `external_data_fec_contributions` (
   `file_num` int(11) DEFAULT NULL,
   `memo_cd` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `memo_text` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `fec_year` int(11) NOT NULL,
-  PRIMARY KEY (`sub_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `fec_year` smallint(6) NOT NULL,
+  UNIQUE KEY `index_external_data_fec_contributions_on_fec_year_and_sub_id` (`fec_year`,`sub_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+ PARTITION BY LIST (`fec_year`)
+(PARTITION `fec_year_2022` VALUES IN (2022) ENGINE = InnoDB,
+ PARTITION `fec_year_2020` VALUES IN (2020) ENGINE = InnoDB,
+ PARTITION `fec_year_2018` VALUES IN (2018) ENGINE = InnoDB,
+ PARTITION `fec_year_2016` VALUES IN (2016) ENGINE = InnoDB,
+ PARTITION `fec_year_2014` VALUES IN (2014) ENGINE = InnoDB,
+ PARTITION `fec_year_2012` VALUES IN (2012) ENGINE = InnoDB,
+ PARTITION `fec_year_2010` VALUES IN (2010) ENGINE = InnoDB,
+ PARTITION `fec_year_default` DEFAULT ENGINE = InnoDB);
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `external_data_nycc`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -2497,6 +2506,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20210121184537'),
 ('20210121223749'),
 ('20210121234418'),
-('20210123144348');
+('20210123144348'),
+('20210201142914');
 
 

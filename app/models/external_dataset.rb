@@ -121,7 +121,8 @@ module ExternalDataset
     @columns = NYSDisclosureExtractor::HEADERS.dup.concat(['dataset_id']).freeze
 
     def self.download
-      Utility.stream_file_if_not_exists(url: @source_url, path: @zip_file)
+      raise NotImplementedError, "this dataset requires manual downloading via a browser"
+      # Utility.stream_file_if_not_exists(url: @source_url, path: @zip_file)
     end
 
     def self.extract
@@ -144,13 +145,16 @@ module ExternalDataset
   class NYSFfiler < ApplicationRecord
     extend DatasetInterface
     self.dataset = :nys_filers
+    # This url stopped working in Janurary 2021
+    # go to https://publicreporting.elections.ny.gov/DownloadCampaignFinanceData/DownloadCampaignFinanceData and use type filer_id
     @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
     @csv_file = ROOT_DIR.join('csv').join('nys_filers.csv')
     @zip_file = ROOT_DIR.join('original').join('commcand.zip')
-    @columns = %w[filer_id name filer_type status committee_type office district treas_first_name treas_last_name address city state zip].freeze
+    @columns = %w[filer_id filer_name compliance_type_desc filter_type_desc filter_status committee_type_desc office_desc district county_desc municipality_subdivision_desc treasurer_first_name treasurer_middle_name treasurer_last_name address city state zipcode].freeze
 
     def self.download
-      Utility.stream_file_if_not_exists(url: @source_url, path: @zip_file)
+      raise NotImplementedError, "this dataset requires manual downloading via a browser"
+      # Utility.stream_file_if_not_exists(url: @source_url, path: @zip_file)
     end
 
     def self.extract

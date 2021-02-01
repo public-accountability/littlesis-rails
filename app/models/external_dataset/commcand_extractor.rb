@@ -4,8 +4,10 @@ module ExternalDataset
   module CommcandExtractor
     def self.each(filepath)
       errors = 0
-      Utility.zip_entry_each_line(zip: filepath, file: 'COMMCAND.txt') do |line|
-        parsed_line = parse_line(line.encode('ASCII', invalid: :replace, undef: :replace, replace: ''))
+      Utility.zip_entry_each_line(zip: filepath, file: 'COMMCAND.CSV') do |line|
+        # parsed_line = parse_line(fix_names(line.encode('ASCII', invalid: :replace, undef: :replace, replace: '').chomp))
+        parsed_line = parse_line(fix_names(line.chomp))
+        # parsed_line = CSV.parse_line(line.encode('ASCII', invalid: :replace, undef: :replace, replace: ''))
         if parsed_line == :error
           Rails.logger.warn "[CommcandExtractor] Could not import line\n    #{line.strip}\n"
           errors += 1
@@ -30,6 +32,21 @@ module ExternalDataset
       else
         parse_line(line, attempt: attempt + 1)
       end
+    end
+
+    NAME_FIXES = [
+      ['Maria D Kaufer For Ad28 District Leader ("Ad28" = "Assembly District 28")"', 'Maria D Kaufer For Ad28 District Leader (Assembly District 28)'],
+      ['The Orchard Park Republican Alliance Pac ("Opgopa" Or "Opra")', 'The Orchard Park Republican Alliance Pac (\"Opgopa\" Or \"Opra\")'],
+      ['Police Accountability Board Alliance ("Paba" Or "The Alliance")', 'Police Accountability Board Alliance (\"Paba\" Or \"The Alliance\")'],
+      ['Local 32bj Seiu American Dream Political Action Fund ("32bj American Dream Fund"', 'Local 32bj Seiu American Dream Political Action Fund (\"American Dream Fund\")'],
+      ['Queens County Gop ("Gop" - "Grand Old Party")', 'Queens County GOP']
+    ].freeze
+
+    private_class_method def self.fix_names(line)
+      NAME_FIXES.each do |(text, replacement)|
+        return line.gsub(text, replacement) if line.include?(text)
+      end
+      line
     end
   end
 end

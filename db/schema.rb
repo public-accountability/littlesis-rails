@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_23_144348) do
+ActiveRecord::Schema.define(version: 2021_02_01_142914) do
 
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -448,7 +448,8 @@ ActiveRecord::Schema.define(version: 2021_01_23_144348) do
     t.index ["cmte_id", "fec_year"], name: "index_external_data_fec_committees_on_cmte_id_and_fec_year", unique: true
   end
 
-  create_table "external_data_fec_contributions", primary_key: "sub_id", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "external_data_fec_contributions", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", options: "ENGINE=InnoDB\n PARTITION BY LIST (`fec_year`)\n(PARTITION `fec_year_2022` VALUES IN (2022) ENGINE = InnoDB,\n PARTITION `fec_year_2020` VALUES IN (2020) ENGINE = InnoDB,\n PARTITION `fec_year_2018` VALUES IN (2018) ENGINE = InnoDB,\n PARTITION `fec_year_2016` VALUES IN (2016) ENGINE = InnoDB,\n PARTITION `fec_year_2014` VALUES IN (2014) ENGINE = InnoDB,\n PARTITION `fec_year_2012` VALUES IN (2012) ENGINE = InnoDB,\n PARTITION `fec_year_2010` VALUES IN (2010) ENGINE = InnoDB,\n PARTITION `fec_year_default` DEFAULT ENGINE = InnoDB)", force: :cascade do |t|
+    t.bigint "sub_id", null: false
     t.string "cmte_id", null: false
     t.text "amndt_ind"
     t.text "rpt_tp"
@@ -469,7 +470,8 @@ ActiveRecord::Schema.define(version: 2021_01_23_144348) do
     t.integer "file_num"
     t.text "memo_cd"
     t.text "memo_text"
-    t.integer "fec_year", null: false
+    t.integer "fec_year", limit: 2, null: false
+    t.index ["fec_year", "sub_id"], name: "index_external_data_fec_contributions_on_fec_year_and_sub_id", unique: true
   end
 
   create_table "external_data_nycc", primary_key: "district", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -525,19 +527,26 @@ ActiveRecord::Schema.define(version: 2021_01_23_144348) do
     t.index ["filer_id"], name: "index_external_data_nys_disclosures_on_filer_id"
   end
 
-  create_table "external_data_nys_filers", primary_key: "filer_id", id: :string, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.text "name"
-    t.string "filer_type"
-    t.string "status"
-    t.string "committee_type"
-    t.string "office"
+  create_table "external_data_nys_filers", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "filer_id", null: false
+    t.string "filer_name"
+    t.string "compliance_type_desc"
+    t.string "filter_type_desc"
+    t.string "filter_status"
+    t.string "committee_type_desc"
+    t.string "office_desc"
     t.string "district"
-    t.text "treas_first_name"
-    t.text "treas_last_name"
-    t.text "address"
-    t.text "city"
+    t.string "county_desc"
+    t.string "municipality_subdivision_desc"
+    t.string "treasurer_first_name"
+    t.string "treasurer_middle_name"
+    t.string "treasurer_last_name"
+    t.string "address"
+    t.string "city"
     t.string "state"
-    t.string "zip"
+    t.string "zipcode"
+    t.index ["filer_id"], name: "index_external_data_nys_filers_on_filer_id", unique: true
+    t.index ["filer_name"], name: "index_external_data_nys_filers_on_filer_name", type: :fulltext
   end
 
   create_table "external_entities", charset: "latin1", force: :cascade do |t|
