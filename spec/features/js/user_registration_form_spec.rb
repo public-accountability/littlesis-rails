@@ -20,11 +20,9 @@ feature 'User registration form', type: :feature, js: true do
       fill_in 'Password confirmation', with: 'volauvent'
       fill_in 'about-you-input', with: 'investigating Trystero and related matters'
       fill_in_math_captcha('math_captcha')
+      click_on 'Sign up'
 
-      alert = accept_alert do
-        click_on 'Sign up'
-      end
-      expect(alert).to eq 'Unfortunately, you have to accept the terms first'
+      expect(page).to have_css('.parsley-required', text: 'Unfortunately, you have to accept the terms first')
     end
   end
 
@@ -39,11 +37,9 @@ feature 'User registration form', type: :feature, js: true do
       fill_in 'about-you-input', with: 'investigating Trystero and related matters'
       fill_in_math_captcha('math_captcha')
       find('#terms_of_use').check
+      click_on 'Sign up'
 
-      alert = accept_alert do
-        click_on 'Sign up'
-      end
-      expect(alert).to eq 'Please ensure that your password is 8 or more characters long!'
+      expect(page).to have_css('.parsley-minlength', text: 'Passwords must be at least 8 characters')
     end
   end
 
@@ -58,11 +54,9 @@ feature 'User registration form', type: :feature, js: true do
       fill_in 'about-you-input', with: 'investigating Trystero and related matters'
       fill_in_math_captcha('math_captcha')
       find('#terms_of_use').check
+      click_on 'Sign up'
 
-      alert = accept_alert do
-        click_on 'Sign up'
-      end
-      expect(alert).to eq 'Your password and password confirmation do not match :('
+      expect(page).to have_css('.parsley-equalto', text: 'Your password and password confirmation do not match :(')
     end
   end
 
