@@ -478,5 +478,21 @@
     "date": "1/7/2021",
     "where_to": "Unknown",
     "org_url": null
+  },
+  {
+    "name": "Mark Meadows",
+    "url": "https://littlesis.org/person/133536-Mark_Meadows",
+    "position": "White House Chief of Staff",
+    "date": "1/20/2021",
+    "where_to": "Conservative Partnership Institute",
+    "org_url": "https://littlesis.org/org/402960-Conservative_Partnership_Institute"
+  },
+  {
+    "name": "Chad Mizelle",
+    "url": "https://littlesis.org/person/254871-Chad_Mizelle",
+    "position": "Acting General Counsel, Department of Homeland Security",
+    "date": "1/20/2021",
+    "where_to": "Jones Day",
+    "org_url": "https://littlesis.org/org/28485-Jones_Day"
   }
 ]
