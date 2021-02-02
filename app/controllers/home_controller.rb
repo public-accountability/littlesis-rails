@@ -26,7 +26,7 @@ class HomeController < ApplicationController
   # Sends CSRF token to browser extension
   def token
     if user_signed_in?
-      render inline: csrf_meta_tags
+      render inline: '<%= csrf_meta_tags %>', layout: false
     else
       head :unauthorized
     end
