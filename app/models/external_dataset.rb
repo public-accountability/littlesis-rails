@@ -111,14 +111,26 @@ module ExternalDataset
     end
   end
 
+  # Steps for a importing NYS Campaign Finance
+  #   - go to publicreporting.elections.ny.gov download and all 4 ALL_REPORTS files
+  #   - place those files in <Rails-root>/data/external_data/original/nys
+  # 3. littlesis data extract nys_disclosures
+  # 4. littlesis data extract nys_disclosures
   class NYSDisclosure < ApplicationRecord
     extend DatasetInterface
     self.dataset = :nys_disclosures
 
     @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/ALL_REPORTS.zip'
     @csv_file = ROOT_DIR.join('csv').join('nys_disclosures.csv')
-    @zip_file = ROOT_DIR.join('original').join('ALL_REPORTS.zip')
-    @columns = NYSDisclosureExtractor::HEADERS.dup.concat(['dataset_id']).freeze
+    # @zip_file = ROOT_DIR.join('original').join('ALL_REPORTS.zip')
+    # @columns = NYSDisclosureExtractor::HEADERS.dup.concat(['dataset_id']).freeze
+
+    FILES = [
+      %w[ALL_REPORTS_CountyCandidate COUNTY_CANDIDATE],
+      %w[ALL_REPORTS_CountyCommittee COUNTY_COMMITTEE],
+      %w[ALL_REPORTS_StateCandidate STATE_CANDIDATE],
+      %w[ALL_REPORTS_StateCommittee STATE_COMMITTEE]
+    ].freeze
 
     def self.download
       raise NotImplementedError, "this dataset requires manual downloading via a browser"
@@ -126,19 +138,23 @@ module ExternalDataset
     end
 
     def self.extract
-      CSV.open(@csv_file.to_s, 'w') do |csv_writer|
-        NYSDisclosureExtractor.new(@zip_file).each do |row|
-          csv_writer.puts row.values_at(*@columns)
-        end
+      FILES.each do |(outer, inner)|
+        otherpath = ROOT_DIR.join('original/nys', "#{outer}.zip")
+        innerpath = ROOT_DIR.join('original/nys', "#{inner}.zip")
+        `unzip -o #{otherpath} #{inner}.zip -d #{ROOT_DIR.join('original/nys')}`
+        `unzip -o #{innerpath} #{inner}.csv -d #{ROOT_DIR.join('original/nys')}`
       end
     end
 
     def self.load
-      run_query "LOAD DATA LOCAL INFILE '#{@csv_file}'
-                 IGNORE
-                 INTO TABLE #{table_name}
-                 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
-                 (#{@columns.join(',')})"
+      FILES.map(&:second).map { |x| ROOT_DIR.join('original/nys/', "#{x}.csv") }.each do |csv_file|
+        run_query <<~SQL
+          LOAD DATA LOCAL INFILE '#{csv_file}'
+          IGNORE
+          INTO TABLE #{table_name}
+          FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
+        SQL
+      end
     end
   end
 

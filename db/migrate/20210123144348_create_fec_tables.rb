@@ -42,7 +42,8 @@ class CreateFECTables < ActiveRecord::Migration[6.1]
 
     add_index :external_data_fec_committees, [:cmte_id, :fec_year], unique: true
 
-    create_table :external_data_fec_contributions, primary_key: :sub_id do |t|
+    create_table :external_data_fec_contributions, id: false do |t|
+      t.bigint :sub_id, null:false
       t.string :cmte_id, null: false
       t.text :amndt_ind
       t.text :rpt_tp
@@ -63,7 +64,9 @@ class CreateFECTables < ActiveRecord::Migration[6.1]
       t.integer :file_num
       t.text :memo_cd
       t.text :memo_text
-      t.integer :fec_year, null: false
+      t.integer :fec_year, limit: 2, null: false
     end
+
+    add_index :external_data_fec_contributions, [:fec_year, :sub_id], unique: true
   end
 end

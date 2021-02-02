@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_01_142914) do
+ActiveRecord::Schema.define(version: 2021_02_02_000131) do
 
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -378,6 +378,13 @@ ActiveRecord::Schema.define(version: 2021_02_01_142914) do
     t.index ["entity_id", "field_id"], name: "index_entity_fields_on_entity_id_and_field_id", unique: true
   end
 
+  create_table "example", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "word", limit: 100
+    t.integer "year"
+    t.string "cand_id", limit: 100
+    t.index ["year", "cand_id"], name: "example_idx", unique: true
+  end
+
   create_table "extension_definition", charset: "utf8", collation: "utf8_unicode_ci", force: :cascade do |t|
     t.string "name", limit: 30, null: false
     t.string "display_name", limit: 50, null: false
@@ -471,7 +478,11 @@ ActiveRecord::Schema.define(version: 2021_02_01_142914) do
     t.text "memo_cd"
     t.text "memo_text"
     t.integer "fec_year", limit: 2, null: false
+    t.index ["cmte_id"], name: "index_external_data_fec_contributions_on_cmte_id"
+    t.index ["employer"], name: "index_external_data_fec_contributions_on_employer", type: :fulltext
     t.index ["fec_year", "sub_id"], name: "index_external_data_fec_contributions_on_fec_year_and_sub_id", unique: true
+    t.index ["name"], name: "index_external_data_fec_contributions_on_name", type: :fulltext
+    t.index ["transaction_amt"], name: "index_external_data_fec_contributions_on_transaction_amt"
   end
 
   create_table "external_data_nycc", primary_key: "district", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -491,40 +502,56 @@ ActiveRecord::Schema.define(version: 2021_02_01_142914) do
     t.text "legislative_office"
   end
 
-  create_table "external_data_nys_disclosures", primary_key: "dataset_id", id: :string, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
-    t.string "filer_id", null: false
-    t.string "freport_id"
-    t.string "transaction_code"
-    t.string "e_year"
-    t.string "t3_trid"
-    t.date "date1_10"
-    t.date "date2_12"
-    t.string "contrib_code_20"
-    t.string "contrib_type_code_25"
-    t.string "corp_30"
-    t.string "first_name_40"
-    t.string "mid_init_42"
-    t.string "last_name_44"
-    t.string "addr_1_50"
-    t.string "city_52"
-    t.string "state_54"
-    t.string "zip_56"
-    t.string "check_no_60"
-    t.string "check_date_62"
-    t.float "amount_70"
-    t.float "amount2_72"
-    t.string "description_80"
-    t.string "other_recpt_code_90"
-    t.string "purpose_code1_100"
-    t.string "purpose_code2_1"
-    t.string "explanation_110"
-    t.string "xfer_type_120"
-    t.string "chkbox_130"
-    t.string "crerec_uid"
-    t.datetime "crerec_date"
-    t.index ["dataset_id"], name: "index_external_data_nys_disclosures_on_dataset_id"
-    t.index ["date1_10"], name: "index_external_data_nys_disclosures_on_date1_10"
+  create_table "external_data_nys_disclosures", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "filer_id", null: false
+    t.string "filer_previous_id"
+    t.string "cand_comm_name"
+    t.integer "election_year"
+    t.string "election_type"
+    t.string "county_desc"
+    t.string "filing_abbrev", limit: 1
+    t.string "filing_desc"
+    t.string "filing_cat_desc"
+    t.string "filing_sched_abbrev"
+    t.string "filing_sched_desc"
+    t.string "loan_lib_number"
+    t.string "trans_number", null: false
+    t.string "trans_mapping"
+    t.datetime "sched_date"
+    t.datetime "org_date"
+    t.string "cntrbr_type_desc"
+    t.string "cntrbn_type_desc"
+    t.string "transfer_type_desc"
+    t.string "receipt_type_desc"
+    t.string "receipt_code_desc"
+    t.string "purpose_code_desc"
+    t.string "r_subcontractor"
+    t.string "flng_ent_name"
+    t.string "flng_ent_first_name"
+    t.string "flng_ent_middle_name"
+    t.string "flng_ent_last_name"
+    t.string "flng_ent_add1"
+    t.string "flng_ent_city"
+    t.string "flng_ent_state"
+    t.string "flng_ent_zip"
+    t.string "flng_ent_country"
+    t.string "payment_type_desc"
+    t.string "pay_number"
+    t.float "owned_amt"
+    t.float "org_amt"
+    t.string "loan_other_desc"
+    t.string "trans_explntn"
+    t.string "r_itemized", limit: 1
+    t.string "r_liability", limit: 1
+    t.string "election_year_str"
+    t.string "office_desc"
+    t.string "district"
+    t.text "dist_off_cand_bal_prop"
     t.index ["filer_id"], name: "index_external_data_nys_disclosures_on_filer_id"
+    t.index ["flng_ent_last_name"], name: "index_external_data_nys_disclosures_on_flng_ent_last_name", type: :fulltext
+    t.index ["flng_ent_name"], name: "index_external_data_nys_disclosures_on_flng_ent_name", type: :fulltext
+    t.index ["org_amt"], name: "index_external_data_nys_disclosures_on_org_amt"
+    t.index ["trans_number"], name: "index_external_data_nys_disclosures_on_trans_number", unique: true
   end
 
   create_table "external_data_nys_filers", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
