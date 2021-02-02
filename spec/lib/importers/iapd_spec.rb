@@ -1,7 +1,7 @@
 require 'sqlite3'
 require 'importers'
 
-describe 'Iapd Dataset' do
+xdescribe 'Iapd Dataset' do
   let(:db) do
     SQLite3::Database.new(":memory:", results_as_hash: true).tap do |db|
       db.execute_batch2 <<SQL

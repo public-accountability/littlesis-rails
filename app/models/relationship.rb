@@ -93,8 +93,8 @@ class Relationship < ApplicationRecord
   has_many :ny_disclosures, through: :ny_matches
 
   # External Data
-  has_many :external_relationships, dependent: :nullify
-  has_many :external_data, through: :external_relationships
+  # has_many :external_relationships, dependent: :nullify
+  # has_many :external_data, through: :external_relationships
 
   validates :entity1_id, presence: true
   validates :entity2_id, presence: true
