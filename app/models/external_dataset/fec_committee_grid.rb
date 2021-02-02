@@ -6,31 +6,30 @@ module ExternalDataset
       ExternalDataset::FECCommittee.all
     end
 
-    filter(:name, :string)
-    filter(:transactino_dt, :date)
-    filter(:transaction_amt, :number)
+    filter(:cmte_nm, :string, header: 'Committee Name') do |value|
+      where("MATCH (cmte_nm) AGAINST (? IN BOOLEAN MODE)", value)
+    end
 
+    filter(:connected_org_nm, :string, header: 'Connected Org Name') do |value|
+      where("MATCH (connected_org_nm) AGAINST (? IN BOOLEAN MODE)", value)
+    end
 
-    column 'cmte_id'
-    column 'amndt_ind'
-    column 'rpt_tp'
-    column 'transaction_pgi'
-    column 'image_num'
-    column 'transaction_tp'
-    column 'entity_tp'
-    column 'name'
-    column 'city'
-    column 'state'
-    column 'zip_code'
-    column 'employer'
-    column 'occupation'
-    column 'transaction_dt'
-    column 'transaction_amt'
-    column 'other_id'
-    column 'tran_id'
-    column 'file_num'
-    column 'memo_cd'
-    column 'memo_text'
-    column 'fec_year'
+    filter(:cmte_pty_affiliation, :string, header: "Party")
+    filter(:cmte_zip, :string, header: 'Zipcode')
+
+    column "cmte_id"
+    column "cmte_nm"
+    column "tres_nm"
+    column "cmte_city"
+    column "cmte_st"
+    column "cmte_zip"
+    column "cmte_dsgn"
+    column "cmte_tp"
+    column "cmte_pty_affiliation"
+    column "cmte_filing_freq"
+    column "org_tp"
+    column "connected_org_nm"
+    column "cand_id"
+    column "fec_year"
   end
 end

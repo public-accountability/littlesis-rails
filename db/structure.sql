@@ -652,7 +652,9 @@ CREATE TABLE `external_data_fec_candidates` (
   `cand_zip` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fec_year` smallint(6) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_external_data_fec_candidates_on_cand_id_and_fec_year` (`cand_id`,`fec_year`)
+  UNIQUE KEY `index_external_data_fec_candidates_on_cand_id_and_fec_year` (`cand_id`,`fec_year`),
+  KEY `index_external_data_fec_candidates_on_cand_pty_affiliation` (`cand_pty_affiliation`),
+  FULLTEXT KEY `index_external_data_fec_candidates_on_cand_name` (`cand_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `external_data_fec_committees`;
@@ -677,7 +679,10 @@ CREATE TABLE `external_data_fec_committees` (
   `cand_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fec_year` smallint(6) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `index_external_data_fec_committees_on_cmte_id_and_fec_year` (`cmte_id`,`fec_year`)
+  UNIQUE KEY `index_external_data_fec_committees_on_cmte_id_and_fec_year` (`cmte_id`,`fec_year`),
+  KEY `index_external_data_fec_committees_on_cmte_pty_affiliation` (`cmte_pty_affiliation`(768)),
+  FULLTEXT KEY `index_external_data_fec_committees_on_cmte_nm` (`cmte_nm`),
+  FULLTEXT KEY `index_external_data_fec_committees_on_connected_org_nm` (`connected_org_nm`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `external_data_fec_contributions`;
@@ -2526,6 +2531,8 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20210121234418'),
 ('20210123144348'),
 ('20210201142914'),
-('20210202000131');
+('20210202000131'),
+('20210202185216'),
+('20210202190816');
 
 

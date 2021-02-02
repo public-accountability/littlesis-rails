@@ -8,7 +8,7 @@ module ExternalDataset
 
     filter(:fec_year, :enum, select: %w[2022 2020 2018 2016 2014 2012], include_blank: false, default: '2020')
     filter(:transaction_tp, :enum, select: %w[15E 15 24T 22Y 10 24I 15C 11 31 20Y 32], multiple: true)
-    filter(:cmte_id)
+    filter(:cmte_id, header: 'Committee ID')
     filter(:name, :string) { |value| where("MATCH (name) AGAINST (? IN BOOLEAN MODE)", value) }
     filter(:employer, :string) { |value| where("MATCH (employer) AGAINST (? IN BOOLEAN MODE)", value) }
     filter(:zip_code, :string)
@@ -20,7 +20,7 @@ module ExternalDataset
     column "cmte_id"
     column "amndt_ind"
     column "rpt_tp"
-    column "transaction_pgi"
+    # column "transaction_pgi"
     # column "image_num"
     column "transaction_tp"
     # column "entity_tp"
@@ -31,7 +31,7 @@ module ExternalDataset
     column "employer"
     column "occupation"
     column "transaction_dt"
-    column("transaction_amt") { |record| ActiveSupport::NumberHelper.number_with_delimiter(record.transaction_amt) }
+    column("transaction_amt") { |record| ActiveSupport::NumberHelper.number_to_delimited(record.transaction_amt) }
     column  "other_id"
     column "tran_id"
     column "file_num"

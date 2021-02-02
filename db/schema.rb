@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_02_000131) do
+ActiveRecord::Schema.define(version: 2021_02_02_190816) do
 
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -433,6 +433,8 @@ ActiveRecord::Schema.define(version: 2021_02_02_000131) do
     t.string "cand_zip"
     t.integer "fec_year", limit: 2, null: false
     t.index ["cand_id", "fec_year"], name: "index_external_data_fec_candidates_on_cand_id_and_fec_year", unique: true
+    t.index ["cand_name"], name: "index_external_data_fec_candidates_on_cand_name", type: :fulltext
+    t.index ["cand_pty_affiliation"], name: "index_external_data_fec_candidates_on_cand_pty_affiliation"
   end
 
   create_table "external_data_fec_committees", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
@@ -453,6 +455,9 @@ ActiveRecord::Schema.define(version: 2021_02_02_000131) do
     t.string "cand_id"
     t.integer "fec_year", limit: 2, null: false
     t.index ["cmte_id", "fec_year"], name: "index_external_data_fec_committees_on_cmte_id_and_fec_year", unique: true
+    t.index ["cmte_nm"], name: "index_external_data_fec_committees_on_cmte_nm", type: :fulltext
+    t.index ["cmte_pty_affiliation"], name: "index_external_data_fec_committees_on_cmte_pty_affiliation", length: 768
+    t.index ["connected_org_nm"], name: "index_external_data_fec_committees_on_connected_org_nm", type: :fulltext
   end
 
   create_table "external_data_fec_contributions", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", options: "ENGINE=InnoDB\n PARTITION BY LIST (`fec_year`)\n(PARTITION `fec_year_2022` VALUES IN (2022) ENGINE = InnoDB,\n PARTITION `fec_year_2020` VALUES IN (2020) ENGINE = InnoDB,\n PARTITION `fec_year_2018` VALUES IN (2018) ENGINE = InnoDB,\n PARTITION `fec_year_2016` VALUES IN (2016) ENGINE = InnoDB,\n PARTITION `fec_year_2014` VALUES IN (2014) ENGINE = InnoDB,\n PARTITION `fec_year_2012` VALUES IN (2012) ENGINE = InnoDB,\n PARTITION `fec_year_2010` VALUES IN (2010) ENGINE = InnoDB,\n PARTITION `fec_year_default` DEFAULT ENGINE = InnoDB)", force: :cascade do |t|

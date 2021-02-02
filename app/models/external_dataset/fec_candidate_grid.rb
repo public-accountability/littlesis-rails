@@ -1,0 +1,33 @@
+# frozen_string_literal: true
+
+module ExternalDataset
+  class FECCandidateGrid < BaseGrid
+    scope do
+      ExternalDataset::FECCandidate.all
+    end
+
+    filter(:cand_name, :string, header: 'Candidate Name') do |value|
+      where("MATCH (cand_name) AGAINST (? IN BOOLEAN MODE)", value)
+    end
+
+    filter(:cand_pty_affiliation, :string, header: 'Party')
+    filter(:cand_zip, :string, header: 'Zipcode')
+
+    column "cand_id"
+    column "cand_name"
+    column "cand_pty_affiliation"
+    column "cand_election_yr"
+    column "cand_office_st"
+    column "cand_office"
+    column "cand_office_district"
+    column "cand_ici"
+    column "cand_status"
+    column "cand_pcc"
+    column "cand_st1"
+    column "cand_st2"
+    column "cand_city"
+    column "cand_st"
+    column "cand_zip"
+    column "fec_year"
+  end
+end
