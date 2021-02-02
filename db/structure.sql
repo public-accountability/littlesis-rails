@@ -808,20 +808,27 @@ DROP TABLE IF EXISTS `external_data_nys_filers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `external_data_nys_filers` (
-  `filer_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `filer_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `committee_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `office` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `filer_id` bigint(20) NOT NULL,
+  `filer_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compliance_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filter_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filter_status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `committee_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `office_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `district` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `treas_first_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `treas_last_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `city` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `county_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `municipality_subdivision_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `treasurer_first_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `treasurer_middle_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `treasurer_last_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `state` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `zip` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`filer_id`)
+  `zipcode` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_external_data_nys_filers_on_filer_id` (`filer_id`),
+  FULLTEXT KEY `index_external_data_nys_filers_on_filer_name` (`filer_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `external_entities`;

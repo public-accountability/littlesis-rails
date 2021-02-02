@@ -1,6 +1,6 @@
 class ExternalDataNYSFilers < ActiveRecord::Migration[6.1]
   def change
-    create_table(:external_data_nys_filers, id: false) do |t|
+    create_table(:external_data_nys_filers) do |t|
       t.bigint :filer_id, null: false
       t.string :filer_name
       t.string :compliance_type_desc
@@ -19,8 +19,8 @@ class ExternalDataNYSFilers < ActiveRecord::Migration[6.1]
       t.string :state
       t.string :zipcode
 
-      t.index :filer_id, unique: true
       t.index :filer_name, type: :fulltext
+      t.index :filer_id, unique: true
     end
   end
 end

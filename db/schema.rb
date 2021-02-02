@@ -559,7 +559,7 @@ ActiveRecord::Schema.define(version: 2021_02_02_190816) do
     t.index ["trans_number"], name: "index_external_data_nys_disclosures_on_trans_number", unique: true
   end
 
-  create_table "external_data_nys_filers", id: false, charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "external_data_nys_filers", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "filer_id", null: false
     t.string "filer_name"
     t.string "compliance_type_desc"

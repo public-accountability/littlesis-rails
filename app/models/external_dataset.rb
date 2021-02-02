@@ -158,7 +158,7 @@ module ExternalDataset
     end
   end
 
-  class NYSFfiler < ApplicationRecord
+  class NYSFiler < ApplicationRecord
     extend DatasetInterface
     self.dataset = :nys_filers
     # This url stopped working in Janurary 2021
@@ -166,7 +166,6 @@ module ExternalDataset
     @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
     @csv_file = ROOT_DIR.join('csv').join('nys_filers.csv')
     @zip_file = ROOT_DIR.join('original').join('commcand.zip')
-    @columns = %w[filer_id filer_name compliance_type_desc filter_type_desc filter_status committee_type_desc office_desc district county_desc municipality_subdivision_desc treasurer_first_name treasurer_middle_name treasurer_last_name address city state zipcode].freeze
 
     def self.download
       raise NotImplementedError, "this dataset requires manual downloading via a browser"
@@ -186,7 +185,7 @@ module ExternalDataset
                  REPLACE
                  INTO TABLE #{table_name}
                  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
-                 (#{@columns.join(',')})"
+                 (filer_id,filer_name,compliance_type_desc,filter_type_desc,filter_status,committee_type_desc,office_desc,district,county_desc,municipality_subdivision_desc,treasurer_first_name,treasurer_middle_name,treasurer_last_name,address,city,state,zipcode)"
     end
   end
 

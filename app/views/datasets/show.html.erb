@@ -5,6 +5,12 @@
 
 <div class="row">
   <div class="col">
+    <h2 class="text-center"><strong>Explore <%= @dataset.dataset_name.to_s.tr('_', ' ').titleize %></strong></h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
     <%= datagrid_form_for @grid, :method => :get, :url => "/datasets/#{@dataset.dataset_name}" %>
   </div>
 </div>
@@ -12,6 +18,7 @@
 <div class="row">
   <div class="col">
     <%= datagrid_table @grid %>
+    <div class="mt-2 mb-2"></div>
     <%= paginate(@grid.assets) %>
   </div>
 </div>

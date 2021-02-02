@@ -15,13 +15,13 @@ module ExternalDataset
 
     column "cand_id"
     column "cand_name"
-    column "cand_pty_affiliation"
+    column "cand_pty_affiliation", order: false
     column "cand_election_yr"
-    column "cand_office_st"
-    column "cand_office"
-    column "cand_office_district"
-    column "cand_ici"
-    column "cand_status"
+    column "cand_office_st", order: false
+    column "cand_office", order: false
+    column "cand_office_district", order: false
+    column "cand_ici", order: false
+    column "cand_status", order: false
     column "cand_pcc"
     column "cand_st1"
     column "cand_st2"
