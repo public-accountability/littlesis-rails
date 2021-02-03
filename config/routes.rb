@@ -59,7 +59,7 @@ Lilsis::Application.routes.draw do
     end
     collection do
       get 'admin'
-      get 'check_username'
+      post 'check_username'
     end
   end
 

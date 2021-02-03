@@ -19,6 +19,9 @@ import 'papaparse'
 import 'file-saver'
 import 'select2'
 
+// JS form validation
+import 'parsleyjs'
+
 import utility from './common/utility'
 import http from './common/http'
 import tags from './common/tags'

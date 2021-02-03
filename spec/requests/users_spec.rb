@@ -5,7 +5,7 @@ describe 'Users' do
     let(:username) { '' }
 
     before do
-      get '/users/check_username', params: { 'username' => username }
+      post '/users/check_username', params: { 'username' => username }
     end
 
     context 'with valid username' do

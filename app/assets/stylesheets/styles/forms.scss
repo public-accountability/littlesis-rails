@@ -1,0 +1,10 @@
+form {
+  .parsley-error {
+    border: 1px solid red;
+  }
+
+  .parsley-errors-list {
+    color: red;
+    padding-left: 1rem;
+  }
+}
