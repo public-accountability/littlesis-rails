@@ -26,8 +26,9 @@
                         map_path(map),
                         class: 'delete-map-button',
                         title: 'Permanently delete this map',
+                        remote: false,
                         method: :delete,
-                        confirm: "Are you sure?") %>
+                        data: { confirm: "Are you sure?" } ) %>
           </td>
 	<% end %>
       </tr>

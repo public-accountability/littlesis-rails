@@ -630,6 +630,207 @@ CREATE TABLE `external_data` (
   KEY `index_external_data_on_dataset` (`dataset`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `external_data_fec_candidates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_data_fec_candidates` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cand_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cand_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_pty_affiliation` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_election_yr` tinyint(4) DEFAULT NULL,
+  `cand_office_st` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_office` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_office_district` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_ici` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_status` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_pcc` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_st1` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_st2` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_city` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_st` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_zip` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fec_year` smallint(6) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_external_data_fec_candidates_on_cand_id_and_fec_year` (`cand_id`,`fec_year`),
+  KEY `index_external_data_fec_candidates_on_cand_pty_affiliation` (`cand_pty_affiliation`),
+  FULLTEXT KEY `index_external_data_fec_candidates_on_cand_name` (`cand_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `external_data_fec_committees`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_data_fec_committees` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `cmte_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cmte_nm` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tres_nm` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cmte_st1` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cmte_st2` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cmte_city` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cmte_st` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cmte_zip` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cmte_dsgn` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cmte_tp` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cmte_pty_affiliation` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cmte_filing_freq` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `org_tp` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `connected_org_nm` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fec_year` smallint(6) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_external_data_fec_committees_on_cmte_id_and_fec_year` (`cmte_id`,`fec_year`),
+  KEY `index_external_data_fec_committees_on_cmte_pty_affiliation` (`cmte_pty_affiliation`(768)),
+  FULLTEXT KEY `index_external_data_fec_committees_on_cmte_nm` (`cmte_nm`),
+  FULLTEXT KEY `index_external_data_fec_committees_on_connected_org_nm` (`connected_org_nm`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `external_data_fec_contributions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_data_fec_contributions` (
+  `sub_id` bigint(20) NOT NULL,
+  `cmte_id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `amndt_ind` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rpt_tp` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `transaction_pgi` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image_num` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `transaction_tp` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `entity_tp` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `state` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `zip_code` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `employer` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `occupation` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `transaction_dt` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `transaction_amt` decimal(10,0) DEFAULT NULL,
+  `other_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tran_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `file_num` int(11) DEFAULT NULL,
+  `memo_cd` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `memo_text` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fec_year` smallint(6) NOT NULL,
+  UNIQUE KEY `index_external_data_fec_contributions_on_fec_year_and_sub_id` (`fec_year`,`sub_id`),
+  KEY `index_external_data_fec_contributions_on_cmte_id` (`cmte_id`),
+  KEY `index_external_data_fec_contributions_on_transaction_amt` (`transaction_amt`),
+  FULLTEXT KEY `index_external_data_fec_contributions_on_name` (`name`),
+  FULLTEXT KEY `index_external_data_fec_contributions_on_employer` (`employer`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+ PARTITION BY LIST (`fec_year`)
+(PARTITION `fec_year_2022` VALUES IN (2022) ENGINE = InnoDB,
+ PARTITION `fec_year_2020` VALUES IN (2020) ENGINE = InnoDB,
+ PARTITION `fec_year_2018` VALUES IN (2018) ENGINE = InnoDB,
+ PARTITION `fec_year_2016` VALUES IN (2016) ENGINE = InnoDB,
+ PARTITION `fec_year_2014` VALUES IN (2014) ENGINE = InnoDB,
+ PARTITION `fec_year_2012` VALUES IN (2012) ENGINE = InnoDB,
+ PARTITION `fec_year_2010` VALUES IN (2010) ENGINE = InnoDB,
+ PARTITION `fec_year_default` DEFAULT ENGINE = InnoDB);
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `external_data_nycc`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_data_nycc` (
+  `district` bigint(20) NOT NULL AUTO_INCREMENT,
+  `personid` smallint(6) NOT NULL,
+  `council_district` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `first_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `full_name` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `photo_url` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `twitter` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `party` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `website` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gender` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `district_office` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `legislative_office` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`district`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `external_data_nys_disclosures`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_data_nys_disclosures` (
+  `filer_id` bigint(20) NOT NULL,
+  `filer_previous_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cand_comm_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `election_year` int(11) DEFAULT NULL,
+  `election_type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `county_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filing_abbrev` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filing_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filing_cat_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filing_sched_abbrev` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filing_sched_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `loan_lib_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `trans_number` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `trans_mapping` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sched_date` datetime DEFAULT NULL,
+  `org_date` datetime DEFAULT NULL,
+  `cntrbr_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cntrbn_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `transfer_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `receipt_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `receipt_code_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `purpose_code_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `r_subcontractor` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `flng_ent_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `flng_ent_first_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `flng_ent_middle_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `flng_ent_last_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `flng_ent_add1` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `flng_ent_city` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `flng_ent_state` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `flng_ent_zip` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `flng_ent_country` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payment_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `pay_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `owned_amt` float DEFAULT NULL,
+  `org_amt` float DEFAULT NULL,
+  `loan_other_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `trans_explntn` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `r_itemized` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `r_liability` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `election_year_str` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `office_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `district` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dist_off_cand_bal_prop` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  UNIQUE KEY `index_external_data_nys_disclosures_on_trans_number` (`trans_number`),
+  KEY `index_external_data_nys_disclosures_on_filer_id` (`filer_id`),
+  KEY `index_external_data_nys_disclosures_on_org_amt` (`org_amt`),
+  FULLTEXT KEY `index_external_data_nys_disclosures_on_flng_ent_name` (`flng_ent_name`),
+  FULLTEXT KEY `index_external_data_nys_disclosures_on_flng_ent_last_name` (`flng_ent_last_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `external_data_nys_filers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_data_nys_filers` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `filer_id` bigint(20) NOT NULL,
+  `filer_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `compliance_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filter_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `filter_status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `committee_type_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `office_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `district` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `county_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `municipality_subdivision_desc` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `treasurer_first_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `treasurer_middle_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `treasurer_last_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `state` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `zipcode` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index_external_data_nys_filers_on_filer_id` (`filer_id`),
+  FULLTEXT KEY `index_external_data_nys_filers_on_filer_name` (`filer_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `external_entities`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2331,6 +2532,14 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20201216170621'),
 ('20201221234821'),
 ('20201221234822'),
-('20210112023923');
+('20210112023923'),
+('20210121184537'),
+('20210121223749'),
+('20210121234418'),
+('20210123144348'),
+('20210201142914'),
+('20210202000131'),
+('20210202185216'),
+('20210202190816');
 
 

@@ -207,6 +207,22 @@ class LsDate # rubocop:disable Metrics/ClassLength
     new(Time.zone.today.iso8601)
   end
 
+  def self.parse_us_date(d)
+    return nil if d.blank?
+
+    Date.strptime(d, '%m/%d/%Y')
+  rescue Date::Error
+    nil
+  end
+
+  def self.parse_us_datetime(d)
+    return nil if d.blank?
+
+    DateTime.strptime(d, '%m/%d/%Y %T')
+  rescue Date::Error
+    nil
+  end
+
   # converts strings to integers and converts 0 to nil
   private_class_method def self.to_int(x)
     return nil if x.blank?

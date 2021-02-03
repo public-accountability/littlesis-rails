@@ -1,4 +1,4 @@
-describe "ExternalRelationships", type: :request do
+xdescribe "ExternalRelationships", type: :request do
   let(:user) { create_basic_user }
 
   before do

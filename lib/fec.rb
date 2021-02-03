@@ -32,7 +32,7 @@ module FEC
       logfile: File.join(default_root, 'log/fec.log'),
       database: File.join(default_root, 'data/fec.db'),
       recheck: false,
-      years: 2016..2020,
+      years: 2010..2022,
       tables: nil
     }
   end

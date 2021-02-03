@@ -64,7 +64,7 @@ module Utility
     Time.zone.now.strftime('%F')
   end
 
-  # GET HTTP request, saving the response body to a local file
+  # GET HTTP request, saving the response body to a local file (streaming)
   def self.stream_file(url:, path:)
     uri = URI(url)
     Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
@@ -81,6 +81,11 @@ module Utility
 
   def self.stream_file_if_not_exists(url:, path:)
     stream_file(url: url, path: path) if file_is_empty_or_nonexistent(path)
+  end
+
+  # GET HTTP request, saving the response body to a local file
+  def self.download_file(url:, path:)
+    File.write(path, Net::HTTP.get(URI.parse(url)))
   end
 
   def self.zip_entry_each_line(zip:, file:, &block)

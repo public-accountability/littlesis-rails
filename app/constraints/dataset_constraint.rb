@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class DatasetConstraint
-  DATASETS = ExternalData::DATASETS.keys.map(&:to_s).to_set.freeze
-
   def initialize(check_id: false)
     @check_id = check_id
   end
@@ -11,10 +9,12 @@ class DatasetConstraint
     dataset = request.params['dataset']
     id = request.params['id'] if @check_id
 
+    is_dataset = ExternalDataset.datasets.key?(dataset.to_sym)
+
     if @check_id
-      DATASETS.include?(dataset) && /\d+/.match?(id)
+      is_dataset && /\d+/.match?(id)
     else
-      DATASETS.include?(dataset)
+      is_dataset
     end
   end
 end

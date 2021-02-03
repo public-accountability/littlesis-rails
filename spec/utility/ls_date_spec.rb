@@ -166,6 +166,16 @@ describe LsDate do
     end
   end
 
+  describe 'parsing us dates' do
+    specify 'parse_us_date' do
+      expect(LsDate.parse_us_date('07/22/1999')).to eq Date.new(1999, 7, 22)
+    end
+
+    specify 'parse_us_datetime' do
+      expect(LsDate.parse_us_datetime('07/22/1999 08:43:59')).to eq DateTime.new(1999, 7, 22, 8, 43, 59)
+    end
+  end
+
   describe 'Comparisons' do
     it 'returns equal when both are unknown' do
       expect(LsDate.new(nil) == LsDate.new(nil)).to be true

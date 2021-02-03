@@ -8,7 +8,7 @@ describe ExternalEntitiesController, type: :controller do
   it { is_expected.to route(:patch, '/external_entities/123').to(action: :update, id: 123) }
   it { is_expected.not_to route(:get, '/external_entities/nycc').to(action: :dataset, dataset: 'nycc') }
 
-  describe 'random' do
+  xdescribe 'random' do
     it 'redirects to random id' do
       allow(controller).to receive(:authenticate_user!)
       expect(ExternalEntity).to receive(:random_unmatched)
