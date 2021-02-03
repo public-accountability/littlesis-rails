@@ -24,7 +24,7 @@
   "dependencies": {
     "@babel/preset-react": "^7.10.1",
     "@public-accountability/simplestore": "^0.1.6",
-    "@rails/ujs": "^6.1.0",
+    "@rails/ujs": "^6.1.1",
     "@rails/webpacker": "^5.1.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "bloodhound-js": "^1.2.3",
