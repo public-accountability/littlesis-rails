@@ -15,10 +15,17 @@
   </div>
 </div>
 
-<div class="row">
+<div class="row mb-2">
   <div class="col">
     <%= datagrid_table @grid %>
-    <div class="mt-2 mb-2"></div>
+  </div>
+</div>
+
+<div class="row mt-2">
+  <div class="col-6">
     <%= paginate(@grid.assets) %>
+  </div>
+  <div class="col-6">
+    <p class="float-right">Total count: <strong><%= ActiveSupport::NumberHelper.number_to_delimited @grid.assets.total_count %></strong></p>
   </div>
 </div>
