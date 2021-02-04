@@ -15,23 +15,21 @@ module ExternalDataset
     end
 
     filter(:filing_sched_abbrev, :enum, select: %w[A B C D E F G H I J K L M N O P Q R], header: 'Schedule')
-
     filter(:org_amt, :float)
 
-    column "filer_id", order: false
-    column "filer_previous_id", order: false
-    column "cand_comm_name"
+    column "filer_id", order: false, header: "Filer ID"
+    column "filer_previous_id", order: false, header: "Previous ID"
     column "election_year"
-    column "election_type"
-    column "county_desc"
+    # column "election_type"
+    # column "county_desc"
     column "filing_abbrev"
-    column "filing_desc"
-    column "filing_cat_desc"
+    column "filing_desc", order: false
+    # column "filing_cat_desc"
     column "filing_sched_abbrev"
-    column "filing_sched_desc"
-    column "loan_lib_number"
-    column "trans_number"
-    column "trans_mapping"
+    column "filing_sched_desc", order: false
+    # column "loan_lib_number"
+    column "trans_number", order: false
+    # column "trans_mapping"
     column "sched_date"
     column "org_date"
     column "cntrbr_type_desc", order: false
@@ -49,7 +47,7 @@ module ExternalDataset
     column "flng_ent_city"
     column "flng_ent_state"
     column "flng_ent_zip"
-    column "flng_ent_country"
+    # column "flng_ent_country"
     column "payment_type_desc", order: false
     column "pay_number"
     column "owned_amt"
@@ -58,9 +56,9 @@ module ExternalDataset
     column "trans_explntn", order: false
     column "r_itemized", order: false
     column "r_liability", order: false
-    column "election_year_str"
-    column "office_desc"
-    column "district"
-    column "dist_off_cand_bal_prop", order: false
+    # column "election_year_str"
+    # column "office_desc"
+    # column "district"
+    # column "dist_off_cand_bal_prop", order: false
   end
 end

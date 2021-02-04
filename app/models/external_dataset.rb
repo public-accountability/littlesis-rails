@@ -138,21 +138,28 @@ module ExternalDataset
     end
 
     def self.extract
+      FileUtils.mkdir_p ROOT_DIR.join('csv/nys')
+
       FILES.each do |(outer, inner)|
-        otherpath = ROOT_DIR.join('original/nys', "#{outer}.zip")
-        innerpath = ROOT_DIR.join('original/nys', "#{inner}.zip")
-        `unzip -o #{otherpath} #{inner}.zip -d #{ROOT_DIR.join('original/nys')}`
-        `unzip -o #{innerpath} #{inner}.csv -d #{ROOT_DIR.join('original/nys')}`
+        outer_zip = ROOT_DIR.join('original/nys', "#{outer}.zip")
+        inner_zip = ROOT_DIR.join('original/nys', "#{inner}.zip")
+        original_csv = ROOT_DIR.join('original/nys', "#{inner}.csv")
+        output_csv = ROOT_DIR.join('csv/nys', "#{inner}.csv")
+        system "unzip -o #{outer_zip} #{inner}.zip -d #{ROOT_DIR.join('original/nys')}", exception: true
+        system "unzip -o #{inner_zip} #{inner}.csv -d #{ROOT_DIR.join('original/nys')}", exception: true
+        system "tr -d '\\000' < #{original_csv} | iconv -f iso-8859-1 -t utf8  > #{output_csv}", exception: true
+        system "csvclean #{output_csv}", exception: true, chdir: ROOT_DIR.join('csv/nys').to_s
       end
     end
 
     def self.load
-      FILES.map(&:second).map { |x| ROOT_DIR.join('original/nys/', "#{x}.csv") }.each do |csv_file|
+      FILES.map(&:second).map { |x| ROOT_DIR.join('csv/nys', "#{x}_out.csv") }.each do |csv_file|
         run_query <<~SQL
           LOAD DATA LOCAL INFILE '#{csv_file}'
           IGNORE
           INTO TABLE #{table_name}
           FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
+          (filer_id, filer_previous_id, election_year, election_type, @dummy, filing_abbrev, filing_desc, r_amend, filing_cat_desc, filing_sched_abbrev, filing_sched_desc, loan_lib_number, trans_number, trans_mapping, sched_date, org_date, cntrbr_type_desc, cntrbn_type_desc, transfer_type_desc, receipt_type_desc, receipt_code_desc, purpose_code_desc, r_subcontractor, flng_ent_name, flng_ent_first_name, flng_ent_middle_name, flng_ent_last_name, flng_ent_add1, @dummy, flng_ent_city, flng_ent_state, flng_ent_zip, flng_ent_country, payment_type_desc, pay_number, owned_amt, org_amt, loan_other_desc, trans_explntn, r_itemized, r_liability, election_year_str, office_desc, district, dist_off_cand_bal_prop)
         SQL
       end
     end
