@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_02_190816) do
+ActiveRecord::Schema.define(version: 2021_02_04_151130) do
 
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -552,6 +552,7 @@ ActiveRecord::Schema.define(version: 2021_02_02_190816) do
     t.string "office_desc"
     t.string "district"
     t.text "dist_off_cand_bal_prop"
+    t.string "r_amend", limit: 1
     t.index ["filer_id"], name: "index_external_data_nys_disclosures_on_filer_id"
     t.index ["flng_ent_last_name"], name: "index_external_data_nys_disclosures_on_flng_ent_last_name", type: :fulltext
     t.index ["flng_ent_name"], name: "index_external_data_nys_disclosures_on_flng_ent_name", type: :fulltext
