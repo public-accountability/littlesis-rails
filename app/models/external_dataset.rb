@@ -79,7 +79,7 @@ module ExternalDataset
     end
 
     def self.extract
-      Utility.save_hash_array_to_csv(csv_file,
+      Utility.save_hash_array_to_csv(@csv_file,
                                      JSON.parse(File.read(@json_file)).map do |x|
                                        {
                                          district: x['District'].to_i,
@@ -107,15 +107,15 @@ module ExternalDataset
                  INTO TABLE #{table_name}
                  FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
                  IGNORE 1 LINES
-                 (#{File.open(csv_file, &:readline).chomp})"
+                 (#{File.open(@csv_file, &:readline).chomp})"
     end
   end
 
   # Steps for a importing NYS Campaign Finance
   #   - go to publicreporting.elections.ny.gov download and all 4 ALL_REPORTS files
   #   - place those files in <Rails-root>/data/external_data/original/nys
-  # 3. littlesis data extract nys_disclosures
-  # 4. littlesis data extract nys_disclosures
+  #   - littlesis data extract nys_disclosures
+  #   - littlesis data load nys_disclosures
   class NYSDisclosure < ApplicationRecord
     extend DatasetInterface
     self.dataset = :nys_disclosures
@@ -213,12 +213,27 @@ module ExternalDataset
     extend DatasetInterface
     extend FECData
     self.dataset = :fec_committees
+
+    has_many :contributions,
+             class_name: 'ExternalDataset::FECContribution',
+             foreign_key: 'cmte_id',
+             primary_key: 'cmte_id',
+             inverse_of: :fec_committee
+
+    def display_name
+      "#{cmte_nm} (#{cmte_id})"
+    end
   end
 
   class FECContribution < ApplicationRecord
     extend DatasetInterface
     extend FECData
     self.dataset = :fec_contributions
+
+    belongs_to :fec_committee, ->(contribution) { where(fec_year: contribution.fec_year) },
+               class_name: 'ExternalDataset::FECCommittee',
+               foreign_key: 'cmte_id',
+               primary_key: 'cmte_id'
   end
 
   datasets.each_key do |dataset|

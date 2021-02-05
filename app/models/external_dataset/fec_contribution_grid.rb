@@ -17,7 +17,12 @@ module ExternalDataset
       where('transaction_amt >= ?', value)
     end
 
-    column "cmte_id"
+    column "cmte_id" do |record|
+      format(record.cmte_id) do |_|
+        record.fec_committee.display_name
+      end
+    end
+
     column "amndt_ind"
     column "rpt_tp"
     # column "transaction_pgi"
