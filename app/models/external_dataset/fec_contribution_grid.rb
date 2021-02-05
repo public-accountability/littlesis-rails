@@ -2,8 +2,10 @@
 
 module ExternalDataset
   class FECContributionGrid < BaseGrid
+    self.batch_size = nil
+
     scope do
-      ExternalDataset::FECContribution.all
+      ExternalDataset::FECContribution
     end
 
     filter(:fec_year, :enum, select: %w[2022 2020 2018 2016 2014 2012], include_blank: false, default: '2020')
