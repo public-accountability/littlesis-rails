@@ -1,4 +1,6 @@
 export function ActionsColumn(config) {
+  const serializer = new XMLSerializer()
+
   if ( config['editable'] ){
     return {
       data: 'actions',
@@ -7,8 +9,9 @@ export function ActionsColumn(config) {
       sortable: false,
       className: 'context',
       render: function(data, type, row) {
-        const js = `LittleSis.removeListEntity('${row.remove_url}')`
-        return '<a onclick="' + js + '"><span class="glyphicon glyphicon-remove"></span></a>'
+        let remover = document.getElementById('entity_remover').content.cloneNode(true)
+        remover.firstElementChild.href = row.remove_url
+        return serializer.serializeToString(remover)
       }
     }
   }
