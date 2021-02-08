@@ -83,6 +83,8 @@ module Tagable
 
   # NOTE: does NOT allow string-intergers as ids .ie. '1'
   def parse_tag_id!(name_or_id)
+    return if name_or_id == 0
+
     msg = name_or_id.is_a?(String) ? :find_by_name! : :find
     Tag.public_send(msg, name_or_id).id
   end

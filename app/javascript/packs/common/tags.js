@@ -105,8 +105,11 @@ export default function tags(){
       id: 'tags-save-button',
       text: 'save',
       click: function(e){
-	e.preventDefault()
-        $.post(STATE.endpoint, {tags: { ids: STATE.tags.current  }})
+        // Avoid sending nothing to Rails if there are no ids
+        let ids = STATE.tags.current.length > 0 ? STATE.tags.current : ['']
+
+        e.preventDefault()
+        $.post(STATE.endpoint, {tags: {ids: ids}})
           .done(function(){ window.location.reload(true) })
       }
     })
