@@ -1,14 +1,20 @@
-<h1>Admin</h1>
+<div class="row">
+  <div class="col">
+    <h1>Site Administration</h1>
+  </div>
+</div>
 
-<%= notice_if_notice %>
-
-<div id="admin-links">
-  <%= link_to 'users admin', admin_users_path %><br />
-  <%= link_to 'tags admin', admin_tags_path %><br />
-  <%= link_to 'active user stats', admin_stats_path %><br />
-  <%= link_to 'dashboard bulletins', dashboard_bulletins_path %><br />
-  <%= link_to 'permission passes', permission_passes_path %><br />
-  <%= link_to 'edit pages', pages_path %><br />
-  <%= link_to 'edit help pages', help_pages_path %><br />
-  <%= link_to 'datasets', datasets_path %><br />
+<div class="row">
+  <div class="col">
+    <div id="admin-links">
+      <%= link_to 'View and Set User Permissions', admin_users_path %><br />
+      <%= link_to 'Configure Tags', admin_tags_path %><br />
+      <%= link_to 'Active User Statistics', admin_stats_path %><br />
+      <%= link_to 'Dashboard Bulletins', dashboard_bulletins_path %><br />
+      <%= link_to 'Permission Passes', permission_passes_path %><br />
+      <%= link_to 'Edit Site Pages', pages_path %><br />
+      <%= link_to 'Edit Help Pages', help_pages_path %><br />
+      <%= link_to 'External Datasets', datasets_path %><br />
+    </div>
+  </div>
 </div>
