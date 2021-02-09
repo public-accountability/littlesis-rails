@@ -1,4 +1,4 @@
-# rubocop:disable RSpec/NamedSubject, RSpec/LetSetup, RSpec/BeforeAfterAll, RSpec/ExpectInHook
+# rubocop:disable RSpec/NamedSubject, RSpec/BeforeAfterAll, RSpec/ExpectInHook
 
 describe UserEdits do
   describe UserEdits::Edits do
@@ -124,10 +124,16 @@ describe UserEdits do
 
     let(:user_one) { create_really_basic_user }
     let(:user_two) { create_really_basic_user }
-    let!(:update_event) { create(:entity_version, whodunnit: user_one.id.to_s, event: 'update') }
-    let!(:destory_event) { create(:entity_version, whodunnit: user_one.id.to_s, event: 'destroy') }
-    let!(:soft_delete_event) { create(:relationship_version, whodunnit: user_one.id.to_s, event: 'soft_delete') }
-    let!(:create_event) { create(:entity_version, whodunnit: user_two.id.to_s, event: 'create') }
+
+    before do
+      create(:entity_version, whodunnit: user_one.id.to_s, event: 'create')
+      create(:entity_version, whodunnit: user_one.id.to_s, event: 'update')
+      create(:entity_version, whodunnit: user_one.id.to_s, event: 'destroy')
+      create(:relationship_version, whodunnit: user_one.id.to_s, event: 'soft_delete')
+
+      create(:entity_version, whodunnit: user_two.id.to_s, event: 'create')
+      create(:relationship_version, whodunnit: user_two.id.to_s, event: 'create')
+    end
 
     describe 'User.active_users' do
       subject { User.active_users }
@@ -135,29 +141,31 @@ describe UserEdits do
       it 'returns an array of ActiveUsers, correctly sorted' do
         expect(subject.length).to eq 2
         expect(subject.first).to be_a UserEdits::ActiveUser
-        expect(subject.first.user).to eql user_one
-        expect(subject.second.user).to eql user_two
+        expect(subject.first.user).to eq user_two
+        expect(subject.second.user).to eq user_one
+
+        expect(subject.first.version.except('id'))
+          .to eq('whodunnit' => user_two.id.to_s,
+                 'edits' => 2,
+                 'entity_create_count' => 1,
+                 'relationship_create_count' => 1,
+                 'create_count' => 2,
+                 'update_count' => 0,
+                 'delete_count' => 0)
+
+        expect(subject.second.version.except('id'))
+          .to eq('whodunnit' => user_one.id.to_s,
+                 'edits' => 4,
+                 'entity_create_count' => 1,
+                 'relationship_create_count' => 0,
+                 'create_count' => 1,
+                 'update_count' => 1,
+                 'delete_count' => 2)
+
+        expect(User.uniq_active_users).to eq 2
       end
-
-      it 'ActiveUser contains correct edits count' do
-        expect(subject.first['edits']).to eq 3
-        expect(subject.first['create_count']).to be_zero
-        expect(subject.first['update_count']).to eq 1
-        expect(subject.first['delete_count']).to eq 2
-
-        expect(subject.second['edits']).to eq 1
-        expect(subject.second['create_count']).to eq 1
-        expect(subject.second['update_count']).to be_zero
-        expect(subject.second['delete_count']).to be_zero
-      end
-    end
-
-    describe 'User.uniq_active_users' do
-      subject { User.uniq_active_users }
-
-      it { is_expected.to eq 2 }
     end
   end
 end
 
-# rubocop:enable RSpec/NamedSubject, RSpec/LetSetup, RSpec/BeforeAfterAll, RSpec/ExpectInHook
+# rubocop:enable RSpec/NamedSubject, RSpec/BeforeAfterAll, RSpec/ExpectInHook
