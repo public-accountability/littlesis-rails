@@ -2,8 +2,10 @@
 
 module ExternalDataset
   class FECContributionGrid < BaseGrid
+    self.batch_size = nil
+
     scope do
-      ExternalDataset::FECContribution.all
+      ExternalDataset::FECContribution
     end
 
     filter(:fec_year, :enum, select: %w[2022 2020 2018 2016 2014 2012], include_blank: false, default: '2020')
@@ -17,7 +19,12 @@ module ExternalDataset
       where('transaction_amt >= ?', value)
     end
 
-    column "cmte_id"
+    column "cmte_id" do |record|
+      format(record.cmte_id) do |_|
+        record.fec_committee.display_name
+      end
+    end
+
     column "amndt_ind"
     column "rpt_tp"
     # column "transaction_pgi"

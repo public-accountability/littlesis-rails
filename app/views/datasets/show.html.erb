@@ -27,5 +27,10 @@
   </div>
   <div class="col-6">
     <p class="float-right">Total count: <strong><%= ActiveSupport::NumberHelper.number_to_delimited @grid.assets.total_count %></strong></p>
+    <% if @grid.assets.total_count <= 100_000 %>
+      <p class="float-right mr-2">
+        <%=  link_to "Download CSV", url_for(format: 'csv', @grid_params_key => @grid_params.delete_if { |_, v| v.blank? }) %>
+      </p>
+    <% end %>
   </div>
 </div>
