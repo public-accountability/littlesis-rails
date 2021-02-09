@@ -11,7 +11,7 @@ describe 'Permission Passes', type: :feature do
   after { logout(:admin_user) }
 
   scenario 'viewing all permission passes' do
-    click_on 'permission passes'
+    click_on 'Permission Passes'
 
     expect(page).to have_css('h1', text: 'Permission Passes')
 
@@ -22,7 +22,7 @@ describe 'Permission Passes', type: :feature do
   end
 
   scenario 'creating a permission pass' do
-    click_on 'permission passes'
+    click_on 'Permission Passes'
     click_on 'New Permission Pass'
 
     expect(page).to have_css('h1', text: 'New Permission Pass')
@@ -48,7 +48,7 @@ describe 'Permission Passes', type: :feature do
     let!(:pass) { create(:permission_pass, creator: admin_user, abilities: UserAbilities.new(:edit, :list, :bulk, :merge)) }
 
     scenario 'editing the pass abilities' do
-      click_on 'permission passes'
+      click_on 'Permission Passes'
 
       within "#permission-passes #pass_#{pass.id}" do
         click_on 'Edit'
@@ -66,7 +66,7 @@ describe 'Permission Passes', type: :feature do
     end
 
     scenario 'choosing invalid dates' do
-      click_on 'permission passes'
+      click_on 'Permission Passes'
 
       within "#permission-passes #pass_#{pass.id}" do
         click_on 'Edit'

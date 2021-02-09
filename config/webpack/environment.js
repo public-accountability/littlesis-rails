@@ -1,11 +1,11 @@
 const { environment } = require('@rails/webpacker')
-const webpack = require('webpack');
+const webpack = require('webpack')
 
 environment.plugins.append('Provide', new webpack.ProvidePlugin({
-   $: 'jquery',
-   jQuery: 'jquery',
-   api: 'packs/common/api'
-}));
+  $: 'jquery',
+  jQuery: 'jquery',
+  api: 'packs/common/api'
+}))
 
 environment.loaders.append('babel', {
   test: /\.js?/,

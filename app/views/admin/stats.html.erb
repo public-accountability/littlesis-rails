@@ -6,7 +6,6 @@
   <% col_class = 'col-sm-12 col-md-10' %>
 
   <div class="row">
-
     <div class="<%= col_class %>">
       <h2 class="pull-left">Users active <%= time_display %>:
 	<strong><%= active_users.total_count %></strong>
@@ -23,15 +22,15 @@
 
       </div>
     </div>
-    
+
     <div class="<%= col_class %>">
       <table id="active-users-table" class="table">
 	<thead>
 	  <tr>
 	    <th>User</th>
-	    <th>Total edits</th>
-	    <th>"Create" edits</th>
-	    <th>"update" edits</th>
+	    <th>Total Edits</th>
+	    <th>Entities Created</th>
+	    <th>Relationships Created</th>
 	  </tr>
 	</thead>
 	<tbody>
@@ -39,8 +38,8 @@
 	    <tr>
 	      <td><%= link_to active_user.username, "/users/#{active_user.username}/edits" %></td>
 	      <td><%= number_with_delimiter active_user['edits']  %></td>
-	      <td><%= number_with_delimiter active_user['create_count'] %></td>
-	      <td><%= number_with_delimiter active_user['update_count'] %></td>
+	      <td><%= number_with_delimiter active_user['entity_create_count'] %></td>
+	      <td><%= number_with_delimiter active_user['relationship_create_count'] %></td>
 	    </tr>
 	  <% end %>
 	</tbody>

@@ -58,6 +58,8 @@ module UserEdits
                        Arel.sql(<<~SELECT)
                          whodunnit,
                          count(versions.id) as edits,
+                         sum(case when event = 'create' and item_type = 'Entity' then 1 else 0 end) as entity_create_count,
+                         sum(case when event = 'create' and item_type = 'Relationship' then 1 else 0 end) as relationship_create_count,
                          sum(case when event = 'create' then 1 else 0 end) as create_count,
                          sum(case when event = 'update' then 1 else 0 end) as update_count,
                          sum(case when event = 'soft_delete' then 1 when event = 'destroy' then 1 else 0 end) as delete_count
@@ -65,7 +67,7 @@ module UserEdits
                      )
                      .where('versions.created_at >= ? AND whodunnit IS NOT NULL', since)
                      .group('whodunnit')
-                     .order('edits desc')
+                     .order('create_count desc')
                      .limit(per_page)
                      .offset((page.to_i - 1) * per_page)
                      .map(&:attributes)
