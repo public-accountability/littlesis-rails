@@ -118,6 +118,7 @@ module ExternalDataset
   #   - littlesis data load nys_disclosures
   class NYSDisclosure < ApplicationRecord
     extend DatasetInterface
+    self.primary_key = 'trans_number'
     self.dataset = :nys_disclosures
 
     @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/ALL_REPORTS.zip'

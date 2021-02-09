@@ -3,7 +3,7 @@
 module ExternalDataset
   class NYSDisclosureGrid < BaseGrid
     scope do
-      ExternalDataset::NYSDisclosure.order(trans_number: :desc)
+      ExternalDataset::NYSDisclosure #.order(trans_number: :desc)
     end
 
     filter(:flng_ent_name, :string, header: 'Name') do |value|
