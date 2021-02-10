@@ -19,13 +19,10 @@ apt-get update && apt-get upgrade -y && apt-get -y install \
 	                                        unzip \
 	                                        zip \
                                                 libdbus-glib-1-dev \
-                                                libsqlite3-dev
-
-
-# MariaDB client
-apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.5/debian buster main'
-apt-get update && apt-get -y install mariadb-client libmariadb-dev
+                                                libsqlite3-dev \
+                                                postgresql-client \
+                                                mariadb-client \
+                                                libmariadb-dev
 
 # Manticore
 curl -sSL https://repo.manticoresearch.com/GPG-KEY-manticore > /etc/apt/trusted.gpg.d/manticore.gpg
