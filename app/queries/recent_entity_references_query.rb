@@ -13,7 +13,7 @@ module RecentEntityReferencesQuery
                            .select('documents.*')
                            .joins(:document)
                            .where(referenceable_type: 'Entity', referenceable_id: entity_ids)
-                           .order('`references`.`created_at` DESC')
+                           .order('"references"."created_at" DESC')
                            .page(page)
                            .per(per_page)
                            .to_sql
