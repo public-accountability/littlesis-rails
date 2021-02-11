@@ -622,11 +622,8 @@ class Entity < ApplicationRecord
   end
 
   def total_usd_donations
-    relationships.joins(:category)
-      .where(
-        relationship_category: { name: 'Donation' },
-        currency: 'USD'
-      )
+    relationships
+      .where(category_id: Relationship::DONATION_CATEGORY, currency: 'usd')
       .sum(:amount)
   end
 

@@ -994,7 +994,7 @@ describe Entity, :tag_helper do
     end
 
     it 'is the total of USD donations' do
-      expect(entity.total_usd_donations).to be 335_43
+      expect(entity.total_usd_donations).to eq 335_43
     end
 
     context 'with a non-USD donation' do
@@ -1194,12 +1194,8 @@ describe Entity, :tag_helper do
 
   describe "parent/child relationships" do
     let(:user) { create_really_basic_user }
-    let(:mega_corp_holdings) { create(:mega_corp_inc, last_user: user) }
-    let(:mega_corp_subsidiary) { create(:corp, last_user: user) }
-
-    before do
-      create(:org_extension_definition)
-    end
+    let(:mega_corp_holdings) { create(:entity_org, last_user: user) }
+    let(:mega_corp_subsidiary) { create(:entity_org, last_user: user) }
 
     context "when children are added to an organization" do
       it "understands itself as a parent" do
