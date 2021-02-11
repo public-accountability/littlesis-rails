@@ -256,10 +256,16 @@ class Entity < ApplicationRecord
     Link.exists?(entity1_id: id, entity2_id: Entity.entity_id_for(other_entity))
   end
 
-  def relateds_by_count(num=5, primary_ext=nil)
-    r = relateds.select("entity.*, COUNT(link.id) AS num").group("link.entity2_id").order("num DESC").limit(num)
-    r.where("entity.primary_ext = ?", primary_ext) unless primary_ext.nil?
-    r
+  def relateds_by_count(num: 5, primary_ext: nil)
+    base = if primary_ext
+             relateds.where('entity.primary_ext' => primary_ext)
+           else
+             relateds
+           end
+
+    Entity.where(
+      :id => base.select('link.entity2_id, count(*) as c').group('link.entity2_id').order('c desc').limit(num).map { |x| x['entity2_id'] }
+    )
   end
 
   def interlocks_by_count(options={}, only_count=false)

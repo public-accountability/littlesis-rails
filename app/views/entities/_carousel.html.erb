@@ -5,7 +5,7 @@
   <div class="entity_carousel_text">
     <div class="entity_carousel_name"><%= entity_link(entity) %></div>
 
-    <% if entity.blurb.present? %>  
+    <% if entity.blurb.present? %>
       <span class="entity_carousel_description"><%= entity.blurb %><br /></span>
     <% end %>
 
@@ -16,7 +16,7 @@
         <%= entity.person? ? "Key affiliations" : "Key people" %>
       </h4>
 
-      <% entity.relateds_by_count(5, entity.other_ext).each do |related| %>
+      <% entity.relateds_by_count(num: 5, primary_ext: entity.other_ext).each do |related| %>
         <%= entity_link(related, truncate(related.name, length: 55)) %>
         <br />
       <% end %>
