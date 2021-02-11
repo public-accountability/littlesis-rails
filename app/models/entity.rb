@@ -274,12 +274,12 @@ class Entity < ApplicationRecord
     max_num = options[:max_num]
     page = options[:page]
 
-    r = Link.select("link2.entity2_id AS degree2_id, GROUP_CONCAT(DISTINCT link2.entity1_id) AS degree1_ids, COUNT(DISTINCT link2.entity1_id) AS num")
-      .joins("LEFT JOIN link AS link2 ON link.entity2_id = link2.entity1_id")
-      .where("link.entity1_id = ?", id)
-      .where("link2.entity2_id <> ?", id)
-      .group("link2.entity2_id")
-      .order("num DESC")
+    r = Link.select("link2.entity2_id AS degree2_id, array_to_string(array_agg(DISTINCT link2.entity1_id), ',') AS degree1_ids, COUNT(DISTINCT link2.entity1_id) AS num")
+          .joins("LEFT JOIN link AS link2 ON link.entity2_id = link2.entity1_id")
+          .where("link.entity1_id = ?", id)
+          .where("link2.entity2_id <> ?", id)
+          .group("link2.entity2_id")
+          .order("num DESC")
 
     r = r.where("link.is_reverse = ?", (order1 == 2)) if order1.present?
     r = r.where("link2.is_reverse = ?", (order2 == 2)) if order2.present?

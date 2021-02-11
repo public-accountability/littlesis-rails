@@ -82,7 +82,7 @@ module NetworkAnalysis
   def self.connected_ids_via(hops:, stat:, entity_id:)
     sql = <<-SQL
     SELECT second_hop.entity2_id AS connected_id,
-           GROUP_CONCAT(distinct second_hop.entity1_id) AS connecting_ids,
+           array_to_string(array_agg(distinct second_hop.entity1_id), ',') AS connecting_ids,
            #{AGGREGATORS_BY_STAT[stat]} AS stat
     FROM (
            SELECT DISTINCT entity2_id as first_hop_dest_id
