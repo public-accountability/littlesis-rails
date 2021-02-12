@@ -18,6 +18,7 @@ module TagSpecHelper
 
   def seed_tags
     before(:all) do
+      Tag.destroy_all
       Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
       TAGS.each { |t| Tag.create!(t) }
     end

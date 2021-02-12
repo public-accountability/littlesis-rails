@@ -42,8 +42,8 @@ describe 'edit entity page', type: :feature, js: true do
 
       within ".edit_entity" do
         find('input[name="reference[just_cleaning_up]"]').click
-        fill_in 'Market capitalization', with: 123
-        fill_in 'Assets', with: 432
+        fill_in 'Market capitalization', with: 123.0
+        fill_in 'Assets', with: 432.0
         fill_in 'Net income', with: 999
         fill_in 'Annual profit', with: 10_101
         click_button 'Update'
@@ -54,8 +54,8 @@ describe 'edit entity page', type: :feature, js: true do
       end
 
       expect(page).to have_current_path concretize_edit_entity_path(entity)
-      expect(page).to have_field('Market capitalization', with: 123)
-      expect(page).to have_field('Assets', with: 432)
+      expect(page).to have_field('Market capitalization', with: 123.0)
+      expect(page).to have_field('Assets', with: 432.0)
       expect(page).to have_field('Net income', with: 999)
       expect(page).to have_field('Annual profit', with: 10_101)
     end

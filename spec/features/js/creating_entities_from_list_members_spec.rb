@@ -11,7 +11,6 @@ feature 'Creating entities from list members page', :sphinx, type: :feature, js:
       end
     end
 
-    create(:person_extension_definition)
     login_as list_owner, scope: :user
     visit members_list_path(list)
   end

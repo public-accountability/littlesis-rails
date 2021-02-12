@@ -38,9 +38,13 @@ class PermissionPass < ApplicationRecord
   private
 
   def reasonable_validity_period
-    errors.add(:base, 'The maximum validity period is 1 week') \
-      unless valid_to - valid_from <= 1.week
-    errors.add(:valid_to, 'must be after the valid from date') unless valid_to > valid_from
+    if valid_to < valid_from
+      errors.add(:valid_to, 'must be after the valid from date')
+    end
+
+    if (valid_to - valid_from).round > 1.week.to_f
+      errors.add(:base, 'The maximum validity period is 1 week')
+    end
   end
 
   def authorized_creator
