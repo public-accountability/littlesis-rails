@@ -398,9 +398,10 @@ describe User do
 
       before { user }
 
-      it { is_expected.to be false }
+      specify do
+        expect(User.valid_username?(name)).to be false
+      end
     end
-
   end
 
   describe '#image_url' do
