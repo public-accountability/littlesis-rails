@@ -19,7 +19,7 @@ class WebRequest < ApplicationRecord
     execute_sql <<~SQL
       UPDATE web_requests
       SET remote_address = NULL, user_agent = NULL
-      WHERE remote_address IS NOT NULL AND `time` <= DATE_SUB(CURRENT_DATE, INTERVAL 8 DAY)
+      WHERE remote_address IS NOT NULL AND time <= (current_date - interval '8 days')
     SQL
   end
 end
