@@ -2,7 +2,6 @@
 
 # rubocop:disable RSpec/InstanceVariable
 
-
 describe 'SQL function: recent_entity_edits' do
   let(:user) { create_basic_user }
   let(:user2) { create_basic_user }
@@ -31,7 +30,7 @@ describe 'SQL function: recent_entity_edits' do
                  'item_type' => 'Entity',
                  'item_id' => @person_created_by_user2.id,
                  'user_id' => user2.id,
-                 'created_at' => @person_created_by_user2.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                 'created_at' => @person_created_by_user2.versions.last.created_at.strftime('%Y-%m-%dT%H:%M:%S.%6N')
                },
                {
                  'entity_id' => @person.id,
@@ -39,7 +38,7 @@ describe 'SQL function: recent_entity_edits' do
                  'item_type' => 'Relationship',
                  'item_id' => @relationship.id,
                  'user_id' => user.id,
-                 'created_at' => @relationship.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                 'created_at' => @relationship.versions.last.created_at.strftime('%Y-%m-%dT%H:%M:%S.%6N')
                },
                {
                  'entity_id' => @org.id,
@@ -47,7 +46,7 @@ describe 'SQL function: recent_entity_edits' do
                  'item_type' => 'Relationship',
                  'item_id' => @relationship.id,
                  'user_id' => user.id,
-                 'created_at' => @relationship.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                 'created_at' => @relationship.versions.last.created_at.strftime('%Y-%m-%dT%H:%M:%S.%6N')
                },
                {
                  'entity_id' => @org.id,
@@ -55,7 +54,7 @@ describe 'SQL function: recent_entity_edits' do
                  'item_type' => 'Entity',
                  'item_id' => @org.id,
                  'user_id' => user.id,
-                 'created_at' => @org.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                 'created_at' => @org.versions.last.created_at.strftime('%Y-%m-%dT%H:%M:%S.%6N')
                }
              ])
   end
@@ -76,7 +75,7 @@ describe 'SQL function: recent_entity_edits' do
                 'item_type' => 'Entity',
                 'item_id' => @person_created_by_user2.id,
                 'user_id' => user2.id,
-                'created_at' => @person_created_by_user2.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                'created_at' => @person_created_by_user2.versions.last.created_at.strftime('%Y-%m-%dT%H:%M:%S.%6N')
               }
             ])
   end
