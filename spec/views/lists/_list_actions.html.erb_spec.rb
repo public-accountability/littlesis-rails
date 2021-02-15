@@ -40,6 +40,7 @@ describe 'lists/list_actions', :type => :view do
 
   context 'when configurable' do
     before do
+      assign(:list, create(:list))
       assign(:permissions, { :editable => true, :configurable => true })
       render partial: 'lists/list_actions.html.erb', locals: { list: build(:list) }
     end

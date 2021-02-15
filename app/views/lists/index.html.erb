@@ -15,9 +15,11 @@
 <%= render partial: 'shared/entity_autocomplete',
     locals: {
       input_id: '#list-entity-search',
+      enable_missing_entity_creation: false,
       http_method: 'get',
       form_path: lists_path(entity_id: "XXX"),
-      query_path: raw("/search/entity?q=%QUERY") } %>
+      query_path: search_entity_path(q: '%QUERY')
+    } %>
 <br>
 
 <%= paginate @lists %>
