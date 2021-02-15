@@ -247,7 +247,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
         it { is_expected.not_to have_selector 'a.tag' }
         it { is_expected.not_to have_selector "#tags-edit-button" }
-        it { is_expected.not_to have_selector 'script#edit-tags-javascript' }
         it { is_expected.not_to have_selector '#sidebar-external-links-container' }
       end
 
@@ -255,7 +254,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         before { create_tags.call; visit_page.call; }
         it { is_expected.to have_selector 'a.tag', count: 2 }
         it { is_expected.not_to have_selector "#tags-edit-button" }
-        it { is_expected.not_to have_selector 'script#edit-tags-javascript' }
       end
 
       context 'with external links' do
@@ -340,13 +338,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           before { visit_page.call; }
           it { is_expected.not_to have_selector 'a.tag' }
           it { is_expected.to have_selector "#tags-edit-button" }
-          it { is_expected.to have_selector 'script#edit-tags-javascript' }
         end
         context "when person has tags" do
           before { create_tags.call; visit_page.call; }
           it { is_expected.to have_selector "#tags-edit-button" }
           it { is_expected.to have_selector 'a.tag', count: 2 }
-          it { is_expected.to have_selector 'script#edit-tags-javascript' }
         end
       end
 
@@ -357,7 +353,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           before { visit_page.call; }
           it { is_expected.not_to have_selector 'a.tag' }
           it { is_expected.to have_selector "#tags-edit-button" }
-          it { is_expected.to have_selector 'script#edit-tags-javascript' }
         end
 
         context "with similar entities" do
@@ -373,7 +368,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           before { create_tags.call; visit_page.call; }
           it { is_expected.to have_selector "#tags-edit-button" }
           it { is_expected.to have_selector 'a.tag', count: 2 }
-          it { is_expected.to have_selector 'script#edit-tags-javascript' }
         end
       end
     end

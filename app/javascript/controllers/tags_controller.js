@@ -5,6 +5,8 @@ export default class extends Controller {
   static values = { data: Object, endpoint: String, alwaysEdit: Boolean }
 
   initialize() {
-    tags().init(this.dataValue, this.endpointValue, this.alwaysEditValue)
+    if ( !$.isEmptyObject(this.dataValue) ){
+      tags().init(this.dataValue, this.endpointValue, this.alwaysEditValue)
+    }
   }
 }

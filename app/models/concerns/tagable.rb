@@ -73,6 +73,8 @@ module Tagable
   end
 
   def tags_for(user)
+    return unless user
+
     {
       byId: hashify(add_permissions(Tag.all, user)),
       current: tags.map(&:id).map(&:to_s)
