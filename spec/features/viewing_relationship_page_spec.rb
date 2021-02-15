@@ -30,7 +30,6 @@ describe "Relationship Page", :type => :feature do
       before { visit "/relationships/#{relationship.id}" }
       it { is_expected.to have_selector '#tags-container' }
       it { is_expected.not_to have_selector '#tags-edit-button' }
-      it { is_expected.not_to have_selector '#tags-init-js' }
     end
   end
 
@@ -48,7 +47,6 @@ describe "Relationship Page", :type => :feature do
     it { is_expected.to have_selector '#tags-container' }
     it { is_expected.to have_selector '#tags-edit-button' }
     it { is_expected.to have_selector '#tags-list li', text: tag.name }
-    it { is_expected.to have_selector '#tags-init-js' }
   end
 
   context 'NYS donation relationship' do

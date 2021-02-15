@@ -1,15 +1,13 @@
-<div id="tags-container">
-</div>
-<br/>
-<span id="tags-controls"></span>
-
-<script>
- $(function(){
-   LittleSis.tags().init(
-     <%= raw(@list.tags_for(current_user).to_json) %>,
-     "<%= raw(tags_list_path(@list)) %>",
-     true
-   );
-
- });
-</script>
+<%= content_tag :div,
+  {
+    data: {
+      controller: "tags",
+      tags_data_value: @list.tags_for(current_user).to_json,
+      tags_endpoint_value: tags_list_path(@list),
+      tags_always_edit_value: true
+    }
+  } do %>
+  <div id="tags-container"></div>
+  <br/>
+  <span id="tags-controls"></span>
+<% end %>

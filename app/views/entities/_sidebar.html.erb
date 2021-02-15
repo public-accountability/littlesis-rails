@@ -27,18 +27,21 @@
   <%# TAGS %>
   <% if @entity.tags.present? || user_signed_in? %>
     <%= profile_page_sidebar('sidebar-tags-container', 'Tags', addon: capture { tags_controls }) do %>
+      <%= content_tag :div,
+        {
+        data: {
+          controller: "tags",
+          tags_data_value: (@entity.tags_for(current_user) || {}).to_json,
+          tags_endpoint_value: concretize_tags_entity_path(@entity)
+        }
+      } do %>
       <%= display_tags(@entity.tags) %>
+      <br/>
+      <span id="tags-controls"></span>
     <% end %>
   <% end %>
+<% end %>
 
-  <% if user_signed_in? %>
-    <script id="edit-tags-javascript">
-     LittleSis.tags().init(
-       <%= raw(@entity.tags_for(current_user).to_json) %>,
-       "<%= raw(concretize_tags_entity_path(@entity)) %>",
-     );
-    </script>
-  <% end %>
 
   <%# Data Partners %>
   <% if show_cmp_data_partner?(@entity) %>

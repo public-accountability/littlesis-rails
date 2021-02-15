@@ -28,18 +28,20 @@
 	  <h4 class="relationship-sidebar-title">Tags</h4>
 
 	  <%= tags_controls if user_signed_in? %>
-	  <%= display_tags(@relationship.tags) %>
 
-	  <% if user_signed_in?  %>
-	    <script id="tags-init-js">
-	     $(function(){
-	       LittleSis.tags().init(
-		 <%= raw(@relationship.tags_for(current_user).to_json) %>,
-		 "<%= raw(tags_relationship_path(@relationship)) %>",
-	       );
-	     });
-	    </script>
-	  <%  end %>
+    <%= content_tag :div,
+      {
+        data: {
+          controller: "tags",
+          tags_data_value: (@relationship.tags_for(current_user) || {}).to_json,
+          tags_endpoint_value: tags_relationship_path(@relationship)
+        }
+      } do %>
+      <%= display_tags(@relationship.tags) %>
+      <br/>
+      <span id="tags-controls"></span>
+    <% end %>
+
 	</div>
 
       <% end %>
