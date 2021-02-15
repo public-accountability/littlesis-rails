@@ -39,9 +39,9 @@ class EntityConnectionsQuery
         SELECT link.entity2_id AS entity_id,
               MIN(link.category_id) AS category_id,
               MAX(connected_entity.link_count) AS entity_link_count,
-              GROUP_CONCAT(link.relationship_id) AS relationship_ids,
+              array_to_string(array_agg(link.relationship_id), ',') AS relationship_ids,
               MAX(relationship.amount) AS relationship_amount,
-              MAX(relationship.is_current) AS relationship_is_current,
+              bool_or(relationship.is_current) AS relationship_is_current,
               MAX(relationship.start_date) AS relationship_start_date,
               MAX(relationship.updated_at) AS relationship_updated_at
          FROM link
