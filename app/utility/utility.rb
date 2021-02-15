@@ -21,11 +21,14 @@ module Utility
 
   def self.execute_sql_file(path)
     db = Rails.configuration.database_configuration.fetch(Rails.env)
-    cmd = "mysql -u #{db['username']} -p#{db['password']} -h #{db['host']} #{db['database']} < #{path}"
-    output = `#{cmd}`
-    if $?.exitstatus != 0
-      ColorPrinter.print_red output
-      raise SQLFileError, output
+
+    psql_connection_string = "postgresql://#{db['username']}:#{db['password']}@#{db['host']}/#{db['database']}"
+
+    output = `psql -b -v ON_ERROR_STOP=1 #{psql_connection_string} < #{path}`
+
+      if $?.exitstatus != 0
+        ColorPrinter.print_red output
+        raise SQLFileError, output
     end
   end
 

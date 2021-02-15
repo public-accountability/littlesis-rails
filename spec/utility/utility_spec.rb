@@ -13,7 +13,8 @@ describe Utility do
   end
 
   describe 'execute_sql_file' do
-    let(:sql_file) do
+
+    def create_tmp_file(sql)
       Tempfile.new.tap do |t|
         t.write sql
         t.rewind
@@ -21,7 +22,7 @@ describe Utility do
     end
 
     context 'with valid sql' do
-      let(:sql) { 'select now()' }
+      let(:sql_file) { create_tmp_file 'select now()' }
 
       it 'runs command without error' do
         expect { Utility.execute_sql_file(sql_file.path) }.not_to raise_error
@@ -29,7 +30,7 @@ describe Utility do
     end
 
     context 'with invalid sql' do
-      let(:sql) { 'Do I look like SQL to you?' }
+      let(:sql_file) { create_tmp_file 'Do I look like SQL to you?' }
 
       it 'raises an error' do
         expect { Utility.execute_sql_file(sql_file.path) }
@@ -108,11 +109,11 @@ describe Utility do
 
   describe 'yes_no_converter' do
     it 'converts Y to true' do
-      expect(Utility.yes_no_converter('Y')).to eql(true)
+      expect(Utility.yes_no_converter('Y')).to be true
     end
 
     it 'converts N to false' do
-      expect(Utility.yes_no_converter('N ')).to eql(false)
+      expect(Utility.yes_no_converter('N ')).to be false
     end
 
     it 'returns nil otherwise' do
@@ -122,11 +123,13 @@ describe Utility do
 
   describe 'one_zero_converter' do
     it 'converts 1 to true' do
-      expect(Utility.one_zero_converter('1')).to eql(true)
+      expect(Utility.one_zero_converter('1')).to be true
     end
+
     it 'converts 0 to false' do
-      expect(Utility.one_zero_converter('0 ')).to eql(false)
+      expect(Utility.one_zero_converter('0 ')).to be false
     end
+
     it 'returns nil otherwise' do
       expect(Utility.one_zero_converter('blah')).to be_nil
     end
