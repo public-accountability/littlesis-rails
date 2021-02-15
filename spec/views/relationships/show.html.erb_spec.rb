@@ -74,14 +74,6 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
       it 'has tags title' do
         css 'h4', text: 'Tags'
       end
-
-      it 'does not have tags-controls' do
-        not_css '#tags-controls'
-      end
-
-      it 'does not have tag edit js' do
-        not_css 'script#tags-init-js'
-      end
     end
 
     context 'anon user and the relationship has no tags' do
@@ -110,10 +102,6 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
           css '#tags-controls'
           css '#tags-controls #tags-edit-button'
         end
-
-        it 'has tag edit js' do
-          css 'script#tags-init-js'
-        end
       end
 
       context 'relationship has no tags' do
@@ -124,9 +112,6 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
           css '#tags-controls #tags-edit-button'
         end
 
-        it 'has tag edit js' do
-          css 'script#tags-init-js'
-        end
         it 'has tags title' do
           css 'h4', text: 'Tags'
         end
