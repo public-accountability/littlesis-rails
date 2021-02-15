@@ -24,7 +24,6 @@ import 'parsleyjs'
 
 import utility from './common/utility'
 import http from './common/http'
-import tags from './common/tags'
 import datatable from 'datatables.net'
 import typeahead from 'typeahead.js'
 import mustache from 'mustache'
@@ -53,7 +52,6 @@ if (!window.LittleSis) {
 }
 
 window.LittleSis.http = http
-window.LittleSis.tags = tags
 window.LittleSis.entityAutocomplete = entityAutocomplete
 window.LittleSis.RelationshipCreationFlow = RelationshipCreationFlow
 window.LittleSis.NyDonationsMatcher = NyDonationsMatcher
