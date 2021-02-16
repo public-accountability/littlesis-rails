@@ -51,6 +51,7 @@ describe Relationship, type: :model do
     it 'has description_sentence' do
       expect(Relationship.new.respond_to?(:description_sentence)).to be true
     end
+
     it 'has find_similar' do
       expect(Relationship.new.respond_to?(:find_similar)).to be true
     end
@@ -98,8 +99,8 @@ describe Relationship, type: :model do
 
     describe 'Relationship Validations' do
       it 'validates position relationship' do
-        person = create(:person)
-        org = create(:org)
+        person = create(:entity_person)
+        org = create(:entity_org)
         rel = Relationship.new(category_id: 1, entity: person, related: org)
         expect(rel.valid?).to eq true
       end
@@ -363,81 +364,60 @@ describe Relationship, type: :model do
   end
 
   describe 'Update Start/End dates' do
-    before(:all) do
-      DatabaseCleaner.start
-      @loeb = create(:loeb)
-      @nrsc = create(:nrsc)
-      @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc, filings: 1, amount: 10_000) # relationship model
+    let!(:entity1) { create(:entity_person) }
+    let!(:entity2) { create(:entity_org) }
+    let!(:donation) do
+      create(:donation_relationship, entity: entity1, related: entity2, filings: 1, amount: 10_000, start_date: "2010-00-00", end_date: "2011-00-00")
     end
 
-    after(:all) { DatabaseCleaner.clean }
-
-    it 'updates start date' do
-      @loeb_donation.update_start_date_if_earlier Date.new(1999)
-      expect(@loeb_donation.start_date).to eql('1999-01-01')
-    end
-
-    it 'updates end date' do
-      @loeb_donation.update_end_date_if_later Date.new(2012)
-      expect(@loeb_donation.end_date).to eql('2012-01-01')
-    end
-
-    it 'does not change if not earlier' do
-      @loeb_donation.update_start_date_if_earlier Date.new(2010)
-      expect(@loeb_donation.start_date).to eql('1999-01-01')
-    end
-
-    it 'does not change if not later' do
-      @loeb_donation.update_end_date_if_later Date.new(2010)
-      expect(@loeb_donation.end_date).to eql('2012-01-01')
-    end
-
-    it 'can handle nil input' do
-      @loeb_donation.update_start_date_if_earlier nil
-      expect(@loeb_donation.start_date).to eql('1999-01-01')
-      @loeb_donation.update_end_date_if_later nil
-      expect(@loeb_donation.end_date).to eql('2012-01-01')
+    specify do
+      donation.update_start_date_if_earlier(Date.new(1999))
+      expect(donation.reload.start_date).to eq '1999-01-01'
+      donation.update_end_date_if_later(Date.new(2012))
+      expect(donation.reload.end_date).to eq '2012-01-01'
+      donation.update_start_date_if_earlier(Date.new(2010))
+      expect(donation.reload.start_date).to eq '1999-01-01'
+      donation.update_end_date_if_later Date.new(2010)
+      expect(donation.reload.end_date).to eq '2012-01-01'
+      donation.update_start_date_if_earlier nil
+      expect(donation.start_date).to eq '1999-01-01'
+      donation.update_end_date_if_later nil
+      expect(donation.end_date).to eq '2012-01-01'
     end
   end
 
   describe '#update_contribution_info' do
-    before(:all) do
-      DatabaseCleaner.start
-      @loeb = create(:loeb)
-      @nrsc = create(:nrsc)
-      @loeb_donation = create(:loeb_donation, entity: @loeb, related: @nrsc, filings: 1, amount: 10_000) # relationship model
+    let(:loeb) { create(:entity_person) }
+    let(:nrsc) { create(:entity_org) }
+
+    let(:loeb_donation) do
+      create(:donation_relationship, entity:  loeb, related: nrsc, filings: 1, amount: 10_000, start_date: "2010-00-00", end_date: "2011-00-00")
+    end
+
+    before do
       d1 = create(:loeb_donation_one)
       d2 = create(:loeb_donation_two)
-      OsMatch.create!(relationship_id: @loeb_donation.id, os_donation_id: d1.id, donor_id: @loeb.id)
-      OsMatch.create!(relationship_id: @loeb_donation.id, os_donation_id: d2.id, donor_id: @loeb.id)
-      @loeb_donation.update_os_donation_info
+      OsMatch.create!(relationship_id: loeb_donation.id, os_donation_id: d1.id, donor_id: loeb.id)
+      OsMatch.create!(relationship_id: loeb_donation.id, os_donation_id: d2.id, donor_id: loeb.id)
+      loeb_donation.update_os_donation_info
     end
 
-    after(:all) { DatabaseCleaner.clean }
-
-    it 'updates amount' do
-      expect(@loeb_donation.amount).to eq 80_800
-    end
-
-    it 'updates filing' do
-      expect(@loeb_donation.filings).to eq 2
-    end
-
-    it 'does not update the database' do
-      expect(Relationship.find(@loeb_donation.id).amount).not_to eql 80_800
+    specify do
+      expect(loeb_donation.amount).to eq 80_800
+      expect(loeb_donation.filings).to eq 2
+      expect(Relationship.find(loeb_donation.id).amount).not_to eql 80_800
     end
 
     it 'can be chained with .save' do
-      @loeb_donation.update_os_donation_info.save
-      expect(Relationship.find(@loeb_donation.id).amount).to eql 80_800
+      loeb_donation.update_os_donation_info.save
+      expect(Relationship.find(loeb_donation.id).amount).to eql 80_800
     end
   end
 
   describe '#update_ny_contribution_info' do
-    before(:all) do
-      DatabaseCleaner.start
-      donor = create(:person, name: 'I <3 ny politicans')
-      elected = create(:elected)
+    before do
+      donor = create(:entity_person, name: 'I <3 ny politicans')
+      elected = create(:entity_org)
       ny_filer = create(:ny_filer)
       @rel = Relationship.create!(entity1_id: donor.id, entity2_id: elected.id, category_id: 5)
       disclosure1 = create(:ny_disclosure, amount1: 2000, schedule_transaction_date: '1999-01-01', ny_filer: ny_filer)
@@ -447,37 +427,20 @@ describe Relationship, type: :model do
       @rel.update_ny_donation_info
     end
 
-    after(:all) { DatabaseCleaner.clean }
-
-    it 'updates amount' do
+    specify do
       expect(@rel.amount).to eq 5_000
-    end
-
-    it 'Sets description if blank' do
       expect(@rel.description1).to eql "NYS Campaign Contribution"
-    end
-
-    it 'updates filing' do
       expect(@rel.filings).to eq 2
-    end
-
-    it 'does not update the database' do
-      expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings'))
-        .to eql("amount" => nil, "filings" => nil)
+      expect(@rel.start_date).to eq '1999-01-01'
+      expect(@rel.end_date).to eq '2017-01-01'
     end
 
     it 'can be chained with .save to update the db' do
+      expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings'))
+        .to eql("amount" => nil, "filings" => nil)
       @rel.update_ny_donation_info.save
       expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings'))
         .to eql("amount" => 5000, "filings" => 2)
-    end
-
-    it 'updates the start date' do
-      expect(@rel.start_date).to eq '1999-01-01'
-    end
-
-    it 'updates the end date' do
-      expect(@rel.end_date).to eq '2017-01-01'
     end
   end
 
