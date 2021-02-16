@@ -78,53 +78,6 @@ describe EntitiesController, type: :controller do
         expect(response.headers['Cache-Control']).to include 'max-age=300'
       end
     end
-
-    xdescribe '#match_donations and reivew donations' do
-      let(:org) { create(:org) }
-
-      login_basic_user
-
-      context 'with match permissions' do
-        before do
-          expect(Entity).to receive(:find_with_merges).and_return(org)
-          expect(controller).to receive(:check_permission).with('importer').and_return(true)
-        end
-
-        describe 'match_donations' do
-          before { get(:match_donations, params: { id: rand(100) }) }
-
-          it { is_expected.to redirect_to fec_entity_match_contributions_path(org) }
-        end
-
-        describe 'review_donations' do
-          before { get(:review_donations, params: { id: rand(100) }) }
-
-          it { is_expected.to render_template(:review_donations) }
-          it { is_expected.to respond_with(200) }
-        end
-      end
-
-      context 'without importer permissions' do
-        login_basic_user
-
-        before do
-          expect(controller).to receive(:check_permission).with('importer').and_call_original
-        end
-
-        describe 'match_donations' do
-          before { get(:match_donations, params: { id: rand(100) }) }
-
-          it { is_expected.to respond_with(403) }
-          it { is_expected.not_to render_template(:match_donations) }
-        end
-
-        describe 'review_donations' do
-          before { get(:review_donations, params: { id: rand(100) }) }
-          it { is_expected.to_not render_template(:review_donations) }
-          it { is_expected.to respond_with(403) }
-        end
-      end
-    end
   end
 
   describe '#create' do
