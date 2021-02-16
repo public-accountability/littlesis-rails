@@ -11,7 +11,7 @@ module ControllerMacros
   def login_user(abilities = [:edit])
     before do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      user = FactoryBot.create(:user)
+      user = RspecHelpers::ExampleMacros.create_basic_user
       create(:user_profile, user: user)
       user.add_ability(*abilities)
       sign_in(user)
