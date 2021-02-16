@@ -79,8 +79,8 @@ describe EntitiesController, type: :controller do
       end
     end
 
-    describe '#match_donations and reivew donations' do
-      let(:org) { build(:org) }
+    xdescribe '#match_donations and reivew donations' do
+      let(:org) { create(:org) }
 
       login_basic_user
 
