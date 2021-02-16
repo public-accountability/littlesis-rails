@@ -1,33 +1,21 @@
 describe 'entities/match_donations.html.erb' do
-  before(:all) do
-    DatabaseCleaner.start
-    @user = create(:user)
-    @e = create(:entity_person, updated_at: Time.now, last_user: @user)
-    @corp = create(:entity_org, name: 'mega corp')
-    Relationship.create!(entity1_id: @e.id, entity2_id: @corp.id, description1: 'Overlord', category_id: 1)
-  end
-
-  after(:all) do
-    DatabaseCleaner.clean
-  end
+  let(:user) { create_basic_user }
+  let(:corp) { create(:entity_org, name: 'mega corp') }
+  let(:entity) { create(:entity_person, updated_at: Time.current, last_user: user) }
 
   describe 'layout' do
     before do
-      assign(:entity, @e)
+      Relationship.create!(entity: entity, related: corp, description1: 'Overlord', category_id: 1)
+      assign(:entity, entity)
       allow(view).to receive(:current_user).and_return(double(:admin? => false))
       render
     end
 
-    it 'has header' do
+    it 'has header, actions, and table' do
       expect(rendered).to have_css '#entity-name'
-    end
-
-    it 'has actions' do
+      # actions
       expect(rendered).to have_css '#entity-edited-history'
       expect(rendered).to have_css '#actions a', :count => 3
-    end
-
-    it 'has table' do
       expect(rendered).to have_css 'table#donations-table'
     end
 
@@ -55,4 +43,3 @@ describe 'entities/match_donations.html.erb' do
     end
   end
 end
-

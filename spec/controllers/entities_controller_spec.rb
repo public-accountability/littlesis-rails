@@ -1,5 +1,5 @@
 describe EntitiesController, type: :controller do
-  include EntitiesHelper
+  include ::EntitiesHelper
 
   it { is_expected.to use_before_action(:authenticate_user!) }
   it { is_expected.to use_before_action(:importers_only) }
@@ -82,12 +82,12 @@ describe EntitiesController, type: :controller do
     describe '#match_donations and reivew donations' do
       let(:org) { build(:org) }
 
-      context 'with match permissions' do
-        login_user([:edit, :bulk])
+      login_basic_user
 
+      context 'with match permissions' do
         before do
           expect(Entity).to receive(:find_with_merges).and_return(org)
-          expect(controller).to receive(:check_permission).with('importer').and_call_original
+          expect(controller).to receive(:check_permission).with('importer').and_return(true)
         end
 
         describe 'match_donations' do
@@ -134,7 +134,7 @@ describe EntitiesController, type: :controller do
     let(:params_missing_ext_add_relationship_page) { params_missing_ext.merge({ 'add_relationship_page' => 'TRUE' }) }
 
     context 'user is logged in' do
-      login_user
+      login_basic_user
 
       context 'from the /entities/new page' do
         context 'without errors' do
