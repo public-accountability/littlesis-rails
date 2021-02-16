@@ -1,8 +1,4 @@
 describe ListsController, :list_helper, type: :controller do
-  before(:all) { DatabaseCleaner.start }
-
-  after(:all) { DatabaseCleaner.clean }
-
   it { is_expected.to route(:delete, '/lists/1').to(action: :destroy, id: 1) }
   it { is_expected.to route(:post, '/lists/1/tags').to(action: :tags, id: 1) }
   it { is_expected.to route(:get, '/lists/1234-list-name/modifications').to(action: :modifications, id: '1234-list-name') }
