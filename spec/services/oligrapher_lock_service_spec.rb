@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe 'OligrapherLockSerivce' do
-  let(:user_one) { create(:user_with_id) }
-  let(:user_two) { create(:user_with_id) }
+  let(:user_one) { create(:user) }
+  let(:user_two) { create(:user) }
 
   let(:map) do
     build(:network_map_version3,

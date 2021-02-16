@@ -35,8 +35,8 @@ module ControllerMacros
   def login_user_without_permissions
     before do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      user = FactoryBot.create(:user)
-      create(:user_profile, user: user)
+      user = RspecHelpers::ExampleMacros.create_basic_user
+      user.remove_ability(:edit)
       sign_in user
     end
   end
