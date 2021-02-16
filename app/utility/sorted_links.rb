@@ -171,25 +171,24 @@ class SortedLinks
   # Integer [, Integer, Integer] -> [ <Link> ]
   def donation_links(entity1_id, page = 1, per_page = 20)
     offset = (page - 1) * per_page
-    Link.find_by_sql(
-      ["(
-          SELECT link.*, relationship.amount
-          FROM link
-          INNER JOIN relationship ON relationship.id = link.relationship_id
-          WHERE link.entity1_id= ? AND link.category_id = 5 AND link.is_reverse = 0
-        )
-         UNION ALL
-        ( 
-          SELECT link.*, relationship.amount
-          FROM relationship
-          INNER JOIN link on link.relationship_id = relationship.id and link.entity1_id = ? and link.is_reverse = 1
-          WHERE relationship.is_deleted = 0 AND relationship.entity2_id = ? AND relationship.category_id = 5
-          ORDER by amount desc LIMIT ? OFFSET ?
-        )"] + ([entity1_id] * 3) + [per_page] + [offset]
-    )
+
+    sql_template = <<~SQL
+      ( SELECT link.*, relationship.amount
+        FROM link
+        INNER JOIN relationship ON relationship.id = link.relationship_id
+        WHERE link.entity1_id = ? AND link.category_id = 5 AND link.is_reverse is false )
+      UNION ALL
+      ( SELECT link.*, relationship.amount
+        FROM relationship
+        INNER JOIN link on link.relationship_id = relationship.id and link.entity1_id = ? and link.is_reverse is true
+        WHERE relationship.is_deleted is false AND relationship.entity2_id = ? AND relationship.category_id = 5
+        ORDER by amount desc LIMIT ? OFFSET ? )
+    SQL
+
+    Link.find_by_sql([sql_template] + ([entity1_id] * 3) + [per_page] + [offset])
   end
-  
-  # Because we are not returning all donation recipient relationships, 
+
+  # Because we are not returning all donation recipient relationships,
   # we need to get a total count for the paginator
   # integer -> integer
   def donors_count(entity1_id)
