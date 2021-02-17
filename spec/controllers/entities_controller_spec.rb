@@ -44,7 +44,7 @@ describe EntitiesController, type: :controller do
   end
 
   describe 'GETs' do
-    let(:entity) { create(:entity_org, updated_at: Time.current) }
+    let(:entity) { create(:entity_org) }
 
     describe '/entity/id' do
       before { get :show, params: { id: entity.id } }
@@ -56,28 +56,6 @@ describe EntitiesController, type: :controller do
       before { get :datatable, params: { id: entity.id } }
 
       it { is_expected.to render_template(:datatable) }
-    end
-
-    describe 'entity/id/contributions' do
-      let(:entity) { build(:mega_corp_inc, updated_at: Time.current) }
-
-      before do
-        expect(Entity).to receive(:find_with_merges).and_return(entity)
-        expect(entity).to receive(:contribution_info).and_return([build(:os_donation)])
-        get :contributions, params: { id: entity.id }
-      end
-
-      it { is_expected.to respond_with(200) }
-
-      it 'responds with json' do
-        expect(response.headers['Content-Type']).to include 'application/json'
-      end
-
-
-      it 'sets cache headers' do
-        expect(response.headers['Cache-Control']).to include 'public'
-        expect(response.headers['Cache-Control']).to include 'max-age=300'
-      end
     end
   end
 

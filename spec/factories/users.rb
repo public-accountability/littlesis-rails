@@ -27,10 +27,4 @@ FactoryBot.define do
     confirmed_at { Time.current }
     id { Faker::Number.unique.between(from: 1, to: 10_000) }
   end
-
-  factory :admin, class: User do
-    id { 200 }
-    username { 'admin' }
-    email { 'admin@littlesis.org' }
-  end
 end

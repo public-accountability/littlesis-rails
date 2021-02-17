@@ -5,11 +5,8 @@ module ControllerMacros
     let(:example_user) { RspecHelpers::ExampleMacros.create_admin_user }
 
     before do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
       sign_in example_user, scope: :user
-    end
-
-    after do
-      sign_out example_user
     end
   end
 
@@ -17,12 +14,9 @@ module ControllerMacros
     let(:example_user) { RspecHelpers::ExampleMacros.create_basic_user }
 
     before do
+      @request.env["devise.mapping"] = Devise.mappings[:user]
       example_user.add_ability(*abilities)
       sign_in example_user, scope: :user
-    end
-
-    after do
-      sign_out example_user
     end
   end
 
@@ -36,17 +30,12 @@ module ControllerMacros
     before do
       sign_in example_user, scope: :user
     end
-
-    after do
-      sign_out example_user
-    end
   end
 
   def login_user_without_permissions
     let(:example_user) { RspecHelpers::ExampleMacros.create_basic_user }
 
     before do
-      example_user.remove_ability(:edit)
       sign_in example_user, scope: :user
     end
   end

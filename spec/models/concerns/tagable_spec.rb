@@ -7,14 +7,6 @@ describe Tagable, type: :model do
   let(:tag_id) { tags.first.id }
   let(:entity) { create(:entity_org) }
 
-  before(:all) do
-    Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
-  end
-
-  after(:all) do
-    Tagging.set_callback(:save, :after, :update_tagable_timestamp)
-  end
-
   describe "the Tagable interface" do
     before { entity.add_tag(tag_id) }
 
@@ -216,8 +208,8 @@ describe Tagable, type: :model do
 
   describe 'formating tags for user editing' do
 
-    let(:owner) { create_really_basic_user }
-    let(:non_owner) { create_really_basic_user }
+    let(:owner) { create_basic_user }
+    let(:non_owner) { create_basic_user }
     let(:restricted_tag) { tags.last.tap { |t| t.update(restricted: true) } }
 
     # we have to use string keys here (unlike everywhere else) b/c of our Tag wanna-be model
