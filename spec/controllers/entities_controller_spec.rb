@@ -73,6 +73,7 @@ describe EntitiesController, type: :controller do
         expect(response.headers['Content-Type']).to include 'application/json'
       end
 
+
       it 'sets cache headers' do
         expect(response.headers['Cache-Control']).to include 'public'
         expect(response.headers['Cache-Control']).to include 'max-age=300'
@@ -80,193 +81,12 @@ describe EntitiesController, type: :controller do
     end
   end
 
-  describe '#create' do
-    let(:params) { { "entity" => { "name" => "new entity", "blurb" => "a blurb goes here", "primary_ext" => "Org" } } }
-    let(:params_missing_ext) { { "entity" => { "name" => "new entity", "blurb" => "a blurb goes here", "primary_ext" => "" } } }
-    let(:params_add_relationship_page) { params.merge({ 'add_relationship_page' => 'TRUE' }) }
-    let(:params_missing_ext_add_relationship_page) { params_missing_ext.merge({ 'add_relationship_page' => 'TRUE' }) }
-
-    context 'user is logged in' do
-      login_basic_user
-
-      context 'from the /entities/new page' do
-        context 'without errors' do
-          it 'redirects to edit url' do
-            post :create, params: params
-            expect(response).to redirect_to concretize_edit_entity_path(Entity.last)
-          end
-
-          it 'is_expected.to create a new entity' do
-            expect { post :create, params: params }.to change { Entity.count }.by(1)
-          end
-
-          it "is_expected.to set last_user_id to be the user's id" do
-            post :create, params: params
-            expect(Entity.last.last_user_id).to eql controller.current_user.id
-          end
-        end
-
-        context 'with errors' do
-          it 'Renders new entities page' do
-            post :create, params: params_missing_ext
-            expect(response).to render_template(:new)
-          end
-
-          it 'sould NOT create a new entity' do
-            expect { post :create, params: params_missing_ext }.not_to change { Entity.count }
-          end
-        end
-      end
-
-      describe 'from the /entities/id/add_relationship page' do
-        context 'without errors' do
-          it 'is_expected.to create a new entity' do
-            expect { post :create, params: params_add_relationship_page }.to change { Entity.count }.by(1)
-          end
-
-          it 'is_expected.to render json with entity id' do
-            post :create, params: params_add_relationship_page
-            json = JSON.parse(response.body)
-            expect(json.fetch('status')).to eql 'OK'
-            expect(json['entity']['id']).to eql Entity.last.id
-            expect(json['entity']).to have_key 'name'
-            expect(json['entity']).to have_key 'url'
-            expect(json['entity']).to have_key 'description'
-            expect(json['entity']).to have_key 'primary_ext'
-          end
-        end
-
-        context 'with errors' do
-          it 'is_expected.to NOT create a new entity' do
-            expect { post :create, params: params_missing_ext_add_relationship_page }
-              .not_to change(Entity, :count)
-          end
-
-          it 'is_expected.to render json with errors' do
-            post :create, params: params_missing_ext_add_relationship_page
-            expect(JSON.parse(response.body)).to have_key 'errors'
-            expect(JSON.parse(response.body).fetch('status')).to eql 'ERROR'
-          end
-        end
-      end
-    end
-
-    context 'when the user is not logged in' do
-      it 'does not create a new entity' do
-        expect { post :create, params: params_add_relationship_page }.not_to change { Entity.count }
-      end
-
-      it 'redirects to login page' do
-        post :create, params: params
-        expect(response.location).to include 'login'
-        expect(response).to have_http_status 302
-      end
-    end
-
-    xcontext 'user does not have contributors permission' do
-      login_user_without_permissions
-
-      it 'does not create a new entity' do
-        expect { post :create, params: params }.not_to change(Entity, :count)
-      end
-
-      it 'returns http status 403' do
-        post :create, params: params
-        expect(response).to have_http_status 403
-      end
-    end
-
-    context 'user is restricted' do
-      login_restricted_user
-
-      it 'does not create a new entity' do
-        expect { post :create, params: params }.not_to change(Entity, :count)
-      end
-
-      it 'redirects to login page' do
-        post :create, params: params
-        expect(response).to have_http_status 302
-        expect(response.location).to include '/home/dashboard'
-      end
-    end
-  end # end of create
-
-  describe 'Political' do
-    let!(:entity) { create(:entity_org, updated_at: Time.current) }
-
-    describe 'Political' do
-      before { get(:political, params: { id: entity.id }) }
-
-      it { is_expected.to render_template(:political) }
-    end
-
-    describe 'match/unmatch donations' do
-      login_user([:edit, :bulk])
-
-      let!(:entity) { create(:entity_org) }
-
-      describe 'POST #match_donation' do
-        before do
-          expect(controller).to receive(:check_permission).and_call_original
-          d1 = create(:os_donation, fec_cycle_id: 'unique_id_1')
-          d2 = create(:os_donation, fec_cycle_id: 'unique_id_2')
-          post :match_donation, params: { id: entity.id, payload: [d1.id, d2.id] }
-        end
-
-        it { is_expected.to respond_with(200) }
-        it { is_expected.to use_before_action(:importers_only) }
-
-        it "updates the entity's last user id after matching" do
-          expect(entity.reload.last_user_id).to eql User.last.id
-        end
-
-        it 'sets the matched_by field of OsMatch' do
-          OsMatch.last(2).each do |match|
-            expect(match.matched_by).to eql User.last.id
-            expect(match.user).to eql User.last
-          end
-        end
-      end
-
-      describe '#unmatch_donation' do
-        specify do
-          expect(controller).to receive(:check_permission).with('importer').and_call_original
-          os_match = double('os match')
-          expect(os_match).to receive(:destroy).exactly(3).times
-          expect(OsMatch).to receive(:find).exactly(3).times.and_return(os_match)
-          post :unmatch_donation, params: { id: entity.id, payload: [5, 6, 7] }
-          expect(response).to have_http_status(200)
-        end
-      end
-
-      describe '#match_ny_donations' do
-        before do
-          expect(controller).to receive(:check_permission).with('importer').and_call_original
-          get :match_ny_donations, params: { id: entity.id }
-        end
-
-        it { is_expected.to respond_with(200) }
-        it { is_expected.to render_template(:match_ny_donations) }
-      end
-
-      describe '#reiview_ny_donations' do
-        before do
-          expect(controller).to receive(:check_permission).with('importer').and_call_original
-          get :review_ny_donations, params: { id: entity.id }
-        end
-
-        it { is_expected.to respond_with(200) }
-        it { is_expected.to render_template(:review_ny_donations) }
-      end
-    end
-  end # end political
-
   describe '#add_relationship' do
     login_user
 
     before do
       expect(Entity).to receive(:find_with_merges).and_return(build(:entity_org))
-      get :add_relationship, params: { id: rand(100) }
+      get :add_relationship, params: { id: rand(1_000) }
     end
 
     it { is_expected.to render_template(:add_relationship) }
@@ -294,11 +114,10 @@ describe EntitiesController, type: :controller do
   end
 
   describe '#update' do
-    let(:user) { create(:user) }
     login_user
 
     describe 'Updating an Org without a reference' do
-      let(:org) { create(:entity_org, last_user_id: user.id) }
+      let(:org) { create(:entity_org, last_user_id: example_user.id) }
       let(:params) do
         { id: org.id, entity: { 'website' => 'http://example.com' }, reference: { 'just_cleaning_up' => '1' } }
       end
@@ -314,7 +133,7 @@ describe EntitiesController, type: :controller do
       end
 
       it 'updates last_user_id' do
-        expect(org.last_user_id).to eq user.id
+        expect(org.last_user_id).to eq example_user.id
         patch :update, params: params
         expect(Entity.find(org.id).last_user_id).to eq controller.current_user.id
       end
@@ -376,7 +195,7 @@ describe EntitiesController, type: :controller do
     end
 
     describe 'adding and removing types' do
-      let!(:org) { create(:entity_org, last_user_id: user.id) }
+      let!(:org) { create(:entity_org) }
       let(:extension_def_ids) { '' }
       let(:params) do
         { id: org.id,
@@ -418,7 +237,8 @@ describe EntitiesController, type: :controller do
     end
 
     describe 'updating an Org with errors' do
-      let(:org) { create(:entity_org, last_user_id: user.id) }
+      let(:org) { create(:entity_org) }
+
       let(:params) do
         { id: org.id, entity: { 'end_date' => 'bad date' }, reference: { 'just_cleaning_up' => '1' } }
       end
@@ -521,94 +341,6 @@ describe EntitiesController, type: :controller do
       before { delete :destroy, params: { id: '123' } }
 
       it { is_expected.to respond_with 302 }
-    end
-  end
-
-  describe 'adding to lists' do
-    let(:user) { create(:user) }
-    let(:public_company) { create(:public_company_entity) }
-    let(:params) { { id: public_company.id, list_id: list.id } }
-
-    before do
-      user.add_ability(:list)
-      sign_in(user)
-    end
-
-    context 'when the list is private to the signed in user' do
-      let(:list) { create(:list, user: user, access: Permissions::ACCESS_PRIVATE) }
-
-      it 'adds the entity to the list' do
-        expect { post :add_to_list, params: params }.to change(list.entities, :count).by(1)
-      end
-    end
-
-    context 'when the list is private to someone else' do
-      let(:list) { create(:list, user: create(:user), access: Permissions::ACCESS_PRIVATE) }
-
-      it 'is forbidden' do
-        post :add_to_list, params: params
-        expect(response).to be_forbidden
-      end
-
-      it "doesn't add the entity to the list" do
-        expect { post :add_to_list, params: params }.not_to change(list.entities, :count)
-      end
-    end
-
-    context 'when the list is open for edits' do
-      let(:list) { create(:list, access: Permissions::ACCESS_OPEN) }
-
-      it 'adds the entity to the list' do
-        expect { post :add_to_list, params: params }.to change(list.entities, :count).by(1)
-      end
-    end
-
-    context 'when the list is closed' do
-      let(:list) { create(:list, access: Permissions::ACCESS_CLOSED) }
-
-      it 'is forbidden' do
-        post :add_to_list, params: params
-        expect(response).to be_forbidden
-      end
-
-      it "doesn't add the entity to the list" do
-        expect { post :add_to_list, params: params }.not_to change(list.entities, :count)
-      end
-    end
-
-    context "when the user doesn't have list permissions" do
-      let(:list) { create(:list, access: Permissions::ACCESS_OPEN) }
-
-      before do
-        sign_out(user)
-        sign_in(create(:user))
-      end
-
-      it 'is forbidden' do
-        post :add_to_list, params: params
-        expect(response).to be_forbidden
-      end
-
-      it "doesn't add the entity to the list" do
-        expect { post :add_to_list, params: params }.not_to change(list.entities, :count)
-      end
-    end
-
-    context "when there is no signed in user" do
-      let(:list) { create(:list, access: Permissions::ACCESS_OPEN) }
-
-      before do
-        sign_out(user)
-      end
-
-      it 'is redirected' do
-        post :add_to_list, params: params
-        expect(response).to be_redirect
-      end
-
-      it "doesn't add the entity to the list" do
-        expect { post :add_to_list, params: params }.not_to change(list.entities, :count)
-      end
     end
   end
 end

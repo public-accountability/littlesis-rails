@@ -4,8 +4,8 @@ describe 'Entity Requests', type: :request do
   let(:person) { create(:entity_person, start_date: '2000-01-01', blurb: nil) }
   let(:user) { create_basic_user }
 
-  before(:each) { login_as(user, :scope => :user) }
-  after(:each) { logout(:user) }
+  before { login_as(user, :scope => :user) }
+  after { logout(:user) }
 
   describe 'creating many entities' do
     let(:entities) { Array.new(2) { build(:random_entity) } }
@@ -80,14 +80,20 @@ describe 'Entity Requests', type: :request do
     let(:new_entity_request) { -> { post '/entities', params: params } }
 
     it 'creates a new entity' do
-      expect(&new_entity_request).to change { Entity.count }.by(1)
+      expect(&new_entity_request).to change(Entity, :count).by(1)
     end
 
     it 'sets blurb to nil if blank' do
       new_entity_request.call
       entity = Entity.last
-      expect(entity.name).to eql 'John Henry'
-      expect(entity.blurb).to eql nil
+      expect(entity.name).to eq 'John Henry'
+      expect(entity.blurb).to eq nil
+    end
+
+    it 'redirects to edit url page' do
+      post '/entities', params: { "entity" => { "name" => "new entity", "blurb" => "a blurb goes here", "primary_ext" => "Org" } }
+      expect(response).to have_http_status :found
+      expect(response.location).to include concretize_edit_entity_path(Entity.last)
     end
   end
 
@@ -264,12 +270,49 @@ describe 'Entity Requests', type: :request do
     end
 
     it 'creates a new image' do
-      expect(&request).to change { Image.count }.by(1)
+      expect(&request).to change(Image, :count).by(1)
     end
   end
 
   it 'redirects /edits to /history' do
     get "/person/#{person.to_param}/edits"
     expect(response).to redirect_to concretize_history_entity_path(person)
+  end
+
+  describe 'from the /entities/id/add_relationship page' do
+    let(:params) { { "entity" => { "name" => "new entity", "blurb" => "a blurb goes here", "primary_ext" => "Org" } } }
+    let(:params_missing_ext) { { "entity" => { "name" => "new entity", "blurb" => "a blurb goes here", "primary_ext" => "" } } }
+    let(:params_add_relationship_page) { params.merge({ 'add_relationship_page' => 'TRUE' }) }
+    let(:params_missing_ext_add_relationship_page) { params_missing_ext.merge({ 'add_relationship_page' => 'TRUE' }) }
+
+    context 'without errors' do
+      it 'is_expected.to create a new entity' do
+        expect { post '/entities', params: params_add_relationship_page }.to change(Entity, :count).by(1)
+      end
+
+      it 'is_expected.to render json with entity id' do
+        post '/entities', params: params_add_relationship_page
+        json = JSON.parse(response.body)
+        expect(json.fetch('status')).to eql 'OK'
+        expect(json['entity']['id']).to eql Entity.last.id
+        expect(json['entity']).to have_key 'name'
+        expect(json['entity']).to have_key 'url'
+        expect(json['entity']).to have_key 'description'
+        expect(json['entity']).to have_key 'primary_ext'
+      end
+    end
+
+    context 'with errors' do
+      it 'is_expected.to NOT create a new entity' do
+        expect { post '/entities', params: params_missing_ext_add_relationship_page }
+          .not_to change(Entity, :count)
+      end
+
+      it 'is_expected.to render json with errors' do
+        post '/entities', params: params_missing_ext_add_relationship_page
+        expect(JSON.parse(response.body)).to have_key 'errors'
+        expect(JSON.parse(response.body).fetch('status')).to eql 'ERROR'
+      end
+    end
   end
 end
