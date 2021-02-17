@@ -34,7 +34,7 @@ BEGIN
           SELECT id, item_type, item_id, entity1_id, entity2_id, whodunnit, created_at
   	  FROM versions
           WHERE entity1_id IS NOT NULL AND (CASE WHEN user_id is NOT NULL THEN whodunnit = user_id ELSE TRUE END)
-          ORDER BY id desc
+          ORDER BY created_at desc
           LIMIT history_limit
         LOOP
 
@@ -44,9 +44,7 @@ BEGIN
                                                          'item_type', version_record.item_type,
                                                          'item_id', version_record.item_id,
                                                          'user_id', version_record.whodunnit::integer,
-                                                         'created_at', version_record.created_at));
-
-
+                                                         'created_at', to_char(version_record.created_at, 'YYYY-MM-DD HH24:MI:SS')));
 
          IF version_record.entity2_id IS NOT NULL THEN
            json_results := array_append(json_results,
@@ -55,7 +53,7 @@ BEGIN
                                                          'item_type', version_record.item_type,
                                                          'item_id', version_record.item_id,
                                                          'user_id', version_record.whodunnit::integer,
-                                                         'created_at', version_record.created_at));
+                                                         'created_at', to_char(version_record.created_at, 'YYYY-MM-DD HH24:MI:SS')));
          END IF;
 
         END LOOP;
