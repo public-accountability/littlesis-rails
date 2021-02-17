@@ -36,6 +36,13 @@ module Utility
     !File.exist?(path) || File.stat(path).size.zero?
   end
 
+  def self.create_tmp_file(content)
+    Tempfile.new.tap do |t|
+      t.write content
+      t.rewind
+    end
+  end
+
   def self.sh(cmd, fail_message: nil)
     if system(cmd)
       true

@@ -15,10 +15,7 @@ describe Utility do
   describe 'execute_sql_file' do
 
     def create_tmp_file(sql)
-      Tempfile.new.tap do |t|
-        t.write sql
-        t.rewind
-      end
+      Utility.create_tmp_file(sql)
     end
 
     context 'with valid sql' do
