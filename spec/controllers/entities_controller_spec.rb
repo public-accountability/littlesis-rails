@@ -81,24 +81,11 @@ describe EntitiesController, type: :controller do
     end
   end
 
-  describe '#add_relationship' do
-    login_user
-
-    before do
-      expect(Entity).to receive(:find_with_merges).and_return(build(:entity_org))
-      get :add_relationship, params: { id: rand(1_000) }
-    end
-
-    it { is_expected.to render_template(:add_relationship) }
-    it { is_expected.to respond_with(200) }
-  end
-
   describe '#edit' do
     login_user
 
     before do
-      expect(Entity).to receive(:find_with_merges).and_return(build(:org))
-      get :edit, params: { id: rand(100) }
+      get :edit, params: { id: create(:entity_org).id }
     end
 
     it { is_expected.to render_template(:edit) }
@@ -118,6 +105,7 @@ describe EntitiesController, type: :controller do
 
     describe 'Updating an Org without a reference' do
       let(:org) { create(:entity_org, last_user_id: example_user.id) }
+
       let(:params) do
         { id: org.id, entity: { 'website' => 'http://example.com' }, reference: { 'just_cleaning_up' => '1' } }
       end
