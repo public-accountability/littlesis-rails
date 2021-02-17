@@ -98,10 +98,8 @@ RSpec.configure do |config|
   # Clean the db after each test start
   config.after(:each) do |example|
     DatabaseCleaner.clean
+
     if example.metadata[:js]
-      puts "--------------------------SETVAL--------------------"
-      ApplicationRecord.connection.execute "select setval('users_id_seq', 1, true)"
-      # ApplicationRecord.connection.execute("ALTER TABLE `users` AUTO_INCREMENT = 1")
       ActiveRecord::Tasks::DatabaseTasks.load_seed
     end
   end

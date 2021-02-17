@@ -3,7 +3,7 @@ FactoryBot.define do
     "user_#{n}@littlesis.org"
   end
 
-  factory :user, class: User do
+  factory :user, class: 'User' do
     username { Faker::Internet.unique.user_name(specifier: 5).tr('.', '') }
     email { Faker::Internet.unique.email }
     about_me { Faker::Movie.quote }
@@ -20,7 +20,7 @@ FactoryBot.define do
     abilities { UserAbilities.new(:admin, :edit, :delete, :merge, :bulk, :match, :list) }
   end
 
-  factory :user_with_id, class: User do
+  factory :user_with_id, class: 'User' do
     username { Faker::Internet.unique.user_name(specifier: 5).tr('.', '') }
     email { generate(:user_email) }
     default_network_id { 79 }
