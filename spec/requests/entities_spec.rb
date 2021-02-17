@@ -177,6 +177,170 @@ describe 'Entity Requests', type: :request do
       end
     end
 
+    describe "Updating Orgs" do
+      let(:org) { create(:entity_org) }
+
+      let(:patch_request) do
+        -> { patch "/entities/#{org.to_param}", params: params }
+      end
+
+      describe 'Updating an Org without a reference' do
+        let(:params) do
+          { id: org.id, entity: { 'website' => 'http://example.com' }, reference: { 'just_cleaning_up' => '1' } }
+        end
+
+        it 'updates entity field' do
+          expect(&patch_request).to change { org.reload.website }.from(nil).to('http://example.com')
+        end
+
+        it 'does not create a new reference' do
+          expect(&patch_request).not_to change(Reference, :count)
+        end
+
+        it 'updates last_user_id' do
+          expect(&patch_request).to change { org.reload.last_user_id }.to(user.id)
+        end
+      end
+
+      describe 'Updating an Org with a reference' do
+        let(:params) do
+          { id: org.id,
+            entity: { 'start_date' => '1929-08-08' },
+            reference: { 'url' => 'http://example.com', 'name' => 'new reference' } }
+        end
+
+        it 'updates entity field' do
+          expect(&patch_request).to change { org.reload.start_date }.from(nil).to('1929-08-08')
+        end
+
+        it 'creates a new reference' do
+          expect(&patch_request).to change(Reference, :count).by(1)
+        end
+
+        it 'redirects to legacy url' do
+          patch_request.call
+          expect(response).to redirect_to concretize_entity_path(org)
+        end
+      end
+    end
+
+    describe 'Adding and removing types' do
+      let!(:org) { create(:entity_org) }
+
+      let(:extension_def_ids) { '' }
+
+      let(:params) do
+        { id: org.id,
+          entity: { 'extension_def_ids' => extension_def_ids },
+          reference: { 'url' => 'http://example.com', 'name' => 'new reference' } }
+      end
+
+      let(:patch_request) do
+        -> { patch "/entities/#{org.to_param}", params: params }
+      end
+
+      describe 'adding new types' do
+        let(:extension_def_ids) { '8,9,10' }
+
+        it 'is_expected.to create 3 new extension records' do
+          expect(&patch_request).to change(ExtensionRecord, :count).by(3)
+        end
+
+        it 'redirects to legacy url' do
+          patch_request.call
+          expect(response).to redirect_to concretize_entity_path(org)
+        end
+      end
+
+      describe 'removing types' do
+        before { org.add_extension('School') }
+
+        it 'is_expected.to remove one extension records' do
+          expect(&patch_request).to change(ExtensionRecord, :count).by(-1)
+        end
+
+        it 'is_expected.to remove School model' do
+          expect(&patch_request).to change(School, :count).by(-1)
+        end
+
+        it 'redirects to legacy url' do
+          patch_request.call
+          expect(response).to redirect_to concretize_entity_path(org)
+        end
+      end
+    end
+
+    describe 'updating a person with a first name that is too long' do
+      let(:person) { create(:entity_person) }
+
+      let(:params) do
+        { id: person.id,
+          entity: { 'blurb' => 'new blurb',
+                    'person_attributes' => { 'name_first' => "#{'x' * 51}",
+                                             'id' => person.person.id } },
+          reference: { 'reference_id' => '123' } }
+      end
+
+      it 'does not change the first name' do
+        expect { patch("/entities/#{person.to_param}", params: params) }.not_to change { person.reload.person.name_first }
+      end
+    end
+
+    describe 'updating a public company' do
+      let(:public_company) { create(:public_company_entity) }
+      let(:params) do
+        { id: public_company.id,
+          entity: {
+            name: public_company.name,
+            public_company_attributes: {
+              id: public_company.public_company.id,
+              ticker: 'ABC'
+            },
+            business_attributes: {
+              id: public_company.business.id,
+              annual_profit: 999,
+              assets: 100,
+              marketcap: 200,
+              net_income: 300
+            }
+          },
+          reference: { 'url' => 'http://example.com', 'name' => 'new reference' } }
+      end
+
+      it 'updates ticker' do
+        expect(Entity.find(public_company.id).public_company.ticker).to eq 'XYZ'
+        expect { patch "/entities/#{public_company.to_param}", params: params }.to change { public_company.reload.public_company.ticker }.to('ABC')
+      end
+
+      it 'updates business fields' do
+        patch "/entities/#{public_company.to_param}", params: params
+        expect(public_company.business.reload).to have_attributes(annual_profit: 999, assets: 100, marketcap: 200, net_income: 300)
+      end
+
+      it 'redirects to entity url' do
+        patch "/entities/#{public_company.to_param}", params: params
+        expect(response).to redirect_to concretize_entity_path(public_company)
+      end
+    end
+
+    describe 'validate' do
+      it 'returns validation errors for invalid entities' do
+        post entities_validate_path, params: { entity: { name: 'Mr Aesop', blurb: 'Hic Rhodus hic salta', primary_ext: '' } }
+
+        expect(response.status).to eq 200
+
+        body = JSON.parse(response.body)
+        expect(body["name"].first).to eq("Could not find a first name. Mr is a common prefix")
+        expect(body["primary_ext"].first).to eq("can't be blank")
+      end
+
+      it 'returns nothing for valid entities' do
+        post entities_validate_path, params: { entity: { name: 'Carl Schmitt', blurb: 'The exception proves everything.', primary_ext: 'org' } }
+        expect(response.status).to eq 200
+        expect(JSON.parse(response.body)).to eq({})
+      end
+    end
+
     context 'as a restricted user' do
       let(:user) { create_restricted_user }
       context 'redirection' do
