@@ -1216,8 +1216,8 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["state_id"], name: "idx_17152_state_id_idx"
   end
 
-  create_table "political_fundraising", primary_key: "entity_id", force: :cascade do |t|
-    t.bigint "id", null: false
+  create_table "political_fundraising", force: :cascade do |t|
+    t.bigint "entity_id", null: false
     t.string "fec_id", limit: 20
     t.bigint "type_id"
     t.bigint "state_id"
@@ -1227,8 +1227,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["type_id"], name: "idx_17161_type_id_idx"
   end
 
-  create_table "political_fundraising_type", id: false, force: :cascade do |t|
-    t.bigint "id", null: false
+  create_table "political_fundraising_type", force: :cascade do |t|
     t.string "name", limit: 50, null: false
   end
 
@@ -1417,8 +1416,8 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["user_id", "resource_type"], name: "idx_17336_index_user_permissions_on_user_id_and_resource_type"
   end
 
-  create_table "user_profiles", primary_key: "user_id", force: :cascade do |t|
-    t.bigint "id", null: false
+  create_table "user_profiles", id: :serial, force: :cascade do |t|
+    t.bigint "user_id", null: false
     t.string "name_first", limit: 255
     t.string "name_last", limit: 255
     t.string "location", limit: 255
@@ -1556,9 +1555,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
   add_foreign_key "ls_list_entity", "entity", name: "ls_list_entity_ibfk_2", on_update: :cascade, on_delete: :cascade
   add_foreign_key "ls_list_entity", "ls_list", column: "list_id", name: "ls_list_entity_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "membership", "relationship", name: "membership_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "object_tag", "tag", name: "object_tag_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "org", "entity", name: "org_ibfk_1", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "os_entity_category", "entity", name: "os_entity_category_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "ownership", "relationship", name: "ownership_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "person", "entity", column: "party_id", name: "person_ibfk_1", on_update: :cascade, on_delete: :nullify
   add_foreign_key "person", "entity", name: "person_ibfk_3", on_update: :cascade, on_delete: :cascade
