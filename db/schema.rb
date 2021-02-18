@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.string "postal", limit: 20
     t.string "latitude", limit: 20
     t.string "longitude", limit: 20
-    t.bigint "category_id"
+    t.integer "category_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean "is_deleted", default: false, null: false
@@ -70,16 +70,16 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["state_id"], name: "idx_16413_state_id_idx"
   end
 
-  create_table "address_category", id: :bigint, default: nil, force: :cascade do |t|
+  create_table "address_category", id: :integer, default: nil, force: :cascade do |t|
     t.string "name", limit: 20, null: false
   end
 
-  create_table "address_country", force: :cascade do |t|
+  create_table "address_country", id: :integer, default: nil, force: :cascade do |t|
     t.string "name", limit: 50, null: false
     t.index ["name"], name: "idx_16446_uniqueness_idx", unique: true
   end
 
-  create_table "address_state", force: :cascade do |t|
+  create_table "address_state", id: :integer, default: nil, force: :cascade do |t|
     t.string "name", limit: 50, null: false
     t.string "abbreviation", limit: 2, null: false
     t.bigint "country_id", null: false
@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["name"], name: "idx_16458_name_idx"
   end
 
-  create_table "api_tokens", force: :cascade do |t|
+  create_table "api_tokens", id: :serial, force: :cascade do |t|
     t.string "token", limit: 255, null: false
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
@@ -139,7 +139,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["source_id"], name: "idx_16472_source_id_idx"
   end
 
-  create_table "article_entities", force: :cascade do |t|
+  create_table "article_entities", id: :serial, force: :cascade do |t|
     t.bigint "article_id", null: false
     t.bigint "entity_id", null: false
     t.boolean "is_featured", default: false, null: false
@@ -149,7 +149,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["is_featured"], name: "idx_16495_index_article_entities_on_is_featured"
   end
 
-  create_table "article_entity", force: :cascade do |t|
+  create_table "article_entity", id: :serial, force: :cascade do |t|
     t.bigint "article_id", null: false
     t.bigint "entity_id", null: false
     t.string "original_name", limit: 100, null: false
@@ -160,12 +160,12 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["entity_id"], name: "idx_16502_entity_id_idx"
   end
 
-  create_table "article_source", force: :cascade do |t|
+  create_table "article_source", id: :serial, force: :cascade do |t|
     t.string "name", limit: 100, null: false
     t.string "abbreviation", limit: 10, null: false
   end
 
-  create_table "articles", force: :cascade do |t|
+  create_table "articles", id: :serial, force: :cascade do |t|
     t.string "title", limit: 255, null: false
     t.string "url", limit: 255, null: false
     t.string "snippet", limit: 255
@@ -227,7 +227,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["cmp_affiliation_id"], name: "idx_16555_index_cmp_relationships_on_cmp_affiliation_id", unique: true
   end
 
-  create_table "common_names", force: :cascade do |t|
+  create_table "common_names", id: :serial, force: :cascade do |t|
     t.string "name", limit: 255
     t.index ["name"], name: "idx_16561_index_common_names_on_name", unique: true
   end
@@ -263,7 +263,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["created_at"], name: "idx_16584_index_dashboard_bulletins_on_created_at"
   end
 
-  create_table "degree", force: :cascade do |t|
+  create_table "degree", id: :serial, force: :cascade do |t|
     t.string "name", limit: 50, null: false
     t.string "abbreviation", limit: 10
   end
@@ -345,11 +345,11 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
   end
 
   create_table "entity", force: :cascade do |t|
-    t.string "name", limit: 200
-    t.string "blurb", limit: 200
+    t.text "name"
+    t.text "blurb"
     t.text "summary"
     t.text "notes"
-    t.string "website", limit: 100
+    t.text "website"
     t.bigint "parent_id"
     t.string "primary_ext", limit: 50
     t.datetime "created_at"
@@ -376,7 +376,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
   create_table "entity_fields", force: :cascade do |t|
     t.bigint "entity_id"
     t.bigint "field_id"
-    t.string "value", limit: 255, null: false
+    t.text "value", null: false
     t.boolean "is_admin", default: false
     t.index ["entity_id", "field_id"], name: "idx_16686_index_entity_fields_on_entity_id_and_field_id", unique: true
   end
@@ -414,8 +414,8 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.text "data", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["dataset", "dataset_id"], name: "idx_34409_index_external_data_on_dataset_and_dataset_id", unique: true
-    t.index ["dataset"], name: "idx_34409_index_external_data_on_dataset"
+    t.index ["dataset", "dataset_id"], name: "idx_34330_index_external_data_on_dataset_and_dataset_id", unique: true
+    t.index ["dataset"], name: "idx_34330_index_external_data_on_dataset"
   end
 
   create_table "external_data_fec_candidates", force: :cascade do |t|
@@ -435,9 +435,9 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.string "cand_st", limit: 2
     t.string "cand_zip", limit: 255
     t.integer "fec_year", limit: 2, null: false
-    t.index "to_tsvector('simple'::regconfig, cand_name)", name: "idx_34418_index_external_data_fec_candidates_on_cand_name", using: :gin
-    t.index ["cand_id", "fec_year"], name: "idx_34418_index_external_data_fec_candidates_on_cand_id_and_fec", unique: true
-    t.index ["cand_pty_affiliation"], name: "idx_34418_index_external_data_fec_candidates_on_cand_pty_affili"
+    t.index "to_tsvector('simple'::regconfig, cand_name)", name: "idx_34339_index_external_data_fec_candidates_on_cand_name", using: :gin
+    t.index ["cand_id", "fec_year"], name: "idx_34339_index_external_data_fec_candidates_on_cand_id_and_fec", unique: true
+    t.index ["cand_pty_affiliation"], name: "idx_34339_index_external_data_fec_candidates_on_cand_pty_affili"
   end
 
   create_table "external_data_fec_committees", force: :cascade do |t|
@@ -457,10 +457,10 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.text "connected_org_nm"
     t.string "cand_id", limit: 255
     t.integer "fec_year", limit: 2, null: false
-    t.index "to_tsvector('simple'::regconfig, cmte_nm)", name: "idx_34435_index_external_data_fec_committees_on_cmte_nm", using: :gin
-    t.index "to_tsvector('simple'::regconfig, connected_org_nm)", name: "idx_34435_index_external_data_fec_committees_on_connected_org_n", using: :gin
-    t.index ["cmte_id", "fec_year"], name: "idx_34435_index_external_data_fec_committees_on_cmte_id_and_fec", unique: true
-    t.index ["cmte_pty_affiliation"], name: "idx_34435_index_external_data_fec_committees_on_cmte_pty_affili"
+    t.index "to_tsvector('simple'::regconfig, cmte_nm)", name: "idx_34356_index_external_data_fec_committees_on_cmte_nm", using: :gin
+    t.index "to_tsvector('simple'::regconfig, connected_org_nm)", name: "idx_34356_index_external_data_fec_committees_on_connected_org_n", using: :gin
+    t.index ["cmte_id", "fec_year"], name: "idx_34356_index_external_data_fec_committees_on_cmte_id_and_fec", unique: true
+    t.index ["cmte_pty_affiliation"], name: "idx_34356_index_external_data_fec_committees_on_cmte_pty_affili"
   end
 
   create_table "external_data_fec_contributions", id: false, force: :cascade do |t|
@@ -486,14 +486,15 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.text "memo_cd"
     t.text "memo_text"
     t.integer "fec_year", limit: 2, null: false
-    t.index "to_tsvector('simple'::regconfig, employer)", name: "idx_34449_index_external_data_fec_contributions_on_employer", using: :gin
-    t.index "to_tsvector('simple'::regconfig, name)", name: "idx_34449_index_external_data_fec_contributions_on_name", using: :gin
-    t.index ["cmte_id"], name: "idx_34449_index_external_data_fec_contributions_on_cmte_id"
-    t.index ["fec_year", "sub_id"], name: "idx_34449_index_external_data_fec_contributions_on_fec_year_and", unique: true
-    t.index ["transaction_amt"], name: "idx_34449_index_external_data_fec_contributions_on_transaction_"
+    t.index "to_tsvector('simple'::regconfig, employer)", name: "idx_34370_index_external_data_fec_contributions_on_employer", using: :gin
+    t.index "to_tsvector('simple'::regconfig, name)", name: "idx_34370_index_external_data_fec_contributions_on_name", using: :gin
+    t.index ["cmte_id"], name: "idx_34370_index_external_data_fec_contributions_on_cmte_id"
+    t.index ["fec_year", "sub_id"], name: "idx_34370_index_external_data_fec_contributions_on_fec_year_and", unique: true
+    t.index ["transaction_amt"], name: "idx_34370_index_external_data_fec_contributions_on_transaction_"
   end
 
-  create_table "external_data_nycc", primary_key: "district", force: :cascade do |t|
+  create_table "external_data_nycc", id: false, force: :cascade do |t|
+    t.bigint "district", null: false
     t.integer "personid", limit: 2, null: false
     t.text "council_district"
     t.text "last_name"
@@ -512,77 +513,77 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
 
   create_table "external_data_nys_disclosures", id: false, force: :cascade do |t|
     t.bigint "filer_id", null: false
-    t.string "filer_previous_id", limit: 255
-    t.string "cand_comm_name", limit: 255
+    t.text "filer_previous_id"
+    t.text "cand_comm_name"
     t.bigint "election_year"
-    t.string "election_type", limit: 255
-    t.string "county_desc", limit: 255
+    t.text "election_type"
+    t.text "county_desc"
     t.string "filing_abbrev", limit: 1
-    t.string "filing_desc", limit: 255
-    t.string "filing_cat_desc", limit: 255
-    t.string "filing_sched_abbrev", limit: 255
-    t.string "filing_sched_desc", limit: 255
-    t.string "loan_lib_number", limit: 255
+    t.text "filing_desc"
+    t.text "filing_cat_desc"
+    t.text "filing_sched_abbrev"
+    t.text "filing_sched_desc"
+    t.text "loan_lib_number"
     t.string "trans_number", limit: 255, null: false
-    t.string "trans_mapping", limit: 255
+    t.text "trans_mapping"
     t.datetime "sched_date"
     t.datetime "org_date"
-    t.string "cntrbr_type_desc", limit: 255
-    t.string "cntrbn_type_desc", limit: 255
-    t.string "transfer_type_desc", limit: 255
-    t.string "receipt_type_desc", limit: 255
-    t.string "receipt_code_desc", limit: 255
-    t.string "purpose_code_desc", limit: 255
-    t.string "r_subcontractor", limit: 255
-    t.string "flng_ent_name", limit: 255
-    t.string "flng_ent_first_name", limit: 255
-    t.string "flng_ent_middle_name", limit: 255
-    t.string "flng_ent_last_name", limit: 255
-    t.string "flng_ent_add1", limit: 255
-    t.string "flng_ent_city", limit: 255
-    t.string "flng_ent_state", limit: 255
-    t.string "flng_ent_zip", limit: 255
-    t.string "flng_ent_country", limit: 255
-    t.string "payment_type_desc", limit: 255
-    t.string "pay_number", limit: 255
+    t.text "cntrbr_type_desc"
+    t.text "cntrbn_type_desc"
+    t.text "transfer_type_desc"
+    t.text "receipt_type_desc"
+    t.text "receipt_code_desc"
+    t.text "purpose_code_desc"
+    t.text "r_subcontractor"
+    t.text "flng_ent_name"
+    t.text "flng_ent_first_name"
+    t.text "flng_ent_middle_name"
+    t.text "flng_ent_last_name"
+    t.text "flng_ent_add1"
+    t.text "flng_ent_city"
+    t.text "flng_ent_state"
+    t.text "flng_ent_zip"
+    t.text "flng_ent_country"
+    t.text "payment_type_desc"
+    t.text "pay_number"
     t.float "owned_amt"
     t.float "org_amt"
-    t.string "loan_other_desc", limit: 255
-    t.string "trans_explntn", limit: 255
+    t.text "loan_other_desc"
+    t.text "trans_explntn"
     t.string "r_itemized", limit: 1
     t.string "r_liability", limit: 1
-    t.string "election_year_str", limit: 255
-    t.string "office_desc", limit: 255
-    t.string "district", limit: 255
+    t.text "election_year_str"
+    t.text "office_desc"
+    t.text "district"
     t.text "dist_off_cand_bal_prop"
     t.string "r_amend", limit: 1
-    t.index "to_tsvector('simple'::regconfig, (flng_ent_last_name)::text)", name: "idx_34470_index_external_data_nys_disclosures_on_flng_ent_last_", using: :gin
-    t.index "to_tsvector('simple'::regconfig, (flng_ent_name)::text)", name: "idx_34470_index_external_data_nys_disclosures_on_flng_ent_name", using: :gin
-    t.index ["filer_id"], name: "idx_34470_index_external_data_nys_disclosures_on_filer_id"
-    t.index ["org_amt"], name: "idx_34470_index_external_data_nys_disclosures_on_org_amt"
-    t.index ["trans_number"], name: "idx_34470_index_external_data_nys_disclosures_on_trans_number", unique: true
+    t.index "to_tsvector('simple'::regconfig, flng_ent_last_name)", name: "idx_34391_index_external_data_nys_disclosures_on_flng_ent_last_", using: :gin
+    t.index "to_tsvector('simple'::regconfig, flng_ent_name)", name: "idx_34391_index_external_data_nys_disclosures_on_flng_ent_name", using: :gin
+    t.index ["filer_id"], name: "idx_34391_index_external_data_nys_disclosures_on_filer_id"
+    t.index ["org_amt"], name: "idx_34391_index_external_data_nys_disclosures_on_org_amt"
+    t.index ["trans_number"], name: "idx_34391_index_external_data_nys_disclosures_on_trans_number", unique: true
   end
 
   create_table "external_data_nys_filers", force: :cascade do |t|
     t.bigint "filer_id", null: false
-    t.string "filer_name", limit: 255
-    t.string "compliance_type_desc", limit: 255
-    t.string "filter_type_desc", limit: 255
-    t.string "filter_status", limit: 255
-    t.string "committee_type_desc", limit: 255
-    t.string "office_desc", limit: 255
-    t.string "district", limit: 255
-    t.string "county_desc", limit: 255
-    t.string "municipality_subdivision_desc", limit: 255
-    t.string "treasurer_first_name", limit: 255
-    t.string "treasurer_middle_name", limit: 255
-    t.string "treasurer_last_name", limit: 255
-    t.string "address", limit: 255
-    t.string "city", limit: 255
-    t.string "state", limit: 255
-    t.string "zipcode", limit: 255
-    t.index "to_tsvector('simple'::regconfig, (filer_name)::text)", name: "idx_34515_index_external_data_nys_filers_on_filer_name", using: :gin
-    t.index ["filer_id"], name: "idx_34515_index_external_data_nys_filers_on_filer_id", unique: true
+    t.text "filer_name"
+    t.text "compliance_type_desc"
+    t.text "filter_type_desc"
+    t.text "filter_status"
+    t.text "committee_type_desc"
+    t.text "office_desc"
+    t.text "district"
+    t.text "county_desc"
+    t.text "municipality_subdivision_desc"
+    t.text "treasurer_first_name"
+    t.text "treasurer_middle_name"
+    t.text "treasurer_last_name"
+    t.text "address"
+    t.text "city"
+    t.text "state"
+    t.text "zipcode"
+    t.index "to_tsvector('simple'::regconfig, filer_name)", name: "idx_34436_index_external_data_nys_filers_on_filer_name", using: :gin
+    t.index ["filer_id"], name: "idx_34436_index_external_data_nys_filers_on_filer_id", unique: true
   end
 
   create_table "external_entities", force: :cascade do |t|
@@ -602,7 +603,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
   create_table "external_links", force: :cascade do |t|
     t.integer "link_type", limit: 2, null: false
     t.bigint "entity_id", null: false
-    t.string "link_id", limit: 255, null: false
+    t.text "link_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["entity_id"], name: "idx_16722_index_external_links_on_entity_id"
@@ -618,8 +619,8 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.bigint "entity1_id"
     t.bigint "entity2_id"
     t.integer "category_id", limit: 2, null: false
-    t.index ["external_data_id"], name: "idx_34540_fk_rails_5025111f98"
-    t.index ["relationship_id"], name: "idx_34540_fk_rails_632542e80c"
+    t.index ["external_data_id"], name: "idx_34461_fk_rails_5025111f98"
+    t.index ["relationship_id"], name: "idx_34461_fk_rails_632542e80c"
   end
 
   create_table "family", force: :cascade do |t|
@@ -805,7 +806,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
   create_table "ls_list_entity", force: :cascade do |t|
     t.bigint "list_id", null: false
     t.bigint "entity_id", null: false
-    t.bigint "rank"
+    t.integer "rank"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "last_user_id"
@@ -837,19 +838,19 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
 
   create_table "network_map", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.string "entity_ids", limit: 5000
-    t.string "rel_ids", limit: 5000
+    t.text "entity_ids"
+    t.text "rel_ids"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean "is_deleted", default: false, null: false
-    t.string "title", limit: 100
+    t.text "title"
     t.text "description"
     t.bigint "width", null: false
     t.bigint "height", null: false
     t.boolean "is_featured", default: false, null: false
     t.string "zoom", limit: 255, default: "1", null: false
     t.boolean "is_private", default: false, null: false
-    t.string "thumbnail", limit: 255
+    t.text "thumbnail"
     t.boolean "delta", default: true, null: false
     t.text "index_data"
     t.string "secret", limit: 255
@@ -973,7 +974,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
   end
 
   create_table "org", force: :cascade do |t|
-    t.string "name", limit: 200, null: false
+    t.text "name", null: false
     t.string "name_nick", limit: 100
     t.bigint "employees"
     t.bigint "revenue"
@@ -1067,21 +1068,21 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.string "name_prefix", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.index ["amount"], name: "idx_34546_index_os_donations_on_amount"
-    t.index ["contribid"], name: "idx_34546_index_os_donations_on_contribid"
-    t.index ["cycle"], name: "idx_34546_index_os_donations_on_cycle"
-    t.index ["date"], name: "idx_34546_index_os_donations_on_date"
-    t.index ["fec_cycle_id"], name: "idx_34546_index_os_donations_on_fec_cycle_id", unique: true
-    t.index ["fectransid", "cycle"], name: "idx_34546_index_os_donations_on_fectransid_and_cycle"
-    t.index ["fectransid"], name: "idx_34546_index_os_donations_on_fectransid"
-    t.index ["microfilm"], name: "idx_34546_index_os_donations_on_microfilm"
-    t.index ["name_last", "name_first"], name: "idx_34546_index_os_donations_on_name_last_and_name_first"
-    t.index ["realcode", "amount"], name: "idx_34546_index_os_donations_on_realcode_and_amount"
-    t.index ["realcode"], name: "idx_34546_index_os_donations_on_realcode"
-    t.index ["recipid", "amount"], name: "idx_34546_index_os_donations_on_recipid_and_amount"
-    t.index ["recipid"], name: "idx_34546_index_os_donations_on_recipid"
-    t.index ["state"], name: "idx_34546_index_os_donations_on_state"
-    t.index ["zip"], name: "idx_34546_index_os_donations_on_zip"
+    t.index ["amount"], name: "idx_34467_index_os_donations_on_amount"
+    t.index ["contribid"], name: "idx_34467_index_os_donations_on_contribid"
+    t.index ["cycle"], name: "idx_34467_index_os_donations_on_cycle"
+    t.index ["date"], name: "idx_34467_index_os_donations_on_date"
+    t.index ["fec_cycle_id"], name: "idx_34467_index_os_donations_on_fec_cycle_id", unique: true
+    t.index ["fectransid", "cycle"], name: "idx_34467_index_os_donations_on_fectransid_and_cycle"
+    t.index ["fectransid"], name: "idx_34467_index_os_donations_on_fectransid"
+    t.index ["microfilm"], name: "idx_34467_index_os_donations_on_microfilm"
+    t.index ["name_last", "name_first"], name: "idx_34467_index_os_donations_on_name_last_and_name_first"
+    t.index ["realcode", "amount"], name: "idx_34467_index_os_donations_on_realcode_and_amount"
+    t.index ["realcode"], name: "idx_34467_index_os_donations_on_realcode"
+    t.index ["recipid", "amount"], name: "idx_34467_index_os_donations_on_recipid_and_amount"
+    t.index ["recipid"], name: "idx_34467_index_os_donations_on_recipid"
+    t.index ["state"], name: "idx_34467_index_os_donations_on_state"
+    t.index ["zip"], name: "idx_34467_index_os_donations_on_zip"
   end
 
   create_table "os_entity_category", force: :cascade do |t|
@@ -1215,18 +1216,19 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["state_id"], name: "idx_17152_state_id_idx"
   end
 
-  create_table "political_fundraising", force: :cascade do |t|
+  create_table "political_fundraising", primary_key: "entity_id", force: :cascade do |t|
+    t.bigint "id", null: false
     t.string "fec_id", limit: 20
     t.bigint "type_id"
     t.bigint "state_id"
-    t.bigint "entity_id", null: false
     t.index ["entity_id"], name: "idx_17161_entity_id_idx"
     t.index ["fec_id"], name: "idx_17161_fec_id_idx"
     t.index ["state_id"], name: "idx_17161_state_id_idx"
     t.index ["type_id"], name: "idx_17161_type_id_idx"
   end
 
-  create_table "political_fundraising_type", force: :cascade do |t|
+  create_table "political_fundraising_type", id: false, force: :cascade do |t|
+    t.bigint "id", null: false
     t.string "name", limit: 50, null: false
   end
 
@@ -1334,7 +1336,8 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["relationship_id"], name: "idx_17249_relationship_id_idx"
   end
 
-  create_table "sphinx_index", primary_key: "name", id: { type: :string, limit: 50 }, force: :cascade do |t|
+  create_table "sphinx_index", id: false, force: :cascade do |t|
+    t.string "name", limit: 50, null: false
     t.datetime "updated_at", null: false
   end
 
@@ -1414,8 +1417,8 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index ["user_id", "resource_type"], name: "idx_17336_index_user_permissions_on_user_id_and_resource_type"
   end
 
-  create_table "user_profiles", force: :cascade do |t|
-    t.bigint "user_id", null: false
+  create_table "user_profiles", primary_key: "user_id", force: :cascade do |t|
+    t.bigint "id", null: false
     t.string "name_first", limit: 255
     t.string "name_last", limit: 255
     t.string "location", limit: 255
@@ -1503,9 +1506,9 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.text "referer"
     t.text "user_agent"
     t.string "request_id", limit: 255, null: false
-    t.index ["request_id"], name: "idx_34579_index_web_requests_on_request_id", unique: true
-    t.index ["time"], name: "idx_34579_idx_web_requests_time"
-    t.index ["time"], name: "idx_34579_index_web_requests_on_time"
+    t.index ["request_id"], name: "idx_34500_index_web_requests_on_request_id", unique: true
+    t.index ["time"], name: "idx_34500_idx_web_requests_time"
+    t.index ["time"], name: "idx_34500_index_web_requests_on_time"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id", on_update: :restrict, on_delete: :restrict
@@ -1564,7 +1567,6 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
   add_foreign_key "political_district", "address_state", column: "state_id", name: "political_district_ibfk_1", on_update: :cascade, on_delete: :restrict
   add_foreign_key "political_fundraising", "address_state", column: "state_id", name: "political_fundraising_ibfk_2", on_update: :cascade, on_delete: :restrict
   add_foreign_key "political_fundraising", "entity", name: "political_fundraising_ibfk_3", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "political_fundraising", "political_fundraising_type", column: "type_id", name: "political_fundraising_ibfk_1", on_update: :cascade, on_delete: :restrict
   add_foreign_key "position", "entity", column: "boss_id", name: "position_ibfk_2", on_update: :cascade, on_delete: :nullify
   add_foreign_key "position", "relationship", name: "position_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "professional", "relationship", name: "professional_ibfk_1", on_update: :cascade, on_delete: :cascade
