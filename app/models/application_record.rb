@@ -65,6 +65,13 @@ class ApplicationRecord < ActiveRecord::Base
     "('#{arr.join("','")}')"
   end
 
+  def self.psql_connection_string
+    return @psql_connection_string if defined?(@psql_connection_string)
+
+    dbconfig = Rails.configuration.database_configuration.fetch(Rails.env)
+    @psql_connection_string = "postgresql://#{dbconfig['username']}:#{dbconfig['password']}@#{dbconfig['host']}/#{dbconfig['database']}"
+  end
+
   protected
 
   def set_last_user_id

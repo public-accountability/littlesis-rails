@@ -1,7 +1,8 @@
 command = ARGV[0]&.to_sym
 dataset = ARGV[1]&.to_sym
 
-puts(<<HELP) if command == :help
+if command == :help
+  puts(<<HELP)
 littlesis data <command> <dataset>
 
  download | downloads original dataset
@@ -11,6 +12,8 @@ littlesis data <command> <dataset>
  report   | table statistics
  list     | print list of datasets
 HELP
+  exit
+end
 
 unless %i[download extract load export report list].include? command
   abort "invalid command: #{command}"

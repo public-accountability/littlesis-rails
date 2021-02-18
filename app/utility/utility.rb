@@ -43,6 +43,14 @@ module Utility
     end
   end
 
+  def self.with_tmp_file(content)
+    tmp_file = create_tmp_file(content)
+    yield tmp_file
+  ensure
+    tmp_file.close
+    tmp_file.unlink
+  end
+
   def self.sh(cmd, fail_message: nil)
     if system(cmd)
       true
@@ -101,6 +109,13 @@ module Utility
   def self.zip_entry_each_line(zip:, file:, &block)
     Zip::File.open(zip) do |zip_file|
       zip_file.get_entry(file).get_input_stream.each(&block)
+    end
+  end
+
+  def self.run_pgloader(command)
+    puts command
+    Utility.with_tmp_file(command) do |tmp|
+      system "pgloader #{tmp.path}", exception: true
     end
   end
 
