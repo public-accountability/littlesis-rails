@@ -21,16 +21,34 @@ module Utility
 
   def self.execute_sql_file(path)
     db = Rails.configuration.database_configuration.fetch(Rails.env)
-    cmd = "mysql -u #{db['username']} -p#{db['password']} -h #{db['host']} #{db['database']} < #{path}"
-    output = `#{cmd}`
-    if $?.exitstatus != 0
-      ColorPrinter.print_red output
-      raise SQLFileError, output
+
+    psql_connection_string = "postgresql://#{db['username']}:#{db['password']}@#{db['host']}/#{db['database']}"
+
+    output = `psql -b -v ON_ERROR_STOP=1 #{psql_connection_string} < #{path}`
+
+      if $?.exitstatus != 0
+        ColorPrinter.print_red output
+        raise SQLFileError, output
     end
   end
 
   def self.file_is_empty_or_nonexistent(path)
     !File.exist?(path) || File.stat(path).size.zero?
+  end
+
+  def self.create_tmp_file(content)
+    Tempfile.new.tap do |t|
+      t.write content
+      t.rewind
+    end
+  end
+
+  def self.with_tmp_file(content)
+    tmp_file = create_tmp_file(content)
+    yield tmp_file
+  ensure
+    tmp_file.close
+    tmp_file.unlink
   end
 
   def self.sh(cmd, fail_message: nil)
@@ -91,6 +109,13 @@ module Utility
   def self.zip_entry_each_line(zip:, file:, &block)
     Zip::File.open(zip) do |zip_file|
       zip_file.get_entry(file).get_input_stream.each(&block)
+    end
+  end
+
+  def self.run_pgloader(command)
+    puts command
+    Utility.with_tmp_file(command) do |tmp|
+      system "pgloader #{tmp.path}", exception: true
     end
   end
 

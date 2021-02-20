@@ -19,28 +19,19 @@ apt-get update && apt-get upgrade -y && apt-get -y install \
 	                                        unzip \
 	                                        zip \
                                                 libdbus-glib-1-dev \
-                                                libsqlite3-dev
-
-
-# MariaDB client
-apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.5/debian buster main'
-apt-get update && apt-get -y install mariadb-client libmariadb-dev
+                                                libsqlite3-dev \
+                                                postgresql-client \
+                                                libmariadb-dev
 
 # Manticore
-curl -sSL https://repo.manticoresearch.com/GPG-KEY-manticore > /etc/apt/trusted.gpg.d/manticore.gpg
 curl -sSL https://repo.manticoresearch.com/repository/manticoresearch_buster/pool/m/manticore/manticore_3.5.4-201211-13f8d08d_amd64.deb > /tmp/manticore.deb
 echo 'cb7d8105067fa5822aa7e85d11ab4208db1f1976793c1f31b621f0b148b48ee8  /tmp/manticore.deb' | sha256sum -c -
 apt-get install -y /tmp/manticore.deb
 
-# Node
+# Node  & Yarn
 curl -sL https://deb.nodesource.com/setup_14.x | bash -
 apt-get install -y nodejs
-
-# Yarn
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-add-apt-repository "deb https://dl.yarnpkg.com/debian/ stable main"
-apt-get update && apt-get -y install yarn
+npm install --global yarn
 
 # Chrome and Chrome Driver
 curl -L "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" > /tmp/chrome.deb

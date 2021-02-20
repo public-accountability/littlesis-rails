@@ -196,7 +196,7 @@ class User < ApplicationRecord
   # is case-insensitively unique. Also see `UserNameValidator`
   # String ---> Boolean
   def self.valid_username?(name)
-    UserNameValidator.valid?(name) && !exists?(username: name)
+    UserNameValidator.valid?(name) && !where('LOWER(username) = ?', name.downcase).exists?
   end
 
   private

@@ -3,7 +3,7 @@
 class UserMapsPresenter
   NETWORK_MAP_FIELDS = [
     'network_map_link(id, title)',
-    "DATE_FORMAT(updated_at, '%Y-%m-%d')"
+    "to_char(updated_at, 'YYYY-MM-DD')"
   ].map { |x| Arel.sql(x) }.freeze
 
   def initialize(user)
@@ -21,4 +21,3 @@ class UserMapsPresenter
     @user.network_maps.order(updated_at: :desc).all.pluck(*NETWORK_MAP_FIELDS)
   end
 end
-

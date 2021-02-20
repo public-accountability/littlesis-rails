@@ -34,5 +34,24 @@ feature 'Editing documents' do
       successfully_visits_page edit_document_path(document)
       page_has_selector "input\#document_name[value='#{new_attrs[:name]}']"
     end
+
+    scenario 'updating a document\'s date' do
+      successfully_visits_page edit_document_path(document)
+      fill_in 'document_publication_date', with: '2017-01-01'
+      click_button 'Update'
+      successfully_visits_page home_dashboard_path
+      visit edit_document_path(document)
+      successfully_visits_page edit_document_path(document)
+      page_has_selector "input\#document_publication_date[value='2017-01-01']"
+      expect(document.reload.publication_date).to eq '2017-01-01'
+    end
+
+    scenario 'submitting an invalid date' do
+      successfully_visits_page edit_document_path(document)
+      fill_in 'document_publication_date', with: 'THIS IS NOT A DATE'
+      click_button 'Update'
+      successfully_visits_page edit_document_path(document)
+      expect(document.reload.publication_date).to be_nil
+    end
   end
 end

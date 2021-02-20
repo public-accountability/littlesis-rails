@@ -256,10 +256,16 @@ class Entity < ApplicationRecord
     Link.exists?(entity1_id: id, entity2_id: Entity.entity_id_for(other_entity))
   end
 
-  def relateds_by_count(num=5, primary_ext=nil)
-    r = relateds.select("entity.*, COUNT(link.id) AS num").group("link.entity2_id").order("num DESC").limit(num)
-    r.where("entity.primary_ext = ?", primary_ext) unless primary_ext.nil?
-    r
+  def relateds_by_count(num: 5, primary_ext: nil)
+    base = if primary_ext
+             relateds.where('entity.primary_ext' => primary_ext)
+           else
+             relateds
+           end
+
+    Entity.where(
+      :id => base.select('link.entity2_id, count(*) as c').group('link.entity2_id').order('c desc').limit(num).map { |x| x['entity2_id'] }
+    )
   end
 
   def interlocks_by_count(options={}, only_count=false)
@@ -274,12 +280,12 @@ class Entity < ApplicationRecord
     max_num = options[:max_num]
     page = options[:page]
 
-    r = Link.select("link2.entity2_id AS degree2_id, GROUP_CONCAT(DISTINCT link2.entity1_id) AS degree1_ids, COUNT(DISTINCT link2.entity1_id) AS num")
-      .joins("LEFT JOIN link AS link2 ON link.entity2_id = link2.entity1_id")
-      .where("link.entity1_id = ?", id)
-      .where("link2.entity2_id <> ?", id)
-      .group("link2.entity2_id")
-      .order("num DESC")
+    r = Link.select("link2.entity2_id AS degree2_id, array_to_string(array_agg(DISTINCT link2.entity1_id), ',') AS degree1_ids, COUNT(DISTINCT link2.entity1_id) AS num")
+          .joins("LEFT JOIN link AS link2 ON link.entity2_id = link2.entity1_id")
+          .where("link.entity1_id = ?", id)
+          .where("link2.entity2_id <> ?", id)
+          .group("link2.entity2_id")
+          .order("num DESC")
 
     r = r.where("link.is_reverse = ?", (order1 == 2)) if order1.present?
     r = r.where("link2.is_reverse = ?", (order2 == 2)) if order2.present?
@@ -622,11 +628,8 @@ class Entity < ApplicationRecord
   end
 
   def total_usd_donations
-    relationships.joins(:category)
-      .where(
-        relationship_category: { name: 'Donation' },
-        currency: 'USD'
-      )
+    relationships
+      .where(category_id: Relationship::DONATION_CATEGORY, currency: 'usd')
       .sum(:amount)
   end
 

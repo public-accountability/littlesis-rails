@@ -187,6 +187,7 @@ GEM
     parallel (1.20.1)
     parser (3.0.0.0)
       ast (~> 2.4.1)
+    pg (1.2.3)
     popper_js (1.16.0)
     pry (0.13.1)
       coderay (~> 1.1)
@@ -400,6 +401,7 @@ DEPENDENCIES
   nokogiri
   paper_trail (~> 11)
   parallel
+  pg
   pry (>= 0.12.0)
   pry-byebug
   pry-doc

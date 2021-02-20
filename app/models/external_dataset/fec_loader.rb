@@ -21,11 +21,8 @@ module ExternalDataset
         Rails.logger.info "FEC: Processing #{path}"
 
         model.run_query <<~SQL
-          LOAD DATA LOCAL INFILE '#{path}'
-          IGNORE
-          INTO TABLE #{model.table_name}
-          FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
-          (#{COLUMNS_LOOKUP[model.dataset_name].join(',')})
+          COPY #{model.table_name} (#{COLUMNS_LOOKUP[model.dataset_name].join(',')})
+          FROM '#{path}' WITH CSV
         SQL
       end
     end
@@ -33,7 +30,11 @@ module ExternalDataset
     def self.iter_csv_filepaths(dataset_name)
       YEARS.each do |year|
         basename = FILENAME_LOOKUP.fetch(dataset_name) + year + ".csv"
-        yield Rails.root.join('data/fec/csv').join(basename)
+
+        rails_path = Rails.root.join('data/fec/csv').join(basename)
+        database_path = Pathname.new('/fec').join(basename)
+
+        yield database_path
       end
     end
   end

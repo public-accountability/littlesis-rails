@@ -116,16 +116,6 @@ module RspecHelpers
       FactoryBot.create(:user)
     end
 
-    def create_basic_user_with_ids(user_id, sf_user_id)
-      raise Exceptions::LittleSisError, "Shouldn't use this method!"
-    end
-
-    def create_basic_user_with_id(user_id)
-      user = FactoryBot.create(:user, id: user_id)
-      user.add_ability!(:edit, :list)
-      user
-    end
-
     def create_basic_user(**attributes)
       ExampleMacros.create_basic_user(**attributes)
     end
@@ -145,10 +135,6 @@ module RspecHelpers
 
     def create_restricted_user
       ExampleMacros.create_restricted_user
-    end
-
-    def create_user_with_sf(attrs = {})
-      raise Exceptions::LittleSisError, "Shouldn't use this method!"
     end
 
     def create_user(attrs = {})

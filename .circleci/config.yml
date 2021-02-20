@@ -11,15 +11,16 @@ jobs:
         environment:
           RAILS_ENV: test
 
-      - image: circleci/mariadb:10.5-focal
+      - image: postgres:13
         environment:
-          MYSQL_ROOT_PASSWORD: root
+          POSTGRES_PASSWORD: littlesis
+          POSTGRES_USER: littlesis
+          POSTGRES_DB: littlesis_test
+
     steps:
       - checkout
       - run: bin/ci_setup.sh
       - run: bin/docker_setup.sh
-      - run: bin/wait_for_mariadb.sh
-      - run: bin/mariadb_setup.sh
 
       - restore_cache:
           keys:
@@ -32,8 +33,8 @@ jobs:
           paths:
             - vendor/bundle
 
-      - run: bundle exec rake db:structure:load
-      - run: bundle exec rake db:seed
+      - run: bundle exec rake db:reset
+      - run: bin/create_sql_functions.sh
       - run: bundle exec rake tmp:clear
 
       - restore_cache:
@@ -49,7 +50,7 @@ jobs:
 
       - run: bundle exec rake webpacker:compile
       - run: bundle exec rake assets:precompile
-      - run: bundle exec rspec --format progress --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
+      - run: bundle exec rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
 
       - store_test_results:
           path: tmp/rspec

@@ -1,6 +1,4 @@
 describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature do
-  seed_tags # seeds db w/ 3 tags
-
   let(:admin) { create_admin_user }
   let(:normal_user) { create_really_basic_user }
   let(:user) { normal_user }
@@ -30,7 +28,11 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
   end
 
   feature 'Tag admin page' do
-    before { visit '/admin/tags' }
+    before do
+      create(:nyc_tag)
+      create(:oil_tag)
+      visit '/admin/tags'
+    end
 
     let(:user) { admin }
 
@@ -38,7 +40,7 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
       expect(page.status_code).to eq 200
       expect(page).to have_current_path '/admin/tags'
       page.assert_selector '#tag-table'
-      page.assert_selector '#tag-table tbody tr', count: 3
+      page.assert_selector '#tag-table tbody tr', count: 2
     end
 
     scenario 'Admin creates a new tag' do
@@ -47,7 +49,7 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
       page.check('Restricted')
       click_button('Create Tag')
 
-      expect(Tag.count).to eq 4
+      expect(Tag.count).to eq 3
       expect(Tag.last.attributes.slice('name', 'description', 'restricted'))
         .to eq('name' => 'cylon',
                'description' => 'spin up those ftl drives',

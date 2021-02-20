@@ -141,13 +141,13 @@ class Tag < ApplicationRecord
     page = page.to_i
 
     sql = <<-SQL
-         SELECT taggings.tagable_id,
+         SELECT taggings.tagable_id as entity_id,
                 SUM( case when linked_taggings.id is null then 0
 		     when taggings.id is null then 0
 		     else 1 end ) as relationship_count
 
          FROM taggings
-         INNER JOIN entity ON entity.id = taggings.tagable_id AND entity.is_deleted = 0 AND entity.primary_ext = '#{entity_type}'
+         INNER JOIN entity ON entity.id = taggings.tagable_id AND entity.is_deleted = FALSE AND entity.primary_ext = '#{entity_type}'
          LEFT JOIN link ON link.entity1_id = taggings.tagable_id
          LEFT JOIN taggings as linked_taggings ON linked_taggings.tagable_id = link.entity2_id AND linked_taggings.tagable_class = 'Entity' AND linked_taggings.tag_id = #{id}
          WHERE taggings.tag_id = #{id} AND taggings.tagable_class = 'Entity'
@@ -157,15 +157,13 @@ class Tag < ApplicationRecord
          OFFSET #{(page - 1) * PER_PAGE}
     SQL
 
-    entities_and_counts = ApplicationRecord.connection.execute(sql).to_a
-
-    relationship_counts = entities_and_counts.reduce({}) do |memo, arr|
-      memo.merge(arr.first => arr.second)
+    entities = ApplicationRecord.connection.execute(sql).to_a.each_with_object({}) do |row, h|
+      h.store row['entity_id'], row['relationship_count']
     end
 
-    Entity.find(entities_and_counts.map(&:first)).to_a.map! do |entity|
+    Entity.find(entities.keys).to_a.map! do |entity|
       entity.singleton_class.class_eval { attr_reader :relationship_count }
-      entity.instance_variable_set(:@relationship_count, relationship_counts.fetch(entity.id))
+      entity.instance_variable_set(:@relationship_count, entities.fetch(entity.id))
       entity
     end
   end
@@ -177,15 +175,16 @@ class Tag < ApplicationRecord
   def lists_by_entity_count(page = 1)
     page = page.nil? ? 1 : page.to_i
     query = <<-SQL
-      SELECT DISTINCT ls_list.*, COUNT(ls_list_entity.id) AS entity_count
+      SELECT DISTINCT ls_list.*,
+             COUNT(ls_list_entity.id) AS list_entity_count
       FROM ls_list
       INNER JOIN taggings ON ls_list.id = taggings.tagable_id
         AND taggings.tag_id = #{id}
         AND taggings.tagable_class = 'List'
       LEFT JOIN ls_list_entity ON ls_list_entity.list_id = ls_list.id
-      WHERE ls_list.is_deleted = 0
+      WHERE ls_list.is_deleted IS FALSE
       GROUP BY ls_list.id
-      ORDER BY entity_count DESC
+      ORDER BY list_entity_count DESC
       LIMIT #{PER_PAGE}
       OFFSET #{(page - 1) * PER_PAGE};
     SQL
@@ -217,8 +216,7 @@ class Tag < ApplicationRecord
  	LEFT JOIN ls_list ON taggings.tagable_id = ls_list.id AND taggings.tagable_class = 'List'
 	LEFT JOIN relationship ON taggings.tagable_id = relationship.id AND taggings.tagable_class = 'Relationship'
 	WHERE taggings.tag_id = #{id}
-            # adding a tag triggers a callback that also updates the tagable. This clause excludes those updates
-	    AND abs(TIMESTAMPDIFF(SECOND, taggings.created_at, COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at))) > 100
+            AND abs(extract(epoch from taggings.created_at - COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at))/3600) > 100
       )
         UNION
       (
@@ -237,12 +235,7 @@ class Tag < ApplicationRecord
         OFFSET #{(page.to_i - 1) * PER_PAGE}
     SQL
 
-    # NOTE: our version of Mysql2::Result is missing the very convenient method: #to_hash ...why?
-    # we should be able to do ApplicationRecord.connection.execute(sql).to_hash instead of
-    # populating the array ourselves...
-    result = []
-    ApplicationRecord.connection.execute(sql).each(:as => :hash) { |h| result << h }
-    result
+    ApplicationRecord.connection.execute(sql).to_a
   end
 
   # type TagablesByClassAndId = {

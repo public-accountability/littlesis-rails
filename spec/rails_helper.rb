@@ -64,7 +64,6 @@ RSpec.configure do |config|
   config.extend ControllerMacros, :type => :controller
   config.extend FeatureGroupMacros, :type => :feature
   config.extend RequestGroupMacros, :type => :request
-  config.extend ListHelpersForExampleGroups, :list_helper
   config.extend TaggingHelpers, :tagging_helper
   config.extend TagSpecHelper, :tag_helper
   config.extend PaginationExampleGroupHelper, :pagination_helper
@@ -99,8 +98,8 @@ RSpec.configure do |config|
   # Clean the db after each test start
   config.after(:each) do |example|
     DatabaseCleaner.clean
+
     if example.metadata[:js]
-      ApplicationRecord.connection.execute("ALTER TABLE `users` AUTO_INCREMENT = 1")
       ActiveRecord::Tasks::DatabaseTasks.load_seed
     end
   end

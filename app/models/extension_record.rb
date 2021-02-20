@@ -14,19 +14,18 @@ class ExtensionRecord < ApplicationRecord
   # Returns nested array:
   # [ [ count, display_name ] ]
   def self.stats
-    sql = <<-SQL
-    SELECT subquery.c, display_name
-    FROM (
+    ApplicationRecord.connection.execute(<<~SQL).to_a.map(&:values)
+      SELECT subquery.c, display_name
+      FROM (
            SELECT definition_id, count(*) as c
            FROM extension_record
            INNER JOIN entity ON entity.id = extension_record.entity_id
-           WHERE entity.is_deleted = 0
+           WHERE entity.is_deleted is false
            GROUP BY definition_id
          ) as subquery
-     INNER JOIN extension_definition ON subquery.definition_id = extension_definition.id
-     ORDER BY subquery.c desc
-     SQL
-    ApplicationRecord.connection.execute(sql).to_a
+       INNER JOIN extension_definition ON subquery.definition_id = extension_definition.id
+       ORDER BY subquery.c desc
+    SQL
   end
 
   # Returns nested array

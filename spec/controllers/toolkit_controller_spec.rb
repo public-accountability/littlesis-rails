@@ -43,8 +43,6 @@ describe ToolkitController, type: :controller do
   end
 
   describe 'edit' do
-    login_admin
-
     before(:all) do
       ToolkitPage.delete_all
       @toolkit_page = ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts')
@@ -84,27 +82,33 @@ describe ToolkitController, type: :controller do
   end
 
   describe '#new' do
-    login_admin
-    before { get :new }
-    it { should respond_with(:success) }
-    it { should render_template(:new) }
+    before do
+      sign_in create_admin_user
+      get :new
+    end
+
+    it { is_expected.to respond_with(:success) }
+    it { is_expected.to render_template(:new) }
   end
 
   describe '#create' do
-    login_admin
     let(:good_params) { { 'toolkit_page' => { 'name' => 'some_page', 'title' => 'page title' } } }
     let(:bad_params) { { 'toolkit_page' => { 'title' => 'page title' } } }
+
+    before do
+      sign_in create_admin_user
+    end
 
     context 'good post' do
       it 'creates a new toolkit page' do
         expect { post :create, params: good_params }
-          .to change { ToolkitPage.count }.by(1)
+          .to change(ToolkitPage, :count).by(1)
       end
 
       it 'sets last_user_id' do
         expect(ToolkitPage).to receive(:new)
-                                .with(hash_including(:last_user_id => controller.current_user.id))
-                                .and_return(spy('toolkit page'))
+                                 .with(hash_including(:last_user_id => controller.current_user.id))
+                                 .and_return(spy('toolkit page'))
         post :create, params: good_params
       end
     end
@@ -123,10 +127,10 @@ describe ToolkitController, type: :controller do
   end
 
   describe '#update' do
-    login_admin
     let(:params) { { 'id' => @page.id, 'toolkit_page' => { 'markdown' => '# part one' } } }
 
     before do
+      sign_in create_admin_user
       @page = ToolkitPage.create!(name: 'cats_in_government', title: 'cats in government', markdown: '# markdown')
     end
 

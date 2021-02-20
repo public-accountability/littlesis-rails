@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '6.1.1'
 
+gem 'pg'
 gem 'mysql2', '~> 0.5.2'
 gem 'puma', '>= 5'
 gem 'redis'

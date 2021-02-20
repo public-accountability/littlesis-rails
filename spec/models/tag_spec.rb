@@ -247,17 +247,20 @@ describe Tag, :pagination_helper do
       end
 
       describe 'listing `tagable_updated` events' do
-        let(:tomorrow) { Date.tomorrow }
+        let(:new_time) { (Time.current + 10.days) }
         let(:relationship) { relationships.first }
-        before { relationship.update_column(:updated_at, tomorrow) }
+
+        before do
+          relationship.update_column(:updated_at, new_time)
+        end
 
         it 'shows a `tagable_updated` event' do
-          expect(tag.recent_edits.first)
-            .to eq("tagable"            => relationships.first,
-                   "tagable_class"      => "Relationship",
-                   "event"              => "tagable_updated",
-                   "event_timestamp"    => tomorrow,
-                   "editor"             => system_user)
+          update_event = tag.recent_edits.first
+          expect(update_event['tagable']).to eq relationships.first
+          expect(update_event['tagable_class']).to eq "Relationship"
+          expect(update_event['event']).to eq "tagable_updated"
+          expect(update_event['editor'].id).to eq 1
+          expect(update_event['event_timestamp'].round).to eq new_time.round
         end
       end
     end

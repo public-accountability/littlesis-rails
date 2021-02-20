@@ -90,7 +90,7 @@ class Permissions
   def edit_list?(list)
     return true if admin? || (list.creator_user_id == @user.id)
     return false if list.restricted?
-    return true if lister? && (list.access == ACCESS_OPEN)
+    return true if @user.lister? && (list.access == ACCESS_OPEN)
     return false
   end
 

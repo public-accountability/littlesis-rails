@@ -3,7 +3,6 @@ feature 'Selenium JS', type: :feature, js: true do
   let(:admin) { create_admin_user }
 
   before do
-    create(:person_extension_definition)
     login_as admin, scope: :user
   end
 

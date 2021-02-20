@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 describe EntityHistory do
   with_versioning do
     subject { EntityHistory.new(entity) }

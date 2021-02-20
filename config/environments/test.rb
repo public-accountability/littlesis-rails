@@ -53,5 +53,5 @@ Rails.application.configure do
 
   config.active_job.queue_adapter = :test
 
-  config.active_record.schema_format = :sql
+  # config.active_record.schema_format = :sql
 end

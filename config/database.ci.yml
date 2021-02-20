@@ -1,5 +1,5 @@
 test:
-  adapter: mysql2
+  adapter: postgresql
   database: littlesis_test
   username: littlesis
   password: littlesis

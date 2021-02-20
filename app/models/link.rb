@@ -39,7 +39,7 @@ class Link < ApplicationRecord
     SQL
 
     ApplicationRecord.connection.exec_query(sql).map do |h|
-      if h.delete('is_reverse') == 1
+      if h.delete('is_reverse') == true
         h['entity1_id'], h['entity2_id'] = h['entity2_id'], h['entity1_id']
       end
       h['id'] = h.delete('relationship_id')

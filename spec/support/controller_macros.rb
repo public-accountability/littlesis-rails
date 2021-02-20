@@ -2,42 +2,41 @@
 
 module ControllerMacros
   def login_admin
+    let(:example_user) { RspecHelpers::ExampleMacros.create_admin_user }
+
     before do
-      @request.env["devise.mapping"] = Devise.mappings[:admin]
-      sign_in RspecHelpers::ExampleMacros.create_admin_user
+      @request.env["devise.mapping"] = Devise.mappings[:user]
+      sign_in example_user, scope: :user
     end
   end
 
   def login_user(abilities = [:edit])
+    let(:example_user) { RspecHelpers::ExampleMacros.create_basic_user }
+
     before do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      user = FactoryBot.create(:user)
-      create(:user_profile, user: user)
-      user.add_ability(*abilities)
-      sign_in(user)
+      example_user.add_ability(*abilities)
+      sign_in example_user, scope: :user
     end
   end
 
   def login_basic_user
-    before do
-      @request.env["devise.mapping"] = Devise.mappings[:user]
-      sign_in RspecHelpers::ExampleMacros.create_basic_user
-    end
+    login_user
   end
 
   def login_restricted_user
+    let(:example_user) { RspecHelpers::ExampleMacros.create_restricted_user }
+
     before do
-      @request.env["devise.mapping"] = Devise.mappings[:user]
-      sign_in RspecHelpers::ExampleMacros.create_restricted_user
+      sign_in example_user, scope: :user
     end
   end
 
   def login_user_without_permissions
+    let(:example_user) { RspecHelpers::ExampleMacros.create_basic_user }
+
     before do
-      @request.env["devise.mapping"] = Devise.mappings[:user]
-      user = FactoryBot.create(:user)
-      create(:user_profile, user: user)
-      sign_in user
+      sign_in example_user, scope: :user
     end
   end
 end

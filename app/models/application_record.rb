@@ -53,7 +53,7 @@ class ApplicationRecord < ActiveRecord::Base
   # example:
   #   execute_one('SELECT COUNT(*) from versions') => 100
   def self.execute_one(sql)
-    connection.execute(sql).first.first
+    connection.execute(sql).values.first.first
   end
 
   # convenience function for running `.connection.execute`
@@ -63,6 +63,13 @@ class ApplicationRecord < ActiveRecord::Base
 
   def self.sqlize_array(arr)
     "('#{arr.join("','")}')"
+  end
+
+  def self.psql_connection_string
+    return @psql_connection_string if defined?(@psql_connection_string)
+
+    dbconfig = Rails.configuration.database_configuration.fetch(Rails.env)
+    @psql_connection_string = "postgresql://#{dbconfig['username']}:#{dbconfig['password']}@#{dbconfig['host']}/#{dbconfig['database']}"
   end
 
   protected

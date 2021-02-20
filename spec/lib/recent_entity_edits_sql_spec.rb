@@ -2,7 +2,6 @@
 
 # rubocop:disable RSpec/InstanceVariable
 
-
 describe 'SQL function: recent_entity_edits' do
   let(:user) { create_basic_user }
   let(:user2) { create_basic_user }
@@ -23,41 +22,44 @@ describe 'SQL function: recent_entity_edits' do
   end
 
   it 'crafts json array of versions' do
-    expect(JSON.parse(ApplicationRecord.execute_one("SELECT recent_entity_edits(10, NULL)")))
-      .to eq([
-               {
-                 'entity_id' => @person_created_by_user2.id,
-                 'version_id' => @person_created_by_user2.versions.last.id,
-                 'item_type' => 'Entity',
-                 'item_id' => @person_created_by_user2.id,
-                 'user_id' => user2.id,
-                 'created_at' => @person_created_by_user2.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
-               },
-               {
-                 'entity_id' => @person.id,
-                 'version_id' => @relationship.versions.last.id,
-                 'item_type' => 'Relationship',
-                 'item_id' => @relationship.id,
-                 'user_id' => user.id,
-                 'created_at' => @relationship.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
-               },
-               {
-                 'entity_id' => @org.id,
-                 'version_id' => @relationship.versions.last.id,
-                 'item_type' => 'Relationship',
-                 'item_id' => @relationship.id,
-                 'user_id' => user.id,
-                 'created_at' => @relationship.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
-               },
-               {
-                 'entity_id' => @org.id,
-                 'version_id' => @org.versions.last.id,
-                 'item_type' => 'Entity',
-                 'item_id' => @org.id,
-                 'user_id' => user.id,
-                 'created_at' => @org.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
-               }
-             ])
+    records = JSON.parse(ApplicationRecord.execute_one("SELECT recent_entity_edits(10, NULL)"))
+
+    results = [
+      {
+        'entity_id' => @person_created_by_user2.id,
+        'version_id' => @person_created_by_user2.versions.last.id,
+        'item_type' => 'Entity',
+        'item_id' => @person_created_by_user2.id,
+        'user_id' => user2.id,
+        'created_at' => @person_created_by_user2.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+      },
+      {
+        'entity_id' => @person.id,
+        'version_id' => @relationship.versions.last.id,
+        'item_type' => 'Relationship',
+        'item_id' => @relationship.id,
+        'user_id' => user.id,
+        'created_at' => @relationship.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+      },
+      {
+        'entity_id' => @org.id,
+        'version_id' => @relationship.versions.last.id,
+        'item_type' => 'Relationship',
+        'item_id' => @relationship.id,
+        'user_id' => user.id,
+        'created_at' => @relationship.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+      },
+      {
+        'entity_id' => @org.id,
+        'version_id' => @org.versions.last.id,
+        'item_type' => 'Entity',
+        'item_id' => @org.id,
+        'user_id' => user.id,
+        'created_at' => @org.versions.last.created_at.strftime('%Y-%m-%d %H:%M:%S')
+      }
+    ]
+
+    expect(records).to eq results
   end
 
   it 'returns only 3 edits for user1' do

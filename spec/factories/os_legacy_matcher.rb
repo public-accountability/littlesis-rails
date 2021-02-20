@@ -1,6 +1,6 @@
-FactoryBot.define do 
+FactoryBot.define do
 
-  factory :loeb, class: Entity do 
+  factory :loeb, class: Entity do
     name { "Daniel S Loeb" }
     blurb { "CEO of Third Point LLC" }
     primary_ext { "Person" }
@@ -50,7 +50,7 @@ FactoryBot.define do
     employer { 'THIRD POINT LLC' }
     fec_cycle_id { '2012_1120620120011115314' }
   end
-  
+
   factory :loeb_donation_two, class: OsDonation do
     cycle { '2010' }
     fectransid { '1050220110005750383' }
@@ -87,24 +87,24 @@ FactoryBot.define do
     object_model { "Relationship" }
     # object_id 419156
   end
-  
+
   factory :loeb_ref_three, class: Reference do
     name { "FEC contribution search" }
     source { "http://docquery.fec.gov/cgi-bin/qindcont/1/(lname|MATCHES|:LOEB:)|AND|(fname|MATCHES|:DANIEL*:)" }
     object_model { "Relationship" }
     # object_id 419156
   end
-  
+
   factory :loeb_ref_four, class: Reference do
     name { "FEC Filing" }
     source { "http//images.nictusa.com/cgi-bin/fecimg/?10020853341" }
     object_model { "Relationship" }
     # object_id 419156
   end
-  
+
   factory :loeb_donation_model, class: Donation do
-    bundler_id { nil } 
+    bundler_id { nil }
     relationship_id { 419156 }
   end
-  
+
 end
