@@ -1,12 +1,10 @@
 <h1 id="bulk-add-header">
   Add entities to <%= link_to @list.name, @list %>
 </h1>
-<div id="bulk-add-container">
-  <script>
-    LittleSis.ListBulkEntityAdder().init({
-      domId:        "bulk-add-container",
-      resourceId:   "<%= raw(@list.id) %>",
-      resourceType: "lists"
-    });
-  </script>
-</div>
+
+<%= content_tag :div, nil,
+  id: "bulk-add-container",
+  data: {
+    controller: "list-bulk-entity",
+    list_bulk_entity_resource_id_value: @list.id
+  } %>
