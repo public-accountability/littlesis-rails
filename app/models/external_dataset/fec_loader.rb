@@ -17,17 +17,17 @@ module ExternalDataset
     }.freeze
 
     def self.run(model)
-      iter_csv_filepaths(model.dataset_name) do |path|
-        Rails.logger.info "FEC: Processing #{path}"
+      loop_csv_files(model.dataset_name) do |filepath|
+        Rails.logger.info "FEC: Processing #{filepath}"
 
         model.run_query <<~SQL
           COPY #{model.table_name} (#{COLUMNS_LOOKUP[model.dataset_name].join(',')})
-          FROM '#{path}' WITH CSV
+          FROM '#{filepath}' WITH CSV
         SQL
       end
     end
 
-    def self.iter_csv_filepaths(dataset_name)
+    def self.loop_csv_files(dataset_name)
       YEARS.each do |year|
         basename = FILENAME_LOOKUP.fetch(dataset_name) + year + ".csv"
 

@@ -1,8 +1,7 @@
-DROP TABLE IF EXISTS clean_users;
-CREATE TABLE clean_users LIKE users;
-INSERT clean_users SELECT * FROM users;
+-- IMPORTANT!
+-- This script deletes user data and is only to be run locally in development
 
-UPDATE clean_users 
+UPDATE users
 SET encrypted_password = '',
     reset_password_token = NULL,
     reset_password_sent_at = NULL,
@@ -21,17 +20,14 @@ SET encrypted_password = '',
     email = CONCAT('user', id, '@email.com'),
     username = CONCAT('user_', id);
 
-
--- This sets user #1 (system@littlesis.org) password to be 'password'
-UPDATE clean_users
+-- This sets the systems user's password to be 'password'
+UPDATE users
 SET encrypted_password = '$2a$10$Q2tSw2llUagw1KRNTtLD4.JiYgFA.9pxgV5aPOs/IxFsddZGa8jgO'
-WHERE id = 1 LIMIT 1;
+WHERE id = 1;
 
-DROP TABLE IF EXISTS clean_user_profiles;
-CREATE TABLE clean_user_profiles LIKE user_profiles;
-INSERT clean_user_profiles SELECT * FROM user_profiles;
 
-UPDATE clean_user_profiles
+
+UPDATE user_profiles
 SET name_first = CONCAT('firstname', id ),
     name_last = CONCAT('lastname', id ),
     reason = 'truth is always in harmony with herself',
