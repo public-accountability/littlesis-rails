@@ -1,70 +1,52 @@
-<script>
- function handleRadioClick(access){
-   $("#" + access + "-radio").trigger('click');
-   $("#list-config-access-buttons button").removeClass('btn-primary');
-   $("#list-config-access-buttons button").addClass('btn-secondary');
-   $("#list-config-access-buttons button").removeClass('btn-secondary');
-   $("#" + access + "-button").addClass('btn-primary');
+<%= content_tag :div,
+  data: {
+    controller: "list-settings",
+    list_settings_list_access_name_value: Permissions::ACCESS_MAPPING[@list.access].downcase,
 
-   $('.list-access-level-help').hide();
-   $("#list-access-level-help-" + access).show();
- }
+  } do %>
 
- $(function(){
-   switch (Number(<%= raw(@list.access) %>)) {
-     case 0:
-       handleRadioClick('open');
-       break;
-     case 1:
-       handleRadioClick('closed');
-       break;
-     case 2:
-       handleRadioClick('private');
-       break;
-     default:
-       throw 'Invalid access number';
-   }
- })
-</script>
+  <div class="row">
+    <div class="col-sm-4 col-md-3 mr-2">
+      <%= label_tag 'Access level' %> <br/>
 
-<div class="row">
-  <div class="col-sm-4 col-md-3 mr-2">
-    <%= label_tag 'Access level' %> <br/>
+      <div id="list-config-access-buttons" class="btn-group m-bottom-1em" role="group" aria-label="...">
+        <% Permissions::ACCESS_MAPPING.each do |code, name| %>
+          <%= label_tag "#{name.downcase}-radio", name,
+            class: "btn #{@list.access == code ? 'btn-primary' : ''}",
+            value: name.downcase,
+            data: {
+              action: 'click->list-settings#switchAccess'
+            } %>
+          <%= f.radio_button :access, code, id: "#{name.downcase}-radio" %>
+        <% end %>
+      </div>
 
-    <div id="list-config-access-buttons" class="btn-group m-bottom-1em" role="group" aria-label="...">
-      <button type="button" id="open-button" class="btn btn-secondary" onclick="handleRadioClick('open')">Open</button>
-      <button type="button" id="closed-button" class="btn btn-secondary" onclick="handleRadioClick('closed')">Closed</button>
-      <button type="button" id="private-button" class="btn btn-secondary" onclick="handleRadioClick('private')">Private</button>
     </div>
-  
-    
-    <%= f.radio_button :access, 0, class: 'btn btn-secondary', id: 'open-radio', style: "display: none" %>
-    <%= f.radio_button :access, 1, class: 'btn btn-secondary', id: 'closed-radio', style: "display: none"  %>
-    <%= f.radio_button :access, 2, class: 'btn btn-secondary', id: 'private-radio', style: "display: none"  %>
+    <div class="col-sm-4 col-md-4">
+        <div class="list-access-level-help" id="list-access-level-help-open">
+      An <b>open list</b> is visible by everyone and can be edited by any LittleSis user who is allowed to modify lists.
+        </div>
+        <div class="list-access-level-help" id="list-access-level-help-closed">
+      A <b>closed list</b> is visible by everyone, but it can only be edited you.
+        </div>
+        <div class="list-access-level-help" id="list-access-level-help-private">
+      A <b>private list</b> can only be seen and edited by you.
+        </div>
+    </div>
   </div>
-  <div class="col-sm-4 col-md-4">
-      <div class="list-access-level-help" id="list-access-level-help-open" style="display: none;">
-	  An <b>open list</b> is visible by everyone and can be edited by any LittleSis user who is allowed to modify lists.
-      </div>
-      <div class="list-access-level-help" id="list-access-level-help-closed" style="display: none;">
-	  A <b>closed list</b> is visible by everyone, but it can only be edited you.
-      </div>
-      <div class="list-access-level-help" id="list-access-level-help-private" style="display: none;">
-	  A <b>private list</b> can only be seen and edited by you.
-      </div>
-  </div>
-</div>
 
-<div class="row form-group">
-  <div class="col-sm-8 col-md-6">
-    <%= f.check_box :is_ranked %>
-    <%= f.label :ranked %>
+  <div class="row form-group">
+    <div class="col-sm-8 col-md-6">
+      <%= f.check_box :is_ranked %>
+      <%= f.label :ranked %>
+    </div>
   </div>
-</div>
 
-<div class="row form-group">
-  <div class="col-sm-8 col-md-6">
-    <%= f.label :sort_by %>
-    <%= f.select :sort_by, Entity::SORTABLE_ATTRIBUTES.collect {|a| [a.to_s.humanize, a]}, { include_blank: true } %>
+  <div class="row form-group">
+    <div class="col-sm-8 col-md-6">
+      <%= f.label :sort_by %>
+      <%= f.select :sort_by, Entity::SORTABLE_ATTRIBUTES.collect {|a| [a.to_s.humanize, a]}, { include_blank: true } %>
+    </div>
   </div>
-</div>
+
+<% end %>

@@ -1,6 +1,6 @@
 td.lists_table_name {
-	min-width: 350px;
-	font-weight: bold;
+  min-width: 350px;
+  font-weight: bold;
 }
 
 #list-header {
@@ -9,30 +9,30 @@ td.lists_table_name {
 }
 
 #list-name {
-    .multiline-text { }
-    .multiline-text a {
-	font-size: 42px;
-     	line-height: 1.2;
-    	font-weight: 500;
-    	display: inline;
-	// padding: 0.45rem;
-	/* Needs prefixing */
-	box-decoration-break: clone;
-	-webkit-box-decoration-break: clone;
-    }
+  .multiline-text { }
+  .multiline-text a {
+    font-size: 42px;
+    line-height: 1.2;
+    font-weight: 500;
+    display: inline;
+    // padding: 0.45rem;
+    /* Needs prefixing */
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
 
-    a:hover {
-	text-decoration: none;
-    }
+  a:hover {
+    text-decoration: none;
+  }
 
-    .list-tags-container {
-	display: inline;
-	position: relative;
-	bottom: 0.4em;
-	ul {
-	    display: inline;
-	}
+  .list-tags-container {
+    display: inline;
+    position: relative;
+    bottom: 0.4em;
+    ul {
+      display: inline;
     }
+  }
 
 }
 
@@ -71,58 +71,68 @@ td.lists_table_name {
 }
 
 #list-sources {
-    font-size: 16px;
-    margin-left: 1em;
+  font-size: 16px;
+  margin-left: 1em;
 }
 
 #list-config-access-buttons {
-    margin-top: 1em;
-    margin-bottom: 2em;
-}
+  margin-top: 1em;
+  margin-bottom: 2em;
 
+  input {
+    display: none;
+  }
+
+  label {
+    display: block;
+    position: relative;
+    cursor: pointer;
+  }
+}
 
 .list-access-level-help {
-    margin-top: 25px;
-    color: rgba(0,0,0,.8);
+  margin-top: 25px;
+  color: rgba(0,0,0,.8);
+  display: none;
 }
-
 
 #list-tab-menu {
 
-    ul {
-	margin: 0;
-	padding: 0;
-	margin-bottom: 1em;
-	box-sizing: border-box;
-    }
+  ul {
+    margin: 0;
+    padding: 0;
+    margin-bottom: 1em;
+    box-sizing: border-box;
+  }
 
-    li {
-	display: inline-block;
-    }
+  li {
+    display: inline-block;
+  }
 
-    a {
-	display: block;
-	font-size: 17px;
-	padding: 0.4em;
-        padding-right: 0.4em;
-        padding-left: 0.4em;
-	padding-left: 0.8em;
-	padding-right: 0.8em;
-	border: 0;
-	margin-right: 0.5em;
-	color: white;
-	background-color: $red_light;
-	border-top-left-radius: 10px;
-	border-top-right-radius: 10px;
-	text-decoration: none;
-    }
+  a {
+    display: block;
+    font-size: 17px;
+    padding: 0.4em;
+    padding-right: 0.4em;
+    padding-left: 0.4em;
+    padding-left: 0.8em;
+    padding-right: 0.8em;
+    border: 0;
+    margin-right: 0.5em;
+    color: white;
+    background-color: $red_light;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    text-decoration: none;
+  }
 
-    li.active a, a:hover {
-	background-color: $red;
-    }
+  li.active a, a:hover {
+    background-color: $red;
+  }
 
 }
 
 .list-tab-alert {
-    @extend .alert-info;
+  @extend .alert-info;
 }
+
