@@ -18,11 +18,3 @@
 <% cache( [@list.cache_key_with_version, 'members'], expires_in: 1.day) do %>
   <%= render partial: 'datatable', locals: { table: @table, editable: @editable } %>
 <% end %>
-
-<%# references input id from list_actions. this is only needed for the edit page.%>
-<%= render partial: 'members_entity_autocomplete',
-	   locals: {
-	     input_id: '#add-entity-input',
-       http_method: 'post',
-       form_path: add_entity_list_path(@list, entity_id: "XXX"),
-       query_path: raw("/search/entity?q=%QUERY&exclude_list=#{@list.id}") } %>

@@ -1,35 +1,52 @@
-<% @config = {
-      query_path: query_path || '/search/entity?&q=%QUERY',
-      input_id: input_id,
-      templates: {
-        entity_suggestion: '#entity_suggestion',
-        empty_message: '#empty_message',
-        form: '#autocomplete_form'
-      }
-}
-%>
+<%= content_tag :span,
+  {
+  data: {
+    controller: "entity-autocomplete",
+    entity_autocomplete_endpoint_value: query_path || "/search/entity?&q=%QUERY",
+    entity_autocomplete_input_id_value: input_id,
+    entity_autocomplete_templates_value: {
+      entity_suggestion: "#entity_suggestion",
+      empty_message: "#empty_message",
+      form: "#autocomplete_form"
+    }
+  }
+} do %>
 
-<script>
-  $(window).ready(function() {
-    let autocomplete = new LittleSis.entityAutocomplete({config: <%= @config.to_json.html_safe %>});
-    autocomplete.prepare();
-  });
-</script>
+  <template id="entity_suggestion">
+    <div class="add-entity-suggestion">
+      <div class="add-entity-name">{{name}}</div>
+      <div class="add-entity-blurb">{{blurb}}</div>
+    </div>
+  </template>
 
-<template id="entity_suggestion">
-  <div class="add-entity-suggestion">
-	  <div class="add-entity-name">{{name}}</div>
-	  <div class="add-entity-blurb">{{blurb}}</div>
-	</div>
-</template>
+  <template id="empty_message">
+    <div class="add-entity-suggestion">No entities found.
+      <% if enable_missing_entity_creation %>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#new_entity_form">
+          create it now
+        </button>
+      <% end %>
+    </div>
+  </template>
 
-<template id="empty_message">
-  <div class="add-entity-suggestion">No entities found</div>
-</template>
+  <% if enable_missing_entity_creation %>
+    <div class="modal" id="new_entity_form">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header"><h1>Create entity for <%= @list.name %> list</h1></div>
+          <div class="modal-body">
+            <%= render partial: 'entities/new_entity_form', locals: { form_url: list_entities_path(@list) } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
 
-<template id="autocomplete_form">
-  <form method="<%= http_method %>" action="<%= form_path %>">
-    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"/>
-    <input type="hidden" name="entity_id" value=""/>
-  </form>
-</template>
+  <template id="autocomplete_form">
+    <form method="<%= http_method %>" action="<%= form_path %>">
+      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>"/>
+      <input type="hidden" name="entity_id" value=""/>
+    </form>
+  </template>
+
+<% end %>

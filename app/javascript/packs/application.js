@@ -28,7 +28,6 @@ import datatable from 'datatables.net'
 import typeahead from 'typeahead.js'
 import mustache from 'mustache'
 
-import entityAutocomplete from './entity_autocomplete'
 import RelationshipCreationFlow from './components/relationship_creation_flow'
 import NyDonationsMatcher from './components/ny_donations_matcher'
 import nysSearch from './components/nys_search'
@@ -52,7 +51,6 @@ if (!window.LittleSis) {
 }
 
 window.LittleSis.http = http
-window.LittleSis.entityAutocomplete = entityAutocomplete
 window.LittleSis.RelationshipCreationFlow = RelationshipCreationFlow
 window.LittleSis.NyDonationsMatcher = NyDonationsMatcher
 window.LittleSis.nysSearch = nysSearch
