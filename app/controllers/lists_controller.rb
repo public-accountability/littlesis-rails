@@ -290,24 +290,31 @@ class ListsController < ApplicationController
     # get people in the list
     entity_ids = @list.entities.people.map(&:id)
 
-    # get entities related by position or membership
-    select = "e.*, COUNT(DISTINCT r.entity1_id) num, GROUP_CONCAT(DISTINCT r.entity1_id) degree1_ids, GROUP_CONCAT(DISTINCT ed.name) types"
-    from = "relationship r LEFT JOIN entity e ON (e.id = r.entity2_id) LEFT JOIN extension_record er ON (er.entity_id = e.id) LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)"
-    where = "r.entity1_id IN (#{entity_ids.join(',')}) AND r.category_id IN (#{Relationship::POSITION_CATEGORY}, #{Relationship::MEMBERSHIP_CATEGORY}) AND r.is_deleted = 0"
-    sql = "SELECT #{select} FROM #{from} WHERE #{where} GROUP BY r.entity2_id ORDER BY num DESC"
+    sql = <<~SQL
+     SELECT  entity.*, subquery.num as num, subquery.degree1_ids as degree1_ids
+     FROM (
+      SELECT relationship.entity2_id as entity_id,
+             COUNT(DISTINCT relationship.entity1_id) as num,
+             array_to_string(array_agg(DISTINCT relationship.entity1_id), ',') degree1_ids
+      FROM relationship
+      LEFT JOIN entity ON (entity.id = relationship.entity2_id)
+      WHERE relationship.entity1_id IN ( #{entity_ids.join(',')} ) AND (relationship.category_id = #{Relationship::POSITION_CATEGORY} OR  relationship.category_id = #{Relationship::MEMBERSHIP_CATEGORY}) AND relationship.is_deleted is false
+      GROUP BY relationship.entity2_id ) AS subquery
+     INNER JOIN entity on entity.id = subquery.entity_id
+     ORDER BY num desc
+    SQL
 
-    orgs = Entity.find_by_sql(sql)
+    entities = Entity.includes(:extension_definitions).find_by_sql(sql).to_a
 
-    # filter entities by type
-    @companies = orgs.select { |org| org.types.include?('Business') }
-    @govt_bodies = orgs.select { |org| org.types.include?('GovernmentBody') }
-    @others = orgs.select { |org| (org.types & %w[Business GovernmentBody]).empty? }
+    @companies = entities.select { |e| e.types.include?('Business') }
+    @govt_bodies = entities.select { |e| e.types.include?('Government Body') }
+    @others = entities - @companies - @govt_bodies
   end
 
   def interlocks_results(options)
     @page = params.fetch(:page, 1)
     num = params.fetch(:num, 20)
-    results = @list     .interlocks(options).page(@page).per(num)
+    results = @list.interlocks(options).page(@page).per(num)
     count = @list.interlocks_count(options)
     Kaminari.paginate_array(results.to_a, total_count: count).page(@page).per(num)
   end
