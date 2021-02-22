@@ -44,8 +44,10 @@ export default class extends Controller {
 function sortOrder(columns, config) {
   if ( config['sort_by'] ) {
     return [[ columns.findIndex(col => col['data'] == config['sort_by']), 'desc' ]]
-  } else {
+  } else if ( config['ranked_table'] ) {
     return [[ columns.findIndex(col => col['data'] == 'default_sort_position'), 'asc' ]]
+  } else {
+    return
   }
 }
 
