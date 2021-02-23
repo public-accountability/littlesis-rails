@@ -7,12 +7,15 @@ module ExternalDataset
     end
 
     filter(:cmte_nm, :string, header: 'Committee Name') do |value|
-      where("MATCH (cmte_nm) AGAINST (? IN BOOLEAN MODE)", value)
+      where("to_tsvector(cmte_nm) @@ websearch_to_tsquery(?)", value)
     end
 
     filter(:connected_org_nm, :string, header: 'Connected Org Name') do |value|
-      where("MATCH (connected_org_nm) AGAINST (? IN BOOLEAN MODE)", value)
+      where("to_tsvector(connected_org_nm) @@ websearch_to_tsquery(?)", value)
     end
+
+    filter(:cand_id, :string, header: 'Candidate ID')
+
 
     filter(:cmte_pty_affiliation, :string, header: "Party")
     filter(:cmte_zip, :string, header: 'Zipcode')

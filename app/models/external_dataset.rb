@@ -230,6 +230,7 @@ module ExternalDataset
     extend DatasetInterface
     extend FECData
     self.dataset = :fec_contributions
+    self.primary_key = 'sub_id'
 
     belongs_to :fec_committee, ->(contribution) { where(fec_year: contribution.fec_year) },
                class_name: 'ExternalDataset::FECCommittee',

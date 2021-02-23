@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_04_151130) do
+ActiveRecord::Schema.define(version: 2021_02_23_163501) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -490,6 +490,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
     t.index "to_tsvector('simple'::regconfig, name)", name: "idx_34370_index_external_data_fec_contributions_on_name", using: :gin
     t.index ["cmte_id"], name: "idx_34370_index_external_data_fec_contributions_on_cmte_id"
     t.index ["fec_year", "sub_id"], name: "idx_34370_index_external_data_fec_contributions_on_fec_year_and", unique: true
+    t.index ["sub_id"], name: "index_external_data_fec_contributions_on_sub_id", unique: true
     t.index ["transaction_amt"], name: "idx_34370_index_external_data_fec_contributions_on_transaction_"
   end
 
@@ -1534,7 +1535,6 @@ ActiveRecord::Schema.define(version: 2021_02_04_151130) do
   add_foreign_key "extension_definition", "extension_definition", column: "parent_id", name: "extension_definition_ibfk_1", on_update: :cascade, on_delete: :restrict
   add_foreign_key "extension_record", "entity", name: "extension_record_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "extension_record", "extension_definition", column: "definition_id", name: "extension_record_ibfk_2", on_update: :cascade, on_delete: :restrict
-  add_foreign_key "external_relationships", "external_data", on_update: :restrict, on_delete: :cascade
   add_foreign_key "family", "relationship", name: "family_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "government_body", "address_state", column: "state_id", name: "government_body_ibfk_1", on_update: :cascade, on_delete: :restrict
   add_foreign_key "government_body", "entity", name: "government_body_ibfk_2", on_update: :cascade, on_delete: :cascade

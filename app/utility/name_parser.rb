@@ -204,6 +204,12 @@ class NameParser
     self
   end
 
+  def middle_initial
+    return nil unless @middle
+
+    @middle[0].upcase
+  end
+
   private
 
   def split_name(str)
