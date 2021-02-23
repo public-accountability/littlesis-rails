@@ -7,8 +7,10 @@ module ExternalDataset
     end
 
     filter(:cand_name, :string, header: 'Candidate Name') do |value|
-      where("MATCH (cand_name) AGAINST (? IN BOOLEAN MODE)", value)
+      where("to_tsvector(cand_name) @@ websearch_to_tsquery(?)", value)
     end
+
+    filter(:cand_id, :string)
 
     filter(:cand_pty_affiliation, :string, header: 'Party')
     filter(:cand_zip, :string, header: 'Zipcode')

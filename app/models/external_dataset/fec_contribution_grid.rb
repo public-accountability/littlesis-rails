@@ -11,8 +11,15 @@ module ExternalDataset
     filter(:fec_year, :enum, select: %w[2022 2020 2018 2016 2014 2012], include_blank: false, default: '2020')
     filter(:transaction_tp, :enum, select: %w[15E 15 24T 22Y 10 24I 15C 11 31 20Y 32], multiple: true)
     filter(:cmte_id, header: 'Committee ID')
-    filter(:name, :string) { |value| where("MATCH (name) AGAINST (? IN BOOLEAN MODE)", value) }
-    filter(:employer, :string) { |value| where("MATCH (employer) AGAINST (? IN BOOLEAN MODE)", value) }
+
+    filter(:name, :string) do |value|
+      where("to_tsvector(name) @@ websearch_to_tsquery(?)", value)
+    end
+
+    filter(:employer, :string) do |value|
+      where("to_tsvector(employer) @@ websearch_to_tsquery(?)", value)
+    end
+
     filter(:zip_code, :string)
 
     filter(:transaction_amt, :integer, header: 'Minimum value') do |value|

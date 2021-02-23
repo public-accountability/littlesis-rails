@@ -101,9 +101,14 @@ describe 'NameParser', :name_parser_helper do
                 name_suffix: nil,
                 name_nick: nil)
     end
+  end
 
-    xit 'returns false for invalid names' do
-      expect(NameParser.parse_to_hash("emma")).to be false
+  describe 'middle_initial' do
+    specify do
+      expect(NameParser.new('foo bar').middle_initial).to be nil
+      expect(NameParser.new('foo x bar').middle_initial).to eq 'X'
+      expect(NameParser.new('foo x. bar').middle_initial).to eq 'X'
+      expect(NameParser.new('foo Xor bar').middle_initial).to eq 'X'
     end
   end
 
