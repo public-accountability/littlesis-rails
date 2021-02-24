@@ -1,11 +1,16 @@
-<% content_for :page_title, @dataset.dataset_name %>
+<% content_for :page_title, @dataset.dataset_name.to_s.titleize %>
 <% content_for :head do %>
   <%= stylesheet_link_tag "external_datasets" %>
 <% end %>
 
 <div class="row">
-  <div class="col">
-    <h2 class="text-center"><strong>Explore <%= @dataset.dataset_name.to_s.tr('_', ' ').titleize %></strong></h2>
+  <div class="col-6">
+    <h2><strong><%= @dataset.dataset_name.to_s.titleize %></strong></h2>
+  </div>
+  <div class="col-6">
+    <div class="float-right">
+      <h2><small><a href="/datasets"><em>datasets</em></a></small></h2>
+    </div>
   </div>
 </div>
 

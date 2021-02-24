@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '6.1.1'
+gem 'rails', '6.1.3'
 
 gem 'pg'
 gem 'mysql2', '~> 0.5.2'
@@ -77,7 +77,7 @@ group :test, :development do
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.0'
   gem 'faker', '>= 2.13'
-  gem 'pry', '>= 0.12.0'
+  gem 'pry'
   gem 'pry-byebug'
   gem 'pry-doc', require: false
   gem 'pry-rails', '>= 0.3.7'
