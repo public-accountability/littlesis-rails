@@ -18,6 +18,10 @@ class UserRequestsGrid < BaseGrid
     end
   end
 
+  column(:created_at, header: "When") do |request|
+    request.created_at.strftime('%m/%d/%Y %T')
+  end
+
   column(:request, html: true) do |request|
     case request.type
     when 'MergeRequest'
