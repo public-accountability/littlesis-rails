@@ -52,7 +52,7 @@ class Document < ApplicationRecord
   end
 
   def self.valid_url?(url)
-    URI.parse(url.strip).is_a?(URI::HTTP)
+    URI.parse(I18n.transliterate(url.strip)).is_a?(URI::HTTP)
   rescue URI::InvalidURIError
     false
   end
