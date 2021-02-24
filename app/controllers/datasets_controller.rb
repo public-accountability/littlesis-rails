@@ -15,7 +15,7 @@ class DatasetsController < ApplicationController
 
     respond_to do |f|
       f.html do
-        @grid.scope { |scope| scope.page(params[:page] || 1) }
+        @grid.scope { |scope| scope.page(params[:page] || 1).per(25) }
       end
       f.csv do
         # prevents downloading csvs with more than 100k rows
