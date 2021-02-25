@@ -13,10 +13,8 @@ class NotificationMailer < ApplicationMailer
   end
 
   def flag_email(user_flag)
-    @email = user_flag.email
-    @message = user_flag.justification
-    @url = user_flag.page
-    mail(to: DEFAULT_TO, subject: 'Flag for Review', reply_to: @email)
+    @user_flag = user_flag
+    mail(to: DEFAULT_TO, subject: 'Flag for Review', reply_to: @user_flag.email)
   end
 
   def signup_email(user)

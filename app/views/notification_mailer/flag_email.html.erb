@@ -1,10 +1,5 @@
-<p><strong>Flag for review: </strong><%= @url %></p>
+<p><strong>Flag for review: </strong><%= link_to @user_flag.page, @user_flag.page %></p>
 
-<% if @name.blank? %>
-    <p><strong><%= @email %></strong> writes:</p>
-<% else  %>
-    <p><strong><%= @name %></strong> (<%= @email %>) writes:</p>
-<% end  %>
-<br />
-<p><%= @message  %></p>
+<p><strong><%= @user_flag.email %></strong> writes:</p>
 
+<p><%= @user_flag.justification  %></p>
