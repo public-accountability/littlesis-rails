@@ -24,50 +24,6 @@ describe HomeController, type: :controller do
       it { is_expected.to respond_with(:success) }
       it { is_expected.to render_template('flag') }
     end
-
-    describe 'POST' do
-      context 'when no email provided' do
-        before do
-          post :flag, params: { url: 'http://url', message: 'hey' }
-        end
-
-        it { is_expected.to set_flash.now[:alert] }
-        it { is_expected.to render_template('flag') }
-
-        it "doesn't send an email" do
-          expect { last_email_sent }.to raise_error(RuntimeError, 'No email has been sent!')
-        end
-      end
-
-      context 'when no message provided' do
-        before do
-          post :flag, params: { url: 'http://url', email: 'test@example.com' }
-        end
-
-        it { is_expected.to set_flash.now[:alert] }
-        it { is_expected.to render_template('flag') }
-
-        it "doesn't send an email" do
-          expect { last_email_sent }.to raise_error(RuntimeError, 'No email has been sent!')
-        end
-      end
-
-      context 'when all required params provided', :run_jobs do
-        let(:params) { { 'url' => 'http://url', 'email' => 'test@example.com', 'message' => 'hey' } }
-
-        before do
-          post :flag, params: { url: 'http://url', email: 'test@example.com', message: 'hey' }
-        end
-
-        it { is_expected.not_to set_flash.now[:alert] }
-        it { is_expected.to set_flash.now[:notice] }
-        it { is_expected.to render_template('flag') }
-
-        it 'sends an email' do
-          expect(last_email_sent).to have_subject('Flag for Review')
-        end
-      end
-    end
   end
 
   describe 'pai_signup_ip_limit' do
