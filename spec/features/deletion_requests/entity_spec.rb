@@ -71,11 +71,11 @@ feature 'Entity deletion request & review' do
           successfully_visits_page home_dashboard_path
         end
 
-        it "notifies admins of the request by delayed email" do
-          expect(message_delivery).to have_received(:deliver_later)
-          expect(NotificationMailer)
-            .to have_received(:deletion_request_email).with(DeletionRequest.last)
-        end
+        # it "notifies admins of the request by delayed email" do
+        #   expect(message_delivery).to have_received(:deliver_later)
+        #   expect(NotificationMailer)
+        #     .to have_received(:deletion_request_email).with(DeletionRequest.last)
+        # end
       end
     end
   end

@@ -30,9 +30,10 @@ describe UserRequest, type: :model do
     it { is_expected.not_to validate_presence_of(:dest_id) }
 
     it 'validates email or user id' do
-      expect(UserRequest.new(justification: "test", type: 'UserFlag', status: 'pending').valid?).to be false
-      expect(UserRequest.new(justification: "test", type: 'UserFlag', status: 'pending', user_id: 1).valid?).to be true
-      expect(UserRequest.new(justification: "test", type: 'UserFlag', status: 'pending', email: 'foo@example.com').valid?).to be true
+      user = create_basic_user
+      expect(UserRequest.new(justification: "test", type: 'UserFlag', page: '/flag', status: 'pending').valid?).to be false
+      expect(UserRequest.new(justification: "test", type: 'UserFlag', page: '/flag', status: 'pending', user_id: user.id).valid?).to be true
+      expect(UserRequest.new(justification: "test", type: 'UserFlag', page: '/flag', status: 'pending', email: 'foo@example.com').valid?).to be true
     end
   end
 

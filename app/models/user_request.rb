@@ -49,7 +49,7 @@ class UserRequest < ApplicationRecord
   private
 
   def user_or_email
-    unless user_id.present? || email.present?
+    unless user.present? || self[:email].present?
       errors.add(:base, :user_or_email_blank, message: 'either user or email must be present')
     end
   end

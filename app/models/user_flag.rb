@@ -10,7 +10,7 @@ class UserFlag < UserRequest
   end
 
   def email
-    self[:email] || user.email
+    self[:email] || user&.email
   end
 
   private

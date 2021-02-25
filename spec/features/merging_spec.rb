@@ -168,9 +168,9 @@ feature 'Merging entities' do
             expect(last.justification).to eql justification
           end
 
-          it "notifies admins of the merge request by delayed email" do
-            expect(NotificationMailer).to have_received(:merge_request_email).with(last)
-            expect(message_delivery).to have_received(:deliver_later)
+          it "does not end merge request emailsl" do
+            expect(NotificationMailer).not_to have_received(:merge_request_email)
+            expect(message_delivery).not_to have_received(:deliver_later)
           end
         end
       end

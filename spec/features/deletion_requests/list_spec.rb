@@ -111,12 +111,12 @@ feature 'List deletion request & review' do
           fill_in 'justification', with: justification
         end
 
-        it 'emails admins with a link to review the request' do
-          click_on 'Request Deletion'
-          email = open_last_email
-          expect(email).to have_subject("List deletion request received for #{list.name}")
-          expect(email).to have_body_text("Justification for deletion: #{justification}")
-        end
+        # it 'emails admins with a link to review the request' do
+        #   click_on 'Request Deletion'
+        #   email = open_last_email
+        #   expect(email).to have_subject("List deletion request received for #{list.name}")
+        #   expect(email).to have_body_text("Justification for deletion: #{justification}")
+        # end
 
         it 'does not delete the list' do
           expect { click_on 'Request Deletion' }.not_to change(List, :count)

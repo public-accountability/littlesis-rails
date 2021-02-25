@@ -27,7 +27,7 @@ describe ListDeletionRequest, type: :model do
       let(:req) { create(:list_deletion_request, type: 'ListDeletionRequest', list: list) }
 
       it 'raises a validation error' do
-        expect { req }.to raise_error(ActiveRecord::RecordInvalid, "Validation failed: User can't be blank")
+        expect { req }.to raise_error(ActiveRecord::RecordInvalid, /must be present/)
       end
     end
 
