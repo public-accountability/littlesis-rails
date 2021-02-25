@@ -108,30 +108,26 @@ describe NotificationMailer, type: :mailer do
   end
 
   describe '#flag_email' do
-    let(:flag_params) do
-      { 'email' => 'user@littlesis.org',
-        'message' => 'something just does not look right',
-        'url' => 'https://littlesis.org/some_page' }
+    let(:user_flag) do
+      UserFlag.create!({ 'email' => 'user@littlesis.org',
+                         'justification' => 'something just does not look right',
+                         'page' => 'https://littlesis.org/some_page' })
     end
 
-    let(:mail) { NotificationMailer.flag_email(flag_params) }
+    let(:mail) { NotificationMailer.flag_email(user_flag) }
 
-    it 'has url' do
+    it 'has url, message, and email' do
       expect(mail.encoded).to include 'https://littlesis.org/some_page'
-    end
-
-    it 'has message' do
       expect(mail.encoded).to include 'something just does not look right'
+      expect(mail.encoded).to include 'user@littlesis.org'
     end
 
     it 'sends email' do
-      expect { mail.deliver_now }
-        .to change { ActionMailer::Base.deliveries.count }.by(1)
+      expect { mail.deliver_now }.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
     it 'sends email later' do
-      expect { mail.deliver_later }
-        .to have_enqueued_job.on_queue('mailers')
+      expect { mail.deliver_later }.to have_enqueued_job.on_queue('mailers')
     end
   end
 

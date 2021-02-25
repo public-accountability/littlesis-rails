@@ -3,6 +3,7 @@ describe UserRequest, type: :model do
 
   describe "schema" do
     it { is_expected.to have_db_column(:user_id).of_type(:integer) }
+    it { is_expected.to have_db_column(:email).of_type(:text) }
     it { is_expected.to have_db_column(:reviewer_id).of_type(:integer) }
     it { is_expected.to have_db_column(:type).of_type(:string) }
     it { is_expected.to have_db_column(:status).of_type(:integer) }
@@ -17,7 +18,6 @@ describe UserRequest, type: :model do
   end
 
   describe "validations" do
-    it { is_expected.to validate_presence_of(:user_id) }
     it { is_expected.to validate_presence_of(:status) }
     it { is_expected.to validate_presence_of(:type) }
     it { is_expected.to validate_presence_of(:justification) }
@@ -28,6 +28,13 @@ describe UserRequest, type: :model do
     it { is_expected.not_to validate_presence_of(:reviewer_id) }
     it { is_expected.not_to validate_presence_of(:source_id) }
     it { is_expected.not_to validate_presence_of(:dest_id) }
+
+    it 'validates email or user id' do
+      user = create_basic_user
+      expect(UserRequest.new(justification: "test", type: 'UserFlag', page: '/flag', status: 'pending').valid?).to be false
+      expect(UserRequest.new(justification: "test", type: 'UserFlag', page: '/flag', status: 'pending', user_id: user.id).valid?).to be true
+      expect(UserRequest.new(justification: "test", type: 'UserFlag', page: '/flag', status: 'pending', email: 'foo@example.com').valid?).to be true
+    end
   end
 
   describe "status" do

@@ -4,6 +4,13 @@ class AdminController < ApplicationController
   before_action :authenticate_user!, :admins_only
 
   def home
+    @requests = UserRequestsGrid.new(params[:user_requests_grid]) do |scope|
+      scope.page(params[:requests_page] || 1).per(10)
+    end
+
+    @users = UserSignupsGrid.new do |scope|
+      scope.page(params[:user_signups_page] || 1).per(10)
+    end
   end
 
   def tags

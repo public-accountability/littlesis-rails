@@ -12,7 +12,7 @@ module DeletionRequests
     def new; end
 
     def create
-      NotificationMailer.deletion_request_email(@deletion_request).deliver_later
+      # NotificationMailer.deletion_request_email(@deletion_request).deliver_later
       redirect_to home_dashboard_path, notice: 'Deletion request sent to admins.'
     end
 

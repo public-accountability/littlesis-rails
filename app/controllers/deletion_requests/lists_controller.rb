@@ -6,7 +6,7 @@ module DeletionRequests
 
     def create
       @deletion_request = ListDeletionRequest.create!(deletion_request_params)
-      NotificationMailer.list_deletion_request_email(@deletion_request).deliver_later
+      # NotificationMailer.list_deletion_request_email(@deletion_request).deliver_later
       redirect_to home_dashboard_path, notice: 'Deletion request sent to admins.'
     end
 

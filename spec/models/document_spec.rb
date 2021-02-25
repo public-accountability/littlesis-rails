@@ -127,5 +127,9 @@ describe Document, type: :model do
       expect(long_name.valid?).to be false
       expect(long_name.error_message).to eq 'Name is too long (maximum is 255 characters)'
     end
+
+    specify do
+      expect(Document.valid_url?('https://mēx.example')).to be true
+    end
   end
 end

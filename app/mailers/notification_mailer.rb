@@ -12,14 +12,9 @@ class NotificationMailer < ApplicationMailer
          reply_to: @email)
   end
 
-  def flag_email(params)
-    @name = params.fetch('name', '')
-    @email = params.fetch('email')
-    @message = params.fetch('message')
-    @url = params.fetch('url')
-    mail(to: DEFAULT_TO,
-         subject: 'Flag for Review',
-         reply_to: @email)
+  def flag_email(user_flag)
+    @user_flag = user_flag
+    mail(to: DEFAULT_TO, subject: 'Flag for Review', reply_to: @user_flag.email)
   end
 
   def signup_email(user)
