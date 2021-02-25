@@ -35,7 +35,7 @@ class MergeController < ApplicationController
       redirect_to @merge_request.dest, notice: "Merge request #{@decision}"
     when Modes::REQUEST
       mr = MergeRequest.create!(new_merge_request_params)
-      NotificationMailer.merge_request_email(mr).deliver_later
+      # NotificationMailer.merge_request_email(mr).deliver_later
       redirect_to @source, notice: "Your request was sent to LittleSis admins"
     end
   end
