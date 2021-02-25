@@ -5,17 +5,14 @@ class UserRequestsGrid < BaseGrid
     UserRequest.where(status: 'pending').order(created_at: :desc)
   end
 
-  column(:type) do |request|
-    case request.type
-    when 'MergeRequest'
-      'Merge'
-    when 'DeletionRequest'
-      'Delete Entity'
-    when 'ListDeletionRequest'
-      'Delete List'
-    when 'ImageDeletionRequest'
-      'Delete Image'
-    end
+  column(:type, order: false) do |request|
+    {
+      'MergeRequest' => 'Merge',
+      'DeletionRequest' => 'Delete Entity',
+      'ListDeletionRequest' => 'Delete List',
+      'ImageDeletionRequest' => 'Delete Image',
+      'UserFlag' => 'Flag'
+    }.fetch(request.type)
   end
 
   column(:created_at, header: "When") do |request|
@@ -32,12 +29,18 @@ class UserRequestsGrid < BaseGrid
       link_to (request.list&.name || 'List'), review_deletion_requests_list_path(request)
     when 'ImageDeletionRequest'
       link_to "Image #{request.image.id}", deletion_requests_image_url(request.id)
+    when 'UserFlag'
+      link_to 'Flag', request.page
     end
   end
 
   column(:requester, html: true) do |request|
-    link_to request.user.username, "/users/#{request.user.username}"
+    if request.user
+      link_to request.user.username, "/users/#{request.user.username}"
+    else
+      mail_to request.email
+    end
   end
 
-  column(:justification)
+  column(:justification, order: false)
 end

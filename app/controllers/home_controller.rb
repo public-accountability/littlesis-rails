@@ -53,21 +53,10 @@ class HomeController < ApplicationController
 
   def flag
     if request.post?
-      if flag_params[:email].blank?
-        flash.now[:alert] = 'Please enter in your email'
-        @message = flag_params[:message]
-        @name = flag_params[:name]
-        @referrer = flag_params[:url]
-      elsif flag_params[:message].blank?
-        flash.now[:alert] = "Don't forget to write a message!"
-        @name = flag_params[:name]
-        @referrer = flag_params[:url]
-      else
-        NotificationMailer.flag_email(flag_params.to_h).deliver_later
-        flash.now[:notice] = 'Your message has been sent. Thank you!'
-      end
+      @flag_form = FlagForm.new(flag_params)
+      @flag_form.create_flag
     else
-      @referrer = request.referer
+      @flag_form = FlagForm.new(page: request.referer, email: current_user&.email)
     end
   end
 
@@ -147,7 +136,7 @@ class HomeController < ApplicationController
   end
 
   def flag_params
-    params.permit(:email, :url, :name, :message)
+    params.permit(:email, :page, :message).to_h
   end
 
   def newsletter_signup_params

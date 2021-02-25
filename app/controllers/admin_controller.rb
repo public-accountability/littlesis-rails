@@ -4,7 +4,7 @@ class AdminController < ApplicationController
   before_action :authenticate_user!, :admins_only
 
   def home
-    @requests = UserRequestsGrid.new do |scope|
+    @requests = UserRequestsGrid.new(params[:user_requests_grid]) do |scope|
       scope.page(params[:requests_page] || 1).per(10)
     end
 

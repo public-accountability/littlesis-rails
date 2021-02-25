@@ -4,36 +4,26 @@
   </div>
 </div>
 
-
 <div class="row admin-table-row">
   <div class="col">
-    <h2>Requests</h2>
-    <%= datagrid_table(@requests, html: { class: 'table table-sm' }) %>
+    <h2>Pending Requests</h2>
+    <%= datagrid_table(@requests, html: { class: 'table table-responsive-lg table-sm' }) %>
     <%= paginate(@requests.assets, param_name: :requests_page) %>
   </div>
 </div>
 
 <div class="row admin-table-row">
   <div class="col">
-    <h2>User Signups</h2>
-    <%= datagrid_table(@users, html: { class: 'table table-sm' }) %>
+    <h2>New User Signups</h2>
+    <%= datagrid_table(@users, html: { class: 'table table-responsive-lg table-sm' }) %>
     <%= paginate(@users.assets, param_name: :user_signups_page) %>
-  </div>
-</div>
-
-
-<div class="row admin-table-row">
-  <div class="col">
-    <h2>Flags</h2>
   </div>
 </div>
 
 <div class="row">
   <div class="col">
-    <h2>Configuration</h2>
-  </div>
-  <div class="col">
     <div id="admin-links">
+      <h2>Configuration</h2>
       <%= link_to 'View and Set User Permissions', admin_users_path %><br />
       <%= link_to 'Configure Tags', admin_tags_path %><br />
       <%= link_to 'Active User Statistics', admin_stats_path %><br />

@@ -8,15 +8,15 @@ class UserSignupsGrid < BaseGrid
       .order(created_at: :desc)
   end
 
-  column(:username, header: "Username", html: true) do |user|
+  column(:username, header: "Username", html: true, order: false) do |user|
     link_to user.username, "/users/#{user.username}"
   end
 
-  column(:confirmed, header: "Joined On") do |user|
+  column(:confirmed, header: "Joined On", order: false) do |user|
     user.created_at.strftime('%m/%d/%Y')
   end
 
-  column(:why_they_joined, header: "Why they joined") do |user|
+  column(:why_they_joined, header: "Why they joined", order: false) do |user|
     user.user_profile&.reason
   end
 end
