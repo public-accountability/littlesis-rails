@@ -172,8 +172,7 @@ module ExternalDataset
     # This url stopped working in Janurary 2021
     # go to https://publicreporting.elections.ny.gov/DownloadCampaignFinanceData/DownloadCampaignFinanceData and use type filer_id
     @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
-    @csv_file = ROOT_DIR.join('csv').join('nys_filers.csv')
-    @zip_file = ROOT_DIR.join('original').join('commcand.zip')
+    @zip_file = ROOT_DIR.join('original/nys').join('commcand.zip')
 
     def self.download
       raise NotImplementedError, "this dataset requires manual downloading via a browser"
@@ -181,7 +180,9 @@ module ExternalDataset
     end
 
     def self.extract
-      CSV.open(@csv_file, 'w') do |csv_writer|
+      FileUtils.mkdir_p ROOT_DIR.join('csv/nys')
+
+      CSV.open(ROOT_DIR.join('csv/nys').join('nys_filers.csv').to_s, 'w') do |csv_writer|
         CommcandExtractor.each(@zip_file) do |row|
           csv_writer << row
         end
@@ -189,11 +190,10 @@ module ExternalDataset
     end
 
     def self.load
-      run_query "LOAD DATA LOCAL INFILE '#{@csv_file}'
-                 REPLACE
-                 INTO TABLE #{table_name}
-                 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
-                 (filer_id,filer_name,compliance_type_desc,filter_type_desc,filter_status,committee_type_desc,office_desc,district,county_desc,municipality_subdivision_desc,treasurer_first_name,treasurer_middle_name,treasurer_last_name,address,city,state,zipcode)"
+      # run_query <<~SQL
+      #   COPY #{table_name} (filer_id,filer_name,compliance_type_desc,filter_type_desc,filter_status,committee_type_desc,office_desc,district,county_desc,municipality_subdivision_desc,treasurer_first_name,treasurer_middle_name,treasurer_last_name,address,city,state,zipcode)
+      #   FROM  '#{Pathname.new("/data").join("external_data/csv/nys/nys_filers.csv")}' WITH CSV;
+      # SQL
     end
   end
 
