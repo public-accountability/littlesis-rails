@@ -36,7 +36,7 @@ npm install --global yarn
 # Chrome and Chrome Driver
 curl -L "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" > /tmp/chrome.deb
 apt-get install -y /tmp/chrome.deb && google-chrome --version
-curl -L "https://chromedriver.storage.googleapis.com/87.0.4280.20/chromedriver_linux64.zip" > /tmp/chromedriver.zip
+curl -L "https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip" > /tmp/chromedriver.zip
 unzip /tmp/chromedriver.zip chromedriver -d /usr/bin
 chown root:root /usr/bin/chromedriver && chmod +x /usr/bin/chromedriver && chromedriver --version
 
