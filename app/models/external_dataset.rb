@@ -22,8 +22,6 @@ module ExternalDataset
   end
 
   module DatasetInterface
-    # setup
-
     def dataset=(dataset)
       mattr_accessor :dataset_name
       self.dataset_name = dataset
@@ -121,48 +119,21 @@ module ExternalDataset
     self.primary_key = 'trans_number'
     self.dataset = :nys_disclosures
 
-    @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/ALL_REPORTS.zip'
     @csv_file = ROOT_DIR.join('csv').join('nys_disclosures.csv')
-    # @zip_file = ROOT_DIR.join('original').join('ALL_REPORTS.zip')
-    # @columns = NYSDisclosureExtractor::HEADERS.dup.concat(['dataset_id']).freeze
-
-    FILES = [
-      %w[ALL_REPORTS_CountyCandidate COUNTY_CANDIDATE],
-      %w[ALL_REPORTS_CountyCommittee COUNTY_COMMITTEE],
-      %w[ALL_REPORTS_StateCandidate STATE_CANDIDATE],
-      %w[ALL_REPORTS_StateCommittee STATE_COMMITTEE]
-    ].freeze
 
     def self.download
       raise NotImplementedError, "this dataset requires manual downloading via a browser"
-      # Utility.stream_file_if_not_exists(url: @source_url, path: @zip_file)
     end
 
     def self.extract
-      FileUtils.mkdir_p ROOT_DIR.join('csv/nys')
-
-      FILES.each do |(outer, inner)|
-        outer_zip = ROOT_DIR.join('original/nys', "#{outer}.zip")
-        inner_zip = ROOT_DIR.join('original/nys', "#{inner}.zip")
-        original_csv = ROOT_DIR.join('original/nys', "#{inner}.csv")
-        output_csv = ROOT_DIR.join('csv/nys', "#{inner}.csv")
-        system "unzip -o #{outer_zip} #{inner}.zip -d #{ROOT_DIR.join('original/nys')}", exception: true
-        system "unzip -o #{inner_zip} #{inner}.csv -d #{ROOT_DIR.join('original/nys')}", exception: true
-        system "tr -d '\\000' < #{original_csv} | iconv -f iso-8859-1 -t utf8  > #{output_csv}", exception: true
-        system "csvclean #{output_csv}", exception: true, chdir: ROOT_DIR.join('csv/nys').to_s
-      end
+      NYSDisclosureExtractor.run
     end
 
     def self.load
-      FILES.map(&:second).map { |x| ROOT_DIR.join('csv/nys', "#{x}_out.csv") }.each do |csv_file|
-        run_query <<~SQL
-          LOAD DATA LOCAL INFILE '#{csv_file}'
-          IGNORE
-          INTO TABLE #{table_name}
-          FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
-          (filer_id, filer_previous_id, election_year, election_type, @dummy, filing_abbrev, filing_desc, r_amend, filing_cat_desc, filing_sched_abbrev, filing_sched_desc, loan_lib_number, trans_number, trans_mapping, sched_date, org_date, cntrbr_type_desc, cntrbn_type_desc, transfer_type_desc, receipt_type_desc, receipt_code_desc, purpose_code_desc, r_subcontractor, flng_ent_name, flng_ent_first_name, flng_ent_middle_name, flng_ent_last_name, flng_ent_add1, @dummy, flng_ent_city, flng_ent_state, flng_ent_zip, flng_ent_country, payment_type_desc, pay_number, owned_amt, org_amt, loan_other_desc, trans_explntn, r_itemized, r_liability, election_year_str, office_desc, district, dist_off_cand_bal_prop)
-        SQL
-      end
+      run_query <<~SQL
+        COPY #{table_name} (filer_id, filer_previous_id, cand_comm_name, election_year, election_type, county_desc, filing_abbrev, filing_desc, r_amend, filing_cat_desc, filing_sched_abbrev, filing_sched_desc, loan_lib_number, trans_number, trans_mapping, sched_date, org_date, cntrbr_type_desc, cntrbn_type_desc, transfer_type_desc, receipt_type_desc, receipt_code_desc, purpose_code_desc, r_subcontractor, flng_ent_name, flng_ent_first_name, flng_ent_middle_name, flng_ent_last_name, flng_ent_add1, flng_ent_city, flng_ent_state, flng_ent_zip, flng_ent_country, payment_type_desc, pay_number, owned_amt, org_amt, loan_other_desc, trans_explntn, r_itemized, r_liability, election_year_str, office_desc, district, dist_off_cand_bal_prop)
+        FROM '/data/external_data/csv/nys/nys_disclosures.csv' WITH CSV;
+      SQL
     end
   end
 
@@ -190,10 +161,10 @@ module ExternalDataset
     end
 
     def self.load
-      # run_query <<~SQL
-      #   COPY #{table_name} (filer_id,filer_name,compliance_type_desc,filter_type_desc,filter_status,committee_type_desc,office_desc,district,county_desc,municipality_subdivision_desc,treasurer_first_name,treasurer_middle_name,treasurer_last_name,address,city,state,zipcode)
-      #   FROM  '#{Pathname.new("/data").join("external_data/csv/nys/nys_filers.csv")}' WITH CSV;
-      # SQL
+      run_query <<~SQL
+        COPY #{table_name} (filer_id,filer_name,compliance_type_desc,filter_type_desc,filter_status,committee_type_desc,office_desc,district,county_desc,municipality_subdivision_desc,treasurer_first_name,treasurer_middle_name,treasurer_last_name,address,city,state,zipcode)
+        FROM  '#{Pathname.new("/data").join("external_data/csv/nys/nys_filers.csv")}' WITH CSV;
+      SQL
     end
   end
 
