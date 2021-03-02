@@ -3,9 +3,9 @@ module FormMathCaptcha
 
   included do
     attr_accessor :math_captcha_first, :math_captcha_second, :math_captcha_operation,
-      :math_captcha_answer
+                  :math_captcha_answer, :user_signed_in
 
-    validate :correct_captcha
+    validate :correct_captcha, :unless => :user_signed_in
   end
 
   private

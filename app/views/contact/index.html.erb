@@ -33,7 +33,9 @@
     </div>
 
     <div class="form-group">
-      <%= render partial: '/application/math_captcha', locals: {f: f, input_class: 'form-control', label_class: '' } unless user_signed_in? %>
+      <% unless user_signed_in?  %>
+        <%= render partial: '/application/math_captcha', locals: {f: f, input_class: 'form-control', label_class: '' } %>
+      <% end %>
     </div>
 
     <%= f.submit("submit", class: 'btn btn-primary') %>

@@ -131,10 +131,6 @@ class HomeController < ApplicationController
     end
   end
 
-  def contact_params
-    params.permit(:email, :subject, :name, :message).to_h
-  end
-
   def flag_params
     params.permit(:email, :page, :message).to_h
   end
