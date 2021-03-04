@@ -1,7 +1,7 @@
-<div class="littlesis_carousel">
+<div class="littlesis_carousel" data-controller="carousel" data-carousel-target="carousel">
   <a class="buttons prev" href="#"><%= image_tag("carousel_left_semi.png"); %></a>
   <div class="viewport">
-      <ul class="overview">
+    <ul class="overview">
       <% entities.shuffle!.each do |entity| %>
         <li>
           <% cache([entity.cache_key_with_version, 'partial/carousel']) do %>
@@ -9,20 +9,7 @@
           <% end %>
         </li>
       <% end %>
-      </ul>
+    </ul>
   </div>
   <a class="buttons next" href="#"><%= image_tag("carousel_right_semi.png") %></a>
 </div>
-
-<script type="text/javascript">         
-    $(document).ready(function(){               
-        $(".littlesis_carousel").tinycarousel({ 
-          pager: true, 
-          start: 1, 
-          interval: true, 
-          intervaltime: 5000, 
-          rewind: true, 
-          animation: true 
-        });       
-    });
-</script> 
