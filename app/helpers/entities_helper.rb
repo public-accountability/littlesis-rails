@@ -161,7 +161,16 @@ module EntitiesHelper
   def glyph_checkbox(checked, def_id)
     glyphicon_class = ['glyphicon', 'type-checkbox']
     glyphicon_class.append(if checked then 'glyphicon-check' else 'glyphicon-unchecked' end)
-    content_tag(:span, nil, class: glyphicon_class, aria_hidden: 'true', data: { definition_id: def_id })
+    content_tag(
+      :span,
+      nil,
+      class: glyphicon_class,
+      aria_hidden: 'true',
+      data: {
+        action: 'click->entity-edit#checkType',
+        definition_id: def_id
+      }
+    )
   end
 
   # <FormBuilder Thingy> -> [options for select]

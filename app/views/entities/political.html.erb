@@ -85,7 +85,3 @@
     <p>Individual profile pages show giving information for the individual profiled; org pages show an aggregate analysis of giving information for individuals with positions or memberships at those orgs. Note that this information may differ substantially from data found at <a href="http://influenceexplorer.com/">InfluenceExplorer</a> or OpenSecrets, because it only includes donations for individuals in our database who have been donor-matched by an analyst.</p>
   <% end %>
 </div>
-
-<% if @entity.contributions? %>
-  <%# <script>political.init(<%= raw @entity.org?.to_s %>);</script> %>
-<% end %>
