@@ -3,7 +3,16 @@
 
 <h3>Add Image</h3>
 
-<%= form_for(@image, url: concretize_upload_image_entity_path(@entity), method: :post) do |f| %>
+<%= form_for(
+  @image,
+  url: concretize_upload_image_entity_path(@entity),
+  method: :post,
+  data: {
+    parsley_validate: true,
+    controller: 'image-editor',
+    image_editor_accepted_extensions_value: Image::VALID_EXTENSIONS.to_a.to_json
+  }
+) do |f| %>
   <% if @image.errors.any? %>
     <div id="error_explanation" class="alert alert-warning">
       <%= pluralize(@image.errors.count, "error") %> prohibited this image from being saved:
@@ -23,7 +32,7 @@
 
         <div class="form-group">
           <%= f.label :file %>
-          <%= f.file_field :file, :onchange => 'validateImageFileUpload(this)' %>
+          <%= f.file_field :file, data: {parsley_filetype: true} %>
         </div>
 
         <div class="field form-group">
@@ -76,28 +85,3 @@
     </div>
     </div>
 <% end %>
-
-<script>
- var ACCEPTED_IMAGE_FILE_TYPES = <%= raw(Image::VALID_EXTENSIONS.to_a.to_json) %>;
-
- function validFileTypeOrUrl(value) {
-   var fileExt = value.split('.').last().toLowerCase();
-   return ACCEPTED_IMAGE_FILE_TYPES.includes(fileExt);
- }
-
- function validateImageFileUpload(fileInput) {
-    if (fileInput.value) {
-
-      if (!validFileTypeOrUrl(fileInput.value)) {
-	$('.image-upload-alert').show();
-	$('.image-upload-alert p')
-	  .html('<strong>Invalid image file type.</strong><br /> Please select an file with one of the following extensions: ' + ACCEPTED_IMAGE_FILE_TYPES.join(', '))
-	return false;
-      }
-
-   }
-       
-   $('.image-upload-alert').hide();
-   return true;
- }
-</script>
