@@ -1,13 +1,13 @@
-<% content_for(:page_title, raw(@entity.name + ' - relationships')) %>
+<% content_for(:page_title, "#{@entity.name} - relationships".html_safe) %>
 <%= render partial: 'header', locals: { entity: @entity } %>
 
 <h3 class="section mt-3">Relationships</h3>
 
-<div id="relationships-datatable-container">
-</div>
-
-<script>
- window.onload = function() {
-   LittleSis.RelationshipsDatatable().start(<%= @entity.id %>);
- }
-</script>
+<%= content_tag :div, nil,
+  {
+    id: "relationships-datatable-container",
+    data: {
+      controller: "relationships-datatable",
+      relationships_datatable_entity_id_value: @entity.id
+    }
+  } %>
