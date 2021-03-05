@@ -11,7 +11,7 @@
 <%= render partial: 'header', locals: { entity: @entity } %>
 <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 
-<%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder  do |f| %>
+<%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder, data: {controller: "entity-edit"} do |f| %>
 
   <div class="row top-1em mb-2">
     <div class="col-md-6 col-sm-6 col-xs-12">
@@ -167,22 +167,3 @@
 <%= render partial: 'edit_aliases' %>
 <hr>
 <%= render partial: 'edit_external_links' %>
-
-<script>
- $(function(){
-   $('.type-checkbox').click(function() {
-     $(this).toggleClass(['glyphicon-check', 'glyphicon-unchecked']);
-
-     // Store checked type boxes (entity extention definition ids) in a hidden field
-     $('#entity_extension_def_ids').val(
-       $('.type-checkbox.glyphicon-check')
-         .map(function(){ return $(this).data().definitionId } )
-         .toArray()
-         .join(',')
-     )
-   })
-
-   $('#entity_regions').select2()
- });
-
-</script>
