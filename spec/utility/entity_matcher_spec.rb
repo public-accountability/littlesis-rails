@@ -20,8 +20,7 @@ describe EntityMatcher, :sphinx do
     before(:all) do
       setup_sphinx 'entity_core' do
         @chum = EntitySpecHelpers.chums(num: 1).first
-        @chum_alias = { first: Faker::Name.first_name, last: Faker::Name.last_name }
-        @chum.aliases.create!(name: [@chum_alias[:first], @chum_alias[:last]].join(' '))
+        @chum.aliases.create!(name: 'Louis Deschamps')
         @chum.person.update!(name_nick: 'Balloonist')
         @entities = EntitySpecHelpers.bad_vibes(num: 2) + EntitySpecHelpers.traverses(num: 2) + Array.wrap(@chum)
       end
@@ -38,7 +37,7 @@ describe EntityMatcher, :sphinx do
       end
 
       describe 'finds by alias' do
-        subject { EntityMatcher::Search.by_name(@chum_alias[:last], primary_ext: 'Person') }
+        subject { EntityMatcher::Search.by_name('Deschamps', primary_ext: 'Person') }
 
         expect_to_find_the_chum
       end
