@@ -10,7 +10,6 @@
 import jquery from 'jquery'
 import Rails from "@rails/ujs"
 import 'bootstrap'
-import 'tinycarousel'
 import 'bootstrap-select'
 import 'jquery-typeahead'
 
