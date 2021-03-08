@@ -8,13 +8,7 @@
     }
   } do %>
 
-  <div class="row">
-    <h1>
-      Your lists
-      <%= link_to 'Create', new_list_path, class: 'btn btn-secondary btn-sm' %>
-      <%= link_to 'Explore', lists_path, class: 'btn btn-secondary btn-sm' %>
-    </h1>
-  </div>
+  <%= render partial: '/lists/index_header' %>
 
   <table data-home-lists-datatable-target="table" id="user-lists-table" class="display" style="width:100%"></table>
 <% end %>

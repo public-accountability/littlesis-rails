@@ -19,7 +19,7 @@ describe NetworkMapsHelper do
       let(:map) { build(:network_map, is_featured: true) }
 
       it 'contains featured icon' do
-        expect(helper.network_map_feature_btn(map)).to include 'class="featured-map-star"'
+        expect(helper.network_map_feature_btn(map)).to include 'class="star"'
       end
     end
 
@@ -27,7 +27,7 @@ describe NetworkMapsHelper do
       let(:map) { build(:network_map, is_featured: false) }
 
       it 'contains not featured icon' do
-        expect(helper.network_map_feature_btn(map)).to include 'class="not-featured-map-star"'
+        expect(helper.network_map_feature_btn(map)).to include 'class="not-star"'
       end
     end
   end

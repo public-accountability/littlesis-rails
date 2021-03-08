@@ -1,68 +1,114 @@
 span.type-checkbox {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 span.entity-type-name {
-    cursor: default;
+  cursor: default;
 }
 
 span.entity-type-checkbox-wrapper:hover {
-    background-color: rgba(255,255,153, 0.4);
+  background-color: rgba(255,255,153, 0.4);
 }
 
 div.tri-boolean-container {
-    label { 
-	margin-left: 5px;
-	margin-right: 5px;
-    }
+  label { 
+    margin-left: 5px;
+    margin-right: 5px;
+  }
 } 
 
 span.alias-remove {
-    color: black;
+  color: black;
 }
 span.alias-remove:hover {
-    color: $link_blue;
+  color: $link_blue;
 }
 
 form.alias-form {
-    display: inline;
+  display: inline;
 }
 
 .entity-type-toggle {
-    color: black;
+  color: black;
 }
 
 // record history pages
 
 #record-history-container {
-    padding-top: 1em;
+  padding-top: 1em;
 
-    table {
-	cursor: default;
-	width: 100%;
-	border-collapse: separate;
-	border-spacing: 0.3em;
+  table {
+    cursor: default;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0.3em;
 
-	td {
-	    @extend .no-border-top;
-	    padding-left: 0;
-	}
-
+    td {
+      @extend .no-border-top;
+      padding-left: 0;
     }
 
-    .pagination {
-	padding-top: 0.2em;
-    }
+  }
+
+  .pagination {
+    padding-top: 0.2em;
+  }
 }
 
 
 #recent-edits-table {
 
-    tr td:first-child {
-	white-space: nowrap;
-    }
+  tr td:first-child {
+    white-space: nowrap;
+  }
 
-    tbody {
-	font-size: 0.75rem;
-    }
+  tbody {
+    font-size: 0.75rem;
+  }
+}
+
+.star-button {
+  @extend .empty-button;
+
+  > span {
+    @extend .glyphicon;
+    font-size: 15px;
+  }
+
+  &:hover > span {
+    color: $link_blue_hover;
+  }
+
+  &:hover > .star {
+    @extend .glyphicon-star-empty;
+  }
+
+  &:hover > .not-star {
+    @extend .glyphicon-star;
+  }
+}
+
+.star {
+  @extend .glyphicon-star;
+}
+
+.not-star {
+  @extend .glyphicon-star-empty;
+}
+
+.delete-button {
+  color: black;
+  background: none;
+  border: none;
+  padding: 0;
+
+  &:hover > span {
+    color: $link_blue_hover;
+  }
+
+  > span {
+    @extend .glyphicon;
+    @extend .glyphicon-trash;
+    @extend .ml-1;
+  }
 }

@@ -43,6 +43,10 @@ class List < ApplicationRecord
     end
   end
 
+  def self.featured
+    where(is_featured: true)
+  end
+
   def self.order_by_entity_count
     order(entity_count: :desc)
   end

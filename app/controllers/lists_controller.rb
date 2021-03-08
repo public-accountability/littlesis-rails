@@ -88,7 +88,12 @@ class ListsController < ApplicationController
   def update
     if @list.update(list_params)
       @list.clear_cache(request.host)
-      redirect_to members_list_path(@list), notice: 'List was successfully updated.'
+
+      if params[:redirect_to]
+        redirect_to params[:redirect_to], notice: 'List was successfully updated.'
+      else
+        redirect_back(fallback_location: members_list_path(@list), notice: 'List was successfully updated.')
+      end
     else
       render action: 'edit'
     end
@@ -339,14 +344,16 @@ class ListsController < ApplicationController
     end
   end
 
-  def permitted_scope
-    List.viewable(current_user)
+  def basic_scope
+    scope = List.viewable(current_user)
+
+    ActiveModel::Type::Boolean.new.cast(params[:featured]) ? scope.featured : scope
   end
 
   def available_scope
-    return permitted_scope unless @entity
+    return basic_scope unless @entity
 
-    permitted_scope.where(id: @entity.lists.pluck(:id))
+    basic_scope.where(id: @entity.lists.pluck(:id))
   end
 
   def search_lists(lists)

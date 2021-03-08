@@ -6,50 +6,6 @@
 
 }
 
-.featured-map-star-button {
-    @extend .empty-button;
-
-    > span {
-	@extend .glyphicon;
-	font-size: 15px;
-    }
-
-    &:hover > span {
-	color: $link_blue_hover;
-    }
-
-    &:hover > .featured-map-star {
-	@extend .glyphicon-star-empty;
-    }
-
-    &:hover > .not-featured-map-star {
-	@extend .glyphicon-star;
-    }
-}
-
-.featured-map-star {
-    @extend .glyphicon-star;
-}
-
-.not-featured-map-star {
-    @extend .glyphicon-star-empty;
-}
-
-a.delete-map-button {
-    color: black;
-
-    &:hover > span {
-	color: $link_blue_hover;
-    }
-
-    > span {
-	@extend .glyphicon;
-        @extend .glyphicon-trash;
-        @extend .ml-1;
-    }
-
-}
-
 /* map pages */
 
 .fullscreen #oligrapher {
