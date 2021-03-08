@@ -283,13 +283,17 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           visit_page.call
         end
 
-        scenario 'viewing network maps section' do
+        it 'has a network maps section' do
           expect(find('#sidebar-maps-container').text).to include 'Network Maps'
-          page_has_selector '#sidebar-maps-container li a', count: 2
-          # first link is the featured map
+        end
+
+        it 'only shows featured maps' do
+          page_has_selector '#sidebar-maps-container li a', count: 1
           expect(find('#sidebar-maps-container ul > li:nth-child(1) > a')['href'])
             .to eql map_path(featured_map)
-          # does not have private map
+        end
+
+        it "doesn't show private maps" do
           expect(all('#sidebar-maps-container ul a').map { |e| e['href'] })
             .not_to include map_path(private_map)
         end
