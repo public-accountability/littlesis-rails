@@ -54,7 +54,9 @@ describe SearchService do
                       .with("@(name,description) foo",
                             per_page: 50,
                             with: { is_deleted: false, is_admin: 0 },
-                            without: { access: Permissions::ACCESS_PRIVATE, entity_count: 0 })
+                            without: { access: Permissions::ACCESS_PRIVATE, entity_count: 0 },
+                            order: "is_featured DESC"
+                           )
                       .once
 
     SearchService.new('foo').lists
@@ -65,7 +67,9 @@ describe SearchService do
                       .with("@(name,description) foo",
                             per_page: 50,
                             with: { is_deleted: false, is_admin: [0, 1] },
-                            without: { access: Permissions::ACCESS_PRIVATE, entity_count: 0})
+                            without: { access: Permissions::ACCESS_PRIVATE, entity_count: 0},
+                            order: "is_featured DESC"
+                           )
                       .once
 
     SearchService.new('foo', admin: true).lists
@@ -75,9 +79,42 @@ describe SearchService do
     expect(NetworkMap).to receive(:search)
                             .with("@(title,description,index_data) foo",
                                   per_page: 50,
-                                  with: { is_deleted: false, is_private: false })
+                                  with: { is_deleted: false, is_private: false },
+                                  order: "is_featured DESC"
+                                 )
                             .once
 
     SearchService.new('foo').maps
+  end
+
+  context 'with featured and non-featured lists' do
+    describe 'search', :sphinx do
+      before(:all) do # rubocop:disable RSpec/BeforeAfterAll
+        setup_sphinx do
+          create(:list, name: 'my interesting list', is_featured: false).tap do |l|
+            ListEntity.create(list_id: l.id, entity_id: create(:entity_person, name: 'Interesting Person').id)
+          end
+
+          create(:list, name: 'some other list', is_featured: true).tap do |l|
+            ListEntity.create(list_id: l.id, entity_id: create(:entity_person, name: 'Other Person').id)
+          end
+
+          create(:list, name: 'yet another list', is_featured: false).tap do |l|
+            ListEntity.create(list_id: l.id, entity_id: create(:entity_person, name: 'Another Person').id)
+          end
+        end
+      end
+
+      after(:all) do # rubocop:disable RSpec/BeforeAfterAll
+        teardown_sphinx { delete_entity_tables }
+      end
+
+      it 'puts featured lists at the top of the results' do
+        results = SearchService.new('list').lists
+
+        expect(results.first.name).to eq 'some other list'
+        expect(results.last.is_featured).to be false
+      end
+    end
   end
 end

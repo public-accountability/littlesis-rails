@@ -32,10 +32,13 @@ class SearchService
     return @lists if defined?(@lists)
 
     list_is_admin = @admin ? [0, 1] : 0
-    @lists = List.search "@(name,description) #{@escaped_query}",
-                         per_page: 50,
-                         with: { is_deleted: false, is_admin: list_is_admin },
-                         without: { access: Permissions::ACCESS_PRIVATE, entity_count: 0 }
+    @lists = List.search(
+      "@(name,description) #{@escaped_query}",
+      per_page: 50,
+      with: { is_deleted: false, is_admin: list_is_admin },
+      without: { access: Permissions::ACCESS_PRIVATE, entity_count: 0 },
+      order: "is_featured DESC"
+    )
   end
 
   def maps
