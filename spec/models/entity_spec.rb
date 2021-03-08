@@ -1256,4 +1256,20 @@ describe Entity, :tag_helper do
       expect { entity.remove_region('Middle East') }.not_to change { entity.reload.locations.count }
     end
   end
+
+  describe '#featured_lists' do
+    let(:entity) { create(:entity_org) }
+    let(:featured_list) { create(:list, is_featured: true) }
+    let(:nonfeatured_list) { create(:list, is_featured: false) }
+
+    before do
+      ListEntity.create!(list_id: featured_list.id, entity_id: entity.id)
+      ListEntity.create!(list_id: nonfeatured_list.id, entity_id: entity.id)
+    end
+
+    it 'returns feature lists that include the entity' do
+      expect(entity.featured_lists).to include(featured_list)
+      expect(entity.featured_lists).not_to include(nonfeatured_list)
+    end
+  end
 end

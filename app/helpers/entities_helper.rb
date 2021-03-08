@@ -210,23 +210,6 @@ module EntitiesHelper
       .join(', ')
   end
 
-  # To eager load list and list_entities: Entity.includes(list_entities: [:lists])
-  def sidebar_lists(list_entities)
-    list_entities.collect do |list_entity|
-      if show_list(list_entity)
-        content_tag(:li, sidebar_list_link(list_entity), class: 'sidebar-list')
-      else
-        "".html_safe
-      end
-    end.reduce(:+)
-  end
-
-  def sidebar_list_link(list_entity)
-    link = link_to list_entity.list.name , list_path(list_entity.list), class: 'link-blue'
-    link += content_tag(:samp, "[\##{list_entity.rank}]") if list_entity.list.is_ranked? && list_entity.rank.present?
-    link
-  end
-
   def sidebar_similar_entities(similar_entities)
     similar_entities
       .collect { |e| link_to(e.name, e.legacy_url) }
@@ -253,13 +236,6 @@ module EntitiesHelper
   # Filters refereces to uniq url/name
   def filter_and_limit_references(refs)
     refs.uniq { |ref| "#{ref.name}#{ref.source}" }.take(10)
-  end
-
-  # skip deleted lists, private lists (unless current_user has access), and skip lists that are networks
-  def show_list(list_entity)
-    list = list_entity.list
-    return false if list.nil?
-    list.user_can_access?(current_user)
   end
 
   def political_tab_col_left

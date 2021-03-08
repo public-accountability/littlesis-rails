@@ -66,9 +66,12 @@
 
   <%# LISTS  %>
   <%= profile_page_sidebar('sidebar-lists-container', 'Lists', subtitle: 'Analyst-created lists of people and org') do %>
-    <% cache(['entity_list_entities', @entity.list_entities], :expires_in => 1.week) do %>
-        <ul class="list-unstyled">
-        <%= sidebar_lists(@entity.list_entities) %>
+    <% cache(['entity_featured_lists', @entity.featured_lists], expires_in: 1.week) do %>
+      <ul class="list-unstyled">
+        <% @entity.featured_lists.each do |list| %>
+          <% next unless list.user_can_access?(current_user) %>
+          <li class='sidebar-list'><%= link_to list.name, list_path(list), class: 'link-blue' %></li>
+        <% end %>
       </ul>
     <% end %>
 
