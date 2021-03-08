@@ -340,11 +340,7 @@ class ListsController < ApplicationController
   end
 
   def permitted_scope
-    if params[:editable] == 'true'
-      List.editable(current_user)
-    else
-      List.viewable(current_user)
-    end
+    List.viewable(current_user)
   end
 
   def available_scope
