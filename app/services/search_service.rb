@@ -44,9 +44,12 @@ class SearchService
   def maps
     return @maps if defined?(@maps)
 
-    @maps = NetworkMap.search "@(title,description,index_data) #{@escaped_query}",
-                              per_page: 50,
-                              with: { is_deleted: false, is_private: false }
+    @maps = NetworkMap.search(
+      "@(title,description,index_data) #{@escaped_query}",
+      per_page: 50,
+      with: { is_deleted: false, is_private: false },
+      order: "is_featured DESC"
+    )
   end
 
   private

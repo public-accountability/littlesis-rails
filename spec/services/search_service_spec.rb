@@ -117,4 +117,27 @@ describe SearchService do
       end
     end
   end
+
+  context 'with featured and non-featured maps' do
+    describe 'search', :sphinx do
+      before(:all) do # rubocop:disable RSpec/BeforeAfterAll
+        setup_sphinx do
+          create(:network_map, title: 'my interesting map', is_featured: false, user: create(:user))
+          create(:network_map_version3, title: 'some other map', is_featured: true, user: create(:user))
+          create(:network_map, title: 'yet another map', is_featured: false, user: create(:user))
+        end
+      end
+
+      after(:all) do # rubocop:disable RSpec/BeforeAfterAll
+        teardown_sphinx
+      end
+
+      it 'puts featured maps at the top of the results' do
+        results = SearchService.new('map').maps
+
+        expect(results.first.name).to eq 'some other map'
+        expect(results.last.is_featured).to be false
+      end
+    end
+  end
 end
