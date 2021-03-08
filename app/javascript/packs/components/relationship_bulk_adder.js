@@ -154,7 +154,7 @@ export default function RelationshipBulkAdder() {
   function sampleCSVLink() {
     return $('<button>', {
       text: 'download sample csv',
-      class: 'btn btn-primary',
+      class: 'btn btn-primary mr-2',
       click: function() {
         var headers = relationshipDetails().map(function(x) {
           return x[1]
@@ -172,8 +172,8 @@ export default function RelationshipBulkAdder() {
     return $('<caption>')
       .append(addRowIcon())
       .append( $('<input>', {id: 'csv-file'}).attr('type', 'file'))
-      .append( $('<div>', {class: 'float-right'}).append(sampleCSVLink()) )
-                         // .append(entityMatchBtn())
+      .append( $('<div>', { class: 'float-right'}).append(sampleCSVLink()).append(entityMatchBtn()) )
+
 
   }
 
