@@ -2,16 +2,28 @@
 
 <div class="row">
   <div class="col">
-    <h3>Recent Edits</h3>
+    <h2 class="d-inline-block">
+      Recent Edits
+    </h2>
+
+    <% if current_user.admin?  %>
+      <div class="d-inline-block float-right mt-2">
+        <% if @without_system_users %>
+          <a class="btn btn-primary btn-sm" href="/edits?page=<%= @page %>&without_system_users=false">show system edits</a>
+        <% else %>
+          <a class="btn btn-primary btn-sm" href="/edits?page=<%= @page %>&without_system_users=true">hide system edits</a>
+        <% end %>
+      </div>
+    <% end %>
+
   </div>
 </div>
 
-
-<% cache( [ 'edits/index', @page ], expires_in: 5.minutes) do %>
+<% cache("/edits/index/#{@page}/#{@without_system_users}", expires_in: 1.minute) do %>
   <div class="row" id="recent-edits-row">
     <div class="col">
 
-      <% edits = EntityHistory.recently_edited_entities(page: @page) %>
+      <% edits = EditedEntity.recently_edited_entities(page: @page, without_system_users: @without_system_users) %>
 
       <table class="table no-top-border" id="recent-edits-table">
         <thead>
@@ -33,7 +45,13 @@
         </tbody>
       </table>
 
-      <%= paginate edits %>
+      <ul class="pagination">
+        <% unless @page == 1 %>
+          <li class="page-item"><a class="page-link" href="/edits?without_system_users=<%= @without_system_users %>&page=<%= @page - 1 %>">previous</a></li>
+          <li class="page-item"><a class="page-link"><%= @page %></a></li>
+        <% end %>
+        <li class="page-item"><a class="page-link" href="/edits?without_system_users=<%= @without_system_users %>&page=<%= @page + 1 %>">next</a></li>
+      </ul>
     </div>
   </div>
 <% end %>

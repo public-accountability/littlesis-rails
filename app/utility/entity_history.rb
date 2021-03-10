@@ -7,15 +7,6 @@ class EntityHistory < RecordHistory
   # exclude users: system, cmp-bot, congress-bot
   EXCLUDED_LAST_USERS = [1, 8178, 8270].freeze
 
-  def self.recently_edited_entities(page: 1)
-    EditedEntity::Query
-      .without_system_users
-      .include_entity
-      .include_user
-      .per(10)
-      .page(page)
-  end
-
   private
 
   # str, str -> str

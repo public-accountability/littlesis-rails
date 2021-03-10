@@ -844,7 +844,9 @@ describe Entity, :tag_helper do
       it 'property escapes names with slashes' do
         e = create(:entity_org, name: 'weird/name')
         e.aliases.create!(name: 'name')
-        expect(e.send(:generate_search_terms)).to eq "(weird\\/name) | (name) | (*weird\\/name*)"
+        expect(e.send(:generate_search_terms)).to include "(weird\\/name)"
+        expect(e.send(:generate_search_terms)).to include "(name)"
+        expect(e.send(:generate_search_terms)).to include "(*weird\\/name*)"
       end
 
       it 'handles orgs with names that only contain essential words ' do

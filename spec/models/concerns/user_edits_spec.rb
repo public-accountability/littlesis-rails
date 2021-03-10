@@ -40,15 +40,6 @@ describe UserEdits do
       relationship_version
     end
 
-    xdescribe '#edited_entities_ids' do
-      subject { UserEdits::Edits.new(user) }
-
-      it 'returns array of all recently edited entities' do
-        expect(subject.edited_entities_ids)
-          .to eq ids.values_at('entity1_id', 'entity2_id', 'entity')
-      end
-    end
-
     describe '#edited_entities' do
       let(:entities) do
         Array.new(3) { create(:entity_person) }
@@ -67,7 +58,7 @@ describe UserEdits do
 
       it 'returns relation of all recently edited entities' do
         edited_entities = UserEdits::Edits.new(user).edited_entities
-        expect(edited_entities.total_count).to eq 3
+        expect(edited_entities.count).to eq 3
       end
     end
 

@@ -6,6 +6,8 @@ class EditsController < ApplicationController
   before_action :set_entity, only: [:entity]
 
   def index
+    @without_system_users = true
+    @without_system_users = false if params[:without_system_users]&.downcase == 'false'
   end
 
   def entity

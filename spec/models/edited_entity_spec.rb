@@ -21,7 +21,6 @@ describe EditedEntity, type: :model do
       sleep 0.01
       arr << create(:page_version)
     end
-    # [entity_version, relationship_version, create(:page_version)]
   end
 
   it { is_expected.to have_db_column(:user_id).of_type(:integer) }
@@ -104,109 +103,6 @@ describe EditedEntity, type: :model do
       expect(EditedEntity.count).to eq 0
       EditedEntity.populate_table
       expect(EditedEntity.count).to eq 3
-      EditedEntity.populate_table
-      expect(EditedEntity.count).to eq 3
-    end
-  end
-
-  describe 'recent' do
-    before { versions }
-
-    it 'returns 2 entities' do
-      expect(EditedEntity.recent.page(1).to_a.size).to eq 2
-    end
-
-    it 'has correct dates' do
-      recently_edited_entities = EditedEntity.recent.page(1)
-
-      # On travis these values are *sometimes* not exactly equal hence the `within_one_second` hack
-      expect(
-        within_one_second?(recently_edited_entities[0].created_at, entity_version.created_at)
-      ).to be true
-
-      expect(
-        within_one_second?(recently_edited_entities[1].created_at, relationship_version.created_at)
-      ).to be true
-    end
-
-    it 'has correct total_count' do
-      expect(EditedEntity.recent.page(1).total_count).to eq 2
-    end
-  end
-
-  describe 'Query' do
-    before { versions }
-
-    describe 'all' do
-      specify do
-        expect(EditedEntity::Query.all.page(1).length).to eq 2
-      end
-
-      specify do
-        expect(EditedEntity::Query.all.page(2).length).to eq 0
-      end
-
-      specify do
-        expect(EditedEntity::Query.all.per(1).page(1).length).to eq 1
-      end
-
-      specify do
-        expect(EditedEntity::Query.all.per(1).page(3).length).to eq 0
-      end
-    end
-
-    describe 'for_user' do
-      specify do
-        expect(EditedEntity::Query.for_user(user_id).page(1).length).to eq 1
-      end
-
-      it 'has correct total_count' do
-        expect(EditedEntity::Query.for_user(user_id).page(1).total_count).to eq 1
-        expect(EditedEntity::Query.for_user(user1_id).page(1).total_count).to eq 2
-      end
-
-      specify do
-        expect(EditedEntity::Query.for_user(user_id).page(1).first.version).to eq entity_version
-      end
-    end
-
-    describe 'without_system_users' do
-      before do
-        create(:entity_version, item_id: create(:entity_org).id, whodunnit: 1)
-      end
-
-      specify do
-        expect(EditedEntity::Query.all.page(1).length).to eq 3
-      end
-
-      specify do
-        expect(EditedEntity::Query.without_system_users.page(1).length).to eq 2
-      end
-    end
-
-    describe 'Entity has been deleted' do
-      before do
-        with_versioning_for(User.system_user) do
-          @entity = create(:entity_person)
-        end
-      end
-
-      it 'removes deleted entity from results' do
-        with_versioning_for(User.system_user) do
-          @entity.soft_delete
-        end
-        expect(EditedEntity::Query.all.page(1).length).to eq 2
-      end
-    end
-
-    # This might seem like a useless test, but because
-    # we use part of Arel's internal api,it's be good
-    # detect for changes in future releaes of rails.
-    describe 'group_by_entity_id_subquery_for_join' do
-      it 'starts with INNER JOIN' do
-        expect(EditedEntity.group_by_entity_id_subquery_for_join.slice(0, 10))
-          .to eq 'INNER JOIN'
-      end
     end
   end
 end

@@ -53,8 +53,9 @@ module Lilsis
     # Make `form_with` generate non-remote forms.
     config.action_view.form_with_generates_remote_forms = false
 
-
     config.active_storage.draw_routes = true
+
+    config.active_record.schema_format = :sql
   end
 
   def self.setup_fec
