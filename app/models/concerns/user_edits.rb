@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Layout/AlignHash
-
 # The namespace UserEdits contains:
 #
 # a module +ActiveUsers+ which add two class
@@ -100,11 +98,7 @@ module UserEdits
 
     # --> [EditedEntity]
     def edited_entities
-      EditedEntity::Query
-        .for_user(@user.id)
-        .include_entity
-        .per(@per_page)
-        .page(@page)
+      EditedEntity.recently_edited_entities(page: @page, user_id: @user.id, per_page: @per_page)
     end
 
     def recent_edits
@@ -144,5 +138,3 @@ module UserEdits
     end
   end
 end
-
-# rubocop:enable Layout/AlignHash

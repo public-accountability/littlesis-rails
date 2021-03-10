@@ -8,14 +8,36 @@
 # and there's no harm in deleting the entire table and running `EditedEntity.populate_table`
 #
 class EditedEntity < ApplicationRecord
-  PER_PAGE = 20
-  belongs_to :entity
+  PER_PAGE = 15
+  belongs_to :entity, -> { unscope(where: :is_deleted) }
   belongs_to :version, class_name: 'PaperTrail::Version', foreign_key: 'version_id', optional: true
   belongs_to :user, optional: true
 
   validates :entity_id, presence: true, uniqueness: { scope: :version_id }
   validates :version_id, presence: true
   validates :created_at, presence: true
+
+  def self.recently_edited_entities(page: 1, without_system_users: false, user_id: nil, per_page: PER_PAGE)
+    where_clause = if user_id.is_a?(Integer)
+                     "WHERE user_id = #{user_id}"
+                   elsif without_system_users
+                     "WHERE user_id NOT IN (#{User.system_users.map(&:id).join(',')})"
+                   end
+
+    EditedEntity.includes(:entity, :user).find_by_sql <<~SQL
+      SELECT edited_entities.*
+      FROM (
+             SELECT max(id) as id, round_five_minutes(created_at) as d
+             FROM edited_entities
+             #{where_clause}
+             GROUP BY entity_id, round_five_minutes(created_at)
+             ORDER BY d DESC
+             LIMIT #{per_page.to_i}
+             OFFSET #{(page - 1) * per_page}
+       ) AS subquery
+      INNER JOIN edited_entities ON edited_entities.id = subquery.id
+    SQL
+  end
 
   # Creates new EditedEntities from a PaperTrail::Version
   # If the verison is for a relationship, two EditedEntities might be created.
@@ -37,102 +59,15 @@ class EditedEntity < ApplicationRecord
     # PaperTrail::Version.order(id: :asc).find_each do |version|
     #   create_from_version(version)
     # end
-    Utility.execute_sql_file Rails.root.join('lib/sql/populate_edited_entities.sql')
-  end
+    # Utility.execute_sql_file Rails.root.join('lib/sql/populate_edited_entities.sql')
 
-  ###########
-  #  Query  #
-  ###########
+    ApplicationRecord.connection.execute <<~SQL
+      INSERT INTO edited_entities (user_id, version_id, entity_id, created_at)
+      (SELECT whodunnit::integer, id, entity1_id, created_at FROM versions WHERE entity1_id IS NOT NULL);
 
-  # Examples
-  #
-  # To get most recently edited entities by a given user:
-  #    EditedEntity::Query.for_user(123).page(1)
-  #
-  # Most recent edited entities (by anyone):
-  #    EditedEntity::Query.all.page(1)
-  #
-  # Most recent edited entities, changeing the per page
-  #    EditedEntity::Query.all.per(50).page(3)
-  #
-  # Most recent edited entities excluding system users
-  #   EditedEntity::Query.without_system_users.page(1)
-  #
-  # .page() returns an ActiveRecord_Relation
-  #
-  class Query
-    attr_accessor :per_page, :condition
+      INSERT INTO edited_entities (user_id, version_id, entity_id, created_at)
+      (SELECT whodunnit::integer, id, entity2_id, created_at FROM versions WHERE entity2_id IS NOT NULL AND entity2_id != entity1_id);
+   SQL
 
-    def initialize(per_page: PER_PAGE, condition: nil, includes: [])
-      @per_page = per_page
-      @condition = condition
-      @includes = includes
-    end
-
-    def per(per_page)
-      @per_page = per_page
-      self
-    end
-
-    %i[entity version user].each do |association|
-      define_method("include_#{association}") do
-        @includes << association unless @includes.include?(association)
-        self
-      end
-    end
-
-    # Integer --> EditedEntited::Collection
-    def page(n)
-      EditedEntity
-        .recent(@condition)
-        .includes(@includes)
-        .page(n)
-        .per(@per_page)
-    end
-
-    def self.for_user(user_id)
-      condition = EditedEntity.arel_table[:user_id].eq(user_id)
-      new(condition: condition)
-    end
-
-    def self.without_system_users
-      condition = EditedEntity.arel_table[:user_id].not_in(User.system_users.map(&:id))
-      new(condition: condition)
-    end
-
-    def self.all
-      new
-    end
-  end
-
-  # def self.self_join_with_grouped_by_entity_id(condition: nil)
-  def self.recent(condition = nil)
-    joins(group_by_entity_id_subquery_for_join(condition))
-      .joins(:entity)
-      .order(version_id: :desc)
-  end
-
-  # This digs DEEP into arel to produces the correct INNER JOIN string
-  # Arel::Nodes::Node | nil -->  String
-  def self.group_by_entity_id_subquery_for_join(condition = nil)
-    subquery = group_by_entity_id(condition).as('subquery')
-
-    arel_table
-      .join(subquery).on(
-        arel_table[:entity_id].eq(subquery[:entity_id])
-          .and(arel_table[:version_id].eq(subquery[:max_version_id]))
-      )
-      .join_sources
-      .first
-      .to_sql
-  end
-
-  #  Arel::Nodes::Node | nil -->  Arel::SelectManager
-  def self.group_by_entity_id(condition = nil)
-    query = arel_table
-              .project(arel_table[:entity_id], arel_table[:version_id].maximum.as('max_version_id'))
-              .group(arel_table[:entity_id])
-
-    condition.present? ? query.where(condition) : query
   end
 end

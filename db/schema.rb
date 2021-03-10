@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_25_161127) do
+ActiveRecord::Schema.define(version: 2021_03_10_150352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -307,9 +307,11 @@ ActiveRecord::Schema.define(version: 2021_02_25_161127) do
     t.bigint "version_id", null: false
     t.bigint "entity_id", null: false
     t.datetime "created_at", null: false
+    t.index "round_five_minutes(created_at)", name: "index_edited_entities_on_round_five_minutes_created_at"
     t.index ["created_at"], name: "idx_16634_index_edited_entities_on_created_at"
     t.index ["entity_id", "version_id", "user_id"], name: "idx_16634_index_edited_entities_on_entity_id_and_version_id_and", unique: true
     t.index ["entity_id", "version_id"], name: "idx_16634_index_edited_entities_on_entity_id_and_version_id", unique: true
+    t.index ["entity_id"], name: "index_edited_entities_on_entity_id"
   end
 
   create_table "education", force: :cascade do |t|
@@ -1037,7 +1039,8 @@ ActiveRecord::Schema.define(version: 2021_02_25_161127) do
     t.index ["recipid"], name: "idx_17051_index_os_committees_on_recipid"
   end
 
-  create_table "os_donations", force: :cascade do |t|
+  create_table "os_donations", id: false, force: :cascade do |t|
+    t.bigserial "id", null: false
     t.string "cycle", limit: 4, null: false
     t.string "fectransid", limit: 19, null: false
     t.string "contribid", limit: 12
@@ -1069,21 +1072,6 @@ ActiveRecord::Schema.define(version: 2021_02_25_161127) do
     t.string "name_prefix", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.index ["amount"], name: "idx_34467_index_os_donations_on_amount"
-    t.index ["contribid"], name: "idx_34467_index_os_donations_on_contribid"
-    t.index ["cycle"], name: "idx_34467_index_os_donations_on_cycle"
-    t.index ["date"], name: "idx_34467_index_os_donations_on_date"
-    t.index ["fec_cycle_id"], name: "idx_34467_index_os_donations_on_fec_cycle_id", unique: true
-    t.index ["fectransid", "cycle"], name: "idx_34467_index_os_donations_on_fectransid_and_cycle"
-    t.index ["fectransid"], name: "idx_34467_index_os_donations_on_fectransid"
-    t.index ["microfilm"], name: "idx_34467_index_os_donations_on_microfilm"
-    t.index ["name_last", "name_first"], name: "idx_34467_index_os_donations_on_name_last_and_name_first"
-    t.index ["realcode", "amount"], name: "idx_34467_index_os_donations_on_realcode_and_amount"
-    t.index ["realcode"], name: "idx_34467_index_os_donations_on_realcode"
-    t.index ["recipid", "amount"], name: "idx_34467_index_os_donations_on_recipid_and_amount"
-    t.index ["recipid"], name: "idx_34467_index_os_donations_on_recipid"
-    t.index ["state"], name: "idx_34467_index_os_donations_on_state"
-    t.index ["zip"], name: "idx_34467_index_os_donations_on_zip"
   end
 
   create_table "os_entity_category", force: :cascade do |t|
@@ -1537,6 +1525,7 @@ ActiveRecord::Schema.define(version: 2021_02_25_161127) do
   add_foreign_key "extension_definition", "extension_definition", column: "parent_id", name: "extension_definition_ibfk_1", on_update: :cascade, on_delete: :restrict
   add_foreign_key "extension_record", "entity", name: "extension_record_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "extension_record", "extension_definition", column: "definition_id", name: "extension_record_ibfk_2", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "external_relationships", "external_data", on_update: :restrict, on_delete: :cascade
   add_foreign_key "family", "relationship", name: "family_ibfk_1", on_update: :cascade, on_delete: :cascade
   add_foreign_key "government_body", "address_state", column: "state_id", name: "government_body_ibfk_1", on_update: :cascade, on_delete: :restrict
   add_foreign_key "government_body", "entity", name: "government_body_ibfk_2", on_update: :cascade, on_delete: :cascade
