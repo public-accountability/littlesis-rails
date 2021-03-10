@@ -34,9 +34,10 @@ class EditedEntity < ApplicationRecord
   end
 
   def self.populate_table
-    PaperTrail::Version.order(id: :asc).find_each do |version|
-      create_from_version(version)
-    end
+    # PaperTrail::Version.order(id: :asc).find_each do |version|
+    #   create_from_version(version)
+    # end
+    Utility.execute_sql_file Rails.root.join('lib/sql/populate_edited_entities.sql')
   end
 
   ###########
