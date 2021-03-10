@@ -34,7 +34,6 @@ jobs:
             - vendor/bundle
 
       - run: bundle exec rake db:reset
-      - run: bin/create_sql_functions.sh
       - run: bundle exec rake tmp:clear
 
       - restore_cache:

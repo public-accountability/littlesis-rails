@@ -1,3 +1,10 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 13.1 (Debian 13.1-1.pgdg100+1)
+-- Dumped by pg_dump version 13.2 (Debian 13.2-1)
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -73,28 +80,6 @@ BEGIN
 END;
 
 $$;
-
-
---
--- Name: round_five_minutes(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.round_five_minutes(timestamp without time zone) RETURNS timestamp without time zone
-    LANGUAGE sql IMMUTABLE
-    AS $_$
-  SELECT date_trunc('hour', $1) + interval '5 min' * round(date_part('minute', $1) / 5.0)
-$_$;
-
-
---
--- Name: round_ten_minutes(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.round_ten_minutes(timestamp without time zone) RETURNS timestamp without time zone
-    LANGUAGE sql IMMUTABLE
-    AS $_$
-  SELECT date_trunc('hour', $1) + interval '10 min' * round(date_part('minute', $1) / 10.0)
-$_$;
 
 
 SET default_tablespace = '';
@@ -2842,6 +2827,7 @@ ALTER SEQUENCE public.os_committees_id_seq OWNED BY public.os_committees.id;
 --
 
 CREATE TABLE public.os_donations (
+    id bigint NOT NULL,
     cycle character varying(4) NOT NULL,
     fectransid character varying(19) NOT NULL,
     contribid character varying(12),
@@ -2872,8 +2858,7 @@ CREATE TABLE public.os_donations (
     name_suffix character varying(255),
     name_prefix character varying(255),
     created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    id integer NOT NULL
+    updated_at timestamp without time zone
 );
 
 
@@ -2882,7 +2867,6 @@ CREATE TABLE public.os_donations (
 --
 
 CREATE SEQUENCE public.os_donations_id_seq
-    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3973,7 +3957,7 @@ ALTER SEQUENCE public.user_profiles_id_seq OWNED BY public.user_profiles.id;
 CREATE TABLE public.user_requests (
     id bigint NOT NULL,
     type character varying(255) NOT NULL,
-    user_id bigint,
+    user_id bigint NOT NULL,
     status bigint DEFAULT 0 NOT NULL,
     source_id bigint,
     dest_id bigint,
@@ -3982,9 +3966,7 @@ CREATE TABLE public.user_requests (
     reviewer_id bigint,
     entity_id bigint,
     justification text,
-    list_id bigint,
-    email text,
-    page text
+    list_id bigint
 );
 
 
@@ -7494,6 +7476,111 @@ CREATE INDEX idx_34461_fk_rails_632542e80c ON public.external_relationships USIN
 
 
 --
+-- Name: idx_34467_index_os_donations_on_amount; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_amount ON public.os_donations USING btree (amount);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_contribid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_contribid ON public.os_donations USING btree (contribid);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_cycle; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_cycle ON public.os_donations USING btree (cycle);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_date ON public.os_donations USING btree (date);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_fec_cycle_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_34467_index_os_donations_on_fec_cycle_id ON public.os_donations USING btree (fec_cycle_id);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_fectransid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_fectransid ON public.os_donations USING btree (fectransid);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_fectransid_and_cycle; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_fectransid_and_cycle ON public.os_donations USING btree (fectransid, cycle);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_microfilm; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_microfilm ON public.os_donations USING btree (microfilm);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_name_last_and_name_first; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_name_last_and_name_first ON public.os_donations USING btree (name_last, name_first);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_realcode; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_realcode ON public.os_donations USING btree (realcode);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_realcode_and_amount; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_realcode_and_amount ON public.os_donations USING btree (realcode, amount);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_recipid; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_recipid ON public.os_donations USING btree (recipid);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_recipid_and_amount; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_recipid_and_amount ON public.os_donations USING btree (recipid, amount);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_state; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_state ON public.os_donations USING btree (state);
+
+
+--
+-- Name: idx_34467_index_os_donations_on_zip; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_34467_index_os_donations_on_zip ON public.os_donations USING btree (zip);
+
+
+--
 -- Name: idx_34500_idx_web_requests_time; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7512,27 +7599,6 @@ CREATE UNIQUE INDEX idx_34500_index_web_requests_on_request_id ON public.web_req
 --
 
 CREATE INDEX idx_34500_index_web_requests_on_time ON public.web_requests USING btree ("time");
-
-
---
--- Name: index_edited_entities_on_entity_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_edited_entities_on_entity_id ON public.edited_entities USING btree (entity_id);
-
-
---
--- Name: index_edited_entities_on_round_five_minutes_created_at; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_edited_entities_on_round_five_minutes_created_at ON public.edited_entities USING btree (public.round_five_minutes(created_at));
-
-
---
--- Name: index_external_data_fec_contributions_on_sub_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_external_data_fec_contributions_on_sub_id ON public.external_data_fec_contributions USING btree (sub_id);
 
 
 --
@@ -8114,157 +8180,4 @@ ALTER TABLE ONLY public.transaction
 --
 -- PostgreSQL database dump complete
 --
-
-SET search_path TO "$user", public;
-
-INSERT INTO "schema_migrations" (version) VALUES
-('20180117165745'),
-('20180117190400'),
-('20180122192339'),
-('20180123184642'),
-('20180123192048'),
-('20180124213412'),
-('20180129193750'),
-('20180312221213'),
-('20180327200500'),
-('20180328171242'),
-('20180402151948'),
-('20180404144759'),
-('20180405165850'),
-('20180405192653'),
-('20180405204432'),
-('20180409211819'),
-('20180418185245'),
-('20180424164740'),
-('20180424165127'),
-('20180424181848'),
-('20180424203632'),
-('20180425160916'),
-('20180517154454'),
-('20180522142905'),
-('20180605184748'),
-('20180813162356'),
-('20180904145133'),
-('20181008145444'),
-('20181113153716'),
-('20181120214543'),
-('20181120220123'),
-('20181121181644'),
-('20181128230617'),
-('20181204170212'),
-('20181210213242'),
-('20181212164901'),
-('20181212195611'),
-('20181218193802'),
-('20181218211422'),
-('20190102183459'),
-('20190107194942'),
-('20190122191600'),
-('20190122195730'),
-('20190123155951'),
-('20190123164450'),
-('20190123170130'),
-('20190225182449'),
-('20190305165817'),
-('20190307135257'),
-('20190403154559'),
-('20190417191412'),
-('20190423154920'),
-('20190423181842'),
-('20190423191048'),
-('20190514141806'),
-('20190514181827'),
-('20190521205445'),
-('20190529164312'),
-('20190604175919'),
-('20190718154608'),
-('20190820204626'),
-('20190827200909'),
-('20190910201358'),
-('20190910221915'),
-('20200225154356'),
-('20200225204527'),
-('20200226191502'),
-('20200302155102'),
-('20200312145600'),
-('20200312145653'),
-('20200312150307'),
-('20200312195049'),
-('20200312200907'),
-('20200312201205'),
-('20200312202512'),
-('20200312202711'),
-('20200313164354'),
-('20200313164724'),
-('20200313183438'),
-('20200313183600'),
-('20200313185203'),
-('20200318160306'),
-('20200318192211'),
-('20200318193304'),
-('20200318193449'),
-('20200318193605'),
-('20200318194011'),
-('20200318194338'),
-('20200318194740'),
-('20200318202345'),
-('20200318202543'),
-('20200318202544'),
-('20200318202545'),
-('20200318202546'),
-('20200318202700'),
-('20200318202702'),
-('20200406170640'),
-('20200406203720'),
-('20200415203303'),
-('20200421032831'),
-('20200501031224'),
-('20200504000349'),
-('20200504154535'),
-('20200504215855'),
-('20200505171235'),
-('20200511192227'),
-('20200518162459'),
-('20200528185753'),
-('20200610195236'),
-('20200625162604'),
-('20200701145405'),
-('20200702145236'),
-('20200708135038'),
-('20200716191825'),
-('20200721195543'),
-('20200803182602'),
-('20200811164427'),
-('20200813195904'),
-('20200827170003'),
-('20200922162428'),
-('20201007180002'),
-('20201007181727'),
-('20201007181953'),
-('20201020180234'),
-('20201021134506'),
-('20201105182656'),
-('20201105184710'),
-('20201120010809'),
-('20201215041916'),
-('20201215172414'),
-('20201215221700'),
-('20201216170621'),
-('20201221234821'),
-('20201221234822'),
-('20210112023923'),
-('20210121184537'),
-('20210121223749'),
-('20210121234418'),
-('20210123144348'),
-('20210201142914'),
-('20210202000131'),
-('20210202185216'),
-('20210202190816'),
-('20210204151130'),
-('20210223163501'),
-('20210225152357'),
-('20210225161127'),
-('20210310150352');
-
 
