@@ -12,7 +12,7 @@
 
 <div class="row">
   <div class="col-sm-3">
-    <a class="collapsed entity-type-toggle" role="button" data-toggle="collapse" href="#tier-three" aria-expanded="false" aria-controls="tier-three">
+    <a class="collapsed entity-type-toggle" role="button" data-toggle="collapse" data-action="entity-edit#toggleTypesIcon" href="#tier-three" aria-expanded="false" aria-controls="tier-three">
       <strong>More:  </strong><span class="glyphicon glyphicon-expand" aria-hidden="true" id="type-collapse-icon"></span>
     </a>
   </div>
@@ -27,21 +27,3 @@
 <br />
 
 <%= f.hidden_field(:extension_def_ids, value: @entity.extension_ids_without_primary_stringified) %>
-
-<script>
- $(function(){
-
-   // toggle icon //
-   $('#tier-three').on('shown.bs.collapse', function () {
-     $('#type-collapse-icon').removeClass('glyphicon-expand');
-     $('#type-collapse-icon').addClass('glyphicon-collapse-down');
-   })
-
-   $('#tier-three').on('hidden.bs.collapse', function () {
-     $('#type-collapse-icon').removeClass('glyphicon-collapse-down');
-     $('#type-collapse-icon').addClass('glyphicon-expand');
-   })
-
- });
-</script>
-
