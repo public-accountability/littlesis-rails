@@ -33,7 +33,6 @@ import EntityMatcher from './components/entity_matcher'
 import RelationshipBulkAdder from './components/relationship_bulk_adder'
 import DonationMatcher from './components/donation_matcher'
 import RelationshipsDatatable from './components/relationships_datatable'
-import EntityPage from './components/entity_page'
 
 jquery.typeahead = typeahead
 window.$ = jquery
@@ -54,7 +53,6 @@ window.LittleSis.EntityMatcher = EntityMatcher
 window.LittleSis.RelationshipBulkAdder = RelationshipBulkAdder
 window.LittleSis.DonationMatcher = DonationMatcher
 window.LittleSis.RelationshipsDatatable = RelationshipsDatatable
-window.LittleSis.EntityPage = EntityPage
 
 import "controllers"
 Rails.start()

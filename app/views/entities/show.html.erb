@@ -1,31 +1,27 @@
 <% content_for(:page_title, @entity.name) %>
 <% content_for(:head) do %>
   <%= og_tags(title: "LittleSis: #{@entity.name}", url: entity_url(@entity), image: @entity.featured_image_url) %>
-  <script>
-   window.addEventListener('DOMContentLoaded', function() {
-     LittleSis.EntityPage.start()
-   })
-  </script>
 <% end %>
 
-<%= render partial: 'shared/entity_info', locals: {entity: @entity}  %>
-<%= render partial: 'shared/notice_or_alert' %>
-<%= render partial: 'header', locals: { entity: @entity } %>
-<%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
+<div data-controller="entity-page">
+  <%= render partial: 'shared/entity_info', locals: {entity: @entity}  %>
+  <%= render partial: 'shared/notice_or_alert' %>
+  <%= render partial: 'header', locals: { entity: @entity } %>
+  <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 
-<div class="row top-1em" id="entity-page-container">
+  <div class="row top-1em" id="entity-page-container">
 
-  <div class="col-md-8 col-sm-8">
+    <div class="col-md-8 col-sm-8">
 
-    <%= render partial: 'summary', locals: { entity: @entity } %>
-    <%= entity_tabs(@entity, @active_tab.to_s) %>
-    <%= render partial:  @active_tab.to_s %>
+      <%= render partial: 'summary', locals: { entity: @entity } %>
+      <%= entity_tabs(@entity, @active_tab.to_s) %>
+      <%= render partial:  @active_tab.to_s %>
+    </div>
+
+    <div class="col-md-4 col-sm-4 hidden-xs">
+      <% cache_unless user_signed_in?, ['relationship_page_sidebar',  @entity.cache_key_with_version], expires_in: 1.day do %>
+        <%= render partial: 'sidebar' %>
+      <% end  %>
+    </div>
   </div>
-
-  <div class="col-md-4 col-sm-4 hidden-xs">
-    <% cache_unless user_signed_in?, ['relationship_page_sidebar',  @entity.cache_key_with_version], expires_in: 1.day do %>
-      <%= render partial: 'sidebar' %>
-    <% end  %>
-  </div>
-
 </div>
