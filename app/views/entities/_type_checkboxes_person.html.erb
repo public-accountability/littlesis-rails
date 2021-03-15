@@ -1,9 +1,9 @@
 <div class="row bottom-1em">
-    <div class="col-sm-3">
-	<a class="collapsed entity-type-toggle" role="button" data-toggle="collapse" href="#person-entity-types" aria-expanded="false" aria-controls="person-entity-types">
-	    <strong>Types:</strong><span>  <span class="glyphicon glyphicon-collapse-down" aria-hidden="true" id="type-collapse-icon"></span>
-	</a>
-    </div>
+  <div class="col-sm-3">
+    <a class="collapsed entity-type-toggle" role="button" data-toggle="collapse" href="#person-entity-types" data-action="entity-edit#toggleTypesIcon" aria-expanded="false" aria-controls="person-entity-types">
+      <strong>Types:</strong><span>  <span class="glyphicon glyphicon-collapse-down" aria-hidden="true" id="type-collapse-icon"></span>
+    </a>
+  </div>
 </div>
 
 <div id="entity-types">
@@ -15,20 +15,3 @@
 </div>
 
 <%= f.hidden_field(:extension_def_ids, value: @entity.extension_ids_without_primary_stringified) %>
-
-<script>
- $(function(){
-
-   // toggle icon //
-   $('#person-entity-types').on('shown.bs.collapse', function () {
-     $('#type-collapse-icon').removeClass('glyphicon-expand');
-     $('#type-collapse-icon').addClass('glyphicon-collapse-down');
-   })
-
-   $('#person-entity-types').on('hidden.bs.collapse', function () {
-     $('#type-collapse-icon').removeClass('glyphicon-collapse-down');
-     $('#type-collapse-icon').addClass('glyphicon-expand');
-   })
-
- });
-</script>

@@ -27,14 +27,12 @@ import datatable from 'datatables.net'
 import typeahead from 'typeahead.js'
 import mustache from 'mustache'
 
-import RelationshipCreationFlow from './components/relationship_creation_flow'
 import NyDonationsMatcher from './components/ny_donations_matcher'
 import nysSearch from './components/nys_search'
 import EntityMatcher from './components/entity_matcher'
 import RelationshipBulkAdder from './components/relationship_bulk_adder'
 import DonationMatcher from './components/donation_matcher'
 import RelationshipsDatatable from './components/relationships_datatable'
-import EntityPage from './components/entity_page'
 
 jquery.typeahead = typeahead
 window.$ = jquery
@@ -49,14 +47,12 @@ if (!window.LittleSis) {
 }
 
 window.LittleSis.http = http
-window.LittleSis.RelationshipCreationFlow = RelationshipCreationFlow
 window.LittleSis.NyDonationsMatcher = NyDonationsMatcher
 window.LittleSis.nysSearch = nysSearch
 window.LittleSis.EntityMatcher = EntityMatcher
 window.LittleSis.RelationshipBulkAdder = RelationshipBulkAdder
 window.LittleSis.DonationMatcher = DonationMatcher
 window.LittleSis.RelationshipsDatatable = RelationshipsDatatable
-window.LittleSis.EntityPage = EntityPage
 
 import "controllers"
 Rails.start()

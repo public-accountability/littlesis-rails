@@ -10,7 +10,7 @@
 </div>
 
 <div class="row mt-2">
-  <div class="col-sm-11 col-md-8 col-lg-6">
+  <div class="col-sm-11 col-md-8 col-lg-6" data-controller="relationship-creator">
     <h2 class="rel-search"
         style="cursor: default"
         title="Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below."
@@ -118,10 +118,3 @@
   </div>
 
 </div> <!-- end of add-relationship-row  -->
-
-<script>
-  $(document).ready(function(){
-    let flow = new LittleSis.RelationshipCreationFlow();
-    flow.init();
-  })
-</script>

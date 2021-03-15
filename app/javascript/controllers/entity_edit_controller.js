@@ -15,4 +15,9 @@ export default class extends Controller {
       .toArray()
       .join(',')
   }
+
+  toggleTypesIcon() {
+    $('#type-collapse-icon').toggleClass('glyphicon-expand')
+    $('#type-collapse-icon').toggleClass('glyphicon-collapse-down')
+  }
 }
