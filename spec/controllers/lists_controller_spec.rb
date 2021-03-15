@@ -70,52 +70,6 @@ describe ListsController, type: :controller do
     end
   end
 
-  describe 'get editable lists' do
-    let(:list_owner) { create_basic_user }
-    let!(:restricted_user) { create_restricted_user }
-    let!(:permitted_lister) { create_basic_user }
-    let!(:private_list) { create(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
-    let!(:public_list) { create(:list, access: Permissions::ACCESS_OPEN) }
-    let!(:closed_list) { create(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
-
-    context 'with a logged in list owner' do
-      before do
-        sign_in(list_owner)
-        get :index, params: { editable: true }
-      end
-
-      it 'includes all editable lists' do
-        expect(assigns(:lists)).to include(private_list, public_list, closed_list)
-      end
-    end
-
-    context 'with a lister other than the private list owner' do
-      before do
-        sign_in(permitted_lister)
-        get :index, params: { editable: true }
-      end
-
-      it "does not include other people's private lists or closed lists" do
-        expect(assigns(:lists)).not_to include(private_list, closed_list)
-      end
-
-      it "includes public lists" do
-        expect(assigns(:lists)).to include(public_list)
-      end
-    end
-
-    context 'with no list permissions' do
-      before do
-        sign_in(restricted_user)
-        get :index, params: { editable: true }
-      end
-
-      it "returns no lists" do
-        expect(assigns(:lists)).to be_empty
-      end
-    end
-  end
-
   describe 'POST create with restricted user' do
     login_restricted_user
 

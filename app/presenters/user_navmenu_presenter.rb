@@ -9,10 +9,10 @@ class UserNavmenuPresenter
     ['Login', '/login'],
     ['Sign Up', '/join'],
     [
-      'Explore', [['Maps', '/maps'],
-                  ['Lists', '/lists'],
-                  ['Tags', '/tags'],
-                  ['Edits', '/edits']]
+      'Explore', [['Maps', Rails.application.routes.url_helpers.featured_maps_path],
+                  ['Lists', Rails.application.routes.url_helpers.lists_path(featured: true)],
+                  ['Tags', Rails.application.routes.url_helpers.tags_path],
+                  ['Edits', Rails.application.routes.url_helpers.edits_path]]
     ],
     [
       'Help', [['Toolkit', '/toolkit'],

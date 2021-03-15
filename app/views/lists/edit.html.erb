@@ -61,7 +61,9 @@
   <%= render 'settings',  f: f %>
   
   <%= render 'settings_admin', f: f %>
-  
+
+  <%= hidden_field_tag :redirect_to, members_list_path(@list) %>
+
   <div class="row top-1em bottom-1em">
     <div class="col-sm-8 col-md-6">
       <%= f.submit "Save", class: "btn btn-primary" %>

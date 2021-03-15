@@ -23,12 +23,12 @@ module NetworkMapsHelper
   def network_map_feature_btn(map)
     return tag.span(class: 'glyphicon glyphicon-lock ') if map.is_private
 
-    icon_class = map.is_featured ? 'featured-map-star' : 'not-featured-map-star'
+    icon_class = map.is_featured ? 'star' : 'not-star'
     button_title = map.is_featured ? 'unfeature this map' : 'feature this map'
 
     form_tag(feature_map_path(map), id: "feature-map-form-#{map.id}", class: 'd-inline') do
       hidden_field_tag('map[feature_action]', (map.is_featured ? 'REMOVE' : 'ADD')) +
-        button_tag(type: 'submit', class: 'featured-map-star-button', title: button_title) { content_tag :span, nil, class: icon_class }
+        button_tag(type: 'submit', class: 'star-button', title: button_title) { content_tag :span, nil, class: icon_class }
     end
   end
 end

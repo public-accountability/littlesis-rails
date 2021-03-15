@@ -67,4 +67,16 @@ module ListsHelper
       return maybe_nil
     end
   end
+
+  def list_page_title
+    return 'Featured Lists' if featured_lists
+    return "Lists featuring #{@entity.name}" if @entity
+    return 'Your lists' if controller.controller_name == 'home'
+
+    'All Lists'
+  end
+
+  def featured_lists
+    @featured_lists ||= ActiveModel::Type::Boolean.new.cast(params[:featured])
+  end
 end

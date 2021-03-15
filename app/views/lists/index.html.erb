@@ -1,4 +1,4 @@
-<h1>Lists</h1>
+<%= render partial: 'index_header' %>
 
 <div class="alert alert-info">
   Lists are collections of people and/or organizations that don't belong to a formal group. Many of them were originally compiled by media organizations, frequently in order to rank people by power, wealth, or influence.
@@ -31,6 +31,7 @@
       <th>Entities</th>
       <th>Description</th>
       <th><%= link_to 'Created', {sort_by: :created_at, order: (params[:order] == 'desc' ? 'asc' : 'desc')}, class: "created_at sorting" %></th>
+      <th colspan='2'/>
     </tr>
   </thead>
 
@@ -45,6 +46,18 @@
           <td><%= list.description %></td>
         <% end %>
         <td class="created"><%= l list.created_at %></td>
+        <% if current_user&.admin? %>
+          <td>
+            <%= button_to list_path(list), method: :patch, params: {list: {id: list.id, is_featured: !list.is_featured}}, class: 'star-button' do %>
+              <span class="<%= list.is_featured ? 'star' : 'not-star' %>">
+            <% end %>
+          </td>
+          <td>
+            <%= button_to list_path(list), method: :delete, params: {id: list.id}, class: 'delete-button', title: 'Permanently delete this list', data: { confirm: "Are you sure?" } do %>
+              <span/>
+            <% end %>
+          </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

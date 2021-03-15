@@ -814,6 +814,10 @@ class Entity < ApplicationRecord
       .join(' | ')
   end
 
+  def featured_lists
+    lists.where(is_featured: true)
+  end
+
   private
 
   # Callbacks for Soft Delete

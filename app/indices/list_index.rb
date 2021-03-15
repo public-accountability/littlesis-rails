@@ -3,6 +3,7 @@ ThinkingSphinx::Index.define :list, :with => :active_record, :delta => ThinkingS
   indexes description
   indexes short_description
 
+  has is_featured, type: :boolean
   has is_deleted, facet: true
   has is_admin, facet: true
   has access, facet: true
