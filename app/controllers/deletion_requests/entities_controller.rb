@@ -24,9 +24,7 @@ module DeletionRequests
     end
 
     def set_entity
-      @entity =
-        @deletion_request&.entity ||
-        Entity.find(params.require(:entity_id).to_i)
+      @entity = @deletion_request&.entity || Entity.find(params.require(:entity_id))
     end
   end
 end

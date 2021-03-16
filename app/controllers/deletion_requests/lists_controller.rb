@@ -25,9 +25,7 @@ module DeletionRequests
     end
 
     def set_list
-      @list =
-        @deletion_request&.list ||
-        List.find(params.require(:list_id))
+      @list = @deletion_request&.list || List.unscoped.find(params.require(:list_id))
     end
   end
 end
