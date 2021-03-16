@@ -4069,7 +4069,7 @@ CREATE TABLE public.versions (
     item_type character varying(255) NOT NULL,
     item_id bigint NOT NULL,
     event character varying(255) NOT NULL,
-    whodunnit character varying(255),
+    whodunnit character varying(255) DEFAULT '1'::character varying,
     object text,
     created_at timestamp without time zone,
     object_changes text,
@@ -8265,6 +8265,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210223163501'),
 ('20210225152357'),
 ('20210225161127'),
-('20210310150352');
+('20210310150352'),
+('20210310195644'),
+('20210316155331');
 
 
