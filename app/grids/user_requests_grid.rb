@@ -24,11 +24,11 @@ class UserRequestsGrid < BaseGrid
     when 'MergeRequest'
       link_to request.source.name, merge_path(mode: 'review', request: request.id)
     when 'DeletionRequest'
-      link_to (request.entity&.name || 'Entity'), review_deletion_requests_entity_path(request)
+      link_to(request.entity&.name || 'Entity', review_deletion_requests_entity_path(request))
     when 'ListDeletionRequest'
-      link_to (request.list&.name || 'List'), review_deletion_requests_list_path(request)
+      link_to(request.list&.name || 'List', review_deletion_requests_list_path(request))
     when 'ImageDeletionRequest'
-      link_to "Image #{request.image.id}", deletion_requests_image_url(request.id)
+      link_to "Image #{request.image&.id}", review_deletion_requests_image_path(request)
     when 'UserFlag'
       link_to 'Flag', request.page
     end
