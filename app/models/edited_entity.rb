@@ -44,7 +44,9 @@ class EditedEntity < ApplicationRecord
   def self.create_from_version(version)
     return unless version.entity_edit?
 
-    base_attributes = { user_id: version.whodunnit&.to_i,
+    user_id = version.whodunnit&.to_i || User.system_user.id
+
+    base_attributes = { user_id: user_id,
                         version_id: version.id,
                         created_at: version.created_at }
 
@@ -56,11 +58,6 @@ class EditedEntity < ApplicationRecord
   end
 
   def self.populate_table
-    # PaperTrail::Version.order(id: :asc).find_each do |version|
-    #   create_from_version(version)
-    # end
-    # Utility.execute_sql_file Rails.root.join('lib/sql/populate_edited_entities.sql')
-
     ApplicationRecord.connection.execute <<~SQL
       INSERT INTO edited_entities (user_id, version_id, entity_id, created_at)
       (SELECT whodunnit::integer, id, entity1_id, created_at FROM versions WHERE entity1_id IS NOT NULL);
@@ -68,6 +65,5 @@ class EditedEntity < ApplicationRecord
       INSERT INTO edited_entities (user_id, version_id, entity_id, created_at)
       (SELECT whodunnit::integer, id, entity2_id, created_at FROM versions WHERE entity2_id IS NOT NULL AND entity2_id != entity1_id);
    SQL
-
   end
 end
