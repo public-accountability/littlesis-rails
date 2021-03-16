@@ -16,6 +16,8 @@ class MergeRequest < UserRequest
              foreign_key: 'dest_id'
 
   def approve!
-    source.merge_with(dest)
+    PaperTrail.request(whodunnit: User.system_user.id.to_s) do
+      source.merge_with(dest)
+    end
   end
 end
