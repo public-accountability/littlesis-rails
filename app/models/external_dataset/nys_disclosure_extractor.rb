@@ -79,6 +79,9 @@ module ExternalDataset
           CSV.foreach(csv_filepath) do |row|
             trans_number = row[13]
 
+            row[39] = row[39].delete(',')[0] if row[39].is_a?(String) && row[39].length > 1
+            row[40] = row[40].delete(',')[0] if row[40].is_a?(String) && row[40].length > 1
+
             if seen_trans_numbers.include?(trans_number)
               Rails.logger.warn "skipping duplicate nys_disclosure row with trans number #{trans_number}"
               skipped_rows += 0
