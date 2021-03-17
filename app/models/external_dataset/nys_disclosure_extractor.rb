@@ -89,7 +89,7 @@ module ExternalDataset
           end
         end
       end
-      Rails.looger.warn "Skipped #{skipped_rows} nys disclosure rows"
+      Rails.logger.warn "Skipped #{skipped_rows} nys disclosure rows"
     end
   end
 end

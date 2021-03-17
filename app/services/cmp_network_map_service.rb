@@ -13,6 +13,7 @@ module CmpNetworkMapService
     User
       .find(CMP_USER_ID)
       .network_maps
+      .where(is_private: false)
       .order(Arel.sql('RANDOM()'))
       .limit(LIMIT)
       .to_a
