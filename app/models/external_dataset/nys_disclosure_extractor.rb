@@ -29,7 +29,6 @@
 # 27 flng_ent_middle_name
 # 28 flng_ent_last_name
 # 29 flng_ent_add1
-# There appears to be an extra, blank field here
 # 30 flng_ent_city
 # 31 flng_ent_state
 # 32 flng_ent_zip
@@ -72,13 +71,28 @@ module ExternalDataset
         system "csvclean #{output_csv}", exception: true, chdir: ROOT_DIR.join('csv/nys').to_s
       end
 
+      seen_trans_numbers = Set.new
+      skipped_rows = 0
+
       CSV.open(ROOT_DIR.join('csv/nys/nys_disclosures.csv'), 'w') do |destination|
         FILES.map(&:second).map(&TO_CSV_PATH).each do |csv_filepath|
           CSV.foreach(csv_filepath) do |row|
-            destination.add_row row[0..28] + row[30..]
+            trans_number = row[13]
+
+            row[39] = row[39].delete(',')[0] if row[39].is_a?(String) && row[39].length > 1
+            row[40] = row[40].delete(',')[0] if row[40].is_a?(String) && row[40].length > 1
+
+            if seen_trans_numbers.include?(trans_number)
+              Rails.logger.warn "skipping duplicate nys_disclosure row with trans number #{trans_number}"
+              skipped_rows += 0
+            else
+              seen_trans_numbers << trans_number
+              destination.add_row(row)
+            end
           end
         end
       end
+      Rails.logger.warn "Skipped #{skipped_rows} nys disclosure rows"
     end
   end
 end
