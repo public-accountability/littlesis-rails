@@ -2,7 +2,7 @@
 
 class UserRequestsGrid < BaseGrid
   scope do
-    UserRequest.where(status: 'pending').order(created_at: :desc)
+    UserRequest.where(status: 'pending').where("type != 'UserFlag'").order(created_at: :desc)
   end
 
   column(:type, order: false) do |request|
