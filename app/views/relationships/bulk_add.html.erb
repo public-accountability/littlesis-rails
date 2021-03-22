@@ -2,110 +2,105 @@
 
 <%= render partial: 'shared/entity_info', locals: { entity: @entity } %>
 
-<div id="spin-me-round-like-a-record" style="display: none;" >
+<div data-controller="relationship-bulk-adder" data-relationship-bulk-adder-user-is-bulker-value="<%= raw current_user.bulker? %>">
+  <div id="spin-me-round-like-a-record" style="display: none;" >
     <div class="row">
-	<h4>Processing</h4>
-	<div class="sk-circle">
-	    <div class="sk-circle1 sk-child"></div>
-	    <div class="sk-circle2 sk-child"></div>
-	    <div class="sk-circle3 sk-child"></div>
-	    <div class="sk-circle4 sk-child"></div>
-	    <div class="sk-circle5 sk-child"></div>
-	    <div class="sk-circle6 sk-child"></div>
-	    <div class="sk-circle7 sk-child"></div>
-	    <div class="sk-circle8 sk-child"></div>
-	    <div class="sk-circle9 sk-child"></div>
-	    <div class="sk-circle10 sk-child"></div>
-	    <div class="sk-circle11 sk-child"></div>
-	    <div class="sk-circle12 sk-child"></div>
-	</div>
+      <h4>Processing</h4>
+      <div class="sk-circle">
+        <div class="sk-circle1 sk-child"></div>
+        <div class="sk-circle2 sk-child"></div>
+        <div class="sk-circle3 sk-child"></div>
+        <div class="sk-circle4 sk-child"></div>
+        <div class="sk-circle5 sk-child"></div>
+        <div class="sk-circle6 sk-child"></div>
+        <div class="sk-circle7 sk-child"></div>
+        <div class="sk-circle8 sk-child"></div>
+        <div class="sk-circle9 sk-child"></div>
+        <div class="sk-circle10 sk-child"></div>
+        <div class="sk-circle11 sk-child"></div>
+        <div class="sk-circle12 sk-child"></div>
+      </div>
     </div>
-</div>
+  </div>
 
-<div class="row mt-3">
+  <div class="row mt-3">
     <div class="col-sm-8 col-sm-offset-2" id="alert-container">
     </div>
-</div>
+  </div>
 
-<div class="row result-mode" id="results">
+  <div class="row result-mode" id="results">
 
-</div>
+  </div>
 
-<div class="row create-mode mt-3">
+  <div class="row create-mode mt-3">
     <div class="col-sm-3">
-	<span><em>Relationship Category</em></span>
-	<%= relationship_select_builder @entity %>
+      <span><em>Relationship Category</em></span>
+      <%= relationship_select_builder @entity %>
     </div>
     <div class="col-sm-4 col-sm-offset-1">
-	<div class="form-group">
-	    <span><em>Source Url*</em></span><br />
-	    <input type="url" id="reference-url" name="referenceUrl" required>
-	</div>
+      <div class="form-group">
+        <span><em>Source Url*</em></span><br />
+        <input type="url" id="reference-url" name="referenceUrl" required>
+      </div>
 
     </div>
     <div class="col-sm-4">
-	<div class="form-group">
-	    <span><em>Source Name*</em></span><br />
-	    <input type="text" id="reference-name" name="referenceName">
-	</div>
+      <div class="form-group">
+        <span><em>Source Name*</em></span><br />
+        <input type="text" id="reference-name" name="referenceName">
+      </div>
     </div>
-</div>
+  </div>
 
-<div class="row create-mode no-gutters">
+  <div class="row create-mode no-gutters">
     <div id="table" class="table-editable">
-	<table class="table table-bordered">
-	</table>
+      <table class="table table-bordered">
+      </table>
     </div>
-</div>
+  </div>
 
-<div class="row create-mode">
+  <div class="row create-mode">
     <div class="col-sm-3 col-sm-offset-2 col-md-2 col-md-offset-6">
-	<div id="notes-mode-toggle" class="btn-group btn-toggle">
-	    <button class="btn btn-sm">ON</button>
-	    <button class="btn btn-sm btn-primary active">OFF</button>
-	</div>
-	<h5>Enable Notes</h5>
+      <div id="notes-mode-toggle" class="btn-group btn-toggle">
+        <button class="btn btn-sm">ON</button>
+        <button class="btn btn-sm btn-primary active">OFF</button>
+      </div>
+      <h5>Enable Notes</h5>
     </div>
 
     <div class="col-sm-3 col-md-2">
-	<div id="autocomplete-toggle" class="btn-group btn-toggle">
-	    <button class="btn btn-sm btn-primary active">ON</button>
-	    <button class="btn btn-sm">OFF</button>
-	</div>
-	<h5>Autocomplete mode</h5>
+      <div id="autocomplete-toggle" class="btn-group btn-toggle">
+        <button class="btn btn-sm btn-primary active">ON</button>
+        <button class="btn btn-sm">OFF</button>
+      </div>
+      <h5>Autocomplete mode</h5>
     </div>
     <div class="col-sm-2 col-md-2">
-	<button id="upload-btn" class="btn red-button hidden create-mode">Upload Data</button>
+      <button id="upload-btn" class="btn red-button hidden create-mode">Upload Data</button>
     </div>
 
-</div>
+  </div>
 
 
-<p id="export"></p>
+  <p id="export"></p>
 
-<script type="text/template" id="entityMatchTable">
- <div id="match-results-table-container">
+  <script type="text/template" id="entityMatchTable">
+    <div id="match-results-table-container">
     <table class="table table-hover table-condensed" id="match-results-table">
-	<thead>
-	    <tr>
-		<th>Name</th>
-		<th>Blurb</th>
-		<th>View</th>
-	    </tr>
-	</thead>
-	<tbody>
-	</tbody>
+  <thead>
+      <tr>
+    <th>Name</th>
+    <th>Blurb</th>
+    <th>View</th>
+      </tr>
+  </thead>
+  <tbody>
+  </tbody>
     </table>
  </div>
-</script>
+  </script>
 
-
-<script>
- $(document).ready(function(){
-   LittleSis.RelationshipBulkAdder().init(<%= raw current_user.bulker? %>);
- });
-</script>
-
-<template class="currency-selector">
-  <%= select_tag(:currency, options_for_select(options_for_currency_select), { include_blank: true, class: 'selectpicker' }) %>
-</template>
+  <template class="currency-selector">
+    <%= select_tag(:currency, options_for_select(options_for_currency_select), { include_blank: true, class: 'selectpicker' }) %>
+  </template>
+</div>

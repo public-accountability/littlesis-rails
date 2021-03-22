@@ -30,7 +30,6 @@ import mustache from 'mustache'
 import NyDonationsMatcher from './components/ny_donations_matcher'
 import nysSearch from './components/nys_search'
 import EntityMatcher from './components/entity_matcher'
-import RelationshipBulkAdder from './components/relationship_bulk_adder'
 import DonationMatcher from './components/donation_matcher'
 import RelationshipsDatatable from './components/relationships_datatable'
 
@@ -50,7 +49,6 @@ window.LittleSis.http = http
 window.LittleSis.NyDonationsMatcher = NyDonationsMatcher
 window.LittleSis.nysSearch = nysSearch
 window.LittleSis.EntityMatcher = EntityMatcher
-window.LittleSis.RelationshipBulkAdder = RelationshipBulkAdder
 window.LittleSis.DonationMatcher = DonationMatcher
 window.LittleSis.RelationshipsDatatable = RelationshipsDatatable
 
