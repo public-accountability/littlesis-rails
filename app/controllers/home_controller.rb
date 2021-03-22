@@ -44,7 +44,6 @@ class HomeController < ApplicationController
 
   def index
     redirect_to_dashboard_if_signed_in unless request.env['PATH_INFO'] == '/home'
-    @newsletter_thankyou = params[:nlty].present?
     @dots_connected = dots_connected
     @carousel_entities = carousel_entities
     @stats = ExtensionRecord.data_summary
@@ -69,7 +68,8 @@ class HomeController < ApplicationController
 
     NewsletterSignupJob.perform_later(form.email, 'newsletter') if form.valid?
 
-    redirect_to root_path(nlty: 'yes')
+    flash.notice = "Thank you! You've been added to our newsletter."
+    redirect_to root_path
   end
 
   # Signup an email address to the PAI newsletter
