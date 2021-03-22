@@ -193,21 +193,6 @@ class EntitiesController < ApplicationController
   def review_ny_donations
   end
 
-  def fields
-    @fields = JSON.dump(Field.all.map { |f| { value: f.name, tokens: f.display_name.split(/\s+/) } });
-  end
-
-  def update_fields
-    if params[:names].nil? and params[:values].nil?
-      fields = {}
-    else
-      fields = Hash[params[:names].zip(params[:values])]
-    end
-    @entity.update_fields(fields)
-    Field.delete_unused
-    redirect_to concretize_fields_entity_path(@entity)
-  end
-
   ##
   # images
   #
