@@ -1,48 +1,18 @@
-<%# Requires presence of two instance vars: @similar_entities, @source%>
+<%= content_tag(
+  :table,
+  data: {
+    controller: "entity-merge",
+    entity_merge_target: "table",
+    entity_merge_possible_merges_value: @similar_entities.to_json,
+    entity_merge_path_value: merge_path(mode: current_user.admin? ? "execute" : "request", source: @source.id)
+  },
+  id: "merge-entity-table",
+  class: "display",
+  width: "100%"
+  ) do %>
 
-<% mode = current_user.admin? ? 'execute' : 'request' %>
+  <template data-entity-merge-target="mergeButton">
+    <a href="{{path}}" class="btn btn-secondary">merge</a>
+  </template>
 
-<table id="merge-entity-table" class="display" width="100%"></table>
-
-<script>
-
- var potentialDestinationEntities = <%= raw @similar_entities.to_json %>
-
- <%#
- # See here: https://datatables.net/reference/option/columns.render
- # for the docs ths on col.render
- %>
-
- var renderName = function(data, type, row, meta) {
-   return $('<a>', { href: row.slug, text: row.name, target: '_blank' }).prop('outerHTML');
- }
-
- var selectLink = function(id) {
-  var params = { mode: '<%= mode %>', source: <%= @source.id %>, dest: id };
-  return "/merge?" + $.param(params);
- }
-
- var selectButton = function(data, type, row, meta) {
-   return $('<a>', {
-     "href": selectLink(data),
-     "text": 'merge',
-     "class": 'btn btn-secondary'
-   }).prop('outerHTML');
- }
-
- $(document).ready(function() {
-   $('#merge-entity-table').DataTable( {
-     searching: false,
-     lengthChange: false,
-     pageLength: 15,
-     order: [],
-     data: potentialDestinationEntities,
-     columns: [
-       { title: "Name", render: renderName },
-       { title: "Description" , data: 'blurb', orderable: false },
-       { title: "Types", data: 'types', orderable: false },
-       { title: "Select", data: 'id', orderable: false, render: selectButton }
-     ]
-   } );
- });
-</script>
+<% end %>
