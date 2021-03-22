@@ -8,60 +8,41 @@
   <div class="row">
     <div class="<%= col_class %>">
       <h2 class="pull-left">Users active <%= time_display %>:
-	<strong><%= active_users.total_count %></strong>
+        <strong><%= active_users.total_count %></strong>
       </h2>
 
       <div id="time-selectpicker-wrapper">
-	<select class="selectpicker" id="time-selectpicker">
-	  <% UserEdits::ACTIVE_USERS_TIME_OPTIONS.keys.each do |opt| %>
-	    <option <%= (opt == @time) ? 'selected' : '' %>>
-	      <%= opt.tr('_', ' ').capitalize %>
-	    </option>
-	  <% end  %>
-	</select>
-
+        <form data-controller="navigation-form" data-navigation-form-target="form">
+          <%= select_tag "time", options_from_collection_for_select(UserEdits::ACTIVE_USERS_TIME_OPTIONS.map {|o| [o.first, o.first.humanize] }, :first, :last, @time), data: {action: "change->navigation-form#submit"}, class: "selectpicker", id: "time-selectpicker" %>
+          <input type="submit" value="view" data-navigation-form-target="hideableSubmit"/>
+        </form>
       </div>
     </div>
 
     <div class="<%= col_class %>">
       <table id="active-users-table" class="table">
-	<thead>
-	  <tr>
-	    <th>User</th>
-	    <th>Total Edits</th>
-	    <th>Entities Created</th>
-	    <th>Relationships Created</th>
-	  </tr>
-	</thead>
-	<tbody>
-	  <% active_users.each do |active_user| %>
-	    <tr>
-	      <td><%= link_to active_user.username, "/users/#{active_user.username}/edits" %></td>
-	      <td><%= number_with_delimiter active_user['edits']  %></td>
-	      <td><%= number_with_delimiter active_user['entity_create_count'] %></td>
-	      <td><%= number_with_delimiter active_user['relationship_create_count'] %></td>
-	    </tr>
-	  <% end %>
-	</tbody>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Total Edits</th>
+            <th>Entities Created</th>
+            <th>Relationships Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% active_users.each do |active_user| %>
+            <tr>
+              <td><%= link_to active_user.username, "/users/#{active_user.username}/edits" %></td>
+              <td><%= number_with_delimiter active_user['edits']  %></td>
+              <td><%= number_with_delimiter active_user['entity_create_count'] %></td>
+              <td><%= number_with_delimiter active_user['relationship_create_count'] %></td>
+            </tr>
+          <% end %>
+        </tbody>
       </table>
 
       <%= paginate active_users %>
 
     </div> <!-- end col -->
   </div> <!-- end row -->
-
-  <script>
-   $(function(){
-
-     $("#time-selectpicker").on('changed.bs.select', function (e) {
-       var time = $(this).val().replace(' ', '_').toLowerCase();
-       var params = Object.assign({}, utility.currentUrlParams(), { "time": time })
-       var url = window.location.origin + window.location.pathname + '?' + $.param(params);
-       window.location.assign(url);
-     });
-
-
-   });
-  </script>
-
 <% end %>
