@@ -1191,38 +1191,6 @@ CREATE TABLE public.entity (
 
 
 --
--- Name: entity_fields; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.entity_fields (
-    id bigint NOT NULL,
-    entity_id bigint,
-    field_id bigint,
-    value text NOT NULL,
-    is_admin boolean DEFAULT false
-);
-
-
---
--- Name: entity_fields_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.entity_fields_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: entity_fields_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.entity_fields_id_seq OWNED BY public.entity_fields.id;
-
-
---
 -- Name: entity_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1721,37 +1689,6 @@ CREATE SEQUENCE public.family_id_seq
 --
 
 ALTER SEQUENCE public.family_id_seq OWNED BY public.family.id;
-
-
---
--- Name: fields; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.fields (
-    id bigint NOT NULL,
-    name character varying(255) NOT NULL,
-    display_name character varying(255) NOT NULL,
-    type character varying(255) DEFAULT 'string'::character varying NOT NULL
-);
-
-
---
--- Name: fields_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.fields_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: fields_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.fields_id_seq OWNED BY public.fields.id;
 
 
 --
@@ -4356,13 +4293,6 @@ ALTER TABLE ONLY public.entity ALTER COLUMN id SET DEFAULT nextval('public.entit
 
 
 --
--- Name: entity_fields id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.entity_fields ALTER COLUMN id SET DEFAULT nextval('public.entity_fields_id_seq'::regclass);
-
-
---
 -- Name: extension_definition id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4430,13 +4360,6 @@ ALTER TABLE ONLY public.external_relationships ALTER COLUMN id SET DEFAULT nextv
 --
 
 ALTER TABLE ONLY public.family ALTER COLUMN id SET DEFAULT nextval('public.family_id_seq'::regclass);
-
-
---
--- Name: fields id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.fields ALTER COLUMN id SET DEFAULT nextval('public.fields_id_seq'::regclass);
 
 
 --
@@ -5174,14 +5097,6 @@ ALTER TABLE ONLY public.email
 
 
 --
--- Name: entity_fields entity_fields_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.entity_fields
-    ADD CONSTRAINT entity_fields_pkey PRIMARY KEY (id);
-
-
---
 -- Name: entity entity_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5267,14 +5182,6 @@ ALTER TABLE ONLY public.external_relationships
 
 ALTER TABLE ONLY public.family
     ADD CONSTRAINT family_pkey PRIMARY KEY (id);
-
-
---
--- Name: fields fields_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.fields
-    ADD CONSTRAINT fields_pkey PRIMARY KEY (id);
 
 
 --
@@ -6248,13 +6155,6 @@ CREATE INDEX idx_16668_website_idx ON public.entity USING btree (website);
 
 
 --
--- Name: idx_16686_index_entity_fields_on_entity_id_and_field_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX idx_16686_index_entity_fields_on_entity_id_and_field_id ON public.entity_fields USING btree (entity_id, field_id);
-
-
---
 -- Name: idx_16691_example_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6343,13 +6243,6 @@ CREATE UNIQUE INDEX idx_16722_index_external_links_on_link_type_and_link_id ON p
 --
 
 CREATE INDEX idx_16728_relationship_id_idx ON public.family USING btree (relationship_id);
-
-
---
--- Name: idx_16734_index_fields_on_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX idx_16734_index_fields_on_name ON public.fields USING btree (name);
 
 
 --
@@ -8267,6 +8160,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210225161127'),
 ('20210310150352'),
 ('20210310195644'),
-('20210316155331');
+('20210316155331'),
+('20210322112057');
 
 
