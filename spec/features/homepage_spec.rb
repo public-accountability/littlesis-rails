@@ -32,14 +32,11 @@ describe 'Homepage' do
 
     scenario 'signing up for the newsletter' do
       expect(page.status_code).to eq 200
-      expect(page).not_to have_selector '#newsletter-thankyou'
 
       fill_in 'newsletter-signup-form-email', with: email
       click_button 'Join!'
 
-      expect(page).to have_css('#newsletter-thankyou',
-                               text: "Thank you! You've been added to our newsletter.")
-      expect(page).not_to have_css('#newsletter-signup-form')
+      expect(page).to show_success "Thank you! You've been added to our newsletter."
 
       expect(signup_job).to have_received(:perform_later).with(email, 'newsletter').once
     end
@@ -48,7 +45,6 @@ describe 'Homepage' do
       fill_in 'newsletter-signup-form-email', with: email
       fill_in 'newsletter_signup_form[very_important_wink_wink]', with: "i'm a bot and i don't know any better"
       click_button 'Join!'
-      successfully_visits_page '/?nlty=yes'
 
       expect(signup_job).not_to have_received(:perform_later)
     end
