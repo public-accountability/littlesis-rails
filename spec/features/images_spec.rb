@@ -80,8 +80,6 @@ describe 'Images' do
 
         page_has_selector 'h3', text: 'Crop Image'
         page_has_selector '#image-wrapper > canvas', count: 1
-
-        expect(page.html).to include "return fetch(\"#{crop_ls_image_path(image)}\""
       end
     end
   end

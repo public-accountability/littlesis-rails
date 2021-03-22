@@ -1,5 +1,4 @@
 <style>
-
  #image-wrapper {
      display:inline-block;
      width: <%= @image.image_width_px %>;
@@ -16,114 +15,42 @@
      width: <%= @image.image_width_px %>;
      height: <%= @image.image_height_px %>;
  }
-
 </style>
 
 <h1 class="mb-1"><%= entity_link(@image.entity) %></h1>
 
 <h3>Crop Image</h3>
 
+<%= content_tag :div,
+    data: {
+      controller: "image-cropper",
+      image_cropper_image_info_value: {
+        ratio: @image.image_dimensions.ratio,
+        type: @image.image_dimensions.type
+      },
+      image_cropper_path_value: crop_ls_image_path(@image)
+    },
+    id: "image-wrapper" do %>
+
 <div class="row">
   <div id="image-wrapper">
-    <canvas width="<%= @image.image_dimensions.width %>" height="<%= @image.image_dimensions.height %>" id="image-canvas"></canvas>
+    <%= content_tag(
+      :canvas,
+      data: {
+        image_cropper_target: "canvas",
+        action: "mousedown->image-cropper#startDrawing mousemove->image-cropper#whileDrawing mouseup->image-cropper#endDrawing"
+      },
+      width: @image.image_dimensions.width,
+      height: @image.image_dimensions.height,
+      id: "image-canvas"
+    ) {} %>
   </div>
 </div>
 
 <div class="row mt-4">
   <div class="ml-5">
-    <button id="submit-crop-button" type="button" class="btn btn-outline-primary">Submit</button>
+    <button id="submit-crop-button" type="button" class="btn btn-outline-primary" data-action="click->image-cropper#submit">Submit</button>
   </div>
 </div>
 
-<script>
- window.addEventListener('load', function() {
-   setupCanvasCrop(document.getElementById('image-canvas'));
- });
-
-
- function setupCanvasCrop(canvas) {
-   var ctx = canvas.getContext('2d');
-   var isDrawing = false;
-   var rect = { "startX": null, "startY": null, "w": null, "h": null };
-   var cropData = { "x": null, "y": null, "w": null, "h": null };
-   
-   function getCursorPosition(canvas, event) {
-     var rect = canvas.getBoundingClientRect();
-     var x = event.clientX - rect.left;
-     var y = event.clientY - rect.top;
-     return { "x": x, "y": y };
-   }
-
-   function updateRect(e)  {
-     var position = getCursorPosition(canvas, e);
-     rect.w = (position.x - rect.startX);
-     rect.h = (position.y - rect.startY);
-   }
-
-   function startDrawing(e) {
-     isDrawing = true;
-     var position = getCursorPosition(canvas, e);
-     rect = { "startX": position.x, "startY": position.y, "w": null, "h": null };
-     cropData = { "x": null, "y": null, "w": null, "h": null };
-   }
-
-   function whileDrawing(e) {
-     if (!isDrawing) {
-       return;
-     }
-
-     updateRect(e);
-
-     ctx.clearRect(0,0, canvas.width,canvas.height);
-     ctx.fillStyle = 'green';
-     ctx.fillRect(rect.startX, rect.startY, rect.w, rect.h);
-   }
-
-   function endDrawing(e) {
-     updateRect(e);
-     var position = getCursorPosition(canvas, e);
-
-     // x,y     coordinates of the top left point of the rectancle
-     // w,h     height and width (absolute value)
-     cropData = {
-       "x": Math.min(rect.startX, position.x),
-       "y": Math.min(rect.startY, position.y),
-       "w": Math.abs(rect.w),
-       "h": Math.abs(rect.h)
-     }
-     
-     isDrawing = false;
-   }
-
-   function params() {
-     var imageInfo = <%= raw({ "ratio" => @image.image_dimensions.ratio, "type" => @image.image_dimensions.type }.to_json) %>;
-
-     return { "crop": Object.assign({}, imageInfo, cropData) }
-   }
-
-   function submit() {
-     return fetch("<%= crop_ls_image_path(@image) %>", {
-       method: "POST",
-       cache: "no-cache",
-       credentials: "include",
-       headers: {
-         "Content-Type":  "application/json",
-	 "Accept":        "application/json",
-         "X-CSRF-Token":  document.querySelector("meta[name='csrf-token']").content
-       }, 
-       body: JSON.stringify(params()),
-     })
-       .then(function(res) { return res.json() })
-       .then(function(json) { window.location.replace(json.url) });
-   }
-
-   // Setup DOM:
-   document.getElementById("submit-crop-button").onclick = submit;
-   canvas.onmousedown = startDrawing;
-   canvas.onmousemove = whileDrawing;
-   canvas.onmouseup = endDrawing;
-}
-
-</script>
-
-
+<% end %>
