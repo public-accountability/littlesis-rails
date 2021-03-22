@@ -223,48 +223,6 @@ div.actions-row {
   color: #888;
 }
 
-
-/* fields */
-
-.fields-table {
-  width: 600px;
-
-  td.name {
-    width: 200px;
-    font-size: 16px;
-    line-height: 34px;
-  }
-
-  td.value {
-    width: 400px;
-  }
-
-  td.actions {
-    line-height: 36px;
-
-    .delete-field {
-      color: #ccc;
-      cursor: pointer;
-
-      &:hover {
-        color: #888;
-      }
-    }
-  }
-
-  td.fields-helper {
-    color: #aaa;
-    font-size: 12px;
-    line-height: 30px;
-    font-style: italic;
-
-    em {
-      font-style: normal;
-      font-weight: 500;
-    }
-  }
-}
-
 /* news articles */
 
 .news-article-checkbox {
