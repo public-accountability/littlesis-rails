@@ -5,7 +5,7 @@ FactoryBot.define do
   end
 
   factory :fec_match do
-    sub_id { Faker::Number.unique.number }
+    association :fec_contribution, factory: :fec_contribution
     association :donor, factory: :entity_donor_fec_match
   end
 end

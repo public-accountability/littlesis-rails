@@ -238,6 +238,12 @@ module ExternalDataset
       transaction_amt
     end
 
+    def date
+      if transaction_dt && /^\d{8}$/.match?(transaction_dt)
+        Date.strptime(transaction_dt, '%m%d%Y')
+      end
+    end
+
     def reference_url
       "http://docquery.fec.gov/cgi-bin/fecimg/?#{image_num}"
     end
