@@ -232,8 +232,18 @@ module ExternalDataset
                foreign_key: 'cmte_id',
                primary_key: 'cmte_id'
 
+    has_one :fec_match, foreign_key: 'sub_id', class_name: 'FECMatch', dependent: :restrict_with_exception, inverse_of: :fec_contribution
+
     def amount
       transaction_amt
+    end
+
+    def reference_url
+      "http://docquery.fec.gov/cgi-bin/fecimg/?#{image_num}"
+    end
+
+    def reference_attributes
+      { name: "FEC Contribution #{sub_id}", url: reference_url }
     end
   end
 

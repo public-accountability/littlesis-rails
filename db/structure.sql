@@ -1696,6 +1696,40 @@ ALTER SEQUENCE public.family_id_seq OWNED BY public.family.id;
 
 
 --
+-- Name: fec_matches; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.fec_matches (
+    id bigint NOT NULL,
+    sub_id bigint NOT NULL,
+    donor_id bigint NOT NULL,
+    recipient_id bigint,
+    candidate_id bigint,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: fec_matches_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.fec_matches_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: fec_matches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.fec_matches_id_seq OWNED BY public.fec_matches.id;
+
+
+--
 -- Name: generic; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4336,6 +4370,13 @@ ALTER TABLE ONLY public.family ALTER COLUMN id SET DEFAULT nextval('public.famil
 
 
 --
+-- Name: fec_matches id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.fec_matches ALTER COLUMN id SET DEFAULT nextval('public.fec_matches_id_seq'::regclass);
+
+
+--
 -- Name: generic id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5148,6 +5189,14 @@ ALTER TABLE ONLY public.external_relationships
 
 ALTER TABLE ONLY public.family
     ADD CONSTRAINT family_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: fec_matches fec_matches_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.fec_matches
+    ADD CONSTRAINT fec_matches_pkey PRIMARY KEY (id);
 
 
 --

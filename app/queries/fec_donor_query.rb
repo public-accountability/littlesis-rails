@@ -1,18 +1,12 @@
 # frozen_string_literal: true
 
 module FECDonorQuery
-  # str or entity --> [Donors]
-  def self.run(search_term, matched: false)
-    query = if search_term.is_a?(Entity)
-              LsSearch.generate_search_terms(search_term)
-            else
-              search_term
-            end
+  def self.run(query)
+    search_terms = Array.wrap(query).map(&:upcase)
 
-    ExternalData.search(query, {
-                          indices: ['external_data_fec_donor_core'],
-                          per_page: 1_000,
-                          with: { matched: matched }
-                        })
+    ExternalDataset::FECContribution
+      .left_outer_joins(:fec_match)
+      .where('fec_matches.id is null') # only include unmatched donations
+      .where(name: search_terms)
   end
 end
