@@ -98,6 +98,6 @@ class FECMatch < ApplicationRecord
     { category_id: Relationship::DONATION_CATEGORY,
       entity: donor,
       related: recipient,
-      description: 'Campaign Contribution' }
+      description1: 'Campaign Contribution' }
   end
 end

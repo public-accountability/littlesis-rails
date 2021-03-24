@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :external_data_fec_contribution do
-    dataset { "fec_contribution" }
+  factory :fec_contribution do
+    sub_id { Faker::Number.unique.number }
   end
 end
