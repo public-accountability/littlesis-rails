@@ -17,16 +17,4 @@
   </div>
 <% end %>
 
-<div id="oligrapher">
-</div>
-
-<script>
- var oli;
-
- window.addEventListener('DOMContentLoaded', function() {
-   oli = new Oligrapher(
-     <%= JSON.generate(@configuration).html_safe %>
-   )
- })
-
-</script>
+<div id="oligrapher" data-controller="oligrapher" data-oligrapher-config-value="<%= @configuration.to_json %>"></div>
