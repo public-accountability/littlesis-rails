@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.10.1",
+    "@public-accountability/oligrapher": "https://github.com/public-accountability/oligrapher.git",
     "@public-accountability/simplestore": "^0.1.6",
     "@rails/ujs": "^6.1.1",
     "@rails/webpacker": "^5.1.1",
