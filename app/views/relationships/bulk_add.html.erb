@@ -84,21 +84,21 @@
 
   <p id="export"></p>
 
-  <script type="text/template" id="entityMatchTable">
+  <template id="entityMatchTable">
     <div id="match-results-table-container">
-    <table class="table table-hover table-condensed" id="match-results-table">
-  <thead>
-      <tr>
-    <th>Name</th>
-    <th>Blurb</th>
-    <th>View</th>
-      </tr>
-  </thead>
-  <tbody>
-  </tbody>
-    </table>
- </div>
-  </script>
+      <table class="table table-hover table-condensed" id="match-results-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Blurb</th>
+            <th>View</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </template>
 
   <template class="currency-selector">
     <%= select_tag(:currency, options_for_select(options_for_currency_select), { include_blank: true, class: 'selectpicker' }) %>
