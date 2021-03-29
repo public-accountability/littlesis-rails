@@ -9,11 +9,11 @@ class FECMatch < ApplicationRecord
              inverse_of: :fec_match
 
   # Entity that donated the money
-  belongs_to :donor, foreign_key: 'donor_id', class_name: 'Entity'
+  belongs_to :donor, class_name: 'Entity'
   # Entity of committee that received the recipient
-  belongs_to :recipient, foreign_key: 'recipient_id', class_name: 'Entity'
-  # The associated candidate for the recipient (not all committees will have)
-  belongs_to :candidate, foreign_key: 'candidate_id', class_name: 'Entity', optional: true
+  belongs_to :recipient, class_name: 'Entity'
+  # The associated candidate for the recipient (not all committees will have one)
+  belongs_to :candidate, class_name: 'Entity', optional: true
 
   def committee_relationship
     Relationship.find_by(committee_relationship_attrs)
@@ -100,7 +100,9 @@ class FECMatch < ApplicationRecord
           # is the committees is associated with a candidate?
           if fec_contribution.fec_committee.cand_id.present?
             # is that candidate connected to a LittleSis entity?
-            if (candidate = ExternalLink.fec_candidate.find_by(link_id: fec_contribution.fec_committee.cand_idfec_contribution.fec_committee.cand_id)&.entity)
+            if (candidate = ExternalLink
+                              .fec_candidate
+                              .find_by(link_id: fec_contribution.fec_committee.cand_id)&.entity)
               fec_match.update!(candidate: candidate)
             end
           end
@@ -109,7 +111,6 @@ class FECMatch < ApplicationRecord
         end
 
         stats[:created] += 1
-
       rescue => e
         Rails.logger.warn "OsMatch (#{os_match.id}) Error: #{e.message}"
         stats[:errors] += 1
