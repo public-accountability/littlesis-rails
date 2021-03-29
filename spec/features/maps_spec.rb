@@ -34,18 +34,6 @@ describe 'Maps' do
     end
   end
 
-  describe 'viewing embeded map map with slide' do
-    it 'uses first slide by default' do
-      visit embedded_v2_map_path(regular_map)
-      expect(page.html).to include "var startIndex = 0;"
-    end
-
-    it 'converts slide param 3 to starting index 2' do
-      visit embedded_v2_map_path(regular_map, params: { 'slide' => '3' })
-      expect(page.html).to include "var startIndex = 2;"
-    end
-  end
-
   xdescribe 'Anonyomous users can view embedded regular maps' do
     before { visit map_path(regular_map) }
 

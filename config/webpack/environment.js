@@ -20,4 +20,8 @@ environment.loaders.append('json', {
   type: 'javascript/auto'
 })
 
+environment.config.externals = {
+  oligrapher: 'Oligrapher'
+}
+
 module.exports = environment

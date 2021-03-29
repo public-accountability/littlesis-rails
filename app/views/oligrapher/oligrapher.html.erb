@@ -17,16 +17,11 @@
   </div>
 <% end %>
 
-<div id="oligrapher">
-</div>
-
-<script>
- var oli;
-
- window.addEventListener('DOMContentLoaded', function() {
-   oli = new Oligrapher(
-     <%= JSON.generate(@configuration).html_safe %>
-   )
- })
-
-</script>
+<%= content_tag(
+  :div,
+  id: "oligrapher",
+  data: {
+    controller: "oligrapher",
+    oligrapher_config_value: @configuration.to_json
+  }
+){} %>
