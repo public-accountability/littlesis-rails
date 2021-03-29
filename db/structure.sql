@@ -608,36 +608,6 @@ ALTER SEQUENCE public.business_id_seq OWNED BY public.business.id;
 
 
 --
--- Name: business_industry; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.business_industry (
-    id bigint NOT NULL,
-    business_id bigint NOT NULL,
-    industry_id bigint NOT NULL
-);
-
-
---
--- Name: business_industry_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.business_industry_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: business_industry_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.business_industry_id_seq OWNED BY public.business_industry.id;
-
-
---
 -- Name: business_person; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1858,37 +1828,6 @@ CREATE SEQUENCE public.image_id_seq
 --
 
 ALTER SEQUENCE public.image_id_seq OWNED BY public.image.id;
-
-
---
--- Name: industries; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.industries (
-    id bigint NOT NULL,
-    name character varying(255) NOT NULL,
-    industry_id character varying(255) NOT NULL,
-    sector_name character varying(255) NOT NULL
-);
-
-
---
--- Name: industries_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.industries_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: industries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.industries_id_seq OWNED BY public.industries.id;
 
 
 --
@@ -4167,13 +4106,6 @@ ALTER TABLE ONLY public.business ALTER COLUMN id SET DEFAULT nextval('public.bus
 
 
 --
--- Name: business_industry id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.business_industry ALTER COLUMN id SET DEFAULT nextval('public.business_industry_id_seq'::regclass);
-
-
---
 -- Name: business_person id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4395,13 +4327,6 @@ ALTER TABLE ONLY public.hierarchy ALTER COLUMN id SET DEFAULT nextval('public.hi
 --
 
 ALTER TABLE ONLY public.image ALTER COLUMN id SET DEFAULT nextval('public.image_id_seq'::regclass);
-
-
---
--- Name: industries id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.industries ALTER COLUMN id SET DEFAULT nextval('public.industries_id_seq'::regclass);
 
 
 --
@@ -4953,14 +4878,6 @@ ALTER TABLE ONLY public.articles
 
 
 --
--- Name: business_industry business_industry_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.business_industry
-    ADD CONSTRAINT business_industry_pkey PRIMARY KEY (id);
-
-
---
 -- Name: business_person business_person_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5222,14 +5139,6 @@ ALTER TABLE ONLY public.hierarchy
 
 ALTER TABLE ONLY public.image
     ADD CONSTRAINT image_pkey PRIMARY KEY (id);
-
-
---
--- Name: industries industries_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.industries
-    ADD CONSTRAINT industries_pkey PRIMARY KEY (id);
 
 
 --
@@ -5889,20 +5798,6 @@ CREATE INDEX idx_16522_entity_id_idx ON public.business USING btree (entity_id);
 
 
 --
--- Name: idx_16531_business_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16531_business_id_idx ON public.business_industry USING btree (business_id);
-
-
---
--- Name: idx_16531_industry_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16531_industry_id_idx ON public.business_industry USING btree (industry_id);
-
-
---
 -- Name: idx_16537_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6292,13 +6187,6 @@ CREATE INDEX idx_16774_entity_id_idx ON public.image USING btree (entity_id);
 --
 
 CREATE INDEX idx_16774_index_image_on_address_id ON public.image USING btree (address_id);
-
-
---
--- Name: idx_16789_index_industries_on_industry_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX idx_16789_index_industries_on_industry_id ON public.industries USING btree (industry_id);
 
 
 --
@@ -7461,22 +7349,6 @@ ALTER TABLE ONLY public.business
 
 
 --
--- Name: business_industry business_industry_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.business_industry
-    ADD CONSTRAINT business_industry_ibfk_1 FOREIGN KEY (industry_id) REFERENCES public.industry(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: business_industry business_industry_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.business_industry
-    ADD CONSTRAINT business_industry_ibfk_2 FOREIGN KEY (business_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
 -- Name: business_person business_person_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8161,6 +8033,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210310150352'),
 ('20210310195644'),
 ('20210316155331'),
-('20210322112057');
+('20210322112057'),
+('20210329095401');
 
 
