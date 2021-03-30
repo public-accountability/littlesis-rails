@@ -14,7 +14,7 @@ class EntitiesController < ApplicationController
   TABS = %w[interlocks political giving datatable].freeze
 
   EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation add_to_list].freeze
-  IMPORTER_ACTIONS = %i[match_donation match_donations review_donations match_ny_donations review_ny_donations].freeze
+  IMPORTER_ACTIONS = %i[match_donation match_donations review_donations].freeze
 
   before_action :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving, :validate]
   before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
@@ -181,16 +181,6 @@ class EntitiesController < ApplicationController
 
   def potential_contributions
     render json: @entity.potential_contributions
-  end
-
-  # ------------------------------ #
-  # NYS Donation Matching          #
-  # ------------------------------ #
-
-  def match_ny_donations
-  end
-
-  def review_ny_donations
   end
 
   ##

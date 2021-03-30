@@ -53,17 +53,6 @@
     <%= render partial: 'entities/sidebar/source_links' %>
   <% end %>
 
-
-  <%# ADVANCED TOOLS  %>
-  <% if user_signed_in? %>
-    <%= profile_page_sidebar('sidebar-advanced-tools-container', 'Advanced tools') do %>
-      <% if current_user.importer? || current_user.admin? %>
-	<br />
-	<%= link_to 'Match NY Donations', concretize_match_ny_donations_entity_path(@entity) %>
-      <% end %>
-    <% end %>
-  <% end %>
-
   <%# LISTS  %>
   <%= profile_page_sidebar('sidebar-lists-container', 'Lists', subtitle: 'Analyst-created lists of people and org') do %>
     <% cache(['entity_featured_lists', @entity.featured_lists], expires_in: 1.week) do %>
