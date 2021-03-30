@@ -27,7 +27,6 @@ import datatable from 'datatables.net'
 import typeahead from 'typeahead.js'
 import mustache from 'mustache'
 
-import NyDonationsMatcher from './components/ny_donations_matcher'
 import nysSearch from './components/nys_search'
 import EntityMatcher from './components/entity_matcher'
 import RelationshipsDatatable from './components/relationships_datatable'
@@ -45,7 +44,6 @@ if (!window.LittleSis) {
 }
 
 window.LittleSis.http = http
-window.LittleSis.NyDonationsMatcher = NyDonationsMatcher
 window.LittleSis.nysSearch = nysSearch
 window.LittleSis.EntityMatcher = EntityMatcher
 window.LittleSis.RelationshipsDatatable = RelationshipsDatatable
