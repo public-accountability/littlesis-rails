@@ -1,8 +1,5 @@
 <% content_for(:page_title, "Your maps") %>
 
-<% @maps_user = current_user %>
-<%= render partial: 'maps/header' %>
-
 <%= content_tag :div,
   {
     data: {
@@ -12,7 +9,7 @@
     }
   } do %>
 
-  <%= render partial: '/lists/index_header' %>
+  <%= render partial: 'maps/header' %>
 
   <table data-home-datatables-target="table" id="user-maps-table" class="display" style="width:100%"></table>
 <% end %>
