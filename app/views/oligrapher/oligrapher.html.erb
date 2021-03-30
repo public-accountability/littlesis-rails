@@ -3,12 +3,6 @@
   <%= og_tags(title: @map.name, url: oligrapher_url(@map), image: asset_path('netmap-org.png')) %>
 <% end %>
 
-<% if user_signed_in? && @map.can_edit?(current_user) %>
-  <% content_for(:navbar_notice) do %>
-    <%= render partial: 'oligrapher_update' %>
-  <% end %>
-<% end %>
-
 <% if @is_pending_editor %>
   <div class="oligrapher-pending-editor-notice">
     The owner of this map has invited you to become an editor. If you accept you will be able to edit the map and your username will appear in the byline.

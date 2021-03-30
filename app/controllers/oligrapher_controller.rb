@@ -15,11 +15,13 @@ class OligrapherController < ApplicationController
   before_action :check_editor, only: %i[update]
   before_action :set_oligrapher_version
 
+  rescue_from ActiveRecord::RecordNotFound, with: :map_not_found
+
   # Pages
 
   def show
     check_private_access
-    @is_pending_editor = (current_user and @map.has_pending_editor?(current_user))
+    @is_pending_editor = (current_user && @map.has_pending_editor?(current_user))
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
     render 'oligrapher/oligrapher', layout: 'oligrapher3'
   end
@@ -248,6 +250,10 @@ class OligrapherController < ApplicationController
     if params[:category_id] && (1..12).cover?(params[:category_id].to_i)
       params[:category_id].to_i
     end
+  end
+
+  def map_not_found
+    render 'errors/not_found', status: :not_found, layout: 'application'
   end
 end
 
