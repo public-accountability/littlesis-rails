@@ -120,25 +120,6 @@ class MapsController < ApplicationController
     redirect_to(oligrapher_path(@map))
   end
 
-  # Main Legacy Oligrapher 2.0 show route
-  # renders the 'story_map' template
-  def show_legacy
-    return redirect_to(oligrapher_path(@map)) if @map.version3?
-
-    check_private_access
-
-    @cacheable = true unless user_signed_in?
-    @editable = false
-
-    @links = [{ text: "embed", url: "#", id: "oligrapherEmbedLink" }]
-    @links.push({ text: 'clone', url: clone_map_url(@map), method: 'POST' }) if @map.is_cloneable
-    @links.push({ text: 'edit', url: edit_map_url(@map) }) if is_owner
-    @links.push({ text: 'share link', url: share_map_url(id: @map.id, secret: @map.secret) }) if @map.is_private && is_owner
-    @links.push(text: 'disclaimer', url: '#disclaimer') # see views/maps/_disclaimer_modal for the disclaimer modal
-
-    render 'story_map', layout: 'oligrapher'
-  end
-
   def raw
     # old map page for iframe embeds, forward to new embed page
     redirect_to embedded_map_path(@map)
@@ -146,81 +127,6 @@ class MapsController < ApplicationController
 
   def new
     redirect_to new_oligrapher_path
-  end
-
-  def new_legacy
-    check_permission 'editor'
-
-    if current_user.settings.oligrapher_beta
-      return redirect_to new_oligrapher_path
-    end
-
-    @map = NetworkMap.new
-    @map.title = 'Untitled Map'
-    @map.user = current_user
-    @editable = true
-    render 'story_map', layout: 'oligrapher'
-  end
-
-  def create
-    attributes = oligrapher_params.merge('user_id' => current_user.id,
-                                         'oligrapher_version' => 2)
-
-    map = NetworkMap.new(attributes)
-
-    if map.save
-      respond_to do |format|
-        format.json { render json: map }
-        format.html { redirect_to edit_map_path(map) }
-      end
-    else
-      not_found
-    end
-  end
-
-  def edit
-    check_owner
-    check_permission 'editor'
-
-    @links = [
-      { text: 'view', url: map_url(@map), target: '_blank' }
-    ]
-
-    @editable = true
-    render 'story_map', layout: 'oligrapher'
-  end
-
-  def update
-    check_owner
-
-    if oligrapher_params.present?
-      @map.update! oligrapher_params
-      render json: { data: @map.attributes }
-    else
-      Rails.logger.warn "Missing oligrapher Parameters for map #{map.id}"
-      render head :bad_request
-    end
-  end
-
-  def destroy
-    check_owner
-
-    @map.destroy
-    redirect_to maps_path
-  end
-
-  def clone
-    return head :unauthorized unless @map.cloneable? || is_owner
-
-    check_permission 'editor'
-
-    map = @map.dup
-    map.update!(is_featured: false,
-                is_private: true,
-                user_id: current_user.id,
-                title: "Clone: #{map.title}")
-
-    redirect_to edit_map_path(map)
   end
 
   ##
