@@ -55,7 +55,7 @@ then
     bin/yarn
 fi
 
-if git_files_changed 'assets' || git_files_changed 'packs' || git_files_changed 'yarn.lock'
+if git_files_changed 'assets' || git_files_changed 'packs' || git_files_changed 'yarn.lock' || git_files_changed 'javascript'
 then
     echo "Precompiling assets"
     bundle exec rake assets:precompile
