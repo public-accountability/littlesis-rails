@@ -26,13 +26,9 @@
 
 <div class="row top-1em">
   <div class="col-md-9 col-sm-9 nopadding">
-    <div id="match-donations" data-entityid="<%= @entity.id %>">
+    <div id="match-donations" data-entityid="<%= @entity.id %>" data-controller="donation-matcher" data-donation-matcher-mode-value="match">
       <table id="donations-table" class="display" width="100%"></table>
     </div>
-    <script>
-      let matcher = LittleSis.DonationMatcher();
-      matcher.init();
-    </script>
   </div>
   <%= render partial: 'match_sidebar' %>
 </div>

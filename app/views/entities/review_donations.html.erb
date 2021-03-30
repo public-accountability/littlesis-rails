@@ -20,13 +20,9 @@
 
 <div class="row top-1em">
   <div class="col-md-10 col-sm-10">
-    <div id="match-donations" data-entityid="<%= @entity.id %>">
+    <div id="match-donations" data-entityid="<%= @entity.id %>" data-controller="donation-matcher" data-donation-matcher-mode-value="review">
       <table id="donations-table" class="display" width="100%"></table>
     </div>
-    <script>
-      let matcher = LittleSis.DonationMatcher();
-      matcher.unmatch_init();
-    </script>
   </div>
   <div class="col-md-2 col-sm-2">
     <!-- side bar -->
@@ -34,4 +30,3 @@
 </div>
 
 </div>
-
