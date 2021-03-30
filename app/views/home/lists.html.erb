@@ -3,12 +3,13 @@
 <%= content_tag :div,
   {
     data: {
-      controller: "home-lists-datatable",
-      home_lists_datatable_data_value: UserListsPresenter.new(current_user).render
+      controller: "home-datatables",
+      home_datatables_data_value: UserListsPresenter.new(current_user).render,
+      home_datatables_name_value: 'lists'
     }
   } do %>
 
   <%= render partial: '/lists/index_header' %>
 
-  <table data-home-lists-datatable-target="table" id="user-lists-table" class="display" style="width:100%"></table>
+  <table data-home-datatables-target="table" id="user-lists-table" class="display" style="width:100%"></table>
 <% end %>

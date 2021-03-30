@@ -3,20 +3,16 @@
 <% @maps_user = current_user %>
 <%= render partial: 'maps/header' %>
 
-<table id="user-maps-table" class="display" style="width:100%"></table>
+<%= content_tag :div,
+  {
+    data: {
+      controller: "home-datatables",
+      home_datatables_data_value: UserMapsPresenter.new(current_user).render,
+      home_datatables_name_value: 'maps'
+    }
+  } do %>
 
-<script>
- var userMaps = <%= raw UserMapsPresenter.new(current_user).render %>;
+  <%= render partial: '/lists/index_header' %>
 
- $(function(){
-   $('#user-maps-table').DataTable( {
-     "data": userMaps,
-     "lengthChange": false,
-     "pageLength": 15,
-     "columns": [
-       { title: "Title" },
-       { title: "Updated At" },
-     ]
-   });
- });
-</script>
+  <table data-home-datatables-target="table" id="user-maps-table" class="display" style="width:100%"></table>
+<% end %>
