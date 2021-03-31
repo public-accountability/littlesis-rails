@@ -69,7 +69,6 @@ RSpec.configure do |config|
   config.extend PaginationExampleGroupHelper, :pagination_helper
   config.extend MergingGroupMacros, :merging_helper
   config.extend NameParserMacros, :name_parser_helper
-  config.extend ExternalLinkGroupHelper, :external_link
 
   # Running tests in database transactions
   #
