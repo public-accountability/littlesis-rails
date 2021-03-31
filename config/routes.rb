@@ -243,8 +243,6 @@ Lilsis::Application.routes.draw do
     action: 'show',
     as: 'share_oligrapher'
 
-  resources :industries, only: [:show]
-
   get '/relationships/bulk_add' => 'relationships#bulk_add'
   post '/relationships/bulk_add' => 'relationships#bulk_add!'
   get '/relationships/find_similar' => 'relationships#find_similar'
