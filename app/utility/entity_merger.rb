@@ -27,6 +27,7 @@ class EntityMerger
       @extensions.each { |e| e.merge!(@dest) }
       @contact_info.each(&:save!)
       @contact_info_to_delete.each(&:destroy!)
+      @source.external_links.each(&:destroy!)
       @external_links.each(&:save!)
       @lists.each { |list_id| ListEntity.create!(list_id: list_id, entity_id: dest.id) }
       @images.each(&:save!)
@@ -154,7 +155,9 @@ class EntityMerger
       if dest_elink_types.include?(link_type) && !ExternalLink::LINK_TYPES.dig(link_type, :multiple)
         raise ConflictingExternalLinksError.new(link_type)
       else
-        @external_links << external_link.tap { |el| el.entity = @dest }
+        new_link = external_link.dup
+        new_link.assign_attributes(entity: @dest)
+        @external_links << new_link
       end
     end
   end
