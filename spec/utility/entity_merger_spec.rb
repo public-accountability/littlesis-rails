@@ -937,17 +937,19 @@ describe 'Merging Entities', :merging_helper do
   end # end nys donations
 
   describe 'external links' do
-    subject { EntityMerger.new(source: source_org, dest: dest_org) }
-
     context 'when source has an external link' do
-      let(:external_link) do
+      let!(:external_link) do
         ExternalLink.create!(link_type: 'sec', link_id: rand(10_000).to_s, entity: source_org)
       end
 
       it 'transfers external links from source to dest' do
-        expect { subject.merge! }
-          .to change { external_link.reload.entity_id }
-                .from(source_org.id).to(dest_org.id)
+        expect do
+          EntityMerger.new(source: source_org, dest: dest_org).merge!
+        end.not_to change(ExternalLink, :count)
+
+        last_link = ExternalLink.last
+        expect(last_link.link_id).to eq external_link.link_id
+        expect(last_link.entity).to eq dest_org
       end
     end
 
@@ -962,11 +964,9 @@ describe 'Merging Entities', :merging_helper do
       before { external_links }
 
       it 'transfers external links from source to dest' do
-        expect { subject.merge! }.to change { external_links[:source].reload.entity_id }.from(source_org.id).to(dest_org.id)
-      end
-
-      it 'dest has two links' do
-        expect { subject.merge! }.to change { dest_org.reload.external_links.count }.from(1).to(2)
+        expect do
+          EntityMerger.new(source: source_org, dest: dest_org).merge!
+        end.to change { dest_org.reload.external_links.count }.from(1).to(2)
       end
     end
 
@@ -981,7 +981,7 @@ describe 'Merging Entities', :merging_helper do
       before { external_links }
 
       it 'does not transfer external links from source to dest' do
-        expect { subject.merge! }.to raise_error(EntityMerger::ConflictingExternalLinksError)
+        expect { EntityMerger.new(source: source_org, dest: dest_org).merge!}.to raise_error(EntityMerger::ConflictingExternalLinksError)
         expect(external_links[:source].reload.entity_id).to eq source_org.id
       end
     end
