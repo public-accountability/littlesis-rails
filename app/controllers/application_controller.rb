@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from Exceptions::UserCannotEditError do
     redirect_to home_dashboard_path, notice: <<~NOTICE
-      In order to prevent abuse, new users are restricted from editing for the first 10 minutes.
+      In order to prevent abuse, new users are restricted from editing for the first hour.
       We are sorry for the inconvenience. Please contact us if you believe that you are getting this message by mistake.
     NOTICE
   end
@@ -37,6 +37,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::RoutingError do |exception|
     raise if Rails.env.development?
+
     render_html_not_found(exception)
   end
 

@@ -20,9 +20,9 @@ describe '/entities/new', type: :feature do
     let(:name) { "#{Faker::Name.first_name} #{Faker::Name.last_name}" }
     let(:blurb) { Faker::Quotes::Shakespeare.hamlet_quote.truncate(200) }
 
-    context 'when user is confirmed over 10 minutes  ago' do
+    context 'when user is confirmed over 60 minutes  ago' do
       before do
-        user.update_columns :confirmed_at => 11.minutes.ago
+        user.update_columns :confirmed_at => 61.minutes.ago
         visit '/entities/new'
       end
 
@@ -41,9 +41,9 @@ describe '/entities/new', type: :feature do
       end
     end
 
-    context 'when user is confirmed less than 10 minutes ago' do
+    context 'when user is confirmed less than 60 minutes ago' do
       before do
-        user.update_columns :confirmed_at => 5.minutes.ago
+        user.update_columns :confirmed_at => 50.minutes.ago
         visit '/entities/new'
       end
 
@@ -61,7 +61,7 @@ describe '/entities/new', type: :feature do
 
         expect(Entity.count).to eq entity_count
 
-        expect(page).to have_text 'In order to prevent abuse, new users are restricted from editing for the first 10 minutes.'
+        expect(page).to have_text 'In order to prevent abuse, new users are restricted from editing for the first hour.'
       end
     end
   end
