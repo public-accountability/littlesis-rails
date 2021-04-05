@@ -30,9 +30,4 @@ class DatasetsController < ApplicationController
       end
     end
   end
-
-  def dataset
-    @dataset = params.require(:dataset)
-    @matched = params[:matched]&.to_sym || :all
-  end
 end
