@@ -1,6 +1,6 @@
 feature 'help pages' do
   let(:admin) { create_admin_user }
-  let(:index_page) { create(:help_page, name: 'index', markdown: '# help pages', title: 'help pages') }
+  let(:index_page) { create(:help_page, name: 'index', title: 'help pages') }
   let(:page_name) { HelpPage.pagify_name(Faker::Book.genre.tr(' ', '_').tr('/', '_')) }
   let(:page_title) { Faker::Book.title }
   let(:help_page) { create(:help_page) }
@@ -14,16 +14,13 @@ feature 'help pages' do
   scenario 'visiting a help page' do
     visit "/help/#{help_page.name}"
     successfully_visits_page "/help/#{help_page.name}"
-    page_has_selector 'h1', text: 'editing relationships'
   end
 
-  context 'as an admin' do
-    let(:help_pages) do
-      Array.new(2) do |n|
-        create(:help_page, markdown: Faker::Markdown.random, name: "page-#{n}", title: "title-#{n}")
-      end
-    end
+  context 'with an admin account' do
+    let(:help_pages) { create_list(:help_page, 2) }
+
     before { login_as(admin, scope: :user) }
+
     after { logout(admin) }
 
     scenario 'creating a new help page' do
@@ -42,23 +39,11 @@ feature 'help pages' do
       successfully_visits_page "/help/#{last_page.name}/edit"
     end
 
-    scenario 'editing a help page' do
-      visit "/help/#{help_page.name}/edit"
-      successfully_visits_page "/help/#{help_page.name}/edit"
-
-      fill_in 'editable-markdown', :with => '## new content'
-      click_button 'Update'
-
-      successfully_visits_page "/help/#{help_page.name}"
-      page_has_selector 'h2', text: "new content"
-      expect(help_page.reload.markdown).to eql '## new content'
-    end
-
     scenario 'visiting the list of all pages' do
       help_pages
       visit "/help/pages"
       successfully_visits_page "/help/pages"
-      
+
       page_has_selector 'th', text: "Name"
       page_has_selector 'th', text: "Edit"
       page_has_selector 'th', text: "Updated at"
