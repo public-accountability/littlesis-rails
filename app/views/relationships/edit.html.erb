@@ -153,12 +153,6 @@
     <%= relationship_form_tag( f.label(:goods, 'Notes', class: label_class), f.text_area(:notes,  size: '40x6') )%>
   </div>
 
-  <% if @relationship.reversible? %>
-    <%= hidden_field_tag "reverse_direction", nil, id: 'relationship-reverse-direction-input' %>
-    <%= javascript_tag { render partial: 'reverse_link.js' } %>
-  <% end %>
-
-
   <div class="form-row">
     <%= f.submit 'Update', class: 'btn btn-primary mr-2' %>
     <%= link_to 'Cancel', relationship_path(@relationship), class: 'btn btn-secondary' %>
