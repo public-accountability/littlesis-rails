@@ -14,7 +14,6 @@ import 'bootstrap-select'
 import 'jquery-typeahead'
 
 import 'd3'
-import 'papaparse'
 import 'file-saver'
 import 'select2'
 
