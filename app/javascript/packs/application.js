@@ -24,7 +24,6 @@ import 'parsleyjs'
 import utility from './common/utility'
 import datatable from 'datatables.net'
 import typeahead from 'typeahead.js'
-import mustache from 'mustache'
 
 import nysSearch from './components/nys_search'
 import EntityMatcher from './components/entity_matcher'
@@ -35,7 +34,6 @@ window.jQuery = jquery
 window.utility = utility
 window.utility.delete = utility.del
 window.datatable = datatable
-window.mustache = mustache
 
 if (!window.LittleSis) {
   window.LittleSis = {}
