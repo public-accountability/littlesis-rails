@@ -3718,7 +3718,7 @@ CREATE TABLE public.toolkit_pages (
     id bigint NOT NULL,
     name character varying(255) NOT NULL,
     title character varying(255),
-    markdown text,
+    markdown_deprecated text,
     last_user_id bigint,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -8092,6 +8092,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210322112057'),
 ('20210329095401'),
 ('20210405180342'),
-('20210405183927');
+('20210405183927'),
+('20210405200349');
 
 
