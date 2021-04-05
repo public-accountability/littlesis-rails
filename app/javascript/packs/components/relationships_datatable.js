@@ -1,3 +1,4 @@
+import datatable from 'datatables.net'
 import Papa from 'papaparse'
 import { saveAs } from 'file-saver'
 import utility from '../common/utility'

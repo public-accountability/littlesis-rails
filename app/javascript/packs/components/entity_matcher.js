@@ -1,4 +1,5 @@
 import utility from '../common/utility'
+import datatable from 'datatables.net'
 
 var matchExistsAndIsDisplay = function(row, type) {
   return row.entity_matches && row.entity_matches.length > 0 && type === 'display'

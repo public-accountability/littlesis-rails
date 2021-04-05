@@ -19,7 +19,6 @@ import 'd3'
 import 'parsleyjs'
 
 import utility from './common/utility'
-import datatable from 'datatables.net'
 import typeahead from 'typeahead.js'
 
 import nysSearch from './components/nys_search'
@@ -30,7 +29,6 @@ window.$ = jquery
 window.jQuery = jquery
 window.utility = utility
 window.utility.delete = utility.del
-window.datatable = datatable
 
 if (!window.LittleSis) {
   window.LittleSis = {}
