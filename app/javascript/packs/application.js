@@ -11,8 +11,6 @@ import Rails from "@rails/ujs"
 import 'bootstrap'
 import 'bootstrap-select'
 
-import 'd3'
-
 // JS form validation
 import 'parsleyjs'
 
