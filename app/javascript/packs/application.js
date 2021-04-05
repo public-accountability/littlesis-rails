@@ -22,7 +22,6 @@ import 'select2'
 import 'parsleyjs'
 
 import utility from './common/utility'
-import http from './common/http'
 import datatable from 'datatables.net'
 import typeahead from 'typeahead.js'
 import mustache from 'mustache'
@@ -42,7 +41,6 @@ if (!window.LittleSis) {
   window.LittleSis = {}
 }
 
-window.LittleSis.http = http
 window.LittleSis.nysSearch = nysSearch
 window.LittleSis.EntityMatcher = EntityMatcher
 
