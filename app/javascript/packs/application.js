@@ -13,14 +13,12 @@ import 'bootstrap'
 // JS form validation
 import 'parsleyjs'
 
-import nysSearch from './components/nys_search'
 import EntityMatcher from './components/entity_matcher'
 
 if (!window.LittleSis) {
   window.LittleSis = {}
 }
 
-window.LittleSis.nysSearch = nysSearch
 window.LittleSis.EntityMatcher = EntityMatcher
 
 import "controllers"
