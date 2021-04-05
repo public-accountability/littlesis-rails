@@ -13,13 +13,5 @@ import 'bootstrap'
 // JS form validation
 import 'parsleyjs'
 
-import EntityMatcher from './components/entity_matcher'
-
-if (!window.LittleSis) {
-  window.LittleSis = {}
-}
-
-window.LittleSis.EntityMatcher = EntityMatcher
-
 import "controllers"
 Rails.start()
