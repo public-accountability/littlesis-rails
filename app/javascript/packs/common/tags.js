@@ -1,3 +1,5 @@
+import 'bootstrap-select'
+
 export default function tags(){
   const $ = window.$
 

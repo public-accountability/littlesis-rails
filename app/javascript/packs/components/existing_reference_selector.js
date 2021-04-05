@@ -1,6 +1,7 @@
 import $ from 'jquery'
 import Bloodhound from 'bloodhound-js'
 import mustache from 'mustache'
+import typeahead from 'typeahead.js'
 
 // CONSTANTS
 const REFERENCES_PER_PAGE = 75

@@ -14,16 +14,11 @@
       <%= form_tag make_primary_alias_path(entity_alias), method: :patch, class: 'alias-form' do  %>
 	<button type="submit" class="btn btn-outline-primary btn-xs" title="Make this the primary alias">Make primary</button>
       <% end %>
-      
-      <!-- Delete alias button -->
 
-      <%= form_for entity_alias, { method: :delete, html: { class: 'alias-form' } }  do |f| %>
-	<a 
-	  href="javascript:{}" 
-	  onclick="document.getElementById('<%= get_form_id(f) %>').submit();" 
-	  title="Remove this alias">
-	  <span class="glyphicon glyphicon-remove alias-remove hvr-pop"></span>
-	</a>
+      <%= form_for entity_alias, { method: :delete, html: { class: 'alias-form' } } do |f| %>
+        <%= f.button :submit, title: "Remove this alias", class: "empty-button" do %>
+          <span class="glyphicon glyphicon-remove alias-remove hvr-pop"/>
+        <% end %>
       <% end %>
 
     <% end %>

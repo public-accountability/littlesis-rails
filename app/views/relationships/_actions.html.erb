@@ -6,21 +6,7 @@
     <%= link_to "flag", flag_path %>
 
     <% if signed_in && current_user.permissions.relationship_permissions(@relationship).fetch(:deleteable) %>
-      
-      <%= form_tag relationship_path(@relationship), method: :delete, id: 'remove-relationship-form', style: "display: none;" do %>
-      <% end %>
-      
-      <%= link_to "remove", "#", id: 'remove-relationship' %>
-      <%= javascript_tag do %>
-       $('#remove-relationship').click(function(e){
-         e.preventDefault();
-	 
-         if (confirm('Are you sure you want to remove this relationship?')) {
-	   document.getElementById('remove-relationship-form').submit();
-	 }
-	 
-       });
-      <% end %>
+      <%= button_to "remove", relationship_path(@relationship), method: :delete, data: { confirm: "Are you sure you want to remove this relationship?" } %>
     <% end %>
   </div>
 </div>

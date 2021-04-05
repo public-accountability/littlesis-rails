@@ -1,6 +1,8 @@
 import Papa from 'papaparse'
 import { saveAs } from 'file-saver'
 import utility from '../common/utility'
+import 'bootstrap-select'
+
 /** TYPES **********************************************
 
 (in Flow notation: https://flow.org/en/docs/types/objects))

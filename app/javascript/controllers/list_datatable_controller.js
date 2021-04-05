@@ -1,4 +1,5 @@
 import { Controller } from 'stimulus'
+import datatable from 'datatables.net'
 
 import { Search } from 'packs/list_datatable/search.js'
 import { BasicColumn } from 'packs/list_datatable/columns/basic_column.js'

@@ -1,20 +1,3 @@
 <h1> Match NYS Filers</h1>
 
-<table id="entity-match-table"></table>
-
-<script>
-  var columns = [
-    { "data": 'name', "title": 'Name', "name": 'name'},
-    { "data": 'filer_id', "title": 'Filer ID', "name": 'filer_id' },
-    { "data": 'id', "visible": false, "name": 'id' }
-  ];
-
-  var dt = new LittleSis.EntityMatcher({
-    "rootElement": '#entity-match-table',
-    "columns": columns,
-    "endpoint": '/nys/datatable',
-    "matchUrl": '/nys/ny_filer_entity'
-  });
-
-  dt.init();
-</script>
+<table id="entity-match-table" data-controller="entity-matcher" data-entity-matcher-target="table"></table>

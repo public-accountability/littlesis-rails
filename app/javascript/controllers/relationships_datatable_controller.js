@@ -1,9 +1,10 @@
 import { Controller } from 'stimulus'
+import RelationshipsDatatable from 'packs/components/relationships_datatable'
 
 export default class extends Controller {
   static values = { entityId: Number }
 
   initialize() {
-    LittleSis.RelationshipsDatatable().start(this.entityIdValue)
+    RelationshipsDatatable().start(this.entityIdValue)
   }
 }

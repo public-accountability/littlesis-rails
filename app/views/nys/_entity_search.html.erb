@@ -1,9 +1,3 @@
-<script>
- $(function(){
-   let search = LittleSis.nysSearch();
-   search.entitySearch("<%= primary_ext %>");
- });
-</script>
 <style>
  tbody td {
      cursor: pointer;
@@ -12,7 +6,7 @@
 <div class="row">
     <div class="col-md-8">
         <h5><%= entity_search_title %></h5>
-        <form class="form-inline" id="entity-search-form">
+        <form class="form-inline" id="entity-search-form" data-controller="nys-entity-search" data-nys-entity-search-primary-ext-value="<%= primary_ext %>">
             <div class="form-group">
                 <input type=text class="form-control" id="entity-search">
             </div>

@@ -1,11 +1,5 @@
 <% content_for(:page_title, "NYS Candidates and Committees") %>
 <%= render partial: 'shared/entity_info', locals: {entity: @entity}  %>
-<script>
- $(function(){
-   let search = LittleSis.nysSearch();
-   search.filerSearch();
- });
-</script>
 
 <div class="row">
   <h2>Find NYS Candidates and Committees for <%= entity_link(@entity) %></h2>
@@ -22,7 +16,7 @@
 <div class="row">
     <h3>Custom search:</h3>
     <div class="col-sm-6">
-	<div class="input-group">
+	<div class="input-group" data-controller="nys-filer-search">
 	    <input type="text" class="form-control" placeholder="Committe or name of filer..." id="custom-search-input">
 	    <span class="input-group-btn">
 		<button class="btn btn-secondary" type="button" id="custom-search-btn">Search</button>
