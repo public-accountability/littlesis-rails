@@ -9,7 +9,6 @@
 
 import Rails from "@rails/ujs"
 import 'bootstrap'
-import 'bootstrap-select'
 
 // JS form validation
 import 'parsleyjs'
