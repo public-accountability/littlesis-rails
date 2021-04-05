@@ -19,6 +19,9 @@
 /tmp
 .cache/
 
+# Ignore vim swap files
+*.swp
+
 # Ignore database configuration
 /config/database.yml
 
