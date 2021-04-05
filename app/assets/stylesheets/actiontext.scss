@@ -4,10 +4,39 @@
 // inclusion directly in any other asset bundle and remove this file.
 @import 'trix/dist/trix';
 
+// On long pages, the toolbar gets lost if pinned to the top; have it follow the user down
+// the page
+trix-toolbar {
+  position: fixed;
+  z-index: 1;
+  background: white;
+  filter: drop-shadow(0 0.7rem 0.8rem lightgray);
+  padding: 1rem;
+
+  .trix-button-group {
+    margin-bottom: 0;
+  }
+}
+
 // We need to override trix.css’s image gallery styles to accommodate the
 // <action-text-attachment> element we wrap around attachments. Otherwise,
 // images in galleries will be squished by the max-width: 33%; rule.
 .trix-content {
+  // Prevent the trix styles overriding the bootstrap typography here
+  @import 'bootstrap/scss/reboot';
+  @import 'bootstrap/scss/type';
+
+  li {
+    margin-left: 2.5rem;
+  }
+
+  padding: {
+    top: 6rem;
+    bottom: 3rem;
+    left: 3rem;
+    right: 3rem;
+  }
+
   .attachment-gallery {
     > action-text-attachment,
     > .attachment {
