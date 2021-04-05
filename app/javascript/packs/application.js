@@ -7,7 +7,6 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
-import jquery from 'jquery'
 import Rails from "@rails/ujs"
 import 'bootstrap'
 import 'bootstrap-select'
@@ -22,8 +21,6 @@ import utility from './common/utility'
 import nysSearch from './components/nys_search'
 import EntityMatcher from './components/entity_matcher'
 
-window.$ = jquery
-window.jQuery = jquery
 window.utility = utility
 window.utility.delete = utility.del
 
