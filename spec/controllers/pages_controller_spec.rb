@@ -16,13 +16,9 @@ describe PagesController, type: :controller do
   it { is_expected.to route(:get, '/swamped').to(action: :swamped) }
   it { is_expected.to route(:post, '/swamped').to(action: :swamped) }
 
-  it 'has MARKDOWN constant' do
-    expect(ToolkitController::MARKDOWN).to be_a(Redcarpet::Markdown)
-  end
-
   describe '#display - GET /features' do
     before do
-      Page.create!(name: 'features', title: 'features', markdown: '# features')
+      Page.create!(name: 'features', title: 'features', content: '<h1>features</h1>')
       get :display, params: { page: 'features' }
     end
 
@@ -43,7 +39,7 @@ describe PagesController, type: :controller do
     login_admin
 
     let(:page) do
-      Page.create!(name: 'people', title: 'people', markdown: '# markdown')
+      Page.create!(name: 'people', title: 'people', content: '<h1>People</h1>')
     end
 
     it 'redirects to /pages/id/edit' do
@@ -54,14 +50,11 @@ describe PagesController, type: :controller do
 
   describe '#update' do
     login_admin
-    let(:params) { { 'id' => @page.id, 'page' => { 'markdown' => '# part one' } } }
+    let(:page) { Page.create!(name: 'about', title: 'about us', content: '<h1>About Us</h1>') }
+    let(:params) { { id: page.id, page: { title: 'Part One' } } }
 
-    before do
-      @page = Page.create!(name: 'about', title: 'about us', markdown: '# markdown')
-    end
-
-    it 'updates markdown' do
-      expect { patch :update, params: params }.to change { @page.reload.markdown }.to('# part one')
+    it 'updates title' do
+      expect { patch :update, params: params }.to change { page.reload.title }.to('Part One')
     end
 
     it 'redirects to display page' do
