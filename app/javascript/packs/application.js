@@ -11,7 +11,6 @@ import jquery from 'jquery'
 import Rails from "@rails/ujs"
 import 'bootstrap'
 import 'bootstrap-select'
-import 'jquery-typeahead'
 
 import 'd3'
 
@@ -19,12 +18,10 @@ import 'd3'
 import 'parsleyjs'
 
 import utility from './common/utility'
-import typeahead from 'typeahead.js'
 
 import nysSearch from './components/nys_search'
 import EntityMatcher from './components/entity_matcher'
 
-jquery.typeahead = typeahead
 window.$ = jquery
 window.jQuery = jquery
 window.utility = utility

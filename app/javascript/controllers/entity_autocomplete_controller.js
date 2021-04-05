@@ -1,6 +1,7 @@
 import { Controller } from 'stimulus'
 import Bloodhound from 'bloodhound-js'
 import mustache from 'mustache'
+import typeahead from 'typeahead.js'
 
 export default class extends Controller {
   static values = { endpoint: String, inputId: String, templates: Object }
