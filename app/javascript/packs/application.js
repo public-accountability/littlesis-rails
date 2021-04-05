@@ -16,13 +16,8 @@ import 'd3'
 // JS form validation
 import 'parsleyjs'
 
-import utility from './common/utility'
-
 import nysSearch from './components/nys_search'
 import EntityMatcher from './components/entity_matcher'
-
-window.utility = utility
-window.utility.delete = utility.del
 
 if (!window.LittleSis) {
   window.LittleSis = {}
