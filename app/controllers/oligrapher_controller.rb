@@ -34,6 +34,22 @@ class OligrapherController < ApplicationController
   end
 
   def example
+    @configuration = {
+      settings: { debug: true },
+      display: { modes: { editor: true } },
+      attributes: {
+        title: "Blank Map",
+        date: "January 12, 2018",
+        subtitle: "",
+        user: { name: "LittleSis User", url: "http://littlesis.org/user/test" },
+        settings: { private: false },
+        links: [
+          { text: "Edit", url: "https://littlesis.org/oligrapher/edit" },
+          { text: "Clone", url: "https://littlesis.org/oligrapher/clone" },
+          { text: "Disclaimer", url: "https://littlesis.org/oligrapher/disclaimer" }
+        ]
+      }
+    }
     render 'oligrapher/example', layout: 'oligrapher3'
   end
 

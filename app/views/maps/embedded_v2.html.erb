@@ -4,41 +4,15 @@
 
 <%= cache_if !user_signed_in?, [ 'embedded', @map, @start_index ] do %>
 
-    <% content_for(:page_title, raw(@map.name)) %>
-    <% content_for(:hide_footer, true) %>
+  <% content_for(:page_title, raw(@map.name)) %>
+  <% content_for(:hide_footer, true) %>
 
-    <div id="oligrapher"></div>
-    <script>
-     var graph = <%= raw(@map.graph_data.to_json) %>;
-     graph.id = <%= @map.id %>;
-
-     var annotations = <%= raw(@map.annotations_data || '[]') %>;
-     var startIndex = <%= @start_index %>;
-
-     var elem = document.getElementById('oligrapher');
-     elem.style.height = window.innerHeight.toString() + 'px';
-
-     var oli = new Oligrapher({
-       root: elem,
-       url: "<%= map_url(@map) %>",
-       isEditor: false,
-       isLocked: true,
-       isEmbedded: true,
-       embedded: {
-	 headerPct: <%= @header_pct %>,
-         annotationPct:  <%= @annotation_pct %>,
-         logoUrl: "https://dfl6orqdcqt4f.cloudfront.net/assets/lilsis-logo-trans-200-74169fd94db9637c31388ad2060b48720f94450b40c45c23a3889cf480f02c52.png",
-         linkUrl: "<%= map_url(@map) %>",
-         linkText: "View this map on LittleSis"
-       },
-       data: {
-	 title: "<%= raw(@map.title.gsub('"', '\"')) %>",
-	 graph: graph,
-	 annotations: annotations
-       },
-       startAnnotation: startIndex
-     });
-
-    </script>
-
+  <%= content_tag(
+    :div,
+    id: "oligrapher",
+    data: {
+      controller: "oligrapher",
+      oligrapher_config_value: @configuration.to_json
+    }
+  ){} %>
 <% end %>

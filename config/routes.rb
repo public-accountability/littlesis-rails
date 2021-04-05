@@ -191,10 +191,9 @@ Lilsis::Application.routes.draw do
 
   get '/maps', to: redirect('/maps/featured')
 
-  resources :maps, except: [:index] do
+  resources :maps, only: [:show, :new] do
     member do
       get 'raw'
-      post 'clone'
       post 'feature'
       get 'embedded'
       get 'map_json'

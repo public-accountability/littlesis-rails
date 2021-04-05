@@ -1,22 +1,9 @@
-<div style="height: 600px; width: 100%" id="oligrapher"></div>
-
-<script>
- window.addEventListener('DOMContentLoaded', function() {
-   var oli = new Oligrapher({
-     settings: { debug: true },
-     display: { modes: { editor: true } },
-     attributes: {
-       title: "Blank Map",
-       date: "January 12, 2018",
-       subtitle: "",
-       user: { name: "LittleSis User", url: "http://littlesis.org/user/test" },
-       settings: { private: false },
-       links: [
-         { text: "Edit", url: "https://littlesis.org/oligrapher/edit" },
-         { text: "Clone", url: "https://littlesis.org/oligrapher/clone" },
-         { text: "Disclaimer", url: "https://littlesis.org/oligrapher/disclaimer" }
-       ]
-     }
-   })
- })
-</script>
+<%= content_tag(
+  :div,
+  id: "oligrapher",
+  data: {
+    controller: "oligrapher",
+    oligrapher_config_value: @configuration.to_json
+  },
+  style: "height: 600px; width: 100%"
+){} %>
