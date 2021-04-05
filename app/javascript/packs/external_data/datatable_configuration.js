@@ -1,4 +1,5 @@
 import Columns from './columns'
+import 'select2'
 
 export default function(dataset) {
   function modifyPayloadBeforeSubmit(d) {
