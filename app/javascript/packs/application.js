@@ -9,6 +9,8 @@
 
 import Rails from "@rails/ujs"
 import 'bootstrap'
+import 'trix'
+import '@rails/actiontext'
 
 // JS form validation
 import 'parsleyjs'

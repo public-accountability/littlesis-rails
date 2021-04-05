@@ -102,6 +102,40 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: action_text_rich_texts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.action_text_rich_texts (
+    id bigint NOT NULL,
+    name character varying NOT NULL,
+    body text,
+    record_type character varying NOT NULL,
+    record_id bigint NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: action_text_rich_texts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.action_text_rich_texts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: action_text_rich_texts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.action_text_rich_texts_id_seq OWNED BY public.action_text_rich_texts.id;
+
+
+--
 -- Name: active_storage_attachments; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4015,6 +4049,13 @@ ALTER SEQUENCE public.web_requests_id_seq OWNED BY public.web_requests.id;
 
 
 --
+-- Name: action_text_rich_texts id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.action_text_rich_texts ALTER COLUMN id SET DEFAULT nextval('public.action_text_rich_texts_id_seq'::regclass);
+
+
+--
 -- Name: active_storage_attachments id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4747,6 +4788,14 @@ ALTER TABLE ONLY public.versions ALTER COLUMN id SET DEFAULT nextval('public.ver
 --
 
 ALTER TABLE ONLY public.web_requests ALTER COLUMN id SET DEFAULT nextval('public.web_requests_id_seq'::regclass);
+
+
+--
+-- Name: action_text_rich_texts action_text_rich_texts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.action_text_rich_texts
+    ADD CONSTRAINT action_text_rich_texts_pkey PRIMARY KEY (id);
 
 
 --
@@ -7296,6 +7345,13 @@ CREATE INDEX idx_34500_index_web_requests_on_time ON public.web_requests USING b
 
 
 --
+-- Name: index_action_text_rich_texts_uniqueness; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_action_text_rich_texts_uniqueness ON public.action_text_rich_texts USING btree (record_type, record_id, name);
+
+
+--
 -- Name: index_edited_entities_on_entity_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8034,6 +8090,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210310195644'),
 ('20210316155331'),
 ('20210322112057'),
-('20210329095401');
+('20210329095401'),
+('20210405180342');
 
 
