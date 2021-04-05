@@ -29,7 +29,6 @@ import mustache from 'mustache'
 
 import nysSearch from './components/nys_search'
 import EntityMatcher from './components/entity_matcher'
-import RelationshipsDatatable from './components/relationships_datatable'
 
 jquery.typeahead = typeahead
 window.$ = jquery
@@ -46,7 +45,6 @@ if (!window.LittleSis) {
 window.LittleSis.http = http
 window.LittleSis.nysSearch = nysSearch
 window.LittleSis.EntityMatcher = EntityMatcher
-window.LittleSis.RelationshipsDatatable = RelationshipsDatatable
 
 import "controllers"
 Rails.start()
