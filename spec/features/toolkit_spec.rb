@@ -2,7 +2,6 @@ feature 'Editable Toolkit Pages' do
   let(:admin) { create_admin_user }
   let(:index) { create(:toolkit_page, name: 'index', markdown: "# toolkit index\n") }
   let(:toolkit_page) { create(:toolkit_page) }
-  let(:markdown) { "#{Faker::Markdown.headers}\n#{Faker::Markdown.ordered_list}" }
   let(:page_name) { Faker::Creature::Cat.name }
   let(:page_title) { Faker::Creature::Cat.breed }
 

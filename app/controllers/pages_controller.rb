@@ -6,9 +6,6 @@ class PagesController < ApplicationController
   before_action :set_page_by_name, only: [:display, :edit_by_name]
   before_action :set_page_by_id, only: [:show, :edit]
 
-  MARKDOWN = Redcarpet::Markdown.new(Redcarpet::Render::HTML,
-                                     autolink: true, fenced_code_blocks: true)
-
   # GET Pages
   def index
     @pages = Page.select('name, title, id, updated_at, created_at, last_user_id').all

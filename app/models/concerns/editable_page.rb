@@ -3,7 +3,6 @@
 # A module for editable pages
 #   required fields:
 #     - name
-#     - markdown
 #     - last_user_id
 module EditablePage
   extend ActiveSupport::Concern
