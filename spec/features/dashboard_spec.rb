@@ -124,9 +124,9 @@ describe 'home/dashboard', type: :feature do
 
   describe 'viewing dashboard bulletins' do
     before do
-      DashboardBulletin.create!(title: 'title A', markdown: '# contentA')
+      DashboardBulletin.create!(title: 'title A')
       DashboardBulletin
-        .create!(title: 'title B', markdown: '# contentB')
+        .create!(title: 'title B')
         .tap { |b| b.update_column(:created_at, 1.day.ago) }
       visit '/home/dashboard'
     end
@@ -139,9 +139,7 @@ describe 'home/dashboard', type: :feature do
       page_has_selector 'div.card', count: 2
 
       expect(find("#{a_selector} .card-header")).to have_text('title A')
-      expect(find("#{a_selector} .card-body h1")).to have_text('contentA')
       expect(find("#{b_selector} .card-header")).to have_text('title B')
-      expect(find("#{b_selector} .card-body h1")).to have_text('contentB')
     end
   end
 end

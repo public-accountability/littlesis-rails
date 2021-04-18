@@ -7,8 +7,9 @@ class DashboardBulletin < ApplicationRecord
   before_validation :clean_color
   after_destroy :clear_dashboard_cache
 
-  validates :markdown, presence: true
   validates :color, css_color: true
+
+  has_rich_text :content
 
   def display_color
     self[:color].presence || DEFAULT_COLOR

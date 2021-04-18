@@ -11,11 +11,10 @@ feature 'DashboardBulletins', type: :feature do
   context 'as an admin user' do
     let(:user) { create_admin_user }
     let(:title) { Faker::Book.title }
-    let(:markdown) { Faker::Markdown.headers }
 
     feature 'viewing all bulletins' do
       before do
-        DashboardBulletin.create!(title: title, markdown: markdown)
+        DashboardBulletin.create!(title: title )
         visit '/dashboard_bulletins'
       end
 
@@ -35,18 +34,16 @@ feature 'DashboardBulletins', type: :feature do
 
       scenario 'admin adds a new bulletins' do
         fill_in 'dashboard_bulletin_title', :with => title
-        fill_in 'editable-markdown', :with => markdown
         click_button 'Create'
 
         expect(DashboardBulletin.count).not_to eql 0
-        expect(DashboardBulletin.last.markdown).to eql markdown
 
         successfully_visits_page('/home/dashboard')
       end
     end
 
     feature 'modifying existing bulletins' do
-      let(:bulletin) { DashboardBulletin.create!(title: title, markdown: Faker::Markdown.emphasis) }
+      let(:bulletin) { DashboardBulletin.create!(title: title) }
 
       before do
         allow(Rails.cache).to receive(:delete_matched)
@@ -56,10 +53,8 @@ feature 'DashboardBulletins', type: :feature do
       scenario 'updating the bulletin\'s content' do
         visit edit_dashboard_bulletin_path(bulletin)
         successfully_visits_page edit_dashboard_bulletin_path(bulletin)
-        fill_in 'editable-markdown', :with => markdown
         click_button 'Update'
 
-        expect(bulletin.reload.markdown).to eql markdown
         successfully_visits_page('/home/dashboard')
       end
 

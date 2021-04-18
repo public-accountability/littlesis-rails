@@ -872,7 +872,7 @@ ALTER SEQUENCE public.custom_key_id_seq OWNED BY public.custom_key.id;
 
 CREATE TABLE public.dashboard_bulletins (
     id bigint NOT NULL,
-    markdown text,
+    markdown_deprecated text,
     title character varying(255),
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -8094,6 +8094,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210405180342'),
 ('20210405183927'),
 ('20210405200349'),
-('20210405202345');
+('20210405202345'),
+('20210412135059');
 
 

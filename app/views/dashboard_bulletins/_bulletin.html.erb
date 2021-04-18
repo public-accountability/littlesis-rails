@@ -9,5 +9,5 @@ wrapping html for the bulletin.
 %>
 
 <%= dashboard_panel(heading: bulletin.title, color: bulletin.display_color) do %>
-  <%= raw EditablePagesController::MARKDOWN.render(bulletin.markdown) %>
+  <%= bulletin.content %>
 <% end %>

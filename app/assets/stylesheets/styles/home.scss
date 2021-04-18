@@ -1,7 +1,11 @@
 #dashboard-bulletins {
-    .card  {
-	margin-bottom: 1.5em;
+  .card  {
+    margin-bottom: 1.5em;
+
+    .trix-content {
+      padding: 0;
     }
+  }
 }
 
 #dashboard-search-form {

@@ -36,6 +36,6 @@ class DashboardBulletinsController < ApplicationController
   end
 
   def bulletin_params
-    params.require(:dashboard_bulletin).permit(:title, :markdown, :color).to_h
+    params.require(:dashboard_bulletin).permit(:title, :content, :color).to_h
   end
 end
