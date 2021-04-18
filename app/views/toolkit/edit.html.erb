@@ -4,7 +4,7 @@
 
 <%= form_for @page, method: :patch, url: toolkit_update_path(id: @page.id) do |f| %>
   <%= f.label :content %>
-  <%= f.rich_text_area :content %>
+  <%= f.rich_text_area :content, data: {controller: 'action-text'} %>
   <%= f.submit "Update",  class: 'btn btn-primary' %>
   <%= link_to 'Cancel', toolkit_display_path(@page), class: 'btn btn-secondary' %>
 <% end %>
