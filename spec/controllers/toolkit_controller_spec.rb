@@ -2,37 +2,33 @@ describe ToolkitController, type: :controller do
   after(:all) { ToolkitPage.delete_all }
   before(:all) { ToolkitPage.delete_all }
 
-  it { should route(:get, '/toolkit').to(action: :index) }
-  it { should route(:get, '/toolkit/new').to(action: :new) }
-  it { should route(:get, '/toolkit/some_page').to(action: :display, page_name: 'some_page') }
-  it { should route(:get, '/toolkit/another_page').to(action: :display, page_name: 'another_page') }
-  it { should route(:post, '/toolkit').to(action: :create) }
-  it { should route(:get, '/toolkit/page/edit').to(action: :edit, page_name: 'page') }
-  it { should route(:patch, '/toolkit/123').to(action: :update, id: '123') }
-
-  it 'has MARKDOWN constant' do
-    expect(ToolkitController::MARKDOWN).to be_a(Redcarpet::Markdown)
-  end
+  it { is_expected.to route(:get, '/toolkit').to(action: :index) }
+  it { is_expected.to route(:get, '/toolkit/new').to(action: :new) }
+  it { is_expected.to route(:get, '/toolkit/some_page').to(action: :display, page_name: 'some_page') }
+  it { is_expected.to route(:get, '/toolkit/another_page').to(action: :display, page_name: 'another_page') }
+  it { is_expected.to route(:post, '/toolkit').to(action: :create) }
+  it { is_expected.to route(:get, '/toolkit/page/edit').to(action: :edit, page_name: 'page') }
+  it { is_expected.to route(:patch, '/toolkit/123').to(action: :update, id: '123') }
 
   describe 'display' do
     before(:all) do
-      ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts', markdown: '# interesting facts')
+      ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts', content: '# interesting facts')
     end
 
     it 'responds with 404 if page does not exist' do
       get :display, params: { page_name: 'not_a_page_yet' }
-      expect(response).to have_http_status(404)
+      expect(response).to have_http_status(:not_found)
     end
 
     it 'renders display if page exists' do
       get :display, params: { page_name: 'interesting_facts' }
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
       expect(response).to render_template(:display)
     end
 
     it 'can accept page names with spaces and capitals' do
       get :display, params: { page_name: 'iNtErEsTiNg FaCtS' }
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(:ok)
       expect(response).to render_template(:display)
     end
 
@@ -43,10 +39,7 @@ describe ToolkitController, type: :controller do
   end
 
   describe 'edit' do
-    before(:all) do
-      ToolkitPage.delete_all
-      @toolkit_page = ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts')
-    end
+    let!(:page) { ToolkitPage.create!(name: 'uninteresting_factoids', title: 'uninteresting factoids') }
 
     before do
       expect(controller).to receive(:authenticate_user!).once
@@ -55,26 +48,27 @@ describe ToolkitController, type: :controller do
 
     it 'responds with 404 if page does not exist' do
       get :edit, params: { page_name: 'not_a_page_yet' }
-      expect(response).to have_http_status 404
+      expect(response).to have_http_status :not_found
     end
 
     it 'renders edit page' do
-      get :edit, params: { page_name: 'interesting_facts' }
-      expect(response).to have_http_status 200
+      get :edit, params: { page_name: 'uninteresting_factoids' }
+      expect(response).to have_http_status :ok
       expect(response).to render_template :edit
     end
 
     it 'assigns toolkit_page' do
-      get :edit, params: { page_name: 'interesting_facts' }
-      expect(controller.instance_variable_get('@page')).to eq @toolkit_page
+      get :edit, params: { page_name: 'uninteresting_factoids' }
+      expect(assigns(:page)).to eq page
     end
   end
 
   describe '#index' do
     before { get :index }
-    it { should respond_with(:success) }
-    it { should render_template(:index) }
-    it { should render_with_layout('toolkit') }
+
+    it { is_expected.to respond_with(:success) }
+    it { is_expected.to render_template(:index) }
+    it { is_expected.to render_with_layout('toolkit') }
 
     it 'sets cache-control headers' do
       expect(response.headers['Cache-Control']).to include 'max-age=86400, public'
@@ -99,24 +93,22 @@ describe ToolkitController, type: :controller do
       sign_in create_admin_user
     end
 
-    context 'good post' do
+    context 'with good post' do
       it 'creates a new toolkit page' do
         expect { post :create, params: good_params }
           .to change(ToolkitPage, :count).by(1)
       end
 
       it 'sets last_user_id' do
-        expect(ToolkitPage).to receive(:new)
-                                 .with(hash_including(:last_user_id => controller.current_user.id))
-                                 .and_return(spy('toolkit page'))
         post :create, params: good_params
+        expect(ToolkitPage.last.last_user_id).to eq controller.current_user.id
       end
     end
 
-    context 'bad post' do
+    context 'with bad post' do
       it 'does not create a new toolkit page' do
         expect { post :create, params: bad_params }
-          .not_to change { ToolkitPage.count }
+          .not_to change(ToolkitPage, :count)
       end
 
       it 'renders new page' do
@@ -127,28 +119,20 @@ describe ToolkitController, type: :controller do
   end
 
   describe '#update' do
-    let(:params) { { 'id' => @page.id, 'toolkit_page' => { 'markdown' => '# part one' } } }
+    let(:page) { ToolkitPage.create!(name: 'cats_in_government', title: 'cats in government') }
+    let(:params) { { id: page.id, toolkit_page: { title: 'Part One' } } }
 
     before do
       sign_in create_admin_user
-      @page = ToolkitPage.create!(name: 'cats_in_government', title: 'cats in government', markdown: '# markdown')
     end
 
-    it 'updates markdown' do
-      expect { patch :update, params: params }.to change { @page.reload.markdown }.to('# part one')
+    it 'updates title' do
+      expect { patch :update, params: params }.to change { page.reload.title }.to('Part One')
     end
 
     it 'redirects to display page' do
       patch :update, params: params
       expect(response).to redirect_to %r{/toolkit/cats_in_government}
-    end
-  end
-
-  describe '#markdown' do
-    it 'can render markdown' do
-      c = ToolkitController.new
-      expect(c.send(:markdown, '# i am markdown'))
-        .to eq "<h1>i am markdown</h1>\n"
     end
   end
 end

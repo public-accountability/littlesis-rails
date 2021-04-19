@@ -1,17 +1,8 @@
 FactoryBot.define do
   factory :help_page do
-    markdown do
-      <<~MARKDOWN
-        # editing relationships
-
-        ## content
-
-        * one
-        * two
-    MARKDOWN
-    end
-    name { 'editing_relationships' }
-    title { 'how to edit relationships' }
+    name { Faker::Lorem.sentence.parameterize }
+    title { Faker::Lorem.sentence }
     last_user_id { 1 }
+    content { "<h1>#{Faker::Lorem.sentence}</h1>" }
   end
 end

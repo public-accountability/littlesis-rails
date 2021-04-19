@@ -11,8 +11,6 @@ Rails.application.config.assets.precompile += [
   'toolkit.js',
   'toolkit.scss',
   'extension.js',
-  'markdown_editor.js',
-  'markdown_editor.scss',
   'relationships_datatable.js',
   'entity_matcher.css.scss',
   'cmp.scss',

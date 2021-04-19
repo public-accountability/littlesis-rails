@@ -1,6 +1,6 @@
 describe Page, type: :model do
   describe 'db columns' do
-    [:name, :title, :markdown, :last_user_id].each do |col|
+    [:name, :title, :last_user_id].each do |col|
       it { should have_db_column(col) }
     end
   end

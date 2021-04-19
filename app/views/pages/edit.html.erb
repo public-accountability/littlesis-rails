@@ -1,5 +1,3 @@
-<%= stylesheet_link_tag  "markdown_editor" %>
-
 <h1>Editing: <%= @page.name %></h1>
 
 <% unless @page.errors.empty? %>
@@ -10,9 +8,9 @@
     <% end %>
 <% end %>
 
-<%= form_for @page, method: :patch, url: page_path(@page), html: {data: {controller: 'markdown'}} do |f| %>
-    <%= f.text_area :markdown, size: "100x25", data: {markdown_target: 'field'} %>
-    <br />
-    <%= f.submit "Update",  class: 'btn btn-primary' %>
-    <%= link_to 'Cancel', "/toolkit/#{@page.name}", class: 'btn btn-secondary' %>
+<%= form_for @page, method: :patch, url: page_path(@page) do |f| %>
+  <%= f.label :content %>
+  <%= f.rich_text_area :content, data: {controller: 'action-text'} %>
+  <%= f.submit "Update",  class: 'btn btn-primary' %>
+  <%= link_to 'Cancel', page_path(@page), class: 'btn btn-secondary' %>
 <% end %>

@@ -13,17 +13,6 @@ describe ToolkitPage, type: :model do
     it { should validate_presence_of(:name) }
   end
 
-  describe 'set_markdown_to_be_blank_string_if_null' do
-    it 'sets markdown to be "" if created with nil' do
-      page1 = ToolkitPage.create!(name: 'page1')
-      expect(ToolkitPage.find(page1.id).markdown).to eq ""
-      page2 = ToolkitPage.create!(name: 'page2', markdown: '# i exist')
-      expect(ToolkitPage.find(page2.id).markdown).to eq '# i exist'
-      page2.update(markdown: 'new value')
-      expect(ToolkitPage.find(page2.id).markdown).to eq 'new value'
-    end
-  end
-
   describe '#modify_name' do
     it 'changes name' do
       page1 = ToolkitPage.create!(name: 'Page Name')

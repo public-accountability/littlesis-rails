@@ -86,7 +86,7 @@ class PagesController < ApplicationController
   end
 
   def update_params
-    params.require(:page).permit(:title, :markdown).merge(last_user_id: current_user.id)
+    params.require(:page).permit(:title, :content).merge(last_user_id: current_user.id)
   end
 
   def new_page_params
