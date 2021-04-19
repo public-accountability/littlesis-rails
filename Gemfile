@@ -24,6 +24,9 @@ gem 'devise', '~> 4.7'
 # Versioning
 gem 'paper_trail', '~> 11'
 
+# Generate versioned Postgres views
+gem 'scenic'
+
 # Pagination
 gem 'kaminari'
 
