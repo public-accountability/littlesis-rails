@@ -60,7 +60,7 @@ class Relationship < ApplicationRecord
     past: 0
   }.freeze
 
-  has_many :links, inverse_of: :relationship, dependent: :destroy
+  has_many :links, inverse_of: :relationship
   belongs_to :entity, class_name: "Entity", foreign_key: "entity1_id", optional: true
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id", optional: true
   belongs_to :unscoped_entity, -> { unscope(where: :is_deleted) }, foreign_key: "entity1_id", class_name: "Entity", optional: true
@@ -117,14 +117,16 @@ class Relationship < ApplicationRecord
 
   before_save :update_is_current_according_to_end_date
 
+  after_commit { Link.refresh }
+
   # This callback is basically a modified version of :touch => true
   # It updates the entity timestamps and also changes the last_user_id of
   # associated entities for the relationship
   after_save :update_entity_timestamps
 
   def after_create_tasks
+    Link.refresh
     create_category
-    create_links
     update_entity_links
   end
 
@@ -147,13 +149,6 @@ class Relationship < ApplicationRecord
   end
 
   private :create_category
-
-  def create_links
-    Link.create(entity1_id: entity1_id, entity2_id: entity2_id, category_id: category_id, is_reverse: false, relationship: self)
-    Link.create(entity1_id: entity2_id, entity2_id: entity1_id, category_id: category_id, is_reverse: true, relationship: self)
-  end
-
-  private :create_links
 
   def self.all_categories
     ALL_CATEGORIES
@@ -319,25 +314,13 @@ class Relationship < ApplicationRecord
     return false
   end
 
-  def reverse_links(update_method = :update)
-    links.each do |link|
-      if link.is_reverse == true
-        link.public_send(update_method, is_reverse: false)
-      else
-        link.public_send(update_method, is_reverse: true)
-      end
-    end
-  end
-
   # Switches entity direction and changes reverses links
   def reverse_direction
     update(entity1_id: entity2_id, entity2_id: entity1_id)
-    reverse_links
   end
 
   def reverse_direction!
     update!(entity1_id: entity2_id, entity2_id: entity1_id)
-    reverse_links(:update!)
   end
 
   ###############################
