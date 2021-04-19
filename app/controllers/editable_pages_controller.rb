@@ -5,21 +5,7 @@ class EditablePagesController < ApplicationController
   before_action :admins_only, except: [:display, :index]
   before_action :set_page, only: [:display, :edit]
 
-  helper_method :markdown, :editable_page_path
-
-  class RenderWithTableClass < Redcarpet::Render::HTML
-    def table(thead, tbody)
-      <<~HTML
-        <table class='table'>
-          <thead>#{thead}</thead>
-          <tbody>#{tbody}</tbody>
-        </table>
-      HTML
-    end
-  end
-
-  MARKDOWN = Redcarpet::Markdown.new(RenderWithTableClass,
-                                     autolink: true, fenced_code_blocks: true, tables: true)
+  helper_method :editable_page_path
 
   # GET /NAMESAPCE/:page_name
   def display
@@ -31,12 +17,7 @@ class EditablePagesController < ApplicationController
   # GET /NAMESPACE
   def index
     @page = self.class.page_model.find_by(name: 'index')
-    @markdown =
-      if @page && !@page.markdown.nil?
-        markdown(@page.markdown)
-      else
-        markdown("The #{self.class.namespace} page named 'index' will be used as the front page.")
-      end
+    @content = @page&.content.presence || "The #{self.class.namespace} page named 'index' will be used as the front page."
   end
 
   # GET /NAMESPACE/new
@@ -88,11 +69,7 @@ class EditablePagesController < ApplicationController
     @page_model
   end
 
-  protected
-
-  def markdown(data)
-    self.class.const_get(:MARKDOWN).render(data || '')
-  end
+  private
 
   def editable_page_path(name, action = nil)
     base = "/#{self.class.namespace}/#{name}"
@@ -100,8 +77,6 @@ class EditablePagesController < ApplicationController
 
     "#{base}/#{action}"
   end
-
-  private
 
   def set_page
     raise Exceptions::NotFoundError if page_name.blank?
