@@ -407,6 +407,10 @@ describe RelationshipsController, type: :controller do
   end
 
   describe 'find_similar' do
+    let(:org) { create(:entity_org) }
+    let(:person) { create(:entity_person) }
+    let!(:rel) { create(:position_relationship, entity: person, related: org, description1: 'influence') }
+
     login_user
 
     it 'returns bad_request if missing params' do
@@ -423,10 +427,6 @@ describe RelationshipsController, type: :controller do
     end
 
     it 'returns json with one similar relationships' do
-      org = create(:entity_org)
-      person = create(:entity_person)
-      rel = create(:position_relationship, entity: person, related: org, description1: 'influence')
-
       get :find_similar, params: { entity1_id: person.id, entity2_id: org.id, category_id: 1 }
 
       json = JSON.parse(response.body)

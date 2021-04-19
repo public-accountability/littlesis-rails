@@ -8,6 +8,10 @@ describe 'Merging Entities', :merging_helper do
   let(:source_person) { create(:entity_person, :with_person_name) }
   let(:dest_person) { create(:entity_person, :with_person_name) }
 
+  before do
+    Link.refresh
+  end
+
   describe 'initializing' do
     let(:source) { build(:org) }
     let(:dest) { build(:org) }

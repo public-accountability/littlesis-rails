@@ -251,7 +251,7 @@ class Relationship < ApplicationRecord
 
   ## callbacks for soft_delete
   def after_soft_delete
-    links.destroy_all
+    Link.refresh
     update_entity_links
     references.destroy_all
     position&.destroy! if is_position?

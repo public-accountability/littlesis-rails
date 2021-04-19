@@ -161,4 +161,17 @@ describe Link, type: :model do
       expect(link.link_content).not_to include("('")
     end
   end
+
+  describe '.populated?' do
+    context 'with a relationship' do
+      before do
+        create(:relationship, entity: create(:entity_person), related: create(:entity_person), category_id: 1)
+      end
+
+      scenario 'the links view is automatically populated' do
+        expect(Relationship.count).to eq 1
+        expect(Link.populated?).to be true
+      end
+    end
+  end
 end

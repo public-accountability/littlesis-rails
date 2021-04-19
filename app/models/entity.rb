@@ -262,7 +262,7 @@ class Entity < ApplicationRecord
            end
 
     Entity.where(
-      :id => base.select('link.entity2_id, count(*) as c').group('link.entity2_id').order('c desc').limit(num).map { |x| x['entity2_id'] }
+      :id => base.select('links.entity2_id, count(*) as c').group('links.entity2_id').order('c desc').limit(num).map { |x| x['entity2_id'] }
     )
   end
 
@@ -278,31 +278,31 @@ class Entity < ApplicationRecord
     max_num = options[:max_num]
     page = options[:page]
 
-    r = Link.select("link2.entity2_id AS degree2_id, array_to_string(array_agg(DISTINCT link2.entity1_id), ',') AS degree1_ids, COUNT(DISTINCT link2.entity1_id) AS num")
-          .joins("LEFT JOIN link AS link2 ON link.entity2_id = link2.entity1_id")
-          .where("link.entity1_id = ?", id)
-          .where("link2.entity2_id <> ?", id)
-          .group("link2.entity2_id")
+    r = Link.select("links2.entity2_id AS degree2_id, array_to_string(array_agg(DISTINCT links2.entity1_id), ',') AS degree1_ids, COUNT(DISTINCT links2.entity1_id) AS num")
+          .joins("LEFT JOIN links AS links2 ON links.entity2_id = links2.entity1_id")
+          .where("links.entity1_id = ?", id)
+          .where("links2.entity2_id <> ?", id)
+          .group("links2.entity2_id")
           .order("num DESC")
 
-    r = r.where("link.is_reverse = ?", (order1 == 2)) if order1.present?
-    r = r.where("link2.is_reverse = ?", (order2 == 2)) if order2.present?
+    r = r.where("links.is_reverse = ?", (order1 == 2)) if order1.present?
+    r = r.where("links2.is_reverse = ?", (order2 == 2)) if order2.present?
 
-    r = r.where("link.category_id" => cat1_ids) if cat1_ids.present?
-    r = r.where("link2.category_id" => cat2_ids) if cat2_ids.present?
+    r = r.where("links.category_id" => cat1_ids) if cat1_ids.present?
+    r = r.where("links2.category_id" => cat2_ids) if cat2_ids.present?
 
     if ext2_ids.present?
-      r = r.joins("LEFT JOIN entity e ON e.id = link2.entity2_id LEFT JOIN extension_record er ON er.entity_id = e.id")
+      r = r.joins("LEFT JOIN entity e ON e.id = links2.entity2_id LEFT JOIN extension_record er ON er.entity_id = e.id")
       r = r.where("er.definition_id" => ext2_ids)
     end
 
     if past1.present?
-      r = r.joins("LEFT JOIN relationship r1 ON r1.id = link.relationship_id")
+      r = r.joins("LEFT JOIN relationship r1 ON r1.id = links.relationship_id")
       r = r.where("(r1.is_current = 1 OR r1.is_current IS NULL) AND r1.end_date IS NULL")
     end
 
     if past2.present?
-      r = r.joins("LEFT JOIN relationship r2 ON r2.id = link2.relationship_id")
+      r = r.joins("LEFT JOIN relationship r2 ON r2.id = links2.relationship_id")
       r = r.where("(r2.is_current = 1 OR r2.is_current IS NULL) AND r2.end_date IS NULL")
     end
 
@@ -390,7 +390,7 @@ class Entity < ApplicationRecord
   end
 
   def affiliations
-    relateds.where('link.category_id IN (1, 3)')
+    relateds.where('links.category_id IN (1, 3)')
   end
 
   def industries
