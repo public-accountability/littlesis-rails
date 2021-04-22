@@ -464,3 +464,23 @@ table.entity-images-table {
 .add-relationship-entity-search-input-group {
     max-width: 330px;
 }
+
+#entity-tags-modal {
+
+    .btn {
+        display: block;
+        margin-top: 5px;
+    }
+
+    .select2-container {
+        min-width: 200px;
+    }
+
+    .modal-dialog {
+        max-width: 350px;
+    }
+
+    .modal-content {
+        min-height: 200px;
+    }
+}

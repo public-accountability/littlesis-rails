@@ -61,6 +61,10 @@ class Tag < ApplicationRecord
     end
   end
 
+  def self.restricted_tags
+    @restricted_tags ||= Tag.where(restricted: true).to_a
+  end
+
   # INSTANCE METHODS
 
   def restricted?

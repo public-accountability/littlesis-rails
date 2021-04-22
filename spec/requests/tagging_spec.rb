@@ -8,9 +8,9 @@ describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
   let(:lister) { create_basic_user }
   let(:admin) { create_admin_user }
   let(:tags_params) { { tags: { ids: ['1', '2'] } } }
-  let(:creating_entity_tags) {  -> { post "/org/#{entity.to_param}/tags", params: tags_params } }
-  let(:creating_list_tags) { -> { post "/lists/#{list.id}/tags", params: tags_params } }
-  let(:creating_relationship_tags) { -> { post "/relationships/#{relationship.id}/tags", params: tags_params } }
+  let(:creating_entity_tags) {  -> { post "/org/#{entity.to_param}/tags", xhr: true, params: tags_params } }
+  let(:creating_list_tags) { -> { post "/lists/#{list.id}/tags", xhr: true, params: tags_params } }
+  let(:creating_relationship_tags) { -> { post "/relationships/#{relationship.id}/tags", xhr: true, params: tags_params } }
 
   def redirects_to_login(r)
     expect(r).to have_http_status 302
@@ -19,17 +19,26 @@ describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
 
   describe 'anon user' do
     it 'cannot create a tag for an entity' do
-      expect(creating_entity_tags).not_to change { Entity.find(entity.id).tags.length }
+      expect do
+        post "/org/#{entity.to_param}/tags", params: tags_params
+      end.not_to change { Entity.find(entity.id).tags.length }
+
       redirects_to_login(response)
     end
 
     it 'cannot create a tag for an list' do
-      expect(creating_list_tags).not_to change { List.find(list.id).tags.length }
+      expect do
+        post "/lists/#{list.id}/tags", params: tags_params
+      end.not_to change { List.find(list.id).tags.length }
+
       redirects_to_login(response)
     end
 
     it 'cannot create a tag for a relationship' do
-      expect(creating_relationship_tags).not_to change { Relationship.find(relationship.id).tags.length }
+      expect do
+        post "/relationships/#{relationship.id}/tags", params: tags_params
+      end.not_to change { Relationship.find(relationship.id).tags.length }
+
       redirects_to_login(response)
     end
   end

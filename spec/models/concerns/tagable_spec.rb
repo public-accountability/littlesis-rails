@@ -213,8 +213,8 @@ describe Tagable, type: :model do
     let(:restricted_tag) { tags.last.tap { |t| t.update(restricted: true) } }
 
     # we have to use string keys here (unlike everywhere else) b/c of our Tag wanna-be model
-    let(:full_access) { { viewable: true, editable: true } }
-    let(:view_only_access) { { viewable: true, editable: false } }
+    let(:full_access) { { viewable: true, editable: true }.with_indifferent_access }
+    let(:view_only_access) { { viewable: true, editable: false }.with_indifferent_access }
 
     before(:each) do
       test_tagable.add_tag(restricted_tag.id)

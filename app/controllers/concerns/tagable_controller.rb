@@ -16,8 +16,12 @@ module TagableController
   def tags
     tagable = self.class.controller_name.classify.constantize.find(params[:id])
     check_tagable_access(tagable)
-    tagable.update_tags(tag_ids)
-    render json: { redirect: after_tags_redirect_url(tagable) }, status: :accepted
+    tagable.update_tags(tag_ids, admin: current_user.admin?)
+
+    respond_to do |format|
+      format.html { redirect_to after_tags_redirect_url(tagable) }
+      format.js { render(json: { redirect: after_tags_redirect_url(tagable) }, status: :accepted) }
+    end
   end
 
   protected
@@ -42,6 +46,10 @@ module TagableController
   private
 
   def tag_ids
-    params.require(:tags).permit(:ids => [])[:ids].map(&:to_i)
+    if params[:tags]
+      params.require(:tags).permit(:ids => [])[:ids].map(&:to_i)
+    else
+      []
+    end
   end
 end

@@ -62,9 +62,17 @@ module Tagable
   end
 
   # [String|Int] -> Tagable
-  def update_tags(ids)
+  def update_tags(ids, admin: false)
     server_tag_ids = tags.map(&:id).to_set
     client_tag_ids = ids.map(&:to_i).to_set
+
+    # add back restricted tags
+    unless admin
+      (server_tag_ids & Tag.restricted_tags.map(&:id)).each do |tag_id|
+        client_tag_ids << tag_id
+      end
+    end
+
     actions = Tag.parse_update_actions(client_tag_ids, server_tag_ids)
 
     actions[:remove].each { |tag_id| remove_tag(tag_id) }
@@ -72,9 +80,7 @@ module Tagable
     self
   end
 
-  def tags_for(user)
-    return unless user
-
+  def tags_for(user = nil)
     {
       byId: hashify(add_permissions(Tag.all, user)),
       current: tags.map(&:id).map(&:to_s)
@@ -94,14 +100,20 @@ module Tagable
   # Array[Tag] -> Hash{[id:string]: Tag}
   def hashify(tags)
     tags.reduce({}) do |acc, t|
-      acc.merge(t['id'].to_s => t)
+      acc.merge(t['id'].to_s => t.with_indifferent_access)
     end
   end
 
   # (Array[Tag], User) -> Array[AugmentedTag]
   def add_permissions(tags, user)
     tags.map do |t|
-      t.attributes.merge('permissions' => user.permissions.tag_permissions(t))
+      permissions = if user
+                      user.permissions.tag_permissions(t)
+                    else
+                      { :viewable => true, :editable => false }
+                    end
+
+      t.attributes.merge('permissions' => permissions)
     end
   end
 end
