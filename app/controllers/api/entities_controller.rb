@@ -8,7 +8,7 @@ class Api::EntitiesController < Api::ApiController
   before_action :set_options, except: [:search]
 
   def show
-    render json: @entity.as_api_json(@options)
+    render json: @entity.as_api_json(**@options)
   end
 
   def relationships

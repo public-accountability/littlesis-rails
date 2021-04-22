@@ -70,12 +70,12 @@ module RspecHelpers
       Faker::Internet.unique.user_name(specifier: 5).tr('.', '_')
     end
 
-    def css(*args)
-      expect(rendered).to have_css(*args)
+    def css(...)
+      expect(rendered).to have_css(...)
     end
 
-    def not_css(*args)
-      expect(rendered).not_to have_css(*args)
+    def not_css(...)
+      expect(rendered).not_to have_css(...)
     end
 
     def create_admin_user

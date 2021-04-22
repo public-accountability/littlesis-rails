@@ -1,18 +1,12 @@
 module Kaminari
   class PaginatableArray
     def map(&block)
-      self.class.new(super(&block), get_options)
-    end
+      options = { limit: @_limit_value,
+                  offset: @_offset_value,
+                  total_count: @_total_count,
+                  padding: @_padding }
 
-    private
-
-    def get_options
-      {
-        limit: @_limit_value,
-        offset: @_offset_value,
-        total_count: @_total_count,
-        padding: @_padding
-      }
+      self.class.new(super(&block), **options)
     end
   end
 end
