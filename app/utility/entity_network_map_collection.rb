@@ -54,7 +54,8 @@ class EntityNetworkMapCollection
 
   ## class methods ##
 
-  def self.remove_all(network_map_id)
+  def self.remove_all
+    Rails.cache.delete_matched(MATCH_PATTERN)
   end
 
   private
