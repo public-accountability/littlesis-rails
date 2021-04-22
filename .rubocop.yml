@@ -8,8 +8,8 @@ AllCops:
     - 'db/schema.rb'
     - 'db/seeds.rb'
     - 'db/migrate/*.rb'
-  TargetRubyVersion: 2.7
-  TargetRailsVersion: 6.0
+  TargetRubyVersion: 3.0
+  TargetRailsVersion: 6.1
 
 Rails:
   Enabled: true
