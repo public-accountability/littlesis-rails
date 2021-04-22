@@ -411,6 +411,7 @@ DEPENDENCIES
   rails-controller-testing
   redcarpet (>= 3.4.0)
   redis
+  rexml
   roo (~> 2.8.1)
   rspec-rails (>= 4.0.1)
   rspec_junit_formatter
@@ -438,4 +439,4 @@ DEPENDENCIES
   zeitwerk
 
 BUNDLED WITH
-   2.1.4
+   2.2.15

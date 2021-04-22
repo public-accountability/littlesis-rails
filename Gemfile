@@ -13,6 +13,7 @@ gem 'concurrent-ruby', require: 'concurrent'
 gem 'nokogiri'
 gem 'parallel'
 gem 'zeitwerk'
+gem 'rexml'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
