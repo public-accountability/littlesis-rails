@@ -138,10 +138,10 @@ feature 'Entity page', type: :feature, js: true do
         visit person_path(person)
 
         find('#sidebar-lists-container .select2').click
-        find('.select2-search__field').native.send_keys('Objectified')
-        find('.select2-search__field').native.send_keys(:return)
-        find('.select2-selection').click
-        find('.select2-search__field').native.send_keys(:return)
+        find('.select2-container--open .select2-search__field').native.send_keys('Objectified')
+        find('.select2-container--open .select2-search__field').native.send_keys(:return)
+        find('#sidebar-lists-container .select2-selection').click
+        find('.select2-container--open .select2-search__field').native.send_keys(:return)
         find('#sidebar-lists-container input[value="add to list"]').click
 
         expect(page).to have_selector('.alert-success', text: "Added to list 'Objectified people'")
