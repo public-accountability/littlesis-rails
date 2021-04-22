@@ -46,6 +46,10 @@ module TagableController
   private
 
   def tag_ids
-    params.require(:tags).permit(:ids => [])[:ids].map(&:to_i)
+    if params[:tags]
+      params.require(:tags).permit(:ids => [])[:ids].map(&:to_i)
+    else
+      []
+    end
   end
 end

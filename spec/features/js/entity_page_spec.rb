@@ -51,29 +51,10 @@ feature 'Entity page', type: :feature, js: true do
     let(:person) { create(:entity_person, name: 'Colander Raclette', blurb: 'A human cheese') }
 
     before { login_as user, scope: :user }
-
     after { logout(:user) }
 
-    xscenario "user edits the entity's blurb" do
-      visit person_path(person)
+    describe 'Adding and removing tags' do
 
-      within '#editable-blurb' do
-        expect(page).to have_selector('#entity-blurb-text', text: 'A human cheese')
-
-        expect(page).to have_selector('#entity-blurb-pencil', visible: :hidden)
-        find('#entity-blurb-text').hover
-        expect(page).to have_selector('#entity-blurb-pencil', visible: :visible)
-        find('#entity-blurb-pencil').click
-
-        find('#entity-blurb-text input').fill_in with: 'A human utensil'
-        find('#entity-blurb-text input').native.send_keys(:return)
-
-        expect(page).to have_selector('#entity-blurb-text', text: 'A human utensil')
-      end
-    end
-
-    # NOTE: failing becuase of a database cleaning problem?
-    xcontext 'with some existing tags' do
       before do
         create(:finance_tag)
         create(:real_estate_tag)
@@ -81,53 +62,33 @@ feature 'Entity page', type: :feature, js: true do
 
       scenario 'user adds tags to an entity' do
         visit person_path(person)
+        expect(page).to have_css('#tags-container li', count: 0)
 
-        within '#profile-page-sidebar' do
-          find('#tags-edit-button').click
+        find('#tags-edit-button').click
+        find('#entity-tags-modal .select2-container').click
+        find('.select2-container--open .select2-results__option', text: 'finance').click
+        find('#entity-tags-modal .select2-container').click
+        find('.select2-container--open .select2-results__option', text: 'real-estate').click
+        find('#entity-tags-modal .select2-container').click
+        find('#entity-tags-modal .btn[type="submit"]').click
 
-          %w[finance real-estate].each do |tag|
-            click_on 'Pick a tag...'
-            find('.text', text: tag).click
-            expect(page).to have_css('#tags-edit-list li', text: tag)
-          end
-
-          expect(page).to have_css('#tags-edit-list li', count: 2)
-
-          first('#tags-edit-list .tag-remove-icon').click
-
-          expect(page).to have_css('#tags-edit-list li', count: 1)
-
-          find('#tags-save-button').click
-        end
+        expect(page).to have_css('#tags-container li', count: 2)
       end
 
-      context 'with a tagged entity' do
-        before do
-          person.add_tag('finance')
-          person.add_tag('real-estate')
-        end
+      scenario 'user removes a tag from an entity' do
+        person.add_tag('finance')
+        visit person_path(person)
+        expect(page).to have_css('#tags-container li', count: 1)
 
-        scenario 'user removes a tag from the entity' do
-          visit person_path(person)
+        find('#tags-edit-button').click
+        find('.select2-selection__choice[title="finance"] .select2-selection__choice__remove').click
+        find('#entity-tags-modal .btn[type="submit"]').click
+        expect(page).to have_css('#tags-container li', count: 0)
 
-          within '#profile-page-sidebar' do
-            expect(page).to have_css('#tags-list li', text: 'finance')
-            expect(page).to have_css('#tags-list li', text: 'real-estate')
-
-            find('#tags-edit-button').click
-
-            within('li', text: 'finance') { find('.tag-remove-icon').click }
-
-            expect(page).not_to have_css('#tags-edit-list li', text: 'finance')
-            expect(page).to have_css('#tags-edit-list li', text: 'real-estate')
-
-            find('#tags-save-button').click
-          end
-        end
       end
     end
 
-    context 'with a list', :sphinx do
+    describe 'Add entities to lists', :sphinx do
       let!(:list) { create(:list, name: 'Objectified people') }
 
       before { setup_sphinx { list } }
