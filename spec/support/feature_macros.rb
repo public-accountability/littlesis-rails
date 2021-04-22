@@ -42,8 +42,8 @@ module FeatureExampleMacros
     selectors.each { |s| page_has_selector s }
   end
 
-  def page_has_selector(*args)
-    expect(page).to have_selector(*args)
+  def page_has_selector(selector, **kwargs)
+    expect(page).to have_selector(selector, **kwargs)
   end
 
   def page_has_no_selector(*args)
