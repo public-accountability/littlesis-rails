@@ -222,7 +222,7 @@ describe EntityMatcher, :sphinx do
       end
 
       it 'sets name when provided hash' do
-        expect(subject.new('name_last' => 'Last', 'name_first' => 'First').name)
+        expect(subject.new({'name_last' => 'Last', 'name_first' => 'First'}).name)
           .to eql ActiveSupport::HashWithIndifferentAccess
                     .new(name_prefix: nil,
                          name_first: "First",
@@ -237,8 +237,8 @@ describe EntityMatcher, :sphinx do
           .to raise_error(EntityMatcher::TestCase::WrongEntityTypeError)
       end
 
-      it 'raises error if called with an hashing missing a last name' do
-        expect { subject.new(first_name: 'xyz') }
+      it 'raises error if called with an hash missing a last name' do
+        expect { subject.new({ first_name: 'xyz' }) }
           .to raise_error(EntityMatcher::TestCase::InvalidPersonHash)
       end
     end
