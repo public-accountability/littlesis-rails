@@ -7,7 +7,7 @@ jobs:
       COVERAGE: yes
     resource_class: medium
     docker:
-      - image: ruby:2.7.2-buster
+      - image: ruby:3.0.1-buster
         environment:
           RAILS_ENV: test
 
