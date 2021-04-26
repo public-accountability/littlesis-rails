@@ -16,6 +16,7 @@ class OligrapherController < ApplicationController
   before_action :set_oligrapher_version
 
   rescue_from ActiveRecord::RecordNotFound, with: :map_not_found
+  rescue_from Exceptions::PermissionError, with: :map_not_found
 
   # Pages
 
