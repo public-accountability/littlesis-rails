@@ -48,9 +48,6 @@ gem 'money'
 
 gem 'datagrid'
 
-# used by Pages and Toolkit for Markdown->Html
-gem 'redcarpet', '>= 3.4.0'
-
 gem 'validate_url', '>= 1.0.13'
 
 # used for screenshot capture
