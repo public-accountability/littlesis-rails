@@ -45,4 +45,8 @@ module MapsHelper
 
     raise Exceptions::PermissionError unless @map.can_edit?(current_user)
   end
+
+  def map_not_found
+    render 'errors/not_found', status: :not_found, layout: 'application'
+  end
 end

@@ -16,6 +16,9 @@ class MapsController < ApplicationController
 
   protect_from_forgery except: [:create, :clone]
 
+  rescue_from ActiveRecord::RecordNotFound, with: :map_not_found
+  rescue_from Exceptions::PermissionError, with: :map_not_found
+
   # defaults for embedded oligrapher
   EMBEDDED_HEADER_PCT = 8
   EMBEDDED_ANNOTATION_PCT = 28
@@ -92,13 +95,13 @@ class MapsController < ApplicationController
         linkText: "View this map on LittleSis"
       },
       data: {
-	      title: @map.title.gsub('"', '\"'),
+	title: @map.title.gsub('"', '\"'),
         graph: @map.graph_data.to_json,
         annotations: @map.annotations_data || '[]'
       },
       startAnnotation: embedded_params.fetch(:slide, 1).to_i - 1
     }
-   
+
     render layout: 'embedded_oligrapher'
   end
 

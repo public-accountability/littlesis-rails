@@ -15,7 +15,7 @@ describe "Oligrapher", type: :request do
 
         it 'map cannot be viewed' do
           get "/oligrapher/#{network_map.to_param}"
-          expect(response.status).to eq 403
+          expect(response.status).to eq 404
         end
       end
 

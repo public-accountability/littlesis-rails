@@ -268,10 +268,6 @@ class OligrapherController < ApplicationController
       params[:category_id].to_i
     end
   end
-
-  def map_not_found
-    render 'errors/not_found', status: :not_found, layout: 'application'
-  end
 end
 
 # Should we have some sort of GraphData validation?
