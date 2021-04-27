@@ -17,7 +17,7 @@ describe 'Maps', :sphinx, type: :request do
       let(:url) { Rails.application.routes.url_helpers.feature_map_path(map) }
       before { post url, params: { action: 'ADD' } }
 
-      denies_access
+      specify { expect(response).to have_http_status :not_found }
     end
   end
 

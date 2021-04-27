@@ -15,13 +15,6 @@ describe 'Maps' do
     it 'redirects to oligrapher map' do
       expect(page.current_path).to eq oligrapher_path(regular_map)
     end
-
-    # it 'has oligrapher js with username and link' do
-    #   expect(page.html).to include "/js/oligrapher/oligrapher-#{NetworkMap::OLIGRAPHER_VERSION}.js"
-    #   expect(page.html).to include "/js/oligrapher/oligrapher_littlesis_bridge-#{NetworkMap::OLIGRAPHER_VERSION}.js"
-    #   expect(page.html).to include "{ name: \"#{user.username}\""
-    #   expect(page.html).to include "url: \"https://littlesis.org/users/#{user.username}\" }"
-    # end
   end
 
   describe 'oligrapher creation page' do
@@ -60,22 +53,22 @@ describe 'Maps' do
 
     it 'access is denied to map page' do
       visit map_path(private_map)
-      expect(page).to have_http_status :forbidden
+      expect(page).to have_http_status :not_found
     end
 
     it 'access is denied to embedded v2 maps' do
       visit embedded_v2_map_path(private_map)
-      expect(page).to have_http_status :forbidden
+      expect(page).to have_http_status :not_found
     end
 
     it 'access is denied to embedded v1 maps' do
       visit embedded_map_path(private_map)
-      expect(page).to have_http_status :forbidden
+      expect(page).to have_http_status :not_found
     end
 
     it 'access is denied to map_json' do
       visit map_json_map_path(private_map)
-      expect(page).to have_http_status :forbidden
+      expect(page).to have_http_status :not_found
     end
   end
 

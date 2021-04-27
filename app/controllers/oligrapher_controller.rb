@@ -16,6 +16,7 @@ class OligrapherController < ApplicationController
   before_action :set_oligrapher_version
 
   rescue_from ActiveRecord::RecordNotFound, with: :map_not_found
+  rescue_from Exceptions::PermissionError, with: :map_not_found
 
   # Pages
 
@@ -266,10 +267,6 @@ class OligrapherController < ApplicationController
     if params[:category_id] && (1..12).cover?(params[:category_id].to_i)
       params[:category_id].to_i
     end
-  end
-
-  def map_not_found
-    render 'errors/not_found', status: :not_found, layout: 'application'
   end
 end
 
