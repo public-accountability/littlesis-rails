@@ -5,13 +5,11 @@ describe EntityConnectionsQuery do
   let(:entity2) { create(:entity_person) }
   let(:entity3) { create(:entity_person) }
   let(:entity4) { create(:entity_person) }
-  let(:relationship1) { create(:social_relationship, entity: entity1, related: entity2) }
-  let(:relationship2) { create(:social_relationship, entity: entity1, related: entity3) }
-  let(:relationship3) { create(:donation_relationship, entity: entity1, related: entity4) }
+  let!(:relationship1) { create(:social_relationship, entity: entity1, related: entity2) }
+  let!(:relationship2) { create(:social_relationship, entity: entity1, related: entity3) }
+  let!(:relationship3) { create(:donation_relationship, entity: entity1, related: entity4) }
 
   let(:query) { EntityConnectionsQuery.new(entity1) }
-
-  before { relationship1; relationship2; relationship3; }
 
   it 'includes fields "relationship_id" and "relationship_category_id"' do
     query.category_id = Relationship::DONATION_CATEGORY
