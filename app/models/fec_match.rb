@@ -19,7 +19,7 @@ class FECMatch < ApplicationRecord
     Relationship.find_by(committee_relationship_attrs)
   end
 
-  def create_commitee_relationship
+  def create_committee_relationship
     unless committee_relationship
       Relationship.create!(committee_relationship_attrs).tap do |r|
         r.add_reference(fec_contribution.reference_attributes).save!
@@ -69,10 +69,22 @@ class FECMatch < ApplicationRecord
                                    filings: contributions.size)
   end
 
-  def self.migration!
-    stats = { :missing => 0, :already_imported => 0, :new_committees => 0, :errors => 0, :created => 0 }
+  def self.test_migration!
+    migration!(proc do |x|
+                 x.where('created_at >= ?', 2.years.ago).order('random()').limit(20_000)
+               end)
+  end
 
-    OsMatch.where("created_at >= ?", 2.years.ago).order('random()').limit(20_000).find_each do |os_match|
+  def self.migration!(scope = nil)
+    stats = { missing: 0, already_imported: 0, new_committees: 0, errors: 0, created: 0 }
+
+    relation = if scope.respond_to?(:call)
+                 scope.call(OsMatch.all)
+               else
+                 OsMatch.all
+               end
+
+    relation.find_each do |os_match|
       # fec trans id in OsDonation  = sub_id in new fec tables
       fec_trans_id = os_match.os_donation.fectransid.to_i
 
@@ -107,12 +119,13 @@ class FECMatch < ApplicationRecord
             end
           end
 
+          fec_match.create_committee_relationship
           fec_match.update_committee_relationship
-        end
 
-        stats[:created] += 1
+          stats[:created] += 1
+        end
       rescue => e
-        Rails.logger.warn "OsMatch (#{os_match.id}) Error: #{e.message}"
+        Rails.logger.warn "OsMatch (#{os_match.id}) Error: #{e.message}. Line: #{e.backtrace[0]}"
         stats[:errors] += 1
       end
     end
