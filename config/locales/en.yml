@@ -33,6 +33,37 @@
 en:
   hello: "Hello world"
 
+  littlesis:
+    person: "person"
+    organization: "organization"
+    entity: "entity"
+    list: "list"
+    map: "map"
+
+
+  menu:
+    login: "Login"
+    signup: "Sign Up"
+    explore: "Explore"
+    help: "Help"
+    about: "About"
+    toolkit: "Toolkit"
+    report_a_bug: "Report a bug"
+    features: "Features"
+    team: "Our Team"
+    api: "Data API"
+    source_code: "Source Code"
+    disclaimer: "Disclaimer"
+    contact_us: "Contact Us"
+    jobs: "Jobs"
+    donate: "Donate"
+    blog: "Blog"
+    settings: "Settings"
+    edits: "Edits"
+
+
+
+
   # kaminari pagination labels
   views:
     pagination:

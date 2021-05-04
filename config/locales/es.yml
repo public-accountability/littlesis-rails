@@ -1,0 +1,30 @@
+es:
+
+  littlesis:
+    person:
+    organization:
+    entity:
+    list:
+    map:
+
+
+  menu:
+    login:
+    logout:
+    signup:
+    explore:
+    help:
+    about:
+    toolkit:
+    report_a_bug:
+    features:
+    team:
+    api:
+    source_code:
+    disclaimer:
+    contact_us:
+    jobs:
+    donate:
+    blog:
+    settings:
+    edits:
