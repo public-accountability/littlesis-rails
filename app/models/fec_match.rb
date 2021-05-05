@@ -121,6 +121,8 @@ class FECMatch < ApplicationRecord
 
           fec_match.create_committee_relationship
           fec_match.update_committee_relationship
+          fec_match.create_candidate_relationship
+          fec_match.update_candidate_relationship
 
           stats[:created] += 1
         end

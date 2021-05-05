@@ -46,8 +46,6 @@
 
   <% if user_signed_in? && ( current_user.importer? || current_user.admin? ) %>
     <%= profile_page_sidebar('sidebar-advanced-tools-container', 'Advanced tools') do %>
-      <%= link_to 'Match NY Donations', concretize_match_ny_donations_entity_path(@entity) %>
-      <br/>
       <%= link_to 'Match FEC Donations', fec_entity_match_contributions_path(@entity) %>
     <% end %>
   <% end %>

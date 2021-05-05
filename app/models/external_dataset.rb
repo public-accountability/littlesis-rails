@@ -249,7 +249,15 @@ module ExternalDataset
     end
 
     def reference_attributes
-      { name: "FEC Contribution #{sub_id}", url: reference_url }
+      { name: "FEC Filing #{sub_id}", url: reference_url }
+    end
+
+    def location
+      "#{city}, #{state}, #{zip_code}"
+    end
+
+    def employment
+      "#{occupation} at #{employer}"
     end
   end
 

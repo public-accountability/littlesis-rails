@@ -2,11 +2,9 @@
 
 module FECDonorQuery
   def self.run(query)
-    search_terms = Array.wrap(query).map(&:upcase)
-
     ExternalDataset::FECContribution
       .left_outer_joins(:fec_match)
-      .where('fec_matches.id is null') # only include unmatched donations
-      .where(name: search_terms)
+      .where("to_tsvector(name) @@ websearch_to_tsquery(?)", query.upcase)
+    # .where('fec_matches.id is null') # only include unmatched donations
   end
 end

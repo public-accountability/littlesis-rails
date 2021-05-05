@@ -25,14 +25,19 @@ class FECController < ApplicationController
   end
 
   def match_contributions
-    # @donors = FECDonorQuery.run(params[:q] || @entity)
+    @query = params[:q] || @entity.name
+    @contributions = ExternalDataset::FECContribution
+                       .includes(:fec_match)
+                       .where("to_tsvector(name) @@ websearch_to_tsquery(?)", query.upcase)
+    #                  .where('fec_matches.id is null') # only include unmatched donations
   end
 
+
   # required params: donor_id, sub_ids
-  def donor_match
-    ExternalEntity.find(params[:external_entity_id]).match_with(@entity)
-    redirect_to action: :match_contributions
-  end
+  # def donor_match
+  #   ExternalEntity.find(params[:external_entity_id]).match_with(@entity)
+  #   redirect_to action: :match_contributions
+  # end
 
   def contribution_unmatch
   end
