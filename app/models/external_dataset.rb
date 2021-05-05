@@ -218,6 +218,8 @@ module ExternalDataset
         entity.add_extension('PoliticalFundraising')
         entity.external_links.create!(link_type: :fec_committee, link_id: cmte_id)
       end
+
+      reload_entity
     end
   end
 
@@ -245,11 +247,11 @@ module ExternalDataset
     end
 
     def reference_url
-      "http://docquery.fec.gov/cgi-bin/fecimg/?#{image_num}"
+      "https://docquery.fec.gov/cgi-bin/fecimg/?#{image_num}"
     end
 
     def reference_attributes
-      { name: "FEC Filing #{sub_id}", url: reference_url }
+      { name: "FEC Record \##{sub_id}", url: reference_url }
     end
 
     def location

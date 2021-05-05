@@ -15,6 +15,13 @@ class FECMatch < ApplicationRecord
   # The associated candidate for the recipient (not all committees will have one)
   belongs_to :candidate, class_name: 'Entity', optional: true
 
+  after_create do
+    create_committee_relationship
+    update_committee_relationship
+    create_candidate_relationship
+    update_candidate_relationship
+  end
+
   def committee_relationship
     Relationship.find_by(committee_relationship_attrs)
   end
@@ -38,6 +45,10 @@ class FECMatch < ApplicationRecord
                                    start_date: contributions.first.date,
                                    end_date: contributions.last.date,
                                    filings: contributions.size)
+
+    contributions.map(&:reference_attributes).each do |attrs|
+      committee_relationship.add_reference(attrs).save
+    end
   end
 
   def candidate_relationship
@@ -47,7 +58,7 @@ class FECMatch < ApplicationRecord
   end
 
   def create_candidate_relationship
-    unless candidate.present? && candidate_relationship.nil?
+    if candidate.present? && candidate_relationship.nil?
       Relationship.create!(candidate_relationship_attrs).tap do |r|
         r.add_reference(fec_contribution.reference_attributes).save!
       end
@@ -67,6 +78,10 @@ class FECMatch < ApplicationRecord
                                    start_date: contributions.first.date,
                                    end_date: contributions.last.date,
                                    filings: contributions.size)
+
+    contributions.map(&:reference_attributes).each do |attrs|
+      candidate_relationship.add_reference(attrs).save
+    end
   end
 
   def self.test_migration!
@@ -76,15 +91,15 @@ class FECMatch < ApplicationRecord
   end
 
   def self.migration!(scope = nil)
-    stats = { missing: 0, already_imported: 0, new_committees: 0, errors: 0, created: 0 }
+    stats = { missing: 0, already_imported: 0, missing_donor: 0, new_committees: 0, errors: 0, created: 0 }
 
-    relation = if scope.respond_to?(:call)
-                 scope.call(OsMatch.all)
-               else
-                 OsMatch.all
-               end
+    os_match_relation = if scope.respond_to?(:call)
+                          scope.call(OsMatch.all)
+                        else
+                          OsMatch.all
+                        end
 
-    relation.find_each do |os_match|
+    os_match_relation.find_each do |os_match|
       # fec trans id in OsDonation  = sub_id in new fec tables
       fec_trans_id = os_match.os_donation.fectransid.to_i
 
@@ -96,6 +111,10 @@ class FECMatch < ApplicationRecord
       elsif FECMatch.exists?(sub_id: fec_trans_id)
         stats[:already_imported] += 1
         next
+      elsif os_match.donor.nil?
+        Rails.logger.warn "OsMatch (#{os_match.id}) is missing a donor"
+        stats[:missing_donor] += 1
+        next
       end
 
       begin
@@ -105,11 +124,11 @@ class FECMatch < ApplicationRecord
             stats[:new_committees] += 1
           end
 
-          fec_match = FECMatch.create!(sub_id: fec_contribution.sub_id, donor_id: os_match.donor_id)
+          fec_match = FECMatch.create!(sub_id: fec_contribution.sub_id,
+                                       donor: os_match.donor,
+                                       recipient: fec_contribution.fec_committee.entity)
 
-          fec_match.update!(recipient: fec_contribution.fec_committee.entity)
-
-          # is the committees is associated with a candidate?
+          # is the committee associated with a candidate?
           if fec_contribution.fec_committee.cand_id.present?
             # is that candidate connected to a LittleSis entity?
             if (candidate = ExternalLink
@@ -118,11 +137,6 @@ class FECMatch < ApplicationRecord
               fec_match.update!(candidate: candidate)
             end
           end
-
-          fec_match.create_committee_relationship
-          fec_match.update_committee_relationship
-          fec_match.create_candidate_relationship
-          fec_match.update_candidate_relationship
 
           stats[:created] += 1
         end

@@ -1,6 +1,7 @@
 describe FECMatch do
+  let(:donor) { create(:entity_person) }
   let(:pac) { create(:entity_org, name: 'pac') }
-  let(:fec_match) { create(:fec_match, recipient: pac) }
+  let(:fec_match) { build(:fec_match, recipient: pac, donor: donor) }
 
   let(:existing_relationship) do
     Relationship.create!(category_id: Relationship::DONATION_CATEGORY,
@@ -18,15 +19,13 @@ describe FECMatch do
   end
 
   describe '#committee_relationship' do
-    before { fec_match }
-
-    it 'creates a new relationship' do
-      expect { fec_match.create_committee_relationship }.to change(Relationship, :count).by(1)
+    it 'creates a new relationship relationships' do
+      expect { fec_match.save! }.to change(Relationship, :count).by(1)
     end
 
     it 'finds existing relationship' do
       existing_relationship
-      expect { fec_match.create_committee_relationship }.not_to change(Relationship, :count)
+      expect { fec_match.save! }.not_to change(Relationship, :count)
       expect(fec_match.committee_relationship).to eq existing_relationship
     end
   end
