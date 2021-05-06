@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '6.1.3.1'
+gem 'rails', '6.1.3.2'
 
 gem 'pg'
 gem 'mysql2', '~> 0.5.2'
@@ -33,7 +33,7 @@ gem 'delayed_job', '~> 4.1'
 gem 'delayed_job_active_record', '>= 4.1.3'
 
 # Assets and images
-gem 'bootstrap', '>= 4.3.1'
+gem 'bootstrap', '~> 4'
 gem 'mini_magick'
 gem 'sassc-rails'
 gem 'sprockets', '~> 3.0'
