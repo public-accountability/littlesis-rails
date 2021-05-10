@@ -1898,39 +1898,6 @@ ALTER SEQUENCE public.industry_id_seq OWNED BY public.industry.id;
 
 
 --
--- Name: link; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.link (
-    id bigint NOT NULL,
-    entity1_id bigint NOT NULL,
-    entity2_id bigint NOT NULL,
-    category_id bigint NOT NULL,
-    relationship_id bigint NOT NULL,
-    is_reverse boolean NOT NULL
-);
-
-
---
--- Name: link_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.link_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: link_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.link_id_seq OWNED BY public.link.id;
-
-
---
 -- Name: relationship; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4403,13 +4370,6 @@ ALTER TABLE ONLY public.industry ALTER COLUMN id SET DEFAULT nextval('public.ind
 
 
 --
--- Name: link id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link ALTER COLUMN id SET DEFAULT nextval('public.link_id_seq'::regclass);
-
-
---
 -- Name: lobby_filing id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5221,14 +5181,6 @@ ALTER TABLE ONLY public.image
 
 ALTER TABLE ONLY public.industry
     ADD CONSTRAINT industry_pkey PRIMARY KEY (id);
-
-
---
--- Name: link link_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link
-    ADD CONSTRAINT link_pkey PRIMARY KEY (id);
 
 
 --
@@ -6261,69 +6213,6 @@ CREATE INDEX idx_16774_entity_id_idx ON public.image USING btree (entity_id);
 --
 
 CREATE INDEX idx_16774_index_image_on_address_id ON public.image USING btree (address_id);
-
-
---
--- Name: idx_16806_category_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_category_id_idx ON public.link USING btree (category_id);
-
-
---
--- Name: idx_16806_entity1_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_entity1_id_idx ON public.link USING btree (entity1_id);
-
-
---
--- Name: idx_16806_entity2_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_entity2_id_idx ON public.link USING btree (entity2_id);
-
-
---
--- Name: idx_16806_index_link_on_entity1_id_and_category_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_index_link_on_entity1_id_and_category_id ON public.link USING btree (entity1_id, category_id);
-
-
---
--- Name: idx_16806_index_link_on_entity1_id_and_category_id_and_is_rever; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_index_link_on_entity1_id_and_category_id_and_is_rever ON public.link USING btree (entity1_id, category_id, is_reverse);
-
-
---
--- Name: idx_16806_relationship_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_relationship_id_idx ON public.link USING btree (relationship_id);
-
-
---
--- Name: index_links_on_entity1_id_and_entity2_id_and_relationship_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_links_on_entity1_id_and_entity2_id_and_relationship_id ON public.links USING btree (entity1_id, entity2_id, relationship_id);
-
-
---
--- Name: index_links_on_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_links_on_id ON public.links USING btree (id);
-
-
---
--- Name: links_relationship_id_is_reverse_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX links_relationship_id_is_reverse_idx ON public.links USING btree (relationship_id, is_reverse);
 
 
 --
@@ -7675,38 +7564,6 @@ ALTER TABLE ONLY public.image
 
 
 --
--- Name: link link_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link
-    ADD CONSTRAINT link_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: link link_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link
-    ADD CONSTRAINT link_ibfk_2 FOREIGN KEY (entity2_id) REFERENCES public.entity(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: link link_ibfk_3; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link
-    ADD CONSTRAINT link_ibfk_3 FOREIGN KEY (entity1_id) REFERENCES public.entity(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: link link_ibfk_4; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link
-    ADD CONSTRAINT link_ibfk_4 FOREIGN KEY (category_id) REFERENCES public.relationship_category(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
 -- Name: lobby_filing_lobby_issue lobby_filing_lobby_issue_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8158,6 +8015,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210405200349'),
 ('20210405202345'),
 ('20210412135059'),
-('20210419114108');
+('20210419114108'),
+('20210510192207');
 
 
