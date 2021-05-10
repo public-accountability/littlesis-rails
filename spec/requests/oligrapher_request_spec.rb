@@ -531,8 +531,8 @@ describe "Oligrapher", type: :request do
     let(:entity2) { create(:entity_person) }
     let(:entity3) { create(:entity_person) }
 
-    let(:rel1) { create(:donation_relationship, entity: entity1, related: entity2, is_current: false) }
-    let(:rel2) { create(:donation_relationship, entity: entity3, related: entity1, is_current: true) }
+    let!(:rel1) { create(:donation_relationship, entity: entity1, related: entity2, is_current: false) }
+    let!(:rel2) { create(:donation_relationship, entity: entity3, related: entity1, is_current: true) }
 
     before { entity1; entity2; entity3; rel1; rel2; }
 
