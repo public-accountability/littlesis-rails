@@ -34,6 +34,7 @@ gem 'delayed_job_active_record', '>= 4.1.3'
 
 # Assets and images
 gem 'bootstrap', '~> 4'
+gem 'image_processing'
 gem 'mini_magick'
 gem 'sassc-rails'
 gem 'sprockets', '~> 3.0'
@@ -76,9 +77,6 @@ group :test, :development do
   gem 'factory_bot_rails', '~> 6.0'
   gem 'faker', '>= 2.13'
   gem 'pry'
-  gem 'pry-byebug'
-  gem 'pry-doc', require: false
-  gem 'pry-rails', '>= 0.3.7'
   gem 'rails-controller-testing'
   gem 'rspec-rails', '>= 4.0.1'
   gem 'rspec_junit_formatter'
