@@ -24,7 +24,8 @@ apt-get update && apt-get upgrade -y && apt-get -y install \
                                                 libmariadb-dev
 
 # Manticore
-curl -sSL https://repo.manticoresearch.com/repository/manticoresearch_buster/pool/m/manticore/manticore_3.5.4-201211-13f8d08d_amd64.deb > /tmp/manticore.deb
+## FIXME: this uses the insecure flag to get around Manticore's broken SSL certificate; this should be removed when that cert is fixed.
+curl -sSL --insecure https://repo.manticoresearch.com/repository/manticoresearch_buster/pool/m/manticore/manticore_3.5.4-201211-13f8d08d_amd64.deb > /tmp/manticore.deb
 echo 'cb7d8105067fa5822aa7e85d11ab4208db1f1976793c1f31b621f0b148b48ee8  /tmp/manticore.deb' | sha256sum -c -
 apt-get install -y /tmp/manticore.deb
 
