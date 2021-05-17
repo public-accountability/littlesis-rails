@@ -84,6 +84,10 @@ group :test, :development do
   gem 'pry-rails', '>= 0.3.7'
   gem 'rails-controller-testing'
   gem 'rspec-rails', '>= 4.0.1'
+
+  # Performance testing in RSpec
+  gem 'rspec-benchmark'
+
   gem 'rspec_junit_formatter'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
