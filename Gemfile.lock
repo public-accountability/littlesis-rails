@@ -66,6 +66,7 @@ GEM
     autoprefixer-rails (10.2.4.0)
       execjs
     bcrypt (3.1.16)
+    benchmark-ips (2.8.4)
     benchmark-malloc (0.2.0)
     benchmark-perf (0.6.0)
     benchmark-trend (0.4.0)
@@ -390,6 +391,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  benchmark-ips
   better_errors (>= 2.5.0)
   bootsnap (>= 1.4.3)
   bootstrap (>= 4.3.1)

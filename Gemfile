@@ -73,6 +73,9 @@ group :development do
 end
 
 group :test, :development do
+  # Simple Rails benchmarking
+  gem 'benchmark-ips'
+
   gem 'capybara', '>= 3.14.0'
   gem 'database_cleaner'
   gem 'email_spec'
