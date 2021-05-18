@@ -26,7 +26,7 @@ class FECController < ApplicationController
 
   def match_contributions
     @query = params[:q] || @entity.name
-    @contributions = ExternalDataset::FECContribution.search_by_name(@query)
+    @contributions = ExternalDataset::FECContribution.search_by_name(@query).limit(2500)
   end
 
   # required params: donor_id, sub_ids
