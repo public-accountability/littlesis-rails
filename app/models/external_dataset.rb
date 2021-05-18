@@ -227,7 +227,7 @@ module ExternalDataset
     extend DatasetInterface
     extend FECData
     self.dataset = :fec_contributions
-    self.primary_key = 'sub_id'
+    # self.primary_key = 'sub_id'
 
     belongs_to :fec_committee, ->(contribution) { where(fec_year: contribution.fec_year) },
                class_name: 'ExternalDataset::FECCommittee',
@@ -260,6 +260,14 @@ module ExternalDataset
 
     def employment
       "#{occupation} at #{employer}"
+    end
+
+    def readonly?
+      true
+    end
+
+    def self.search_by_name(query)
+      includes(:fec_match).where("name_tsvector @@ websearch_to_tsquery(?)", query.upcase)
     end
   end
 

@@ -1,51 +1,15 @@
 # ThinkingSphinx::Index.define(
-#   :external_data, :name => 'external_data_nys_disclosure', :with => :active_record
+#   'external_dataset/fec_contribution',
+#   :with => :active_record
 # ) do
-#   where 'external_data.dataset = 4'
+#   indexes name
+#   indexes employer
+#   indexes occupation
 
-#   join external_relationship
+#   has city
+#   has state
+#   has zip_code
+#   has transaction_amt
 
-#   # Is this external relationship matched?
-#   has 'IF(external_relationships.relationship_id is NULL, FALSE, TRUE)', as: :matched, type: :boolean
-
-#   # Attributes from disclosure: transaction_code, date, amount
-
-#   has "CAST(JSON_VALUE(external_data.data, '$.TRANSACTION_CODE') AS CHAR(1))", as: :transaction_code, type: :string
-
-#   has(<<-SQL, as: :date, type: :string)
-#     CASE
-#         WHEN JSON_VALUE(external_data.data, '$.DATE1_10') = '' THEN NULL
-#         ELSE DATE_FORMAT(STR_TO_DATE(JSON_VALUE(external_data.data, '$.DATE1_10'),  '%m/%d/%Y'), '%Y-%m-%d')
-#     END
-#   SQL
-
-#   has(<<-SQL, :as => :amount, :type => :bigint)
-#     CASE
-#       WHEN JSON_VALUE(external_data.data, '$.AMOUNT_70') = ''  THEN NULL
-#       ELSE CAST(ROUND(CAST(JSON_VALUE(external_data.data, '$.AMOUNT_70') as FLOAT)) as SIGNED)
-#     END
-#   SQL
-
-#   indexes <<~SQL
-#     TRIM(
-#       CONCAT_WS(' ',
-#         JSON_VALUE(external_data.data, '$.FIRST_NAME_40'),
-#         JSON_VALUE(external_data.data, '$.LAST_NAME_44'),
-#         JSON_VALUE(external_data.data, '$.CORP_30')
-#       )
-#     )
-#   SQL
-# end
-
-# ThinkingSphinx::Index.define(
-#   :external_data, :name => 'external_data_fec_donor', :with => :active_record
-# ) do
-#   where 'external_data.dataset = 9'
-#   join external_entity
-#   # is the external entity matched?
-#   has 'IF(external_entities.entity_id is NULL, FALSE, TRUE)', as: :matched, type: :boolean
-#   has "JSON_VALUE(external_data.data, '$.city')", as: :city, type: :string
-#   has "JSON_VALUE(external_data.data, '$.state')", as: :state, type: :string
-#   has "JSON_VALUE(external_data.data, '$.zip_code')", as: :zip_code, type: :string
-#   indexes "JSON_VALUE(external_data.data, '$.name')", as: :name, type: :string
+#   where 'fec_year = 2020'
 # end

@@ -4,7 +4,7 @@
 
 <div class="row mt-4 bg-light">
   <div class="col p-2">
-    <p>Help expand the LittleSis database by finding matching donors in the FEC's bulk dataset.</p>
+    <p>Help us expand the LittleSis database by identifying donors in the FEC's dataset</p>
     <%= form_with url: fec_entity_match_contributions_path(@entity), method: :get, class: 'input-group' do |form| %>
       <%= form.text_field "q",  value: @query, class: "form-control", placeholder: 'DOE, JANE' %>
       <div class="input-group-append">

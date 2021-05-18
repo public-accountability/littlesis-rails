@@ -26,12 +26,8 @@ class FECController < ApplicationController
 
   def match_contributions
     @query = params[:q] || @entity.name
-    @contributions = ExternalDataset::FECContribution
-                       .includes(:fec_match)
-                       .where("to_tsvector(name) @@ websearch_to_tsquery(?)", query.upcase)
-    #                  .where('fec_matches.id is null') # only include unmatched donations
+    @contributions = ExternalDataset::FECContribution.search_by_name(@query)
   end
-
 
   # required params: donor_id, sub_ids
   # def donor_match
@@ -47,4 +43,11 @@ class FECController < ApplicationController
 
   def candidate
   end
+
+  private
+
+  # def set_entity
+  #   Rails.logger.warn "SET ENTITY CALLED"
+  #   super(id: params.require('id').split('-').first)
+  # end
 end

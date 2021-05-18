@@ -5,10 +5,6 @@
 #
 #   bin/rails runner ./lib/scripts/fec --years=2012,2016 --run
 #
-# To populate the external data table:
-#
-#   bin/rails runner ./lib/scripts/fec_import.rb
-#
 
 require 'parallel'
 require 'zip'

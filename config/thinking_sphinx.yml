@@ -3,7 +3,7 @@ defaults: &defaults
   min_infix_len: 3
   min_word_len: 2
   html_strip: true
-  mem_limit: 256M
+  mem_limit:  512M
   charset_table: "0..9, a..z, _, -, A..Z->a..z, U+00C0->a, U+00C1->a,
 	  U+00C2->a, U+00C3->a, U+00C4->a, U+00C5->a, U+00C7->c, U+00C8->e,
 	  U+00C9->e, U+00CA->e, U+00CB->e, U+00CC->i, U+00CD->i, U+00CE->i,
@@ -86,10 +86,12 @@ defaults: &defaults
 	  U+1EEA->u, U+1EEB->u, U+1EEC->u, U+1EED->u, U+1EEE->u, U+1EEF->u,
 	  U+1EF0->u, U+1EF1->u, U+1EF2->y, U+1EF3->y, U+1EF4->y, U+1EF5->y,
 	  U+1EF6->y, U+1EF7->y, U+1EF8->y, U+1EF9->y, &"
-  
+
 test:
   <<: *defaults
   mysql41: 9307
+  mem_limit:  1024M
+  batch_size: 10000
 
 development:
   <<: *defaults
