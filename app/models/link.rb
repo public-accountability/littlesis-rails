@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 class Link < ApplicationRecord
-  include SingularTable
+  self.primary_key = :id
 
   belongs_to :relationship, inverse_of: :links
   belongs_to :entity, foreign_key: "entity1_id", inverse_of: :links
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id", inverse_of: :reverse_links
   has_many :references, through: :relationship
   has_many :chained_links, class_name: "Link", foreign_key: "entity1_id", primary_key: "entity2_id"
+
+  default_scope { where(is_deleted: false) }
 
   def self.interlock_hash_from_entities(entity_ids)
     interlock_hash(where(entity1_id: entity_ids))
@@ -23,22 +25,27 @@ class Link < ApplicationRecord
 
   # Retrives first and second degree relationships
   #
+  # Relationships are represented as a simple hash, rather than with the full ActiveRecord objects
+  # to save on memory, as we may have a lot of records here.
+  #
   # Note: hardcoded limit of 20,000
   #
   # Entity | Array[Entity] | Interger --> [{}]
   def self.relationship_network_for(entities)
     entity_ids = Array.wrap(entities).uniq.map! { |e| Entity.entity_id_for(e) }
 
-    sql = <<-SQL
-    SELECT *
-    FROM link as degree_one_links
-    LEFT JOIN link as degree_two_links
+    sql = <<~SQL
+      SELECT *
+      FROM links as degree_one_links
+      LEFT JOIN links as degree_two_links
             ON degree_one_links.entity2_id = degree_two_links.entity1_id
-    #{sanitize_sql_for_conditions(['WHERE degree_one_links.entity1_id IN (?)', entity_ids])}
-    LIMIT 20000
+        #{sanitize_sql_for_conditions(['WHERE degree_one_links.entity1_id IN (?)', entity_ids])}
+      LIMIT 20000
     SQL
 
     ApplicationRecord.connection.exec_query(sql).map do |h|
+      # Un-reverse the entity1/2 positions if this is a reverse link, so that they correspond to the fields of the actual
+      # relationship object
       if h.delete('is_reverse') == true
         h['entity1_id'], h['entity2_id'] = h['entity2_id'], h['entity1_id']
       end
@@ -86,5 +93,24 @@ class Link < ApplicationRecord
       stake = relationship&.ownership&.percent_stake
       "; percent stake: #{stake}%" if stake.present?
     end
+  end
+
+  # Tell Rails not to try writing to this model, since it is backed by a view
+  def readonly?
+    true
+  end
+
+  # Refresh the view, concurrently if it has already been populated
+  def self.refresh
+    Scenic.database.refresh_materialized_view(table_name, concurrently: populated?, cascade: false)
+  end
+
+  def self.populated?
+    ActiveRecord::Base.connection.execute(
+        <<~SQL
+          SELECT relispopulated FROM pg_class WHERE relname = '#{table_name}'
+        SQL
+      )
+      &.first['relispopulated']
   end
 end

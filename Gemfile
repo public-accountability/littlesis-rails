@@ -24,6 +24,9 @@ gem 'devise', '~> 4.7'
 # Versioning
 gem 'paper_trail', '~> 11'
 
+# Generate versioned Postgres views
+gem 'scenic'
+
 # Pagination
 gem 'kaminari'
 
@@ -71,6 +74,9 @@ group :development do
 end
 
 group :test, :development do
+  # Simple Rails benchmarking
+  gem 'benchmark-ips'
+
   gem 'capybara', '>= 3.14.0'
   gem 'database_cleaner'
   gem 'email_spec'
@@ -79,6 +85,10 @@ group :test, :development do
   gem 'pry'
   gem 'rails-controller-testing'
   gem 'rspec-rails', '>= 4.0.1'
+
+  # Performance testing in RSpec
+  gem 'rspec-benchmark'
+
   gem 'rspec_junit_formatter'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
