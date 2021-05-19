@@ -262,8 +262,10 @@ module ExternalDataset
       "#{occupation} at #{employer}"
     end
 
-    def readonly?
-      true
+    unless Rails.env.test?
+      def readonly?
+        true
+      end
     end
 
     def self.search_by_name(query)
