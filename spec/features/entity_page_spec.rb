@@ -1,5 +1,4 @@
-# rubocop:disable Style/StringLiterals
-
+# rubocop:disable RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
 describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :feature do
   include EntitiesHelper
 
@@ -15,7 +14,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
   end
   let(:visit_page) { proc { visit concretize_entity_path(person) } }
-  before(:each) do
+
+  before do
     allow(Entity).to receive(:search).and_return([])
   end
 
@@ -137,7 +137,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   describe "header" do
     before { visit_page.call }
 
-    context 'anon user' do
+    context 'with an anonymous user' do
 
       it "shows the entity's name" do
         expect(page.find("#entity-name")).to have_text person.name
@@ -159,9 +159,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
     end
 
-    context 'user is signed in' do
+    context 'when the user is signed in' do
       let(:user) { create_basic_user }
+
       before { login_as(user, scope: :user) }
+
       after { logout(user) }
 
       it 'has editable blurb'
@@ -175,7 +177,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       expect(page).not_to have_selector("#entity_summary")
     end
 
-    context "entity has summary" do
+    context "with an entity that has a summary" do
       let(:person) do
         create(:entity_person, last_user_id: user.id, summary: "foobar")
       end
@@ -185,7 +187,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
     end
 
-    context "entity has summary longer than limit" do
+    context "with an entity that has a summary longer than limit" do
       let(:person) do
         create(:entity_person,
                last_user_id: user.id,
@@ -198,7 +200,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       it "allows user to hide and show longer version (HACK)" do
         expect(page).to have_selector ".summary-show-more"
-        expect(page).to have_selector ".summary-show-less", visible: false
+        expect(page).to have_selector ".summary-show-less", visible: :hidden
       end
     end
   end
@@ -214,12 +216,13 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       allow(Entity).to receive(:search).and_return([build(:entity_person)])
     end
 
-    context 'anon user' do
+    context 'with an anonymous user' do
       context 'with similar entities' do
         before do
           allow(Entity).to receive(:search).and_return([build(:entity_person)])
           visit_page.call
         end
+
         it { is_expected.to have_selector "#sidebar-similar-entities-container" }
         it { is_expected.to have_text 'Similar Entities' }
         it { is_expected.not_to have_selector 'a#begin-merging-process-link' }
@@ -251,7 +254,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       context 'with tags' do
-        before { create_tags.call; visit_page.call; }
+        before do
+          create_tags.call
+          visit_page.call
+        end
+
         it { is_expected.to have_selector 'a.tag', count: 2 }
         it { is_expected.not_to have_selector "#tags-edit-button" }
       end
@@ -334,27 +341,36 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
     describe "when logged in" do
       let(:user) { create_basic_user }
+
       before { login_as(user, scope: :user) }
+
       after { logout(user) }
 
-      context 'regular user' do
+      context 'with a regular user' do
         context 'without tags' do
           before { visit_page.call; }
+
           it { is_expected.not_to have_selector 'a.tag' }
           it { is_expected.to have_selector "#tags-edit-button" }
         end
+
         context "when person has tags" do
-          before { create_tags.call; visit_page.call; }
+          before do
+            create_tags.call
+            visit_page.call
+          end
+
           it { is_expected.to have_selector "#tags-edit-button" }
           it { is_expected.to have_selector 'a.tag', count: 2 }
         end
       end
 
-      context "admin user" do
+      context "with an admin user" do
         let(:user) { create_admin_user }
 
         context 'without tags' do
           before { visit_page.call; }
+
           it { is_expected.not_to have_selector 'a.tag' }
           it { is_expected.to have_selector "#tags-edit-button" }
         end
@@ -364,12 +380,17 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
             allow(Entity).to receive(:search).and_return([build(:entity_person)])
             visit_page.call
           end
+
           it { is_expected.to have_selector "#sidebar-similar-entities-container" }
           it { is_expected.to have_selector 'a#begin-merging-process-link' }
         end
 
         context "when person has tags" do
-          before { create_tags.call; visit_page.call; }
+          before do
+            create_tags.call
+            visit_page.call
+          end
+
           it { is_expected.to have_selector "#tags-edit-button" }
           it { is_expected.to have_selector 'a.tag', count: 2 }
         end
@@ -379,6 +400,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
   describe "navigation tabs" do
     before { visit_page.call }
+
     let(:subpage_links) do
       [{ text: 'Relationships',  path: concretize_entity_path(person) },
        { text: 'Interlocks',     path: concretize_interlocks_entity_path(person) },
@@ -409,7 +431,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       create(:membership_relationship, entity: org_with_memberships, related: org_with_members)
     end
 
-    context 'on entity page with memberships' do
+    context 'when on an entity page with memberships' do
       before { visit concretize_entity_path(org_with_memberships, relationships: 'memberships') }
 
       it 'show title Memberships' do
@@ -418,7 +440,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
     end
 
-    context 'on entity page with members' do
+    context 'when on an entity page with members' do
       before { visit concretize_entity_path(org_with_members, relationships: 'members') }
 
       it 'show title Memberships' do
@@ -429,6 +451,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
   describe "relationships tab" do
     before { visit concretize_entity_path(person) }
+
     context 'with no relationships' do
       it 'shows stub message' do
         successfully_visits_page concretize_entity_path(person)
@@ -440,6 +463,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
     context 'with two relationships: position and generic' do
       let(:entity) { create(:entity_person) }
+
       before do
         Relationship.create!(category_id: 1, entity: entity, related: create(:entity_org))
         Relationship.create!(category_id: 12, entity: entity, related: create(:entity_org))
@@ -457,19 +481,15 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe "interlocks tab" do
-    let(:interlocks) {}
-    let(:root_entity) {}
-
-    before do
-      interlocks
-      visit interlocks_entity_path(root_entity)
-    end
-
-    context "for a person" do
-      let(:people) { Array.new(4) { create(:entity_person, :with_last_user_id) } }
-      let(:orgs) { Array.new(3) { create(:entity_org) } }
+    context "with a person" do
+      let(:people) { create_list(:entity_person, 4, :with_last_user_id) }
+      let(:orgs) { create_list(:entity_org, 3) }
       let(:root_entity) { people.first }
-      let(:interlocks) { interlock_people_via_orgs(people, orgs)}
+
+      before do
+        interlock_people_via_orgs(people, orgs)
+        visit interlocks_entity_path(root_entity)
+      end
 
       describe "table layout" do
         it "shows a header and subheader" do
@@ -492,16 +512,16 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         end
 
         describe "first row" do
-          subject { page.all("#entity-connections-table tbody tr").first }
+          subject(:row) { page.all("#entity-connections-table tbody tr").first }
 
           it "displays the most-interlocked person's name as link" do
-            expect(subject.find('.connected-entity-cell'))
+            expect(row.find('.connected-entity-cell'))
               .to have_link(person.name, href: concretize_entity_path(people[3]))
           end
 
           it "displays interlocking orgs' names as links in same row as interlocked people" do
             orgs.each do |org|
-              expect(subject.find('.connecting-entities-cell'))
+              expect(row.find('.connecting-entities-cell'))
                 .to have_link(org.name, href: concretize_entity_path(org))
             end
           end
@@ -538,11 +558,15 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
     end
 
-    context "for an organization" do
+    context "with an organization" do
       let(:orgs) { Array.new(4) { create(:entity_org, :with_last_user_id) } }
       let(:people) { Array.new(3) { create(:entity_person) } }
       let(:root_entity) { orgs.first }
-      let(:interlocks) { interlock_orgs_via_people(orgs, people) }
+
+      before do
+        interlock_orgs_via_people(orgs, people)
+        visit interlocks_entity_path(root_entity)
+      end
 
       it "shows a header and subheader" do
         expect(page.find("#entity-connections-title"))
@@ -564,16 +588,16 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       describe "first row" do
-        subject { page.all("#entity-connections-table tbody tr").first }
+        subject(:row) { page.all("#entity-connections-table tbody tr").first }
 
         it "displays the most-interlocked org's name as link" do
-          expect(subject.find('.connected-entity-cell'))
+          expect(row.find('.connected-entity-cell'))
             .to have_link(org.name, href: concretize_entity_path(orgs[3]))
         end
 
         it "displays interlocking peoples' names as links in same row as interlocked org" do
           people.each do |person|
-            expect(subject.find('.connecting-entities-cell'))
+            expect(row.find('.connecting-entities-cell'))
               .to have_link(person.name, href: concretize_entity_path(person))
           end
         end
@@ -582,19 +606,20 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe "giving tab" do
-    let(:setup_donations) { proc {} }
-    let(:root_entity) {}
-
-    before do
-      setup_donations.call
-      visit giving_entity_path(root_entity)
-    end
-
     describe "for a person" do
-      let(:donors) { Array.new(4) { create(:entity_person, :with_last_user_id) } }
-      let(:recipients) { Array.new(3) { create(%i[entity_org entity_person].sample) } }
-      let(:setup_donations) { proc { create_donations_from(donors, recipients) } }
+      let(:donors) { create_list(:entity_person, 4, :with_last_user_id) }
+      let(:recipients) { create_list(%i[entity_org entity_person].sample, 3) }
       let(:root_entity) { donors.first }
+      let(:setup_donations) { proc { create_donations_from(donors, recipients) } }
+
+      before do
+        create_donations_from(donors, recipients)
+        visit giving_entity_path(root_entity)
+      end
+
+      it 'shows correct page' do
+        expect(page).to have_current_path giving_entity_path(root_entity)
+      end
 
       it "shows a header and subheader" do
         expect(page.find("#entity-connections-title"))
@@ -603,8 +628,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           .to have_text "from #{root_entity.name} also received"
       end
 
-      it "has a table of connected entites" do
-        expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
+      it "has a table of connected entities" do
+        expect(page).to have_css('#entity-connections-table tbody tr', count: 3)
       end
 
       it "shows a table header for connected entities" do
@@ -616,17 +641,17 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       describe "first row" do
-        subject { page.all("#entity-connections-table tbody tr").first }
+        subject(:row) { page.all("#entity-connections-table tbody tr").first }
 
         it "displays the most-connected donor's name as link" do
-          expect(subject.find('.connected-entity-cell'))
+          expect(row.find('.connected-entity-cell'))
             .to have_link(root_entity.name, href: concretize_entity_path(donors[3]))
         end
 
         it "displays connecting recipients' names as links in same row as connected donors" do
           recipients.each do |r|
-            expect(subject.find('.connecting-entities-cell'))
-              .to have_link(r.name, href: concretize_entity_path(r))
+            expect(page)
+              .to have_css(".connecting-entities-cell a[href='#{concretize_entity_path(r)}']", text: r.name)
           end
         end
       end
@@ -634,21 +659,19 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
     describe "for an org" do
       let(:org) { create(:entity_org, :with_last_user_id) }
-      let(:donors) { Array.new(3) { |n| create(:entity_person) } }
-      let(:recipients) do
-        Array.new(4) { |n| create(:entity_org, name: "org-#{n}") }
-      end
-      let(:root_entity){ org }
+      let(:donors) { create_list(:entity_person, 3) }
+      let(:recipients) { create_list(:entity_org, 4) }
+      let(:root_entity) { org }
 
-      let(:setup_donations) do
-        proc do
-          donors.each_with_index { |d| create(:position_relationship, entity: d, related: org) }
-          create_donations_to(recipients, donors)
-        end
+      before do
+        donors.each { |d| create(:position_relationship, entity: d, related: org) }
+        create_donations_to(recipients, donors)
+
+        visit giving_entity_path(root_entity)
       end
 
       it 'shows correct page' do
-        expect(page.current_path).to eql giving_entity_path(org)
+        expect(page).to have_current_path giving_entity_path(org)
       end
 
       it "shows a header and subheader" do
@@ -659,6 +682,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       it "has a table of connected entites" do
+        expect(org.relationships.count).to eq 3
         expect(page.find("#entity-connections-table tbody")).to have_selector "tr", count: 3
       end
 
@@ -678,24 +702,21 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         subject { page.all("#entity-connections-table tbody tr").first }
 
         it "displays the most-donated-to recipient's name as link" do
-          expect(subject.find('.connected-entity-cell'))
-            .to have_link(root_entity.name, href: concretize_entity_path(recipients[3]))
+          expect(page).to have_css('.connected-entity-cell a', text: root_entity.name)
         end
 
         it "displays connecting donors' names as links" do
           donors.each do |d|
-            expect(subject.find('.connecting-entities-cell'))
-              .to have_link(d.name, href: concretize_entity_path(d))
+            expect(page)
+              .to have_css(".connecting-entities-cell a[href='#{concretize_entity_path(d)}']", text: d.name)
           end
         end
 
         it "displays the sum of donations given by connecting donors" do
-          expect(subject.find('.connection-stat-cell'))
-            .to have_text ActiveSupport::NumberHelper.number_to_currency(900, precision: 0)
+          expect(page).to have_css('.connection-stat-cell', text: ActiveSupport::NumberHelper.number_to_currency(900, precision: 0))
         end
       end
     end
   end
 end
-
-# rubocop:enable Style/StringLiterals
+# rubocop:enable RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups

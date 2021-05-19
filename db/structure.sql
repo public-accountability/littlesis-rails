@@ -1954,36 +1954,56 @@ ALTER SEQUENCE public.industry_id_seq OWNED BY public.industry.id;
 
 
 --
--- Name: link; Type: TABLE; Schema: public; Owner: -
+-- Name: relationship; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.link (
+CREATE TABLE public.relationship (
     id bigint NOT NULL,
     entity1_id bigint NOT NULL,
     entity2_id bigint NOT NULL,
     category_id bigint NOT NULL,
-    relationship_id bigint NOT NULL,
-    is_reverse boolean NOT NULL
+    description1 character varying(100),
+    description2 character varying(100),
+    amount bigint,
+    currency character varying(255),
+    goods text,
+    filings bigint,
+    notes text,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    start_date character varying(10),
+    end_date character varying(10),
+    is_current boolean,
+    is_deleted boolean DEFAULT false NOT NULL,
+    last_user_id bigint,
+    amount2 bigint,
+    is_gte boolean DEFAULT false NOT NULL
 );
 
 
 --
--- Name: link_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: links; Type: MATERIALIZED VIEW; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.link_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: link_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.link_id_seq OWNED BY public.link.id;
+CREATE MATERIALIZED VIEW public.links AS
+ SELECT concat(relationship.id, 'normal') AS id,
+    relationship.entity1_id,
+    relationship.entity2_id,
+    relationship.category_id,
+    relationship.id AS relationship_id,
+    false AS is_reverse,
+    relationship.is_deleted
+   FROM public.relationship
+UNION
+ SELECT concat(relationship.id, 'reverse') AS id,
+    relationship.entity2_id AS entity1_id,
+    relationship.entity1_id AS entity2_id,
+    relationship.category_id,
+    relationship.id AS relationship_id,
+    true AS is_reverse,
+    relationship.is_deleted
+   FROM public.relationship
+  WITH NO DATA;
 
 
 --
@@ -3407,34 +3427,6 @@ ALTER SEQUENCE public.references_id_seq OWNED BY public."references".id;
 
 
 --
--- Name: relationship; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.relationship (
-    id bigint NOT NULL,
-    entity1_id bigint NOT NULL,
-    entity2_id bigint NOT NULL,
-    category_id bigint NOT NULL,
-    description1 character varying(100),
-    description2 character varying(100),
-    amount bigint,
-    currency character varying(255),
-    goods text,
-    filings bigint,
-    notes text,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    start_date character varying(10),
-    end_date character varying(10),
-    is_current boolean,
-    is_deleted boolean DEFAULT false NOT NULL,
-    last_user_id bigint,
-    amount2 bigint,
-    is_gte boolean DEFAULT false NOT NULL
-);
-
-
---
 -- Name: relationship_category; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4448,13 +4440,6 @@ ALTER TABLE ONLY public.industry ALTER COLUMN id SET DEFAULT nextval('public.ind
 
 
 --
--- Name: link id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link ALTER COLUMN id SET DEFAULT nextval('public.link_id_seq'::regclass);
-
-
---
 -- Name: lobby_filing id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5282,14 +5267,6 @@ ALTER TABLE ONLY public.image
 
 ALTER TABLE ONLY public.industry
     ADD CONSTRAINT industry_pkey PRIMARY KEY (id);
-
-
---
--- Name: link link_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link
-    ADD CONSTRAINT link_pkey PRIMARY KEY (id);
 
 
 --
@@ -6329,48 +6306,6 @@ CREATE INDEX idx_16774_entity_id_idx ON public.image USING btree (entity_id);
 --
 
 CREATE INDEX idx_16774_index_image_on_address_id ON public.image USING btree (address_id);
-
-
---
--- Name: idx_16806_category_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_category_id_idx ON public.link USING btree (category_id);
-
-
---
--- Name: idx_16806_entity1_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_entity1_id_idx ON public.link USING btree (entity1_id);
-
-
---
--- Name: idx_16806_entity2_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_entity2_id_idx ON public.link USING btree (entity2_id);
-
-
---
--- Name: idx_16806_index_link_on_entity1_id_and_category_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_index_link_on_entity1_id_and_category_id ON public.link USING btree (entity1_id, category_id);
-
-
---
--- Name: idx_16806_index_link_on_entity1_id_and_category_id_and_is_rever; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_index_link_on_entity1_id_and_category_id_and_is_rever ON public.link USING btree (entity1_id, category_id, is_reverse);
-
-
---
--- Name: idx_16806_relationship_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16806_relationship_id_idx ON public.link USING btree (relationship_id);
 
 
 --
@@ -7473,6 +7408,27 @@ CREATE UNIQUE INDEX index_external_data_fec_contributions_on_sub_id ON public.ex
 
 
 --
+-- Name: index_links_on_entity1_id_and_entity2_id_and_relationship_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_links_on_entity1_id_and_entity2_id_and_relationship_id ON public.links USING btree (entity1_id, entity2_id, relationship_id);
+
+
+--
+-- Name: index_links_on_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_links_on_id ON public.links USING btree (id);
+
+
+--
+-- Name: links_relationship_id_is_reverse_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX links_relationship_id_is_reverse_idx ON public.links USING btree (relationship_id, is_reverse);
+
+
+--
 -- Name: address address_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7710,38 +7666,6 @@ ALTER TABLE ONLY public.government_body
 
 ALTER TABLE ONLY public.image
     ADD CONSTRAINT image_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: link link_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link
-    ADD CONSTRAINT link_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: link link_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link
-    ADD CONSTRAINT link_ibfk_2 FOREIGN KEY (entity2_id) REFERENCES public.entity(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: link link_ibfk_3; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link
-    ADD CONSTRAINT link_ibfk_3 FOREIGN KEY (entity1_id) REFERENCES public.entity(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: link link_ibfk_4; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.link
-    ADD CONSTRAINT link_ibfk_4 FOREIGN KEY (category_id) REFERENCES public.relationship_category(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
@@ -8196,6 +8120,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210405200349'),
 ('20210405202345'),
 ('20210412135059'),
+('20210419114108'),
+('20210510192207'),
 ('20210512184454'),
 ('20210518204954');
 

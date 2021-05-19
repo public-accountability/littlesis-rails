@@ -80,25 +80,25 @@ module NetworkAnalysis
 
   # [Hop], Symbol, Integer -> [ConnectedIdHashd]
   def self.connected_ids_via(hops:, stat:, entity_id:)
-    sql = <<-SQL
-    SELECT second_hop.entity2_id AS connected_id,
+    sql = <<~SQL
+      SELECT second_hop.entity2_id AS connected_id,
            array_to_string(array_agg(distinct second_hop.entity1_id), ',') AS connecting_ids,
            #{AGGREGATORS_BY_STAT[stat]} AS stat
-    FROM (
+      FROM (
            SELECT DISTINCT entity2_id as first_hop_dest_id
-           FROM link
-	   WHERE entity1_id = #{entity_id}
+           FROM links
+	    WHERE entity1_id = #{entity_id}
                  AND category_id = #{hops.first[:category_id]}
                  AND is_reverse = #{hops.first[:is_reverse]}
-    ) as first_hop
-    JOIN link as second_hop
+      ) as first_hop
+      JOIN links as second_hop
           ON first_hop.first_hop_dest_id = second_hop.entity1_id
           AND second_hop.category_id = #{hops.second[:category_id]}
           AND second_hop.is_reverse = #{hops.second[:is_reverse]}
-    #{JOIN_STATEMENTS[:relationship] if JOINS_BY_STAT.dig(stat, :relationship)}
-    WHERE second_hop.entity2_id <> #{entity_id}
-    GROUP BY second_hop.entity2_id
-    ORDER BY stat desc
+      #{JOIN_STATEMENTS[:relationship] if JOINS_BY_STAT.dig(stat, :relationship)}
+      WHERE second_hop.entity2_id <> #{entity_id}
+      GROUP BY second_hop.entity2_id
+      ORDER BY stat desc
     SQL
 
     ApplicationRecord.connection.exec_query(sql).to_a.map { |h| parse_connecting_ids(h) }

@@ -21,7 +21,6 @@ module SphinxTestHelper
 
   def delete_entity_tables
     Entity.delete_all
-    Link.delete_all
     Alias.delete_all
     Org.delete_all
     Person.delete_all

@@ -36,20 +36,20 @@ class EntityConnectionsQuery
              connected_entities.relationship_ids AS connected_relationship_ids,
              connected_entities.category_id AS connected_category_id
       FROM (
-        SELECT link.entity2_id AS entity_id,
-              MIN(link.category_id) AS category_id,
+        SELECT links.entity2_id AS entity_id,
+              MIN(links.category_id) AS category_id,
               MAX(connected_entity.link_count) AS entity_link_count,
-              array_to_string(array_agg(link.relationship_id), ',') AS relationship_ids,
+              array_to_string(array_agg(links.relationship_id), ',') AS relationship_ids,
               MAX(relationship.amount) AS relationship_amount,
               bool_or(relationship.is_current) AS relationship_is_current,
               MAX(relationship.start_date) AS relationship_start_date,
               MAX(relationship.updated_at) AS relationship_updated_at
-         FROM link
-         INNER JOIN relationship ON relationship.id = link.relationship_id
-         INNER JOIN entity AS connected_entity ON connected_entity.id = link.entity2_id
-         WHERE link.entity1_id = #{@entity.id}
+         FROM links
+         INNER JOIN relationship ON relationship.id = links.relationship_id
+         INNER JOIN entity AS connected_entity ON connected_entity.id = links.entity2_id
+         WHERE links.entity1_id = #{@entity.id}
          #{category_sql} #{excluded_ids_sql}
-         GROUP BY link.entity2_id
+         GROUP BY links.entity2_id
       ) AS connected_entities
       LEFT JOIN entity ON entity.id = connected_entities.entity_id
       ORDER BY #{order_sql}
@@ -74,12 +74,12 @@ class EntityConnectionsQuery
   end
 
   def category_sql
-    "AND link.category_id = #{category}" if category
+    "AND links.category_id = #{category}" if category
   end
 
   def excluded_ids_sql
     if @excluded_ids.present?
-      "AND link.entity2_id NOT IN #{ApplicationRecord.sqlize_array(@excluded_ids.map(&:to_i))}"
+      "AND links.entity2_id NOT IN #{ApplicationRecord.sqlize_array(@excluded_ids.map(&:to_i))}"
     end
   end
 

@@ -1,8 +1,12 @@
+require 'rspec-benchmark'
+
 describe Link, type: :model do
-  it { should belong_to(:relationship) }
-  it { should belong_to(:entity) }
-  it { should belong_to(:related) }
-  it { should have_many(:chained_links) }
+  include RSpec::Benchmark::Matchers
+
+  it { is_expected.to belong_to(:relationship) }
+  it { is_expected.to belong_to(:entity) }
+  it { is_expected.to belong_to(:related) }
+  it { is_expected.to have_many(:chained_links) }
 
   def org_with_type(type)
     org = create(:entity_org)
@@ -14,11 +18,6 @@ describe Link, type: :model do
     person = create(:entity_person)
     person.add_extension(type)
     person
-  end
-
-  # cr = create_relationship
-  def cr(entity, related, cat)
-    Relationship.create!(category_id: cat, entity: entity, related: related)
   end
 
   describe 'relationship_network_for' do
@@ -34,48 +33,38 @@ describe Link, type: :model do
       }
     end
 
-    # root is connected to a and b
-    # a is connected to c and d
-    # b is connected to d
+    let!(:root_to_a) { create(:relationship, entity: root, related: entities['a'], category_id: 1) }
+    let!(:b_to_root) { create(:relationship, entity: entities['b'], related: root, category_id: 12) }
+
     before do
-      @position_relationship = cr(root, entities['a'], 1)
-      @generic_relationship = cr(entities['b'], root, 12)
-      cr entities['a'], entities['c'], 3
-      cr entities['a'], entities['d'], 5
-      cr entities['b'], entities['d'], 5
-      # relationships between x & y
-      cr entities['x'], entities['y'], 12
-      # random relationship
-      cr entities['c'], create(:entity_person), 12
+      create(:relationship, entity: entities['a'], related: entities['c'], category_id: 3)
+      create(:relationship, entity: entities['a'], related: entities['d'], category_id: 5)
+      create(:relationship, entity: entities['b'], related: entities['d'], category_id: 5)
+      create(:relationship, entity: entities['x'], related: entities['y'], category_id: 12)
+      create(:relationship, entity: entities['c'], related: create(:entity_person), category_id: 12)
     end
 
-    context 'network for root node' do
-      subject { Link.relationship_network_for(root) }
+    context 'when looking at the network for a root node' do
+      let(:network) { Link.relationship_network_for(root) }
 
       it 'returns 5 hashes' do
-        expect(subject.count).to eql 5
+        expect(network.count).to eq 5
       end
 
       it 'reverses relationship order if needed' do
-        expect(subject.find { |h| h['category_id'] == 1 })
-          .to eql({ 'id' => @position_relationship.id,
-                    'category_id' => 1,
-                    'entity1_id' => root.id,
-                    'entity2_id' => entities['a'].id })
+        expect(network.find { |h| h['category_id'] == 1 })
+          .to include({ id: root_to_a.id, category_id: 1, entity1_id: root.id, entity2_id: entities['a'].id }.stringify_keys)
 
-        expect(subject.find { |h| h['category_id'] == 12 })
-          .to eql({ 'id' => @generic_relationship.id,
-                    'category_id' => 12,
-                    'entity1_id' => entities['b'].id,
-                    'entity2_id' =>  root.id })
+        expect(network.find { |h| h['category_id'] == 12 })
+          .to include({ id: b_to_root.id, category_id: 12, entity1_id: entities['b'].id, entity2_id: root.id }.stringify_keys)
       end
     end
 
-    context 'network for 2 entities' do
-      subject { Link.relationship_network_for([root, entities['x']]) }
+    context 'with a network for 2 entities' do
+      let(:network) { Link.relationship_network_for([root, entities['x']]) }
 
       it 'returns 6 hashes' do
-        expect(subject.count).to eql 6
+        expect(network.count).to eq 6
       end
     end
   end
@@ -132,10 +121,8 @@ describe Link, type: :model do
                                       start_date: "2004-01-03", end_date: "2016-05-07")
     end
 
-    let(:ownership) { create(:ownership, relationship: relationship, percent_stake: 100) }
-    let(:link) { relationship.link }
-
-    before { ownership; link; }
+    let!(:ownership) { create(:ownership, relationship: relationship, percent_stake: 100) }
+    let!(:link) { relationship.link }
 
     it 'describes the relationship' do
       expect(link.link_content).to include('Owner')
@@ -159,6 +146,30 @@ describe Link, type: :model do
       expect(link.link_content).to include("(Jan 3 '04→?)")
       relationship.update!(start_date: nil)
       expect(link.link_content).not_to include("('")
+    end
+  end
+
+  context 'with a relationship' do
+    before do
+      create(:relationship, entity: create(:entity_person), related: create(:entity_person), category_id: 1)
+    end
+
+    describe '.populated?' do
+      scenario 'the links view is automatically populated' do
+        expect(Relationship.count).to eq 1
+        expect(Link.populated?).to be true
+      end
+    end
+
+    xdescribe '.refresh' do
+      it 'refreshes the view concurrently in less than 10ms' do
+        expect(Link.populated?).to be true
+        expect { ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY links') }.to perform_under(10).ms
+      end
+
+      it 'refreshes the entire view in less than 10 ms' do
+        expect { ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW links') }.to perform_under(10).ms
+      end
     end
   end
 end

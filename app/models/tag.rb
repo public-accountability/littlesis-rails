@@ -152,8 +152,8 @@ class Tag < ApplicationRecord
 
          FROM taggings
          INNER JOIN entity ON entity.id = taggings.tagable_id AND entity.is_deleted = FALSE AND entity.primary_ext = '#{entity_type}'
-         LEFT JOIN link ON link.entity1_id = taggings.tagable_id
-         LEFT JOIN taggings as linked_taggings ON linked_taggings.tagable_id = link.entity2_id AND linked_taggings.tagable_class = 'Entity' AND linked_taggings.tag_id = #{id}
+         LEFT JOIN links ON links.entity1_id = taggings.tagable_id
+         LEFT JOIN taggings as linked_taggings ON linked_taggings.tagable_id = links.entity2_id AND linked_taggings.tagable_class = 'Entity' AND linked_taggings.tag_id = #{id}
          WHERE taggings.tag_id = #{id} AND taggings.tagable_class = 'Entity'
          GROUP BY taggings.tagable_id
          ORDER BY relationship_count desc

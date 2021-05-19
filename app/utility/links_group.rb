@@ -48,7 +48,7 @@ class LinksGroup
 
   def sort_by_amount(links)
     links.sort do |a, b|
-      if a.relationship.amount && b.relationship.amount
+      if a.relationship&.amount && b.relationship&.amount
         b.relationship.amount <=> a.relationship.amount
       else
         -1
