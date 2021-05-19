@@ -407,10 +407,12 @@ Lilsis::Application.routes.draw do
   get '/datasets/:dataset' => 'datasets#show', constraints: DatasetConstraint.new, as: 'dataset'
 
   namespace :fec do
-    get '/entities/:id/contributions', action: :contributions, as: :entity_contributions
-    get '/entities/:id/match_contributions', action: :match_contributions, as: :entity_match_contributions
-    post '/entities/:id/donor_match', action: :donor_match, as: :entity_donor_match
-    delete '/contribution_unmatch', action: :contribution_unmatch
+    constraints(id: /[0-9]+(-[^\/]+)?/) do
+      get '/entities/:id/contributions', action: :contributions, as: :entity_contributions
+      get '/entities/:id/match_contributions', action: :match_contributions, as: :entity_match_contributions
+      post '/entities/:id/donor_match', action: :donor_match, as: :entity_donor_match
+      delete '/contribution_unmatch', action: :contribution_unmatch
+    end
   end
 
   resources :external_entities, only: %i[show update] do

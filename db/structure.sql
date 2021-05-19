@@ -1416,8 +1416,30 @@ CREATE TABLE public.external_data_fec_contributions (
     file_num bigint,
     memo_cd text,
     memo_text text,
-    fec_year smallint NOT NULL
+    fec_year smallint NOT NULL,
+    id integer NOT NULL,
+    name_tsvector tsvector
 );
+
+
+--
+-- Name: external_data_fec_contributions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.external_data_fec_contributions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: external_data_fec_contributions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.external_data_fec_contributions_id_seq OWNED BY public.external_data_fec_contributions.id;
 
 
 --
@@ -1693,6 +1715,40 @@ CREATE SEQUENCE public.family_id_seq
 --
 
 ALTER SEQUENCE public.family_id_seq OWNED BY public.family.id;
+
+
+--
+-- Name: fec_matches; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.fec_matches (
+    id bigint NOT NULL,
+    sub_id bigint NOT NULL,
+    donor_id bigint NOT NULL,
+    recipient_id bigint,
+    candidate_id bigint,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: fec_matches_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.fec_matches_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: fec_matches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.fec_matches_id_seq OWNED BY public.fec_matches.id;
 
 
 --
@@ -4301,6 +4357,13 @@ ALTER TABLE ONLY public.external_data_fec_committees ALTER COLUMN id SET DEFAULT
 
 
 --
+-- Name: external_data_fec_contributions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.external_data_fec_contributions ALTER COLUMN id SET DEFAULT nextval('public.external_data_fec_contributions_id_seq'::regclass);
+
+
+--
 -- Name: external_data_nys_filers id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4333,6 +4396,13 @@ ALTER TABLE ONLY public.external_relationships ALTER COLUMN id SET DEFAULT nextv
 --
 
 ALTER TABLE ONLY public.family ALTER COLUMN id SET DEFAULT nextval('public.family_id_seq'::regclass);
+
+
+--
+-- Name: fec_matches id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.fec_matches ALTER COLUMN id SET DEFAULT nextval('public.fec_matches_id_seq'::regclass);
 
 
 --
@@ -5103,6 +5173,14 @@ ALTER TABLE ONLY public.external_data_fec_committees
 
 
 --
+-- Name: external_data_fec_contributions external_data_fec_contributions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.external_data_fec_contributions
+    ADD CONSTRAINT external_data_fec_contributions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: external_data_nys_filers external_data_nys_filers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5148,6 +5226,14 @@ ALTER TABLE ONLY public.external_relationships
 
 ALTER TABLE ONLY public.family
     ADD CONSTRAINT family_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: fec_matches fec_matches_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.fec_matches
+    ADD CONSTRAINT fec_matches_pkey PRIMARY KEY (id);
 
 
 --
@@ -5676,6 +5762,13 @@ ALTER TABLE ONLY public.versions
 
 ALTER TABLE ONLY public.web_requests
     ADD CONSTRAINT web_requests_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: fec_contributions_name_idx; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX fec_contributions_name_idx ON public.external_data_fec_contributions USING gin (to_tsvector('english'::regconfig, name));
 
 
 --
@@ -7366,6 +7459,13 @@ CREATE INDEX index_edited_entities_on_round_five_minutes_created_at ON public.ed
 
 
 --
+-- Name: index_external_data_fec_contributions_on_name_tsvector; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_external_data_fec_contributions_on_name_tsvector ON public.external_data_fec_contributions USING gin (name_tsvector);
+
+
+--
 -- Name: index_external_data_fec_contributions_on_sub_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8095,6 +8195,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210405183927'),
 ('20210405200349'),
 ('20210405202345'),
-('20210412135059');
+('20210412135059'),
+('20210512184454'),
+('20210518204954');
 
 

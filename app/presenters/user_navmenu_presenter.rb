@@ -51,7 +51,7 @@ class UserNavmenuPresenter
   def user_items(user)
     [
       user_links(user),
-      MENU_ITEMS[2], # explore
+      user_explore(user),
       ADD_LINKS,
       MENU_ITEMS[3], # help
       MENU_ITEMS[4]  # about
@@ -70,5 +70,17 @@ class UserNavmenuPresenter
         ['Logout', '/logout']
       ].compact
     ]
+  end
+
+  def user_explore(user)
+    if user.admin?
+      ['Explore', [['Maps', Rails.application.routes.url_helpers.featured_maps_path],
+                   ['Lists', Rails.application.routes.url_helpers.lists_path(featured: true)],
+                   ['Tags', Rails.application.routes.url_helpers.tags_path],
+                   ['Edits', Rails.application.routes.url_helpers.edits_path],
+                   ['Datasets', Rails.application.routes.url_helpers.datasets_path]]]
+    else
+      MENU_ITEMS[2]
+    end
   end
 end

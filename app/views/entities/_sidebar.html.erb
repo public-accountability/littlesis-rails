@@ -44,6 +44,13 @@
     <%= render partial: 'entities/sidebar/source_links' %>
   <% end %>
 
+  <% if user_signed_in? && ( current_user.importer? || current_user.admin? ) %>
+    <%= profile_page_sidebar('sidebar-advanced-tools-container', 'Advanced tools') do %>
+      <%= link_to 'Match FEC Donations', fec_entity_match_contributions_path(@entity) %>
+    <% end %>
+  <% end %>
+
+
   <%# LISTS  %>
   <%= profile_page_sidebar('sidebar-lists-container', 'Lists', subtitle: 'Analyst-created lists of people and org') do %>
     <% cache(['entity_featured_lists', @entity.featured_lists], expires_in: 1.week) do %>

@@ -25,14 +25,15 @@ class FECController < ApplicationController
   end
 
   def match_contributions
-    # @donors = FECDonorQuery.run(params[:q] || @entity)
+    @query = params[:q] || @entity.name
+    @contributions = ExternalDataset::FECContribution.search_by_name(@query).limit(2500)
   end
 
   # required params: donor_id, sub_ids
-  def donor_match
-    ExternalEntity.find(params[:external_entity_id]).match_with(@entity)
-    redirect_to action: :match_contributions
-  end
+  # def donor_match
+  #   ExternalEntity.find(params[:external_entity_id]).match_with(@entity)
+  #   redirect_to action: :match_contributions
+  # end
 
   def contribution_unmatch
   end
@@ -42,4 +43,11 @@ class FECController < ApplicationController
 
   def candidate
   end
+
+  private
+
+  # def set_entity
+  #   Rails.logger.warn "SET ENTITY CALLED"
+  #   super(id: params.require('id').split('-').first)
+  # end
 end

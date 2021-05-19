@@ -2,11 +2,32 @@
 
 <%#  render partial: 'entities/header', locals: { entity: @entity } %>
 
-<div class="row mt-4">
-  <div class="col">
-    <p>An updated Match Donations page will be available shortly</p>
+<div class="row mt-4 bg-light">
+  <div class="col p-2">
+    <p>Help us expand the LittleSis database by identifying donors in the FEC's dataset</p>
+    <%= form_with url: fec_entity_match_contributions_path(@entity), method: :get, class: 'input-group' do |form| %>
+      <%= form.text_field "q",  value: @query, class: "form-control", placeholder: 'DOE, JANE' %>
+      <div class="input-group-append">
+        <%= form.submit "Search", class: 'btn btn-outline-secondary' %>
+      </div>
+    <% end %>
   </div>
 </div>
 
-
-<%#= render partial: 'table' %>
+<div class="row">
+  <div class="col mt-4 p-1">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th></tr>
+          <th>Location</th>
+          <th>Employment</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'fec_contribution', collection: @contributions %>
+      </tbody>
+    </table>
+  </div>
+</div>

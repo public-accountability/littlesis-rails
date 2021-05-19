@@ -27,6 +27,8 @@ class User < ApplicationRecord
          :rememberable,
          :trackable
 
+  has_paper_trail only: %i[username about_me], on: %i[update]
+
   # Core associations
   has_one :user_profile, inverse_of: :user, dependent: :destroy
   has_one :api_token, dependent: :destroy
