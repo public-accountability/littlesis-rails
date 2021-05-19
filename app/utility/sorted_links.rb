@@ -173,14 +173,14 @@ class SortedLinks
     offset = (page - 1) * per_page
 
     sql_template = <<~SQL
-      ( SELECT link.*, relationship.amount
-        FROM link
-        INNER JOIN relationship ON relationship.id = link.relationship_id
-        WHERE link.entity1_id = ? AND link.category_id = 5 AND link.is_reverse is false )
+      ( SELECT links.*, relationship.amount
+        FROM links
+        INNER JOIN relationship ON relationship.id = links.relationship_id
+        WHERE links.entity1_id = ? AND links.category_id = 5 AND links.is_reverse is false )
       UNION ALL
-      ( SELECT link.*, relationship.amount
+      ( SELECT links.*, relationship.amount
         FROM relationship
-        INNER JOIN link on link.relationship_id = relationship.id and link.entity1_id = ? and link.is_reverse is true
+        INNER JOIN links on links.relationship_id = relationship.id and links.entity1_id = ? and links.is_reverse is true
         WHERE relationship.is_deleted is false AND relationship.entity2_id = ? AND relationship.category_id = 5
         ORDER by amount desc LIMIT ? OFFSET ? )
     SQL
