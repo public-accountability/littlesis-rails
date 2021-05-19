@@ -71,25 +71,13 @@ describe 'Search', :sphinx, :tag_helper, type: :request do
       end
 
       it 'returns both apple entities when searching for oil tag' do
-        request_for_tag 'apple', 'oil'
+        request_for_tag('apple', 'oil')
         response_has_n_results 2
         response_names_eql 'apple org', 'apple person'
       end
 
       it 'returns only apple org when searching for nyc tag' do
-        request_for_tag 'apple', 'nyc'
-        response_has_n_results 1
-        response_names_eql 'apple org'
-      end
-
-      it 'returns only apple org when searching for nyc and oil tag' do
-        request_for_tag 'apple', %w[nyc oil]
-        response_has_n_results 1
-        response_names_eql 'apple org'
-      end
-
-      it 'returns only apple org when searching for nyc and oil tag as CSV' do
-        request_for_tag 'apple', 'nyc,oil'
+        get '/search/entity', params: { q: 'apple', tags: 'nyc' }
         response_has_n_results 1
         response_names_eql 'apple org'
       end
