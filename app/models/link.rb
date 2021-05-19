@@ -100,8 +100,17 @@ class Link < ApplicationRecord
     true
   end
 
-  # Refresh the view, concurrently if it has already been populated
+  # Refresh the view in a background job
   def self.refresh
+    if Rails.env.test?
+      refresh_materialized_view
+    else
+      LinksViewRefereshJob.perform_later
+    end
+  end
+
+  # Refresh the view, concurrently if it has already been populated
+  def self.refresh_materialized_view
     Scenic.database.refresh_materialized_view(table_name, concurrently: populated?, cascade: false)
   end
 
