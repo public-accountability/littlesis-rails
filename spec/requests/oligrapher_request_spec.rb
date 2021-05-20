@@ -531,10 +531,18 @@ describe "Oligrapher", type: :request do
     let(:entity2) { create(:entity_person) }
     let(:entity3) { create(:entity_person) }
 
-    let!(:rel1) { create(:donation_relationship, entity: entity1, related: entity2, is_current: false) }
-    let!(:rel2) { create(:donation_relationship, entity: entity3, related: entity1, is_current: true) }
+    let(:rel1) { create(:donation_relationship, entity: entity1, related: entity2, is_current: false) }
+    let(:rel2) { create(:donation_relationship, entity: entity3, related: entity1, is_current: true) }
 
-    before { entity1; entity2; entity3; rel1; rel2; }
+    before do
+      entity1
+      entity2
+      entity3
+      rel1
+      sleep 0.01
+      rel2
+      sleep 0.01
+    end
 
     it 'responds with bad request if no entity1_id param' do
       get '/oligrapher/get_edges', params: { entity2_ids: [entity2.id, entity3.id] }
@@ -548,9 +556,9 @@ describe "Oligrapher", type: :request do
 
     it 'renders json with node and edge data if connections are found' do
       get '/oligrapher/get_edges', params: {
-        entity1_id: entity1.id,
-        entity2_ids: [entity2.id, entity3.id]
-      }
+            entity1_id: entity1.id,
+            entity2_ids: [entity2.id, entity3.id]
+          }
       expect(response).to have_http_status 200
       expect(json.length).to eq 2
       expect(json.first['id']).to eq rel1.id.to_s
@@ -584,10 +592,10 @@ describe "Oligrapher", type: :request do
 
     it 'renders json with node and edge data if connections are found' do
       get '/oligrapher/get_interlocks', params: {
-        entity1_id: entity1.id,
-        entity2_id: entity2.id,
-        entity_ids: entity4.id
-      }
+            entity1_id: entity1.id,
+            entity2_id: entity2.id,
+            entity_ids: entity4.id
+          }
       expect(response).to have_http_status 200
       expect(json['nodes'].length).to eq 1
       expect(json['edges'].length).to eq 2
