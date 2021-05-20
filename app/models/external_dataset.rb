@@ -105,12 +105,10 @@ module ExternalDataset
     end
 
     def self.load
-      run_query "LOAD DATA LOCAL INFILE '#{@csv_file}'
-                 REPLACE
-                 INTO TABLE #{table_name}
-                 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"'
-                 IGNORE 1 LINES
-                 (#{File.open(@csv_file, &:readline).chomp})"
+      run_query <<~SQL
+        COPY #{table_name} (#{File.open(@csv_file, &:readline).chomp})
+        FROM '#{@csv_file.to_s.gsub("/littlesis", "")}' WITH CSV HEADER
+      SQL
     end
   end
 
