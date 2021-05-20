@@ -9,7 +9,7 @@ class DatasetConstraint
     dataset = request.params['dataset']
     id = request.params['id'] if @check_id
 
-    is_dataset = ExternalDataset.datasets.key?(dataset.to_sym)
+    is_dataset = ExternalDataset::DATASETS.include?(dataset.to_sym)
 
     if @check_id
       is_dataset && /\d+/.match?(id)

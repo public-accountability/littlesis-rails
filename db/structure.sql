@@ -1462,6 +1462,86 @@ ALTER SEQUENCE public.external_data_id_seq OWNED BY public.external_data.id;
 
 
 --
+-- Name: external_data_nyc_contributions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.external_data_nyc_contributions (
+    id bigint NOT NULL,
+    election smallint,
+    officecd character varying(2),
+    recipid text,
+    canclass character varying,
+    recipname text,
+    committee text,
+    filing smallint,
+    schedule text,
+    pageno numeric,
+    sequenceno numeric,
+    refno character varying,
+    date date,
+    refunddate date,
+    name text,
+    c_code text,
+    strno text,
+    strname text,
+    apartment text,
+    boroughcd character varying(1),
+    city text,
+    state text,
+    zip text,
+    occupation text,
+    empname text,
+    empstrno text,
+    empstrname text,
+    empcity text,
+    empstate text,
+    amnt numeric(15,2),
+    matchamnt numeric,
+    prevamnt numeric,
+    pay_method smallint,
+    intermno text,
+    intermname text,
+    intstrno text,
+    intstrnm text,
+    intaptno text,
+    intcity text,
+    intst text,
+    intzip text,
+    intempname text,
+    intempstno text,
+    intempstnm text,
+    intempcity text,
+    intempst text,
+    intoccupa text,
+    purposecd text,
+    exemptcd text,
+    adjtypecd text,
+    rr_ind text,
+    seg_ind text,
+    int_c_code text
+);
+
+
+--
+-- Name: external_data_nyc_contributions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.external_data_nyc_contributions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: external_data_nyc_contributions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.external_data_nyc_contributions_id_seq OWNED BY public.external_data_nyc_contributions.id;
+
+
+--
 -- Name: external_data_nycc; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4356,6 +4436,13 @@ ALTER TABLE ONLY public.external_data_fec_contributions ALTER COLUMN id SET DEFA
 
 
 --
+-- Name: external_data_nyc_contributions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.external_data_nyc_contributions ALTER COLUMN id SET DEFAULT nextval('public.external_data_nyc_contributions_id_seq'::regclass);
+
+
+--
 -- Name: external_data_nys_filers id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5163,6 +5250,14 @@ ALTER TABLE ONLY public.external_data_fec_committees
 
 ALTER TABLE ONLY public.external_data_fec_contributions
     ADD CONSTRAINT external_data_fec_contributions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: external_data_nyc_contributions external_data_nyc_contributions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.external_data_nyc_contributions
+    ADD CONSTRAINT external_data_nyc_contributions_pkey PRIMARY KEY (id);
 
 
 --
