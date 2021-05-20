@@ -21,12 +21,12 @@ unless %i[download extract load export create_table report list].include? comman
 end
 
 if command == :list
-  ExternalDataset.datasets.each_key { |k| puts k }
+  ExternalDataset::DATASETS.each { |k| puts k }
   exit
 end
 
-unless ExternalDataset.datasets.include? dataset
+unless ExternalDataset::DATASETS.include? dataset
   abort "invalid dataset: #{dataset}"
 end
 
-ExternalDataset.public_send(dataset).public_send(command)
+ExternalDataset.const_get(dataset.to_s.classify).public_send(command)
