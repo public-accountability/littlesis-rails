@@ -3,7 +3,7 @@
 module ExternalDataset
   TABLE_PREFIX = 'external_data'
   ROOT_DIR = Rails.root.join('data/external_data')
-  DATASETS = %i[nycc nyc_contribution nys_disclosures nys_filers fec_candidates fec_committees fec_contribution].freeze
+  DATASETS = %i[nycc nyc_contributions nys_disclosures nys_filers fec_candidates fec_committees fec_contributions].freeze
 
   mattr_reader :descriptions do
     {
@@ -15,8 +15,7 @@ module ExternalDataset
       nys_filers: 'New York State Campaign Finance Committees',
       fec_candidates: 'Candidates for US Federal Office',
       fec_committees: 'Federal Campaign Finance Committees',
-      fec_contribution: 'Federal Campaign Finance Individual Contributions',
-      fec_donor: 'Donors Extracted from FEC Individual Contributions'
+      fec_contributions: 'Federal Campaign Finance Individual Contributions'
     }.with_indifferent_access.freeze
   end
 

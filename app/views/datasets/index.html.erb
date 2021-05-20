@@ -1,14 +1,14 @@
 <% content_for :page_title, "External Datasets" %>
 
 <div id="datasets-overview">
-  <% ExternalDataset.datasets.each_pair do |dataset_name, dataset| %>
+  <% ExternalDataset::DATASETS.each do |dataset_name| %>
     <div class="mt-2">
       <h3>
         <%= link_to dataset_name, "/datasets/#{dataset_name}" %>
 
-        <small class="text-muted"><%= dataset.description %></small>
+        <small class="text-muted"><%= ExternalDataset.descriptions[dataset_name] %></small>
         <span> | </span>
-        <small class="text-primary"><%=  dataset.count %> rows</small>
+        <small class="text-primary"><%=  ExternalDataset.const_get(dataset_name.to_s.classify).count %> rows</small>
       </h3>
     </div>
   <% end %>
