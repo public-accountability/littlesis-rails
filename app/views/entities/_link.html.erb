@@ -1,5 +1,5 @@
-<div class="relationship-section">
-  <div class="related_entity">
+<div class="relationship-section d-flex flex-row">
+  <div class="related_entity flex-column flex-fill">
     <div class="related_entity_entity">
       <span class="related_entity_name"><%= link_to link[0].related.name, concretize_entity_path(link[0].related) %></span>
       <span class="related_entity_blurb"><%= link[0].related.blurb %></span>
@@ -17,5 +17,25 @@
         </div>
       <% end %>
     </div>
+  </div>
+  <div class="flex-column align-items-sm-end">
+    <% if current_user&.admin? %>
+      <td>
+        <%= button_to(
+          relationship_path(link[0].relationship),
+          method: :patch,
+          params: {
+            relationship: {
+              is_featured: !link[0].relationship.is_featured
+            },
+            reference: {just_cleaning_up: true}
+          },
+          class: 'star-button',
+          title: (link[0].relationship.is_featured ? 'unfeature relationship' : 'feature relationship')
+        ) do %>
+        <span class="<%= !link[0].relationship.is_featured ? 'star' : 'not-star' %>">
+        <% end %>
+      </td>
+    <% end %>
   </div>
 </div>

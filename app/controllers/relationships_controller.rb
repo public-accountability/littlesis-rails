@@ -47,7 +47,8 @@ class RelationshipsController < ApplicationController
     :notes,
     :start_date,
     :end_date,
-    :is_current
+    :is_current,
+    :is_featured
   ].freeze
 
   rescue_from Exceptions::MissingCategoryIdParamError do |exception|
@@ -67,6 +68,7 @@ class RelationshipsController < ApplicationController
   # it also reverse the direction of the relationship
   def update
     @relationship.assign_attributes relationship_params
+
     # If user has not checked the 'just cleaning up' or selected an existing reference
     # then a new reference must be created
     @relationship.validate_reference(reference_params) if need_to_create_new_reference
@@ -76,15 +78,15 @@ class RelationshipsController < ApplicationController
 
         if @relationship.valid?
           @relationship.save!
+          flash[:notice] = 'Relationship updated'
           @relationship.reverse_direction! if reverse_direction?
           update_entity_last_user
-
         end
       end
     end
 
     if @relationship.valid?
-      return redirect_to relationship_path(@relationship)
+      return redirect_back fallback_location: relationship_path(@relationship)
     else
       return render :edit
     end

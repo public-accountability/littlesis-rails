@@ -111,17 +111,18 @@ form.edit-relationship-form {
     }
 
     .relationship-section {
-        border: 0px solid #ddd;
-        border-top: 0;
+        border: {
+          top: 1px solid #ddd;
+          bottom: none;
+        }
 	
-	.related_entity {
+        .related_entity {
             ul {
                 margin-bottom: 0;
             }
             color: #444;
             font-size: 14px;
             line-height: 1.3em;
-            border-top: 1px solid #ddd;
             padding: 0.5em;
             padding-bottom: 0.4em;
             padding-left: 0.3em;

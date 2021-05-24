@@ -5,7 +5,6 @@
 
 <div data-controller="entity-page">
   <%= render partial: 'shared/entity_info', locals: {entity: @entity}  %>
-  <%= render partial: 'shared/notice_or_alert' %>
   <%= render partial: 'header', locals: { entity: @entity } %>
   <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 
