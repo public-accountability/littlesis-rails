@@ -8,6 +8,23 @@
     <% if signed_in && current_user.permissions.relationship_permissions(@relationship).fetch(:deleteable) %>
       <%= button_to "remove", relationship_path(@relationship), method: :delete, data: { confirm: "Are you sure you want to remove this relationship?" } %>
     <% end %>
+
+    <% if user_admin? %>
+      <td>
+        <%= button_to(
+          ( @relationship.is_featured ? 'unfeature' : 'feature' ),
+          relationship_path(@relationship),
+          method: :patch,
+          params: {
+            relationship: {
+              is_featured: !@relationship.is_featured
+            },
+            reference: {just_cleaning_up: true}
+          },
+          title: (@relationship.is_featured ? 'unfeature relationship' : 'feature relationship')
+        ) %>
+      </td>
+    <% end %>
   </div>
 </div>
 

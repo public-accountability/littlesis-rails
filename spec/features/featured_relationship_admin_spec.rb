@@ -18,6 +18,16 @@ describe 'Featured relationship admin', type: :feature do
         expect(page).not_to have_css('.relationship-section .star-button')
       end
     end
+
+    context 'when on the relationship page' do
+      before do
+        visit edit_relationship_path(relationships.last)
+      end
+
+      it 'does not offer the featured relationship button' do
+        expect(page).not_to have_css('.relationship-section .star-button')
+      end
+    end
   end
 
   context 'when logged in as an admin' do
@@ -44,6 +54,38 @@ describe 'Featured relationship admin', type: :feature do
         expect(relationships.last.reload.is_featured).to be true
 
         all('.relationship-section .star-button').last.click
+
+        expect(page).to show_success('Relationship updated')
+
+        expect(relationships.last.reload.is_featured).to be false
+      end
+    end
+
+    context 'when on the relationship page' do
+      before do
+        visit edit_relationship_path(relationships.last)
+      end
+
+      it 'offers the featured relationship button' do
+        within '#action-buttons' do
+          expect(page).to have_button 'feature'
+        end
+      end
+
+      it 'can feature and unfeature the relationship' do
+        expect(relationships.last.is_featured).to be false
+
+        within '#action-buttons' do
+          click_button 'feature'
+        end
+
+        expect(page).to show_success('Relationship updated')
+
+        expect(relationships.last.reload.is_featured).to be true
+
+        within '#action-buttons' do
+          click_button 'unfeature'
+        end
 
         expect(page).to show_success('Relationship updated')
 
