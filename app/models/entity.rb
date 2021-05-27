@@ -374,6 +374,10 @@ class Entity < ApplicationRecord
     raise ArgumentError, "Accepted types: Entity, Integer, or String"
   end
 
+  def self.with_relationships
+    joins(:relationships).having('COUNT(relationship.id) > 0').group('entity.id')
+  end
+
   # Utilities - Instance Methods #
 
   def update_link_count

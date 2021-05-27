@@ -1274,4 +1274,20 @@ describe Entity, :tag_helper do
       expect(entity.featured_lists).not_to include(nonfeatured_list)
     end
   end
+
+  describe '.with_relationships' do
+    let(:related_entity) { create(:entity_org) }
+    let(:related_entity2) { create(:entity_person) }
+    let!(:unrelated_entity) { create(:entity_org) }
+
+    before do
+      create(:generic_relationship, entity: related_entity, related: related_entity2)
+    end
+
+    it 'returns only entities that have relationships' do
+      scope = Entity.with_relationships
+      expect(scope).to include(related_entity, related_entity2)
+      expect(scope).not_to include(unrelated_entity)
+    end
+  end
 end
