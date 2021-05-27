@@ -113,11 +113,11 @@ class Relationship < ApplicationRecord
 
   before_validation :set_last_user_id
 
-  after_create :after_create_tasks
-
   before_save :update_is_current_according_to_end_date
 
-  after_commit { Link.refresh }
+  after_create :after_create_tasks
+
+  # after_commit { Link.refresh }
 
   # This callback is basically a modified version of :touch => true
   # It updates the entity timestamps and also changes the last_user_id of
