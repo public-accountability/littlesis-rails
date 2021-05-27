@@ -2071,18 +2071,18 @@ CREATE MATERIALIZED VIEW public.links AS
     relationship.entity2_id,
     relationship.category_id,
     relationship.id AS relationship_id,
-    false AS is_reverse,
-    relationship.is_deleted
+    false AS is_reverse
    FROM public.relationship
+  WHERE (relationship.is_deleted = false)
 UNION
  SELECT concat(relationship.id, 'reverse') AS id,
     relationship.entity2_id AS entity1_id,
     relationship.entity1_id AS entity2_id,
     relationship.category_id,
     relationship.id AS relationship_id,
-    true AS is_reverse,
-    relationship.is_deleted
+    true AS is_reverse
    FROM public.relationship
+  WHERE (relationship.is_deleted = false)
   WITH NO DATA;
 
 
@@ -7517,13 +7517,6 @@ CREATE UNIQUE INDEX index_links_on_id ON public.links USING btree (id);
 
 
 --
--- Name: links_relationship_id_is_reverse_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX links_relationship_id_is_reverse_idx ON public.links USING btree (relationship_id, is_reverse);
-
-
---
 -- Name: address address_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8218,6 +8211,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210419114108'),
 ('20210510192207'),
 ('20210512184454'),
-('20210518204954');
+('20210518204954'),
+('20210527181734'),
+('20210527182912');
 
 

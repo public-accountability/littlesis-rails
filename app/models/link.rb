@@ -9,8 +9,6 @@ class Link < ApplicationRecord
   has_many :references, through: :relationship
   has_many :chained_links, class_name: "Link", foreign_key: "entity1_id", primary_key: "entity2_id"
 
-  default_scope { where(is_deleted: false) }
-
   def self.interlock_hash_from_entities(entity_ids)
     interlock_hash(where(entity1_id: entity_ids))
   end
