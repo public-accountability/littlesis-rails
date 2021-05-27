@@ -105,7 +105,7 @@ class Link < ApplicationRecord
     if Rails.env.test?
       refresh_materialized_view
     else
-      LinksViewRefereshJob.perform_later
+      LinksViewRefreshJob.perform_later
     end
   end
 
