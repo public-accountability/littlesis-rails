@@ -317,10 +317,12 @@ class Relationship < ApplicationRecord
   # Switches entity direction and changes reverses links
   def reverse_direction
     update(entity1_id: entity2_id, entity2_id: entity1_id)
+    Link.refresh
   end
 
   def reverse_direction!
     update!(entity1_id: entity2_id, entity2_id: entity1_id)
+    Link.refresh
   end
 
   ###############################
