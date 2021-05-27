@@ -29,7 +29,7 @@ class ListDatatable
   end
 
   def get_interlocks
-    @links = Link.includes(:relationship).where(entity1_id: @entity_ids, category_id: [1, 3], relationship: { is_deleted: 0 }).where.not(entity2_id: @entity_ids).limit(10000)
+    @links = Link.includes(:relationship).where(entity1_id: @entity_ids, category_id: [1, 3]).where.not(entity2_id: @entity_ids).limit(10000)
     @num_links = @links.count
 
     if interlocks?
@@ -76,7 +76,7 @@ class ListDatatable
       blurb: list_entity.entity.blurb,
       blurb_excerpt: excerpt(list_entity.entity.blurb, 70 - list_entity.entity.name.length),
       types: list_entity.entity.types.join(","),
-      industries: list_entity.entity.industries.join(','),    
+      industries: list_entity.entity.industries.join(','),
       interlock_ids: interlock_ids,
       list_interlock_ids: list_interlock_ids
     }.merge(sort_column(list_entity.entity))
