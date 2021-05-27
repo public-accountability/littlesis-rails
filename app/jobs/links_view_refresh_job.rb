@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class LinksViewRefreshJob < ApplicationJob
-  queue_as :default
+  queue_as :links_refreshes
 
   def perform
+    # Avoid backing up lots of identical refreshes pointlessly
+    return if Delayed::Job.where(queue: 'links_refreshes').count > 1
+
     @time_started = Time.current
     Link.refresh_materialized_view
   end
