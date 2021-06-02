@@ -70,6 +70,14 @@ class PagesController < ApplicationController
     end
   end
 
+  def bulk_data
+  end
+
+  def public_data
+    expires_in 1.week, public: true
+    send_file PublicData::DIR.join(params[:file])
+  end
+
   private
 
   def set_page_by_id

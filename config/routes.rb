@@ -386,6 +386,8 @@ Lilsis::Application.routes.draw do
   get "/donate" => "pages#donate"
   get "/swamped" => "pages#swamped"
   post "/swamped" => "pages#swamped"
+  get '/bulk_data' => 'pages#bulk_data'
+  get '/public_data/:file' => 'pages#public_data', constraints: { file: /(entities|relationships)\.json(\.gz)?/ }
 
   ############
   # Partners #

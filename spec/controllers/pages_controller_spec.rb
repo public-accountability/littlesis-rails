@@ -15,6 +15,9 @@ describe PagesController, type: :controller do
   it { is_expected.to route(:get, '/pages').to(action: :index) }
   it { is_expected.to route(:get, '/swamped').to(action: :swamped) }
   it { is_expected.to route(:post, '/swamped').to(action: :swamped) }
+  it { is_expected.to route(:get, '/bulk_data').to(action: :bulk_data) }
+  it { is_expected.to route(:get, '/public_data/relationships.json.gz').to(action: :public_data, file: 'relationships.json.gz') }
+  it { is_expected.not_to route(:get, '/public_data/example.json').to(action: :public_data) }
 
   describe '#display - GET /features' do
     before do

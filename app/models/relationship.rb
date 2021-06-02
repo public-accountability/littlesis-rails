@@ -211,7 +211,7 @@ class Relationship < ApplicationRecord
   end
 
   def all_attributes
-    attributes.merge!(category_attributes).reject { |_k, v| v.nil? }
+    attributes.merge!(category_attributes.to_h).reject { |_k, v| v.nil? }
   end
 
   def self.category_has_fields?(category_id)
@@ -230,7 +230,7 @@ class Relationship < ApplicationRecord
 
   def category_attributes
     category = get_category
-    return {} if category.nil?
+    return nil if category.nil?
 
     hash = category.attributes
     hash.delete("id")
@@ -515,6 +515,14 @@ class Relationship < ApplicationRecord
   # Array of api data for the entities in the relationship
   def api_included
     @api_included ||= [entity.api_data(exclude: :extensions), related.api_data(exclude: :extensions)]
+  end
+
+  def api_links
+    @api_links ||= {
+      'self' => url,
+      'entity' => entity.url,
+      'related' => related.url
+    }
   end
 
   def restore!
