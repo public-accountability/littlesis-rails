@@ -7,15 +7,14 @@
 
 <div class="row">
   <div class="col-md-10">
-    <h1>LittleSis Api Documentation - Version 2</h1>
+    <h1>LittleSis API Documentation</h1>
   </div>
 </div>
 
 <div class="row">
   <%= api_column do %>
-    <h2>Responses</h2>
-    <p>The API follows many of the conventions of <%= link_to 'JSON API', 'http://jsonapi.org/' %>, but does not implement the entire specification.</p>
-    <p>All responses are in JSON.</p>
+    <p>The API follows many of the conventions of <%= link_to 'JSON API', 'http://jsonapi.org/' %>, but does not implement the entire specification. All responses are in JSON.</p>
+    <p>The API does not require any API keys or authentication, although requests may be rate-limited. If you would like a copy of our entire dataset please visit the <a href="/bulk_data">bulk data</a> page</p>
   <% end %>
   <div class="col-md-8">
     <h3>Successful Responses</h3>
@@ -171,7 +170,7 @@
 {
   "meta": {
     "copyright": "LittleSis CC BY-SA 4.0",
-    "license": "https://creativecommons.org/licenses/by-sa/4.0/us/",
+    "license": "https://creativecommons.org/licenses/by-sa/4.0/",
     "apiVersion": "2.0"
   },
   "data": [
@@ -236,7 +235,7 @@
 	"currentPage": 1,
 	"pageCount": 3,
 	"copyright": "LittleSis CC BY-SA 4.0",
-	"license": "https://creativecommons.org/licenses/by-sa/4.0/us/",
+	"license": "https://creativecommons.org/licenses/by-sa/4.0/",
 	"apiVersion": "2.0"
     }
 }
@@ -279,14 +278,13 @@
   <% end %>
 
   <%= api_column do %>
-    <p>The response object also includes information on the two entities in the relationship under the key <em>'included'</em></p>
-
+    <p>The response object also contains information on the two associated entities under the key <em>'included'</em></p>
     <p>Example request: <code>curl https://littlesis.org/api/relationships/297069</code></p>
     <pre><code>
 {
   "meta": {
     "copyright": "LittleSis CC BY-SA 4.0",
-    "license": "https://creativecommons.org/licenses/by-sa/4.0/us/",
+    "license": "https://creativecommons.org/licenses/by-sa/4.0/",
     "apiVersion": "2.0"
   },
   "data": {
@@ -299,18 +297,22 @@
       "category_id": 5,
       "description1": "Campaign Contribution",
       "description2": "Campaign Contribution",
-      "amount": 631700,
+      "amount": 500,
+      "currency": "usd",
       "goods": null,
-      "filings": 16,
-      "updated_at": "2017-07-25T18:18:13Z",
-      "start_date": "2004-00-00",
-      "end_date": "2016-04-25",
-      "is_current": null,
-      "description": "Robert Mercer gave money to  Republican National Committee"
+      "filings": 1,
+      "updated_at": "2021-05-04T20:26:45Z",
+      "start_date": "2011-08-15",
+      "end_date": "2011-08-15",
+      "is_current": false,
+      "description": "Robert Mercer  gave money to  Republican National Committee ",
+      "category_attributes": {
+        "bundler_id": null
+      }
     },
-    "links": {
-      "self": "https://littlesis.org/relationships/297069"
-    }
+    "self": "https://littlesis.org/relationships/297069",
+    "entity": "https://littlesis.org/person/72489-Robert_Mercer",
+    "related": "https://littlesis.org/org/28778-Republican_National_Committee"
   },
   "included": [
     {
@@ -320,14 +322,15 @@
         "id": 72489,
         "name": "Robert Mercer",
         "blurb": "Renaissance Tech billionaire, Club for Growth backer",
-        "summary": "Robert Mercer, 65, is co-CEO of Renaissance Technologies LLC, a $15 billion hedge fund. The IBM language-recognition whiz-turned-financier brought home $125 million in 2011, making him the 16th highest-earning hedge fund manager, according to Forbes.\r\n\r\nRenaissance Technologies is based in New York City, with additional locations in London and East Setauket, N.Y., where Mercer lives.",
+        "summary": "Robert Mercer is co-CEO of Renaissance Technologies LLC, a $15 billion hedge fund. The IBM language-recognition whiz-turned-financier brought home $125 million in 2011, making him the 16th highest-earning hedge fund manager, according to Forbes.\r\n\r\nRenaissance Technologies is based in New York City, with additional locations in London and East Setauket, N.Y., where Mercer lives. On November 2 2017 He announced that he is stepping down as co-chief executive of his hedge fund, Renaissance Technologies, and selling his stake in Breitbart News to his daughters. ",
         "website": null,
         "parent_id": null,
         "primary_ext": "Person",
-        "updated_at": "2017-09-11T21:48:02Z",
+        "updated_at": "2021-05-05T00:46:25Z",
         "start_date": null,
         "end_date": null,
         "aliases": [
+          "Robert Leroy Mercer",
           "Robert Mercer"
         ],
         "types": [
@@ -345,13 +348,13 @@
       "attributes": {
         "id": 28778,
         "name": "Republican National Committee",
-        "blurb": "The Grand Ol' Party",
+        "blurb": "U.S. political committee that leads the Republican Party of the U.S.",
         "summary": null,
-        "website": null,
+        "website": "https://gop.com/",
         "parent_id": null,
         "primary_ext": "Org",
-        "updated_at": "2017-10-09T01:09:46Z",
-        "start_date": null,
+        "updated_at": "2021-05-10T19:31:24Z",
+        "start_date": "1856-00-00",
         "end_date": null,
         "aliases": [
           "Republican National Committee",
