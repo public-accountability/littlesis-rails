@@ -2,12 +2,10 @@
 
 module ApplicationHelper
   def page_title
-    title = content_for?(:page_title) ? content_for(:page_title) : ''
+    title = content_for(:page_title) || 'LittleSis'
 
-    if content_for?(:skip_page_title_suffix)
+    if title.include?('LittleSis')
       title
-    elsif title.blank?
-      'LittleSis'
     else
       "#{title} - LittleSis"
     end

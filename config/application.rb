@@ -30,6 +30,8 @@ module Lilsis
     config.action_controller.default_url_options = default_url_options
     config.action_mailer.default_url_options = default_url_options
 
+    config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
+
     config.time_zone = 'UTC'
     config.active_record.default_timezone = :utc
 
