@@ -21,6 +21,7 @@ relationship:
     - is_gte
   fields:
     description: 'description'
+    category_attributes: 'category_attributes'
 extensionrecord:
   ignore:
     - entity_id

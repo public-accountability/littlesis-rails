@@ -211,7 +211,7 @@ class Relationship < ApplicationRecord
   end
 
   def all_attributes
-    attributes.merge!(category_attributes).reject { |_k, v| v.nil? }
+    attributes.merge!(category_attributes.to_h).reject { |_k, v| v.nil? }
   end
 
   def self.category_has_fields?(category_id)
@@ -230,7 +230,7 @@ class Relationship < ApplicationRecord
 
   def category_attributes
     category = get_category
-    return {} if category.nil?
+    return nil if category.nil?
 
     hash = category.attributes
     hash.delete("id")
