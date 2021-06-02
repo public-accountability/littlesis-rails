@@ -70,6 +70,7 @@ group :development do
   gem 'better_errors', '>= 2.5.0'
   gem 'memory_profiler'
   gem 'rack-mini-profiler', require: false
+  gem 'solargraph', require: false
   gem 'web-console'
 end
 
