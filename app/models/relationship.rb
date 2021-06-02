@@ -517,6 +517,14 @@ class Relationship < ApplicationRecord
     @api_included ||= [entity.api_data(exclude: :extensions), related.api_data(exclude: :extensions)]
   end
 
+  def api_links
+    @api_links ||= {
+      'self' => url,
+      'entity' => entity.url,
+      'related' => related.url
+    }
+  end
+
   def restore!
     raise Exceptions::CannotRestoreError unless is_deleted
     return nil if entity.nil? || related.nil? || entity.is_deleted || related.is_deleted
