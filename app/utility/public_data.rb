@@ -8,7 +8,11 @@ module PublicData
 
   def self.run
     FileUtils.mkdir_p DIR
+    entities
+    relationships
+  end
 
+  def self.entities
     File.open(DIR.join('entities.json'), 'w') do |f|
       f.write '['
 
@@ -25,7 +29,9 @@ module PublicData
       f.seek(-1, IO::SEEK_CUR)
       f.write ']'
     end
+  end
 
+  def self.relationships
     File.open(DIR.join('relationships.json'), 'w') do |f|
       f.write '['
 
@@ -44,7 +50,7 @@ module PublicData
     end
   end
 
-  def gzip
+  def self.gzip
     system "gzip --keep #{DIR.join('entities.json')}"
     system "gzip --keep #{DIR.join('relationships.json')}"
   end
