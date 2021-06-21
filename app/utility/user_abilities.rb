@@ -24,7 +24,8 @@ class UserAbilities
     :bulk => :bulker?,
     :match => :matcher?,
     :list => :lister?,
-    :upload => :uploader?
+    :upload => :uploader?,
+    :essential => :essential?
   }.freeze
 
   ALL_ABILITIES = ABILITY_MAPPING.keys.to_set.freeze
@@ -37,7 +38,8 @@ class UserAbilities
     :bulk => 'Ability to bulk import an unlimited # of entities and relationships',
     :match => 'Ability to match New York and federal donations',
     :list => 'Can add entities to any open list',
-    :upload => 'Ability to upload primary source documents'
+    :upload => 'Ability to upload primary source documents',
+    :essential => 'Ability to edit when noediting is on'
   }.freeze
 
   extend Forwardable

@@ -8,7 +8,9 @@ Bundler.require(*Rails.groups)
 
 APP_CONFIG = YAML.load(
   ERB.new(File.new("#{Dir.getwd}/config/lilsis.yml").read).result
-).fetch(Rails.env).with_indifferent_access.freeze
+).fetch(Rails.env).with_indifferent_access
+
+APP_CONFIG.freeze unless Rails.env.test?
 
 module Lilsis
   class Application < Rails::Application

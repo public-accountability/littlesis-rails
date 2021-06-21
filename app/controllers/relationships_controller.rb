@@ -6,6 +6,7 @@ class RelationshipsController < ApplicationController
   before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction]
   before_action :authenticate_user!, except: [:show]
   before_action :block_restricted_user_access, only: [:create, :update, :destroy, :bulk_add]
+  before_action -> { check_permission('editor') }, only: [:create, :update, :destroy, :bulk_add, :reverse_direction]
   before_action :check_delete_permission, only: [:destroy]
   before_action :set_entity, only: [:bulk_add]
 
@@ -242,7 +243,7 @@ class RelationshipsController < ApplicationController
 
     # 30, 31, 50, and 51 represent special categories
     # see helpers/tools_helper.rb
-    if [30, 31, 50, 51]. include? r[:category_id].to_i
+    if [30, 31, 50, 51].include? r[:category_id].to_i
       if r[:category_id].to_i == 50 || r[:category_id].to_i == 31
         r[:entity1_id] = entity2.id
         r[:entity2_id] = entity1.id
