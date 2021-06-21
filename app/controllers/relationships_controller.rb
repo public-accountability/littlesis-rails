@@ -6,6 +6,7 @@ class RelationshipsController < ApplicationController
   before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction]
   before_action :authenticate_user!, except: [:show]
   before_action :block_restricted_user_access, only: [:create, :update, :destroy, :bulk_add]
+  before_action -> { check_permission('editor') }, only: [:create, :update, :destroy, :bulk_add, :reverse_direction]
   before_action :check_delete_permission, only: [:destroy]
   before_action :set_entity, only: [:bulk_add]
 
