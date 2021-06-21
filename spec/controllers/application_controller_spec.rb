@@ -54,7 +54,6 @@ describe ApplicationController, type: :controller do
       end
     end
   end
-
   describe 'errors' do
     describe 'permission errors' do
       controller do
@@ -124,6 +123,33 @@ describe ApplicationController, type: :controller do
       expect(subject.send(:cast_to_boolean, 'nil')).to be nil
       expect(subject.send(:cast_to_boolean, 'null')).to be nil
       expect(subject.send(:cast_to_boolean, 'NULL')).to be nil
+    end
+  end
+
+  describe 'When edits are disabled' do
+    before do
+      expect(APP_CONFIG).to receive(:[]).with('noediting').and_return(true)
+    end
+
+    it 'blocks users who can edit' do
+      user = RspecHelpers::ExampleMacros.create_basic_user
+      expect(user.editor?).to be true
+      expect(user.essential?).to be false
+      sign_in user
+      expect { controller.check_permission('editor') }.to raise_error(Exceptions::EditingDisabled)
+    end
+
+    it 'permits essential users' do
+      user = RspecHelpers::ExampleMacros.create_basic_user
+      user.add_ability!(:essential)
+      expect(user.essential?).to be true
+      sign_in user
+      expect { controller.check_permission('editor') }.not_to raise_error
+    end
+
+    it 'permits admins' do
+      sign_in RspecHelpers::ExampleMacros.create_admin_user
+      expect { controller.check_permission('editor') }.not_to raise_error
     end
   end
 end

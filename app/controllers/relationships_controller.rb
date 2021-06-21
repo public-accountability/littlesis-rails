@@ -242,7 +242,7 @@ class RelationshipsController < ApplicationController
 
     # 30, 31, 50, and 51 represent special categories
     # see helpers/tools_helper.rb
-    if [30, 31, 50, 51]. include? r[:category_id].to_i
+    if [30, 31, 50, 51].include? r[:category_id].to_i
       if r[:category_id].to_i == 50 || r[:category_id].to_i == 31
         r[:entity1_id] = entity2.id
         r[:entity2_id] = entity1.id

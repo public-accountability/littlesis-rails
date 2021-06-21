@@ -11,6 +11,8 @@ module Exceptions
   class InvalidEntityIdError < LittleSisError; end
   class OligrapherAssetsError < LittleSisError; end
   class MatchingError < LittleSisError; end
+  class EditingDisabled <  LittleSisError; end
+
 
   class CannotRestoreError < StandardError
     def message
@@ -18,31 +20,31 @@ module Exceptions
     end
   end
 
-  class MissingEntityAssociationDataError < StandardError
-    def message
-      "Missing association data for this Entity"
+    class MissingEntityAssociationDataError < StandardError
+      def message
+        "Missing association data for this Entity"
+      end
     end
-  end
 
-  class UnauthorizedBulkRequest < StandardError
-    def message
-      "User lacks priveleges to submit bulk request of this size"
+    class UnauthorizedBulkRequest < StandardError
+      def message
+        "User lacks priveleges to submit bulk request of this size"
+      end
     end
-  end
 
-  class InvalidUrlError < ArgumentError
-    def message
-      "The URL is invalid"
+    class InvalidUrlError < ArgumentError
+      def message
+        "The URL is invalid"
+      end
     end
-  end
 
-  class ModelIsDeletedError < ActiveRecord::ActiveRecordError
-    def message
-      "The model has been deleted"
+    class ModelIsDeletedError < ActiveRecord::ActiveRecordError
+      def message
+        "The model has been deleted"
+      end
     end
-  end
 
-  class ThatsWeirdError < StandardError
+    class ThatsWeirdError < StandardError
     def message
       "Well, that's weird."
     end
