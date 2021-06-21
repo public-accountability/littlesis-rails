@@ -147,5 +147,6 @@ RSpec/ImplicitSubject:
   Exclude:
     - 'spec/controllers/*.rb'
 
-Capybara/FeatureMethods:
-  Enabled: false
+RSpec/Capybara:
+  Capybara/FeatureMethods:
+    Enabled: false
