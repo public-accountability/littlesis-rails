@@ -22,6 +22,14 @@ class LinksGroup
   end
 
   def order(links)
+    sort_by_featured(primary_sort(links))
+  end
+
+  def sort_by_featured(links)
+    links.sort_by { |a| a.relationship.is_featured ? 0 : 1 }
+  end
+
+  def primary_sort(links)
     case @category_id
     when 4
       sort_by_related_link_count(links)
