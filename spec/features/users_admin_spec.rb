@@ -14,7 +14,7 @@ describe 'Users Admin Pages', :type => :feature do
       expect(page).not_to have_selector 'div.alert'
     end
 
-    it 'has one PERMIT form for the restircted user' do
+    it 'has one PERMIT form for the restricted user' do
       expect(page).to have_selector 'button', text: 'Remove restriction', count: 1
     end
 
@@ -65,12 +65,12 @@ describe 'Users Admin Pages', :type => :feature do
 
     it 'shows table with abilities' do
       successfully_visits_page edit_permissions_url
-      page_has_selector 'table#users-edit-permissions-table tbody tr', count: 8
-      page_has_selector 'table#users-edit-permissions-table tbody tr td input[value="ADD"]', count: 7
+      page_has_selector 'table#users-edit-permissions-table tbody tr', count: 9
+      page_has_selector 'table#users-edit-permissions-table tbody tr td input[value="ADD"]', count: 8
       page_has_selector 'table#users-edit-permissions-table tbody tr td input[value="DELETE"]', count: 1
     end
 
-    it 'adding the bulk permisison permisison' do
+    it 'adding the bulk permission' do
       successfully_visits_page edit_permissions_url
 
       expect(test_user.abilities.include?(:bulk)).to be false
@@ -83,7 +83,7 @@ describe 'Users Admin Pages', :type => :feature do
       expect(test_user.reload.abilities.include?(:bulk)).to be true
     end
 
-    it 'removing the edit permisison permisison' do
+    it 'removing the edit permission' do
       successfully_visits_page edit_permissions_url
 
       expect(test_user.abilities.include?(:edit)).to be true
@@ -91,7 +91,7 @@ describe 'Users Admin Pages', :type => :feature do
       find('.delete-user-ability-edit').click
 
       successfully_visits_page edit_permissions_url
-      page_has_selector 'table#users-edit-permissions-table tbody tr td input[value="ADD"]', count: 8
+      page_has_selector 'table#users-edit-permissions-table tbody tr td input[value="ADD"]', count: 9
       expect(page).to have_text 'Permission was successfully deleted.'
       expect(test_user.reload.abilities.include?(:edit)).to be false
     end
