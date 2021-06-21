@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Person < ApplicationRecord
-  include SingularTable
   # Provides: SHORT_FIRST_NAMES, LONG_FIRST_NAMES, DISPLAY_ATTRIBUTES
   include PersonConstants
 

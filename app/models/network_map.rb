@@ -3,7 +3,6 @@
 # rubocop:disable Rails/SafeNavigation
 
 class NetworkMap < ApplicationRecord
-  include SingularTable
   include SoftDelete
 
   ThinkingSphinx::Callbacks.append(self, :behaviours => [:sql, :deltas])

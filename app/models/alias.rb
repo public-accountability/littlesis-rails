@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Alias < ApplicationRecord
-  include SingularTable
   extend WithoutPaperTrailVersioning
   attr_accessor :skip_update_entity_callback
   has_paper_trail on: [:create, :destroy],

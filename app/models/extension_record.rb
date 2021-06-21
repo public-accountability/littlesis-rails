@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ExtensionRecord < ApplicationRecord
-  include SingularTable
   include Api::Serializable
 
   has_paper_trail on: [:create, :destroy],
@@ -18,12 +17,12 @@ class ExtensionRecord < ApplicationRecord
       SELECT subquery.c, display_name
       FROM (
            SELECT definition_id, count(*) as c
-           FROM extension_record
-           INNER JOIN entity ON entity.id = extension_record.entity_id
-           WHERE entity.is_deleted is false
+           FROM extension_records
+           INNER JOIN entities ON entities.id = extension_records.entity_id
+           WHERE entities.is_deleted is false
            GROUP BY definition_id
          ) as subquery
-       INNER JOIN extension_definition ON subquery.definition_id = extension_definition.id
+       INNER JOIN extension_definitions ON subquery.definition_id = extension_definitions.id
        ORDER BY subquery.c desc
     SQL
   end

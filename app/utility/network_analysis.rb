@@ -13,7 +13,7 @@ module NetworkAnalysis
   STATS = [:amount_sum, :connecting_id_count].freeze
 
   AGGREGATORS_BY_STAT = {
-    amount_sum: 'SUM(case when relationship.amount is null then 0 else relationship.amount end)',
+    amount_sum: 'SUM(case when relationships.amount is null then 0 else relationships.amount end)',
     connecting_id_count: 'COUNT(distinct second_hop.entity1_id)'
   }.freeze
 
@@ -22,7 +22,7 @@ module NetworkAnalysis
   }.freeze
 
   JOIN_STATEMENTS = {
-    relationship: 'JOIN relationship on second_hop.relationship_id = relationship.id'
+    relationship: 'JOIN relationships on second_hop.relationship_id = relationships.id'
   }.freeze
 
   PARAMS_BY_QUERY = {

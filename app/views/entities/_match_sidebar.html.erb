@@ -13,10 +13,10 @@
     <!-- Eventually we should replace this with a common sorted links section that works for both People and Orgs-->
     <% if @entity.person? %>
 
-      <% if @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').present? %>
+      <% if @entity.relationships.where('relationships.category_id = 1 OR relationships.category_id = 3').present? %>
         <div class="text-center">
 	  <p class=""><strong>Positions</strong></p>
-	  <% @entity.relationships.where('relationship.category_id = 1 OR relationship.category_id = 3').each do |r|  %>
+	  <% @entity.relationships.where('relationships.category_id = 1 OR relationships.category_id = 3').each do |r|  %>
             <% cache r do %>
 	      <%= render partial: 'position', locals: { relationship: r } %>
             <% end %>

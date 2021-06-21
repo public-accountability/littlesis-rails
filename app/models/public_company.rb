@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class PublicCompany < ApplicationRecord
-  include SingularTable
-
   has_paper_trail on: [:update],
                   meta: { entity1_id: :entity_id }
 

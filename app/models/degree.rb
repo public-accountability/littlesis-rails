@@ -1,6 +1,4 @@
 class Degree < ApplicationRecord
-  include SingularTable
-
   def self.select_options
     all.map { |degree| [degree.name, degree.id] }
   end

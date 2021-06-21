@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class RelationshipCategory < ApplicationRecord
-  include SingularTable
-
   has_many :relationships, inverse_of: :category
 
   def self.valid_categories

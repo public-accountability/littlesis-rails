@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Education < ApplicationRecord
-  include SingularTable
-
   belongs_to :relationship, inverse_of: :education, optional: true
   belongs_to :degree, optional: true
 
