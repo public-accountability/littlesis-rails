@@ -46,7 +46,7 @@ describe LinksGroup do
     end
   end
 
-  describe 'link sorting by date' do
+  describe 'link sorting' do
     let(:org) { create(:entity_org).add_extension('Business') }
     let(:person) { create(:entity_person) }
     let(:links) { SortedLinks.new(person) }
@@ -63,6 +63,17 @@ describe LinksGroup do
         expect(links_group.links[0].map { |l| l.relationship.notes })
           .to match %w[current unknown past]
       end
+
+      context 'with a featured relationship' do
+        before do
+          create(:position_relationship, entity: person, related: org, notes: 'featured', is_current: nil, is_featured: true)
+        end
+
+        it 'puts the featured relationship first' do
+          expect(links_group.links[0].map { |l| l.relationship.notes })
+            .to match %w[featured current unknown past]
+        end
+      end
     end
 
     context 'with relationships differentiated by end date' do
@@ -76,6 +87,17 @@ describe LinksGroup do
         expect(links_group.links[0].map { |l| l.relationship.notes })
           .to match %w[endless ending ended]
       end
+
+      context 'with a featured relationship' do
+        before do
+          create(:position_relationship, entity: person, related: org, notes: 'featured', is_current: nil, is_featured: true)
+        end
+
+        it 'puts the featured relationship first' do
+          expect(links_group.links[0].map { |l| l.relationship.notes })
+            .to match %w[featured endless ending ended]
+        end
+      end
     end
 
     context 'with relationships differentiated by start date' do
@@ -88,6 +110,17 @@ describe LinksGroup do
       it 'sorts correctly by start date' do
         expect(links_group.links[0].map { |l| l.relationship.notes })
           .to match %w[newest older oldest]
+      end
+
+      context 'with a featured relationship' do
+        before do
+          create(:position_relationship, entity: person, related: org, notes: 'featured', is_current: nil, is_featured: true)
+        end
+
+        it 'puts the featured relationship first' do
+          expect(links_group.links[0].map { |l| l.relationship.notes })
+            .to match %w[featured newest older oldest]
+        end
       end
     end
 
@@ -103,6 +136,17 @@ describe LinksGroup do
       it 'sorts the links correctly' do
         expect(links_group.order(links_group.links[0]).map { |l| l.relationship.notes })
           .to match %w[e b c d a]
+      end
+
+      context 'with a featured relationship' do
+        before do
+          create(:position_relationship, entity: person, related: org, notes: 'featured', is_current: nil, is_featured: true)
+        end
+
+        it 'puts the featured relationship first' do
+          expect(links_group.links[0].map { |l| l.relationship.notes })
+            .to match %w[featured e b c d a]
+        end
       end
     end
   end
