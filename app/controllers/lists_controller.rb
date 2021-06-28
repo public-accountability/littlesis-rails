@@ -296,16 +296,16 @@ class ListsController < ApplicationController
     entity_ids = @list.entities.people.map(&:id)
 
     sql = <<~SQL
-     SELECT  entity.*, subquery.num as num, subquery.degree1_ids as degree1_ids
+     SELECT  entities.*, subquery.num as num, subquery.degree1_ids as degree1_ids
      FROM (
-      SELECT relationship.entity2_id as entity_id,
-             COUNT(DISTINCT relationship.entity1_id) as num,
-             array_to_string(array_agg(DISTINCT relationship.entity1_id), ',') degree1_ids
-      FROM relationship
-      LEFT JOIN entity ON (entity.id = relationship.entity2_id)
-      WHERE relationship.entity1_id IN ( #{entity_ids.join(',')} ) AND (relationship.category_id = #{Relationship::POSITION_CATEGORY} OR  relationship.category_id = #{Relationship::MEMBERSHIP_CATEGORY}) AND relationship.is_deleted is false
-      GROUP BY relationship.entity2_id ) AS subquery
-     INNER JOIN entity on entity.id = subquery.entity_id
+      SELECT relationships.entity2_id as entity_id,
+             COUNT(DISTINCT relationships.entity1_id) as num,
+             array_to_string(array_agg(DISTINCT relationships.entity1_id), ',') degree1_ids
+      FROM relationships
+      LEFT JOIN entities ON (entities.id = relationships.entity2_id)
+      WHERE relationships.entity1_id IN ( #{entity_ids.join(',')} ) AND (relationships.category_id = #{Relationship::POSITION_CATEGORY} OR  relationships.category_id = #{Relationship::MEMBERSHIP_CATEGORY}) AND relationships.is_deleted is false
+      GROUP BY relationships.entity2_id ) AS subquery
+     INNER JOIN entities on entities.id = subquery.entity_id
      ORDER BY num desc
     SQL
 

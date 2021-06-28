@@ -195,6 +195,40 @@ describe ListsController, type: :controller do
     end
   end
 
+  context 'with a list of people' do
+    let(:list) { create(:list) }
+    let(:person) { create(:entity_person) }
+
+    before do
+      ListEntity.create!(list_id: list.id, entity_id: person.id)
+      Link.refresh
+    end
+
+    describe 'interlocks' do
+      before do
+        get :interlocks, params: { id: list.id }
+      end
+
+      it { is_expected.to respond_with(:success) }
+    end
+
+    describe 'giving' do
+      before do
+        get :giving, params: { id: list.id }
+      end
+
+      it { is_expected.to respond_with(:success) }
+    end
+
+    describe 'funding' do
+      before do
+        get :funding, params: { id: list.id }
+      end
+
+      it { is_expected.to respond_with(:success) }
+    end
+  end
+
   describe 'remove_entity' do
     login_admin
     let(:list) { create(:list) }
