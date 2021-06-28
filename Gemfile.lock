@@ -257,6 +257,7 @@ GEM
       nokogiri
     rexml (3.2.5)
     riddle (2.4.2)
+    rollbar (3.2.0)
     roo (2.8.3)
       nokogiri (~> 1)
       rubyzip (>= 1.3.0, < 3.0.0)
@@ -444,6 +445,7 @@ DEPENDENCIES
   rails-controller-testing
   redis
   rexml
+  rollbar
   roo (~> 2.8.1)
   rspec-benchmark
   rspec-rails (>= 4.0.1)
