@@ -113,20 +113,20 @@ class List < ApplicationRecord
 
   def interlocks(options)
     options = { count: false, sort: :num }.merge(options)
-    select = (!!options[:count] ? "entity.id" : "entity.*") + ", CONCAT(',', GROUP_CONCAT(DISTINCT ed.name), ',') AS exts, COUNT(DISTINCT e1.id) AS num_entities, GROUP_CONCAT(DISTINCT e1.id) AS degree1_ids, SUM(DISTINCTROW relationship.amount) AS total_amount"
+    select = (!!options[:count] ? "entities.id" : "entities.*") + ", CONCAT(',', ARRAY_AGG(DISTINCT ed.name), ',') AS exts, COUNT(DISTINCT e1.id) AS num_entities, ARRAY_AGG(DISTINCT e1.id) AS degree1_ids, SUM(DISTINCT relationships.amount) AS total_amount"
     query = Entity.select(select)
-              .joins("LEFT JOIN link ON (link.entity1_id = entity.id)")
-              .joins("LEFT JOIN relationship ON (relationship.id = link.relationship_id)")
-              .joins("LEFT JOIN entity e1 ON (e1.id = link.entity2_id)")
+              .joins("LEFT JOIN links ON (links.entity1_id = entities.id)")
+              .joins("LEFT JOIN relationships ON (relationships.id = links.relationship_id)")
+              .joins("LEFT JOIN entities e1 ON (e1.id = links.entity2_id)")
               .joins("LEFT JOIN ls_list_entity le ON (le.entity_id = e1.id)")
-              .joins("LEFT JOIN extension_record er ON (er.entity_id = entity.id)")
-              .joins("LEFT JOIN extension_definition ed ON (ed.id = er.definition_id)")
-              .where("entity.is_deleted = 0 AND e1.is_deleted = 0")
+              .joins("LEFT JOIN extension_records er ON (er.entity_id = entities.id)")
+              .joins("LEFT JOIN extension_definitions ed ON (ed.id = er.definition_id)")
+              .where("entities.is_deleted IS FALSE AND e1.is_deleted IS FALSE")
               .where("le.list_id = #{id}")
-              .where("link.category_id IN (#{options[:category_ids].join(', ')})")
-              .group("entity.id")
+              .where("links.category_id IN (#{options[:category_ids].join(', ')})")
+              .group("entities.id")
               .order((options[:sort] == :num ? "num_entities" : "total_amount") + " DESC")
-    query = query.where("link.is_reverse = #{options[:order] == 2 ? 1 : 0}") unless options[:order].nil?
+    query = query.where("links.is_reverse IS #{options[:order] == 2 ? 'TRUE' : 'FALSE'}") unless options[:order].nil?
     query = query.having("exts LIKE '%,#{options[:degree2_type]},%'") unless options[:degree2_type].nil?
     query = query.where("e1.primary_ext = '#{options[:degree1_ext]}'") unless options[:degree1_ext].nil?
     options[:exclude_degree2_types].to_a.each do |type|
