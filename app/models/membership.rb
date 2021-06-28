@@ -4,7 +4,6 @@
 # a hash of information (state, district, etc.)
 # See lib/congress_importer for the scraper.
 class Membership < ApplicationRecord
-  include SingularTable
   serialize :elected_term, Hash
 
   has_paper_trail on: [:update, :destroy]

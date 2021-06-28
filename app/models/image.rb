@@ -7,7 +7,6 @@
 #  images/large/prefix/filename.jpg
 #  images/square/prefix/filename/jpg
 class Image < ApplicationRecord
-  include SingularTable
   include SoftDelete
 
   belongs_to :entity, inverse_of: :images, optional: true

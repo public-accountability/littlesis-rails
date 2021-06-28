@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Entity < ApplicationRecord
-  include SingularTable
   include SoftDelete
   include Referenceable
   include Political
@@ -256,7 +255,7 @@ class Entity < ApplicationRecord
 
   def relateds_by_count(num: 5, primary_ext: nil)
     base = if primary_ext
-             relateds.where('entity.primary_ext' => primary_ext)
+             relateds.where('entities.primary_ext' => primary_ext)
            else
              relateds
            end

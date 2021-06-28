@@ -32,7 +32,7 @@ class EntityConnectionsQuery
 
   def find_by_sql
     Entity.find_by_sql(<<~SQL)
-      SELECT entity.*,
+      SELECT entities.*,
              connected_entities.relationship_ids AS connected_relationship_ids,
              connected_entities.category_id AS connected_category_id
       FROM (
@@ -40,18 +40,18 @@ class EntityConnectionsQuery
               MIN(links.category_id) AS category_id,
               MAX(connected_entity.link_count) AS entity_link_count,
               array_to_string(array_agg(links.relationship_id), ',') AS relationship_ids,
-              MAX(relationship.amount) AS relationship_amount,
-              bool_or(relationship.is_current) AS relationship_is_current,
-              MAX(relationship.start_date) AS relationship_start_date,
-              MAX(relationship.updated_at) AS relationship_updated_at
+              MAX(relationships.amount) AS relationship_amount,
+              bool_or(relationships.is_current) AS relationship_is_current,
+              MAX(relationships.start_date) AS relationship_start_date,
+              MAX(relationships.updated_at) AS relationship_updated_at
          FROM links
-         INNER JOIN relationship ON relationship.id = links.relationship_id
-         INNER JOIN entity AS connected_entity ON connected_entity.id = links.entity2_id
+         INNER JOIN relationships ON relationships.id = links.relationship_id
+         INNER JOIN entities AS connected_entity ON connected_entity.id = links.entity2_id
          WHERE links.entity1_id = #{@entity.id}
          #{category_sql} #{excluded_ids_sql}
          GROUP BY links.entity2_id
       ) AS connected_entities
-      LEFT JOIN entity ON entity.id = connected_entities.entity_id
+      LEFT JOIN entities ON entities.id = connected_entities.entity_id
       ORDER BY #{order_sql}
       LIMIT #{limit}
       OFFSET #{offset}

@@ -3,7 +3,6 @@
 # rubocop:disable Naming/PredicateName, Style/StringLiterals
 
 class Relationship < ApplicationRecord
-  include SingularTable
   include SoftDelete
   include Referenceable
   include RelationshipDisplay

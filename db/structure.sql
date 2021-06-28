@@ -302,10 +302,10 @@ ALTER SEQUENCE public.address_id_seq OWNED BY public.address.id;
 
 
 --
--- Name: address_state; Type: TABLE; Schema: public; Owner: -
+-- Name: address_states; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.address_state (
+CREATE TABLE public.address_states (
     id integer NOT NULL,
     name character varying(50) NOT NULL,
     abbreviation character varying(2) NOT NULL,
@@ -352,10 +352,10 @@ ALTER SEQUENCE public.addresses_id_seq OWNED BY public.addresses.id;
 
 
 --
--- Name: alias; Type: TABLE; Schema: public; Owner: -
+-- Name: aliases; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.alias (
+CREATE TABLE public.aliases (
     id bigint NOT NULL,
     entity_id bigint NOT NULL,
     name character varying(200) NOT NULL,
@@ -367,10 +367,10 @@ CREATE TABLE public.alias (
 
 
 --
--- Name: alias_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: aliases_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.alias_id_seq
+CREATE SEQUENCE public.aliases_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -379,10 +379,10 @@ CREATE SEQUENCE public.alias_id_seq
 
 
 --
--- Name: alias_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: aliases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.alias_id_seq OWNED BY public.alias.id;
+ALTER SEQUENCE public.aliases_id_seq OWNED BY public.aliases.id;
 
 
 --
@@ -608,10 +608,40 @@ ALTER SEQUENCE public.articles_id_seq OWNED BY public.articles.id;
 
 
 --
--- Name: business; Type: TABLE; Schema: public; Owner: -
+-- Name: business_people; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.business (
+CREATE TABLE public.business_people (
+    id bigint NOT NULL,
+    sec_cik bigint,
+    entity_id bigint NOT NULL
+);
+
+
+--
+-- Name: business_people_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.business_people_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: business_people_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.business_people_id_seq OWNED BY public.business_people.id;
+
+
+--
+-- Name: businesses; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.businesses (
     id bigint NOT NULL,
     annual_profit bigint,
     entity_id bigint NOT NULL,
@@ -623,10 +653,10 @@ CREATE TABLE public.business (
 
 
 --
--- Name: business_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: businesses_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.business_id_seq
+CREATE SEQUENCE public.businesses_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -635,40 +665,10 @@ CREATE SEQUENCE public.business_id_seq
 
 
 --
--- Name: business_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: businesses_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.business_id_seq OWNED BY public.business.id;
-
-
---
--- Name: business_person; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.business_person (
-    id bigint NOT NULL,
-    sec_cik bigint,
-    entity_id bigint NOT NULL
-);
-
-
---
--- Name: business_person_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.business_person_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: business_person_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.business_person_id_seq OWNED BY public.business_person.id;
+ALTER SEQUENCE public.businesses_id_seq OWNED BY public.businesses.id;
 
 
 --
@@ -801,10 +801,10 @@ ALTER SEQUENCE public.common_names_id_seq OWNED BY public.common_names.id;
 
 
 --
--- Name: couple; Type: TABLE; Schema: public; Owner: -
+-- Name: couples; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.couple (
+CREATE TABLE public.couples (
     id bigint NOT NULL,
     entity_id bigint NOT NULL,
     partner1_id bigint,
@@ -813,10 +813,10 @@ CREATE TABLE public.couple (
 
 
 --
--- Name: couple_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: couples_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.couple_id_seq
+CREATE SEQUENCE public.couples_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -825,10 +825,10 @@ CREATE SEQUENCE public.couple_id_seq
 
 
 --
--- Name: couple_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: couples_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.couple_id_seq OWNED BY public.couple.id;
+ALTER SEQUENCE public.couples_id_seq OWNED BY public.couples.id;
 
 
 --
@@ -900,10 +900,10 @@ ALTER SEQUENCE public.dashboard_bulletins_id_seq OWNED BY public.dashboard_bulle
 
 
 --
--- Name: degree; Type: TABLE; Schema: public; Owner: -
+-- Name: degrees; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.degree (
+CREATE TABLE public.degrees (
     id integer NOT NULL,
     name character varying(50) NOT NULL,
     abbreviation character varying(10)
@@ -911,10 +911,10 @@ CREATE TABLE public.degree (
 
 
 --
--- Name: degree_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: degrees_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.degree_id_seq
+CREATE SEQUENCE public.degrees_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -924,10 +924,10 @@ CREATE SEQUENCE public.degree_id_seq
 
 
 --
--- Name: degree_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: degrees_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.degree_id_seq OWNED BY public.degree.id;
+ALTER SEQUENCE public.degrees_id_seq OWNED BY public.degrees.id;
 
 
 --
@@ -1006,10 +1006,10 @@ ALTER SEQUENCE public.documents_id_seq OWNED BY public.documents.id;
 
 
 --
--- Name: donation; Type: TABLE; Schema: public; Owner: -
+-- Name: donations; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.donation (
+CREATE TABLE public.donations (
     id bigint NOT NULL,
     bundler_id bigint,
     relationship_id bigint NOT NULL
@@ -1017,10 +1017,10 @@ CREATE TABLE public.donation (
 
 
 --
--- Name: donation_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: donations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.donation_id_seq
+CREATE SEQUENCE public.donations_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1029,10 +1029,10 @@ CREATE SEQUENCE public.donation_id_seq
 
 
 --
--- Name: donation_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: donations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.donation_id_seq OWNED BY public.donation.id;
+ALTER SEQUENCE public.donations_id_seq OWNED BY public.donations.id;
 
 
 --
@@ -1068,10 +1068,10 @@ ALTER SEQUENCE public.edited_entities_id_seq OWNED BY public.edited_entities.id;
 
 
 --
--- Name: education; Type: TABLE; Schema: public; Owner: -
+-- Name: educations; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.education (
+CREATE TABLE public.educations (
     id bigint NOT NULL,
     degree_id bigint,
     field character varying(30),
@@ -1081,10 +1081,10 @@ CREATE TABLE public.education (
 
 
 --
--- Name: education_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: educations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.education_id_seq
+CREATE SEQUENCE public.educations_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1093,17 +1093,17 @@ CREATE SEQUENCE public.education_id_seq
 
 
 --
--- Name: education_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: educations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.education_id_seq OWNED BY public.education.id;
+ALTER SEQUENCE public.educations_id_seq OWNED BY public.educations.id;
 
 
 --
--- Name: elected_representative; Type: TABLE; Schema: public; Owner: -
+-- Name: elected_representatives; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.elected_representative (
+CREATE TABLE public.elected_representatives (
     id bigint NOT NULL,
     bioguide_id character varying(20),
     govtrack_id character varying(20),
@@ -1116,10 +1116,10 @@ CREATE TABLE public.elected_representative (
 
 
 --
--- Name: elected_representative_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: elected_representatives_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.elected_representative_id_seq
+CREATE SEQUENCE public.elected_representatives_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1128,17 +1128,17 @@ CREATE SEQUENCE public.elected_representative_id_seq
 
 
 --
--- Name: elected_representative_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: elected_representatives_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.elected_representative_id_seq OWNED BY public.elected_representative.id;
+ALTER SEQUENCE public.elected_representatives_id_seq OWNED BY public.elected_representatives.id;
 
 
 --
--- Name: email; Type: TABLE; Schema: public; Owner: -
+-- Name: emails; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.email (
+CREATE TABLE public.emails (
     id bigint NOT NULL,
     entity_id bigint NOT NULL,
     address character varying(60) NOT NULL,
@@ -1150,10 +1150,10 @@ CREATE TABLE public.email (
 
 
 --
--- Name: email_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: emails_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.email_id_seq
+CREATE SEQUENCE public.emails_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1162,17 +1162,17 @@ CREATE SEQUENCE public.email_id_seq
 
 
 --
--- Name: email_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: emails_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.email_id_seq OWNED BY public.email.id;
+ALTER SEQUENCE public.emails_id_seq OWNED BY public.emails.id;
 
 
 --
--- Name: entity; Type: TABLE; Schema: public; Owner: -
+-- Name: entities; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.entity (
+CREATE TABLE public.entities (
     id bigint NOT NULL,
     name text,
     blurb text,
@@ -1195,10 +1195,10 @@ CREATE TABLE public.entity (
 
 
 --
--- Name: entity_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: entities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.entity_id_seq
+CREATE SEQUENCE public.entities_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1207,10 +1207,10 @@ CREATE SEQUENCE public.entity_id_seq
 
 
 --
--- Name: entity_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: entities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.entity_id_seq OWNED BY public.entity.id;
+ALTER SEQUENCE public.entities_id_seq OWNED BY public.entities.id;
 
 
 --
@@ -1225,10 +1225,10 @@ CREATE TABLE public.example (
 
 
 --
--- Name: extension_definition; Type: TABLE; Schema: public; Owner: -
+-- Name: extension_definitions; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.extension_definition (
+CREATE TABLE public.extension_definitions (
     id bigint NOT NULL,
     name character varying(30) NOT NULL,
     display_name character varying(50) NOT NULL,
@@ -1239,10 +1239,10 @@ CREATE TABLE public.extension_definition (
 
 
 --
--- Name: extension_definition_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: extension_definitions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.extension_definition_id_seq
+CREATE SEQUENCE public.extension_definitions_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1251,17 +1251,17 @@ CREATE SEQUENCE public.extension_definition_id_seq
 
 
 --
--- Name: extension_definition_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: extension_definitions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.extension_definition_id_seq OWNED BY public.extension_definition.id;
+ALTER SEQUENCE public.extension_definitions_id_seq OWNED BY public.extension_definitions.id;
 
 
 --
--- Name: extension_record; Type: TABLE; Schema: public; Owner: -
+-- Name: extension_records; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.extension_record (
+CREATE TABLE public.extension_records (
     id bigint NOT NULL,
     entity_id bigint NOT NULL,
     definition_id bigint NOT NULL,
@@ -1270,10 +1270,10 @@ CREATE TABLE public.extension_record (
 
 
 --
--- Name: extension_record_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: extension_records_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.extension_record_id_seq
+CREATE SEQUENCE public.extension_records_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1282,10 +1282,10 @@ CREATE SEQUENCE public.extension_record_id_seq
 
 
 --
--- Name: extension_record_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: extension_records_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.extension_record_id_seq OWNED BY public.extension_record.id;
+ALTER SEQUENCE public.extension_records_id_seq OWNED BY public.extension_records.id;
 
 
 --
@@ -1768,10 +1768,10 @@ ALTER SEQUENCE public.external_relationships_id_seq OWNED BY public.external_rel
 
 
 --
--- Name: family; Type: TABLE; Schema: public; Owner: -
+-- Name: families; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.family (
+CREATE TABLE public.families (
     id bigint NOT NULL,
     is_nonbiological boolean,
     relationship_id bigint NOT NULL
@@ -1779,10 +1779,10 @@ CREATE TABLE public.family (
 
 
 --
--- Name: family_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: families_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.family_id_seq
+CREATE SEQUENCE public.families_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1791,10 +1791,10 @@ CREATE SEQUENCE public.family_id_seq
 
 
 --
--- Name: family_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: families_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.family_id_seq OWNED BY public.family.id;
+ALTER SEQUENCE public.families_id_seq OWNED BY public.families.id;
 
 
 --
@@ -1861,10 +1861,10 @@ ALTER SEQUENCE public.generic_id_seq OWNED BY public.generic.id;
 
 
 --
--- Name: government_body; Type: TABLE; Schema: public; Owner: -
+-- Name: government_bodies; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.government_body (
+CREATE TABLE public.government_bodies (
     id bigint NOT NULL,
     is_federal boolean,
     state_id bigint,
@@ -1875,10 +1875,10 @@ CREATE TABLE public.government_body (
 
 
 --
--- Name: government_body_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: government_bodies_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.government_body_id_seq
+CREATE SEQUENCE public.government_bodies_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1887,10 +1887,10 @@ CREATE SEQUENCE public.government_body_id_seq
 
 
 --
--- Name: government_body_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: government_bodies_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.government_body_id_seq OWNED BY public.government_body.id;
+ALTER SEQUENCE public.government_bodies_id_seq OWNED BY public.government_bodies.id;
 
 
 --
@@ -1957,10 +1957,10 @@ ALTER SEQUENCE public.hierarchy_id_seq OWNED BY public.hierarchy.id;
 
 
 --
--- Name: image; Type: TABLE; Schema: public; Owner: -
+-- Name: images; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.image (
+CREATE TABLE public.images (
     id bigint NOT NULL,
     entity_id bigint,
     filename character varying(100) NOT NULL,
@@ -1982,10 +1982,10 @@ CREATE TABLE public.image (
 
 
 --
--- Name: image_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: images_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.image_id_seq
+CREATE SEQUENCE public.images_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -1994,10 +1994,10 @@ CREATE SEQUENCE public.image_id_seq
 
 
 --
--- Name: image_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: images_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.image_id_seq OWNED BY public.image.id;
+ALTER SEQUENCE public.images_id_seq OWNED BY public.images.id;
 
 
 --
@@ -2034,10 +2034,10 @@ ALTER SEQUENCE public.industry_id_seq OWNED BY public.industry.id;
 
 
 --
--- Name: relationship; Type: TABLE; Schema: public; Owner: -
+-- Name: relationships; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.relationship (
+CREATE TABLE public.relationships (
     id bigint NOT NULL,
     entity1_id bigint NOT NULL,
     entity2_id bigint NOT NULL,
@@ -2057,7 +2057,8 @@ CREATE TABLE public.relationship (
     is_deleted boolean DEFAULT false NOT NULL,
     last_user_id bigint,
     amount2 bigint,
-    is_gte boolean DEFAULT false NOT NULL
+    is_gte boolean DEFAULT false NOT NULL,
+    is_featured boolean DEFAULT false NOT NULL
 );
 
 
@@ -2066,23 +2067,23 @@ CREATE TABLE public.relationship (
 --
 
 CREATE MATERIALIZED VIEW public.links AS
- SELECT concat(relationship.id, 'normal') AS id,
-    relationship.entity1_id,
-    relationship.entity2_id,
-    relationship.category_id,
-    relationship.id AS relationship_id,
+ SELECT concat(relationships.id, 'normal') AS id,
+    relationships.entity1_id,
+    relationships.entity2_id,
+    relationships.category_id,
+    relationships.id AS relationship_id,
     false AS is_reverse
-   FROM public.relationship
-  WHERE (relationship.is_deleted = false)
+   FROM public.relationships
+  WHERE (relationships.is_deleted = false)
 UNION
- SELECT concat(relationship.id, 'reverse') AS id,
-    relationship.entity2_id AS entity1_id,
-    relationship.entity1_id AS entity2_id,
-    relationship.category_id,
-    relationship.id AS relationship_id,
+ SELECT concat(relationships.id, 'reverse') AS id,
+    relationships.entity2_id AS entity1_id,
+    relationships.entity1_id AS entity2_id,
+    relationships.category_id,
+    relationships.id AS relationship_id,
     true AS is_reverse
-   FROM public.relationship
-  WHERE (relationship.is_deleted = false)
+   FROM public.relationships
+  WHERE (relationships.is_deleted = false)
   WITH NO DATA;
 
 
@@ -2272,10 +2273,10 @@ ALTER SEQUENCE public.lobbying_id_seq OWNED BY public.lobbying.id;
 
 
 --
--- Name: lobbyist; Type: TABLE; Schema: public; Owner: -
+-- Name: lobbyists; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.lobbyist (
+CREATE TABLE public.lobbyists (
     id bigint NOT NULL,
     lda_registrant_id bigint,
     entity_id bigint NOT NULL
@@ -2283,10 +2284,10 @@ CREATE TABLE public.lobbyist (
 
 
 --
--- Name: lobbyist_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: lobbyists_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.lobbyist_id_seq
+CREATE SEQUENCE public.lobbyists_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -2295,10 +2296,10 @@ CREATE SEQUENCE public.lobbyist_id_seq
 
 
 --
--- Name: lobbyist_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: lobbyists_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.lobbyist_id_seq OWNED BY public.lobbyist.id;
+ALTER SEQUENCE public.lobbyists_id_seq OWNED BY public.lobbyists.id;
 
 
 --
@@ -2455,10 +2456,10 @@ ALTER SEQUENCE public.map_annotations_id_seq OWNED BY public.map_annotations.id;
 
 
 --
--- Name: membership; Type: TABLE; Schema: public; Owner: -
+-- Name: memberships; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.membership (
+CREATE TABLE public.memberships (
     id bigint NOT NULL,
     dues bigint,
     relationship_id bigint NOT NULL,
@@ -2467,10 +2468,10 @@ CREATE TABLE public.membership (
 
 
 --
--- Name: membership_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: memberships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.membership_id_seq
+CREATE SEQUENCE public.memberships_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -2479,17 +2480,17 @@ CREATE SEQUENCE public.membership_id_seq
 
 
 --
--- Name: membership_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: memberships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.membership_id_seq OWNED BY public.membership.id;
+ALTER SEQUENCE public.memberships_id_seq OWNED BY public.memberships.id;
 
 
 --
--- Name: network_map; Type: TABLE; Schema: public; Owner: -
+-- Name: network_maps; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.network_map (
+CREATE TABLE public.network_maps (
     id bigint NOT NULL,
     user_id bigint NOT NULL,
     entity_ids text,
@@ -2521,10 +2522,10 @@ CREATE TABLE public.network_map (
 
 
 --
--- Name: network_map_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: network_maps_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.network_map_id_seq
+CREATE SEQUENCE public.network_maps_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -2533,10 +2534,10 @@ CREATE SEQUENCE public.network_map_id_seq
 
 
 --
--- Name: network_map_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: network_maps_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.network_map_id_seq OWNED BY public.network_map.id;
+ALTER SEQUENCE public.network_maps_id_seq OWNED BY public.network_maps.id;
 
 
 --
@@ -2750,10 +2751,10 @@ ALTER SEQUENCE public.object_tag_id_seq OWNED BY public.object_tag.id;
 
 
 --
--- Name: org; Type: TABLE; Schema: public; Owner: -
+-- Name: orgs; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.org (
+CREATE TABLE public.orgs (
     id bigint NOT NULL,
     name text NOT NULL,
     name_nick character varying(100),
@@ -2766,10 +2767,10 @@ CREATE TABLE public.org (
 
 
 --
--- Name: org_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: orgs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.org_id_seq
+CREATE SEQUENCE public.orgs_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -2778,10 +2779,10 @@ CREATE SEQUENCE public.org_id_seq
 
 
 --
--- Name: org_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: orgs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.org_id_seq OWNED BY public.org.id;
+ALTER SEQUENCE public.orgs_id_seq OWNED BY public.orgs.id;
 
 
 --
@@ -2827,10 +2828,10 @@ ALTER SEQUENCE public.os_candidates_id_seq OWNED BY public.os_candidates.id;
 
 
 --
--- Name: os_category; Type: TABLE; Schema: public; Owner: -
+-- Name: os_categories; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.os_category (
+CREATE TABLE public.os_categories (
     id bigint NOT NULL,
     category_id character varying(10) NOT NULL,
     category_name character varying(100) NOT NULL,
@@ -2841,10 +2842,10 @@ CREATE TABLE public.os_category (
 
 
 --
--- Name: os_category_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: os_categories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.os_category_id_seq
+CREATE SEQUENCE public.os_categories_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -2853,10 +2854,10 @@ CREATE SEQUENCE public.os_category_id_seq
 
 
 --
--- Name: os_category_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: os_categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.os_category_id_seq OWNED BY public.os_category.id;
+ALTER SEQUENCE public.os_categories_id_seq OWNED BY public.os_categories.id;
 
 
 --
@@ -2964,10 +2965,10 @@ ALTER SEQUENCE public.os_donations_id_seq OWNED BY public.os_donations.id;
 
 
 --
--- Name: os_entity_category; Type: TABLE; Schema: public; Owner: -
+-- Name: os_entity_categories; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.os_entity_category (
+CREATE TABLE public.os_entity_categories (
     id bigint NOT NULL,
     entity_id bigint NOT NULL,
     category_id character varying(10) NOT NULL,
@@ -2978,10 +2979,10 @@ CREATE TABLE public.os_entity_category (
 
 
 --
--- Name: os_entity_category_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: os_entity_categories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.os_entity_category_id_seq
+CREATE SEQUENCE public.os_entity_categories_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -2990,10 +2991,10 @@ CREATE SEQUENCE public.os_entity_category_id_seq
 
 
 --
--- Name: os_entity_category_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: os_entity_categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.os_entity_category_id_seq OWNED BY public.os_entity_category.id;
+ALTER SEQUENCE public.os_entity_categories_id_seq OWNED BY public.os_entity_categories.id;
 
 
 --
@@ -3073,10 +3074,10 @@ ALTER SEQUENCE public.os_matches_id_seq OWNED BY public.os_matches.id;
 
 
 --
--- Name: ownership; Type: TABLE; Schema: public; Owner: -
+-- Name: ownerships; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.ownership (
+CREATE TABLE public.ownerships (
     id bigint NOT NULL,
     percent_stake bigint,
     shares bigint,
@@ -3085,10 +3086,10 @@ CREATE TABLE public.ownership (
 
 
 --
--- Name: ownership_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: ownerships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.ownership_id_seq
+CREATE SEQUENCE public.ownerships_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3097,10 +3098,10 @@ CREATE SEQUENCE public.ownership_id_seq
 
 
 --
--- Name: ownership_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: ownerships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.ownership_id_seq OWNED BY public.ownership.id;
+ALTER SEQUENCE public.ownerships_id_seq OWNED BY public.ownerships.id;
 
 
 --
@@ -3135,6 +3136,48 @@ CREATE SEQUENCE public.pages_id_seq
 --
 
 ALTER SEQUENCE public.pages_id_seq OWNED BY public.pages.id;
+
+
+--
+-- Name: people; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.people (
+    id bigint NOT NULL,
+    name_last character varying(50) NOT NULL,
+    name_first character varying(50) NOT NULL,
+    name_middle character varying(50),
+    name_prefix character varying(30),
+    name_suffix character varying(30),
+    name_nick character varying(30),
+    birthplace character varying(50),
+    gender_id bigint,
+    party_id bigint,
+    is_independent boolean,
+    net_worth bigint,
+    entity_id bigint NOT NULL,
+    name_maiden character varying(50),
+    nationality text
+);
+
+
+--
+-- Name: people_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.people_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: people_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.people_id_seq OWNED BY public.people.id;
 
 
 --
@@ -3174,52 +3217,10 @@ ALTER SEQUENCE public.permission_passes_id_seq OWNED BY public.permission_passes
 
 
 --
--- Name: person; Type: TABLE; Schema: public; Owner: -
+-- Name: phones; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.person (
-    id bigint NOT NULL,
-    name_last character varying(50) NOT NULL,
-    name_first character varying(50) NOT NULL,
-    name_middle character varying(50),
-    name_prefix character varying(30),
-    name_suffix character varying(30),
-    name_nick character varying(30),
-    birthplace character varying(50),
-    gender_id bigint,
-    party_id bigint,
-    is_independent boolean,
-    net_worth bigint,
-    entity_id bigint NOT NULL,
-    name_maiden character varying(50),
-    nationality text
-);
-
-
---
--- Name: person_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.person_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: person_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.person_id_seq OWNED BY public.person.id;
-
-
---
--- Name: phone; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.phone (
+CREATE TABLE public.phones (
     id bigint NOT NULL,
     entity_id bigint NOT NULL,
     number character varying(20) NOT NULL,
@@ -3232,10 +3233,10 @@ CREATE TABLE public.phone (
 
 
 --
--- Name: phone_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: phones_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.phone_id_seq
+CREATE SEQUENCE public.phones_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3244,17 +3245,17 @@ CREATE SEQUENCE public.phone_id_seq
 
 
 --
--- Name: phone_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: phones_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.phone_id_seq OWNED BY public.phone.id;
+ALTER SEQUENCE public.phones_id_seq OWNED BY public.phones.id;
 
 
 --
--- Name: political_candidate; Type: TABLE; Schema: public; Owner: -
+-- Name: political_candidates; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.political_candidate (
+CREATE TABLE public.political_candidates (
     id bigint NOT NULL,
     is_federal boolean,
     is_state boolean,
@@ -3268,10 +3269,10 @@ CREATE TABLE public.political_candidate (
 
 
 --
--- Name: political_candidate_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: political_candidates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.political_candidate_id_seq
+CREATE SEQUENCE public.political_candidates_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3280,10 +3281,10 @@ CREATE SEQUENCE public.political_candidate_id_seq
 
 
 --
--- Name: political_candidate_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: political_candidates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.political_candidate_id_seq OWNED BY public.political_candidate.id;
+ALTER SEQUENCE public.political_candidates_id_seq OWNED BY public.political_candidates.id;
 
 
 --
@@ -3319,38 +3320,6 @@ ALTER SEQUENCE public.political_district_id_seq OWNED BY public.political_distri
 
 
 --
--- Name: political_fundraising; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.political_fundraising (
-    id bigint NOT NULL,
-    entity_id bigint NOT NULL,
-    fec_id character varying(20),
-    type_id bigint,
-    state_id bigint
-);
-
-
---
--- Name: political_fundraising_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.political_fundraising_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: political_fundraising_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.political_fundraising_id_seq OWNED BY public.political_fundraising.id;
-
-
---
 -- Name: political_fundraising_type; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3380,10 +3349,42 @@ ALTER SEQUENCE public.political_fundraising_type_id_seq OWNED BY public.politica
 
 
 --
--- Name: position; Type: TABLE; Schema: public; Owner: -
+-- Name: political_fundraisings; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public."position" (
+CREATE TABLE public.political_fundraisings (
+    id bigint NOT NULL,
+    entity_id bigint NOT NULL,
+    fec_id character varying(20),
+    type_id bigint,
+    state_id bigint
+);
+
+
+--
+-- Name: political_fundraisings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.political_fundraisings_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: political_fundraisings_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.political_fundraisings_id_seq OWNED BY public.political_fundraisings.id;
+
+
+--
+-- Name: positions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.positions (
     id bigint NOT NULL,
     is_board boolean,
     is_executive boolean,
@@ -3395,10 +3396,10 @@ CREATE TABLE public."position" (
 
 
 --
--- Name: position_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: positions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.position_id_seq
+CREATE SEQUENCE public.positions_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3407,10 +3408,10 @@ CREATE SEQUENCE public.position_id_seq
 
 
 --
--- Name: position_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: positions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.position_id_seq OWNED BY public."position".id;
+ALTER SEQUENCE public.positions_id_seq OWNED BY public.positions.id;
 
 
 --
@@ -3443,10 +3444,10 @@ ALTER SEQUENCE public.professional_id_seq OWNED BY public.professional.id;
 
 
 --
--- Name: public_company; Type: TABLE; Schema: public; Owner: -
+-- Name: public_companies; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.public_company (
+CREATE TABLE public.public_companies (
     id bigint NOT NULL,
     ticker character varying(10),
     sec_cik bigint,
@@ -3455,10 +3456,10 @@ CREATE TABLE public.public_company (
 
 
 --
--- Name: public_company_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: public_companies_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.public_company_id_seq
+CREATE SEQUENCE public.public_companies_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3467,10 +3468,10 @@ CREATE SEQUENCE public.public_company_id_seq
 
 
 --
--- Name: public_company_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: public_companies_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.public_company_id_seq OWNED BY public.public_company.id;
+ALTER SEQUENCE public.public_companies_id_seq OWNED BY public.public_companies.id;
 
 
 --
@@ -3507,10 +3508,10 @@ ALTER SEQUENCE public.references_id_seq OWNED BY public."references".id;
 
 
 --
--- Name: relationship_category; Type: TABLE; Schema: public; Owner: -
+-- Name: relationship_categories; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.relationship_category (
+CREATE TABLE public.relationship_categories (
     id bigint NOT NULL,
     name character varying(30) NOT NULL,
     display_name character varying(30) NOT NULL,
@@ -3524,10 +3525,10 @@ CREATE TABLE public.relationship_category (
 
 
 --
--- Name: relationship_category_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: relationship_categories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.relationship_category_id_seq
+CREATE SEQUENCE public.relationship_categories_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3536,17 +3537,17 @@ CREATE SEQUENCE public.relationship_category_id_seq
 
 
 --
--- Name: relationship_category_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: relationship_categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.relationship_category_id_seq OWNED BY public.relationship_category.id;
+ALTER SEQUENCE public.relationship_categories_id_seq OWNED BY public.relationship_categories.id;
 
 
 --
--- Name: relationship_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: relationships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.relationship_id_seq
+CREATE SEQUENCE public.relationships_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3555,10 +3556,10 @@ CREATE SEQUENCE public.relationship_id_seq
 
 
 --
--- Name: relationship_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: relationships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.relationship_id_seq OWNED BY public.relationship.id;
+ALTER SEQUENCE public.relationships_id_seq OWNED BY public.relationships.id;
 
 
 --
@@ -3633,10 +3634,10 @@ CREATE TABLE public.schema_migrations (
 
 
 --
--- Name: school; Type: TABLE; Schema: public; Owner: -
+-- Name: schools; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.school (
+CREATE TABLE public.schools (
     id bigint NOT NULL,
     endowment bigint,
     students bigint,
@@ -3648,10 +3649,10 @@ CREATE TABLE public.school (
 
 
 --
--- Name: school_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: schools_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.school_id_seq
+CREATE SEQUENCE public.schools_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3660,10 +3661,10 @@ CREATE SEQUENCE public.school_id_seq
 
 
 --
--- Name: school_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: schools_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.school_id_seq OWNED BY public.school.id;
+ALTER SEQUENCE public.schools_id_seq OWNED BY public.schools.id;
 
 
 --
@@ -3873,10 +3874,10 @@ ALTER SEQUENCE public.toolkit_pages_id_seq OWNED BY public.toolkit_pages.id;
 
 
 --
--- Name: transaction; Type: TABLE; Schema: public; Owner: -
+-- Name: transactions; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.transaction (
+CREATE TABLE public.transactions (
     id bigint NOT NULL,
     contact1_id bigint,
     contact2_id bigint,
@@ -3887,10 +3888,10 @@ CREATE TABLE public.transaction (
 
 
 --
--- Name: transaction_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: transactions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.transaction_id_seq
+CREATE SEQUENCE public.transactions_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -3899,10 +3900,10 @@ CREATE SEQUENCE public.transaction_id_seq
 
 
 --
--- Name: transaction_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: transactions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.transaction_id_seq OWNED BY public.transaction.id;
+ALTER SEQUENCE public.transactions_id_seq OWNED BY public.transactions.id;
 
 
 --
@@ -4219,10 +4220,10 @@ ALTER TABLE ONLY public.addresses ALTER COLUMN id SET DEFAULT nextval('public.ad
 
 
 --
--- Name: alias id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: aliases id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.alias ALTER COLUMN id SET DEFAULT nextval('public.alias_id_seq'::regclass);
+ALTER TABLE ONLY public.aliases ALTER COLUMN id SET DEFAULT nextval('public.aliases_id_seq'::regclass);
 
 
 --
@@ -4268,17 +4269,17 @@ ALTER TABLE ONLY public.articles ALTER COLUMN id SET DEFAULT nextval('public.art
 
 
 --
--- Name: business id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: business_people id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.business ALTER COLUMN id SET DEFAULT nextval('public.business_id_seq'::regclass);
+ALTER TABLE ONLY public.business_people ALTER COLUMN id SET DEFAULT nextval('public.business_people_id_seq'::regclass);
 
 
 --
--- Name: business_person id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: businesses id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.business_person ALTER COLUMN id SET DEFAULT nextval('public.business_person_id_seq'::regclass);
+ALTER TABLE ONLY public.businesses ALTER COLUMN id SET DEFAULT nextval('public.businesses_id_seq'::regclass);
 
 
 --
@@ -4310,10 +4311,10 @@ ALTER TABLE ONLY public.common_names ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- Name: couple id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: couples id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.couple ALTER COLUMN id SET DEFAULT nextval('public.couple_id_seq'::regclass);
+ALTER TABLE ONLY public.couples ALTER COLUMN id SET DEFAULT nextval('public.couples_id_seq'::regclass);
 
 
 --
@@ -4331,10 +4332,10 @@ ALTER TABLE ONLY public.dashboard_bulletins ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- Name: degree id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: degrees id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.degree ALTER COLUMN id SET DEFAULT nextval('public.degree_id_seq'::regclass);
+ALTER TABLE ONLY public.degrees ALTER COLUMN id SET DEFAULT nextval('public.degrees_id_seq'::regclass);
 
 
 --
@@ -4352,10 +4353,10 @@ ALTER TABLE ONLY public.documents ALTER COLUMN id SET DEFAULT nextval('public.do
 
 
 --
--- Name: donation id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: donations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.donation ALTER COLUMN id SET DEFAULT nextval('public.donation_id_seq'::regclass);
+ALTER TABLE ONLY public.donations ALTER COLUMN id SET DEFAULT nextval('public.donations_id_seq'::regclass);
 
 
 --
@@ -4366,45 +4367,45 @@ ALTER TABLE ONLY public.edited_entities ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
--- Name: education id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: educations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.education ALTER COLUMN id SET DEFAULT nextval('public.education_id_seq'::regclass);
-
-
---
--- Name: elected_representative id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.elected_representative ALTER COLUMN id SET DEFAULT nextval('public.elected_representative_id_seq'::regclass);
+ALTER TABLE ONLY public.educations ALTER COLUMN id SET DEFAULT nextval('public.educations_id_seq'::regclass);
 
 
 --
--- Name: email id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: elected_representatives id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.email ALTER COLUMN id SET DEFAULT nextval('public.email_id_seq'::regclass);
-
-
---
--- Name: entity id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.entity ALTER COLUMN id SET DEFAULT nextval('public.entity_id_seq'::regclass);
+ALTER TABLE ONLY public.elected_representatives ALTER COLUMN id SET DEFAULT nextval('public.elected_representatives_id_seq'::regclass);
 
 
 --
--- Name: extension_definition id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: emails id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.extension_definition ALTER COLUMN id SET DEFAULT nextval('public.extension_definition_id_seq'::regclass);
+ALTER TABLE ONLY public.emails ALTER COLUMN id SET DEFAULT nextval('public.emails_id_seq'::regclass);
 
 
 --
--- Name: extension_record id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: entities id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.extension_record ALTER COLUMN id SET DEFAULT nextval('public.extension_record_id_seq'::regclass);
+ALTER TABLE ONLY public.entities ALTER COLUMN id SET DEFAULT nextval('public.entities_id_seq'::regclass);
+
+
+--
+-- Name: extension_definitions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.extension_definitions ALTER COLUMN id SET DEFAULT nextval('public.extension_definitions_id_seq'::regclass);
+
+
+--
+-- Name: extension_records id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.extension_records ALTER COLUMN id SET DEFAULT nextval('public.extension_records_id_seq'::regclass);
 
 
 --
@@ -4471,10 +4472,10 @@ ALTER TABLE ONLY public.external_relationships ALTER COLUMN id SET DEFAULT nextv
 
 
 --
--- Name: family id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: families id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.family ALTER COLUMN id SET DEFAULT nextval('public.family_id_seq'::regclass);
+ALTER TABLE ONLY public.families ALTER COLUMN id SET DEFAULT nextval('public.families_id_seq'::regclass);
 
 
 --
@@ -4492,10 +4493,10 @@ ALTER TABLE ONLY public.generic ALTER COLUMN id SET DEFAULT nextval('public.gene
 
 
 --
--- Name: government_body id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: government_bodies id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.government_body ALTER COLUMN id SET DEFAULT nextval('public.government_body_id_seq'::regclass);
+ALTER TABLE ONLY public.government_bodies ALTER COLUMN id SET DEFAULT nextval('public.government_bodies_id_seq'::regclass);
 
 
 --
@@ -4513,10 +4514,10 @@ ALTER TABLE ONLY public.hierarchy ALTER COLUMN id SET DEFAULT nextval('public.hi
 
 
 --
--- Name: image id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: images id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.image ALTER COLUMN id SET DEFAULT nextval('public.image_id_seq'::regclass);
+ALTER TABLE ONLY public.images ALTER COLUMN id SET DEFAULT nextval('public.images_id_seq'::regclass);
 
 
 --
@@ -4569,10 +4570,10 @@ ALTER TABLE ONLY public.lobbying ALTER COLUMN id SET DEFAULT nextval('public.lob
 
 
 --
--- Name: lobbyist id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: lobbyists id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.lobbyist ALTER COLUMN id SET DEFAULT nextval('public.lobbyist_id_seq'::regclass);
+ALTER TABLE ONLY public.lobbyists ALTER COLUMN id SET DEFAULT nextval('public.lobbyists_id_seq'::regclass);
 
 
 --
@@ -4604,17 +4605,17 @@ ALTER TABLE ONLY public.map_annotations ALTER COLUMN id SET DEFAULT nextval('pub
 
 
 --
--- Name: membership id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: memberships id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.membership ALTER COLUMN id SET DEFAULT nextval('public.membership_id_seq'::regclass);
+ALTER TABLE ONLY public.memberships ALTER COLUMN id SET DEFAULT nextval('public.memberships_id_seq'::regclass);
 
 
 --
--- Name: network_map id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: network_maps id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.network_map ALTER COLUMN id SET DEFAULT nextval('public.network_map_id_seq'::regclass);
+ALTER TABLE ONLY public.network_maps ALTER COLUMN id SET DEFAULT nextval('public.network_maps_id_seq'::regclass);
 
 
 --
@@ -4653,10 +4654,10 @@ ALTER TABLE ONLY public.object_tag ALTER COLUMN id SET DEFAULT nextval('public.o
 
 
 --
--- Name: org id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: orgs id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.org ALTER COLUMN id SET DEFAULT nextval('public.org_id_seq'::regclass);
+ALTER TABLE ONLY public.orgs ALTER COLUMN id SET DEFAULT nextval('public.orgs_id_seq'::regclass);
 
 
 --
@@ -4667,10 +4668,10 @@ ALTER TABLE ONLY public.os_candidates ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- Name: os_category id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: os_categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.os_category ALTER COLUMN id SET DEFAULT nextval('public.os_category_id_seq'::regclass);
+ALTER TABLE ONLY public.os_categories ALTER COLUMN id SET DEFAULT nextval('public.os_categories_id_seq'::regclass);
 
 
 --
@@ -4688,10 +4689,10 @@ ALTER TABLE ONLY public.os_donations ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- Name: os_entity_category id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: os_entity_categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.os_entity_category ALTER COLUMN id SET DEFAULT nextval('public.os_entity_category_id_seq'::regclass);
+ALTER TABLE ONLY public.os_entity_categories ALTER COLUMN id SET DEFAULT nextval('public.os_entity_categories_id_seq'::regclass);
 
 
 --
@@ -4709,10 +4710,10 @@ ALTER TABLE ONLY public.os_matches ALTER COLUMN id SET DEFAULT nextval('public.o
 
 
 --
--- Name: ownership id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: ownerships id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.ownership ALTER COLUMN id SET DEFAULT nextval('public.ownership_id_seq'::regclass);
+ALTER TABLE ONLY public.ownerships ALTER COLUMN id SET DEFAULT nextval('public.ownerships_id_seq'::regclass);
 
 
 --
@@ -4723,6 +4724,13 @@ ALTER TABLE ONLY public.pages ALTER COLUMN id SET DEFAULT nextval('public.pages_
 
 
 --
+-- Name: people id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.people ALTER COLUMN id SET DEFAULT nextval('public.people_id_seq'::regclass);
+
+
+--
 -- Name: permission_passes id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4730,24 +4738,17 @@ ALTER TABLE ONLY public.permission_passes ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
--- Name: person id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: phones id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.person ALTER COLUMN id SET DEFAULT nextval('public.person_id_seq'::regclass);
-
-
---
--- Name: phone id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.phone ALTER COLUMN id SET DEFAULT nextval('public.phone_id_seq'::regclass);
+ALTER TABLE ONLY public.phones ALTER COLUMN id SET DEFAULT nextval('public.phones_id_seq'::regclass);
 
 
 --
--- Name: political_candidate id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: political_candidates id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.political_candidate ALTER COLUMN id SET DEFAULT nextval('public.political_candidate_id_seq'::regclass);
+ALTER TABLE ONLY public.political_candidates ALTER COLUMN id SET DEFAULT nextval('public.political_candidates_id_seq'::regclass);
 
 
 --
@@ -4758,13 +4759,6 @@ ALTER TABLE ONLY public.political_district ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- Name: political_fundraising id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.political_fundraising ALTER COLUMN id SET DEFAULT nextval('public.political_fundraising_id_seq'::regclass);
-
-
---
 -- Name: political_fundraising_type id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4772,10 +4766,17 @@ ALTER TABLE ONLY public.political_fundraising_type ALTER COLUMN id SET DEFAULT n
 
 
 --
--- Name: position id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: political_fundraisings id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."position" ALTER COLUMN id SET DEFAULT nextval('public.position_id_seq'::regclass);
+ALTER TABLE ONLY public.political_fundraisings ALTER COLUMN id SET DEFAULT nextval('public.political_fundraisings_id_seq'::regclass);
+
+
+--
+-- Name: positions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.positions ALTER COLUMN id SET DEFAULT nextval('public.positions_id_seq'::regclass);
 
 
 --
@@ -4786,10 +4787,10 @@ ALTER TABLE ONLY public.professional ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- Name: public_company id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: public_companies id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.public_company ALTER COLUMN id SET DEFAULT nextval('public.public_company_id_seq'::regclass);
+ALTER TABLE ONLY public.public_companies ALTER COLUMN id SET DEFAULT nextval('public.public_companies_id_seq'::regclass);
 
 
 --
@@ -4800,17 +4801,17 @@ ALTER TABLE ONLY public."references" ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- Name: relationship id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: relationship_categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.relationship ALTER COLUMN id SET DEFAULT nextval('public.relationship_id_seq'::regclass);
+ALTER TABLE ONLY public.relationship_categories ALTER COLUMN id SET DEFAULT nextval('public.relationship_categories_id_seq'::regclass);
 
 
 --
--- Name: relationship_category id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: relationships id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.relationship_category ALTER COLUMN id SET DEFAULT nextval('public.relationship_category_id_seq'::regclass);
+ALTER TABLE ONLY public.relationships ALTER COLUMN id SET DEFAULT nextval('public.relationships_id_seq'::regclass);
 
 
 --
@@ -4828,10 +4829,10 @@ ALTER TABLE ONLY public.representative_district ALTER COLUMN id SET DEFAULT next
 
 
 --
--- Name: school id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: schools id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.school ALTER COLUMN id SET DEFAULT nextval('public.school_id_seq'::regclass);
+ALTER TABLE ONLY public.schools ALTER COLUMN id SET DEFAULT nextval('public.schools_id_seq'::regclass);
 
 
 --
@@ -4877,10 +4878,10 @@ ALTER TABLE ONLY public.toolkit_pages ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- Name: transaction id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: transactions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.transaction ALTER COLUMN id SET DEFAULT nextval('public.transaction_id_seq'::regclass);
+ALTER TABLE ONLY public.transactions ALTER COLUMN id SET DEFAULT nextval('public.transactions_id_seq'::regclass);
 
 
 --
@@ -4989,10 +4990,10 @@ ALTER TABLE ONLY public.address
 
 
 --
--- Name: address_state address_state_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: address_states address_state_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.address_state
+ALTER TABLE ONLY public.address_states
     ADD CONSTRAINT address_state_pkey PRIMARY KEY (id);
 
 
@@ -5005,11 +5006,11 @@ ALTER TABLE ONLY public.addresses
 
 
 --
--- Name: alias alias_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: aliases aliases_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.alias
-    ADD CONSTRAINT alias_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.aliases
+    ADD CONSTRAINT aliases_pkey PRIMARY KEY (id);
 
 
 --
@@ -5069,19 +5070,19 @@ ALTER TABLE ONLY public.articles
 
 
 --
--- Name: business_person business_person_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: business_people business_people_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.business_person
-    ADD CONSTRAINT business_person_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.business_people
+    ADD CONSTRAINT business_people_pkey PRIMARY KEY (id);
 
 
 --
--- Name: business business_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: businesses businesses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.business
-    ADD CONSTRAINT business_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.businesses
+    ADD CONSTRAINT businesses_pkey PRIMARY KEY (id);
 
 
 --
@@ -5117,11 +5118,11 @@ ALTER TABLE ONLY public.common_names
 
 
 --
--- Name: couple couple_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: couples couples_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.couple
-    ADD CONSTRAINT couple_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.couples
+    ADD CONSTRAINT couples_pkey PRIMARY KEY (id);
 
 
 --
@@ -5141,11 +5142,11 @@ ALTER TABLE ONLY public.dashboard_bulletins
 
 
 --
--- Name: degree degree_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: degrees degrees_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.degree
-    ADD CONSTRAINT degree_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.degrees
+    ADD CONSTRAINT degrees_pkey PRIMARY KEY (id);
 
 
 --
@@ -5165,11 +5166,11 @@ ALTER TABLE ONLY public.documents
 
 
 --
--- Name: donation donation_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: donations donations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.donation
-    ADD CONSTRAINT donation_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.donations
+    ADD CONSTRAINT donations_pkey PRIMARY KEY (id);
 
 
 --
@@ -5181,51 +5182,51 @@ ALTER TABLE ONLY public.edited_entities
 
 
 --
--- Name: education education_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: educations educations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.education
-    ADD CONSTRAINT education_pkey PRIMARY KEY (id);
-
-
---
--- Name: elected_representative elected_representative_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.elected_representative
-    ADD CONSTRAINT elected_representative_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.educations
+    ADD CONSTRAINT educations_pkey PRIMARY KEY (id);
 
 
 --
--- Name: email email_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: elected_representatives elected_representatives_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.email
-    ADD CONSTRAINT email_pkey PRIMARY KEY (id);
-
-
---
--- Name: entity entity_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.entity
-    ADD CONSTRAINT entity_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.elected_representatives
+    ADD CONSTRAINT elected_representatives_pkey PRIMARY KEY (id);
 
 
 --
--- Name: extension_definition extension_definition_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: emails emails_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.extension_definition
-    ADD CONSTRAINT extension_definition_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.emails
+    ADD CONSTRAINT emails_pkey PRIMARY KEY (id);
 
 
 --
--- Name: extension_record extension_record_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: entities entities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.extension_record
-    ADD CONSTRAINT extension_record_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.entities
+    ADD CONSTRAINT entities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extension_definitions extension_definitions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.extension_definitions
+    ADD CONSTRAINT extension_definitions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extension_records extension_records_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.extension_records
+    ADD CONSTRAINT extension_records_pkey PRIMARY KEY (id);
 
 
 --
@@ -5301,11 +5302,11 @@ ALTER TABLE ONLY public.external_relationships
 
 
 --
--- Name: family family_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: families families_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.family
-    ADD CONSTRAINT family_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.families
+    ADD CONSTRAINT families_pkey PRIMARY KEY (id);
 
 
 --
@@ -5325,11 +5326,11 @@ ALTER TABLE ONLY public.generic
 
 
 --
--- Name: government_body government_body_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: government_bodies government_bodies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.government_body
-    ADD CONSTRAINT government_body_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.government_bodies
+    ADD CONSTRAINT government_bodies_pkey PRIMARY KEY (id);
 
 
 --
@@ -5349,11 +5350,11 @@ ALTER TABLE ONLY public.hierarchy
 
 
 --
--- Name: image image_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: images images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.image
-    ADD CONSTRAINT image_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.images
+    ADD CONSTRAINT images_pkey PRIMARY KEY (id);
 
 
 --
@@ -5413,11 +5414,11 @@ ALTER TABLE ONLY public.lobbying
 
 
 --
--- Name: lobbyist lobbyist_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: lobbyists lobbyists_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.lobbyist
-    ADD CONSTRAINT lobbyist_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.lobbyists
+    ADD CONSTRAINT lobbyists_pkey PRIMARY KEY (id);
 
 
 --
@@ -5453,19 +5454,19 @@ ALTER TABLE ONLY public.map_annotations
 
 
 --
--- Name: membership membership_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: memberships memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.membership
-    ADD CONSTRAINT membership_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.memberships
+    ADD CONSTRAINT memberships_pkey PRIMARY KEY (id);
 
 
 --
--- Name: network_map network_map_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: network_maps network_maps_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.network_map
-    ADD CONSTRAINT network_map_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.network_maps
+    ADD CONSTRAINT network_maps_pkey PRIMARY KEY (id);
 
 
 --
@@ -5509,11 +5510,11 @@ ALTER TABLE ONLY public.object_tag
 
 
 --
--- Name: org org_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: orgs orgs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.org
-    ADD CONSTRAINT org_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.orgs
+    ADD CONSTRAINT orgs_pkey PRIMARY KEY (id);
 
 
 --
@@ -5525,11 +5526,11 @@ ALTER TABLE ONLY public.os_candidates
 
 
 --
--- Name: os_category os_category_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: os_categories os_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.os_category
-    ADD CONSTRAINT os_category_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.os_categories
+    ADD CONSTRAINT os_categories_pkey PRIMARY KEY (id);
 
 
 --
@@ -5549,11 +5550,11 @@ ALTER TABLE ONLY public.os_donations
 
 
 --
--- Name: os_entity_category os_entity_category_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: os_entity_categories os_entity_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.os_entity_category
-    ADD CONSTRAINT os_entity_category_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.os_entity_categories
+    ADD CONSTRAINT os_entity_categories_pkey PRIMARY KEY (id);
 
 
 --
@@ -5573,11 +5574,11 @@ ALTER TABLE ONLY public.os_matches
 
 
 --
--- Name: ownership ownership_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ownerships ownerships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.ownership
-    ADD CONSTRAINT ownership_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.ownerships
+    ADD CONSTRAINT ownerships_pkey PRIMARY KEY (id);
 
 
 --
@@ -5589,6 +5590,14 @@ ALTER TABLE ONLY public.pages
 
 
 --
+-- Name: people people_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.people
+    ADD CONSTRAINT people_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: permission_passes permission_passes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5597,27 +5606,19 @@ ALTER TABLE ONLY public.permission_passes
 
 
 --
--- Name: person person_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: phones phones_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.person
-    ADD CONSTRAINT person_pkey PRIMARY KEY (id);
-
-
---
--- Name: phone phone_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.phone
-    ADD CONSTRAINT phone_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.phones
+    ADD CONSTRAINT phones_pkey PRIMARY KEY (id);
 
 
 --
--- Name: political_candidate political_candidate_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: political_candidates political_candidates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.political_candidate
-    ADD CONSTRAINT political_candidate_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.political_candidates
+    ADD CONSTRAINT political_candidates_pkey PRIMARY KEY (id);
 
 
 --
@@ -5629,14 +5630,6 @@ ALTER TABLE ONLY public.political_district
 
 
 --
--- Name: political_fundraising political_fundraising_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.political_fundraising
-    ADD CONSTRAINT political_fundraising_pkey PRIMARY KEY (id);
-
-
---
 -- Name: political_fundraising_type political_fundraising_type_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5645,11 +5638,19 @@ ALTER TABLE ONLY public.political_fundraising_type
 
 
 --
--- Name: position position_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: political_fundraisings political_fundraisings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."position"
-    ADD CONSTRAINT position_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.political_fundraisings
+    ADD CONSTRAINT political_fundraisings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: positions positions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.positions
+    ADD CONSTRAINT positions_pkey PRIMARY KEY (id);
 
 
 --
@@ -5661,11 +5662,11 @@ ALTER TABLE ONLY public.professional
 
 
 --
--- Name: public_company public_company_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: public_companies public_companies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.public_company
-    ADD CONSTRAINT public_company_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.public_companies
+    ADD CONSTRAINT public_companies_pkey PRIMARY KEY (id);
 
 
 --
@@ -5677,19 +5678,19 @@ ALTER TABLE ONLY public."references"
 
 
 --
--- Name: relationship_category relationship_category_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: relationship_categories relationship_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.relationship_category
-    ADD CONSTRAINT relationship_category_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.relationship_categories
+    ADD CONSTRAINT relationship_categories_pkey PRIMARY KEY (id);
 
 
 --
--- Name: relationship relationship_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: relationships relationships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.relationship
-    ADD CONSTRAINT relationship_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.relationships
+    ADD CONSTRAINT relationships_pkey PRIMARY KEY (id);
 
 
 --
@@ -5717,11 +5718,11 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
--- Name: school school_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: schools schools_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.school
-    ADD CONSTRAINT school_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.schools
+    ADD CONSTRAINT schools_pkey PRIMARY KEY (id);
 
 
 --
@@ -5773,11 +5774,11 @@ ALTER TABLE ONLY public.toolkit_pages
 
 
 --
--- Name: transaction transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: transactions transactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.transaction
-    ADD CONSTRAINT transaction_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.transactions
+    ADD CONSTRAINT transactions_pkey PRIMARY KEY (id);
 
 
 --
@@ -5924,35 +5925,35 @@ CREATE UNIQUE INDEX idx_16446_uniqueness_idx ON public.address_country USING btr
 -- Name: idx_16452_country_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16452_country_id_idx ON public.address_state USING btree (country_id);
+CREATE INDEX idx_16452_country_id_idx ON public.address_states USING btree (country_id);
 
 
 --
 -- Name: idx_16452_uniqueness_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX idx_16452_uniqueness_idx ON public.address_state USING btree (name);
+CREATE UNIQUE INDEX idx_16452_uniqueness_idx ON public.address_states USING btree (name);
 
 
 --
 -- Name: idx_16458_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16458_entity_id_idx ON public.alias USING btree (entity_id);
+CREATE INDEX idx_16458_entity_id_idx ON public.aliases USING btree (entity_id);
 
 
 --
 -- Name: idx_16458_name_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16458_name_idx ON public.alias USING btree (name);
+CREATE INDEX idx_16458_name_idx ON public.aliases USING btree (name);
 
 
 --
 -- Name: idx_16458_uniqueness_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX idx_16458_uniqueness_idx ON public.alias USING btree (entity_id, name, context);
+CREATE UNIQUE INDEX idx_16458_uniqueness_idx ON public.aliases USING btree (entity_id, name, context);
 
 
 --
@@ -6008,14 +6009,14 @@ CREATE INDEX idx_16502_entity_id_idx ON public.article_entity USING btree (entit
 -- Name: idx_16522_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16522_entity_id_idx ON public.business USING btree (entity_id);
+CREATE INDEX idx_16522_entity_id_idx ON public.businesses USING btree (entity_id);
 
 
 --
 -- Name: idx_16537_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16537_entity_id_idx ON public.business_person USING btree (entity_id);
+CREATE INDEX idx_16537_entity_id_idx ON public.business_people USING btree (entity_id);
 
 
 --
@@ -6064,21 +6065,21 @@ CREATE UNIQUE INDEX idx_16561_index_common_names_on_name ON public.common_names 
 -- Name: idx_16568_index_couple_on_entity_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16568_index_couple_on_entity_id ON public.couple USING btree (entity_id);
+CREATE INDEX idx_16568_index_couple_on_entity_id ON public.couples USING btree (entity_id);
 
 
 --
 -- Name: idx_16568_index_couple_on_partner1_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16568_index_couple_on_partner1_id ON public.couple USING btree (partner1_id);
+CREATE INDEX idx_16568_index_couple_on_partner1_id ON public.couples USING btree (partner1_id);
 
 
 --
 -- Name: idx_16568_index_couple_on_partner2_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16568_index_couple_on_partner2_id ON public.couple USING btree (partner2_id);
+CREATE INDEX idx_16568_index_couple_on_partner2_id ON public.couples USING btree (partner2_id);
 
 
 --
@@ -6127,14 +6128,14 @@ CREATE UNIQUE INDEX idx_16615_index_documents_on_url_hash ON public.documents US
 -- Name: idx_16628_bundler_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16628_bundler_id_idx ON public.donation USING btree (bundler_id);
+CREATE INDEX idx_16628_bundler_id_idx ON public.donations USING btree (bundler_id);
 
 
 --
 -- Name: idx_16628_relationship_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16628_relationship_id_idx ON public.donation USING btree (relationship_id);
+CREATE INDEX idx_16628_relationship_id_idx ON public.donations USING btree (relationship_id);
 
 
 --
@@ -6162,105 +6163,105 @@ CREATE UNIQUE INDEX idx_16634_index_edited_entities_on_entity_id_and_version_id_
 -- Name: idx_16640_degree_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16640_degree_id_idx ON public.education USING btree (degree_id);
+CREATE INDEX idx_16640_degree_id_idx ON public.educations USING btree (degree_id);
 
 
 --
 -- Name: idx_16640_relationship_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16640_relationship_id_idx ON public.education USING btree (relationship_id);
+CREATE INDEX idx_16640_relationship_id_idx ON public.educations USING btree (relationship_id);
 
 
 --
 -- Name: idx_16647_crp_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16647_crp_id_idx ON public.elected_representative USING btree (crp_id);
+CREATE INDEX idx_16647_crp_id_idx ON public.elected_representatives USING btree (crp_id);
 
 
 --
 -- Name: idx_16647_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16647_entity_id_idx ON public.elected_representative USING btree (entity_id);
+CREATE INDEX idx_16647_entity_id_idx ON public.elected_representatives USING btree (entity_id);
 
 
 --
 -- Name: idx_16661_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16661_entity_id_idx ON public.email USING btree (entity_id);
+CREATE INDEX idx_16661_entity_id_idx ON public.emails USING btree (entity_id);
 
 
 --
 -- Name: idx_16661_last_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16661_last_user_id_idx ON public.email USING btree (last_user_id);
+CREATE INDEX idx_16661_last_user_id_idx ON public.emails USING btree (last_user_id);
 
 
 --
 -- Name: idx_16668_blurb_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16668_blurb_idx ON public.entity USING btree (blurb);
+CREATE INDEX idx_16668_blurb_idx ON public.entities USING btree (blurb);
 
 
 --
 -- Name: idx_16668_created_at_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16668_created_at_idx ON public.entity USING btree (created_at);
+CREATE INDEX idx_16668_created_at_idx ON public.entities USING btree (created_at);
 
 
 --
 -- Name: idx_16668_index_entity_on_delta; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16668_index_entity_on_delta ON public.entity USING btree (delta);
+CREATE INDEX idx_16668_index_entity_on_delta ON public.entities USING btree (delta);
 
 
 --
 -- Name: idx_16668_last_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16668_last_user_id_idx ON public.entity USING btree (last_user_id);
+CREATE INDEX idx_16668_last_user_id_idx ON public.entities USING btree (last_user_id);
 
 
 --
 -- Name: idx_16668_name_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16668_name_idx ON public.entity USING btree (name);
+CREATE INDEX idx_16668_name_idx ON public.entities USING btree (name);
 
 
 --
 -- Name: idx_16668_parent_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16668_parent_id_idx ON public.entity USING btree (parent_id);
+CREATE INDEX idx_16668_parent_id_idx ON public.entities USING btree (parent_id);
 
 
 --
 -- Name: idx_16668_search_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16668_search_idx ON public.entity USING btree (name, blurb, website);
+CREATE INDEX idx_16668_search_idx ON public.entities USING btree (name, blurb, website);
 
 
 --
 -- Name: idx_16668_updated_at_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16668_updated_at_idx ON public.entity USING btree (updated_at);
+CREATE INDEX idx_16668_updated_at_idx ON public.entities USING btree (updated_at);
 
 
 --
 -- Name: idx_16668_website_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16668_website_idx ON public.entity USING btree (website);
+CREATE INDEX idx_16668_website_idx ON public.entities USING btree (website);
 
 
 --
@@ -6274,42 +6275,42 @@ CREATE UNIQUE INDEX idx_16691_example_idx ON public.example USING btree (year, c
 -- Name: idx_16698_name_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16698_name_idx ON public.extension_definition USING btree (name);
+CREATE INDEX idx_16698_name_idx ON public.extension_definitions USING btree (name);
 
 
 --
 -- Name: idx_16698_parent_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16698_parent_id_idx ON public.extension_definition USING btree (parent_id);
+CREATE INDEX idx_16698_parent_id_idx ON public.extension_definitions USING btree (parent_id);
 
 
 --
 -- Name: idx_16698_tier_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16698_tier_idx ON public.extension_definition USING btree (tier);
+CREATE INDEX idx_16698_tier_idx ON public.extension_definitions USING btree (tier);
 
 
 --
 -- Name: idx_16705_definition_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16705_definition_id_idx ON public.extension_record USING btree (definition_id);
+CREATE INDEX idx_16705_definition_id_idx ON public.extension_records USING btree (definition_id);
 
 
 --
 -- Name: idx_16705_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16705_entity_id_idx ON public.extension_record USING btree (entity_id);
+CREATE INDEX idx_16705_entity_id_idx ON public.extension_records USING btree (entity_id);
 
 
 --
 -- Name: idx_16705_last_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16705_last_user_id_idx ON public.extension_record USING btree (last_user_id);
+CREATE INDEX idx_16705_last_user_id_idx ON public.extension_records USING btree (last_user_id);
 
 
 --
@@ -6351,7 +6352,7 @@ CREATE UNIQUE INDEX idx_16722_index_external_links_on_link_type_and_link_id ON p
 -- Name: idx_16728_relationship_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16728_relationship_id_idx ON public.family USING btree (relationship_id);
+CREATE INDEX idx_16728_relationship_id_idx ON public.families USING btree (relationship_id);
 
 
 --
@@ -6365,14 +6366,14 @@ CREATE INDEX idx_16744_relationship_id_idx ON public.generic USING btree (relati
 -- Name: idx_16750_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16750_entity_id_idx ON public.government_body USING btree (entity_id);
+CREATE INDEX idx_16750_entity_id_idx ON public.government_bodies USING btree (entity_id);
 
 
 --
 -- Name: idx_16750_state_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16750_state_id_idx ON public.government_body USING btree (state_id);
+CREATE INDEX idx_16750_state_id_idx ON public.government_bodies USING btree (state_id);
 
 
 --
@@ -6393,14 +6394,14 @@ CREATE INDEX idx_16768_relationship_id_idx ON public.hierarchy USING btree (rela
 -- Name: idx_16774_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16774_entity_id_idx ON public.image USING btree (entity_id);
+CREATE INDEX idx_16774_entity_id_idx ON public.images USING btree (entity_id);
 
 
 --
 -- Name: idx_16774_index_image_on_address_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16774_index_image_on_address_id ON public.image USING btree (address_id);
+CREATE INDEX idx_16774_index_image_on_address_id ON public.images USING btree (address_id);
 
 
 --
@@ -6414,7 +6415,7 @@ CREATE INDEX idx_16812_relationship_id_idx ON public.lobbying USING btree (relat
 -- Name: idx_16818_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16818_entity_id_idx ON public.lobbyist USING btree (entity_id);
+CREATE INDEX idx_16818_entity_id_idx ON public.lobbyists USING btree (entity_id);
 
 
 --
@@ -6547,21 +6548,21 @@ CREATE INDEX idx_16901_index_map_annotations_on_map_id ON public.map_annotations
 -- Name: idx_16914_relationship_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16914_relationship_id_idx ON public.membership USING btree (relationship_id);
+CREATE INDEX idx_16914_relationship_id_idx ON public.memberships USING btree (relationship_id);
 
 
 --
 -- Name: idx_16923_index_network_map_on_delta; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16923_index_network_map_on_delta ON public.network_map USING btree (delta);
+CREATE INDEX idx_16923_index_network_map_on_delta ON public.network_maps USING btree (delta);
 
 
 --
 -- Name: idx_16923_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_16923_user_id_idx ON public.network_map USING btree (user_id);
+CREATE INDEX idx_16923_user_id_idx ON public.network_maps USING btree (user_id);
 
 
 --
@@ -6715,7 +6716,7 @@ CREATE UNIQUE INDEX idx_17014_uniqueness_idx ON public.object_tag USING btree (o
 -- Name: idx_17020_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17020_entity_id_idx ON public.org USING btree (entity_id);
+CREATE INDEX idx_17020_entity_id_idx ON public.orgs USING btree (entity_id);
 
 
 --
@@ -6743,14 +6744,14 @@ CREATE INDEX idx_17029_index_os_candidates_on_feccandid ON public.os_candidates 
 -- Name: idx_17045_unique_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX idx_17045_unique_id_idx ON public.os_category USING btree (category_id);
+CREATE UNIQUE INDEX idx_17045_unique_id_idx ON public.os_categories USING btree (category_id);
 
 
 --
 -- Name: idx_17045_unique_name_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX idx_17045_unique_name_idx ON public.os_category USING btree (category_name);
+CREATE UNIQUE INDEX idx_17045_unique_name_idx ON public.os_categories USING btree (category_name);
 
 
 --
@@ -6778,21 +6779,21 @@ CREATE INDEX idx_17051_index_os_committees_on_recipid ON public.os_committees US
 -- Name: idx_17069_category_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17069_category_id_idx ON public.os_entity_category USING btree (category_id);
+CREATE INDEX idx_17069_category_id_idx ON public.os_entity_categories USING btree (category_id);
 
 
 --
 -- Name: idx_17069_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17069_entity_id_idx ON public.os_entity_category USING btree (entity_id);
+CREATE INDEX idx_17069_entity_id_idx ON public.os_entity_categories USING btree (entity_id);
 
 
 --
 -- Name: idx_17069_uniqueness_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX idx_17069_uniqueness_idx ON public.os_entity_category USING btree (entity_id, category_id);
+CREATE UNIQUE INDEX idx_17069_uniqueness_idx ON public.os_entity_categories USING btree (entity_id, category_id);
 
 
 --
@@ -6862,7 +6863,7 @@ CREATE INDEX idx_17086_index_os_matches_on_relationship_id ON public.os_matches 
 -- Name: idx_17093_relationship_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17093_relationship_id_idx ON public.ownership USING btree (relationship_id);
+CREATE INDEX idx_17093_relationship_id_idx ON public.ownerships USING btree (relationship_id);
 
 
 --
@@ -6876,77 +6877,77 @@ CREATE UNIQUE INDEX idx_17099_index_pages_on_name ON public.pages USING btree (n
 -- Name: idx_17119_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17119_entity_id_idx ON public.person USING btree (entity_id);
+CREATE INDEX idx_17119_entity_id_idx ON public.people USING btree (entity_id);
 
 
 --
 -- Name: idx_17119_gender_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17119_gender_id_idx ON public.person USING btree (gender_id);
+CREATE INDEX idx_17119_gender_id_idx ON public.people USING btree (gender_id);
 
 
 --
 -- Name: idx_17119_name_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17119_name_idx ON public.person USING btree (name_last, name_first, name_middle);
+CREATE INDEX idx_17119_name_idx ON public.people USING btree (name_last, name_first, name_middle);
 
 
 --
 -- Name: idx_17119_party_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17119_party_id_idx ON public.person USING btree (party_id);
+CREATE INDEX idx_17119_party_id_idx ON public.people USING btree (party_id);
 
 
 --
 -- Name: idx_17134_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17134_entity_id_idx ON public.phone USING btree (entity_id);
+CREATE INDEX idx_17134_entity_id_idx ON public.phones USING btree (entity_id);
 
 
 --
 -- Name: idx_17134_last_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17134_last_user_id_idx ON public.phone USING btree (last_user_id);
+CREATE INDEX idx_17134_last_user_id_idx ON public.phones USING btree (last_user_id);
 
 
 --
 -- Name: idx_17142_crp_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17142_crp_id_idx ON public.political_candidate USING btree (crp_id);
+CREATE INDEX idx_17142_crp_id_idx ON public.political_candidates USING btree (crp_id);
 
 
 --
 -- Name: idx_17142_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17142_entity_id_idx ON public.political_candidate USING btree (entity_id);
+CREATE INDEX idx_17142_entity_id_idx ON public.political_candidates USING btree (entity_id);
 
 
 --
 -- Name: idx_17142_house_fec_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17142_house_fec_id_idx ON public.political_candidate USING btree (house_fec_id);
+CREATE INDEX idx_17142_house_fec_id_idx ON public.political_candidates USING btree (house_fec_id);
 
 
 --
 -- Name: idx_17142_pres_fec_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17142_pres_fec_id_idx ON public.political_candidate USING btree (pres_fec_id);
+CREATE INDEX idx_17142_pres_fec_id_idx ON public.political_candidates USING btree (pres_fec_id);
 
 
 --
 -- Name: idx_17142_senate_fec_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17142_senate_fec_id_idx ON public.political_candidate USING btree (senate_fec_id);
+CREATE INDEX idx_17142_senate_fec_id_idx ON public.political_candidates USING btree (senate_fec_id);
 
 
 --
@@ -6960,42 +6961,42 @@ CREATE INDEX idx_17152_state_id_idx ON public.political_district USING btree (st
 -- Name: idx_17161_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17161_entity_id_idx ON public.political_fundraising USING btree (entity_id);
+CREATE INDEX idx_17161_entity_id_idx ON public.political_fundraisings USING btree (entity_id);
 
 
 --
 -- Name: idx_17161_fec_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17161_fec_id_idx ON public.political_fundraising USING btree (fec_id);
+CREATE INDEX idx_17161_fec_id_idx ON public.political_fundraisings USING btree (fec_id);
 
 
 --
 -- Name: idx_17161_state_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17161_state_id_idx ON public.political_fundraising USING btree (state_id);
+CREATE INDEX idx_17161_state_id_idx ON public.political_fundraisings USING btree (state_id);
 
 
 --
 -- Name: idx_17161_type_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17161_type_id_idx ON public.political_fundraising USING btree (type_id);
+CREATE INDEX idx_17161_type_id_idx ON public.political_fundraisings USING btree (type_id);
 
 
 --
 -- Name: idx_17174_boss_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17174_boss_id_idx ON public."position" USING btree (boss_id);
+CREATE INDEX idx_17174_boss_id_idx ON public.positions USING btree (boss_id);
 
 
 --
 -- Name: idx_17174_relationship_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17174_relationship_id_idx ON public."position" USING btree (relationship_id);
+CREATE INDEX idx_17174_relationship_id_idx ON public.positions USING btree (relationship_id);
 
 
 --
@@ -7009,7 +7010,7 @@ CREATE INDEX idx_17180_relationship_id_idx ON public.professional USING btree (r
 -- Name: idx_17186_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17186_entity_id_idx ON public.public_company USING btree (entity_id);
+CREATE INDEX idx_17186_entity_id_idx ON public.public_companies USING btree (entity_id);
 
 
 --
@@ -7023,56 +7024,56 @@ CREATE INDEX idx_17193_index_references_on_referenceable_id_and_referenceabl ON 
 -- Name: idx_17200_category_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17200_category_id_idx ON public.relationship USING btree (category_id);
+CREATE INDEX idx_17200_category_id_idx ON public.relationships USING btree (category_id);
 
 
 --
 -- Name: idx_17200_entity1_category_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17200_entity1_category_idx ON public.relationship USING btree (entity1_id, category_id);
+CREATE INDEX idx_17200_entity1_category_idx ON public.relationships USING btree (entity1_id, category_id);
 
 
 --
 -- Name: idx_17200_entity1_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17200_entity1_id_idx ON public.relationship USING btree (entity1_id);
+CREATE INDEX idx_17200_entity1_id_idx ON public.relationships USING btree (entity1_id);
 
 
 --
 -- Name: idx_17200_entity2_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17200_entity2_id_idx ON public.relationship USING btree (entity2_id);
+CREATE INDEX idx_17200_entity2_id_idx ON public.relationships USING btree (entity2_id);
 
 
 --
 -- Name: idx_17200_entity_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17200_entity_idx ON public.relationship USING btree (entity1_id, entity2_id);
+CREATE INDEX idx_17200_entity_idx ON public.relationships USING btree (entity1_id, entity2_id);
 
 
 --
 -- Name: idx_17200_index_relationship_is_d_e2_cat_amount; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17200_index_relationship_is_d_e2_cat_amount ON public.relationship USING btree (is_deleted, entity2_id, category_id, amount);
+CREATE INDEX idx_17200_index_relationship_is_d_e2_cat_amount ON public.relationships USING btree (is_deleted, entity2_id, category_id, amount);
 
 
 --
 -- Name: idx_17200_last_user_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17200_last_user_id_idx ON public.relationship USING btree (last_user_id);
+CREATE INDEX idx_17200_last_user_id_idx ON public.relationships USING btree (last_user_id);
 
 
 --
 -- Name: idx_17216_uniqueness_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX idx_17216_uniqueness_idx ON public.relationship_category USING btree (name);
+CREATE UNIQUE INDEX idx_17216_uniqueness_idx ON public.relationship_categories USING btree (name);
 
 
 --
@@ -7107,7 +7108,7 @@ CREATE UNIQUE INDEX idx_17234_uniqueness_idx ON public.representative_district U
 -- Name: idx_17243_entity_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17243_entity_id_idx ON public.school USING btree (entity_id);
+CREATE INDEX idx_17243_entity_id_idx ON public.schools USING btree (entity_id);
 
 
 --
@@ -7170,21 +7171,21 @@ CREATE UNIQUE INDEX idx_17295_index_toolkit_pages_on_name ON public.toolkit_page
 -- Name: idx_17305_contact1_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17305_contact1_id_idx ON public.transaction USING btree (contact1_id);
+CREATE INDEX idx_17305_contact1_id_idx ON public.transactions USING btree (contact1_id);
 
 
 --
 -- Name: idx_17305_contact2_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17305_contact2_id_idx ON public.transaction USING btree (contact2_id);
+CREATE INDEX idx_17305_contact2_id_idx ON public.transactions USING btree (contact2_id);
 
 
 --
 -- Name: idx_17305_relationship_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX idx_17305_relationship_id_idx ON public.transaction USING btree (relationship_id);
+CREATE INDEX idx_17305_relationship_id_idx ON public.transactions USING btree (relationship_id);
 
 
 --
@@ -7517,19 +7518,26 @@ CREATE UNIQUE INDEX index_links_on_id ON public.links USING btree (id);
 
 
 --
+-- Name: index_relationships_on_is_featured; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_relationships_on_is_featured ON public.relationships USING btree (is_featured);
+
+
+--
 -- Name: address address_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.address
-    ADD CONSTRAINT address_ibfk_2 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT address_ibfk_2 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: alias alias_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: aliases alias_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.alias
-    ADD CONSTRAINT alias_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.aliases
+    ADD CONSTRAINT alias_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -7541,19 +7549,19 @@ ALTER TABLE ONLY public.article
 
 
 --
--- Name: business business_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: businesses business_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.business
-    ADD CONSTRAINT business_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.businesses
+    ADD CONSTRAINT business_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: business_person business_person_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: business_people business_person_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.business_person
-    ADD CONSTRAINT business_person_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.business_people
+    ADD CONSTRAINT business_person_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -7565,91 +7573,91 @@ ALTER TABLE ONLY public.candidate_district
 
 
 --
--- Name: donation donation_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: donations donation_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.donation
-    ADD CONSTRAINT donation_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: donation donation_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.donation
-    ADD CONSTRAINT donation_ibfk_2 FOREIGN KEY (bundler_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE SET NULL;
+ALTER TABLE ONLY public.donations
+    ADD CONSTRAINT donation_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: education education_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: donations donation_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.education
-    ADD CONSTRAINT education_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: education education_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.education
-    ADD CONSTRAINT education_ibfk_2 FOREIGN KEY (degree_id) REFERENCES public.degree(id) ON UPDATE CASCADE ON DELETE SET NULL;
+ALTER TABLE ONLY public.donations
+    ADD CONSTRAINT donation_ibfk_2 FOREIGN KEY (bundler_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
--- Name: elected_representative elected_representative_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: educations education_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.elected_representative
-    ADD CONSTRAINT elected_representative_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: email email_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.email
-    ADD CONSTRAINT email_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.educations
+    ADD CONSTRAINT education_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: entity entity_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: educations education_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.entity
-    ADD CONSTRAINT entity_ibfk_1 FOREIGN KEY (parent_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: extension_definition extension_definition_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.extension_definition
-    ADD CONSTRAINT extension_definition_ibfk_1 FOREIGN KEY (parent_id) REFERENCES public.extension_definition(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE ONLY public.educations
+    ADD CONSTRAINT education_ibfk_2 FOREIGN KEY (degree_id) REFERENCES public.degrees(id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
--- Name: extension_record extension_record_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: elected_representatives elected_representative_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.extension_record
-    ADD CONSTRAINT extension_record_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: extension_record extension_record_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.extension_record
-    ADD CONSTRAINT extension_record_ibfk_2 FOREIGN KEY (definition_id) REFERENCES public.extension_definition(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE ONLY public.elected_representatives
+    ADD CONSTRAINT elected_representative_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: family family_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: emails email_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.family
-    ADD CONSTRAINT family_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.emails
+    ADD CONSTRAINT email_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: entities entity_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.entities
+    ADD CONSTRAINT entity_ibfk_1 FOREIGN KEY (parent_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: extension_definitions extension_definition_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.extension_definitions
+    ADD CONSTRAINT extension_definition_ibfk_1 FOREIGN KEY (parent_id) REFERENCES public.extension_definitions(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: extension_records extension_record_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.extension_records
+    ADD CONSTRAINT extension_record_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: extension_records extension_record_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.extension_records
+    ADD CONSTRAINT extension_record_ibfk_2 FOREIGN KEY (definition_id) REFERENCES public.extension_definitions(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: families family_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.families
+    ADD CONSTRAINT family_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -7665,7 +7673,7 @@ ALTER TABLE ONLY public.address
 --
 
 ALTER TABLE ONLY public.cmp_entities
-    ADD CONSTRAINT fk_rails_216b4cd432 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT fk_rails_216b4cd432 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
@@ -7693,10 +7701,10 @@ ALTER TABLE ONLY public.addresses
 
 
 --
--- Name: relationship fk_rails_92c847cbfe; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: relationships fk_rails_92c847cbfe; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.relationship
+ALTER TABLE ONLY public.relationships
     ADD CONSTRAINT fk_rails_92c847cbfe FOREIGN KEY (last_user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
@@ -7717,10 +7725,10 @@ ALTER TABLE ONLY public.active_storage_attachments
 
 
 --
--- Name: entity fk_rails_d27e2518f5; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: entities fk_rails_d27e2518f5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.entity
+ALTER TABLE ONLY public.entities
     ADD CONSTRAINT fk_rails_d27e2518f5 FOREIGN KEY (last_user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
@@ -7733,27 +7741,27 @@ ALTER TABLE ONLY public.user_requests
 
 
 --
--- Name: government_body government_body_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: government_bodies government_body_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.government_body
-    ADD CONSTRAINT government_body_ibfk_1 FOREIGN KEY (state_id) REFERENCES public.address_state(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-
-
---
--- Name: government_body government_body_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.government_body
-    ADD CONSTRAINT government_body_ibfk_2 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.government_bodies
+    ADD CONSTRAINT government_body_ibfk_1 FOREIGN KEY (state_id) REFERENCES public.address_states(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
--- Name: image image_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: government_bodies government_body_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.image
-    ADD CONSTRAINT image_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.government_bodies
+    ADD CONSTRAINT government_body_ibfk_2 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: images image_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.images
+    ADD CONSTRAINT image_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -7777,7 +7785,7 @@ ALTER TABLE ONLY public.lobby_filing_lobby_issue
 --
 
 ALTER TABLE ONLY public.lobby_filing_lobbyist
-    ADD CONSTRAINT lobby_filing_lobbyist_ibfk_1 FOREIGN KEY (lobbyist_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT lobby_filing_lobbyist_ibfk_1 FOREIGN KEY (lobbyist_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -7793,7 +7801,7 @@ ALTER TABLE ONLY public.lobby_filing_lobbyist
 --
 
 ALTER TABLE ONLY public.lobby_filing_relationship
-    ADD CONSTRAINT lobby_filing_relationship_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT lobby_filing_relationship_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
@@ -7809,15 +7817,15 @@ ALTER TABLE ONLY public.lobby_filing_relationship
 --
 
 ALTER TABLE ONLY public.lobbying
-    ADD CONSTRAINT lobbying_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT lobbying_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: lobbyist lobbyist_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: lobbyists lobbyist_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.lobbyist
-    ADD CONSTRAINT lobbyist_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.lobbyists
+    ADD CONSTRAINT lobbyist_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -7833,7 +7841,7 @@ ALTER TABLE ONLY public.ls_list_entity
 --
 
 ALTER TABLE ONLY public.ls_list_entity
-    ADD CONSTRAINT ls_list_entity_ibfk_2 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT ls_list_entity_ibfk_2 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -7845,59 +7853,59 @@ ALTER TABLE ONLY public.ls_list
 
 
 --
--- Name: membership membership_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: memberships membership_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.membership
-    ADD CONSTRAINT membership_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: org org_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.org
-    ADD CONSTRAINT org_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.memberships
+    ADD CONSTRAINT membership_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: ownership ownership_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: orgs org_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.ownership
-    ADD CONSTRAINT ownership_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: person person_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.person
-    ADD CONSTRAINT person_ibfk_1 FOREIGN KEY (party_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE SET NULL;
+ALTER TABLE ONLY public.orgs
+    ADD CONSTRAINT org_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: person person_ibfk_3; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ownerships ownership_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.person
-    ADD CONSTRAINT person_ibfk_3 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: phone phone_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.phone
-    ADD CONSTRAINT phone_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.ownerships
+    ADD CONSTRAINT ownership_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: political_candidate political_candidate_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: people person_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.political_candidate
-    ADD CONSTRAINT political_candidate_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.people
+    ADD CONSTRAINT person_ibfk_1 FOREIGN KEY (party_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: people person_ibfk_3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.people
+    ADD CONSTRAINT person_ibfk_3 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: phones phone_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.phones
+    ADD CONSTRAINT phone_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: political_candidates political_candidate_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.political_candidates
+    ADD CONSTRAINT political_candidate_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -7905,39 +7913,39 @@ ALTER TABLE ONLY public.political_candidate
 --
 
 ALTER TABLE ONLY public.political_district
-    ADD CONSTRAINT political_district_ibfk_1 FOREIGN KEY (state_id) REFERENCES public.address_state(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT political_district_ibfk_1 FOREIGN KEY (state_id) REFERENCES public.address_states(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
--- Name: political_fundraising political_fundraising_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: political_fundraisings political_fundraising_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.political_fundraising
-    ADD CONSTRAINT political_fundraising_ibfk_2 FOREIGN KEY (state_id) REFERENCES public.address_state(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-
-
---
--- Name: political_fundraising political_fundraising_ibfk_3; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.political_fundraising
-    ADD CONSTRAINT political_fundraising_ibfk_3 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.political_fundraisings
+    ADD CONSTRAINT political_fundraising_ibfk_2 FOREIGN KEY (state_id) REFERENCES public.address_states(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
--- Name: position position_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: political_fundraisings political_fundraising_ibfk_3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."position"
-    ADD CONSTRAINT position_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.political_fundraisings
+    ADD CONSTRAINT political_fundraising_ibfk_3 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: position position_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: positions position_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public."position"
-    ADD CONSTRAINT position_ibfk_2 FOREIGN KEY (boss_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE SET NULL;
+ALTER TABLE ONLY public.positions
+    ADD CONSTRAINT position_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: positions position_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.positions
+    ADD CONSTRAINT position_ibfk_2 FOREIGN KEY (boss_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
@@ -7945,39 +7953,39 @@ ALTER TABLE ONLY public."position"
 --
 
 ALTER TABLE ONLY public.professional
-    ADD CONSTRAINT professional_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT professional_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: public_company public_company_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: public_companies public_company_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.public_company
-    ADD CONSTRAINT public_company_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: relationship relationship_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.relationship
-    ADD CONSTRAINT relationship_ibfk_1 FOREIGN KEY (entity2_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.public_companies
+    ADD CONSTRAINT public_company_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: relationship relationship_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: relationships relationship_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.relationship
-    ADD CONSTRAINT relationship_ibfk_2 FOREIGN KEY (entity1_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.relationships
+    ADD CONSTRAINT relationship_ibfk_1 FOREIGN KEY (entity2_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: relationship relationship_ibfk_3; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: relationships relationship_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.relationship
-    ADD CONSTRAINT relationship_ibfk_3 FOREIGN KEY (category_id) REFERENCES public.relationship_category(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+ALTER TABLE ONLY public.relationships
+    ADD CONSTRAINT relationship_ibfk_2 FOREIGN KEY (entity1_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: relationships relationship_ibfk_3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.relationships
+    ADD CONSTRAINT relationship_ibfk_3 FOREIGN KEY (category_id) REFERENCES public.relationship_categories(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
@@ -7985,7 +7993,7 @@ ALTER TABLE ONLY public.relationship
 --
 
 ALTER TABLE ONLY public.representative_district
-    ADD CONSTRAINT representative_district_ibfk_3 FOREIGN KEY (representative_id) REFERENCES public.elected_representative(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT representative_district_ibfk_3 FOREIGN KEY (representative_id) REFERENCES public.elected_representatives(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -8001,15 +8009,15 @@ ALTER TABLE ONLY public.representative_district
 --
 
 ALTER TABLE ONLY public.representative
-    ADD CONSTRAINT representative_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT representative_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: school school_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: schools school_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.school
-    ADD CONSTRAINT school_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.schools
+    ADD CONSTRAINT school_ibfk_1 FOREIGN KEY (entity_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -8017,31 +8025,31 @@ ALTER TABLE ONLY public.school
 --
 
 ALTER TABLE ONLY public.social
-    ADD CONSTRAINT social_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT social_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: transaction transaction_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: transactions transaction_ibfk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.transaction
-    ADD CONSTRAINT transaction_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationship(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: transaction transaction_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.transaction
-    ADD CONSTRAINT transaction_ibfk_2 FOREIGN KEY (contact2_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE SET NULL;
+ALTER TABLE ONLY public.transactions
+    ADD CONSTRAINT transaction_ibfk_1 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
--- Name: transaction transaction_ibfk_3; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: transactions transaction_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.transaction
-    ADD CONSTRAINT transaction_ibfk_3 FOREIGN KEY (contact1_id) REFERENCES public.entity(id) ON UPDATE CASCADE ON DELETE SET NULL;
+ALTER TABLE ONLY public.transactions
+    ADD CONSTRAINT transaction_ibfk_2 FOREIGN KEY (contact2_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: transactions transaction_ibfk_3; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.transactions
+    ADD CONSTRAINT transaction_ibfk_3 FOREIGN KEY (contact1_id) REFERENCES public.entities(id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
@@ -8212,7 +8220,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210510192207'),
 ('20210512184454'),
 ('20210518204954'),
+('20210524101935'),
 ('20210527181734'),
-('20210527182912');
+('20210527182912'),
+('20210621141942');
 
 

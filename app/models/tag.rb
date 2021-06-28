@@ -151,7 +151,7 @@ class Tag < ApplicationRecord
 		     else 1 end ) as relationship_count
 
          FROM taggings
-         INNER JOIN entity ON entity.id = taggings.tagable_id AND entity.is_deleted = FALSE AND entity.primary_ext = '#{entity_type}'
+         INNER JOIN entities ON entities.id = taggings.tagable_id AND entities.is_deleted = FALSE AND entities.primary_ext = '#{entity_type}'
          LEFT JOIN links ON links.entity1_id = taggings.tagable_id
          LEFT JOIN taggings as linked_taggings ON linked_taggings.tagable_id = links.entity2_id AND linked_taggings.tagable_class = 'Entity' AND linked_taggings.tag_id = #{id}
          WHERE taggings.tag_id = #{id} AND taggings.tagable_class = 'Entity'
@@ -212,15 +212,15 @@ class Tag < ApplicationRecord
                taggings.tagable_id,
                taggings.tagable_class,
                taggings.created_at as tagging_created_at,
-               COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at) AS event_timestamp,
-               COALESCE(entity.last_user_id, ls_list.last_user_id, relationship.last_user_id) AS editor_id,
+               COALESCE(entities.updated_at, ls_list.updated_at, relationships.updated_at) AS event_timestamp,
+               COALESCE(entities.last_user_id, ls_list.last_user_id, relationships.last_user_id) AS editor_id,
                'tagable_updated' as event
 	FROM taggings
-	LEFT JOIN entity ON taggings.tagable_id = entity.id AND taggings.tagable_class = 'Entity'
+	LEFT JOIN entities ON taggings.tagable_id = entities.id AND taggings.tagable_class = 'Entity'
  	LEFT JOIN ls_list ON taggings.tagable_id = ls_list.id AND taggings.tagable_class = 'List'
-	LEFT JOIN relationship ON taggings.tagable_id = relationship.id AND taggings.tagable_class = 'Relationship'
+	LEFT JOIN relationships ON taggings.tagable_id = relationships.id AND taggings.tagable_class = 'Relationship'
 	WHERE taggings.tag_id = #{id}
-            AND abs(extract(epoch from taggings.created_at - COALESCE(entity.updated_at, ls_list.updated_at, relationship.updated_at))/3600) > 100
+            AND abs(extract(epoch from taggings.created_at - COALESCE(entities.updated_at, ls_list.updated_at, relationships.updated_at))/3600) > 100
       )
         UNION
       (

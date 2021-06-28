@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class AddressState < ApplicationRecord
-  include SingularTable
-
   has_many :addresses, inverse_of: :state, dependent: :destroy
 
   def self.abbreviation_map
