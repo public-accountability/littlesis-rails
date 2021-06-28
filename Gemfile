@@ -62,6 +62,9 @@ gem 'text', '>= 1.3.1'
 
 gem 'httparty', '>= 0.16.2'
 
+# Track exceptions
+gem 'rollbar'
+
 group :test do
   gem 'simplecov', :require => false
 end
