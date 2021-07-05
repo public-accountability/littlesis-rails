@@ -227,6 +227,14 @@ describe ListsController, type: :controller do
 
       it { is_expected.to respond_with(:success) }
     end
+
+    describe 'government' do
+      before do
+        get :government, params: { id: list.id }
+      end
+
+      it { is_expected.to respond_with(:success) }
+    end
   end
 
   describe 'remove_entity' do

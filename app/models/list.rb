@@ -113,7 +113,7 @@ class List < ApplicationRecord
 
   def interlocks(options)
     options = { count: false, sort: :num }.merge(options)
-    select = (!!options[:count] ? "entities.id" : "entities.*") + ", CONCAT(',', ARRAY_AGG(DISTINCT ed.name), ',') AS exts, COUNT(DISTINCT e1.id) AS num_entities, ARRAY_AGG(DISTINCT e1.id) AS degree1_ids, SUM(DISTINCT relationships.amount) AS total_amount"
+    select = (!!options[:count] ? "entities.id" : "entities.*") + ", COUNT(DISTINCT e1.id) AS num_entities, STRING_AGG(DISTINCT e1.id::text, ',') AS degree1_ids, SUM(DISTINCT relationships.amount) AS total_amount"
     query = Entity.select(select)
               .joins("LEFT JOIN links ON (links.entity1_id = entities.id)")
               .joins("LEFT JOIN relationships ON (relationships.id = links.relationship_id)")
@@ -127,10 +127,10 @@ class List < ApplicationRecord
               .group("entities.id")
               .order((options[:sort] == :num ? "num_entities" : "total_amount") + " DESC")
     query = query.where("links.is_reverse IS #{options[:order] == 2 ? 'TRUE' : 'FALSE'}") unless options[:order].nil?
-    query = query.having("exts LIKE '%,#{options[:degree2_type]},%'") unless options[:degree2_type].nil?
+    query = query.having("STRING_AGG(DISTINCT ed.name, ',') LIKE '%,#{options[:degree2_type]},%'") unless options[:degree2_type].nil?
     query = query.where("e1.primary_ext = '#{options[:degree1_ext]}'") unless options[:degree1_ext].nil?
     options[:exclude_degree2_types].to_a.each do |type|
-      query = query.having("exts NOT LIKE '%,#{type},%'")
+      query = query.having("STRING_AGG(DISTINCT ed.name, ',') NOT LIKE '%,#{type},%'")
     end
 
     query
