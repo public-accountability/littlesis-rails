@@ -18,9 +18,9 @@ module EntitiesHelper
   # * supplement entity_path(entity) with concretize_entity_path(entity), which returns
   # /org/1234-Malwart instead of /entities/1234-Malwart
   #
-  # * supplement interlocks_entity_url(entity, format: :json) with
-  # concretize_interlocks_entity_url(entity, format: :json), which returns
-  # /org/1234-Malwart/interlocks.json instead of /entities/1234-Malwart/interlocks.json
+  # * supplement datatable_entity_url(entity, format: :json) with
+  # concretize_datatable_entity_url(entity, format: :json), which returns
+  # /org/1234-Malwart/datatable.json instead of /entities/1234-Malwart/datatable.json
   #
   Rails.application.routes.routes
     .select { |r| r.defaults[:controller] == 'entities' || r.defaults[:action] == 'entity' }
@@ -249,8 +249,8 @@ module EntitiesHelper
   def entity_tabs(entity, active_tab)
     tab_contents = [
       { text: 'Relationships',  path: concretize_entity_path(entity) },
-      { text: 'Interlocks',     path: concretize_interlocks_entity_path(entity) },
-      { text: 'Giving',         path: concretize_giving_entity_path(entity) },
+      { text: 'Interlocks',     path: concretize_tab_entity_path(entity, tab: :interlocks) },
+      { text: 'Giving',         path: concretize_tab_entity_path(entity, tab: :giving) },
       # { text: 'Political',      path: concretize_political_entity_path(entity) },
       { text: 'Data',           path: concretize_datatable_entity_path(entity) }
     ]
