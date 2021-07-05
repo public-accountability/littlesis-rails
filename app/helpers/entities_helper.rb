@@ -23,7 +23,7 @@ module EntitiesHelper
   # /org/1234-Malwart/datatable.json instead of /entities/1234-Malwart/datatable.json
   #
   Rails.application.routes.routes
-    .select { |r| r.defaults[:controller] == 'entities' || r.defaults[:action] == 'entity' }
+    .select { |r| r.defaults[:controller] =~ /entities/ || r.defaults[:action] == 'entity' }
     .each do |route|
     next unless route.name&.match?(/entities|entity/)
 

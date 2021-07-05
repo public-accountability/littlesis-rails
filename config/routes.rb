@@ -129,14 +129,11 @@ Lilsis::Application.routes.draw do
           get 'potential_contributions'
           get 'edits' => redirect("/#{path_prefix}/%{id}/history")
           get 'history' => 'edits#entity'
-          get 'images'
-          get 'new_image'
-          post 'upload_image'
-          post 'remove_image'
-          post 'feature_image'
           get 'add_relationship'
           post 'tags'
         end
+
+        resources :images, controller: 'entities/images'
 
         collection do
           post 'bulk' => 'entities#create_bulk'

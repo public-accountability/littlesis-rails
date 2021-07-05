@@ -421,7 +421,7 @@ describe 'Entity Requests', type: :request do
     end
 
     let(:request) do
-      -> { post upload_image_entity_path(person), params: params }
+      -> { post concretize_entity_images_path(person), params: params }
     end
 
     before do

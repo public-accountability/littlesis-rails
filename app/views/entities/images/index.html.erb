@@ -1,0 +1,14 @@
+<% content_for(:page_title, raw(@entity.name + ' - images')) %>
+
+<%= render partial: 'entities/header', locals: { entity: @entity } %>
+
+<h3>
+  Images
+  &nbsp;<%= link_to('add', new_entity_image_path(@entity), class: "btn btn-secondary btn-sm") %>
+</h3>
+
+<table class="table entity-images-table">
+  <% @entity.images.each do |image| %>
+    <%= render partial: 'table_row', locals: { image: image } %>
+  <% end %>
+</table>

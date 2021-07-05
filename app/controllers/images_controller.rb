@@ -8,7 +8,7 @@ class ImagesController < ApplicationController
     if request.post?
       new_image = Image.crop(@image, **crop_image_params)
       Image.replace old_image: @image, new_image: new_image
-      render json: { "url": images_entity_path(@image.entity) }, status: :created
+      render json: { "url": entity_images_path(@image.entity) }, status: :created
     else
       @image = ImageCropPresenter.new(@image)
     end
@@ -18,7 +18,7 @@ class ImagesController < ApplicationController
   # This route varies from rails convention by adding /update
   def update
     @image.update(image_update_params)
-    redirect_to images_entity_path(@image.entity)
+    redirect_to entity_images_path(@image.entity)
   end
 
   private

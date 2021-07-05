@@ -26,10 +26,10 @@ describe 'Images' do
     let(:url) { 'https://example.com/example.png' }
     let(:image_data) { File.open(example_png).read }
 
-    before { visit concretize_new_image_entity_path(entity) }
+    before { visit concretize_new_entity_image_path(entity) }
 
     scenario 'Uploading an image from a file' do
-      successfully_visits_page concretize_new_image_entity_path(entity)
+      successfully_visits_page concretize_new_entity_image_path(entity)
 
       attach_file 'image_file', example_png
       fill_in 'image_caption', with: image_caption
@@ -42,11 +42,11 @@ describe 'Images' do
       expect(images.first.caption).to eql image_caption
       expect(images.first.is_featured).to be true
 
-      successfully_visits_page concretize_images_entity_path(entity)
+      successfully_visits_page concretize_entity_images_path(entity)
     end
 
     scenario 'Uploading an image from a URL' do
-      successfully_visits_page concretize_new_image_entity_path(entity)
+      successfully_visits_page concretize_new_entity_image_path(entity)
 
       fill_in 'image_caption', with: image_caption
       fill_in 'image_url', with: url
@@ -64,7 +64,7 @@ describe 'Images' do
       expect(images.first.caption).to eql image_caption
       expect(images.first.is_featured).to be true
 
-      successfully_visits_page concretize_images_entity_path(entity)
+      successfully_visits_page concretize_entity_images_path(entity)
     end
 
     describe 'visting the crop image page' do
@@ -81,6 +81,43 @@ describe 'Images' do
         page_has_selector 'h3', text: 'Crop Image'
         page_has_selector '#image-wrapper > canvas', count: 1
       end
+    end
+  end
+
+  feature 'featuring an image' do
+    let(:featured_image) { create(:image, entity: create(:entity_org), is_featured: true) }
+    let(:unfeatured_image) { create(:image, entity: featured_image.entity) }
+
+    before do
+      setup_image_path unfeatured_image
+      visit concretize_entity_images_path(unfeatured_image.entity)
+    end
+
+    it 'sets is_featured to true' do
+      within '.entity-images-table' do
+        expect(unfeatured_image.is_featured).to be false
+        click_on 'feature'
+        expect(unfeatured_image.reload.is_featured).to be true
+      end
+    end
+  end
+
+  feature 'removing an image' do
+    let(:image) { create(:image, entity: create(:entity_org)) }
+
+    before do
+      user.add_ability!(:delete)
+      setup_image_path image
+      visit concretize_entity_images_path(image.entity)
+    end
+
+    it 'removes the image' do
+      within '.entity-images-table' do
+        click_on 'remove'
+      end
+
+      expect(page).to show_success 'Image deleted'
+      expect(image.reload.is_deleted).to be true
     end
   end
 

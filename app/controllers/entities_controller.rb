@@ -169,53 +169,6 @@ class EntitiesController < ApplicationController
     render json: @entity.potential_contributions
   end
 
-  ##
-  # images
-  #
-
-  def images
-    check_permission 'contributor'
-  end
-
-  def feature_image
-    image = Image.find(params[:image_id])
-    image.feature
-    redirect_to concretize_images_entity_path(@entity)
-  end
-
-  def remove_image
-    image = Image.find(params[:image_id])
-    image.destroy
-    redirect_to concretize_images_entity_path(@entity)
-  end
-
-  def new_image
-    @image = Image.new
-    @image.entity = @entity
-  end
-
-  def upload_image
-    if image_params[:file]
-      @image = Image.new_from_upload(image_params[:file])
-    elsif image_params[:url]
-      @image = Image.new_from_url(image_params[:url])
-    else
-      return head :bad_request
-    end
-
-    # TODO: handle error if @image doesn't exist?
-
-    @image.assign_attributes(entity: @entity,
-                             is_free: cast_to_boolean(image_params[:is_free]),
-                             caption: image_params[:caption])
-    if @image.save
-      @image.feature if cast_to_boolean(image_params[:is_featured])
-      redirect_to concretize_images_entity_path(@entity), notice: 'Image was successfully created.'
-    else
-      render action: 'new_image', notice: 'Failed to add the image :('
-    end
-  end
-
   def validate
     essential_entity_attributes = params.require(:entity).permit(:name, :blurb, :primary_ext).to_h
     entity = Entity.new(essential_entity_attributes)
@@ -231,10 +184,6 @@ class EntitiesController < ApplicationController
 
   def set_entity_references
     @references = @entity.references.order('updated_at desc').limit(10)
-  end
-
-  def image_params
-    params.require(:image).permit(:file, :caption, :url, :is_free, :is_featured)
   end
 
   def new_entity_params

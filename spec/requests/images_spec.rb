@@ -56,7 +56,7 @@ describe 'Images' do
       it 'returns json with redirect to url' do
         crop_request.call
         expect(response).to have_http_status :created
-        expect(json).to eq({ 'url' => images_entity_path(person) })
+        expect(json).to eq({ 'url' => entity_images_path(person) })
       end
 
       it 'replaces images' do
