@@ -2,18 +2,11 @@
 
 class ListsController < ApplicationController
   include TagableController
+  include ListPermissions
 
-  ERRORS = ActiveSupport::HashWithIndifferentAccess.new(
-    entity_associations_bad_format: {
-      errors: [{ title: 'Could not add entities to list: improperly formatted request.' }]
-    },
-    entity_associations_invalid_reference: {
-      errors: [{ title: 'Could not add entities to list: invalid reference.' }]
-    }
-  )
-
-  EDITABLE_ACTIONS = %i[create update add_entity destroy crop_images remove_entity update_entity create_entity_associations].freeze
-  SIGNED_IN_ACTIONS = (EDITABLE_ACTIONS + %i[new edit admin update_cache new_entity_associations modifications tags]).freeze
+  EDITABLE_ACTIONS = %i[create update add_entity destroy crop_images remove_entity
+                        update_entity].freeze
+  SIGNED_IN_ACTIONS = (EDITABLE_ACTIONS + %i[new edit admin update_cache modifications tags]).freeze
 
   # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
   # from TagableController and therefore including :tags in the list is required
@@ -22,14 +15,18 @@ class ListsController < ApplicationController
   before_action :authenticate_user!, only: SIGNED_IN_ACTIONS
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
   before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :search_data, :admin, :crop_images, :members, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
+                only: [:show, :edit, :update, :destroy, :search_data, :admin, :crop_images,
+                       :members, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
 
   # permissions
   before_action :set_permissions,
-                only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
+                only: [:members, :interlocks, :giving, :funding, :references, :edit, :update,
+                       :destroy, :add_entity, :remove_entity, :update_entity]
   before_action :set_entity, only: :index
-  before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references]
-  before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
+  before_action -> {
+                  check_access(:viewable)
+                }, only: [:members, :interlocks, :giving, :funding, :references]
+  before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
@@ -72,7 +69,9 @@ class ListsController < ApplicationController
     @list.creator_user_id = current_user.id
     @list.last_user_id = current_user.id
 
-    ref_params = params.permit(ref: [:url, :name])[:ref]&.to_h&.keep_if { |_, v| v.present? }.presence
+    ref_params = params.permit(ref: [:url, :name])[:ref]&.to_h&.keep_if do |_, v|
+      v.present?
+    end.presence
     @list.validate_reference(ref_params) if ref_params
 
     if @list.valid?
@@ -92,46 +91,16 @@ class ListsController < ApplicationController
       if params[:redirect_to]
         redirect_to params[:redirect_to], notice: 'List was successfully updated.'
       else
-        redirect_back(fallback_location: members_list_path(@list), notice: 'List was successfully updated.')
+        redirect_back(fallback_location: members_list_path(@list),
+                      notice: 'List was successfully updated.')
       end
     else
       render action: 'edit'
     end
   end
 
-  # DELETE /lists/1
-  # def destroy
-  #   @list.destroy
-  #   redirect_to lists_url, notice: 'List was successfully destroyed.'
-  # end
-
-  # GET /lists/:id/associations/entities
-  def new_entity_associations; end
-
-  # POST /lists/:id/associations/entities
-  # only handles json
-  def create_entity_associations
-    payload = create_entity_associations_payload
-    return render json: ERRORS[:entity_associations_bad_format], status: :bad_request unless payload
-
-    dattrs = Document::DocumentAttributes.new(payload['reference_attrs'])
-
-    unless dattrs.valid?
-      return render json: ERRORS[:entity_associations_invalid_reference], status: :bad_request
-    end
-
-    @list
-      .add_entities(payload['entity_ids'])
-      .add_reference(dattrs)
-      .save!
-
-    json = Api.as_api_json(@list.list_entities.to_a).merge!('included' => Array.wrap(@list.last_reference.api_data))
-
-    render json: json, status: :ok
-  end
-
   def destroy
-    #check_permission 'admin'
+    # check_permission 'admin'
 
     @list.soft_delete
     redirect_to lists_path, notice: 'List was successfully destroyed.'
@@ -142,7 +111,7 @@ class ListsController < ApplicationController
 
   def crop_images
     check_permission 'importer'
-    entity_ids = @list.entities.joins(:images).where(image: { is_featured: true }).group("entity.id").order("image.updated_at ASC").pluck(:id)
+    entity_ids = @list.entities.joins(:images).where(image: { is_featured: true }).group('entity.id').order('image.updated_at ASC').pluck(:id)
     set_entity_queue(:crop_images, entity_ids, @list.id)
     next_entity_id = next_entity_in_queue(:crop_images)
     image_id = Image.where(entity_id: next_entity_id, is_featured: true).first
@@ -171,14 +140,15 @@ class ListsController < ApplicationController
       list_entity = ListEntity.find(data[:list_entity_id])
       list_entity.rank = data[:rank]
       if list_entity.list.custom_field_name.present?
-        list_entity.custom_field = (data[:context].present? ? data[:context] : nil)
+        list_entity.custom_field = (data[:context].presence)
       end
       list_entity.save
       list_entity.list.clear_cache(request.host)
       table = ListDatatable.new(@list)
-      render json: { row: table.list_entity_data(list_entity, data[:interlock_ids], data[:list_interlock_ids]) }
+      render json: { row: table.list_entity_data(list_entity, data[:interlock_ids],
+                                                 data[:list_interlock_ids]) }
     else
-      render json: {}, status: 404
+      render json: {}, status: :not_found
     end
   end
 
@@ -221,7 +191,7 @@ class ListsController < ApplicationController
       category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
       order: 2,
       degree1_ext: 'Person',
-      exclude_degree2_types: ['Business', 'GovernmentBody']
+      exclude_degree2_types: %w[Business GovernmentBody]
     )
   end
 
@@ -281,32 +251,22 @@ class ListsController < ApplicationController
   #   @reference_params ||= params.require(:ref).permit(:url, :name).to_h
   # end
 
-  def create_entity_associations_payload
-    payload = params.require('data').map { |x| x.permit('type', 'id', { 'attributes' => ['url', 'name'] }) }
-    {
-      'entity_ids'      => payload.select { |x| x['type'] == 'entities' }.map { |x| x['id'] },
-      'reference_attrs' => payload.select { |x| x['type'] == 'references' }.map { |x| x['attributes'] }.first
-    }
-  rescue ActionController::ParameterMissing, ActiveRecord::RecordInvalid
-    nil
-  end
-
   def interlocks_query
     # get people in the list
     entity_ids = @list.entities.people.map(&:id)
 
-    sql = <<~SQL
-     SELECT  entities.*, subquery.num as num, subquery.degree1_ids as degree1_ids
-     FROM (
-      SELECT relationships.entity2_id as entity_id,
-             COUNT(DISTINCT relationships.entity1_id) as num,
-             array_to_string(array_agg(DISTINCT relationships.entity1_id), ',') degree1_ids
-      FROM relationships
-      LEFT JOIN entities ON (entities.id = relationships.entity2_id)
-      WHERE relationships.entity1_id IN ( #{entity_ids.join(',')} ) AND (relationships.category_id = #{Relationship::POSITION_CATEGORY} OR  relationships.category_id = #{Relationship::MEMBERSHIP_CATEGORY}) AND relationships.is_deleted is false
-      GROUP BY relationships.entity2_id ) AS subquery
-     INNER JOIN entities on entities.id = subquery.entity_id
-     ORDER BY num desc
+    sql = <<~SQL.squish
+      SELECT  entities.*, subquery.num as num, subquery.degree1_ids as degree1_ids
+      FROM (
+       SELECT relationships.entity2_id as entity_id,
+              COUNT(DISTINCT relationships.entity1_id) as num,
+              array_to_string(array_agg(DISTINCT relationships.entity1_id), ',') degree1_ids
+       FROM relationships
+       LEFT JOIN entities ON (entities.id = relationships.entity2_id)
+       WHERE relationships.entity1_id IN ( #{entity_ids.join(',')} ) AND (relationships.category_id = #{Relationship::POSITION_CATEGORY} OR  relationships.category_id = #{Relationship::MEMBERSHIP_CATEGORY}) AND relationships.is_deleted is false
+       GROUP BY relationships.entity2_id ) AS subquery
+      INNER JOIN entities on entities.id = subquery.entity_id
+      ORDER BY num desc
     SQL
 
     entities = Entity.includes(:extension_definitions).find_by_sql(sql).to_a
@@ -322,16 +282,6 @@ class ListsController < ApplicationController
     results = @list.interlocks(options).page(@page).per(num)
     count = @list.interlocks_count(options)
     Kaminari.paginate_array(results.to_a, total_count: count).page(@page).per(num)
-  end
-
-  def set_permissions
-    @permissions = current_user ?
-                     current_user.permissions.list_permissions(@list) :
-                     Permissions.anon_list_permissions(@list)
-  end
-
-  def check_access(permission)
-    raise Exceptions::PermissionError unless @permissions[permission]
   end
 
   def after_tags_redirect_url(list)

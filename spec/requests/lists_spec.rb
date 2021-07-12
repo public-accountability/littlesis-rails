@@ -157,7 +157,7 @@ describe 'List Requests' do
       it 'returns 400 with an error message' do
         request.call
         expect(response).to have_http_status 400
-        expect(json).to eql ListsController::ERRORS[:entity_associations_bad_format]
+        expect(json).to eql Lists::EntityAssociationsController::ERRORS[:entity_associations_bad_format]
       end
     end
 
@@ -175,7 +175,7 @@ describe 'List Requests' do
       it 'returns 400 with an error message' do
         request.call
         expect(response).to have_http_status 400
-        expect(json).to eql ListsController::ERRORS[:entity_associations_invalid_reference]
+        expect(json).to eql Lists::EntityAssociationsController::ERRORS[:entity_associations_invalid_reference]
       end
     end
   end
