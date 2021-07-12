@@ -74,8 +74,6 @@ Lilsis::Application.routes.draw do
       get 'members'
       # entities
       post 'add_entity'
-      get 'entities/bulk' => 'lists#new_entity_associations'
-      post 'entities/bulk' => 'lists#create_entity_associations'
       post 'create_entities'
       post 'update_entity'
       post 'remove_entity'
@@ -94,6 +92,7 @@ Lilsis::Application.routes.draw do
     end
 
     resources :entities, only: :create, controller: 'lists/entities'
+    resources :entity_associations, path: 'entities/bulk', only: [:new, :create], controller: 'lists/entity_associations'
   end
 
   resources :ls_images, only: [], path: 'images', controller: 'images' do
