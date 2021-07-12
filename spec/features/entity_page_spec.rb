@@ -70,10 +70,10 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         should_redirect(concretize_entity_path(alice), concretize_entity_path(bob))
       end
 
-      EntitiesController::TABS.each do |tab|
+      %i[interlocks giving].each do |tab|
         it "redirects from alice's #{tab} tab to bob's #{tab} tab" do
-          should_redirect(send("#{tab}_entity_path", alice),
-                          send("#{tab}_entity_path", bob))
+          should_redirect(tab_person_path(alice, tab: tab),
+                          tab_person_path(bob, tab: tab))
         end
       end
     end
@@ -88,10 +88,10 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         should_redirect(concretize_entity_path(alice), concretize_entity_path(cassie))
       end
 
-      EntitiesController::TABS.each do |tab|
+      %i[interlocks giving].each do |tab|
         it "redirects from alice's #{tab} tab to cassie's #{tab} tab" do
-          should_redirect(send("#{tab}_entity_path", alice),
-                          send("#{tab}_entity_path", cassie))
+          should_redirect(concretize_tab_entity_path(alice, tab: tab),
+                          concretize_tab_entity_path(cassie, tab: tab))
         end
       end
     end
@@ -109,9 +109,9 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         expect(page).to have_text "Page Not Found"
       end
 
-      EntitiesController::TABS.each do |tab|
+      %i[interlocks giving].each do |tab|
         it "renders 'not found' when trying to visit alice's #{tab} tab" do
-          visit send("#{tab}_entity_path", alice)
+          visit tab_entity_path(alice, tab: tab)
           expect(page.status_code).to eq 404
           expect(page).to have_text "Page Not Found"
         end
@@ -403,8 +403,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
     let(:subpage_links) do
       [{ text: 'Relationships',  path: concretize_entity_path(person) },
-       { text: 'Interlocks',     path: concretize_interlocks_entity_path(person) },
-       { text: 'Giving',         path: concretize_giving_entity_path(person) },
+       { text: 'Interlocks',     path: concretize_tab_entity_path(person, tab: :interlocks) },
+       { text: 'Giving',         path: concretize_tab_entity_path(person, tab: :giving) },
        # { text: 'Political',      path: concretize_political_entity_path(person) },
        { text: 'Data',           path: concretize_datatable_entity_path(person) }]
     end
@@ -488,7 +488,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       before do
         interlock_people_via_orgs(people, orgs)
-        visit interlocks_entity_path(root_entity)
+        visit tab_entity_path(root_entity, tab: :interlocks)
       end
 
       describe "table layout" do
@@ -565,7 +565,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       before do
         interlock_orgs_via_people(orgs, people)
-        visit interlocks_entity_path(root_entity)
+        visit tab_entity_path(root_entity, tab: :interlocks)
       end
 
       it "shows a header and subheader" do
@@ -614,11 +614,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       before do
         create_donations_from(donors, recipients)
-        visit giving_entity_path(root_entity)
+        visit tab_entity_path(root_entity, tab: :giving)
       end
 
       it 'shows correct page' do
-        expect(page).to have_current_path giving_entity_path(root_entity)
+        expect(page).to have_current_path tab_entity_path(root_entity, tab: :giving)
       end
 
       it "shows a header and subheader" do
@@ -667,11 +667,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         donors.each { |d| create(:position_relationship, entity: d, related: org) }
         create_donations_to(recipients, donors)
 
-        visit giving_entity_path(root_entity)
+        visit tab_entity_path(root_entity, tab: :giving)
       end
 
       it 'shows correct page' do
-        expect(page).to have_current_path giving_entity_path(org)
+        expect(page).to have_current_path tab_entity_path(org, tab: :giving)
       end
 
       it "shows a header and subheader" do

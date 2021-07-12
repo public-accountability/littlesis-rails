@@ -115,8 +115,7 @@ Lilsis::Application.routes.draw do
       resources path_prefix, controller: 'entities' do
         member do
           # profile page
-          get 'interlocks'
-          get 'giving'
+          get ':tab', to: 'entities#show', constraints: {tab: /interlocks|giving/}, as: 'tab'
           get 'political'
           #get 'relationships'
           post 'add_to_list'

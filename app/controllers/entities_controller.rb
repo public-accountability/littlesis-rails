@@ -11,8 +11,6 @@ class EntitiesController < ApplicationController
     }
   )
 
-  TABS = %w[interlocks political giving datatable].freeze
-
   EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation add_to_list].freeze
   IMPORTER_ACTIONS = %i[match_donation match_donations review_donations].freeze
 
@@ -22,22 +20,10 @@ class EntitiesController < ApplicationController
   before_action :importers_only, only: IMPORTER_ACTIONS
   before_action :set_entity, except: [:new, :create, :show, :create_bulk, :validate]
   before_action :set_entity_for_profile_page, only: [:show]
+  before_action :set_tab_for_profile_page, only: [:show]
   before_action :check_delete_permission, only: [:destroy]
 
-  ## Profile Page Tabs:
-  # (consider moving these all to #show route)
   def show
-    @active_tab = :relationships
-  end
-
-  def interlocks
-    @active_tab = :interlocks
-    render 'show'
-  end
-
-  def giving
-    @active_tab = :giving
-    render 'show'
   end
 
   def political
@@ -273,5 +259,9 @@ class EntitiesController < ApplicationController
     unless current_user.permissions.entity_permissions(@entity).fetch(:deleteable)
       raise Exceptions::PermissionError
     end
+  end
+
+  def set_tab_for_profile_page
+    @active_tab = params.fetch(:tab, :relationships)
   end
 end
