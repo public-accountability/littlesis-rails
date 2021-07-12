@@ -15,7 +15,7 @@
 
   <% if @permissions[:editable] %>
     <% if has_ability?('bulker') %>
-      <%= link_to('add bulk', entities_bulk_list_path(list), class: 'btn btn-clear') %>
+      <%= link_to('add bulk', new_list_entity_association_path(list), class: 'btn btn-clear') %>
     <% end %>
 
     <input id="add-entity-input" type="text" class="form-control" placeholder="add entity">

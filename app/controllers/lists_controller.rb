@@ -2,6 +2,7 @@
 
 class ListsController < ApplicationController
   include TagableController
+  include ListPermissions
 
   ERRORS = ActiveSupport::HashWithIndifferentAccess.new(
     entity_associations_bad_format: {
@@ -12,8 +13,8 @@ class ListsController < ApplicationController
     }
   )
 
-  EDITABLE_ACTIONS = %i[create update add_entity destroy crop_images remove_entity update_entity create_entity_associations].freeze
-  SIGNED_IN_ACTIONS = (EDITABLE_ACTIONS + %i[new edit admin update_cache new_entity_associations modifications tags]).freeze
+  EDITABLE_ACTIONS = %i[create update add_entity destroy crop_images remove_entity update_entity].freeze
+  SIGNED_IN_ACTIONS = (EDITABLE_ACTIONS + %i[new edit admin update_cache modifications tags]).freeze
 
   # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
   # from TagableController and therefore including :tags in the list is required
@@ -22,14 +23,14 @@ class ListsController < ApplicationController
   before_action :authenticate_user!, only: SIGNED_IN_ACTIONS
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
   before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :search_data, :admin, :crop_images, :members, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications, :new_entity_associations, :create_entity_associations]
+                only: [:show, :edit, :update, :destroy, :search_data, :admin, :crop_images, :members, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
 
   # permissions
   before_action :set_permissions,
-                only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
+                only: [:members, :interlocks, :giving, :funding, :references, :edit, :update, :destroy, :add_entity, :remove_entity, :update_entity]
   before_action :set_entity, only: :index
   before_action -> { check_access(:viewable) }, only: [:members, :interlocks, :giving, :funding, :references]
-  before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity, :new_entity_associations, :create_entity_associations]
+  before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
@@ -97,37 +98,6 @@ class ListsController < ApplicationController
     else
       render action: 'edit'
     end
-  end
-
-  # DELETE /lists/1
-  # def destroy
-  #   @list.destroy
-  #   redirect_to lists_url, notice: 'List was successfully destroyed.'
-  # end
-
-  # GET /lists/:id/associations/entities
-  def new_entity_associations; end
-
-  # POST /lists/:id/associations/entities
-  # only handles json
-  def create_entity_associations
-    payload = create_entity_associations_payload
-    return render json: ERRORS[:entity_associations_bad_format], status: :bad_request unless payload
-
-    dattrs = Document::DocumentAttributes.new(payload['reference_attrs'])
-
-    unless dattrs.valid?
-      return render json: ERRORS[:entity_associations_invalid_reference], status: :bad_request
-    end
-
-    @list
-      .add_entities(payload['entity_ids'])
-      .add_reference(dattrs)
-      .save!
-
-    json = Api.as_api_json(@list.list_entities.to_a).merge!('included' => Array.wrap(@list.last_reference.api_data))
-
-    render json: json, status: :ok
   end
 
   def destroy
@@ -281,16 +251,6 @@ class ListsController < ApplicationController
   #   @reference_params ||= params.require(:ref).permit(:url, :name).to_h
   # end
 
-  def create_entity_associations_payload
-    payload = params.require('data').map { |x| x.permit('type', 'id', { 'attributes' => ['url', 'name'] }) }
-    {
-      'entity_ids'      => payload.select { |x| x['type'] == 'entities' }.map { |x| x['id'] },
-      'reference_attrs' => payload.select { |x| x['type'] == 'references' }.map { |x| x['attributes'] }.first
-    }
-  rescue ActionController::ParameterMissing, ActiveRecord::RecordInvalid
-    nil
-  end
-
   def interlocks_query
     # get people in the list
     entity_ids = @list.entities.people.map(&:id)
@@ -322,16 +282,6 @@ class ListsController < ApplicationController
     results = @list.interlocks(options).page(@page).per(num)
     count = @list.interlocks_count(options)
     Kaminari.paginate_array(results.to_a, total_count: count).page(@page).per(num)
-  end
-
-  def set_permissions
-    @permissions = current_user ?
-                     current_user.permissions.list_permissions(@list) :
-                     Permissions.anon_list_permissions(@list)
-  end
-
-  def check_access(permission)
-    raise Exceptions::PermissionError unless @permissions[permission]
   end
 
   def after_tags_redirect_url(list)
