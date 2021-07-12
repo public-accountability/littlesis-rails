@@ -1,11 +1,11 @@
 <% content_for(:page_title, raw(@entity.name + ' - upload image')) %>
-<%= render partial: 'header', locals: { entity: @entity } %>
+<%= render partial: 'entities/header', locals: { entity: @entity } %>
 
 <h3>Add Image</h3>
 
 <%= form_for(
-  @image,
-  url: concretize_upload_image_entity_path(@entity),
+  :image,
+  url: entity_images_path(@entity),
   method: :post,
   data: {
     parsley_validate: true,
@@ -13,18 +13,6 @@
     image_editor_accepted_extensions_value: Image::VALID_EXTENSIONS.to_a.to_json
   }
 ) do |f| %>
-  <% if @image.errors.any? %>
-    <div id="error_explanation" class="alert alert-warning">
-      <%= pluralize(@image.errors.count, "error") %> prohibited this image from being saved:
-
-      <ul>
-	<% @image.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-	<% end %>
-      </ul>
-    </div>
-  <% end %>
-
   <div class="row">
     <div class="col-sm-7">
       <div class="image-upload-file-url-box">

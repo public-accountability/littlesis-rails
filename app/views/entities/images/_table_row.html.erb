@@ -18,10 +18,12 @@
   <td>
     <%= link_to("crop", crop_ls_image_path(image)) %><br>
 
-    <% unless image.is_featured %>
-      <%= link_to("feature", concretize_feature_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
-      <br>
+    <% if image.is_featured %>
+      <%= button_to('unfeature', concretize_entity_image_path(@entity, id: image), params: {image: {is_featured: false}}, method: :put, class: 'btn-link') %>
+    <% else %>
+      <%= button_to('feature', concretize_entity_image_path(@entity, id: image), params: {image: {is_featured: true}}, method: :put, class: 'btn-link') %>
     <% end %>
+    <br>
 
     <a href="#"' onclick="$('#<%=image_deletion_request_modal_id %>').modal('show')">
     Request deletion
@@ -34,7 +36,7 @@
     <% end %>
 
     <% if current_user.has_ability?('deleter') %>
-      <%= link_to("remove", concretize_remove_image_entity_path(@entity, image_id: image.id), method: :post, data: { confirm: "Are you sure?" }) %>
+      <%= button_to("remove", entity_image_path(@entity, id: image.id), method: :delete, data: { confirm: "Are you sure?" }, class: 'btn-link') %>
     <% end %>
 
   </td>
