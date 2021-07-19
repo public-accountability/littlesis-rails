@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Lists
+  # Handles creation of entities in the context of lists
   class EntitiesController < ApplicationController
     before_action :authenticate_user!
     before_action :block_restricted_user_access
@@ -27,11 +28,12 @@ module Lists
     end
 
     def add_to_list
-      ListEntity.add_to_list!(
-        list_id: @list.id,
-        entity_id: @entity.id,
-        current_user: current_user
-      )
+      raise Exceptions::PermissionError unless @list.user_can_edit?(current_user)
+
+      ListEntity.find_or_initialize_by(list: @list, entity: @entity).tap do |le|
+        le.current_user = current_user
+        le.save!
+      end
     end
 
     def set_list
