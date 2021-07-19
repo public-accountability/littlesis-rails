@@ -2,7 +2,7 @@ describe 'adding to lists' do
   let(:user) { create_basic_user }
   let(:public_company) { create(:public_company_entity) }
   let(:params) { { id: public_company.id, list_id: list.id } }
-  let(:path) { add_to_list_entity_path(public_company) }
+  let(:path) { list_list_entities_path(list, public_company) }
 
   before do
     user.add_ability(:list)

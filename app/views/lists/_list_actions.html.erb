@@ -25,7 +25,7 @@
           input_id: '#add-entity-input',
           enable_missing_entity_creation: true,
           http_method: 'post',
-          form_path: add_entity_list_path(@list),
+          form_path: list_list_entities_path(@list),
           query_path: search_entity_path(q: '%QUERY', exclude_list: @list.id)
         }
     %>

@@ -72,12 +72,6 @@ Lilsis::Application.routes.draw do
       get 'admin'
       get 'crop_images'
       get 'members'
-      # entities
-      post 'add_entity'
-      post 'create_entities'
-      post 'update_entity'
-      post 'remove_entity'
-      # ^- entities
       get 'clear_cache'
       post 'delete'
       get 'interlocks'
@@ -93,6 +87,7 @@ Lilsis::Application.routes.draw do
 
     resources :entities, only: :create, controller: 'lists/entities'
     resources :entity_associations, path: 'entities/bulk', only: [:new, :create], controller: 'lists/entity_associations'
+    resources :list_entities, only: [:create, :update, :destroy], controller: 'lists/list_entities'
   end
 
   resources :ls_images, only: [], path: 'images', controller: 'images' do

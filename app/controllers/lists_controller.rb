@@ -4,8 +4,7 @@ class ListsController < ApplicationController
   include TagableController
   include ListPermissions
 
-  EDITABLE_ACTIONS = %i[create update add_entity destroy crop_images remove_entity
-                        update_entity].freeze
+  EDITABLE_ACTIONS = %i[create update destroy crop_images].freeze
   SIGNED_IN_ACTIONS = (EDITABLE_ACTIONS + %i[new edit admin update_cache modifications tags]).freeze
 
   # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
@@ -16,7 +15,7 @@ class ListsController < ApplicationController
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
   before_action :set_list,
                 only: [:show, :edit, :update, :destroy, :search_data, :admin, :crop_images,
-                       :members, :update_entity, :remove_entity, :clear_cache, :add_entity, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
+                       :members, :clear_cache, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
 
   # permissions
   before_action :set_permissions,
@@ -26,7 +25,6 @@ class ListsController < ApplicationController
   before_action -> {
                   check_access(:viewable)
                 }, only: [:members, :interlocks, :giving, :funding, :references]
-  before_action -> { check_access(:editable) }, only: [:add_entity, :remove_entity, :update_entity]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
@@ -123,7 +121,7 @@ class ListsController < ApplicationController
     @table.generate_data
 
     @datatable_config = {
-      update_path: update_entity_list_path(@table.list),
+      update_path: list_list_entity_path(@table.list),
       editable: @permissions[:editable],
       ranked_table: @table.ranked?,
       sort_by: @list.sort_by
@@ -133,35 +131,6 @@ class ListsController < ApplicationController
   def clear_cache
     @list.clear_cache(request.host)
     render json: { status: 'success' }
-  end
-
-  def update_entity
-    if data = params[:data]
-      list_entity = ListEntity.find(data[:list_entity_id])
-      list_entity.rank = data[:rank]
-      if list_entity.list.custom_field_name.present?
-        list_entity.custom_field = (data[:context].presence)
-      end
-      list_entity.save
-      list_entity.list.clear_cache(request.host)
-      table = ListDatatable.new(@list)
-      render json: { row: table.list_entity_data(list_entity, data[:interlock_ids],
-                                                 data[:list_interlock_ids]) }
-    else
-      render json: {}, status: :not_found
-    end
-  end
-
-  def remove_entity
-    ListEntity.remove_from_list!(params[:list_entity_id].to_i, current_user: current_user)
-    redirect_to members_list_path(@list)
-  end
-
-  def add_entity
-    ListEntity.add_to_list!(list_id: @list.id,
-                            entity_id: params[:entity_id],
-                            current_user: current_user)
-    redirect_to members_list_path(@list)
   end
 
   def interlocks

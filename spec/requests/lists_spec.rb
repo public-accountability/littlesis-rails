@@ -74,7 +74,7 @@ describe 'List Requests' do
 
   describe 'adding one entity to a list' do
     subject do
-      -> { post add_entity_list_path(list), params: { :entity_id => entity.id } }
+      -> { post list_list_entities_path(list), params: { :entity_id => entity.id } }
     end
 
     it do
@@ -94,7 +94,7 @@ describe 'List Requests' do
 
   describe 'removing entity from a list' do
     subject do
-      -> { post remove_entity_list_path(list), params: { :list_entity_id => list_entity.id } }
+      -> { delete list_list_entity_path(list, list_entity) }
     end
 
     let(:list_entity) do

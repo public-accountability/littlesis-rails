@@ -72,7 +72,7 @@ class ListDatatable
       url: list_entity.entity.url,
       name: list_entity.entity.name,
       rels_url: concretize_datatable_entity_path(list_entity.entity),
-      remove_url: remove_entity_list_path(list_entity.list, list_entity_id: list_entity.id),
+      remove_url: list_list_entity_path(list_entity.list, list_entity),
       blurb: list_entity.entity.blurb,
       blurb_excerpt: excerpt(list_entity.entity.blurb, 70 - list_entity.entity.name.length),
       types: list_entity.entity.types.join(","),
