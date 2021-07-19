@@ -22,23 +22,6 @@ module Lists
       redirect_to members_list_path(@list)
     end
 
-    def update
-      if data = params[:data]
-        list_entity = ListEntity.find(data[:list_entity_id])
-        list_entity.rank = data[:rank]
-        if list_entity.list.custom_field_name.present?
-          list_entity.custom_field = (data[:context].presence)
-        end
-        list_entity.save
-        list_entity.list.clear_cache(request.host)
-        table = ListDatatable.new(@list)
-        render json: { row: table.list_entity_data(list_entity, data[:interlock_ids],
-                                                   data[:list_interlock_ids]) }
-      else
-        render json: {}, status: :not_found
-      end
-    end
-
     def destroy
       ListEntity.find(params[:id]).tap do |le|
         le.current_user = current_user
