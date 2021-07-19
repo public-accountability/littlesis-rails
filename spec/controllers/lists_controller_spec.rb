@@ -2,8 +2,6 @@ describe ListsController, type: :controller do
   it { is_expected.to route(:delete, '/lists/1').to(action: :destroy, id: 1) }
   it { is_expected.to route(:post, '/lists/1/tags').to(action: :tags, id: 1) }
   it { is_expected.to route(:get, '/lists/1234-list-name/modifications').to(action: :modifications, id: '1234-list-name') }
-  it { is_expected.to route(:get, '/lists/1/entities/bulk').to(action: :new_entity_associations, id: 1) }
-  it { is_expected.to route(:post, '/lists/1/entities/bulk').to(action: :create_entity_associations, id: 1) }
 
   describe 'GET /lists' do
     let(:inc) { create(:entity_org) }

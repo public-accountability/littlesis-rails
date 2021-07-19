@@ -11,7 +11,7 @@ feature 'Bulk-adding entities to a list', type: :feature, js: true do
 
   before do
     login_as list_owner, scope: :user
-    visit entities_bulk_list_path(list)
+    visit new_list_entity_association_path(list)
   end
 
   after do
