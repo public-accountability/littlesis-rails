@@ -63,7 +63,7 @@
     <% end %>
 
     <% if user_signed_in? %>
-      <%= form_for @entity, method: 'post', url: list_list_entities_path(@entity) do |f| %>
+      <%= form_for @entity, method: 'post', url: entity_list_entities_path(@entity) do |f| %>
         <select name='list_id' class='lists-dropdown w-100' data-entity-page-target="listsDropdown"/>
         <%= f.submit 'add to list', class: 'btn btn-primary' %>
       <% end %>

@@ -111,8 +111,6 @@ Lilsis::Application.routes.draw do
           # profile page
           get ':tab', to: 'entities#show', constraints: {tab: /interlocks|giving/}, as: 'tab'
           get 'political'
-          #get 'relationships'
-          post 'add_to_list'
           get 'datatable'
           get 'match_donations'
           get 'review_donations'
@@ -128,6 +126,7 @@ Lilsis::Application.routes.draw do
         end
 
         resources :images, controller: 'entities/images'
+        resources :list_entities, only: :create, controller: 'entities/list_entities'
 
         collection do
           post 'bulk' => 'entities#create_bulk'

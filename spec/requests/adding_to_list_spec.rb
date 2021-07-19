@@ -2,7 +2,7 @@ describe 'adding to lists' do
   let(:user) { create_basic_user }
   let(:public_company) { create(:public_company_entity) }
   let(:params) { { id: public_company.id, list_id: list.id } }
-  let(:path) { list_list_entities_path(list, public_company) }
+  let(:path) { entity_list_entities_path(public_company, list) }
 
   before do
     user.add_ability(:list)
@@ -78,9 +78,9 @@ describe 'adding to lists' do
 
     let(:list) { create(:list, access: Permissions::ACCESS_OPEN) }
 
-    it 'is redirected' do
+    it 'is unauthorized' do
       post path, params: params
-      expect(response).to be_redirect
+      expect(response).to be_unauthorized
     end
 
     it "doesn't add the entity to the list" do
