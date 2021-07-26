@@ -1,9 +1,0 @@
-<%= render partial: 'header', locals: { list: @list } %>
-
-<h3>Admin Links</h3>
-
-<%= link_to('match donations', match_donations_list_path(@list)) %><br>
-<%= link_to('crop images', crop_images_list_path(@list)) %><br>
-<%= link_to('find articles', find_articles_list_path(@list)) %><br>
-<%= link_to('create map', create_map_list_path(@list), method: :post) %><br>
-<%= link_to('clear cache', clear_cache_list_path(@list)) %><br>
