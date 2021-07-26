@@ -1,7 +1,7 @@
 <% content_for(:page_title, raw(@list.name + ' - Interlocks')) %>
 
-<%= render partial: 'header', locals: { list: @list } %>
-<%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :giving } %>
+<%= render partial: 'lists/header', locals: { list: @list } %>
+<%= render partial: 'lists/tabs', locals: { list: @list, selected_tab: :giving } %>
 
 <%= dismissable_alert('list_giving_alert', 'list-tab-alert') do %>
   People on this list have donated to following organizations.
@@ -9,12 +9,12 @@
 
 <% cache( [ @list.cache_key_with_version, 'giving', @page ], expires_in: 1.day) do %>
 
-  <% if @recipients.count > 0 %>
+  <% if @interlocks.count > 0 %>
   <h3>Common Recipients</h3>
   <% if local_assigns[:preview] %>
-    <%= paginate_preview(@recipients, 5, giving_list_path) %>
+    <%= paginate_preview(@interlocks, 5, giving_list_path) %>
   <% else %>
-    <%= paginate(@recipients) %>
+    <%= paginate(@interlocks) %>
   <% end %>
   <table class="table interlocks-table">
     <thead>
@@ -23,7 +23,7 @@
       <th>People</th>
     </thead>
     <tbody>
-      <% (local_assigns[:preview] ? @recipients.take(5) : @recipients).each do |org| %>
+      <% (local_assigns[:preview] ? @interlocks.take(5) : @interlocks).each do |org| %>
         <tr>
           <td><strong><%= entity_hash_link(org) %></strong></td>
           <td><%= number_to_currency(org['total_amount'].to_i, precision: 0) %></td>

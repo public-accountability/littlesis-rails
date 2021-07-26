@@ -1,0 +1,8 @@
+<% content_for(:page_title, raw(@list.name + ' - Interlocks')) %>
+
+<%= render partial: 'lists/header', locals: { list: @list } %>
+<%= render partial: 'lists/tabs', locals: { list: @list, selected_tab: :interlocks } %>
+
+<% cache([@list.cache_key_with_version, 'government', @page], expires_in: 1.day) do %>
+  <%= render partial: 'government', locals: { govt_bodies: @interlocks } %>
+<% end %>

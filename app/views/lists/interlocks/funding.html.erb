@@ -9,12 +9,12 @@
 
 <% cache( [ @list.cache_key_with_version, 'funding', @page ], expires_in: 1.day) do %>
 
-  <% if @donors.count > 0 %>
+  <% if @interlocks.count > 0 %>
   <h3>Common Donors</h3>
   <% if local_assigns[:preview] %>
-    <%= paginate_preview(@donors, 5, funding_list_path) %>
+    <%= paginate_preview(@interlocks, 5, funding_list_path) %>
   <% else %>
-    <%= paginate(@donors) %>
+    <%= paginate(@interlocks) %>
   <% end %>
   <table class="table interlocks-table">
     <thead>
@@ -23,7 +23,7 @@
       <th>People</th>
     </thead>
     <tbody>
-      <% (local_assigns[:preview] ? @donors.take(5) : @donors).each do |org| %>
+      <% (local_assigns[:preview] ? @interlocks.take(5) : @interlocks).each do |org| %>
         <tr>
           <td><strong><%= entity_hash_link(org) %></strong></td>
           <td><%= number_to_currency(org['total_amount'].to_i, precision: 0) %></td>

@@ -15,16 +15,14 @@ class ListsController < ApplicationController
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
   before_action :set_list,
                 only: [:show, :edit, :update, :destroy, :search_data, :admin, :crop_images,
-                       :members, :clear_cache, :find_entity, :delete, :interlocks, :companies, :government, :other_orgs, :references, :giving, :funding, :modifications]
+                       :members, :clear_cache, :find_entity, :delete, :references, :modifications]
 
   # permissions
   before_action :set_permissions,
-                only: [:members, :interlocks, :giving, :funding, :references, :edit, :update,
+                only: [:members, :references, :edit, :update,
                        :destroy, :add_entity, :remove_entity, :update_entity]
   before_action :set_entity, only: :index
-  before_action -> {
-                  check_access(:viewable)
-                }, only: [:members, :interlocks, :giving, :funding, :references]
+  before_action -> { check_access(:viewable) }, only: [:members, :references]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
@@ -133,59 +131,7 @@ class ListsController < ApplicationController
     render json: { status: 'success' }
   end
 
-  def interlocks
-    entities = ListInterlocksQuery.new(@list).run
-    @companies = entities.select { |e| e.types.include?('Business') }
-    @govt_bodies = entities.select { |e| e.types.include?('Government Body') }
-    @others = entities - @companies - @govt_bodies
-  end
-
-  def companies
-    @companies = interlocks_results(
-      category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
-      order: 2,
-      degree1_ext: 'Person',
-      degree2_type: 'Business'
-    )
-  end
-
-  def government
-    @govt_bodies = interlocks_results(
-      category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
-      order: 2,
-      degree1_ext: 'Person',
-      degree2_type: 'GovernmentBody'
-    )
-  end
-
-  def other_orgs
-    @others = interlocks_results(
-      category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
-      order: 2,
-      degree1_ext: 'Person',
-      exclude_degree2_types: %w[Business GovernmentBody]
-    )
-  end
-
   def references
-  end
-
-  def giving
-    @recipients = interlocks_results(
-      category_ids: [Relationship::DONATION_CATEGORY],
-      order: 2,
-      degree1_ext: 'Person',
-      sort: :amount
-    )
-  end
-
-  def funding
-    @donors = interlocks_results(
-      category_ids: [Relationship::DONATION_CATEGORY],
-      order: 1,
-      degree1_ext: 'Person',
-      sort: :amount
-    )
   end
 
   def modifications
@@ -222,14 +168,6 @@ class ListsController < ApplicationController
   # def reference_params
   #   @reference_params ||= params.require(:ref).permit(:url, :name).to_h
   # end
-
-  def interlocks_results(options)
-    @page = params.fetch(:page, 1)
-    num = params.fetch(:num, 20)
-    results = @list.interlocks(options).page(@page).per(num)
-    count = @list.interlocks_count(options)
-    Kaminari.paginate_array(results.to_a, total_count: count).page(@page).per(num)
-  end
 
   def after_tags_redirect_url(list)
     edit_list_url(list)

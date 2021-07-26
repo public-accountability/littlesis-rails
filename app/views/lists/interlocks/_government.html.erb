@@ -1,7 +1,7 @@
 <% if govt_bodies.count > 0 %>
 <h3>Government Bodies</h3>
 <% if local_assigns[:preview] %>
-  <%= paginate_preview(govt_bodies, 5, government_list_path) %>
+  <%= paginate_preview(govt_bodies, 5, list_interlocks_tab_path(@list, :government)) %>
 <% else %>
   <%= paginate(govt_bodies) %>
 <% end %>

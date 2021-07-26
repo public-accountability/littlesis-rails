@@ -7,11 +7,11 @@ module ListsHelper
     when :members
       members_list_path(list)
     when :interlocks
-      interlocks_list_path(list)
+      list_interlocks_path(list)
     when :giving
-      giving_list_path(list)
+      list_interlocks_tab_path(list, tab)
     when :funding
-      funding_list_path(list)
+      list_interlocks_tab_path(list, tab)
     when :sources
       references_list_path(list)
     when :edits
