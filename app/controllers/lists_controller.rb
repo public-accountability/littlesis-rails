@@ -13,14 +13,10 @@ class ListsController < ApplicationController
   # in controller concerns? (ziggy 2017-08-31)
   before_action :authenticate_user!, only: SIGNED_IN_ACTIONS
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
-  before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :search_data,
-                       :members, :find_entity, :delete, :references, :modifications]
+  before_action :set_list, only: [:show, :edit, :update, :destroy, :members, :references,
+                                  :modifications]
 
-  # permissions
-  before_action :set_permissions,
-                only: [:members, :references, :edit, :update,
-                       :destroy, :add_entity, :remove_entity, :update_entity]
+  before_action :set_permissions, only: [:members, :references, :edit, :update, :destroy]
   before_action :set_entity, only: :index
   before_action -> { check_access(:viewable) }, only: [:members, :references]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
@@ -29,7 +25,6 @@ class ListsController < ApplicationController
 
   before_action :set_page, only: [:modifications]
 
-  # GET /lists
   def index
     page = params[:page] || 1
     per = 20
@@ -45,21 +40,17 @@ class ListsController < ApplicationController
     end
   end
 
-  # GET /lists/1
   def show
     redirect_to action: 'members'
   end
 
-  # GET /lists/new
   def new
     @list = List.new
   end
 
-  # GET /lists/1/edit
   def edit
   end
 
-  # POST /lists
   def create
     @list = List.new(list_params)
     @list.creator_user_id = current_user.id
@@ -79,25 +70,20 @@ class ListsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /lists/1
   def update
-    if @list.update(list_params)
-      @list.clear_cache(request.host)
+    render action: 'edit' unless @list.update(list_params)
 
-      if params[:redirect_to]
-        redirect_to params[:redirect_to], notice: 'List was successfully updated.'
-      else
-        redirect_back(fallback_location: members_list_path(@list),
-                      notice: 'List was successfully updated.')
-      end
+    @list.clear_cache(request.host)
+
+    if params[:redirect_to]
+      redirect_to params[:redirect_to], notice: 'List was successfully updated.'
     else
-      render action: 'edit'
+      redirect_back(fallback_location: members_list_path(@list),
+                    notice: 'List was successfully updated.')
     end
   end
 
   def destroy
-    # check_permission 'admin'
-
     @list.soft_delete
     redirect_to lists_path, notice: 'List was successfully destroyed.'
   end
@@ -122,7 +108,6 @@ class ListsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_list
     @list = List.find(params[:id])
   end
@@ -131,7 +116,6 @@ class ListsController < ApplicationController
     @entity = Entity.find(params[:entity_id]) if params[:entity_id].present?
   end
 
-  # Only allow a trusted parameter "white list" through.
   def list_params # rubocop:disable Metrics/MethodLength
     params.require(:list)
       .permit(
@@ -147,10 +131,6 @@ class ListsController < ApplicationController
         :access
       )
   end
-
-  # def reference_params
-  #   @reference_params ||= params.require(:ref).permit(:url, :name).to_h
-  # end
 
   def after_tags_redirect_url(list)
     edit_list_url(list)

@@ -70,7 +70,6 @@ Lilsis::Application.routes.draw do
   resources :lists do
     member do
       get 'members'
-      post 'delete'
       get 'references'
       get 'modifications'
       post 'tags'
