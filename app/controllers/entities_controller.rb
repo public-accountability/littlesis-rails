@@ -11,7 +11,7 @@ class EntitiesController < ApplicationController
     }
   )
 
-  EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation add_to_list].freeze
+  EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation].freeze
   IMPORTER_ACTIONS = %i[match_donation match_donations review_donations].freeze
 
   before_action :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving, :validate]
@@ -105,18 +105,6 @@ class EntitiesController < ApplicationController
   def add_relationship
     @relationship = Relationship.new
     @reference = Reference.new
-  end
-
-  def add_to_list
-    list = List.find(params[:list_id])
-    raise Exceptions::PermissionError unless list.user_can_edit?(current_user)
-
-    ListEntity.add_to_list!(list_id: list.id,
-                            entity_id: @entity.id,
-                            current_user: current_user)
-
-    flash[:notice] = "Added to list '#{list.name}'"
-    redirect_to concretize_entity_path(@entity)
   end
 
   def references

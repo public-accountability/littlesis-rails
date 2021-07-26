@@ -235,28 +235,6 @@ describe ListsController, type: :controller do
     end
   end
 
-  describe 'remove_entity' do
-    login_admin
-    let(:list) { create(:list) }
-    let(:person) { create(:entity_person) }
-    let!(:list_entity) { ListEntity.create!(list_id: list.id, entity_id: person.id) }
-
-    let(:post_remove_entity) do
-      proc do
-        post :remove_entity, params: { id: list.id, list_entity_id: list_entity.id }
-      end
-    end
-
-    it 'removes the list entity' do
-      expect(&post_remove_entity).to change { ListEntity.count }.by(-1)
-    end
-
-    it 'redirects to the members page' do
-      post_remove_entity.call
-      expect(response).to have_http_status(302)
-    end
-  end
-
   describe 'List access controls' do
     let(:creator) { create_basic_user }
     let(:non_creator) { create_really_basic_user }

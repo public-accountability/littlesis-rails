@@ -59,8 +59,8 @@
 
   <template id="entity_remover">
     <%= link_to(
-      remove_entity_list_path(table.list, list_entity_id: 'XYZ'),
-      method: :post,
+      list_list_entity_path(table.list, list_entity_id: 'XYZ'),
+      method: :delete,
       data: { confirm: 'Are you sure you want to remove this entity from this list?' },
       class: 'remove_entity'
     ) do %>
