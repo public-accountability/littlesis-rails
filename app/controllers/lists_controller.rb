@@ -4,8 +4,8 @@ class ListsController < ApplicationController
   include TagableController
   include ListPermissions
 
-  EDITABLE_ACTIONS = %i[create update destroy crop_images].freeze
-  SIGNED_IN_ACTIONS = (EDITABLE_ACTIONS + %i[new edit admin update_cache modifications tags]).freeze
+  EDITABLE_ACTIONS = %i[create update destroy].freeze
+  SIGNED_IN_ACTIONS = (EDITABLE_ACTIONS + %i[new edit modifications tags]).freeze
 
   # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
   # from TagableController and therefore including :tags in the list is required
@@ -14,8 +14,8 @@ class ListsController < ApplicationController
   before_action :authenticate_user!, only: SIGNED_IN_ACTIONS
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
   before_action :set_list,
-                only: [:show, :edit, :update, :destroy, :search_data, :admin, :crop_images,
-                       :members, :clear_cache, :find_entity, :delete, :references, :modifications]
+                only: [:show, :edit, :update, :destroy, :search_data,
+                       :members, :find_entity, :delete, :references, :modifications]
 
   # permissions
   before_action :set_permissions,
@@ -102,18 +102,6 @@ class ListsController < ApplicationController
     redirect_to lists_path, notice: 'List was successfully destroyed.'
   end
 
-  def admin
-  end
-
-  def crop_images
-    check_permission 'importer'
-    entity_ids = @list.entities.joins(:images).where(image: { is_featured: true }).group('entity.id').order('image.updated_at ASC').pluck(:id)
-    set_entity_queue(:crop_images, entity_ids, @list.id)
-    next_entity_id = next_entity_in_queue(:crop_images)
-    image_id = Image.where(entity_id: next_entity_id, is_featured: true).first
-    redirect_to crop_image_path(id: image_id)
-  end
-
   def members
     @table = ListDatatable.new(@list)
     @table.generate_data
@@ -124,11 +112,6 @@ class ListsController < ApplicationController
       ranked_table: @table.ranked?,
       sort_by: @list.sort_by
     }
-  end
-
-  def clear_cache
-    @list.clear_cache(request.host)
-    render json: { status: 'success' }
   end
 
   def references

@@ -69,10 +69,7 @@ Lilsis::Application.routes.draw do
 
   resources :lists do
     member do
-      get 'admin'
-      get 'crop_images'
       get 'members'
-      get 'clear_cache'
       post 'delete'
       get 'references'
       get 'modifications'
