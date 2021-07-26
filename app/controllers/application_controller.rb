@@ -82,7 +82,7 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    raise Exceptions::NotFoundError
+    raise Exceptions::NotFoundError, request.path
   end
 
   def dismiss_alert(id)
