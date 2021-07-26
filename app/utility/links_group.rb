@@ -6,6 +6,8 @@ class LinksGroup
   # input: [ <Link> ] , str, str, integer
   # Assumes that the links all have the same category
   def initialize(links, keyword, heading, count = nil)
+    raise ArgumentError, 'called without links' unless links.present?
+
     @keyword = keyword
     @heading = heading
     @category_id = links.empty? ? nil : links[0].category_id
