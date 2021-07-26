@@ -1,6 +1,6 @@
 <% content_for(:page_title, raw(@list.name + ' - Interlocks')) %>
 
-<%= render partial: 'header', locals: { list: @list } %>
+<%= render partial: 'lists/header', locals: { list: @list } %>
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :interlocks } %>
 
 <%= dismissable_alert('list_interlocks_alert', 'list-tab-alert') do %>
@@ -8,7 +8,7 @@
 <% end %>
 
 <% cache( [@list.cache_key_with_version, 'interlocks' ], expires_in: 1.day) do %>
-  <%= render partial: "lists/companies", locals: { companies: @companies, preview: true } %>
-  <%= render partial: "lists/government", locals: { govt_bodies: @govt_bodies, preview: true } %>
-  <%= render partial: "lists/other_orgs", locals: { others: @others, preview: true } %>
+  <%= render partial: "companies", locals: { companies: @companies, preview: true } %>
+  <%= render partial: "government", locals: { govt_bodies: @govt_bodies, preview: true } %>
+  <%= render partial: "other_orgs", locals: { others: @others, preview: true } %>
 <% end %>

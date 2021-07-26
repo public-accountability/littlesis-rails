@@ -1,17 +1,17 @@
-<% if others.count > 0 %>
-<h3>Other Organizations</h3>
+<% if companies.count > 0 %>
+<h3>Companies</h3>
 <% if local_assigns[:preview] %>
-  <%= paginate_preview(others, 5, other_orgs_list_path) %>
+  <%= paginate_preview(companies, 5, list_interlocks_tab_path(@list, :companies)) %>
 <% else %>
-  <%= paginate(others) %>
+  <%= paginate(companies) %>
 <% end %>
 <table class="table interlocks-table">
   <thead>
-    <th>Org</th>
+    <th>Company</th>
     <th>People</th>
   </thead>
   <tbody>
-    <% (local_assigns[:preview] ? others.take(5) : others).each do |org| %>
+    <% (local_assigns[:preview] ? companies.take(5) : companies).each do |org| %>
       <tr>
         <td><strong><%= entity_hash_link(org) %></strong></td>
         <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
@@ -19,4 +19,5 @@
     <% end %>
   </tbody>
 </table>
+<br>
 <% end %>
