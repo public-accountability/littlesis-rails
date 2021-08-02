@@ -1,40 +1,33 @@
 # frozen_string_literal: true
 
 class RelationshipCategory < ApplicationRecord
-  has_many :relationships, inverse_of: :category
+  has_many :relationships, inverse_of: :category, dependent: :nullify
+
+  def self.name_to_id
+    @name_to_id ||= pluck(:name, :id)
+      .to_h
+      .transform_keys(&:downcase)
+      .symbolize_keys
+  end
+
+  def self.id_to_name
+    @id_to_name ||= name_to_id.invert
+  end
 
   def self.valid_categories
-    person_to_person = (1..12).to_a
-    person_to_org = (1..12).to_a
-    org_to_person = (1..12).to_a
-    org_to_org = (1..12).to_a
-    all.each do |cat|
-      if cat.entity1_requirements == 'Person'
-        org_to_person.delete(cat.id)
-        org_to_org.delete(cat.id)
-      end
-
-      if cat.entity1_requirements == 'Org'
-        person_to_org.delete(cat.id)
-        person_to_person.delete(cat.id)
-      end
-
-      if cat.entity2_requirements == 'Person'
-        org_to_org.delete(cat.id)
-        person_to_org.delete(cat.id)
-      end
-
-      if cat.entity2_requirements == 'Org'
-        org_to_person.delete(cat.id)
-        person_to_person.delete(cat.id)
-      end
-    end
-
     {
-      person_to_person: person_to_person,
-      person_to_org: person_to_org,
-      org_to_person: org_to_person,
-      org_to_org: org_to_org
+      person_to_person: without_entity_requirements(entity1: 'Org', entity2: 'Org').pluck(:id),
+      person_to_org: without_entity_requirements(entity1: 'Org', entity2: 'Person').pluck(:id),
+      org_to_person: without_entity_requirements(entity1: 'Person', entity2: 'Org').pluck(:id),
+      org_to_org: without_entity_requirements(entity1: 'Person', entity2: 'Person').pluck(:id)
     }
+  end
+
+  def self.with_entity_requirements(entity1:, entity2:)
+    where(entity1_requirements: entity1).or(where(entity2_requirements: entity2))
+  end
+
+  def self.without_entity_requirements(entity1:, entity2:)
+    where.not(id: with_entity_requirements(entity1: entity1, entity2: entity2).pluck(:id))
   end
 end
