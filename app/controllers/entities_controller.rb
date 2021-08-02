@@ -14,7 +14,9 @@ class EntitiesController < ApplicationController
   EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation].freeze
   IMPORTER_ACTIONS = %i[match_donation match_donations review_donations].freeze
 
-  before_action :authenticate_user!, except: [:show, :datatable, :political, :contributions, :references, :interlocks, :giving, :validate]
+  before_action :authenticate_user!,
+                except: [:show, :datatable, :political, :contributions, :references,
+                         :validate]
   before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
   before_action :importers_only, only: IMPORTER_ACTIONS
@@ -40,7 +42,7 @@ class EntitiesController < ApplicationController
     entities = Entity.create!(entity_attrs)
     render json: Api.as_api_json(entities), status: :created
   rescue ActionController::ParameterMissing, NoMethodError, ActiveRecord::RecordInvalid
-    render json: ERRORS[:create_bulk], status: 400
+    render json: ERRORS[:create_bulk], status: :bad_request
   end
 
   def new
@@ -50,32 +52,10 @@ class EntitiesController < ApplicationController
   def create
     @entity = Entity.new(new_entity_params)
 
-    if @entity.save # successfully created entity
-      params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
-
-      if wants_json_response?
-        render json: {
-                 status: 'OK',
-                 entity: {
-                   id: @entity.id,
-                   name: @entity.name,
-                   description: @entity.blurb,
-                   url: @entity.url,
-                   primary_ext: @entity.primary_ext
-                 }
-               }
-      else
-        redirect_to concretize_edit_entity_path(@entity)
-      end
-
-    else # encounted error
-
-      if wants_json_response?
-        render json: { status: 'ERROR', errors: @entity.errors.messages }
-      else
-        render action: 'new'
-      end
-
+    if wants_json_response?
+      handle_json_creation
+    else
+      handle_creation
     end
   end
 
@@ -90,6 +70,7 @@ class EntitiesController < ApplicationController
 
     if @entity.valid?
       return render json: { status: 'OK' } if api_request?
+
       return redirect_to concretize_entity_path(@entity)
     else
       set_entity_references
@@ -200,5 +181,40 @@ class EntitiesController < ApplicationController
 
   def set_tab_for_profile_page
     @active_tab = params.fetch(:tab, :relationships)
+  end
+
+  def handle_creation
+    if @entity.save
+      add_extensions
+      redirect_to concretize_edit_entity_path(@entity)
+    else
+      render action: 'new'
+    end
+  end
+
+  def handle_json_creation
+    if @entity.save
+      add_extensions
+      render json: json_success_response
+    else
+      render json: { status: 'ERROR', errors: @entity.errors.messages }
+    end
+  end
+
+  def add_extensions
+    params[:types].each { |type| @entity.add_extension(type) } if params[:types].present?
+  end
+
+  def json_success_response
+    {
+      status: 'OK',
+      entity: {
+        id: @entity.id,
+        name: @entity.name,
+        description: @entity.blurb,
+        url: @entity.url,
+        primary_ext: @entity.primary_ext
+      }
+    }
   end
 end
