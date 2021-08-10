@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Link < ApplicationRecord
-  self.primary_key = :id
-
   belongs_to :relationship, inverse_of: :links
   belongs_to :entity, foreign_key: "entity1_id", inverse_of: :links
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id", inverse_of: :reverse_links
@@ -91,33 +89,5 @@ class Link < ApplicationRecord
       stake = relationship&.ownership&.percent_stake
       "; percent stake: #{stake}%" if stake.present?
     end
-  end
-
-  # Tell Rails not to try writing to this model, since it is backed by a view
-  def readonly?
-    true
-  end
-
-  # Refresh the view in a background job
-  def self.refresh
-    if Rails.env.test?
-      refresh_materialized_view
-    else
-      LinksViewRefereshJob.perform_later
-    end
-  end
-
-  # Refresh the view, concurrently if it has already been populated
-  def self.refresh_materialized_view
-    Scenic.database.refresh_materialized_view(table_name, concurrently: populated?, cascade: false)
-  end
-
-  def self.populated?
-    ActiveRecord::Base.connection.execute(
-        <<~SQL
-          SELECT relispopulated FROM pg_class WHERE relname = '#{table_name}'
-        SQL
-      )
-      &.first['relispopulated']
   end
 end

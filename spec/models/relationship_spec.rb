@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe Relationship, type: :model do
-  before(:all) { Link.refresh_materialized_view }
-
   let(:person1) { create(:entity_person, :with_person_name) }
   let(:person2) { create(:entity_person, :with_person_name) }
 

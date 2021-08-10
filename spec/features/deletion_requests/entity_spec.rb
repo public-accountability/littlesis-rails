@@ -18,7 +18,6 @@ feature 'Entity deletion request & review' do
 
   describe "requesting a deletion" do
     before do
-      Link.refresh
       visit entity_path(entity)
       click_link "remove"
     end
@@ -84,7 +83,6 @@ feature 'Entity deletion request & review' do
   describe "reviewing a deletion request" do
     let(:deletion_request) { create :deletion_request, user: requester, entity: entity }
     before do
-      Link.refresh
       visit review_deletion_requests_entity_path(deletion_request)
     end
 

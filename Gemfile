@@ -24,9 +24,6 @@ gem 'devise', '~> 4.7'
 # Versioning
 gem 'paper_trail', '~> 11'
 
-# Generate versioned Postgres views
-gem 'scenic'
-
 # Pagination
 gem 'kaminari'
 
@@ -78,9 +75,6 @@ group :development do
 end
 
 group :test, :development do
-  # Simple Rails benchmarking
-  gem 'benchmark-ips'
-
   gem 'capybara', '>= 3.14.0'
   gem 'database_cleaner'
   gem 'email_spec'

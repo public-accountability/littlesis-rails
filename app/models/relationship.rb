@@ -116,15 +116,12 @@ class Relationship < ApplicationRecord
 
   after_create :after_create_tasks
 
-  # after_commit { Link.refresh }
-
   # This callback is basically a modified version of :touch => true
   # It updates the entity timestamps and also changes the last_user_id of
   # associated entities for the relationship
   after_save :update_entity_timestamps
 
   def after_create_tasks
-    Link.refresh
     create_category
     update_entity_links
   end
@@ -245,7 +242,6 @@ class Relationship < ApplicationRecord
 
   ## callbacks for soft_delete
   def after_soft_delete
-    Link.refresh
     update_entity_links
     references.destroy_all
     position&.destroy! if is_position?
@@ -316,12 +312,10 @@ class Relationship < ApplicationRecord
   # Switches entity direction and changes reverses links
   def reverse_direction
     update(entity1_id: entity2_id, entity2_id: entity1_id)
-    Link.refresh
   end
 
   def reverse_direction!
     update!(entity1_id: entity2_id, entity2_id: entity1_id)
-    Link.refresh
   end
 
   ###############################

@@ -5,7 +5,6 @@ describe Lists::InterlocksController, type: :controller do
 
     before do
       ListEntity.create!(list_id: list.id, entity_id: person.id)
-      Link.refresh
     end
 
     describe 'interlocks' do
