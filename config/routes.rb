@@ -408,6 +408,8 @@ Lilsis::Application.routes.draw do
     get 'random', on: :collection, action: :random
   end
 
+  match 'relationship/view/id/:id', via: :get, constraints: {id: /[0-9]+/}, to: 'relationships/routes#redirect_to_canonical'
+
   match "*path",
         to: "errors#not_found",
         via: :all,
