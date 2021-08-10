@@ -2034,6 +2034,39 @@ ALTER SEQUENCE public.industry_id_seq OWNED BY public.industry.id;
 
 
 --
+-- Name: links; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.links (
+    id bigint NOT NULL,
+    entity1_id integer NOT NULL,
+    entity2_id integer NOT NULL,
+    category_id integer NOT NULL,
+    relationship_id bigint NOT NULL,
+    is_reverse boolean NOT NULL
+);
+
+
+--
+-- Name: links_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.links_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: links_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.links_id_seq OWNED BY public.links.id;
+
+
+--
 -- Name: lobby_filing; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4503,6 +4536,13 @@ ALTER TABLE ONLY public.industry ALTER COLUMN id SET DEFAULT nextval('public.ind
 
 
 --
+-- Name: links id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links ALTER COLUMN id SET DEFAULT nextval('public.links_id_seq'::regclass);
+
+
+--
 -- Name: lobby_filing id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5338,6 +5378,14 @@ ALTER TABLE ONLY public.images
 
 ALTER TABLE ONLY public.industry
     ADD CONSTRAINT industry_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: links links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT links_pkey PRIMARY KEY (id);
 
 
 --
@@ -7479,6 +7527,27 @@ CREATE UNIQUE INDEX index_external_data_fec_contributions_on_sub_id ON public.ex
 
 
 --
+-- Name: index_links_on_entity1_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_links_on_entity1_id ON public.links USING btree (entity1_id);
+
+
+--
+-- Name: index_links_on_entity2_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_links_on_entity2_id ON public.links USING btree (entity2_id);
+
+
+--
+-- Name: index_links_on_relationship_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_links_on_relationship_id ON public.links USING btree (relationship_id);
+
+
+--
 -- Name: index_relationships_on_is_featured; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7622,6 +7691,14 @@ ALTER TABLE ONLY public.families
 
 
 --
+-- Name: links fk_rails_0353ffb851; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT fk_rails_0353ffb851 FOREIGN KEY (category_id) REFERENCES public.relationship_categories(id);
+
+
+--
 -- Name: address fk_rails_1bfe88c8a7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7646,11 +7723,35 @@ ALTER TABLE ONLY public.external_relationships
 
 
 --
+-- Name: links fk_rails_5241e19b68; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT fk_rails_5241e19b68 FOREIGN KEY (entity1_id) REFERENCES public.entities(id);
+
+
+--
 -- Name: taggings fk_rails_5607f02466; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.taggings
     ADD CONSTRAINT fk_rails_5607f02466 FOREIGN KEY (last_user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: links fk_rails_76cfce1454; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT fk_rails_76cfce1454 FOREIGN KEY (entity2_id) REFERENCES public.entities(id);
+
+
+--
+-- Name: links fk_rails_7ef9af5669; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT fk_rails_7ef9af5669 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id);
 
 
 --
@@ -8186,6 +8287,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210527182912'),
 ('20210621141942'),
 ('20210726145559'),
-('20210810192930');
+('20210810192930'),
+('20210810193020');
 
 
