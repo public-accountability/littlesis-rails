@@ -2034,60 +2034,6 @@ ALTER SEQUENCE public.industry_id_seq OWNED BY public.industry.id;
 
 
 --
--- Name: relationships; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.relationships (
-    id bigint NOT NULL,
-    entity1_id bigint NOT NULL,
-    entity2_id bigint NOT NULL,
-    category_id bigint NOT NULL,
-    description1 character varying(100),
-    description2 character varying(100),
-    amount bigint,
-    currency character varying(255),
-    goods text,
-    filings bigint,
-    notes text,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    start_date character varying(10),
-    end_date character varying(10),
-    is_current boolean,
-    is_deleted boolean DEFAULT false NOT NULL,
-    last_user_id bigint,
-    amount2 bigint,
-    is_gte boolean DEFAULT false NOT NULL,
-    is_featured boolean DEFAULT false NOT NULL
-);
-
-
---
--- Name: links; Type: MATERIALIZED VIEW; Schema: public; Owner: -
---
-
-CREATE MATERIALIZED VIEW public.links AS
- SELECT concat(relationships.id, 'normal') AS id,
-    relationships.entity1_id,
-    relationships.entity2_id,
-    relationships.category_id,
-    relationships.id AS relationship_id,
-    false AS is_reverse
-   FROM public.relationships
-  WHERE (relationships.is_deleted = false)
-UNION
- SELECT concat(relationships.id, 'reverse') AS id,
-    relationships.entity2_id AS entity1_id,
-    relationships.entity1_id AS entity2_id,
-    relationships.category_id,
-    relationships.id AS relationship_id,
-    true AS is_reverse
-   FROM public.relationships
-  WHERE (relationships.is_deleted = false)
-  WITH NO DATA;
-
-
---
 -- Name: lobby_filing; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3541,6 +3487,35 @@ CREATE SEQUENCE public.relationship_categories_id_seq
 --
 
 ALTER SEQUENCE public.relationship_categories_id_seq OWNED BY public.relationship_categories.id;
+
+
+--
+-- Name: relationships; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.relationships (
+    id bigint NOT NULL,
+    entity1_id bigint NOT NULL,
+    entity2_id bigint NOT NULL,
+    category_id bigint NOT NULL,
+    description1 character varying(100),
+    description2 character varying(100),
+    amount bigint,
+    currency character varying(255),
+    goods text,
+    filings bigint,
+    notes text,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    start_date character varying(10),
+    end_date character varying(10),
+    is_current boolean,
+    is_deleted boolean DEFAULT false NOT NULL,
+    last_user_id bigint,
+    amount2 bigint,
+    is_gte boolean DEFAULT false NOT NULL,
+    is_featured boolean DEFAULT false NOT NULL
+);
 
 
 --
@@ -7504,20 +7479,6 @@ CREATE UNIQUE INDEX index_external_data_fec_contributions_on_sub_id ON public.ex
 
 
 --
--- Name: index_links_on_entity1_id_and_entity2_id_and_relationship_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_links_on_entity1_id_and_entity2_id_and_relationship_id ON public.links USING btree (entity1_id, entity2_id, relationship_id);
-
-
---
--- Name: index_links_on_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_links_on_id ON public.links USING btree (id);
-
-
---
 -- Name: index_relationships_on_is_featured; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8224,6 +8185,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210527181734'),
 ('20210527182912'),
 ('20210621141942'),
-('20210726145559');
+('20210726145559'),
+('20210810192930');
 
 
