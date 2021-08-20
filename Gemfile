@@ -6,6 +6,7 @@ gem 'pg'
 gem 'mysql2', '~> 0.5.2'
 gem 'puma', '>= 5'
 gem 'redis'
+gem 'scenic'
 
 # Utilities
 gem 'bootsnap', '>= 1.4.3', require: false
