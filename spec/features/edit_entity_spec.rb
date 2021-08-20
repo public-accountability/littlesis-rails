@@ -9,7 +9,6 @@ describe 'edit entity page', type: :feature, js: true do
     if create_external_link
       ExternalLink.create!(entity_id: entity.id, link_id: wikipedia_name, link_type: 'wikipedia')
     end
-    Link.refresh
     login_as(user, scope: :user)
     visit concretize_edit_entity_path(entity)
   end

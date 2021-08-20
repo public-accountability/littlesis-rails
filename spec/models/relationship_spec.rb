@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe Relationship, type: :model do
-  before(:all) { Link.refresh_materialized_view }
-
   let(:person1) { create(:entity_person, :with_person_name) }
   let(:person2) { create(:entity_person, :with_person_name) }
 
@@ -278,6 +276,13 @@ describe Relationship, type: :model do
 
         expect { create_relationship.call }.to change(Position, :count).by(1)
         expect(Position.last.is_board).to be true
+      end
+    end
+
+    describe 'create_links' do
+      it 'creates 2 links after creating relationship' do
+        expect { Relationship.create!(category_id: 12, entity: person1, related: person2) }
+          .to change(Link, :count).by(2)
       end
     end
 
@@ -764,7 +769,7 @@ describe Relationship, type: :model do
         expect { rel.restore! }.to change { rel.is_deleted }.to(false)
       end
 
-      # :create_category, :update_entity_links
+      # :create_category, :create_links, :update_entity_links
       it 'creates category' do
         expect { rel.soft_delete }.to change { Position.count }.by(-1)
         expect(rel.reload.position).to be nil

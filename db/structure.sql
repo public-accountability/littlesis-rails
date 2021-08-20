@@ -2034,57 +2034,36 @@ ALTER SEQUENCE public.industry_id_seq OWNED BY public.industry.id;
 
 
 --
--- Name: relationships; Type: TABLE; Schema: public; Owner: -
+-- Name: links; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.relationships (
+CREATE TABLE public.links (
     id bigint NOT NULL,
-    entity1_id bigint NOT NULL,
-    entity2_id bigint NOT NULL,
-    category_id bigint NOT NULL,
-    description1 character varying(100),
-    description2 character varying(100),
-    amount bigint,
-    currency character varying(255),
-    goods text,
-    filings bigint,
-    notes text,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
-    start_date character varying(10),
-    end_date character varying(10),
-    is_current boolean,
-    is_deleted boolean DEFAULT false NOT NULL,
-    last_user_id bigint,
-    amount2 bigint,
-    is_gte boolean DEFAULT false NOT NULL,
-    is_featured boolean DEFAULT false NOT NULL
+    entity1_id integer NOT NULL,
+    entity2_id integer NOT NULL,
+    category_id integer NOT NULL,
+    relationship_id bigint NOT NULL,
+    is_reverse boolean NOT NULL
 );
 
 
 --
--- Name: links; Type: MATERIALIZED VIEW; Schema: public; Owner: -
+-- Name: links_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE MATERIALIZED VIEW public.links AS
- SELECT concat(relationships.id, 'normal') AS id,
-    relationships.entity1_id,
-    relationships.entity2_id,
-    relationships.category_id,
-    relationships.id AS relationship_id,
-    false AS is_reverse
-   FROM public.relationships
-  WHERE (relationships.is_deleted = false)
-UNION
- SELECT concat(relationships.id, 'reverse') AS id,
-    relationships.entity2_id AS entity1_id,
-    relationships.entity1_id AS entity2_id,
-    relationships.category_id,
-    relationships.id AS relationship_id,
-    true AS is_reverse
-   FROM public.relationships
-  WHERE (relationships.is_deleted = false)
-  WITH NO DATA;
+CREATE SEQUENCE public.links_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: links_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.links_id_seq OWNED BY public.links.id;
 
 
 --
@@ -3544,6 +3523,35 @@ ALTER SEQUENCE public.relationship_categories_id_seq OWNED BY public.relationshi
 
 
 --
+-- Name: relationships; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.relationships (
+    id bigint NOT NULL,
+    entity1_id bigint NOT NULL,
+    entity2_id bigint NOT NULL,
+    category_id bigint NOT NULL,
+    description1 character varying(100),
+    description2 character varying(100),
+    amount bigint,
+    currency character varying(255),
+    goods text,
+    filings bigint,
+    notes text,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    start_date character varying(10),
+    end_date character varying(10),
+    is_current boolean,
+    is_deleted boolean DEFAULT false NOT NULL,
+    last_user_id bigint,
+    amount2 bigint,
+    is_gte boolean DEFAULT false NOT NULL,
+    is_featured boolean DEFAULT false NOT NULL
+);
+
+
+--
 -- Name: relationships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -4528,6 +4536,13 @@ ALTER TABLE ONLY public.industry ALTER COLUMN id SET DEFAULT nextval('public.ind
 
 
 --
+-- Name: links id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links ALTER COLUMN id SET DEFAULT nextval('public.links_id_seq'::regclass);
+
+
+--
 -- Name: lobby_filing id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5363,6 +5378,14 @@ ALTER TABLE ONLY public.images
 
 ALTER TABLE ONLY public.industry
     ADD CONSTRAINT industry_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: links links_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT links_pkey PRIMARY KEY (id);
 
 
 --
@@ -7504,17 +7527,24 @@ CREATE UNIQUE INDEX index_external_data_fec_contributions_on_sub_id ON public.ex
 
 
 --
--- Name: index_links_on_entity1_id_and_entity2_id_and_relationship_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_links_on_entity1_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_links_on_entity1_id_and_entity2_id_and_relationship_id ON public.links USING btree (entity1_id, entity2_id, relationship_id);
+CREATE INDEX index_links_on_entity1_id ON public.links USING btree (entity1_id);
 
 
 --
--- Name: index_links_on_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_links_on_entity2_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_links_on_id ON public.links USING btree (id);
+CREATE INDEX index_links_on_entity2_id ON public.links USING btree (entity2_id);
+
+
+--
+-- Name: index_links_on_relationship_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_links_on_relationship_id ON public.links USING btree (relationship_id);
 
 
 --
@@ -7661,6 +7691,14 @@ ALTER TABLE ONLY public.families
 
 
 --
+-- Name: links fk_rails_0353ffb851; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT fk_rails_0353ffb851 FOREIGN KEY (category_id) REFERENCES public.relationship_categories(id);
+
+
+--
 -- Name: address fk_rails_1bfe88c8a7; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7685,11 +7723,35 @@ ALTER TABLE ONLY public.external_relationships
 
 
 --
+-- Name: links fk_rails_5241e19b68; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT fk_rails_5241e19b68 FOREIGN KEY (entity1_id) REFERENCES public.entities(id);
+
+
+--
 -- Name: taggings fk_rails_5607f02466; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.taggings
     ADD CONSTRAINT fk_rails_5607f02466 FOREIGN KEY (last_user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: links fk_rails_76cfce1454; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT fk_rails_76cfce1454 FOREIGN KEY (entity2_id) REFERENCES public.entities(id);
+
+
+--
+-- Name: links fk_rails_7ef9af5669; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.links
+    ADD CONSTRAINT fk_rails_7ef9af5669 FOREIGN KEY (relationship_id) REFERENCES public.relationships(id);
 
 
 --
@@ -8224,6 +8286,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210527181734'),
 ('20210527182912'),
 ('20210621141942'),
-('20210726145559');
+('20210726145559'),
+('20210810192930'),
+('20210810193020'),
+('20210810194132');
 
 

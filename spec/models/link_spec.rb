@@ -148,28 +148,4 @@ describe Link, type: :model do
       expect(link.link_content).not_to include("('")
     end
   end
-
-  context 'with a relationship' do
-    before do
-      create(:relationship, entity: create(:entity_person), related: create(:entity_person), category_id: 1)
-    end
-
-    describe '.populated?' do
-      scenario 'the links view is automatically populated' do
-        expect(Relationship.count).to eq 1
-        expect(Link.populated?).to be true
-      end
-    end
-
-    xdescribe '.refresh' do
-      it 'refreshes the view concurrently in less than 10ms' do
-        expect(Link.populated?).to be true
-        expect { ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW CONCURRENTLY links') }.to perform_under(10).ms
-      end
-
-      it 'refreshes the entire view in less than 10 ms' do
-        expect { ActiveRecord::Base.connection.execute('REFRESH MATERIALIZED VIEW links') }.to perform_under(10).ms
-      end
-    end
-  end
 end
