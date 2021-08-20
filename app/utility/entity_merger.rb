@@ -272,6 +272,8 @@ class EntityMerger
       elsif rel.entity2_id == source.id
         rel.os_matches.each { |m| m.update!(recip_id: dest.id) }
         rel.update!(entity2_id: dest.id)
+        rel.links.where(is_reverse: false).update_all(entity2_id: dest.id)
+        rel.links.where(is_reverse: true).update_all(entity1_id: dest.id)
       else
         raise Exceptions::ThatsWeirdError
       end
@@ -295,6 +297,8 @@ class EntityMerger
       elsif rel.entity2_id == source.id
         rel.ny_matches.each { |m| m.update!(recip_id: dest.id) }
         rel.update!(entity2_id: dest.id)
+        rel.links.where(is_reverse: false).update_all(entity2_id: dest.id)
+        rel.links.where(is_reverse: true).update_all(entity1_id: dest.id)
       else
         raise Exceptions::ThatsWeirdError
       end

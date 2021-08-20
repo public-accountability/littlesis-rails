@@ -59,7 +59,7 @@ class Relationship < ApplicationRecord
     past: 0
   }.freeze
 
-  has_many :links, inverse_of: :relationship
+  has_many :links, inverse_of: :relationship, dependent: :destroy
   belongs_to :entity, class_name: "Entity", foreign_key: "entity1_id", optional: true
   belongs_to :related, class_name: "Entity", foreign_key: "entity2_id", optional: true
   belongs_to :unscoped_entity, -> { unscope(where: :is_deleted) }, foreign_key: "entity1_id", class_name: "Entity", optional: true
@@ -123,6 +123,7 @@ class Relationship < ApplicationRecord
 
   def after_create_tasks
     create_category
+    create_links
     update_entity_links
   end
 
@@ -145,6 +146,13 @@ class Relationship < ApplicationRecord
   end
 
   private :create_category
+
+  def create_links
+    Link.create(entity1_id: entity1_id, entity2_id: entity2_id, category_id: category_id, is_reverse: false, relationship: self)
+    Link.create(entity1_id: entity2_id, entity2_id: entity1_id, category_id: category_id, is_reverse: true, relationship: self)
+  end
+
+  private :create_links
 
   def self.all_categories
     ALL_CATEGORIES
@@ -242,6 +250,7 @@ class Relationship < ApplicationRecord
 
   ## callbacks for soft_delete
   def after_soft_delete
+    links.destroy_all
     update_entity_links
     references.destroy_all
     position&.destroy! if is_position?
@@ -309,13 +318,23 @@ class Relationship < ApplicationRecord
     return false
   end
 
+  def reverse_links(update_method = :update)
+    ApplicationRecord.transaction do
+      links.each do |link|
+        link.public_send(update_method, is_reverse: !link.is_reverse)
+      end
+    end
+  end
+
   # Switches entity direction and changes reverses links
   def reverse_direction
     update(entity1_id: entity2_id, entity2_id: entity1_id)
+    reverse_links
   end
 
   def reverse_direction!
     update!(entity1_id: entity2_id, entity2_id: entity1_id)
+    reverse_links(:update!)
   end
 
   ###############################

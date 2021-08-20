@@ -279,6 +279,13 @@ describe Relationship, type: :model do
       end
     end
 
+    describe 'create_links' do
+      it 'creates 2 links after creating relationship' do
+        expect { Relationship.create!(category_id: 12, entity: person1, related: person2) }
+          .to change(Link, :count).by(2)
+      end
+    end
+
     describe 'category_name' do
       it 'returns correct names' do
         expect(build(:position_relationship).category_name).to eql "Position"
@@ -762,7 +769,7 @@ describe Relationship, type: :model do
         expect { rel.restore! }.to change { rel.is_deleted }.to(false)
       end
 
-      # :create_category, :update_entity_links
+      # :create_category, :create_links, :update_entity_links
       it 'creates category' do
         expect { rel.soft_delete }.to change { Position.count }.by(-1)
         expect(rel.reload.position).to be nil
