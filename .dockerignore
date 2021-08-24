@@ -1,8 +1,11 @@
 *.sql
 *.gz
+*.log
+*.pgdump
 tmp
 public
 data
 db
 log
 node_modules
+assets
