@@ -18,6 +18,7 @@
 /log/*.lock
 /tmp
 .cache/
+.log/
 
 # Ignore vim swap files
 *.swp

@@ -58,8 +58,6 @@ gem 'selenium-webdriver', '>= 3.11.0'
 # Used by StringSimilarity
 gem 'text', '>= 1.3.1'
 
-gem 'httparty', '>= 0.16.2'
-
 # Track exceptions
 gem 'rollbar'
 
@@ -81,8 +79,6 @@ group :test, :development do
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.0'
   gem 'faker', '>= 2.13'
-  gem 'pry'
-  gem 'pry-byebug'
   gem 'rails-controller-testing'
   gem 'rspec-rails', '>= 4.0.1'
 

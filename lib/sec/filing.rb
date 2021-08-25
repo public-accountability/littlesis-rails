@@ -8,8 +8,9 @@ module SEC
     # output: string OR nil
     def self.download(url)
       Rails.logger.debug('SEC::Filing') { "Downloading #{url}" }
-      res = HTTParty.get(url, headers: { 'User-Agent' => '' })
-      if res.success?
+      res = Net::HTTP.get_response(URI(url), { 'User-Agent' => '' })
+
+      if res.is_a?(Net::HTTPSuccess)
         res.body
       else
         Rails.logger.warn('SEC::Filing') { "failed to download #{url}" }

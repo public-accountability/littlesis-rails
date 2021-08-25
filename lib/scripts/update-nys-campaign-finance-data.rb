@@ -34,11 +34,7 @@ end
 # Skip downloading the zip file if the local copy is less than 1 day old
 if Utility.file_is_empty_or_nonexistent(ZIP_FILE_PATH) || !(File.ctime(ZIP_FILE_PATH).to_date === Time.current.to_date)
   ColorPrinter.print_blue "Downloading: #{URL}"
-
-  File.open(ZIP_FILE_PATH, 'wb') do |file|
-    response = HTTParty.get(URL, stream_body: true) { |fragment| file.write(fragment) }
-    raise 'Failed to download file' unless response.success?
-  end
+  Utility.stream_file url: URL, path: ZIP_FILE_PATH
 else
   ColorPrinter.print_blue 'ALL_REPORTS.zip has already been downloaded'
 end

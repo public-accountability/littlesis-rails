@@ -13,6 +13,12 @@ describe Image, type: :model do
     end
   end
 
+  before(:all) do
+    Image::IMAGE_TYPES.map(&:to_s).each do |img_type|
+      FileUtils.mkdir_p Rails.root.join('tmp', img_type)
+    end
+  end
+
   describe 'validations, associations, and constants' do
     it { is_expected.not_to have_db_column(:title) }
     it { is_expected.not_to validate_presence_of(:caption) }
@@ -198,29 +204,28 @@ describe Image, type: :model do
 
       it 'retrieves information from head if no extension found' do
         url = 'https://example.com/example_image'
-        head = double('HTTParty::Response head double')
-        expect(head).to receive(:success?).and_return true
+        head = double('HTTP Response Double')
+        expect(head).to receive(:is_a?).with(Net::HTTPSuccess).and_return true
         expect(head).to receive(:[]).with('content-type').and_return('image/jpg')
-        expect(HTTParty).to receive(:head).with(url).and_return(head)
+        expect(Utility).to receive(:head_request).with(url).and_return(head)
         expect(Image.file_ext_from(url)).to eql 'jpg'
       end
 
       it 'raises error if there is an invalid format' do
         url = 'https://example.com/example_image'
-        head = double('HTTParty::Response head double')
-        expect(head).to receive(:success?).and_return true
+        head = double('HTTP Response Double')
+        expect(head).to receive(:is_a?).with(Net::HTTPSuccess).and_return true
         expect(head).to receive(:[]).with('content-type').and_return('audio/mpeg3')
-        expect(HTTParty).to receive(:head).with(url).and_return(head)
+        expect(Utility).to receive(:head_request).with(url).and_return(head)
         expect { Image.file_ext_from(url) }
           .to raise_error { Image::InvalidFileExtensionError }
       end
 
       it 'raises error if request is a faliure' do
         url = 'https://example.com/example_image'
-        head = double('HTTParty::Response head double')
-        expect(head).to receive(:success?).and_return false
-        expect(HTTParty).to receive(:head).with(url).and_return(head)
-
+        head = double('HTTP Response Double')
+        expect(head).to receive(:is_a?).with(Net::HTTPSuccess).and_return(false)
+        expect(Utility).to receive(:head_request).with(url).and_return(head)
         expect { Image.file_ext_from(url) }
           .to raise_error { Image::RemoteImageRequestFailure }
       end
@@ -236,12 +241,6 @@ describe Image, type: :model do
       let(:path_1x1) { Rails.root.join('spec', 'testdata', '1x1.png').to_s }
       let(:path_40x60) { Rails.root.join('spec', 'testdata', '40x60.png').to_s }
       let(:path_1200x900) { Rails.root.join('spec', 'testdata', '1200x900.png').to_s }
-
-      before do
-        Image::IMAGE_TYPES.map(&:to_s).each do |img_type|
-          FileUtils.mkdir_p Rails.root.join('tmp', img_type)
-        end
-      end
 
       it 'does nothing if image variation already exists (and check_first is true)' do
         image_file = ImageFile.new(filename: filename, type: 'small')
