@@ -98,36 +98,28 @@ class RelationshipLabel < SimpleDelegator
   end
 
   def default_description
-    case category_id
-    when 1
-      return 'Position'
-    when 2
+    case RelationshipCategory.id_to_name[category_id]
+    when :education
       return description1 if description1.present?
       return 'Student' if is_reverse
       return 'School' unless is_reverse
-    when 3
+    when :membership
       return 'Member'
-    when 4
+    when :family
       return 'Relative'
-    when 5
+    when :donation
       return 'Donation/Grant'
-    when 6
+    when :transaction
       return 'Service/Transaction'
-    when 7
-      return 'Lobbying'
-    when 8
-      return 'Social'
-    when 9
-      return 'Professional'
-    when 10
+    when :ownership
       return 'Owner'
-    when 11
+    when :hierarchy
       return 'Child Org' if is_reverse
       return 'Parent Org' unless is_reverse
-    when 12
+    when :generic
       return 'Affiliation'
     else
-      return ''
+      return RelationshipCategory.id_to_name[category_id].to_s.capitalize
     end
   end
 
