@@ -13,6 +13,12 @@ describe Image, type: :model do
     end
   end
 
+  before(:all) do
+    Image::IMAGE_TYPES.map(&:to_s).each do |img_type|
+      FileUtils.mkdir_p Rails.root.join('tmp', img_type)
+    end
+  end
+
   describe 'validations, associations, and constants' do
     it { is_expected.not_to have_db_column(:title) }
     it { is_expected.not_to validate_presence_of(:caption) }
@@ -236,12 +242,6 @@ describe Image, type: :model do
       let(:path_1x1) { Rails.root.join('spec', 'testdata', '1x1.png').to_s }
       let(:path_40x60) { Rails.root.join('spec', 'testdata', '40x60.png').to_s }
       let(:path_1200x900) { Rails.root.join('spec', 'testdata', '1200x900.png').to_s }
-
-      before do
-        Image::IMAGE_TYPES.map(&:to_s).each do |img_type|
-          FileUtils.mkdir_p Rails.root.join('tmp', img_type)
-        end
-      end
 
       it 'does nothing if image variation already exists (and check_first is true)' do
         image_file = ImageFile.new(filename: filename, type: 'small')

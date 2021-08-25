@@ -82,6 +82,14 @@ module Utility
     Time.zone.now.strftime('%F')
   end
 
+  def self.head_request(url)
+    uri = URI(url)
+    http = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https')
+    response = http.head(uri.path.presence || '/')
+    http.finish
+    response
+  end
+
   # GET HTTP request, saving the response body to a local file (streaming)
   def self.stream_file(url:, path:)
     uri = URI(url)

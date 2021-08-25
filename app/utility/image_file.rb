@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# Very simple wrapper around File
-# used by Image
+# Very simple wrapper around File, used by Image
 class ImageFile
   IMAGE_ROOT = APP_CONFIG['image_root']
 
@@ -14,7 +13,7 @@ class ImageFile
 
     @filename = filename
     @type = type.to_s.downcase
-    @path = File.join(IMAGE_ROOT, @type, @filename.slice(0, 2), @filename)
+    @path = Rails.root.join(IMAGE_ROOT, @type, @filename.slice(0, 2), @filename).to_s
   end
 
   def exists?
@@ -22,9 +21,14 @@ class ImageFile
   end
 
   def write(img)
-    TypeCheck.check img, MiniMagick::Image
     make_dir_prefix
-    img.write(@path)
+    if img.is_a?(MiniMagick::Image)
+      img.write(@path)
+    elsif File.exist?(img) # assumes img is a String or Pathname
+      FileUtils.cp(img, @path)
+    else
+      raise Exceptions::LittleSisError, "Cannot write image: #{img.class}"
+    end
     File.chmod(0o644, @path)
   end
 

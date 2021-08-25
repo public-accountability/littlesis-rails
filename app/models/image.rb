@@ -61,7 +61,7 @@ class Image < ApplicationRecord
   end
 
   def image_file(type = 'profile')
-    ImageFile.new(filename: read_attribute(:filename), type: type)
+    ImageFile.new(filename: self[:filename], type: type)
   end
 
   Dimensions = Struct.new(:width, :height)
@@ -70,7 +70,7 @@ class Image < ApplicationRecord
     img = image_file(type).mini_magick
     Dimensions.new(img.width, img.height)
   ensure
-    img.destroy!
+    img&.destroy!
   end
 
   def destroy
@@ -78,8 +78,8 @@ class Image < ApplicationRecord
   end
 
   def original_exists?
-    HTTParty.head(url).code == 200
-  rescue HTTParty::ResponseError, SocketError
+    Utility.head_request(url).code == '200'
+  rescue Net::HTTPBadResponse, SocketError, Net::ProtocolError
     false
   end
 
@@ -204,20 +204,20 @@ class Image < ApplicationRecord
     image_file = ImageFile.new(filename: filename, type: type)
     return :exists if check_first && image_file.exists?
 
-    img = MiniMagick::Image.open(read_path)
+    if type.to_s == 'original'
+      image_file.write(read_path)
+    else
+      img = MiniMagick::Image.open(read_path)
+      max_size = IMAGE_SIZES.fetch(type.to_sym)
 
-    max_size = IMAGE_SIZES.fetch(type.to_sym)
-
-    # resize the image unless it's already smaller than the max size
-    # or max size is missing (i.e. type == original)
-    if max_size && ((img.width > max_size) || (img.height > max_size))
-      img.resize "#{max_size}x#{max_size}"
+      if (img.width > max_size) || (img.height > max_size)
+        img.resize "#{max_size}x#{max_size}"
+        image_file.write(img)
+      else
+        image_file.write(read_path)
+      end
     end
-
-    image_file.write(img)
     :created
-  ensure
-    img&.destroy!
   end
 
   # inputs:
