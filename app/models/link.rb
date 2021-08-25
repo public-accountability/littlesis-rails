@@ -7,6 +7,14 @@ class Link < ApplicationRecord
   has_many :references, through: :relationship
   has_many :chained_links, class_name: "Link", foreign_key: "entity1_id", primary_key: "entity2_id"
 
+  def self.with_category_name(name)
+    where(category_id: RelationshipCategory.name_to_id[name.to_sym])
+  end
+
+  def self.without_category_name(name)
+    where.not(category_id: RelationshipCategory.name_to_id[name.to_sym])
+  end
+
   def self.interlock_hash_from_entities(entity_ids)
     interlock_hash(where(entity1_id: entity_ids))
   end

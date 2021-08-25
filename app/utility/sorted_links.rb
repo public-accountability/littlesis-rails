@@ -25,31 +25,26 @@ class SortedLinks
               :parents,
               :miscellaneous
 
-  SECTION_TO_CAT = {
-    'business_positions' => 1,
-    'government_positions' => 1,
-    'in_the_office_positions' => 1,
-    'staff' => 1,
-    'other_positions' => 1,
-    'members' => 3,
-    'memberships' => 3,
-    'schools' => 2,
-    'students' => 2,
-    'family' => 4,
-    'donors' => 5,
-    'donation_recipients' => 5,
-    'political_fundraising_committees' => 5,
-    'services_transactions' => 6,
-    'lobbies' => 7,
-    'lobbied_by' => 7,
-    'friendships' => 8,
-    'professional_relationships' => 9,
-    'owners' => 10,
-    'holdings' => 10,
-    'parents' => 11,
-    'children' => 11,
-    'miscellaneous' => 12
+  CATEGORY_SECTIONS = {
+    position: %i[business_positions government_positions in_the_office_positions staff other_positions],
+    membership: %i[members memberships],
+    education: %i[schools students],
+    family: %i[family],
+    donation: %i[donors donation_recipients political_fundraising_committees],
+    transaction: %i[services_transactions],
+    lobbying: %i[lobbies lobbied_by],
+    friendships: %i[social],
+    professional: %i[professional_relationships],
+    ownership: %i[owners holdings],
+    hierarchy: %i[parents children],
+    generic: %i[miscellaneous]
   }.freeze
+
+  SECTION_TO_CATEGORY = Array.new.tap do |array|
+    SortedLinks::CATEGORY_SECTIONS.invert.each_pair do |k,v|
+      k.each {|w| array << {w => v}}
+    end
+  end.reduce({}, :merge).freeze
 
   # input: <Entity>, String, Integer/String, Integer/String
   def initialize(entity, section = nil, page = 1, per_page = 20)
@@ -78,8 +73,8 @@ class SortedLinks
     categories = links.group_by { |l| l.category_id }
     categories.default = []
 
-    staff, positions = split categories[1]
-    members, memberships = split categories[3]
+    staff, positions = split categories[RelationshipCategory.name_to_id[:position]]
+    members, memberships = split categories[RelationshipCategory.name_to_id[:membership]]
     @staff = LinksGroup.new(staff, 'staff', 'Leadership & Staff')
 
     @members = LinksGroup.new(members, 'members', 'Members')
@@ -87,40 +82,40 @@ class SortedLinks
 
     create_position_subgroups(positions)
 
-    students, schools = split categories[2]
+    students, schools = split categories[RelationshipCategory.name_to_id[:education]]
     @students = LinksGroup.new(students, 'students', 'Students')
     @schools = LinksGroup.new(schools, 'schools', 'Education')
 
-    @family = LinksGroup.new(categories[4], 'family', 'Family')
+    @family = LinksGroup.new(categories[RelationshipCategory.name_to_id[:family]], 'family', 'Family')
 
     if @use_separate_donation_query
       create_donation_subgroups
     else
-      donors, donation_recipients = split categories[5]
+      donors, donation_recipients = split categories[RelationshipCategory.name_to_id[:donation]]
       # political_fundraising_committees, donors = donors.partition { |l| l.is_pfc_link? }
       # @political_fundraising_committees = LinksGroup.new(political_fundraising_committees, 'political_fundraising_committees', 'Political Fundraising Committees')
       @donors = LinksGroup.new(donors, 'donors', 'Donors')
       @donation_recipients = LinksGroup.new(donation_recipients, 'donation_recipients', 'Donation/Grant Recipients')
     end
 
-    @services_transactions = LinksGroup.new(categories[6], 'services_transactions', 'Services/Transactions')
+    @services_transactions = LinksGroup.new(categories[RelationshipCategory.name_to_id[:transaction]], 'services_transactions', 'Services/Transactions')
 
-    lobbied_by, lobbies = split categories[7]
+    lobbied_by, lobbies = split categories[RelationshipCategory.name_to_id[:lobbying]]
     @lobbies = LinksGroup.new(lobbies, 'lobbies', 'Lobbying')
     @lobbied_by = LinksGroup.new(lobbied_by, 'lobbied_by', 'Lobbied By')
 
-    @friendships = LinksGroup.new(categories[8], 'friendships', 'Friends')
-    @professional_relationships = LinksGroup.new(categories[9], 'professional_relationships', 'Professional Associates')
+    @friendships = LinksGroup.new(categories[RelationshipCategory.name_to_id[:social]], 'friendships', 'Friends')
+    @professional_relationships = LinksGroup.new(categories[RelationshipCategory.name_to_id[:professional]], 'professional_relationships', 'Professional Associates')
 
-    owners, holdings = split categories[10]
+    owners, holdings = split categories[RelationshipCategory.name_to_id[:ownership]]
     @owners = LinksGroup.new(owners, 'owners', 'Owners')
     @holdings = LinksGroup.new(holdings, 'holdings', 'Holdings')
 
-    children, parents = split categories[11]
+    children, parents = split categories[RelationshipCategory.name_to_id[:hierarchy]]
     @children = LinksGroup.new(children, 'children', 'Child Organizations')
     @parents = LinksGroup.new(parents, 'parents', 'Parent Organizations')
 
-    @miscellaneous = LinksGroup.new(categories[12], 'miscellaneous', 'Other Affiliations')
+    @miscellaneous = LinksGroup.new(categories[RelationshipCategory.name_to_id[:generic]], 'miscellaneous', 'Other Affiliations')
   end
 
   # Sorts position relationships (category 1)
@@ -176,12 +171,12 @@ class SortedLinks
       ( SELECT links.*, relationships.amount
         FROM links
         INNER JOIN relationships ON relationships.id = links.relationship_id
-        WHERE links.entity1_id = ? AND links.category_id = 5 AND links.is_reverse is false )
+        WHERE links.entity1_id = ? AND links.category_id = #{RelationshipCategory.name_to_id[:donation]} AND links.is_reverse is false )
       UNION ALL
       ( SELECT links.*, relationships.amount
         FROM relationships
         INNER JOIN links on links.relationship_id = relationships.id and links.entity1_id = ? and links.is_reverse is true
-        WHERE relationships.is_deleted is false AND relationships.entity2_id = ? AND relationships.category_id = 5
+        WHERE relationships.is_deleted is false AND relationships.entity2_id = ? AND relationships.category_id = #{RelationshipCategory.name_to_id[:donation]}
         ORDER by amount desc LIMIT ? OFFSET ? )
     SQL
 
@@ -192,12 +187,18 @@ class SortedLinks
   # we need to get a total count for the paginator
   # integer -> integer
   def donors_count(entity1_id)
-    Link.where(entity1_id: entity1_id, category_id: 5, is_reverse: true).count
+    Link
+      .with_category_name(:donation)
+      .where(entity1_id: entity1_id, is_reverse: true)
+      .count
   end
 
   # This preloads relationship, related entities and their extensions for all types except donation (category id = 5)
   def preloaded_links(entity_id)
-    Link.preload(:relationship, related: [:extension_records]).where("entity1_id = ? AND category_id <> 5", entity_id)
+    Link
+      .preload(:relationship, related: [:extension_records])
+      .without_category_name(:donation)
+      .where(entity1_id: entity_id)
   end
 
   # This preloads relationship, related entities and entity extensions for all categories
@@ -211,7 +212,10 @@ class SortedLinks
       @use_separate_donation_query = true
       donation_links_preloaded(entity_id)
     else
-      Link.preload(:relationship, related: [:extension_records]).where(entity1_id: entity_id, category_id: SECTION_TO_CAT[section])
+      Link
+        .preload(:relationship, related: [:extension_records])
+        .with_category_name(SECTION_TO_CATEGORY[section.to_sym])
+        .where(entity1_id: entity_id)
     end
   end
 
