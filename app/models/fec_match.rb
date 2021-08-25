@@ -155,14 +155,14 @@ class FECMatch < ApplicationRecord
   private
 
   def committee_relationship_attrs
-    { category_id: Relationship::DONATION_CATEGORY,
+    { category_id: RelationshipCategory.name_to_id[:donation],
       entity: donor,
       related: recipient,
       description1: 'Campaign Contribution' }
   end
 
   def candidate_relationship_attrs
-    { category_id: Relationship::DONATION_CATEGORY,
+    { category_id: RelationshipCategory.name_to_id[:donation],
       entity: donor,
       related: candidate,
       description1: 'Campaign Contribution' }

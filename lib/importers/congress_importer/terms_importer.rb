@@ -65,7 +65,7 @@ class CongressImporter
     def update_party_membership(membership, relationship)
       relationship = Relationship.new if relationship.blank?
 
-      relationship.update!(category_id: Relationship::MEMBERSHIP_CATEGORY,
+      relationship.update!(category_id: RelationshipCategory.name_to_id[:membership],
                            entity1_id: @entity.id,
                            entity2_id: PARTY_TO_ENTITY.fetch(membership['party']),
                            last_user_id: CongressImporter::CONGRESS_BOT_USER)
@@ -75,14 +75,14 @@ class CongressImporter
       @entity
         .relationships
         .reload
-        .where(category_id: Relationship::MEMBERSHIP_CATEGORY, entity2_id: party_id)
+        .where(category_id: RelationshipCategory.name_to_id[:membership], entity2_id: party_id)
         .order('updated_at desc')
     end
 
     def update_or_create_relationship(term, relationship: nil)
       relationship = Relationship.new if relationship.blank?
 
-      relationship.update!(category_id: Relationship::MEMBERSHIP_CATEGORY,
+      relationship.update!(category_id: RelationshipCategory.name_to_id[:membership],
                            entity1_id: @entity.id,
                            entity2_id: TERM_TYPE_TO_ENTITY.fetch(term['type']),
                            description1: TERM_TYPE_TO_DESCRIPTION.fetch(term['type']),

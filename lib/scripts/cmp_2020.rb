@@ -160,7 +160,7 @@ def run(dry_run:)
 
       attrs = {
         is_current: is_current,
-        category_id: Relationship::POSITION_CATEGORY,
+        category_id: RelationshipCategory.name_to_id[:position],
         entity: entity,
         related: related,
         position_attributes: { is_board: is_board, is_executive: is_executive }

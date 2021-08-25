@@ -23,8 +23,8 @@ describe SortedLinks do
 
     context 'with one business relationship and one government relationships' do
       before do
-        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: government)
-        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: business)
+        Relationship.create!(category_id: RelationshipCategory.name_to_id[:position], entity: person, related: government)
+        Relationship.create!(category_id: RelationshipCategory.name_to_id[:position], entity: person, related: business)
       end
 
       it 'has one business_position' do
@@ -45,8 +45,8 @@ describe SortedLinks do
 
     context 'with one business position and one other position' do
       before do
-        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: create(:entity_org))
-        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: business)
+        Relationship.create!(category_id: RelationshipCategory.name_to_id[:position], entity: person, related: create(:entity_org))
+        Relationship.create!(category_id: RelationshipCategory.name_to_id[:position], entity: person, related: business)
       end
 
       it 'has one business_position' do
@@ -67,8 +67,8 @@ describe SortedLinks do
 
     context 'with two other positions' do
       before do
-        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: create(:entity_org))
-        Relationship.create!(category_id: Relationship::POSITION_CATEGORY, entity: person, related: create(:entity_org))
+        Relationship.create!(category_id: RelationshipCategory.name_to_id[:position], entity: person, related: create(:entity_org))
+        Relationship.create!(category_id: RelationshipCategory.name_to_id[:position], entity: person, related: create(:entity_org))
       end
 
       it 'has two other positions with heading "Positions"' do

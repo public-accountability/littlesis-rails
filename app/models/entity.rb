@@ -41,7 +41,7 @@ class Entity < ApplicationRecord
   has_many :relationships, through: :links
 
   has_many :hierarchy_relationships,
-           -> { where(category_id: Relationship::HIERARCHY_CATEGORY) },
+           -> { where(category_id: RelationshipCategory.name_to_id[:hierarchy]) },
            source: 'relationship',
            through: :links
 
@@ -532,7 +532,7 @@ class Entity < ApplicationRecord
 
   def total_usd_donations
     relationships
-      .where(category_id: Relationship::DONATION_CATEGORY, currency: 'usd')
+      .where(category_id: RelationshipCategory.name_to_id[:donation], currency: 'usd')
       .sum(:amount)
   end
 

@@ -20,19 +20,6 @@ class Relationship < ApplicationRecord
                     }
                   }
 
-  POSITION_CATEGORY = 1
-  EDUCATION_CATEGORY = 2
-  MEMBERSHIP_CATEGORY = 3
-  FAMILY_CATEGORY = 4
-  DONATION_CATEGORY = 5
-  TRANSACTION_CATEGORY = 6
-  LOBBYING_CATEGORY = 7
-  SOCIAL_CATEGORY = 8
-  PROFESSIONAL_CATEGORY = 9
-  OWNERSHIP_CATEGORY = 10
-  HIERARCHY_CATEGORY = 11
-  GENERIC_CATEGORY = 12
-
   BULK_LIMIT = 8
 
   ALL_CATEGORIES = [
@@ -159,7 +146,7 @@ class Relationship < ApplicationRecord
   end
 
   def self.category_display_name(cat_id)
-    return 'Transaction' if cat_id == TRANSACTION_CATEGORY
+    return 'Transaction' if cat_id == RelationshipCategory.name_to_id[:transaction]
 
     ALL_CATEGORIES[cat_id]
   end
@@ -358,9 +345,9 @@ class Relationship < ApplicationRecord
   end
 
   # creates category helpers: is_position? is_education? etc.
-  %w[POSITION EDUCATION MEMBERSHIP FAMILY DONATION TRANSACTION LOBBYING SOCIAL PROFESSIONAL OWNERSHIP HIERARCHY GENERIC].each do |category|
-    define_method "is_#{category.downcase}?" do
-      category_id == Relationship.const_get("#{category}_CATEGORY")
+  RelationshipCategory.name_to_id.each_pair do |name, id|
+    define_method "is_#{name}?" do
+      category_id == id
     end
   end
 

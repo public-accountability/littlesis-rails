@@ -179,7 +179,7 @@ describe 'Relationships Requests' do
       let(:entity2) { create(:entity_org, :with_org_name) }
 
       let(:transaction_relationship) do
-        Relationship.create!(category_id: Relationship::TRANSACTION_CATEGORY,
+        Relationship.create!(category_id: RelationshipCategory.name_to_id[:transaction],
                              entity: entity1,
                              related: entity2,
                              description1: 'Contractor',

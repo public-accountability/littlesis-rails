@@ -4,10 +4,10 @@
 
 module NetworkAnalysis
   HOPS = {
-    gives_labor_to:  { category_id: Relationship::POSITION_CATEGORY, is_reverse: false },
-    gets_labor_from: { category_id: Relationship::POSITION_CATEGORY, is_reverse: true  },
-    gives_money_to:  { category_id: Relationship::DONATION_CATEGORY, is_reverse: false },
-    gets_money_from: { category_id: Relationship::DONATION_CATEGORY, is_reverse: true  }
+    gives_labor_to:  { category_id: RelationshipCategory.name_to_id[:position], is_reverse: false },
+    gets_labor_from: { category_id: RelationshipCategory.name_to_id[:position], is_reverse: true  },
+    gives_money_to:  { category_id: RelationshipCategory.name_to_id[:donation], is_reverse: false },
+    gets_money_from: { category_id: RelationshipCategory.name_to_id[:donation], is_reverse: true  }
   }.freeze
 
   STATS = [:amount_sum, :connecting_id_count].freeze

@@ -101,12 +101,12 @@ describe Relationship, type: :model do
       it 'validates position relationship' do
         person = create(:entity_person)
         org = create(:entity_org)
-        rel = Relationship.new(category_id: 1, entity: person, related: org)
+        rel = Relationship.new(category_id: RelationshipCategory.name_to_id[:position], entity: person, related: org)
         expect(rel.valid?).to eq true
       end
 
-      it 'fails to validate bad HIERARCHY_CATEGORY relationship' do
-        rel = Relationship.new(category_id: 11, entity: person1, related: person2)
+      it 'fails to validate bad hierarchy relationship' do
+        rel = Relationship.new(category_id: RelationshipCategory.name_to_id[:hierarchy], entity: person1, related: person2)
         expect(rel.valid?).to eq false
         expect(rel.errors.full_messages[0]).to eql 'Category Hierarchy is not a valid category for Person to Person relationships'
       end
@@ -754,7 +754,7 @@ describe Relationship, type: :model do
     let(:person) { create(:entity_person) }
     let(:org) { create(:entity_org) }
     let(:rel) do
-      Relationship.create!(entity: person, related: org, category_id: Relationship::POSITION_CATEGORY)
+      Relationship.create!(entity: person, related: org, category_id: RelationshipCategory.name_to_id[:position])
     end
 
     it 'raises error if called on a model that is not deleted' do

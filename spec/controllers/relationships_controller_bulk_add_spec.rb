@@ -248,7 +248,7 @@ describe RelationshipsController, type: :controller do
 
         let(:params) do
           { 'entity1_id' => school.id,
-            'category_id' => Relationship::EDUCATION_CATEGORY,
+            'category_id' => RelationshipCategory.name_to_id[:education],
             'reference' => { 'url' => "https://example.com", 'name' => 'example.com' },
             'relationships' => [ {
                                    'name' => student.id,

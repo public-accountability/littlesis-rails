@@ -3,11 +3,11 @@
 module Oligrapher
   VERSION = '333015ac08d5766a2512f65fef29831b6851fd48'
 
-  DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
-                                      Relationship::EDUCATION_CATEGORY,
-                                      Relationship::MEMBERSHIP_CATEGORY,
-                                      Relationship::DONATION_CATEGORY,
-                                      Relationship::OWNERSHIP_CATEGORY]).freeze
+  DISPLAY_ARROW_CATEGORIES = Set.new([RelationshipCategory.name_to_id[:position],
+                                      RelationshipCategory.name_to_id[:education],
+                                      RelationshipCategory.name_to_id[:membership],
+                                      RelationshipCategory.name_to_id[:donation],
+                                      RelationshipCategory.name_to_id[:ownership]]).freeze
 
   def self.configuration(map:, current_user: nil, embed: false)
     is_owner = current_user.present? && map.user_id == current_user.id

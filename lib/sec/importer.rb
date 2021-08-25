@@ -28,7 +28,7 @@ module SEC
       attributes = {
         entity: reporting_owner_entity,
         related: @entity,
-        category_id: ::Relationship::POSITION_CATEGORY,
+        category_id: ::RelationshipCategory.name_to_id[:position],
         description1: documents.first[:title].presence,
         start_date: documents.first[:date_filed],
         is_current: nil,

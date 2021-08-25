@@ -108,7 +108,7 @@ describe 'Deleting an Entity', type: :model do
 
       it "restores the entity's relationships" do
         business_academic
-        rel = Relationship.create!(entity: entity, related: business_academic, category_id: Relationship::GENERIC_CATEGORY)
+        rel = Relationship.create!(entity: entity, related: business_academic, category_id: RelationshipCategory.name_to_id[:generic])
 
         expect { business_academic.soft_delete }
           .to change { Relationship.unscoped.find(rel.id).is_deleted }.to(true)
@@ -119,7 +119,7 @@ describe 'Deleting an Entity', type: :model do
 
       it "does not restore the entity's relationships" do
         business_academic
-        rel = Relationship.create!(entity: entity, related: business_academic, category_id: Relationship::GENERIC_CATEGORY)
+        rel = Relationship.create!(entity: entity, related: business_academic, category_id: RelationshipCategory.name_to_id[:generic])
 
         expect { business_academic.soft_delete }
           .to change { Relationship.unscoped.find(rel.id).is_deleted }.to(true)

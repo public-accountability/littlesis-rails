@@ -25,7 +25,7 @@ class ListInterlocksQuery
               array_to_string(array_agg(DISTINCT relationships.entity1_id), ',') degree1_ids
        FROM relationships
        LEFT JOIN entities ON (entities.id = relationships.entity2_id)
-       WHERE relationships.entity1_id IN ( #{entity_ids.join(',')} ) AND (relationships.category_id = #{Relationship::POSITION_CATEGORY} OR  relationships.category_id = #{Relationship::MEMBERSHIP_CATEGORY}) AND relationships.is_deleted is false
+       WHERE relationships.entity1_id IN ( #{entity_ids.join(',')} ) AND (relationships.category_id = #{RelationshipCategory.name_to_id[:position]} OR  relationships.category_id = #{RelationshipCategory.name_to_id[:membership]}) AND relationships.is_deleted is false
        GROUP BY relationships.entity2_id ) AS subquery
       INNER JOIN entities on entities.id = subquery.entity_id
       ORDER BY num desc

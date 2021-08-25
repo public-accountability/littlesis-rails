@@ -41,9 +41,9 @@ module Sapi
 
       def category_id
         if person&.jobtitle&.present?
-          ::Relationship::POSITION_CATEGORY
+          ::RelationshipCategory.name_to_id[:position]
         else
-          ::Relationship::GENERIC_CATEGORY
+          ::RelationshipCategory.name_to_id[:generic]
         end
       end
 
@@ -183,7 +183,7 @@ module Sapi
                                                   related: r.org.littlesis_entity,
                                                   category_id: r.category_id)
 
-      if littlesis_relationship.category_id == ::Relationship::POSITION_CATEGORY
+      if littlesis_relationship.category_id == ::RelationshipCategory.name_to_id[:position]
         if r.person.jobtitle.length > 100
           littlesis_relationship.description1 = r.person.jobtitle.tr(r.org.name, '').slice(0, 100)
         else

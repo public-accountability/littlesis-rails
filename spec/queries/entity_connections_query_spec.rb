@@ -12,7 +12,7 @@ describe EntityConnectionsQuery do
   let(:query) { EntityConnectionsQuery.new(entity1) }
 
   it 'includes fields "relationship_id" and "relationship_category_id"' do
-    query.category_id = Relationship::DONATION_CATEGORY
+    query.category_id = RelationshipCategory.name_to_id[:donation]
     query.order = :updated
     query.run
 
@@ -22,18 +22,18 @@ describe EntityConnectionsQuery do
 
   describe 'filtering by category' do
     specify do
-      query.category_id = Relationship::SOCIAL_CATEGORY
+      query.category_id = RelationshipCategory.name_to_id[:social]
       expect(query.run.size).to eq 2
     end
 
     specify do
-      query.category_id = Relationship::SOCIAL_CATEGORY
+      query.category_id = RelationshipCategory.name_to_id[:social]
       query.page = 2
       expect(query.run.size).to eq 0
     end
 
     specify do
-      query.category_id = Relationship::DONATION_CATEGORY
+      query.category_id = RelationshipCategory.name_to_id[:donation]
       query.order = :amount
       expect(query.run.size).to eq 1
     end
@@ -57,20 +57,20 @@ describe EntityConnectionsQuery do
 
     specify do
       query.excluded_ids = [entity3.id]
-      query.category_id = Relationship::SOCIAL_CATEGORY
+      query.category_id = RelationshipCategory.name_to_id[:social]
       expect(query.run.size).to eq 1
     end
 
     specify do
       query.excluded_ids = [entity2.id, entity3.id]
-      query.category_id = Relationship::SOCIAL_CATEGORY
+      query.category_id = RelationshipCategory.name_to_id[:social]
       expect(query.run.size).to eq 0
     end
   end
 
   describe 'accepts category ids as strings' do
     specify do
-      query.category_id = Relationship::DONATION_CATEGORY.to_s
+      query.category_id = RelationshipCategory.name_to_id[:donation].to_s
       expect(query.run.size).to eq 1
     end
   end
