@@ -16,154 +16,131 @@ class RelationshipDetails
     freeze
   end
 
+  # Calls the appropriate method in CategoryDetails below for the category
   def calculate_details
-    case @rel.category_id
-    when 1
-      position
-    when 2
-      education
-    when 3
-      membership
-      elected_term if @rel.us_legislator?
-    when 4
-      family
-    when 5
-      donation
-    when 6
-      transaction
-    when 7
-      lobbying
-    when 8
-      social
-    when 9
-      profession
-    when 10
-      ownership
-    when 11
-      hierarchy
-    when 12
-      generic
-    else
-      raise Exceptions::LittleSisError, 'Invalid relationship category id'
+    public_send @rel.category.name.downcase
+  end
+
+  concerning :CategoryDetails do
+    def position
+      title
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:is_board, 'Board member', @@bool)
+        .add_field(:is_executive, 'Executive', @@bool)
+        .add_field(:is_employee, 'Employee', @@bool)
+        .add_field(:compensation, 'Compensation', format_in_usd)
+        .add_field(:notes, 'Notes')
     end
-  end
 
-  def position
-    title
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:is_board, 'Board member', @@bool)
-      .add_field(:is_executive, 'Executive', @@bool)
-      .add_field(:is_employee, 'Employee', @@bool)
-      .add_field(:compensation, 'Compensation', format_in_usd)
-      .add_field(:notes, 'Notes')
-  end
+    def education
+      add_field(:description1, 'Type')
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:degree, 'Degree')
+        .add_field(:education_field, 'Field')
+        .add_field(:is_dropout, 'Is Dropout', @@bool)
+        .add_field(:notes, 'Notes')
+    end
 
-  def education
-    add_field(:description1, 'Type')
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:degree, 'Degree')
-      .add_field(:education_field, 'Field')
-      .add_field(:is_dropout, 'Is Dropout', @@bool)
-      .add_field(:notes, 'Notes')
-  end
+    def membership
+      title
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:membership_dues, 'Dues', format_in_usd)
+        .add_field(:notes, 'Notes')
 
-  def membership
-    title
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:membership_dues, 'Dues', format_in_usd)
-      .add_field(:notes, 'Notes')
-  end
+      elected_term if @rel.us_legislator?
+    end
 
-  def family
-    description_field(:description1, @rel.entity)
-    description_field(:description2, @rel.related)
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:notes, 'Notes')
-  end
+    def family
+      description_field(:description1, @rel.entity)
+      description_field(:description2, @rel.related)
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:notes, 'Notes')
+    end
 
-  def donation
-    add_field(:description1, 'Type')
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:amount, 'Amount', format_with_currency)
-      .add_field(:filings, filings_text)
-      .add_field(:goods, 'Goods')
-      .add_field(:notes, 'Notes')
-  end
+    def donation
+      add_field(:description1, 'Type')
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:amount, 'Amount', format_with_currency)
+        .add_field(:filings, filings_text)
+        .add_field(:goods, 'Goods')
+        .add_field(:notes, 'Notes')
+    end
 
-  def transaction
-    description_field(:description1, @rel.entity)
-      .description_field(:description2, @rel.related)
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:amount, 'Amount', format_with_currency)
-      .add_field(:goods, 'Goods')
-      .add_field(:notes, 'Notes')
-  end
+    def transaction
+      description_field(:description1, @rel.entity)
+        .description_field(:description2, @rel.related)
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:amount, 'Amount', format_with_currency)
+        .add_field(:goods, 'Goods')
+        .add_field(:notes, 'Notes')
+    end
 
-  def lobbying
-    add_field(:description1, 'Type')
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:amount, 'Amount', format_with_currency)
-      .add_field(:filings, 'LDA Filings')
-      .add_field(:notes, 'Notes')
-  end
+    def lobbying
+      add_field(:description1, 'Type')
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:amount, 'Amount', format_with_currency)
+        .add_field(:filings, 'LDA Filings')
+        .add_field(:notes, 'Notes')
+    end
 
-  def social
-    description_field(:description1, @rel.entity)
-      .description_field(:description2, @rel.related)
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:notes, 'Notes')
-  end
+    def social
+      description_field(:description1, @rel.entity)
+        .description_field(:description2, @rel.related)
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:notes, 'Notes')
+    end
 
-  def profession
-    description_field(:description1, @rel.entity)
-      .description_field(:description2, @rel.related)
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:notes, 'Notes')
-  end
+    def professional
+      description_field(:description1, @rel.entity)
+        .description_field(:description2, @rel.related)
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:notes, 'Notes')
+    end
 
-  def ownership
-    title
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:percent_stake, 'Percent Stake', @@percent)
-      .add_field(:shares_owned, 'Shares', @@human_int)
-      .add_field(:notes, 'Notes')
-  end
+    def ownership
+      title
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:percent_stake, 'Percent Stake', @@percent)
+        .add_field(:shares_owned, 'Shares', @@human_int)
+        .add_field(:notes, 'Notes')
+    end
 
-  def hierarchy
-    description_field(:description1, @rel.entity)
-      .description_field(:description2, @rel.related)
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:notes, 'Notes')
-  end
+    def hierarchy
+      description_field(:description1, @rel.entity)
+        .description_field(:description2, @rel.related)
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:notes, 'Notes')
+    end
 
-  def generic
-    description_field(:description1, @rel.entity)
-      .description_field(:description2, @rel.related)
-      .add_field(:start_date, 'Start Date')
-      .add_field(:end_date, 'End Date')
-      .add_field(:is_current, 'Is Current', @@bool)
-      .add_field(:notes, 'Notes')
+    def generic
+      description_field(:description1, @rel.entity)
+        .description_field(:description2, @rel.related)
+        .add_field(:start_date, 'Start Date')
+        .add_field(:end_date, 'End Date')
+        .add_field(:is_current, 'Is Current', @@bool)
+        .add_field(:notes, 'Notes')
+    end
   end
 
   def title
