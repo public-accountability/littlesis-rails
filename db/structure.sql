@@ -801,37 +801,6 @@ ALTER SEQUENCE public.common_names_id_seq OWNED BY public.common_names.id;
 
 
 --
--- Name: couples; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.couples (
-    id bigint NOT NULL,
-    entity_id bigint NOT NULL,
-    partner1_id bigint,
-    partner2_id bigint
-);
-
-
---
--- Name: couples_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.couples_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: couples_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.couples_id_seq OWNED BY public.couples.id;
-
-
---
 -- Name: custom_key; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4319,13 +4288,6 @@ ALTER TABLE ONLY public.common_names ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- Name: couples id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.couples ALTER COLUMN id SET DEFAULT nextval('public.couples_id_seq'::regclass);
-
-
---
 -- Name: custom_key id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5133,14 +5095,6 @@ ALTER TABLE ONLY public.common_names
 
 
 --
--- Name: couples couples_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.couples
-    ADD CONSTRAINT couples_pkey PRIMARY KEY (id);
-
-
---
 -- Name: custom_key custom_key_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5861,13 +5815,6 @@ ALTER TABLE ONLY public.web_requests
 
 
 --
--- Name: fec_contributions_name_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX fec_contributions_name_idx ON public.external_data_fec_contributions USING gin (to_tsvector('english'::regconfig, name));
-
-
---
 -- Name: idx_16388_index_active_storage_attachments_on_blob_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6082,27 +6029,6 @@ CREATE UNIQUE INDEX idx_16555_index_cmp_relationships_on_cmp_affiliation_id ON p
 --
 
 CREATE UNIQUE INDEX idx_16561_index_common_names_on_name ON public.common_names USING btree (name);
-
-
---
--- Name: idx_16568_index_couple_on_entity_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16568_index_couple_on_entity_id ON public.couples USING btree (entity_id);
-
-
---
--- Name: idx_16568_index_couple_on_partner1_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16568_index_couple_on_partner1_id ON public.couples USING btree (partner1_id);
-
-
---
--- Name: idx_16568_index_couple_on_partner2_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16568_index_couple_on_partner2_id ON public.couples USING btree (partner2_id);
 
 
 --
@@ -8289,6 +8215,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210726145559'),
 ('20210810192930'),
 ('20210810193020'),
-('20210810194132');
+('20210810194132'),
+('20210825171731');
 
 

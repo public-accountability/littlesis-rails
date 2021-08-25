@@ -453,38 +453,6 @@ class Entity < ApplicationRecord
   end
 
   ##
-  # Couple
-  #
-
-  def self.create_couple(name, partner1, partner2)
-    blurb = [partner1.blurb, partner2.blurb].compact.join('; ')
-    blurb = nil unless blurb.present?
-
-    e = create(
-      name: name,
-      blurb: blurb,
-      primary_ext: 'Couple',
-      last_user_id: APP_CONFIG['system_user_id']
-    )
-    e.couple.partner1_id = partner1.id
-    e.couple.partner2_id = partner2.id
-    e.couple.save
-    e
-  end
-
-  def self.find_couple(partner1_id, partner2_id)
-    joins(:couple).where("(couple.partner1_id = ? AND couple.partner2_id = ?) OR (couple.partner1_id = ? AND couple.partner2_id = ?)", partner1_id, partner2_id, partner2_id, partner1_id).first
-  end
-
-  def couples
-    Couple.where("couple.partner1_id = ? OR couple.partner2_id = ?", id, id)
-  end
-
-  def partners
-    couples.map { |c| c.partner1_id == id ? c.partner2 : c.partner1 }
-  end
-
-  ##
   # articles, addresses, references
   #
 

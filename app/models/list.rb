@@ -93,12 +93,6 @@ class List < ApplicationRecord
     user.permissions.list_permissions(self)[:editable]
   end
 
-  def entities_with_couples
-    # if entity on list is couple, replace it with individual entities
-    entity_ids = list_entities.joins("LEFT JOIN couple ON (couple.entity_id = ls_list_entity.entity_id)").select("IF(couple.id IS NULL, ls_list_entity.entity_id, NULL) AS entity_id, couple.partner1_id, couple.partner2_id").reduce([]) { |ary, row| ary.concat([row['entity_id'], row['partner1_id'], row['partner2_id']]) }.uniq.compact
-    Entity.where(id: entity_ids)
-  end
-
   def interlocks_hash
     list_entities = ListEntity.joins(:list).where(entity_id: entity_ids, ls_list: { is_deleted: false, is_admin: false }).where.not(list_id: id).limit(50000)
     list_entities.reduce({}) do |hash, le|
