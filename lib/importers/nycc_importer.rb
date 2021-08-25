@@ -35,7 +35,7 @@ module NYCCImporter
 
   def self.download_data
     unless DATA_FILE.exist?
-      File.write DATA_FILE, HTTParty.get(SOURCE_URL).body
+      File.write DATA_FILE, Net::HTTP.get(URI(SOURCE_URL))
     end
   end
 end
