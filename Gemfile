@@ -81,8 +81,6 @@ group :test, :development do
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.0'
   gem 'faker', '>= 2.13'
-  gem 'pry'
-  gem 'pry-byebug', require: false
   gem 'rails-controller-testing'
   gem 'rspec-rails', '>= 4.0.1'
 
