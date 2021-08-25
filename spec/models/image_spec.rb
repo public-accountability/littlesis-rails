@@ -204,29 +204,28 @@ describe Image, type: :model do
 
       it 'retrieves information from head if no extension found' do
         url = 'https://example.com/example_image'
-        head = double('HTTParty::Response head double')
-        expect(head).to receive(:success?).and_return true
+        head = double('HTTP Response Double')
+        expect(head).to receive(:is_a?).with(Net::HTTPSuccess).and_return true
         expect(head).to receive(:[]).with('content-type').and_return('image/jpg')
-        expect(HTTParty).to receive(:head).with(url).and_return(head)
+        expect(Utility).to receive(:head_request).with(url).and_return(head)
         expect(Image.file_ext_from(url)).to eql 'jpg'
       end
 
       it 'raises error if there is an invalid format' do
         url = 'https://example.com/example_image'
-        head = double('HTTParty::Response head double')
-        expect(head).to receive(:success?).and_return true
+        head = double('HTTP Response Double')
+        expect(head).to receive(:is_a?).with(Net::HTTPSuccess).and_return true
         expect(head).to receive(:[]).with('content-type').and_return('audio/mpeg3')
-        expect(HTTParty).to receive(:head).with(url).and_return(head)
+        expect(Utility).to receive(:head_request).with(url).and_return(head)
         expect { Image.file_ext_from(url) }
           .to raise_error { Image::InvalidFileExtensionError }
       end
 
       it 'raises error if request is a faliure' do
         url = 'https://example.com/example_image'
-        head = double('HTTParty::Response head double')
-        expect(head).to receive(:success?).and_return false
-        expect(HTTParty).to receive(:head).with(url).and_return(head)
-
+        head = double('HTTP Response Double')
+        expect(head).to receive(:is_a?).with(Net::HTTPSuccess).and_return(false)
+        expect(Utility).to receive(:head_request).with(url).and_return(head)
         expect { Image.file_ext_from(url) }
           .to raise_error { Image::RemoteImageRequestFailure }
       end

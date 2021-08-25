@@ -28,10 +28,8 @@ describe 'Images' do
     let(:image) { build(:image, entity: create(:entity_org)) }
 
     before do
-      allow(HTTParty).to receive(:get)
-                           .with(url, stream_body: true)
-                           .and_yield(image_data)
-                           .and_return(:success? => true)
+      allow(Utility).to receive(:stream_file)
+                          .and_return(double("HTTP Response", "is_a?": true))
       allow(Image).to receive(:new_from_url).and_return(image)
 
       visit concretize_new_entity_image_path(entity)

@@ -113,8 +113,8 @@ class Image < ApplicationRecord
     uri = URI(url_or_path)
     raise ImagePathMissingExtension if uri.scheme.nil?
 
-    head = HTTParty.head(url_or_path)
-    raise RemoteImageRequestFailure unless head.success?
+    head = Utility.head_request(url_or_path)
+    raise RemoteImageRequestFailure unless head.is_a?(Net::HTTPSuccess)
 
     mime_type = head['content-type'].downcase
 
@@ -127,11 +127,12 @@ class Image < ApplicationRecord
 
   def self.save_http_to_tmp(url)
     file_path = Rails.root.join('tmp', "#{Digest::MD5.hexdigest(url)}.#{file_ext_from(url)}").to_s
-    file = File.open(file_path, 'wb')
-    response = HTTParty.get(url, stream_body: true) { |fragment| file.write(fragment) }
-    return response.success? ? file_path : false
-  ensure
-    file.close
+    response = Utility.stream_file(url: url, path: file_path)
+    if response.is_a?(Net::HTTPSuccess)
+      file_path
+    else
+      false
+    end
   end
 
   def self.save_data_url_to_tmp(url)

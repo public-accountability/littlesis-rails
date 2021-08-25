@@ -58,8 +58,6 @@ gem 'selenium-webdriver', '>= 3.11.0'
 # Used by StringSimilarity
 gem 'text', '>= 1.3.1'
 
-gem 'httparty', '>= 0.16.2'
-
 # Track exceptions
 gem 'rollbar'
 
