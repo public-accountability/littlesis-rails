@@ -801,37 +801,6 @@ ALTER SEQUENCE public.common_names_id_seq OWNED BY public.common_names.id;
 
 
 --
--- Name: couples; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.couples (
-    id bigint NOT NULL,
-    entity_id bigint NOT NULL,
-    partner1_id bigint,
-    partner2_id bigint
-);
-
-
---
--- Name: couples_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.couples_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: couples_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.couples_id_seq OWNED BY public.couples.id;
-
-
---
 -- Name: custom_key; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1459,86 +1428,6 @@ CREATE SEQUENCE public.external_data_id_seq
 --
 
 ALTER SEQUENCE public.external_data_id_seq OWNED BY public.external_data.id;
-
-
---
--- Name: external_data_nyc_contributions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.external_data_nyc_contributions (
-    id bigint NOT NULL,
-    election smallint,
-    officecd character varying(2),
-    recipid text,
-    canclass character varying,
-    recipname text,
-    committee text,
-    filing smallint,
-    schedule text,
-    pageno numeric,
-    sequenceno numeric,
-    refno character varying,
-    date date,
-    refunddate date,
-    name text,
-    c_code text,
-    strno text,
-    strname text,
-    apartment text,
-    boroughcd character varying(1),
-    city text,
-    state text,
-    zip text,
-    occupation text,
-    empname text,
-    empstrno text,
-    empstrname text,
-    empcity text,
-    empstate text,
-    amnt numeric(15,2),
-    matchamnt numeric,
-    prevamnt numeric,
-    pay_method smallint,
-    intermno text,
-    intermname text,
-    intstrno text,
-    intstrnm text,
-    intaptno text,
-    intcity text,
-    intst text,
-    intzip text,
-    intempname text,
-    intempstno text,
-    intempstnm text,
-    intempcity text,
-    intempst text,
-    intoccupa text,
-    purposecd text,
-    exemptcd text,
-    adjtypecd text,
-    rr_ind text,
-    seg_ind text,
-    int_c_code text
-);
-
-
---
--- Name: external_data_nyc_contributions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.external_data_nyc_contributions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: external_data_nyc_contributions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.external_data_nyc_contributions_id_seq OWNED BY public.external_data_nyc_contributions.id;
 
 
 --
@@ -4319,13 +4208,6 @@ ALTER TABLE ONLY public.common_names ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- Name: couples id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.couples ALTER COLUMN id SET DEFAULT nextval('public.couples_id_seq'::regclass);
-
-
---
 -- Name: custom_key id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4442,13 +4324,6 @@ ALTER TABLE ONLY public.external_data_fec_committees ALTER COLUMN id SET DEFAULT
 --
 
 ALTER TABLE ONLY public.external_data_fec_contributions ALTER COLUMN id SET DEFAULT nextval('public.external_data_fec_contributions_id_seq'::regclass);
-
-
---
--- Name: external_data_nyc_contributions id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.external_data_nyc_contributions ALTER COLUMN id SET DEFAULT nextval('public.external_data_nyc_contributions_id_seq'::regclass);
 
 
 --
@@ -5133,14 +5008,6 @@ ALTER TABLE ONLY public.common_names
 
 
 --
--- Name: couples couples_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.couples
-    ADD CONSTRAINT couples_pkey PRIMARY KEY (id);
-
-
---
 -- Name: custom_key custom_key_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5266,14 +5133,6 @@ ALTER TABLE ONLY public.external_data_fec_committees
 
 ALTER TABLE ONLY public.external_data_fec_contributions
     ADD CONSTRAINT external_data_fec_contributions_pkey PRIMARY KEY (id);
-
-
---
--- Name: external_data_nyc_contributions external_data_nyc_contributions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.external_data_nyc_contributions
-    ADD CONSTRAINT external_data_nyc_contributions_pkey PRIMARY KEY (id);
 
 
 --
@@ -5861,13 +5720,6 @@ ALTER TABLE ONLY public.web_requests
 
 
 --
--- Name: fec_contributions_name_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX fec_contributions_name_idx ON public.external_data_fec_contributions USING gin (to_tsvector('english'::regconfig, name));
-
-
---
 -- Name: idx_16388_index_active_storage_attachments_on_blob_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6082,27 +5934,6 @@ CREATE UNIQUE INDEX idx_16555_index_cmp_relationships_on_cmp_affiliation_id ON p
 --
 
 CREATE UNIQUE INDEX idx_16561_index_common_names_on_name ON public.common_names USING btree (name);
-
-
---
--- Name: idx_16568_index_couple_on_entity_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16568_index_couple_on_entity_id ON public.couples USING btree (entity_id);
-
-
---
--- Name: idx_16568_index_couple_on_partner1_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16568_index_couple_on_partner1_id ON public.couples USING btree (partner1_id);
-
-
---
--- Name: idx_16568_index_couple_on_partner2_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_16568_index_couple_on_partner2_id ON public.couples USING btree (partner2_id);
 
 
 --
@@ -8289,6 +8120,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210726145559'),
 ('20210810192930'),
 ('20210810193020'),
-('20210810194132');
+('20210810194132'),
+('20210825171731');
 
 

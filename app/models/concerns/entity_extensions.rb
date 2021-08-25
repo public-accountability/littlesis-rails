@@ -41,7 +41,7 @@ module EntityExtensions
     'PublicIntellectual',
     'PublicOfficial',
     'Lawyer',
-    'Couple',
+    'Couple', # deprecated
     'ResearchInstitute',
     'GovernmentAdvisoryBody',
     'EliteConsensus'
@@ -58,15 +58,13 @@ module EntityExtensions
     'GovernmentBody',
     'BusinessPerson',
     'Lobbyist',
-    'PoliticalFundraising',
-    'Couple'
+    'PoliticalFundraising'
   ].freeze
 
   included do
     # extensions
     has_one :person, inverse_of: :entity, dependent: :destroy
     has_one :org, inverse_of: :entity, dependent: :destroy
-    has_one :couple, inverse_of: :entity, dependent: :destroy
     has_one :public_company, inverse_of: :entity, dependent: :destroy
     has_one :school, inverse_of: :entity, dependent: :destroy
     has_one :business_person, inverse_of: :entity, dependent: :destroy
@@ -118,10 +116,6 @@ module EntityExtensions
 
   def org?
     primary_ext == 'Org'
-  end
-
-  def couple?
-    primary_ext == 'Couple'
   end
 
   def school?
