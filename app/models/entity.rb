@@ -13,7 +13,7 @@ class Entity < ApplicationRecord
   # self.default_timezone = :local
   # self.skip_time_zone_conversion_for_attributes = [:created_at, :updated_at]
 
-  ThinkingSphinx::Callbacks.append(self, :behaviours => [:sql, :deltas])
+  ThinkingSphinx::Callbacks.append(self, :behaviours => [:real_time])
 
   EXCERPT_SIZE = 150
   PER_PAGE = 20
