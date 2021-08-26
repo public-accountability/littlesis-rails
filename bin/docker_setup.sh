@@ -12,6 +12,8 @@ apt-get update && apt-get upgrade -y && apt-get -y install \
 	                                        unzip \
 	                                        zip \
                                                 libsqlite3-dev \
+                                                libgtk-3-dev \
+                                                libdbus-glib-1-dev \
                                                 postgresql-client \
                                                 libmariadb-dev
 
