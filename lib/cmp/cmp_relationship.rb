@@ -60,7 +60,7 @@ module Cmp
 
     def basic_relationship_attributes
       {
-        category_id: Relationship::POSITION_CATEGORY,
+        category_id: RelationshipCategory.name_to_id[:position],
         entity: person_entity,
         related: org_entity
       }

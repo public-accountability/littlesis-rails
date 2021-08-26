@@ -19,36 +19,36 @@ module RelationshipDisplay
   # and after Entity two's name
   # Links are generated in the view.
   def description_sentence
-    case category_id
-    when Relationship::POSITION_CATEGORY
+    case RelationshipCategory.id_to_name[category_id]
+    when :position
       [ " #{has_had} a position#{title_in_parens}at ", "" ]
-    when Relationship::EDUCATION_CATEGORY
+    when :education
       [ " #{is_was} a student of ", ""]
-    when Relationship::MEMBERSHIP_CATEGORY
+    when :membership
       [ " #{is_was} a member of ", ""]
-    when Relationship::FAMILY_CATEGORY
+    when :family
       [ " and ", " #{are_were} in a family" ]
-    when Relationship::DONATION_CATEGORY
+    when :donation
       [ " gave money to ", ""]
-    when Relationship::TRANSACTION_CATEGORY
+    when :transaction
       [ " and ", " #{did_do} business" ]
-    when Relationship::LOBBYING_CATEGORY
+    when :lobbying
       [ " #{lobbies_lobbied} ", ""]
-    when Relationship::SOCIAL_CATEGORY
+    when :social
       if !description1.nil? and description1 == description2
         [ " and ", " #{are_were} #{description1.pluralize}" ]
       else
         [ " and ", " #{have_had} a social relationship" ]
       end
-    when Relationship::PROFESSIONAL_CATEGORY
+    when :professional
       if !description1.nil? and description1 == description2
         [ " and ", " #{are_were} #{description1.pluralize}" ]
       else
         [ " and ", " #{have_had} a professional relationship" ]
       end
-    when Relationship::OWNERSHIP_CATEGORY
+    when :ownership
       [ " #{is_was} an owner of ", ""]
-    when Relationship::HIERARCHY_CATEGORY
+    when :hierarchy
       [ " and ", " #{have_had} a hierarchical relationship" ]
     else
       [" and ", " #{have_had} a generic relationship"]

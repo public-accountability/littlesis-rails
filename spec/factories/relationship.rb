@@ -14,57 +14,57 @@ FactoryBot.define do
   end
 
   factory :generic_relationship, class: Relationship do
-    category_id { Relationship::GENERIC_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:generic] }
     id { generate(:relationship_id) }
   end
 
   factory :donation_relationship, class: Relationship do
-    category_id { Relationship::DONATION_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:donation] }
     id { generate(:relationship_id) }
   end
 
   factory :education_relationship, class: Relationship do
-    category_id { Relationship::EDUCATION_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:education] }
     id { generate(:relationship_id) }
   end
 
   factory :membership_relationship, class: Relationship do
-    category_id { Relationship::MEMBERSHIP_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:membership] }
   end
 
   factory :family_relationship, class: Relationship do
-    category_id { Relationship::FAMILY_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:family] }
   end
 
   factory :social_relationship, class: Relationship do
-    category_id { Relationship::SOCIAL_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:social] }
     id { generate(:relationship_id) }
   end
 
   factory :position_relationship, class: Relationship do
     entity1_id { 100 }
     entity2_id { 200 }
-    category_id { Relationship::POSITION_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:position] }
   end
 
   factory :transaction_relationship, class: Relationship do
-    category_id { Relationship::TRANSACTION_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:transaction] }
   end
 
   factory :lobbying_relationship, class: Relationship do
-    category_id { Relationship::LOBBYING_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:lobbying] }
   end
 
   factory :professional_relationship, class: Relationship do
-    category_id { Relationship::PROFESSIONAL_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:professional] }
   end
   
   factory :ownership_relationship, class: Relationship do
-    category_id { Relationship::OWNERSHIP_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:ownership] }
   end
 
   factory :hierarchy_relationship, class: Relationship do
-    category_id { Relationship::HIERARCHY_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:hierarchy] }
   end
 
   factory :relationship, class: Relationship do
@@ -75,11 +75,11 @@ FactoryBot.define do
 
   factory :nys_donation_relationship, class: Relationship do
     description1 { 'NYS Campaign Contribution' }
-    category_id { Relationship::DONATION_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:donation] }
   end
 
   factory :federal_donation_relationship, class: Relationship do
     description1 { 'Campaign Contribution' }
-    category_id { Relationship::DONATION_CATEGORY }
+    category_id { RelationshipCategory.name_to_id[:donation] }
   end
 end

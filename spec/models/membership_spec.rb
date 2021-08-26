@@ -10,11 +10,11 @@ describe Membership do
 
     before do
       Relationship
-        .create!(category_id: Relationship::MEMBERSHIP_CATEGORY, entity: elected, related: us_senate)
+        .create!(category_id: RelationshipCategory.name_to_id[:membership], entity: elected, related: us_senate)
         .tap { |relationship| relationship.membership.update!(elected_term: elected_term_hash) }
 
       Relationship
-        .create!(category_id: Relationship::MEMBERSHIP_CATEGORY, entity: elected, related: create(:entity_org))
+        .create!(category_id: RelationshipCategory.name_to_id[:membership], entity: elected, related: create(:entity_org))
     end
 
     specify do

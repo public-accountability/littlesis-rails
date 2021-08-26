@@ -159,7 +159,7 @@ class Relationship < ApplicationRecord
   end
 
   def self.category_display_name(cat_id)
-    return 'Transaction' if cat_id == TRANSACTION_CATEGORY
+    return 'Transaction' if cat_id == RelationshipCategory.name_to_id[:transaction]
 
     ALL_CATEGORIES[cat_id]
   end

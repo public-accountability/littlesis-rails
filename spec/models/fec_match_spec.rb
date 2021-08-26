@@ -4,7 +4,7 @@ describe FECMatch do
   let(:fec_match) { build(:fec_match, recipient: pac, donor: donor) }
 
   let(:existing_relationship) do
-    Relationship.create!(category_id: Relationship::DONATION_CATEGORY,
+    Relationship.create!(category_id: RelationshipCategory.name_to_id[:donation],
                          entity: fec_match.donor,
                          related: pac,
                          description1: 'Campaign Contribution',

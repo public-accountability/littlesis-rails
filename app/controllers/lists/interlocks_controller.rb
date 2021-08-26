@@ -5,7 +5,7 @@ module Lists
     include ListPermissions
 
     OPTIONS = {
-      category_ids: [Relationship::POSITION_CATEGORY, Relationship::MEMBERSHIP_CATEGORY],
+      category_ids: [RelationshipCategory.name_to_id[:position], RelationshipCategory.name_to_id[:membership]],
       order: 2,
       degree1_ext: 'Person'
     }.freeze
@@ -51,9 +51,9 @@ module Lists
                    when 'other_orgs'
                      OPTIONS.merge(exclude_degree2_types: %w[Business GovernmentBody])
                    when 'giving'
-                     OPTIONS.merge(category_ids: [Relationship::DONATION_CATEGORY], sort: :amount)
+                     OPTIONS.merge(category_ids: [RelationshipCategory.name_to_id[:donation]], sort: :amount)
                    when 'funding'
-                     OPTIONS.merge(category_ids: [Relationship::DONATION_CATEGORY], order: 1,
+                     OPTIONS.merge(category_ids: [RelationshipCategory.name_to_id[:donation]], order: 1,
                                    sort: :amount)
                    end
     end

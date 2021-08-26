@@ -705,7 +705,7 @@ describe EntityMerger, :merging_helper do
       it 'stores potential duplicate relationship' do
         expect(merger.potential_duplicate_relationships.length).to eq 1
         r = merger.potential_duplicate_relationships.first
-        expect(r.triplet).to eql([dest_org.id, other_org.id, Relationship::MEMBERSHIP_CATEGORY])
+        expect(r.triplet).to eql([dest_org.id, other_org.id, RelationshipCategory.name_to_id[:membership]])
       end
     end
 

@@ -23,7 +23,7 @@ module FEC
       ExternalData
         .fec_contribution
         .create!(dataset_id: self.SUB_ID, data: attributes)
-        .create_external_relationship!(dataset: :fec_contribution, category_id: Relationship::DONATION_CATEGORY)
+        .create_external_relationship!(dataset: :fec_contribution, category_id: RelationshipCategory.name_to_id[:donation])
     end
 
     def self.large_transactions

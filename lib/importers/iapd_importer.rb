@@ -60,9 +60,9 @@ class IapdImporter
   def self.process_schedule_a
     ExternalData.iapd_schedule_a.find_each do |external_data|
       category_id = if external_data.data_wrapper.owner_primary_ext == 'Person'
-                      Relationship::POSITION_CATEGORY
+                      RelationshipCategory.name_to_id[:position]
                     else
-                      Relationship::OWNERSHIP_CATEGORY
+                      RelationshipCategory.name_to_id[:ownership]
                     end
 
       ExternalRelationship
