@@ -2,21 +2,24 @@ require 'rake'
 
 module SphinxTestHelper
   def setup_sphinx(*indexes)
-    ThinkingSphinx::Deltas.suspend!
-    yield if block_given?
-    Lilsis::Application.load_tasks
-    Rake::Task['ts:configure'].invoke
     ThinkingSphinx::Test.init
-    ThinkingSphinx::Test.index
-    # indexes.each { |idx| ThinkingSphinx::Test.index idx }
-    ThinkingSphinx::Test.start index: false
+    ThinkingSphinx::Test.start :index => false
+
+    # ThinkingSphinx::Deltas.suspend!
+    # yield if block_given?
+    # Lilsis::Application.load_tasks
+    # Rake::Task['ts:configure'].invoke
+    # ThinkingSphinx::Test.init
+    # ThinkingSphinx::Test.index
+    # # indexes.each { |idx| ThinkingSphinx::Test.index idx }
+    # ThinkingSphinx::Test.start index: false
   end
 
   def teardown_sphinx
     ThinkingSphinx::Test.stop
     ThinkingSphinx::Test.clear
-    yield if block_given?
-    ThinkingSphinx::Deltas.resume!
+    # yield if block_given?
+    # ThinkingSphinx::Deltas.resume!
   end
 
   def delete_entity_tables

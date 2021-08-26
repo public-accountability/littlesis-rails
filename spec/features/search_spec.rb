@@ -1,5 +1,7 @@
 describe 'Search', :sphinx, js: true do
   before do
+    setup_sphinx
+
     create(:finance_tag)
     create(:real_estate_tag)
     create(:nyc_tag)
@@ -15,8 +17,6 @@ describe 'Search', :sphinx, js: true do
     entities[1].add_tag('finance')
     entities[1].add_tag('real-estate')
     entities[2].add_tag('nyc')
-
-    setup_sphinx
   end
 
   after do
