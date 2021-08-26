@@ -16,6 +16,8 @@ Rails.application.configure do
   # just for the purpose of running a single test. If you are using a tool that
   # preloads Rails for running tests, you may have to set it to true.
   config.eager_load = false
+  config.before_initialize {|app| app.config.paths.add 'app/models/relationship_category', eager_load: true}
+
   # config.enable_dependency_loading = true
 
   Lilsis::Application.default_url_options[:host] = 'test.host'
