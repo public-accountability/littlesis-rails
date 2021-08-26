@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-# rubocop:disable Naming/PredicateName, Style/StringLiterals
+require Rails.root.join('app/models/relationship_category')
 
+# rubocop:disable Naming/PredicateName, Style/StringLiterals
 class Relationship < ApplicationRecord
   include SoftDelete
   include Referenceable

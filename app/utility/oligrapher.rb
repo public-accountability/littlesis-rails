@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require Rails.root.join('app/models/relationship_category')
+
 module Oligrapher
   VERSION = '333015ac08d5766a2512f65fef29831b6851fd48'
 

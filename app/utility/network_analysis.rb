@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/MethodLength
+require Rails.root.join('app/models/relationship_category')
 
+# rubocop:disable Metrics/MethodLength
 module NetworkAnalysis
   HOPS = {
     gives_labor_to:  { category_id: RelationshipCategory.name_to_id[:position], is_reverse: false },
