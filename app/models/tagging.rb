@@ -29,7 +29,6 @@ class Tagging < ApplicationRecord
   def populate_to_sphinx
     return unless tagable_class == 'Entity'
 
-    # ThinkingSphinx::RealTime::Callbacks::RealTimeCallbacks.new(:entity).after_save(self)
     ThinkingSphinx::RealTime::Callbacks::RealTimeCallbacks
       .new(:entity, [:tagable])
       .after_save(self)

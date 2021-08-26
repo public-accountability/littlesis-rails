@@ -53,20 +53,6 @@ describe 'Entity Search', :sphinx, type: :request do
   end
 
   describe 'Limiting search by tag' do
-    def request_for_tag(query, tags)
-      get '/search/entity', params: { q: query, tags: tags }
-    end
-
-    def response_has_n_results(n)
-      expect(response).to have_http_status :ok
-      expect(json.length).to eq n
-    end
-
-    def response_names_eql(*names)
-      response_names = json.map { |e| e['name'] }.to_set
-      expect(response_names).to eql names.to_set
-    end
-
     it 'returns both apple entities when searching for oil tag' do
       get '/search/entity', params: { q: 'apple', tags: 'oil' }
       expect(response).to have_http_status :ok
@@ -76,22 +62,23 @@ describe 'Entity Search', :sphinx, type: :request do
 
     it 'returns only apple org when searching for nyc tag' do
       get '/search/entity', params: { q: 'apple', tags: 'nyc' }
-      response_has_n_results 1
-      response_names_eql 'apple org'
+      expect(response).to have_http_status :ok
+      expect(json.length).to eq 1
+      expect(json.map { |e| e['name'] }).to eq ['apple org']
     end
 
     it 'returns only apple person when searching for finance tag by name' do
-      request_for_tag 'apple', 'finance'
-      response_has_n_results 1
-      response_names_eql 'apple person'
+      get '/search/entity', params: { q: 'apple', tags: 'finance' }
+      expect(response).to have_http_status :ok
+      expect(json.length).to eq 1
+      expect(json.map { |e| e['name'] }).to eq ['apple person']
     end
 
     it 'returns only apple person when searching for finance tag by id' do
-      request_for_tag 'apple', '3'
-      response_has_n_results 1
-      response_names_eql 'apple person'
+      get '/search/entity', params: { q: 'apple', tags: '3' }
+      expect(response).to have_http_status :ok
+      expect(json.length).to eq 1
+      expect(json.map { |e| e['name'] }).to eq ['apple person']
     end
   end
 end
-
-# rubocop:enable RSpec/MultipleExpectations, RSpec/BeforeAfterAll
