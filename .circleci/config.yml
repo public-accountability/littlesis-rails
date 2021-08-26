@@ -33,7 +33,7 @@ jobs:
           paths:
             - vendor/bundle
 
-      - run: bundle exec rake db:reset
+      - run: bundle exec rake db:schema:load
       - run: bundle exec rake tmp:clear
 
       - restore_cache:
