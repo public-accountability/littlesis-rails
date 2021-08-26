@@ -14,6 +14,7 @@ class Tagging < ApplicationRecord
   belongs_to :tag
 
   after_save :update_tagable_timestamp
+  after_save :populate_to_sphinx
 
   # TODO: replace this with touch_by
   def update_tagable_timestamp(last_user_id = APP_CONFIG['system_user_id'])
@@ -22,5 +23,15 @@ class Tagging < ApplicationRecord
     else
       tagable.update(last_user_id: last_user_id)
     end
+  end
+
+  # see https://freelancing-gods.com/thinking-sphinx/v5/indexing.html#callbacks
+  def populate_to_sphinx
+    return unless tagable_class == 'Entity'
+
+    # ThinkingSphinx::RealTime::Callbacks::RealTimeCallbacks.new(:entity).after_save(self)
+    ThinkingSphinx::RealTime::Callbacks::RealTimeCallbacks
+      .new(:entity, [:tagable])
+      .after_save(self)
   end
 end
