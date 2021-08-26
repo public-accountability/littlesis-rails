@@ -91,13 +91,12 @@ feature 'Entity page', type: :feature, js: true do
     end
 
     describe 'Add entities to lists', :sphinx do
-      let!(:list) { create(:list, name: 'Objectified people') }
-
-      before { setup_sphinx { list } }
+      before { setup_sphinx }
 
       after { teardown_sphinx }
 
       scenario 'user searches for the list and adds the entity to it' do
+        create(:list, name: 'Objectified people')
         visit person_path(person)
 
         find('#sidebar-lists-container .select2').click
