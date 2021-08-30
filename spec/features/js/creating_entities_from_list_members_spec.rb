@@ -5,10 +5,9 @@ feature 'Creating entities from list members page', :sphinx, type: :feature, js:
   let(:mucho) { create(:entity_person, name: 'Mucho Maas') }
 
   before do
-    setup_sphinx do
-      [oedipa, mucho].each do |person|
-        ListEntity.create!(list_id: list.id, entity_id: person.id)
-      end
+    setup_sphinx
+    [oedipa, mucho].each do |person|
+      ListEntity.create!(list_id: list.id, entity_id: person.id)
     end
 
     login_as list_owner, scope: :user

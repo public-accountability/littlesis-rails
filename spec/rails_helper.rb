@@ -75,8 +75,6 @@ RSpec.configure do |config|
   # DatabaseCleaner actually handles the transactions.
   config.use_transactional_fixtures = false
 
-  # DatabaseCleaner.strategy = :transaction
-
   config.before(:each) do |example|
     if example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
@@ -88,9 +86,6 @@ RSpec.configure do |config|
     ThinkingSphinx::Configuration.instance.settings['real_time_callbacks'] = false
   end
 
-  # For transaction strategy, start the database cleaner before each test start
-  # Note that some individual tests also depend on local invocations of DatabaseCleaner
-  # within before(:all) blocks etc.
   config.before(:each) do
     DatabaseCleaner.start
   end
