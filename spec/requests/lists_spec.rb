@@ -183,14 +183,13 @@ describe 'List Requests' do
   describe 'search', :sphinx do
     before do
       setup_sphinx
-      create(:list, name: 'my interesting list').tap do |l|
-        ListEntity.create(list_id: l.id, entity_id: create(:entity_person, name: 'Angela Merkel').id)
-      end
+      list = create(:list, name: 'my interesting list')
+      ListEntity.create(list_id: list.id, entity_id: create(:entity_person, name: 'Angela Merkel').id)
 
       create(:list, name: 'some other list')
     end
 
-    after  do
+    after do
       teardown_sphinx
     end
 
