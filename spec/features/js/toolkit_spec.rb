@@ -40,7 +40,6 @@ feature 'Editable Toolkit Pages' do
 
         click_button 'Update'
 
-        visit toolkit_display_path(toolkit_page.name)
         page_has_selector 'h1', text: 'I Am the Main Title'
         page_has_selector 'h2', text: 'I Am a Subhead'
       end

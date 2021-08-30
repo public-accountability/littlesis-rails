@@ -76,7 +76,6 @@ feature 'Entity page', :sphinx, type: :feature, js: true do
         find('#entity-tags-modal .modal-header').click
 
         click_on 'Update'
-        visit person_path(person)
         expect(page).to have_css('#tags-container li', count: 2)
       end
 
@@ -89,6 +88,7 @@ feature 'Entity page', :sphinx, type: :feature, js: true do
         find('.select2-selection__choice[title="finance"] .select2-selection__choice__remove').click
         find('#entity-tags-modal .modal-header').click
         find('#entity-tags-modal .btn[type="submit"]').click
+
         expect(page).to have_css('#tags-container li', count: 0)
 
       end
