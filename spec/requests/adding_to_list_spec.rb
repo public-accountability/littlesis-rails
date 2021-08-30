@@ -1,4 +1,4 @@
-describe 'adding to lists' do
+describe 'adding to lists', :sphinx do
   let(:user) { create_basic_user }
   let(:public_company) { create(:public_company_entity) }
   let(:params) { { id: public_company.id, list_id: list.id } }

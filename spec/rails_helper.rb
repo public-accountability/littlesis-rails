@@ -83,6 +83,9 @@ RSpec.configure do |config|
     else
       DatabaseCleaner.strategy = :transaction
     end
+
+    # see SphinxTestHelper#setup_sphinx
+    ThinkingSphinx::Configuration.instance.settings['real_time_callbacks'] = false
   end
 
   # For transaction strategy, start the database cleaner before each test start

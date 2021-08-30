@@ -1,4 +1,8 @@
-feature 'Entity page', type: :feature, js: true do
+feature 'Entity page', :sphinx, type: :feature, js: true do
+  before { setup_sphinx }
+
+  after { teardown_sphinx }
+
   context 'with an entity with a summary' do
     let(:entity) { create(:entity_person, summary: Faker::Lorem.paragraph(sentence_count: 10)) }
 

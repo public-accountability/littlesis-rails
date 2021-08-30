@@ -181,18 +181,17 @@ describe 'List Requests' do
   end
 
   describe 'search', :sphinx do
-    before(:all) do # rubocop:disable RSpec/BeforeAfterAll
-      setup_sphinx do
-        create(:list, name: 'my interesting list').tap do |l|
-          ListEntity.create(list_id: l.id, entity_id: create(:entity_person, name: 'Angela Merkel').id)
-        end
-
-        create(:list, name: 'some other list')
+    before do
+      setup_sphinx
+      create(:list, name: 'my interesting list').tap do |l|
+        ListEntity.create(list_id: l.id, entity_id: create(:entity_person, name: 'Angela Merkel').id)
       end
+
+      create(:list, name: 'some other list')
     end
 
-    after(:all) do # rubocop:disable RSpec/BeforeAfterAll
-      teardown_sphinx { delete_entity_tables }
+    after  do
+      teardown_sphinx
     end
 
     describe 'finding lists by name' do
