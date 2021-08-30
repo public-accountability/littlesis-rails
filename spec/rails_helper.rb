@@ -40,6 +40,10 @@ Capybara.javascript_driver = :headless_firefox
 Capybara.javascript_driver = :headless_chrome if ENV['LITTLESIS_USE_CHROME']
 Capybara.javascript_driver = :headless_firefox if ENV['LITTLESIS_USE_FIREFOX']
 
+if ENV['CIRCLECI']
+  Capybara.default_max_wait_time = 10
+end
+
 RSpec.configure do |config|
   config.expect_with :rspec
   config.mock_with :rspec
