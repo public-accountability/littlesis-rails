@@ -15,6 +15,7 @@ class Tagging < ApplicationRecord
 
   after_save :update_tagable_timestamp
   after_save :populate_to_sphinx
+  after_destroy :populate_to_sphinx
 
   # TODO: replace this with touch_by
   def update_tagable_timestamp(last_user_id = APP_CONFIG['system_user_id'])
