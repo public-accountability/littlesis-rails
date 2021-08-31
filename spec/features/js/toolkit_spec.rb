@@ -38,7 +38,7 @@ feature 'Editable Toolkit Pages' do
         find(:css, '.trix-button--icon-heading-2').click
         content_field.send_keys 'I Am a Subhead', :enter
 
-        click_button 'Update'
+        find(:css, 'input.btn[type="submit"]').click
 
         page_has_selector 'h1', text: 'I Am the Main Title'
         page_has_selector 'h2', text: 'I Am a Subhead'
