@@ -26,7 +26,7 @@ feature 'Editable Toolkit Pages' do
     context 'with an existing toolkit page' do
       let(:toolkit_page) { create(:toolkit_page, content: '') }
 
-      scenario 'Editing the toolkit page' do
+      xit 'Editing the toolkit page' do
         visit toolkit_edit_path(toolkit_page.name)
 
         page_has_selector 'h1', text: "Editing: #{toolkit_page.name}"
@@ -38,7 +38,6 @@ feature 'Editable Toolkit Pages' do
         find(:css, '.trix-button--icon-heading-2').click
         content_field.send_keys 'I Am a Subhead', :enter
 
-        sleep 0.25
         find('input.btn[type="submit"]').click
 
         page_has_selector 'h1', text: 'I Am the Main Title'
@@ -46,7 +45,7 @@ feature 'Editable Toolkit Pages' do
       end
     end
 
-    xit 'Creating a new toolkit page' do
+    it 'Creating a new toolkit page' do
       original_page_count = ToolkitPage.count
       visit toolkit_new_path
       page_has_selector 'h1', text: "Create a new toolkit page"
@@ -54,7 +53,7 @@ feature 'Editable Toolkit Pages' do
 
       fill_in 'toolkit_page_name', with: page_name
       fill_in 'toolkit_page_title', with: page_title
-      click_button 'submit'
+      find('input.btn[type="submit"]').click
 
       expect(ToolkitPage.count).to eql(original_page_count + 1)
 
