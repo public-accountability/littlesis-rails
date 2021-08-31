@@ -1,5 +1,3 @@
-# rubocop:disable RSpec/BeforeAfterAll, RSpec/InstanceVariable, RSpec/EmptyExampleGroup
-
 describe 'Maps', :sphinx, type: :request do
   describe 'redirecting version 3 map' do
     let(:map) { create(:network_map, user: create(:user), oligrapher_version: 3) }
@@ -22,15 +20,14 @@ describe 'Maps', :sphinx, type: :request do
   end
 
   describe 'oligrapher search api' do
-    before(:all) do
-      setup_sphinx 'entity_core' do
-        @apple_corp = create(:entity_org, name: 'apple corp')
-        @banana_corp = create(:entity_org, name: 'banana! corp')
-      end
+    before do
+      setup_sphinx
+      @apple_corp = create(:entity_org, name: 'apple corp')
+      @banana_corp = create(:entity_org, name: 'banana! corp')
     end
 
-    after(:all) do
-      teardown_sphinx { delete_entity_tables }
+    after do
+      teardown_sphinx
     end
 
     describe 'find nodes' do
@@ -64,5 +61,3 @@ describe 'Maps', :sphinx, type: :request do
     end
   end
 end
-
-# rubocop:enable RSpec/BeforeAfterAll, RSpec/InstanceVariable, RSpec/EmptyExampleGroup

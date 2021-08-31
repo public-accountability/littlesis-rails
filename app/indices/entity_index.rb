@@ -1,15 +1,15 @@
-ThinkingSphinx::Index.define :entity, :with => :active_record, :delta => ThinkingSphinx::Deltas::DelayedDelta do
+ThinkingSphinx::Index.define :entity, :with => :real_time do
   indexes name, sortable: true
   indexes blurb
   indexes summary
-  indexes aliases.name, as: :aliases
+  indexes also_known_as_index, as: :aliases
   indexes person.name_nick, as: :name_nick
 
-  has primary_ext
-  has is_deleted, facet: true
-  has last_user_id, facet: true
-  has updated_at
-  has link_count
-  has taggings.tag_id, as: :tag_ids, facet: true
-  has locations.region, as: :regions, facet: true
+  has primary_ext, type: :string
+  has is_deleted, type: :boolean
+  has last_user_id, type: :integer
+  has updated_at, type: :timestamp
+  has link_count, type: :integer
+  has tag_ids, as: :tag_ids, multi: true, type: :integer
+  has region_numbers, as: :regions, multi: true, type: :integer
 end

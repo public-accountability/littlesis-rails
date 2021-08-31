@@ -1,22 +1,24 @@
 describe 'Search', :sphinx, js: true do
   before do
+    setup_sphinx
+
     create(:finance_tag)
     create(:real_estate_tag)
     create(:nyc_tag)
 
-    entities = [
-      create(:entity_org, name: 'apple org'),
-      create(:entity_person, name: 'apple person'),
-      create(:entity_org, name: 'banana! corp')
-    ]
+    create(:entity_org, name: 'apple org').tap do |e|
+      e.add_tag('finance')
+      e.add_tag('nyc')
+    end
 
-    entities[0].add_tag('finance')
-    entities[0].add_tag('nyc')
-    entities[1].add_tag('finance')
-    entities[1].add_tag('real-estate')
-    entities[2].add_tag('nyc')
+    create(:entity_person, name: 'apple person').tap do |e|
+      e.add_tag('finance')
+      e.add_tag('real-estate')
+    end
 
-    setup_sphinx
+    create(:entity_org, name: 'banana! corp').tap do |e|
+      e.add_tag('nyc')
+    end
   end
 
   after do
@@ -24,8 +26,6 @@ describe 'Search', :sphinx, js: true do
   end
 
   describe 'searching for bananas' do
-    let(:lists) { [create(:open_list, name: 'Green Bananas')] }
-
     it 'finds a single entity' do
       visit '/search?q=banana'
       expect(page.all('.entity-search-result').length).to eq 1
@@ -39,8 +39,11 @@ describe 'Search', :sphinx, js: true do
     end
 
     it 'Finds entity and list' do
-      expect(List).to receive(:search).once.and_return(lists)
+      list = create(:open_list, name: 'Green Banana')
+      list.add_entity(create(:entity_org))
+
       visit '/search?q=banana'
+
       expect(page.all('.entity-search-result').length).to eq 1
       expect(page).to have_selector 'h3', text: 'Lists'
     end

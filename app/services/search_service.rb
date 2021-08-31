@@ -36,7 +36,7 @@ class SearchService
       "@(name,description) #{@escaped_query}",
       per_page: 50,
       with: { is_deleted: false, is_admin: list_is_admin },
-      without: { access: Permissions::ACCESS_PRIVATE, entity_count: 0 },
+      without: { access: Permissions::ACCESS_PRIVATE },
       order: "is_featured DESC"
     )
   end
@@ -57,7 +57,7 @@ class SearchService
   # Removes the words "and", "the", and "of" from the query, except when they
   # appear within quoted phrases.
   #
-  # e.g. the input query [university of california "school of law"] 
+  # e.g. the input query [university of california "school of law"]
   # should result in [university california "school of law"]
   def clean(query)
     # second argument to split() keeps trailing nil array elements

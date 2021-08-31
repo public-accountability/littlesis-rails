@@ -43,7 +43,7 @@ gem 'webpacker', '>= 4.0.2'
 
 # Search
 gem 'thinking-sphinx', '~> 5.1'
-gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_delta'
+# gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_delta'
 
 # handle currencies etc
 gem 'money'

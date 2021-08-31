@@ -16,7 +16,7 @@ class NyDisclosure < ApplicationRecord
   validates :transaction_id, presence: true
   validates :schedule_transaction_date, presence: true
 
-  ThinkingSphinx::Callbacks.append(self, :behaviours => [:sql, :deltas])
+  # ThinkingSphinx::Callbacks.append(self, :behaviours => [:real_time])
 
   def full_name
     return corp_name if corp_name.present?

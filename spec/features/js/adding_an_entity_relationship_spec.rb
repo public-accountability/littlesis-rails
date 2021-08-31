@@ -4,11 +4,8 @@ feature 'Adding an entity relationship', :sphinx, type: :feature, js: true do
   let(:entity2) { create(:entity_person, name: 'Graeme Glamp') }
 
   before do
-    setup_sphinx do
-      entity
-      entity2
-    end
-
+    setup_sphinx
+    [entity, entity2]
     login_as user, scope: :user
     visit person_path(entity)
   end

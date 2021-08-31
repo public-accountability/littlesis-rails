@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/InstanceVariable, RSpec/NamedSubject, RSpec/NestedGroups
-
 describe EntityMatcher, :sphinx do
   def result_person(*args)
     EntityMatcher::EvaluationResult::Person.new.tap do |er|
@@ -17,35 +15,29 @@ describe EntityMatcher, :sphinx do
 
   describe 'Search' do
     # creates a sample set of 5 people: 2 Vibes, 2 Traverses, and 1 Chum of chance
-    before(:all) do
-      setup_sphinx 'entity_core' do
-        @chum = EntitySpecHelpers.chums(num: 1).first
-        @chum.aliases.create!(name: 'Louis Deschamps')
-        @chum.person.update!(name_nick: 'Balloonist')
-        @entities = EntitySpecHelpers.bad_vibes(num: 2) + EntitySpecHelpers.traverses(num: 2) + Array.wrap(@chum)
-      end
+    before do
+      setup_sphinx
+      @chum = EntitySpecHelpers.chums(num: 1).first
+      @chum.aliases.create!(name: 'Louis Deschamps')
+      @chum.person.update!(name_nick: 'Balloonist')
+      @entities = EntitySpecHelpers.bad_vibes(num: 2) + EntitySpecHelpers.traverses(num: 2) + Array.wrap(@chum)
     end
 
-    after(:all) { teardown_sphinx { delete_entity_tables } }
+    after do
+      teardown_sphinx
+    end
 
     describe 'searching for a chum' do
-      def self.expect_to_find_the_chum
-        specify do
-          expect(subject.length).to eq 1
-          expect(subject.first).to eq @chum
-        end
+      it 'finds by alias' do
+        subject = EntityMatcher::Search.by_name('Deschamps', primary_ext: 'Person')
+        expect(subject.length).to eq 1
+        expect(subject.first).to eq @chum
       end
 
-      describe 'finds by alias' do
-        subject { EntityMatcher::Search.by_name('Deschamps', primary_ext: 'Person') }
-
-        expect_to_find_the_chum
-      end
-
-      describe 'finds by nickname' do
-        subject { EntityMatcher::Search.by_name('Balloonist', primary_ext: 'Person') }
-
-        expect_to_find_the_chum
+      it 'finds by nickname' do
+        subject = EntityMatcher::Search.by_name('Balloonist', primary_ext: 'Person')
+        expect(subject.length).to eq 1
+        expect(subject.first).to eq @chum
       end
     end
 
@@ -193,6 +185,7 @@ describe EntityMatcher, :sphinx do
 
     describe EntityMatcher::TestCase::Person do
       subject { EntityMatcher::TestCase::Person }
+
       let(:name) { Faker::Name.name }
       let(:person) { build(:person, :with_person_name, person: build(:a_person)) }
       let(:persisted_person) { create(:entity_person, :with_person_name) }
@@ -1006,5 +999,3 @@ describe EntityMatcher, :sphinx do
     end # end sorting orgs
   end
 end
-
-# rubocop:enable RSpec/InstanceVariable, RSpec/NamedSubject, , RSpec/NestedGroups
