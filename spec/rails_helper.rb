@@ -72,35 +72,11 @@ RSpec.configure do |config|
   config.extend MergingGroupMacros, :merging_helper
   config.extend NameParserMacros, :name_parser_helper
 
-  # Running tests in database transactions
-  #
-  # Note that this being false does not actually mean we are not using transactions;
-  # it just tells RSpec to tell Rails not to handle transactions for tests;
-  # DatabaseCleaner actually handles the transactions.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   config.before(:each) do |example|
-    if example.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
-
     # see SphinxTestHelper#setup_sphinx
     ThinkingSphinx::Configuration.instance.settings['real_time_callbacks'] = false
-  end
-
-  config.before(:each) do
-    DatabaseCleaner.start
-  end
-
-  # Clean the db after each test start
-  config.after(:each) do |example|
-    DatabaseCleaner.clean
-
-    if example.metadata[:js]
-      ActiveRecord::Tasks::DatabaseTasks.load_seed
-    end
   end
 
   config.around(:each, :caching) do |example|
