@@ -15,6 +15,8 @@ require 'rails/all'
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'capybara/rspec'
+require "capybara/rails"
+require "selenium/webdriver"
 require 'devise'
 require 'paper_trail/frameworks/rspec'
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -36,13 +38,30 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
 
+Capybara.register_driver :headless_chrome do |app|
+  options = Selenium::WebDriver::Chrome::Options.new
+  options.headless!
+  options.add_argument('--ignore-certificate-errors')
+  options.add_argument('--window-size=1280,1920')
+  options.add_argument('--no-sandbox')
+
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
+end
+
+Capybara.register_driver :headless_firefox do |app|
+  options = Selenium::WebDriver::Firefox::Options.new
+  options.headless!
+  Capybara::Selenium::Driver.new(app, browser: :firefox, options: options)
+end
+
+Capybara.ignore_hidden_elements = false
+Capybara.server = :puma, { Silent: true } # Remove crummy test output
+Capybara.default_max_wait_time = ENV["CI"] ? 15 : 5
+Capybara.default_host = "#{Lilsis::Application.default_url_options[:protocol]}://#{Lilsis::Application.default_url_options[:host]}"
+
 Capybara.javascript_driver = :headless_firefox
 Capybara.javascript_driver = :headless_chrome if ENV['LITTLESIS_USE_CHROME']
 Capybara.javascript_driver = :headless_firefox if ENV['LITTLESIS_USE_FIREFOX']
-
-if ENV['CIRCLECI']
-  Capybara.default_max_wait_time = 10
-end
 
 RSpec.configure do |config|
   config.expect_with :rspec

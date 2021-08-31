@@ -31,6 +31,3 @@ npm install --global yarn
 curl -L "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" | tar xjf - -C /opt
 printf "#!/bin/sh\nexec /opt/firefox/firefox \$@\n" > /usr/local/bin/firefox && chmod +x /usr/local/bin/firefox && firefox -version
 curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.29.1/geckodriver-v0.29.1-linux64.tar.gz" | tar xzf - -C /usr/local/bin
-
-# Clean
-apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

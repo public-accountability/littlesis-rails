@@ -56,29 +56,33 @@ describe 'Entity Search', :sphinx, type: :request do
     it 'returns both apple entities when searching for oil tag' do
       get '/search/entity', params: { q: 'apple', tags: 'oil' }
       expect(response).to have_http_status :ok
-      expect(json.length).to eq 2
-      expect(json.map { |e| e['name'] }.to_set).to eql ['apple org', 'apple person'].to_set
+      j = JSON.parse(response.body)
+      expect(j.length).to eq 2
+      expect(j.map { |e| e['name'] }.to_set).to eql ['apple org', 'apple person'].to_set
     end
 
     it 'returns only apple org when searching for nyc tag' do
       get '/search/entity', params: { q: 'apple', tags: 'nyc' }
       expect(response).to have_http_status :ok
-      expect(json.length).to eq 1
-      expect(json.map { |e| e['name'] }).to eq ['apple org']
+      j = JSON.parse(response.body)
+      expect(j.length).to eq 1
+      expect(j.map { |e| e['name'] }).to eq ['apple org']
     end
 
     it 'returns only apple person when searching for finance tag by name' do
       get '/search/entity', params: { q: 'apple', tags: 'finance' }
       expect(response).to have_http_status :ok
-      expect(json.length).to eq 1
-      expect(json.map { |e| e['name'] }).to eq ['apple person']
+      j = JSON.parse(response.body)
+      expect(j.length).to eq 1
+      expect(j.map { |e| e['name'] }).to eq ['apple person']
     end
 
     it 'returns only apple person when searching for finance tag by id' do
       get '/search/entity', params: { q: 'apple', tags: '3' }
       expect(response).to have_http_status :ok
-      expect(json.length).to eq 1
-      expect(json.map { |e| e['name'] }).to eq ['apple person']
+      j = JSON.parse(response.body)
+      expect(j.length).to eq 1
+      expect(j.map { |e| e['name'] }).to eq ['apple person']
     end
   end
 end

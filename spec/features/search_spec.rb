@@ -26,8 +26,6 @@ describe 'Search', :sphinx, js: true do
   end
 
   describe 'searching for bananas' do
-    # let(:lists) { [] }
-
     it 'finds a single entity' do
       visit '/search?q=banana'
       expect(page.all('.entity-search-result').length).to eq 1
