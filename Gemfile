@@ -10,7 +10,6 @@ gem 'scenic'
 
 # Utilities
 gem 'bootsnap', '>= 1.4.3', require: false
-gem 'concurrent-ruby', require: 'concurrent'
 gem 'nokogiri'
 gem 'parallel'
 gem 'zeitwerk'
@@ -43,7 +42,6 @@ gem 'webpacker', '>= 4.0.2'
 
 # Search
 gem 'thinking-sphinx', '~> 5.1'
-# gem 'ts-delayed-delta', '2.1.0', :require => 'thinking_sphinx/deltas/delayed_delta'
 
 # handle currencies etc
 gem 'money'
@@ -69,7 +67,6 @@ group :development do
   gem 'better_errors', '>= 2.5.0'
   gem 'memory_profiler'
   gem 'rack-mini-profiler', require: false
-  gem 'solargraph', require: false
   gem 'web-console'
 end
 
