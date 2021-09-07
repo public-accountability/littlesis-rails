@@ -11,11 +11,11 @@ class SearchController < ApplicationController
 
     if query.present?
       service = SearchService.new(query, page: @page, admin: user_is_admin, tag_filter: @tag_filter&.name)
+
       @entities = service.entities
 
-      # On the first page we show results for all categories: only entities can be paginated.
-      # Right now, only searching for entiteis can be filtered by tag, so
-      # if there is a tag filter, we can only display the entity results
+      # Only entities are displayed if on page 2+ or if there is a tag filter
+      # Entities are the only model that can be filtered by paged or paginated
       if @page == 1 && !@tag_filter
         @lists = service.lists
         @maps = service.maps
