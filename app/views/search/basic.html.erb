@@ -1,22 +1,22 @@
 <% content_for(:page_title, "Search" + (params[:q].present? ? " - " + params[:q] : "")) %>
 
 <div class="row mb-2">
-  <div class="col-sm-auto">
+  <div class="col-3">
     <h1>Search</h1>
   </div>
-    <% if @tag_filter %>
-      <div class="col-sm-auto ml-2">
-	<div>
-	  <span class="text-secondary align-bottom">Searching within:</span>
-	  <span class="tag-container align-bottom">
-            <%= link_to(@tag_filter.name, @tag_filter, class: "tag") %>
-          </span>
-	</div>
+  <% if @tag_filter %>
+    <div class="col-sm-auto ml-2">
+      <div>
+	<span class="text-secondary align-bottom">Searching within:</span>
+	<span class="tag-container align-bottom">
+          <%= link_to(@tag_filter, Tag.get(@tag_filter), class: "tag") %>
+        </span>
       </div>
-    <% end %>
+    </div>
+  <% end %>
 </div>
 
-<div class="row">
+<div class="row mb-4">
   <div class="col-sm-12 col-md-6 col-lg-5">
     <%= form_tag search_path, method: :get do %>
       <div class="input-group">
@@ -24,7 +24,7 @@
 	<span class="input-group-append">
 	  <button type="submit" class="btn btn-clear">
             <span class="glyphicon glyphicon-search"></span>
-      </input>
+          </button>
 	</span>
       </div>
     <% end %>
@@ -32,55 +32,77 @@
 </div>
 
 <div class="search-results row">
-  <div class="col">
-  <% if @tags.count > 0 %>
-
-    <h3 class="mt-2">Tags</h3>
-    <% @tags.each do |tag| %>
-      <span class="search-result-link">
-	<%= link_to tag.name, tag_path(tag) %>
-      </span> &nbsp;<em><%= tag.description %></em>
-      <br>
-    <% end %>
+  <% if @tags && @tags.count > 0 %>
+    <div class="col">
+      <h3 class="mt-2">Tags</h3>
+      <% @tags.each do |tag| %>
+        <span class="search-result-link">
+	  <%= link_to tag.name, tag_path(tag) %>
+        </span> &nbsp;<em><%= tag.description %></em>
+        <br>
+      <% end %>
+    </div>
   <% end %>
+</div>
 
-  <% if @entities.count > 0 %>
-    <h3 class="mt-2">Entities</h3>
-    <%= paginate @entities %>
-    <% @entities.each do |entity| %>
-      <div class="search-result-wrapper entity-search-result">
-	<span class="search-result-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em><br>
-	<span class="entity-search-result-summary"><%= highlight(truncate((entity.summary or ""), length: 70), params[:q]) %></span>
-      </div>
-    <% end %>
-    <br>
+<div class="search-results row">
+  <% if @entities && @entities.count > 0 %>
+    <div class="col">
+      <h3 class="mt-2">Entities</h3>
+      <%= paginate @entities %>
+      <% @entities.each do |entity| %>
+        <div class="search-result-wrapper entity-search-result">
+	  <span class="search-result-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em><br>
+	  <span class="entity-search-result-summary"><%= highlight(truncate((entity.summary or ""), length: 70), params[:q]) %></span>
+        </div>
+      <% end %>
+    </div>
   <% end %>
+</div>
 
-  <% if @lists.count > 0 %>
-    <h3 class="mt-2">Lists</h3>
-    <% @lists.each do |list| %>
-      <div class="search-result-wrapper">
-	<span class="search-result-link"><%= list_link(list) %></span> &nbsp;<em><%= highlight((truncate(list.description, length: 70) or ""), params[:q]) %></em>
-      </div>
-    <% end %>
-    <br>
+<div class="search-results row">
+  <% if @lists && @lists.count > 0 %>
+    <div class="col">
+      <h3 class="mt-2">Lists</h3>
+      <% @lists.each do |list| %>
+        <div class="search-result-wrapper">
+	  <span class="search-result-link"><%= list_link(list) %></span> &nbsp;<em><%= highlight((truncate(list.description, length: 70) or ""), params[:q]) %></em>
+        </div>
+      <% end %>
+    </div>
   <% end %>
+</div>
 
-
-
-  <% if @maps.count > 0 %>
-    <h3 class="mt-2">Network Maps</h3>
-    <% @maps.each do |map| %>
-      <div class="search-result-wrapper">
-	<span class="search-result-link"><%= network_map_link(map) %></span>
-	<br>
-      </div>
-    <% end %>
-    <br>
+<div class="search-results row">
+  <% if @maps && @maps.count > 0 %>
+    <div class="col">
+      <h3 class="mt-2">Network Maps</h3>
+      <% @maps.each do |map| %>
+        <div class="search-result-wrapper">
+	  <span class="search-result-link"><%= network_map_link(map) %></span>
+	  <br>
+        </div>
+      <% end %>
+    </div>
   <% end %>
+</div>
 
+
+<div class="row">
   <% if @no_results %>
-    <%= render partial: "cantfind" %>
+    <div class="col">
+      <strong>No results found.</strong>
+      <br/>
+      <% if user_signed_in? && params[:q].length >= 3 %>
+        Can't find something that should be on LittleSis?  <%= link_to('Add It', new_entity_path(:name => params[:q]), class: "btn btn-primary") %>
+      <% end %>
+    </div>
+  <% elsif @sphinx_error %>
+    <div class="col">
+      <div class="alert alert-secondary" role="alert">
+        <p>An error occured while searching for <code><%= params[:q] %></code></p>
+        <p class="font-weight-light text-muted"><%= link_to "Report a bug", bug_report_path(bug_report_short_summary: "Error when searching for \"#{params[:q]}\"") %></p>
+      </div>
+    </div>
   <% end %>
-  </div>
 </div>

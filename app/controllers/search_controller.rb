@@ -1,35 +1,43 @@
 # frozen_string_literal: true
 
 class SearchController < ApplicationController
-  before_action :set_initial_search_values, only: [:basic]
   before_action :set_page, only: [:basic]
-  before_action :set_and_validate_tag_filter, only: [:basic]
 
   def basic
-    query = params[:q].presence
+    @query = params[:q].presence
+    @tag_filter = (params[:tags].presence || params[:tag].presence)
     user_is_admin = current_user&.admin?
 
-    if query.present?
-      service = SearchService.new(query, page: @page, admin: user_is_admin, tag_filter: @tag_filter&.name)
+    return render(status: :bad_request) if @tag_filter && Tag.get(params[:tags]).nil?
+
+    begin
+      service = SearchService.new(@query, page: @page, admin: user_is_admin, tag_filter: @tag_filter)
 
       @entities = service.entities
 
       # Only entities are displayed if on page 2+ or if there is a tag filter
-      # Entities are the only model that can be filtered by paged or paginated
+      # Entities are the only model that can be filtered by tag or paginated
       if @page == 1 && !@tag_filter
         @lists = service.lists
         @maps = service.maps
-        @tags = service.tags if user_is_admin
+        @tags = service.tags
+      else
+        @lists = @maps = @tags = []
       end
-    end
 
-    @no_results = (@lists.count + @entities.count + @maps.count + @tags.count).zero?
+      @no_results = (@lists.count + @entities.count + @maps.count + @tags.count).zero?
+    rescue SearchService::BlankQueryError
+    # just re-render the blank search page
+    rescue ThinkingSphinx::SyntaxError => e
+      logger.warn "ThinkingSphinx::SyntaxError: #{e}"
+      @sphinx_error = true
+    end
 
     respond_to do |format|
       format.html { render 'basic' }
 
       format.json do
-        entities = @entities.map { |e| e.to_hash(image_url: true) }
+        entities = @entities.map { |entity| entity.to_hash(image_url: true) }
         render json: { entities: entities }
       end
     end
@@ -65,29 +73,7 @@ class SearchController < ApplicationController
     end
   end
 
-  def set_initial_search_values
-    @entities = []
-    @groups = []
-    @lists = []
-    @maps = []
-    @tags = []
-    @tag_filter = nil
-  end
-
   def set_page
     @page = params.fetch(:page, 1).to_i
-  end
-
-  def set_and_validate_tag_filter
-    tag_param = params[:tags].presence
-    return if tag_param.nil?
-
-    tag = Tag.get(tag_param)
-
-    if tag.present?
-      @tag_filter = tag
-    else
-      render status: :bad_request
-    end
   end
 end

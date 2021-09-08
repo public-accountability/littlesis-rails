@@ -1,7 +1,7 @@
 describe 'Search', :sphinx, js: true do
   before do
+    Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
     setup_sphinx
-
     create(:finance_tag)
     create(:real_estate_tag)
     create(:nyc_tag)
@@ -23,6 +23,7 @@ describe 'Search', :sphinx, js: true do
 
   after do
     teardown_sphinx
+    Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
   end
 
   describe 'searching for bananas' do
@@ -54,6 +55,7 @@ describe 'Search', :sphinx, js: true do
       expect(List).not_to receive(:search)
       visit '/search?q=apple&tags=nyc'
       expect(page.all('.entity-search-result').length).to eq 1
+
       expect(page).to have_selector 'a', class: 'tag', text: 'nyc'
     end
 

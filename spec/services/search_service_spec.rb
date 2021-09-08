@@ -35,7 +35,7 @@ describe SearchService do
 
   it 'searches entities' do
     expect(EntitySearchService).to receive(:new)
-                                     .with(query: 'foo', page: 1)
+                                     .with(query: 'foo', page: 1, populate: true)
                                      .once
                                      .and_return(double(:search => []))
     SearchService.new('foo').entities
@@ -43,7 +43,7 @@ describe SearchService do
 
   it 'passes tag filter to entities' do
     expect(EntitySearchService).to receive(:new)
-                                     .with(query: 'foo', tags: 'bar', page: 1)
+                                     .with(query: 'foo', tags: 'bar', page: 1, populate: true)
                                      .once
                                      .and_return(double(:search => []))
     SearchService.new('foo', tag_filter: 'bar').entities
@@ -52,7 +52,8 @@ describe SearchService do
   it 'searches lists when not an admin' do
     expect(List).to receive(:search)
                       .with("@(name,description) foo",
-                            per_page: 50,
+                            per_page: 10,
+                            populate: true,
                             with: { is_deleted: false, is_admin: 0 },
                             without: { access: Permissions::ACCESS_PRIVATE },
                             order: "is_featured DESC"
@@ -65,7 +66,8 @@ describe SearchService do
   it 'searches lists when user is an admin' do
     expect(List).to receive(:search)
                       .with("@(name,description) foo",
-                            per_page: 50,
+                            per_page: 10,
+                            populate: true,
                             with: { is_deleted: false, is_admin: [0, 1] },
                             without: { access: Permissions::ACCESS_PRIVATE },
                             order: "is_featured DESC"
@@ -78,7 +80,8 @@ describe SearchService do
   it 'searches maps' do
     expect(NetworkMap).to receive(:search)
                             .with("@(title,description,index_data) foo",
-                                  per_page: 50,
+                                  per_page: 10,
+                                  populate: true,
                                   with: { is_deleted: false, is_private: false },
                                   order: "is_featured DESC"
                                  )
@@ -105,7 +108,7 @@ describe SearchService do
       end
 
       after do
-        teardown_sphinx { delete_entity_tables }
+        teardown_sphinx
       end
 
       it 'puts featured lists at the top of the results' do
