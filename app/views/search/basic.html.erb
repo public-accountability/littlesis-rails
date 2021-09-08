@@ -91,10 +91,9 @@
 <div class="row">
   <% if @no_results %>
     <div class="col">
-      <strong>No results found.</strong>
-      <br/>
+      <p><strong>No results found.</strong></p>
       <% if user_signed_in? && params[:q].length >= 3 %>
-        Can't find something that should be on LittleSis?  <%= link_to('Add It', new_entity_path(:name => params[:q]), class: "btn btn-primary") %>
+        <p>Can't find something that should be on LittleSis? <%= link_to('Add It', new_entity_path(:name => params[:q]), class: "btn btn-primary") %></p>
       <% end %>
     </div>
   <% elsif @sphinx_error %>
