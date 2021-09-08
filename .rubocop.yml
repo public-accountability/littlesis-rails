@@ -40,8 +40,6 @@ Metrics/CyclomaticComplexity:
 
 Naming/MethodParameterName:
   Enabled: false
-  Exclude:
-    - 'app/models/image.rb'
 
 Lint/AmbiguousBlockAssociation:
   Exclude:
@@ -79,19 +77,10 @@ Style/HashSyntax:
   Exclude:
     - 'config/routes.rb'
 
-Style/NumericLiterals:
-  Exclude:
-    - 'spec/factories/*.rb'
-
 Style/StringLiterals:
-  Exclude:
-    - 'spec/**/*.rb'
-    - 'lib/**/*.rb'
-
-Style/SymbolArray:
   Enabled: false
 
-Style/RedundantReturn:
+Style/SymbolArray:
   Enabled: false
 
 Style/ImplicitRuntimeError:
@@ -115,10 +104,6 @@ Layout/EmptyLinesAroundBlockBody:
     - 'spec/**/*.rb'
     - 'lib/scripts/*.rb'
 
-Layout/HashAlignment:
-  Exclude:
-    - 'lib/fec/**/*.rb'
-
 Rails/FilePath:
   Enabled: false
 
@@ -135,17 +120,13 @@ RSpec/ExampleLength:
 
 RSpec/EmptyExampleGroup:
   Exclude:
-    - 'spec/features/*.rb'
+    - 'spec/features/**/*.rb'
 
 RSpec/MultipleExpectations:
   Enabled: false
 
 RSpec/NestedGroups:
   Max: 4
-
-RSpec/ImplicitSubject:
-  Exclude:
-    - 'spec/controllers/*.rb'
 
 RSpec/Capybara:
   Capybara/FeatureMethods:
