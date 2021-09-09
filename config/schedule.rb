@@ -19,10 +19,6 @@
 
 # Learn more: http://github.com/javan/whenever
 
-# every 2.minutes do
-#   rake "search:update_entity_delta_index", output: nil
-# end
-
 log_file = '/var/www/littlesis/log/cron.log'
 
 every 1.day do
@@ -39,8 +35,4 @@ end
 
 every 1.day, at: '5:00 am' do
   rake "maps:screenshot:missing", output: log_file
-end
-
-every 1.day, at: '5:30 am' do
-  rake "ts:index", output: log_file
 end
