@@ -1,11 +1,23 @@
-.littlesis_carousel { height: 300px; x-overflow:hidden; position: relative; left: -26px; width: 1012px; }
+.littlesis_carousel_wrapper {
+    width: 1060px;
+    margin: auto;
+}
 
-.littlesis_carousel .viewport { 
-  float: left; 
-  width: 960px; 
-  height: $small_column_width; 
-  overflow: hidden; 
-  position: relative; 
+.littlesis_carousel {
+    height: 300px;
+    x-overflow:hidden;
+    position: relative;
+    a.buttons img {
+        cursor: pointer;
+    }
+}
+
+.littlesis_carousel .viewport {
+  float: left;
+  width: 960px;
+  height: $small_column_width;
+  overflow: hidden;
+  position: relative;
   background-color: #f8f8f8;
   border-radius: 10px;
   /* box-shadow: inset 3px 3px 5px 2px #ccc; */
@@ -20,19 +32,18 @@
 .littlesis_carousel .pager { overflow:hidden; list-style: none; clear: both; margin: 0 0 0 45px; }
 .littlesis_carousel .pager li { float: left; }
 
-.littlesis_carousel .pagenum { 
-	background-color: #fff; 
-	text-decoration: none; 
-	text-align: center; 
-	padding: 5px; 
-	color: #555555; 
-	font-size: 14px; 
-	font-weight: bold; 
-	display: block; 
+.littlesis_carousel .pagenum {
+	background-color: #fff;
+	text-decoration: none;
+	text-align: center;
+	padding: 5px;
+	color: #555555;
+	font-size: 14px;
+	font-weight: bold;
+	display: block;
 }
 
 .littlesis_carousel .active { color: #fff; background-color:  #555555; }
-
 
 /* entity/carousel */
 
@@ -87,9 +98,9 @@
   width: 100%;
   margin-top: 0.3em;
 
-  td { 
+  td {
     vertical-align: top;
-    padding-right: 2em; 
+    padding-right: 2em;
     max-width: 400px;
     min-width: 200px;
   }
