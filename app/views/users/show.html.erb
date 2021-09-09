@@ -44,6 +44,11 @@
 <% if @user.show_private? %>
   <h3>
     Permissions
+    <% if current_user&.admin? %>
+      <small>
+        <%= link_to "edit permissions",  edit_permissions_user_path(id: @user.id), class: "btn btn-primary btn-sm" %>
+      </small>
+    <% end %>
   </h3>
   <div>
     <table>
