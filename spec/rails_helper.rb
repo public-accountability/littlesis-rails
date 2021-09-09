@@ -54,6 +54,7 @@ Capybara.register_driver :headless_firefox do |app|
   Capybara::Selenium::Driver.new(app, browser: :firefox, options: options)
 end
 
+Capybara.raise_server_errors = false
 Capybara.ignore_hidden_elements = false
 Capybara.server = :puma, { Silent: true } # Remove crummy test output
 Capybara.default_max_wait_time = ENV["CI"] ? 15 : 5
