@@ -35,7 +35,7 @@ export default function RelationshipsDatatableLoader(){
   }
 
   var NUMBER_REGEX = RegExp('^[0-9]+$')
-  
+
   var columns = ["Related Entity", "Relationship", "Details", "Date(s)"]
   var TABLE_ID = "relationships-table"
 
@@ -46,7 +46,7 @@ export default function RelationshipsDatatableLoader(){
   var ENTITY_ID = null
 
   var DATATABLE_COLUMNS = [
-    { 
+    {
       data: null,
       name: 'entity_name',
       width: '40%',
@@ -109,7 +109,7 @@ export default function RelationshipsDatatableLoader(){
    * Network request to obtain data for datatable
    *
    * @param {Integer} entityId
-   * @returns {Promise} 
+   * @returns {Promise}
    */
   function fetchData(entityId) {
     return fetch("/datatable/entity/" + entityId, { "method": 'get' })
@@ -135,7 +135,7 @@ export default function RelationshipsDatatableLoader(){
    * Used to handle searching of boolean columns
    * see: https://datatables.net/reference/option/columns.data
    * @param {String} key
-   * @returns {Function} 
+   * @returns {Function}
    */
   function ternary(key) {
     return function(row) {
@@ -160,20 +160,20 @@ export default function RelationshipsDatatableLoader(){
 
   /**
    * Render Link with related entity names and blurb
-   * @returns {String} 
+   * @returns {String}
    */
   function renderRelatedEntity(data) {
     var entity = otherEntity(data)
     var a = utility.createLink(entity.url)
     a.setAttribute('class', 'entity-link')
     a.textContent = entity.name
-    
+
     if (entity.blurb) {
       var blurb = utility.createElementWithText('div', entity.blurb)
       blurb.setAttribute('class', 'entity-blurb')
       a.appendChild(blurb)
     }
-    
+
     return a.outerHTML
   }
 
@@ -181,7 +181,7 @@ export default function RelationshipsDatatableLoader(){
   /**
    * Renders description fields. Adds amount if present.
    *
-   * @returns {String} 
+   * @returns {String}
    */
   function renderDescription(data, type, row) {
     if (ENTITY_ID === row.entity1_id) {
@@ -194,7 +194,7 @@ export default function RelationshipsDatatableLoader(){
   /**
    * Render link to Relationship
    *
-   * @returns {String} 
+   * @returns {String}
    */
   function renderCategory(category_id, type, row) {
     var a = utility.createLink(row.url)
@@ -205,7 +205,7 @@ export default function RelationshipsDatatableLoader(){
   /**
    * Renders date or shows if relationship is current/past
    *
-   * @returns {String|Null} 
+   * @returns {String|Null}
    */
   function renderDate(data, type, row) {
     let date = null
@@ -225,7 +225,7 @@ export default function RelationshipsDatatableLoader(){
         date = row.start_date.slice(0, 4) + ' - ?'
       }
     }
-    
+
     if (row.end_date) {
       date = '? - ' + row.end_date.slice(0, 4)
     }
@@ -324,7 +324,7 @@ export default function RelationshipsDatatableLoader(){
 
     // see: https://stackoverflow.com/questions/29836857/jquery-datatable-filtering-so-confusing
     //       and https://datatables.net/examples/plug-ins/range_filtering
-  
+
     "amount": function() {
       var input = createTextInput('relationships-amount', 'min amount')
 
@@ -363,7 +363,7 @@ export default function RelationshipsDatatableLoader(){
 	var query = this.checked ? 'true' : ''
 	tableApi().column('is_current:name').search(query).draw()
       })
-      
+
       return checkbox
     },
 
@@ -374,7 +374,7 @@ export default function RelationshipsDatatableLoader(){
 	var query = this.checked ? 'true' : ''
 	tableApi().column('is_board:name').search(query).draw()
       })
-      
+
       return checkbox
     },
 
@@ -385,7 +385,7 @@ export default function RelationshipsDatatableLoader(){
 	var query = this.checked ? 'true' : ''
 	tableApi().column('is_executive:name').search(query).draw()
       })
-      
+
       return checkbox
     }
   }
@@ -395,7 +395,7 @@ export default function RelationshipsDatatableLoader(){
    * Creates table filters
    *
    * @param {Object} data
-   * @returns {Element} 
+   * @returns {Element}
    */
   function createFilters(data) {
     var div = utility.createElement({ "id": 'relationships-filters' })
@@ -427,7 +427,7 @@ export default function RelationshipsDatatableLoader(){
   /**
    * Creates a <table> with column headers
    *
-   * @returns {Element} 
+   * @returns {Element}
    */
   function createTable() {
     var table = createElement('table')
@@ -440,7 +440,7 @@ export default function RelationshipsDatatableLoader(){
     columns.forEach(function(c) {
       tr.appendChild(utility.createElementWithText('th', c))
     })
-    
+
     thead.appendChild(tr)
     table.appendChild(thead)
     return table
@@ -455,7 +455,7 @@ export default function RelationshipsDatatableLoader(){
 
   /**
    * Returns current filter data
-   * @returns {Array[Object]} 
+   * @returns {Array[Object]}
    */
   function getFilteredTableData() {
     return tableApi()
@@ -504,7 +504,7 @@ export default function RelationshipsDatatableLoader(){
   }
 
   // MAIN //
-  
+
   function tableApi() {
     return $('#' + TABLE_ID).dataTable().api()
   }
@@ -540,5 +540,5 @@ export default function RelationshipsDatatableLoader(){
     "tableApi": tableApi,
     "data": function() { return DATA_STORE }
   }
-  
+
 }
