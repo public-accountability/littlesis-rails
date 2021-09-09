@@ -56,14 +56,18 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
     before { login_as user, scope: :user }
     after { logout(:user) }
 
-    # THESE FAIL ON CIRCLECI BUT NOT LOCALLY
-    describe 'Adding and removing tags' do
+    describe_unless_on_circleci 'Adding and removing tags' do
       before do
+        Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
         create(:finance_tag)
         create(:real_estate_tag)
       end
 
-      xit 'user adds tags to an entity' do
+      after do
+        Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
+      end
+
+      it 'user adds tags to an entity' do
         visit person_path(person)
         expect(page).to have_css('#tags-container li', count: 0)
 
@@ -77,7 +81,7 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
         expect(page).to have_css('#tags-container li', count: 2)
       end
 
-      xit 'user removes a tag from an entity' do
+      it 'user removes a tag from an entity' do
         person.add_tag('finance')
         visit person_path(person)
         expect(page).to have_css('#tags-container li', count: 1)
