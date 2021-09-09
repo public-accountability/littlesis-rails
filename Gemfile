@@ -89,8 +89,6 @@ group :test, :development do
   gem 'rubocop-rspec', '>= 2.0.0pre', require: false
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '>= 4.0.0'
-  gem 'spring'
-  gem 'spring-commands-rspec'
 end
 
 # Used by lib/

@@ -7,7 +7,7 @@ class DatasetsController < ApplicationController
   end
 
   def show
-    @dataset = ExternalDataset.datasets.fetch(params[:dataset].to_sym) # class (i.e. ExternalDataset::FECContribution)
+    @dataset = ExternalDataset.fetch_dataset_class(params[:dataset]) # class (i.e. ExternalDataset::FECContribution)
     @grid_class = ExternalDataset.const_get("#{@dataset.dataset_name.to_s.classify}Grid") # class (i.e. ExternalDataset::FECContributionGrid)
     @grid_params_key = @grid_class.name.underscore.tr('/', '_').to_sym # symbol (ie. :external_dataset_fec_contribution_grid)
     @grid_params = params.fetch(@grid_params_key, {}).permit!
