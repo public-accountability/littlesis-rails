@@ -187,5 +187,13 @@ module RspecHelpers
         expect(subject.instance_variable_get("@#{instance_var}")).to eql expected
       end
     end
+
+    def describe_unless_on_circleci(...)
+      if ENV['CIRCLECI']
+        xdescribe(...)
+      else
+        describe(...)
+      end
+    end
   end
 end

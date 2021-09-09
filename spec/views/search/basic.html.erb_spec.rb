@@ -27,50 +27,27 @@ describe 'search/basic', type: :view do
       css 'div.search-results'
     end
 
-    context 'results found' do
+    describe 'results found' do
       let(:q) { 'xyz' }
       let(:entities) { Kaminari.paginate_array([build(:org)]).page(1) }
 
       it { is_expected.not_to render_template(partial: '_cantfind') }
     end
 
-    context 'no results found' do
+    describe 'no results found' do
       let(:q) { 'xyz' }
       let(:no_results) { true }
 
-      it { is_expected.to render_template(partial: '_cantfind') }
+      specify do
+        css 'strong', text: "No results found."
+      end
     end
   end
 
-  context 'Searching for buffalo' do
+  describe 'Searching for buffalo' do
     let(:q) { 'buffalo' }
 
-    context 'nothing found' do
-      let(:no_results) { true }
-
-      it 'displays no results found message' do
-        css 'strong', text: 'No results found.'
-        css 'h3', text: "Can't find something that should be on LittleSis?"
-      end
-
-      context 'user signed in' do
-        let(:user_signed_in) { true }
-
-        it 'has button to add it' do
-          css 'a.btn', text: 'Add It'
-          expect(rendered).not_to include 'to add it yourself!'
-        end
-      end
-
-      context 'user not signed in' do
-        it 'suggests you sign in and add it yourself' do
-          expect(rendered).to include 'to add it yourself!'
-          not_css 'a.btn', text: 'Add It'
-        end
-      end
-    end
-
-    context 'found 2 lists (and no groups)' do
+    describe 'found 2 lists (and no groups)' do
       let(:lists) { [build(:list), build(:open_list)] }
 
       it 'shows list of list links' do
@@ -80,7 +57,7 @@ describe 'search/basic', type: :view do
       end
     end
 
-    context 'found a map' do
+    describe 'found a map' do
       let(:maps) { [build(:network_map)] }
 
       it 'shows link to the map' do
@@ -91,7 +68,7 @@ describe 'search/basic', type: :view do
       end
     end
 
-    context 'found a entity' do
+    describe 'found a entity' do
       let(:entities) { Kaminari.paginate_array([build(:org)]).page(1) }
 
       it 'shows link to the entity' do
@@ -100,7 +77,7 @@ describe 'search/basic', type: :view do
       end
     end
 
-    context 'found a tag' do
+    describe 'found a tag' do
       let(:tags) { [build(:oil_tag, id: 123)] }
 
       it 'shows a link to the tag' do

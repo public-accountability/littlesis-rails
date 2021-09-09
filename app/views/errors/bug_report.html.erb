@@ -1,5 +1,5 @@
 <% if notice %>
-  <div class="row no-gutters">
+  <div class="row">
     <div class="col-sm-8">
       <div class="alert alert-success"><%= notice %></div>
     </div>
@@ -11,15 +11,16 @@
  label.col-form-label {
      font-weight: bold;
  }
- 
+
 </style>
 
-<div class="row no-gutters mt-3">
+<div class="row mt-3">
+  <div class="col">
   <h1>Report a bug or request a new feature</h1>
   <p>We can't fix a problem we don't know about! If something on the site is not working please let us know.</p>
-  
+
   <%= form_tag("/bug_report", method: "post",  multipart: true) do %>
-    
+
     <div class="form-group row align-items-center">
       <label class="col-sm-2 col-form-label">Email</label>
       <div class="col-sm-4">
@@ -42,7 +43,7 @@
     <div class="form-group row align-items-center">
       <label class="col-sm-2 col-form-label">Short Summary*</label>
       <div class="col-sm-6">
-        <%= text_field_tag "summary", nil, size: 41, required: true, class: 'form-control pt-2' %>
+        <%= text_field_tag "summary", params[:bug_report_short_summary], size: 41, required: true, class: 'form-control pt-2' %>
       </div>
     </div>
 
@@ -53,7 +54,7 @@
       </div>
     </div>
 
-    
+
     <div class="form-group row align-items-center">
       <label class="col-sm-2 col-form-label">Description</label>
       <div class="col-sm-7">
@@ -87,11 +88,12 @@
       </div>
     </div>
 
-    
+
     <div class="form-group row align-items-center">
       <div class="offset-2 col-sm-10">
         <%= submit_tag("Submit", class: 'btn btn-primary') %>
       </div>
     </div>
   <% end %>
+  </div>
 </div>

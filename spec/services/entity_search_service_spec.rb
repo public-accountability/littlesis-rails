@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-describe EntitySearchService, :tag_helper do
-  seed_tags
-
+describe EntitySearchService do
   let(:defaults) do
     { with: { is_deleted: false },
       per_page: 15,
       page: 1,
+      populate: false,
       select: '*, weight() * (link_count + 1) AS link_weight',
       order: 'link_weight DESC' }
   end
@@ -33,29 +32,46 @@ describe EntitySearchService, :tag_helper do
     expect { EntitySearchService.new.search }.to raise_error(ArgumentError)
   end
 
-  it 'accepts a single tag as string' do
-    expect(EntitySearchService.new(query: 'x', tags: 'nyc').options[:tags]).to eq [2]
-  end
+  describe 'tags' do
+    before do
+      Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
+      Tag.create!(TagSpecHelper::OIL_TAG)
+      Tag.create!(TagSpecHelper::NYC_TAG)
+    end
 
-  it 'accepts a mutiple tags as array' do
-    expect(EntitySearchService.new(query: 'x', tags: ['oil', 'nyc']).options[:tags]).to eq [1, 2]
-  end
+    after do
+      Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
+    end
 
-  it 'accepts a mutiple tags as string' do
-    expect(EntitySearchService.new(query: 'x', tags: 'oil,nyc').options[:tags]).to eq [1, 2]
-  end
+    it 'accepts a single tag as string' do
+      expect(EntitySearchService.new(query: 'x', tags: 'nyc').options[:tags]).to eq [2]
+    end
 
-  it 'accepts a mutiple tags as string (as integers)' do
-    expect(EntitySearchService.new(query: 'x', tags: '1,3').options[:tags]).to eq [1, 3]
-  end
+    it 'accepts a mutiple tags as array' do
+      expect(EntitySearchService.new(query: 'x', tags: ['oil', 'nyc']).options[:tags]).to eq [1, 2]
+    end
 
-  it 'ignores tags that do not exist' do
-    expect(EntitySearchService.new(query: 'x', tags: '1,4').options[:tags]).to eq [1]
-  end
+    it 'accepts a mutiple tags as string' do
+      expect(EntitySearchService.new(query: 'x', tags: 'oil,nyc').options[:tags]).to eq [1, 2]
+    end
 
-  it 'warns if tag does not exists' do
-    expect(Rails.logger).to receive(:warn).with("[EntitySearchService]: unknown tag: foo").once
-    expect(EntitySearchService.new(query: 'x', tags: 'oil,foo').options[:tags]).to eq [1]
+    it 'accepts a mutiple tags as string (as integers)' do
+      expect(EntitySearchService.new(query: 'x', tags: '1,2').options[:tags]).to eq [1, 2]
+    end
+
+    it 'ignores tags that do not exist' do
+      expect(EntitySearchService.new(query: 'x', tags: '1,4').options[:tags]).to eq [1]
+    end
+
+    it 'warns if tag does not exists' do
+      expect(Rails.logger).to receive(:warn).with("[EntitySearchService]: unknown tag: foo").once
+      expect(EntitySearchService.new(query: 'x', tags: 'oil,foo').options[:tags]).to eq [1]
+    end
+
+    it 'includes tags in query' do
+      expect(EntitySearchService.new(query: 'x', tags: 'oil,nyc').search_options[:with_all]).to eq(tag_ids: [1, 2])
+      expect(EntitySearchService.new(query: 'x', tags: '2').search_options[:with_all]).to eq(tag_ids: [2])
+    end
   end
 
   describe 'search_options' do
@@ -65,11 +81,6 @@ describe EntitySearchService, :tag_helper do
     it 'skips tags if empty' do
       expect(EntitySearchService.new(query: 'x').search_options[:with_all]).to be_nil
       expect(EntitySearchService.new(query: 'x', tags: '100').search_options[:with_all]).to be_nil
-    end
-
-    it 'includes tags in query' do
-      expect(EntitySearchService.new(query: 'x', tags: 'oil,nyc').search_options[:with_all]).to eq(tag_ids: [1, 2])
-      expect(EntitySearchService.new(query: 'x', tags: '2').search_options[:with_all]).to eq(tag_ids: [2])
     end
 
     it 'does not contain option without when exclude_list is empty' do
@@ -97,6 +108,32 @@ describe EntitySearchService, :tag_helper do
       search = EntitySearchService.new(query: entity_id).search
       expect(search).to be_a Kaminari::PaginatableArray
       expect(search.length).to eq 1
+    end
+  end
+
+  describe 'can filtering by tags', :sphinx do
+    before do
+      Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
+      setup_sphinx
+      create(:nyc_tag)
+
+      create(:entity_org, name: 'apple org').tap do |e|
+        e.add_tag('nyc')
+      end
+
+      create(:entity_person, name: 'apple person')
+    end
+
+    after do
+      teardown_sphinx
+    end
+
+    it 'finds 2 entities' do
+      expect(EntitySearchService.new(query: "apple").search.length).to eq 2
+    end
+
+    it 'finds 1 entities when filtering by nyc tag' do
+      expect(EntitySearchService.new(query: "apple", tags: "nyc").search.length).to eq 1
     end
   end
 end

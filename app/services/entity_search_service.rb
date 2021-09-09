@@ -10,7 +10,8 @@ class EntitySearchService
     page: 1,
     tags: nil,
     regions: nil,
-    exclude_list: nil
+    exclude_list: nil,
+    populate: false
   }.freeze
 
   attr_reader :query, :options, :search_options, :search
@@ -27,6 +28,7 @@ class EntitySearchService
       with_all: {},
       per_page: @options[:num].to_i,
       page: @options[:page].to_i,
+      populate: @options[:populate],
       select: '*, weight() * (link_count + 1) AS link_weight',
       order: 'link_weight DESC'
     }
@@ -68,7 +70,7 @@ class EntitySearchService
   end
 
   def parse_tags
-    return if @options[:tags].nil?
+    return if @options[:tags].blank?
 
     TypeCheck.check @options[:tags], [String, Array]
 
@@ -84,7 +86,7 @@ class EntitySearchService
     @options[:tags].map!(&:id)
 
     if @options[:tags]&.length&.positive?
-      @search_options[:with_all][:tag_ids] =  @options[:tags]
+      @search_options[:with_all][:tag_ids] = @options[:tags]
     end
   end
 

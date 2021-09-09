@@ -22,7 +22,7 @@ class SearchService
   def entities
     return @entities if defined?(@entities)
 
-    entity_search_args = { query: @query, page: @page }
+    entity_search_args = { query: @query, page: @page, populate: true }
     entity_search_args[:tags] = @tag_filter if @tag_filter
 
     @entities = EntitySearchService.new(**entity_search_args).search
@@ -34,10 +34,11 @@ class SearchService
     list_is_admin = @admin ? [0, 1] : 0
     @lists = List.search(
       "@(name,description) #{@escaped_query}",
-      per_page: 50,
+      per_page: 10,
       with: { is_deleted: false, is_admin: list_is_admin },
       without: { access: Permissions::ACCESS_PRIVATE },
-      order: "is_featured DESC"
+      order: "is_featured DESC",
+      populate: true
     )
   end
 
@@ -46,9 +47,10 @@ class SearchService
 
     @maps = NetworkMap.search(
       "@(title,description,index_data) #{@escaped_query}",
-      per_page: 50,
+      per_page: 10,
       with: { is_deleted: false, is_private: false },
-      order: "is_featured DESC"
+      order: "is_featured DESC",
+      populate: true
     )
   end
 
