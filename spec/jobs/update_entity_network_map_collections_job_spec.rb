@@ -1,4 +1,4 @@
-xdescribe UpdateEntityNetworkMapCollectionsJob, type: :job do
+describe UpdateEntityNetworkMapCollectionsJob, type: :job do
   include ActiveJob::TestHelper
 
   before(:all) do
