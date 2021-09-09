@@ -23,7 +23,7 @@ class Firefox
   end
 
   def self.new_driver
-    Selenium::WebDriver.for(:firefox, options: SELENIUM_OPTIONS).tap do |driver|
+    Selenium::WebDriver.for(:firefox, capabilities: SELENIUM_OPTIONS).tap do |driver|
       driver.manage.window.size = Selenium::WebDriver::Dimension.new(*DIMENSIONS)
     end
   end

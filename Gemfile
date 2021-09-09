@@ -51,7 +51,7 @@ gem 'datagrid'
 gem 'validate_url', '>= 1.0.13'
 
 # used for screenshot capture
-gem 'selenium-webdriver', '>= 3.11.0'
+gem 'selenium-webdriver', '>= 4.0.0.rc1'
 
 # Used by StringSimilarity
 gem 'text', '>= 1.3.1'
