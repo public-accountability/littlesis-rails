@@ -776,7 +776,7 @@ describe Relationship, type: :model do
         expect { rel.restore! }.to change { Position.count }.by(1)
       end
 
-      xit 'creates links' do
+      it 'creates links' do
         expect { rel.soft_delete }.to change { Link.count }.by(-2)
         expect { rel.restore! }.to change { Link.count }.by(2)
       end

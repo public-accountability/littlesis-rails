@@ -59,39 +59,12 @@
   #relationships-amount {
     width: 125px;
   }
-
-
-
 }
 
 // allows <div.buttons> to nicely fix to the left of it
 #relationships-table_info {
   clear: none;
   margin-top: 3px;
-}
-
-///////////////////////
-// shared styles    //
-/////////////////////
-
-// DataTable tweaks for lists and entity datatable page
-#datatable-table, #relationships-table {  
-  border-bottom-color: rgb(221, 221, 221);
-
-  tbody, thead th {
-    border-bottom-color: rgb(221, 221, 221);
-  }
-
-  .entity-link {
-    font-weight: 500;
-  }
-
-  // Fix spacing issue
-  thead tr {
-    th.sorting_asc, th.sorting {
-      padding-left: 17px;
-    }
-  }
 }
 
 // filters
@@ -148,57 +121,5 @@ html #datatable-table_info {
   }
   .glyphicon-remove:hover {
     color: #666666;
-  }
-}
-
-
-// fix spacing issue with paginate button
-
-html .dataTables_wrapper .dataTables_paginate .paginate_button {
-  padding: 0;
-  margin: 0;
-  border: 0;
-
-  &:hover {
-    border: 0;
-    background: none;
-  }
-}
-
-li#datatable-table_previous, li#datatable-table_next {
-  border: 0;
-}
-
-
-html table.dataTable thead {
-  a.sorting {
-    display: block;
-    color: inherit;
-    padding-left: 1.9em;
-
-    &::before,
-    &::after {
-      bottom: 0
-    }
-  }
-
-  .sorting_asc {
-    background: asset-url('sort_asc.png') no-repeat center left;
-  }
-
-  .sorting_desc {
-    background: asset-url('sort_desc.png') no-repeat center left;
-  }
-
-  .sorting {
-    background: asset-url('sort_both.png') no-repeat center left;
-  }
-
-  .sorting_asc_disabled {
-    background: asset-url('sort_asc_disabled.png') no-repeat center left;
-  }
-
-  .sorting_desc_disabled {
-    background: asset-url('sort_desc_disabled.png') no-repeat center left;
   }
 }

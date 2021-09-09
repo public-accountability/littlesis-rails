@@ -27,13 +27,13 @@ describe 'Maps' do
     end
   end
 
-  xdescribe 'Anonyomous users can view embedded regular maps' do
+  describe 'Anonyomous users can view embedded regular maps' do
     before { visit map_path(regular_map) }
 
-    specify { successfully_visits_page map_path(regular_map) }
+    specify { successfully_visits_page oligrapher_path(regular_map) }
   end
 
-  xdescribe 'Users can view their own private maps' do
+  describe 'Users can view their own private maps' do
     before do
       login_as(user, scope: :user)
       visit map_path(private_map)
@@ -42,7 +42,7 @@ describe 'Maps' do
     after { logout(admin) }
 
     it 'map page is viewable' do
-      successfully_visits_page map_path(private_map)
+      successfully_visits_page oligrapher_path(private_map)
     end
   end
 
