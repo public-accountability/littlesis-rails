@@ -29,7 +29,7 @@ end
 
 if command == :report && dataset.nil?
   ExternalDataset::DATASETS.each do |d|
-    ExternalDataset.const_get(d.to_s.classify).report
+    ExternalDataset.fetch_dataset_class(d).report
   end
   exit
 end
@@ -38,4 +38,4 @@ unless ExternalDataset::DATASETS.include? dataset
   abort "invalid dataset: #{dataset}"
 end
 
-ExternalDataset.const_get(dataset.to_s.classify).public_send(command)
+ExternalDataset.fetch_dataset_class(dataset).public_send(command)

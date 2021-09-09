@@ -19,6 +19,12 @@ module ExternalDataset
     }.with_indifferent_access.freeze
   end
 
+  def self.fetch_dataset_class(dname)
+    raise ArgumentError, "invalid dataset: #{dname}" unless DATASETS.include?(dname.to_sym)
+
+    const_get(dname.to_s.classify)
+  end
+
   module DatasetInterface
     def dataset=(dataset)
       unless ExternalDataset::DATASETS.include?(dataset)
