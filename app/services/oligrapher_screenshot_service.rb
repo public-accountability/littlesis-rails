@@ -11,8 +11,8 @@ class OligrapherScreenshotService
     end
 
     Firefox.visit(map_url(map)) do |driver|
-      driver.execute_script('window.oli.hideAnnotations()')
-      svg = driver.execute_script('return window.oli.toSvg()')
+      driver.execute_script('window.Oligrapher.instance.hideAnnotations()')
+      svg = driver.execute_script('return window.Oligrapher.instance.toSvg()')
       document = Nokogiri::XML(svg)
 
       if svg && valid_svg?(document)
