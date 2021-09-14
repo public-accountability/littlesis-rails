@@ -20,16 +20,15 @@ describe OligrapherScreenshotService do
     let(:map_url) { Lilsis::Application.routes.url_helpers.oligrapher_url(map) }
 
     it 'saves screenshot to database' do
-      expect(driver).to receive(:execute_script).with('window.oli.hideAnnotations()')
-      expect(driver).to receive(:execute_script).with('return window.oli.toSvg()').and_return(svg)
+      expect(driver).to receive(:execute_script).with(/hideAnnotations/)
+      expect(driver).to receive(:execute_script).with(/toSvg/).and_return(svg)
       expect(Firefox).to receive(:visit).with(map_url).and_yield(driver)
       expect { OligrapherScreenshotService.run(map) }.to change(map, :screenshot)
       expect(map.screenshot).to be_a(String)
     end
 
     it 'transforms the height and width of the SVG' do
-      expect(driver).to receive(:execute_script).with('window.oli.hideAnnotations()')
-      expect(driver).to receive(:execute_script).with('return window.oli.toSvg()').and_return(svg)
+      expect(driver).to receive(:execute_script).twice.and_return(nil, svg)
       expect(Firefox).to receive(:visit).and_yield(driver)
       OligrapherScreenshotService.run(map)
       expect(map.screenshot).to include "height=\"#{OligrapherScreenshotService::HEIGHT}\""
@@ -37,8 +36,7 @@ describe OligrapherScreenshotService do
     end
 
     it 'validates svg and skips saving' do
-      expect(driver).to receive(:execute_script).with('window.oli.hideAnnotations()')
-      expect(driver).to receive(:execute_script).with('return window.oli.toSvg()').and_return("invalid svg")
+      expect(driver).to receive(:execute_script).twice.and_return(nil, "invalid svg")
       expect(Firefox).to receive(:visit).and_yield(driver)
       expect { OligrapherScreenshotService.run(map) }.not_to change(map, :screenshot)
     end
