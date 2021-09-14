@@ -128,4 +128,8 @@ module ApplicationHelper
       false
     end
   end
+
+  def show_stars?
+    user_admin? && current_user.settings.show_stars
+  end
 end

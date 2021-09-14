@@ -1,6 +1,6 @@
 <div class="relationship-section d-flex flex-row">
   <div class="related_entity flex-column flex-fill">
-    <% if current_user&.admin? %>
+    <% if show_stars? %>
       <div class="related_entity_feature_relationship_button">
         <%= render partial: 'feature_relationship_button', locals: { relationship: link[0].relationship } %>
       </div>

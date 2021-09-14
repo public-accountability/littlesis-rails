@@ -6,7 +6,7 @@
     <% if @entity.links.count.zero? %>
       <%= render partial: 'no_relationships' %>
     <% else %>
-      <% cache_unless (user_admin? ||  @entity.updated_at > 2.minutes.ago), ['relationship_page', @entity.cache_key_with_version] do %>
+      <% cache_unless (show_stars? || @entity.updated_at > 2.minutes.ago), ['relationship_page', @entity.cache_key_with_version] do %>
         <% @links = SortedLinks.new(@entity) %>
         <% section_order(@entity).each do |section| %>
 	  <% links_group = @links.send(section) %>
@@ -25,7 +25,7 @@
 
     <% page = params[:page].blank? ? 1 : params[:page] %>
 
-    <% cache_unless (user_admin? ||  @entity.updated_at > 2.minutes.ago), ['relationship_page', @entity.cache_key_with_version, params[:relationships], page] do %>
+    <% cache_unless (show_stars? || @entity.updated_at > 2.minutes.ago), ['relationship_page', @entity.cache_key_with_version, params[:relationships], page] do %>
       <% @links = SortedLinks.new(@entity, params[:relationships], page) %>
       <% links_group = @links.send(params[:relationships]) %>
       <%= section_heading(links_group) %>

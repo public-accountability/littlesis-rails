@@ -3,12 +3,12 @@
 # Like a struct, but will silently remove any settings not currently defined
 class UserSettings
   DEFAULTS = {
-    oligrapher_beta: false,
-    default_tag: :oligrapher
+    default_tag: :oligrapher,
+    show_stars: true  # admin-only setting
   }.freeze
 
   CONVERTERS = Hash.new(->(x) { x }).tap do |hash|
-    hash[:oligrapher_beta] = ->(x) { ActiveModel::Type::Boolean.new.cast(x) }
+    hash[:show_stars] = ->(x) { ActiveModel::Type::Boolean.new.cast(x) }
   end.with_indifferent_access.freeze
 
   SettingsStruct = Struct.new(*DEFAULTS.keys, keyword_init: true)
