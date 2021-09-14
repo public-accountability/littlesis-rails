@@ -33,7 +33,7 @@
       <% raise ActiveRecord::RecordNotFound unless paginatable_links.count > 0 %>
       <%= paginate paginatable_links %>
       <div class="relationship-links">
-	<%= render partial: 'link', collection: paginatable_links %>
+        <%= render partial: 'link', collection: paginatable_links %>
       </div>
 
       <%= paginate paginatable_links %>

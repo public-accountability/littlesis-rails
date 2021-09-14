@@ -1,5 +1,11 @@
 <div class="relationship-section d-flex flex-row">
   <div class="related_entity flex-column flex-fill">
+    <% if current_user&.admin? %>
+      <div class="related_entity_feature_relationship_button">
+        <%= render partial: 'feature_relationship_button', locals: { relationship: link[0].relationship } %>
+      </div>
+    <% end %>
+
     <div class="related_entity_entity">
       <span class="related_entity_name"><%= link_to link[0].related.name, concretize_entity_path(link[0].related) %></span>
       <span class="related_entity_blurb"><%= link[0].related.blurb %></span>
@@ -18,8 +24,4 @@
       <% end %>
     </div>
   </div>
-
-  <% if current_user&.admin? %>
-    <%= render partial: 'feature_relationship_button', locals: { relationship: link[0].relationship } %>
-  <% end %>
 </div>
