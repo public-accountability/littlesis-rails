@@ -1,68 +1,182 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t 'hello'
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t('hello') %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# The following keys must be escaped otherwise they will not be retrieved by
-# the default I18n backend:
-#
-# true, false, on, off, yes, no
-#
-# Instead, surround them with single quotes.
-#
-# en:
-#   'true': 'foo'
-#
-#
-# To learn more, please read the Rails Internationalization guide
-# available at http://guides.rubyonrails.org/i18n.html.
-
 en:
   hello: "Hello world"
 
   littlesis:
-    person: "person"
-    organization: "organization"
-    entity: "entity"
-    list: "list"
-    map: "map"
+    person: person
+    organization: organization
+    entity: entity
+    list: list
+    map: map
+    tag: tag
+    datasets: datasets
+    interlocks: interlocks
+    links: links
+    external_links: "external links"
+    reference: reference
+    document: document
+    entity_extensions:
+      Person: "Person"
+      Org: "Organization"
+      PoliticalCandidate: "Political Candidate"
+      ElectedRepresentative: "Elected Representative"
+      Business: "Business"
+      GovernmentBody: "Government Body"
+      School: "School"
+      MembershipOrg: "Membership Organization"
+      Philanthropy: "Philanthropy"
+      NonProfit: "Other Not-for-Profit"
+      PoliticalFundraising: "Political Fundraising Committee"
+      PrivateCompany: "Private Company"
+      PublicCompany: "Public Company"
+      IndustryTrade: "Industry/Trade Association"
+      LawFirm: "Law Firm"
+      LobbyingFirm: "Lobbying Firm"
+      PublicRelationsFirm: "Public Relations Firm"
+      IndividualCampaignCommittee: "Individual Campaign Committee"
+      Pac: "PAC"
+      OtherCampaignCommittee: "Other Campaign Committee"
+      MediaOrg: "Media Organization"
+      ThinkTank: "Policy/Think Tank"
+      Cultural: "Cultural/Arts"
+      SocialClub: "Social Club"
+      ProfessionalAssociation: "Professional Association"
+      PoliticalParty: "Political Party"
+      LaborUnion: "Labor Union"
+      Gse: "Government-Sponsored Enterprise"
+      BusinessPerson: "Business Person"
+      Lobbyist: "Lobbyist"
+      Academic: "Academic"
+      MediaPersonality: "Media Personality"
+      ConsultingFirm: "Consulting Firm"
+      PublicIntellectual: "Public Intellectual"
+      PublicOfficial: "Public Official"
+      Lawyer: "Lawyer"
+      Couple: "Couple"
+      ResearchInstitute: "Academic Research Institute"
+      GovernmentAdvisoryBody: "Government Advisory Body"
+      EliteConsensus: "Elite Consensus Group"
+  vocab:
+    actions:
+    add:
+    alive:
+    all:
+    back:
+    birth_date:
+    birthplace:
+    bulk:
+    cancel:
+    category:
+    citations:
+    click:
+    confirmation:
+    create:
+    current:
+    dashboard:
+    data:
+    death_date:
+    delete:
+    details:
+    donation:
+    edit:
+    email:
+    end_date:
+    family:
+    flag:
+    gender:
+    generic:
+    giving:
+    grant:
+    join:
+    lobbying:
+    location:
+    merge:
+    name:
+    next:
+    nickname:
+    password:
+    position:
+    prefix:
+    previous:
+    professional:
+    reference:
+    remove:
+    search:
+    service:
+    settings:
+    social:
+    star:
+    start_date:
+    suffix:
+    summary:
+    toolkit:
+    transaction:
+    types:
+    update:
+    website:
 
+  phrases:
+    "A project of":
+    "A unique resource for investigating cronyism, conflicts of interest, and systemic corruption":
+    "An involuntary facebook of the 1%":
+    "Analyst-created lists of people and org":
+    "Articles documenting info on this page":
+    "Can't find what you are looking for?":
+    "Cancel my account":
+    "Click here to add a relationship":
+    "Click here to create a new entity":
+    "Click make primary to change the entity's default name":
+    "Connect this entity to other sites":
+    "Corporate fat cats":
+    "Create new refernce":
+    "Creating a new relationship between:":
+    "Current password":
+    "Data Summary":
+    "Dots connected":
+    "Elite think tanks":
+    "Existing Source":
+    "Explore trainings, news, & tools":
+    "Export CSV":
+    "Eyes on the ties":
+    "Get started on a new map":
+    "Just Cleaning Up":
+    "LittleSis is a free database of who-knows-who at the heights of business and government":
+    "Made for watchdogs":
+    "Map the power with Oligrapher":
+    "Names behind the news":
+    "News and analysis from LittleSis":
+    "Oligrapher is a new tool for visualizing networks of influence using LittleSis Data":
+    "Paid for politicians":
+    "Power research toolkit and trainings":
+    "Relationship Category":
+    "Revolving door lobbyists":
+    "Secretive Super PACs":
+    "Think and do tank":
+    "Visual online mapping tool":
+    "We're a grassroots watchdog network connecting the dots between the world's most powerful people and organizations.":
+    "Where is this information coming from?":
+    "additional names for the person":
+    "basic info":
+    "click here":
+    "create a new":
+    "edited by":
+    "match donations":
+    "recent edits":
+    "related entity":
+    "report a bug":
+    "search for a name":
+    "show system edits":
+    "sign up for a LittleSis account":
+    "source links":
+    "we need your current password to confirm your changes":
+    "your settings":
+    "your email":
+    "your Recent Edits":
+    "your lists":
+    "your maps":
+    stub_profile: "This is a stub profile page – there are no relationships in the database for this person. Be the first to add one!"
 
-  menu:
-    login: "Login"
-    signup: "Sign Up"
-    explore: "Explore"
-    help: "Help"
-    about: "About"
-    toolkit: "Toolkit"
-    report_a_bug: "Report a bug"
-    features: "Features"
-    team: "Our Team"
-    api: "Data API"
-    source_code: "Source Code"
-    disclaimer: "Disclaimer"
-    contact_us: "Contact Us"
-    jobs: "Jobs"
-    donate: "Donate"
-    blog: "Blog"
-    settings: "Settings"
-    edits: "Edits"
-
-
-
+  pages:
+    tags: "Tags allow contributors to thematically group people, organizations, lists, and relationships on LittleSis. Below is a list of all the tags on the site. Don't see a tag you want to use? Use this form to request it!"
 
   # kaminari pagination labels
   views:
