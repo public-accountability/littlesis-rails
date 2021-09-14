@@ -1,16 +1,17 @@
 <%= form_with(url: '/users/settings', method: :put) do %>
+  <% if current_user.admin? %>
+    <div class="form-group mb-2">
+      <label class="mr-2 font-weight-bold">Show Stars</label>
 
-  <div class="form-group mb-2">
-    <label class="mr-2 font-weight-bold">enable oligrapher 3</label>
-
-    <label class="user-settings-toggle">
-      <input name="settings[oligrapher_beta]" type="hidden" value="0" />
-      <input type="checkbox"
-             id="settings_oligrapher_beta"
-             name="settings[oligrapher_beta]" value="1"
-             onchange="this.closest('form').submit()"
-             <%= @user.settings.oligrapher_beta ? 'checked="checked"' : nil %> />
-      <span></span>
-    </label>
-  </div>
+      <label class="user-settings-toggle">
+        <input name="settings[show_stars]" type="hidden" value="0" />
+        <input type="checkbox"
+               id="settings_show_stars"
+               name="settings[show_stars]" value="1"
+               onchange="this.closest('form').submit()"
+               <%= @user.settings.show_stars ? 'checked="checked"' : nil %> />
+        <span></span>
+      </label>
+    </div>
+  <% end %>
 <% end %>

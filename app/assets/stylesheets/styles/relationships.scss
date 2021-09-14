@@ -26,7 +26,7 @@ form.edit-relationship-form {
 	@extend .row;
 	margin-left: 15px;
     }
-    
+
     .form-label {
 	@extend .col-sm-2;
 	@extend .col-form-label;
@@ -73,14 +73,14 @@ form.edit-relationship-form {
 	    max-width: 130px;
 	}
     }
-    
+
 }
 
 #source-links-table {
     @extend .table;
     @extend .table-sm;
     @extend .table-hover;
-    
+
     td {
 	font-size: 0.8em;
     }
@@ -115,7 +115,7 @@ form.edit-relationship-form {
           top: 1px solid #ddd;
           bottom: none;
         }
-	
+
         .related_entity {
             ul {
                 margin-bottom: 0;
@@ -153,7 +153,12 @@ form.edit-relationship-form {
                 cursor: pointer;
             }
         }
-	
+
+        .related_entity_feature_relationship_button {
+            margin-left: -20px;
+        }
+
+
     } // end relationship-section
 
     .relationship-links {

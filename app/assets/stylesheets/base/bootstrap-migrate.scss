@@ -18,7 +18,7 @@ $gray-lighter: lighten($gray-base, 93.5%) !default; // #eee
     font-size  : .875rem;
     line-height  : .5;
     border-radius : .2rem;
-}          
+}
 
 // .btn-default {
 //     @extend .btn-secondary;
@@ -146,8 +146,8 @@ table.no-top-border thead > tr > th {
 .glyphicon-music                  { &:before { content: "\e002"; } }
 .glyphicon-search                 { &:before { content: "\e003"; } }
 .glyphicon-heart                  { &:before { content: "\e005"; } }
-.glyphicon-star                   { &:before { content: "\e006"; } }
-.glyphicon-star-empty             { &:before { content: "\e007"; } }
+.glyphicon-star-empty             { &:before { content: "\e006"; } }
+.glyphicon-star                   { &:before { content: "\e007"; } }
 .glyphicon-user                   { &:before { content: "\e008"; } }
 .glyphicon-film                   { &:before { content: "\e009"; } }
 .glyphicon-th-large               { &:before { content: "\e010"; } }

@@ -1,11 +1,11 @@
 describe UserSettings do
   it 'returns defaults and forwards methods' do
-    expect(UserSettings.new.oligrapher_beta).to be false
-    expect(UserSettings.new[:oligrapher_beta]).to be false
+    expect(UserSettings.new.default_tag).to eq :oligrapher
+    expect(UserSettings.new[:default_tag]).to eq :oligrapher
   end
 
   it 'accepts values' do
-    expect(UserSettings.new(oligrapher_beta: true).oligrapher_beta).to be true
+    expect(UserSettings.new(default_tag: :map_the_power).default_tag).to eq :map_the_power
   end
 
   it 'silently ignores invalid attributes' do
@@ -20,9 +20,9 @@ describe UserSettings do
   end
 
   it 'loads from json_string' do
-    settings = UserSettings.load("{\"oligrapher_beta\":true}")
+    settings = UserSettings.load("{\"default_tag\":\"foobar\"}")
 
     expect(settings).to be_a UserSettings
-    expect(settings.oligrapher_beta).to be true
+    expect(settings.default_tag).to be :foobar
   end
 end
