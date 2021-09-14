@@ -44,18 +44,18 @@ describe 'Users' do
   end
 
   describe 'updating settings' do
-    let(:user) { create_basic_user }
+    let(:admin_user) { create_admin_user }
 
     before do
-      login_as(user, :scope => :user)
+      login_as(admin_user, :scope => :user)
     end
 
     after { logout(:user) }
 
-    it 'changes oligrapher_beta' do
-      expect(user.settings.oligrapher_beta).to be false
-      put "/users/settings", params: { settings: { oligrapher_beta: true } }, as: :json
-      expect(user.reload.settings.oligrapher_beta).to be true
+    it 'admins can update can show stars settings' do
+      expect(admin_user.settings.show_stars).to be true
+      put "/users/settings", params: { settings: { show_stars: false } }, as: :json
+      expect(admin_user.reload.settings.show_stars).to be false
       expect(response.status).to eq 302
       expect(response.location).to include '/users/edit'
     end

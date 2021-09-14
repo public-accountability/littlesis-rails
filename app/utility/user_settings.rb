@@ -8,6 +8,7 @@ class UserSettings
   }.freeze
 
   CONVERTERS = Hash.new(->(x) { x }).tap do |hash|
+    hash[:default_tag] = ->(x) { x.to_sym }
     hash[:show_stars] = ->(x) { ActiveModel::Type::Boolean.new.cast(x) }
   end.with_indifferent_access.freeze
 
@@ -22,6 +23,8 @@ class UserSettings
                 else
                   SettingsStruct.new(DEFAULTS.dup.merge!(kwargs.slice(*DEFAULTS.keys)))
                 end
+
+    @settings[:default_tag] = @settings[:default_tag].to_sym if @settings[:default_tag]
   end
 
   def update(hash)
