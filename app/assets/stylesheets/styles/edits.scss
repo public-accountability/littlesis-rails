@@ -86,14 +86,13 @@ form.alias-form {
   &:hover > .not-star {
     @extend .glyphicon-star;
   }
-}
 
-.star {
-  @extend .glyphicon-star;
-}
-
-.not-star {
-  @extend .glyphicon-star-empty;
+  .star {
+      @extend .glyphicon-star;
+  }
+  .not-star {
+      @extend .glyphicon-star-empty;
+  }
 }
 
 .delete-button {
