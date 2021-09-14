@@ -53,7 +53,11 @@ class SortedLinks
 
   # input: <Entity>, String, Integer/String, Integer/String
   def initialize(entity, section = nil, page = 1, per_page = 20)
-    raise ArgumentError, "SortedLinks must be initialized with a <Entity>" unless entity.is_a? Entity
+    unless entity.is_a? Entity
+      raise ArgumentError,
+            'SortedLinks must be initialized with a <Entity>'
+    end
+
     @entity = entity
     @page = page.to_i
     @per_page = per_page.to_i
@@ -75,7 +79,7 @@ class SortedLinks
   end
 
   def create_subgroups(links)
-    categories = links.group_by { |l| l.category_id }
+    categories = links.group_by(&:category_id)
     categories.default = []
 
     staff, positions = split categories[1]
@@ -97,20 +101,21 @@ class SortedLinks
       create_donation_subgroups
     else
       donors, donation_recipients = split categories[5]
-      # political_fundraising_committees, donors = donors.partition { |l| l.is_pfc_link? }
-      # @political_fundraising_committees = LinksGroup.new(political_fundraising_committees, 'political_fundraising_committees', 'Political Fundraising Committees')
       @donors = LinksGroup.new(donors, 'donors', 'Donors')
-      @donation_recipients = LinksGroup.new(donation_recipients, 'donation_recipients', 'Donation/Grant Recipients')
+      @donation_recipients = LinksGroup.new(donation_recipients, 'donation_recipients',
+                                            'Donation/Grant Recipients')
     end
 
-    @services_transactions = LinksGroup.new(categories[6], 'services_transactions', 'Services/Transactions')
+    @services_transactions = LinksGroup.new(categories[6], 'services_transactions',
+                                            'Services/Transactions')
 
     lobbied_by, lobbies = split categories[7]
     @lobbies = LinksGroup.new(lobbies, 'lobbies', 'Lobbying')
     @lobbied_by = LinksGroup.new(lobbied_by, 'lobbied_by', 'Lobbied By')
 
     @friendships = LinksGroup.new(categories[8], 'friendships', 'Friends')
-    @professional_relationships = LinksGroup.new(categories[9], 'professional_relationships', 'Professional Associates')
+    @professional_relationships = LinksGroup.new(categories[9], 'professional_relationships',
+                                                 'Professional Associates')
 
     owners, holdings = split categories[10]
     @owners = LinksGroup.new(owners, 'owners', 'Owners')
@@ -130,18 +135,22 @@ class SortedLinks
   #  - @in_the_office_positions
   #  - @other_positions
   def create_position_subgroups(positions)
-    jobs = positions.group_by { |l| l.position_type }
+    jobs = positions.group_by(&:position_type)
     jobs.default = []
 
-    @business_positions = LinksGroup.new(jobs['business'], 'business_positions', 'Business Positions')
-    @government_positions = LinksGroup.new(jobs['government'], 'government_positions', 'Government Positions')
-    @in_the_office_positions = LinksGroup.new(jobs['office'], 'in_the_office_positions', 'In The Office Of')
+    @business_positions = LinksGroup.new(jobs['business'], 'business_positions',
+                                         'Business Positions')
+    @government_positions = LinksGroup.new(jobs['government'], 'government_positions',
+                                           'Government Positions')
+    @in_the_office_positions = LinksGroup.new(jobs['office'], 'in_the_office_positions',
+                                              'In The Office Of')
 
-    if [@business_positions, @government_positions, @in_the_office_positions].map(&:count).reduce(:+).zero?
-      other_heading = 'Positions'
-    else
-      other_heading = 'Other Positions'
-    end
+    other_heading = if [@business_positions, @government_positions,
+                        @in_the_office_positions].map(&:count).reduce(:+).zero?
+                      'Positions'
+                    else
+                      'Other Positions'
+                    end
 
     @other_positions = LinksGroup.new(jobs['other'], 'other_positions', other_heading)
   end
@@ -149,7 +158,8 @@ class SortedLinks
   def create_donation_subgroups
     donors, donation_recipients = split(donation_links_preloaded(@entity.id))
     @donors = LinksGroup.new(donors, 'donors', 'Donors', donors_count(@entity.id))
-    @donation_recipients = LinksGroup.new(donation_recipients, 'donation_recipients', 'Donation/Grant Recipients')
+    @donation_recipients = LinksGroup.new(donation_recipients, 'donation_recipients',
+                                          'Donation/Grant Recipients')
   end
 
   private
@@ -159,7 +169,8 @@ class SortedLinks
   def donation_links_preloaded(entity1_id)
     links = donation_links(entity1_id, @page, @per_page) if @page.present? && @per_page.present?
     links = donation_links(entity1_id) unless @page.present? && @per_page.present?
-    # Rails doesn't particularly document the use of Associations::Preloader on it's own...but hey...what's stopping us?
+    # Rails doesn't particularly document the use of Associations::Preloader on its own...
+    # but hey...what's stopping us?
     ActiveRecord::Associations::Preloader.new.preload(links, [:relationship, :related])
     links
   end
@@ -172,7 +183,7 @@ class SortedLinks
   def donation_links(entity1_id, page = 1, per_page = 20)
     offset = (page - 1) * per_page
 
-    sql_template = <<~SQL
+    sql_template = <<~SQL.squish
       ( SELECT links.*, relationships.amount
         FROM links
         INNER JOIN relationships ON relationships.id = links.relationship_id
@@ -195,9 +206,12 @@ class SortedLinks
     Link.where(entity1_id: entity1_id, category_id: 5, is_reverse: true).count
   end
 
-  # This preloads relationship, related entities and their extensions for all types except donation (category id = 5)
+  # Preloads relationship, related entities and their extensions for all types except donation
+  # (category id = 5)
   def preloaded_links(entity_id)
-    Link.preload(:relationship, related: [:extension_records]).where("entity1_id = ? AND category_id <> 5", entity_id)
+    Link.preload(:relationship, related: [:extension_records]).where(
+      'entity1_id = ? AND category_id <> 5', entity_id
+    )
   end
 
   # This preloads relationship, related entities and entity extensions for all categories
@@ -211,7 +225,9 @@ class SortedLinks
       @use_separate_donation_query = true
       donation_links_preloaded(entity_id)
     else
-      Link.preload(:relationship, related: [:extension_records]).where(entity1_id: entity_id, category_id: SECTION_TO_CAT[section])
+      Link
+        .preload(:relationship, related: [:extension_records])
+        .where(entity1_id: entity_id, category_id: SECTION_TO_CAT[section])
     end
   end
 

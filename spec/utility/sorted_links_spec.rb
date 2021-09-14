@@ -15,11 +15,11 @@ describe SortedLinks do
   end
 
   describe 'Position sorted' do
+    subject(:person_links) { SortedLinks.new(person) }
+
     let(:government) { create(:entity_org).add_extension('GovernmentBody') }
     let(:business) { create(:entity_org).add_extension('Business') }
     let(:person) { create(:entity_person, :with_person_name) }
-
-    subject { SortedLinks.new(person) }
 
     context 'with one business relationship and one government relationships' do
       before do
@@ -28,18 +28,18 @@ describe SortedLinks do
       end
 
       it 'has one business_position' do
-        expect(subject.business_positions).to be_a LinksGroup
-        expect(subject.business_positions.count).to eql 1
+        expect(person_links.business_positions).to be_a LinksGroup
+        expect(person_links.business_positions.count).to be 1
       end
 
       it 'has one governnment_position' do
-        expect(subject.government_positions).to be_a LinksGroup
-        expect(subject.government_positions.count).to eql 1
+        expect(person_links.government_positions).to be_a LinksGroup
+        expect(person_links.government_positions.count).to be 1
       end
 
       it 'has NO in the office of positions or other positions' do
-        expect(subject.in_the_office_positions.count).to be_zero 
-        expect(subject.other_positions.count).to be_zero
+        expect(person_links.in_the_office_positions.count).to be_zero
+        expect(person_links.other_positions.count).to be_zero
       end
     end
 
@@ -50,18 +50,18 @@ describe SortedLinks do
       end
 
       it 'has one business_position' do
-        expect(subject.business_positions).to be_a LinksGroup
-        expect(subject.business_positions.count).to eql 1
+        expect(person_links.business_positions).to be_a LinksGroup
+        expect(person_links.business_positions.count).to be 1
       end
 
       it 'has one other position with heading "Other positions"' do
-        expect(subject.other_positions.count).to eql 1
-        expect(subject.other_positions.heading).to eql 'Other Positions'
+        expect(person_links.other_positions.count).to be 1
+        expect(person_links.other_positions.heading).to eql 'Other Positions'
       end
 
       it 'has NO in the office of positions or government  positions' do
-        expect(subject.in_the_office_positions.count).to be_zero
-        expect(subject.government_positions.count).to be_zero
+        expect(person_links.in_the_office_positions.count).to be_zero
+        expect(person_links.government_positions.count).to be_zero
       end
     end
 
@@ -72,19 +72,19 @@ describe SortedLinks do
       end
 
       it 'has two other positions with heading "Positions"' do
-        expect(subject.other_positions.count).to eql 2
-        expect(subject.other_positions.heading).to eql 'Positions'
+        expect(person_links.other_positions.count).to be 2
+        expect(person_links.other_positions.heading).to eql 'Positions'
       end
 
       it 'has NO in the office positions, government positions, or business positions' do
-        expect(subject.in_the_office_positions.count).to be_zero
-        expect(subject.government_positions.count).to be_zero
-          expect(subject.business_positions.count).to be_zero
+        expect(person_links.in_the_office_positions.count).to be_zero
+        expect(person_links.government_positions.count).to be_zero
+        expect(person_links.business_positions.count).to be_zero
       end
     end
   end
 
-  context 'initalized with a section' do
+  context 'when initalized with a section' do
     let(:org_with_members) { create(:entity_org) }
     let(:org_with_membership) { create(:entity_org) }
 
@@ -107,7 +107,7 @@ describe SortedLinks do
       it 'returns preloaded Links with members relationships' do
         sorted_links = SortedLinks.new(org_with_members, 'members', 1)
         preloaded_links = sorted_links.send(:preloaded_links_for_section, org_with_members.id, 'members')
-        expect(preloaded_links.length).to eql 1
+        expect(preloaded_links.length).to be 1
         expect(preloaded_links.first).to be_a Link
       end
     end
