@@ -4,18 +4,18 @@
   <% if params[:relationships] == nil %>
 
     <% if @entity.links.count.zero? %>
-	    <%= render partial: 'no_relationships' %>
+      <%= render partial: 'no_relationships' %>
     <% else %>
-      <% cache_if(@entity.updated_at < 2.minutes.ago, ['relationship_page', @entity.cache_key_with_version]) do  %>
-	      <% @links = SortedLinks.new(@entity) %>
-	      <% section_order(@entity).each do |section| %>
-	        <% links_group = @links.send(section) %>
-	        <%= section_heading(links_group) %>
-	        <%= link_to_all(@entity, links_group) %>
-	        <div>
-	          <%= render partial: 'link', collection: links_group.links.take(10) %>
-	        </div>
-	      <% end %>
+      <% cache_unless (user_admin? ||  @entity.updated_at > 2.minutes.ago), ['relationship_page', @entity.cache_key_with_version] do %>
+        <% @links = SortedLinks.new(@entity) %>
+        <% section_order(@entity).each do |section| %>
+	  <% links_group = @links.send(section) %>
+	  <%= section_heading(links_group) %>
+	  <%= link_to_all(@entity, links_group) %>
+	  <div>
+	    <%= render partial: 'link', collection: links_group.links.take(10) %>
+	  </div>
+        <% end %>
       <% end # end cache %>
     <% end %>
 
@@ -25,8 +25,7 @@
 
     <% page = params[:page].blank? ? 1 : params[:page] %>
 
-    <% cache ['relationship_page', @entity.cache_key_with_version, params[:relationships], page ] do  %>
-
+    <% cache_unless (user_admin? ||  @entity.updated_at > 2.minutes.ago), ['relationship_page', @entity.cache_key_with_version, params[:relationships], page] do %>
       <% @links = SortedLinks.new(@entity, params[:relationships], page) %>
       <% links_group = @links.send(params[:relationships]) %>
       <%= section_heading(links_group) %>
@@ -34,10 +33,10 @@
       <% raise ActiveRecord::RecordNotFound unless paginatable_links.count > 0 %>
       <%= paginate paginatable_links %>
       <div class="relationship-links">
-	      <%= render partial: 'link', collection: paginatable_links %>
+	<%= render partial: 'link', collection: paginatable_links %>
       </div>
-      <%= paginate paginatable_links %>
 
+      <%= paginate paginatable_links %>
 
     <% end %>
   <% end %>
