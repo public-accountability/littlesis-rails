@@ -4,6 +4,6 @@ export default class extends Controller {
   static values = { config: Object }
 
   connect() {
-    new Oligrapher(this.configValue)
+    window.Oligrapher.instance = new Oligrapher(this.configValue)
   }
 }
