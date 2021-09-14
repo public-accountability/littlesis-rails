@@ -18,24 +18,8 @@
       <% end %>
     </div>
   </div>
-  <div class="flex-column align-items-sm-end">
-    <% if current_user&.admin? %>
-      <td>
-        <%= button_to(
-          relationship_path(link[0].relationship),
-          method: :patch,
-          params: {
-            relationship: {
-              is_featured: !link[0].relationship.is_featured
-            },
-            reference: {just_cleaning_up: true}
-          },
-          class: 'star-button',
-          title: (link[0].relationship.is_featured ? 'unfeature relationship' : 'feature relationship')
-        ) do %>
-        <span class="<%= !link[0].relationship.is_featured ? 'star' : 'not-star' %>">
-        <% end %>
-      </td>
-    <% end %>
-  </div>
+
+  <% if current_user&.admin? %>
+    <%= render partial: 'feature_relationship_button', locals: { relationship: link[0].relationship } %>
+  <% end %>
 </div>

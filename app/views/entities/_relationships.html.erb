@@ -6,7 +6,7 @@
     <% if @entity.links.count.zero? %>
 	    <%= render partial: 'no_relationships' %>
     <% else %>
-      <% cache_if(@entity.updated_at < 10.minutes.ago, ['relationship_page', @entity.cache_key_with_version]) do  %>
+      <% cache_if(@entity.updated_at < 2.minutes.ago, ['relationship_page', @entity.cache_key_with_version]) do  %>
 	      <% @links = SortedLinks.new(@entity) %>
 	      <% section_order(@entity).each do |section| %>
 	        <% links_group = @links.send(section) %>

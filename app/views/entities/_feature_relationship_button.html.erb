@@ -1,0 +1,18 @@
+<div class="flex-column align-items-sm-end">
+  <td>
+    <%= button_to(
+      relationship_path(relationship),
+      method: :patch,
+      params: {
+        relationship: {
+          is_featured: !relationship.is_featured
+        },
+        reference: {just_cleaning_up: true}
+      },
+      class: 'star-button',
+      title: (relationship.is_featured ? 'unfeature relationship' : 'feature relationship')
+    ) do %>
+      <span class="<%= !relationship.is_featured ? 'star' : 'not-star' %>">
+    <% end %>
+  </td>
+</div>
