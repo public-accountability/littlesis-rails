@@ -191,12 +191,12 @@ en:
             <li>Contributions that spam the database</li>
           </ul>
         I understand that if I am in violation of any of these terms of use my account will be restricted from editing while LittleSis staff investigate and delete any data that is inappropriate for the site. If the violation occurred by accident I can appeal to have my editing restrictions lifted, however this is at the discretion of LittleSis staff. Repeated violations will result in a suspension of my LittleSis account.
-      i_accept_the_terms: I accept the above terms of use
+      i_accept_the_terms: "I accept the above terms of use"
       what_are_your_research interests: What are your research interests?
       what_using_for:  What are you hoping to use LittleSis for?
       solve_math_problem: Please solve the following math problem
       name_and_email: your name and email will not be public
-      email_confirmation: An email with a confirmation link is on the way
+      email_confirmation: An email with a confirmation link is on the way.
       after_confirming: After confirming your email address, you'll be able to login using your email and password here
       having_problems: If you are having any problems with the registration process please contact us at
       no_confirmation instructions: Didn't receive confirmation instructions?
