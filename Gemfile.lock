@@ -368,7 +368,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  better_errors (>= 2.5.0)
+  better_errors
   bootsnap (>= 1.4.3)
   bootstrap (~> 4)
   capybara (>= 3.14.0)
@@ -406,7 +406,7 @@ DEPENDENCIES
   rubocop
   rubocop-performance
   rubocop-rails
-  rubocop-rspec (>= 2.0.0pre)
+  rubocop-rspec
   rubyzip
   sassc-rails
   scenic
