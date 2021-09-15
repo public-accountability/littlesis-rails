@@ -5,13 +5,12 @@ feature 'help pages' do
   let(:page_title) { Faker::Book.title }
   let(:help_page) { create(:help_page) }
 
-  scenario 'visting the help pages index' do
+  scenario 'viewing the help pages index' do
     visit "/help"
     expect(page.status_code).to eq 200
-    page_has_selector 'h1', text: 'LittleSis Help'
   end
 
-  scenario 'visiting a help page' do
+  scenario 'viewing a help page' do
     visit "/help/#{help_page.name}"
     successfully_visits_page "/help/#{help_page.name}"
   end
