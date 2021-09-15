@@ -74,7 +74,6 @@ group :test do
 end
 
 group :development do
-  gem 'memory_profiler'
   gem 'rack-mini-profiler', require: false
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
