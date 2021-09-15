@@ -400,6 +400,7 @@ DEPENDENCIES
   rexml
   rollbar
   roo (~> 2.8.1)
+  rspec
   rspec-benchmark
   rspec-rails (>= 4.0.1)
   rspec_junit_formatter

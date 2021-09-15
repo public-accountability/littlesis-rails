@@ -93,8 +93,9 @@ class NetworkMap < ApplicationRecord
     documents.map { |d| "<div><a href=\"#{d.url}\">#{d.name}</a></div>"}.join("\n")
   end
 
+  # enques job to take screenshot
   def take_screenshot
-    OligrapherScreenshotService.run(self)
+    OligrapherScreenshotJob.perform_later(id)
   end
 
   # Creates these functions:
