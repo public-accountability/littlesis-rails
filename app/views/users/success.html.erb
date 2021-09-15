@@ -1,9 +1,10 @@
 <div class="row">
-    <div class="col-sm-12 col-md-10">
-        <h2>Welcome to LittleSis!</h2>
-        <p>Before you can starting editing you must confirm your email address.</p>
-	<p>You recieve shortly an email with a confirmation link. If the email never arrives or if you are having any problems with the registration process please contact us at: <%=  mail_to "admin@littlesis.org" %></p>
-	<p> After confirming your email address, you'll be able to login using your email and password here: <%= link_to 'littlesis.org/login', new_user_session_path %></p>
-	
-    </div>
+  <div class="col-sm-10 col-md-8">
+    <h1 class="mb-2">Welcome to LittleSis!</h1>
+    <p><b>An email with a confirmation link is on the way.</b></p>
+    <p class="mr-5">
+      After confirming your email address, you'll be able to login using your email and password here: <%= link_to 'littlesis.org/login', new_user_session_path %>
+    </p>
+    <p class="mr-5"><small>If you are having any problems with the registration process please contact us at <%=  mail_to "admin@littlesis.org" %><br/></small></p>
+  </div>
 </div>
