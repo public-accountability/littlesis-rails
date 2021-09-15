@@ -40,8 +40,7 @@ module Lilsis
     # Since Rails 6 `belongs_to` associations are by default
     config.active_record.belongs_to_required_by_default = false
 
-    # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
-    # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
+    config.i18n.fallbacks = [:en]
 
     config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch('redis_url') }
 

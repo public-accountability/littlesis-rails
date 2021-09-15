@@ -51,7 +51,7 @@ gem 'datagrid'
 gem 'validate_url', '>= 1.0.13'
 
 # used for screenshot capture
-gem 'selenium-webdriver', '>= 4.0.0.rc1'
+gem 'selenium-webdriver', '>= 4.0.0.rc1', require: true
 
 # Used by StringSimilarity
 gem 'text', '>= 1.3.1'
@@ -60,39 +60,35 @@ gem 'text', '>= 1.3.1'
 gem 'rollbar'
 
 group :test do
-  gem 'simplecov', :require => false
-end
-
-group :development do
-  gem 'better_errors', '>= 2.5.0'
-  gem 'memory_profiler'
-  gem 'rack-mini-profiler', require: false
-  gem 'web-console'
-end
-
-group :test, :development do
   gem 'capybara', '>= 3.14.0'
   gem 'database_cleaner'
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.0'
-  gem 'faker', '>= 2.13'
   gem 'rails-controller-testing'
-  gem 'rspec-rails', '>= 4.0.1'
-
-  # Performance testing in RSpec
   gem 'rspec-benchmark'
+  gem 'rspec-rails', '>= 4.0.1'
+  gem 'rspec_junit_formatter', require: false
+  gem 'shoulda-callback-matchers', '~> 1.1.4'
+  gem 'shoulda-matchers', '>= 4.0.0'
+  gem 'simplecov', require: false
+end
 
-  gem 'rspec_junit_formatter'
+group :development do
+  gem 'rack-mini-profiler', require: false
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
-  gem 'rubocop-rspec', '>= 2.0.0pre', require: false
-  gem 'shoulda-callback-matchers', '~> 1.1.4'
-  gem 'shoulda-matchers', '>= 4.0.0'
+  gem 'rubocop-rspec', require: false
+  gem 'web-console'
+  gem 'better_errors'
+end
+
+group :test, :development do
+  gem 'memory_profiler'
+  gem 'faker', '>= 2.13'
 end
 
 # Used by lib/
-
 gem 'roo', "~> 2.8.1", require: false
 gem 'rubyzip', require: false
 gem 'sqlite3', require: false
