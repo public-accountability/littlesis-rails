@@ -17,10 +17,13 @@ class OligrapherScreenshotJob < ApplicationJob
       document = Nokogiri::XML(svg)
 
       if svg && valid_svg?(document)
-        map.update_column(screenshot: scale_svg(document))
+        map.update_columns(screenshot: scale_svg(document))
       else
-        Rails.logger.info "Failed to get a valid svg image for map #{map_id}"
+        Rails.logger.warn "Failed to get a valid svg image for map #{map_id}"
       end
+
+    rescue Net::ReadTimeout
+      Rails.logger.warn "Net::ReadTimeout while trying to take screenshot of map #{map_id}"
     end
   end
 
