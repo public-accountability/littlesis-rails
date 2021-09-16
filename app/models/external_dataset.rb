@@ -46,7 +46,7 @@ module ExternalDataset
       raise NotImplementedError
     end
 
-    def extract
+    def transform
       raise NotImplementedError
     end
 
