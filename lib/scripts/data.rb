@@ -15,8 +15,12 @@ littlesis data <command> <dataset>
  etl           | runs download, transform, load, report
 HELP
 
-if command == :help
+case command
+when :help
   puts HELP
+  exit
+when :list
+  ExternalDataset.datasets.each { |d| puts d }
   exit
 end
 
@@ -37,8 +41,6 @@ when :report
   else
     ExternalDataset.public_send(dataset).report
   end
-when :list
-  ExternalDataset.datasets.each { |d| puts d }
 when :etl
   puts "Working on #{dataset}: "
   %i[download transform load report].each do |c|

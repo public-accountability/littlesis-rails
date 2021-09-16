@@ -29,7 +29,8 @@ module FEC
       database: File.join(default_root, 'data/fec.db'),
       recheck: false,
       years: 2010..2022,
-      tables: nil
+      tables: nil,
+      processes: 4
     }
   end
 

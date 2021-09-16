@@ -32,7 +32,7 @@ module ExternalDataset
         basename = FILENAME_LOOKUP.fetch(dataset_name) + year + ".csv"
 
         rails_path = Rails.root.join('data/fec/csv').join(basename)
-        database_path = Pathname.new('/fec').join(basename)
+        database_path = Pathname.new('/data/fec/csv').join(basename)
 
         yield database_path
       end
