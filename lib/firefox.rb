@@ -6,7 +6,13 @@
 # Firefox.visit('https://littlesis.org') do |driver|
 #   # use driver
 # end
-#
+
+require 'selenium-webdriver'
+
+if Rails.env.development?
+  Selenium::WebDriver.logger.level = :debug
+end
+
 class Firefox
   SELENIUM_OPTIONS = Selenium::WebDriver::Firefox::Options.new.tap do |options|
     options.headless!

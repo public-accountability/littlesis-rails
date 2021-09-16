@@ -51,7 +51,7 @@ gem 'datagrid'
 gem 'validate_url', '>= 1.0.13'
 
 # used for screenshot capture
-gem 'selenium-webdriver', '>= 4.0.0.rc1', require: true
+gem 'selenium-webdriver', '>= 4.0.0.rc1', require: false
 
 # Used by StringSimilarity
 gem 'text', '>= 1.3.1'
@@ -66,8 +66,9 @@ group :test do
   gem 'factory_bot_rails', '~> 6.0'
   gem 'rails-controller-testing'
   gem 'rspec-benchmark'
+  gem 'rspec'
   gem 'rspec-rails', '>= 4.0.1'
-  gem 'rspec_junit_formatter', require: false
+  gem 'rspec_junit_formatter'
   gem 'shoulda-callback-matchers', '~> 1.1.4'
   gem 'shoulda-matchers', '>= 4.0.0'
   gem 'simplecov', require: false
