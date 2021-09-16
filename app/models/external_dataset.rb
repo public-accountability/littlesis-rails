@@ -66,7 +66,7 @@ module ExternalDataset
     end
 
     def report
-      puts "There are #{count} rows in #{table_name}"
+      puts "There are #{ActiveSupport::NumberHelper.number_to_delimited(count)} rows in #{table_name}"
     end
 
     # utility

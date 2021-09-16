@@ -56,6 +56,10 @@ class Person < ApplicationRecord
     [name_first, name_middle, name_last].filter(&:empty?).join(' ')
   end
 
+  def last_first
+    "#{name_last}, #{name_first}"
+  end
+
   def self.same_first_names(name)
     Array.wrap(SHORT_FIRST_NAMES.fetch(name.downcase, []))
       .concat(Array.wrap(LONG_FIRST_NAMES.fetch(name.downcase, [])))

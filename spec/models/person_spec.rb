@@ -1,6 +1,6 @@
 describe Person do
-  it { should belong_to(:entity).optional }
-  it { should have_db_column(:nationality) }
+  it { is_expected.to belong_to(:entity).optional }
+  it { is_expected.to have_db_column(:nationality) }
 
   it 'has SHORT_FIRST_NAMES constant' do
     expect(Person::SHORT_FIRST_NAMES).to be_a Hash
@@ -43,21 +43,27 @@ describe Person do
     end
   end
 
-  describe 'validations' do
-    it { should validate_presence_of(:name_last) }
-    it { should validate_presence_of(:name_first) }
-    it { should validate_length_of(:name_last).is_at_most(50) }
-    it { should validate_length_of(:name_last).is_at_most(50) }
+  describe 'validations and helpers' do
+    it { is_expected.to validate_presence_of(:name_last) }
+    it { is_expected.to validate_presence_of(:name_first) }
+    it { is_expected.to validate_length_of(:name_last).is_at_most(50) }
+    it { is_expected.to validate_length_of(:name_first).is_at_most(50) }
+
+    specify do
+      expect(build(:a_person, name_first: 'First', name_last: 'Last').last_first).to eq "Last, First"
+    end
   end
 
   describe 'titleize_names' do
-    let(:the_reverend) { build(:a_person,
-                               name_first: 'first',
-                               name_last: 'last',
-                               name_middle: 'middle',
-                               name_suffix: 'II',
-                               name_prefix: 'rev.',
-                               name_nick: 'the rev') }
+    let(:the_reverend) do
+      build(:a_person,
+            name_first: 'first',
+            name_last: 'last',
+            name_middle: 'middle',
+            name_suffix: 'II',
+            name_prefix: 'rev.',
+            name_nick: 'the rev')
+    end
 
     it 'titleizes first and last names' do
       rev = the_reverend
@@ -111,11 +117,11 @@ describe Person do
   end
 
   describe 'gender_to_id' do
-    specify { expect(Person.gender_to_id('F')).to eql 1 }
-    specify { expect(Person.gender_to_id(1)).to eql 1 }
-    specify { expect(Person.gender_to_id('2')).to eql 2 }
-    specify { expect(Person.gender_to_id('male')).to eql 2 }
-    specify { expect(Person.gender_to_id('o')).to eql 3 }
+    specify { expect(Person.gender_to_id('F')).to eq 1 }
+    specify { expect(Person.gender_to_id(1)).to eq 1 }
+    specify { expect(Person.gender_to_id('2')).to eq 2 }
+    specify { expect(Person.gender_to_id('male')).to eq 2 }
+    specify { expect(Person.gender_to_id('o')).to eq 3 }
     specify { expect(Person.gender_to_id('xyz')).to be nil }
     specify { expect(Person.gender_to_id(nil)).to be nil }
   end
