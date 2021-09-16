@@ -1,33 +1,40 @@
 <% content_for(:page_title, "Match FEC Contributions: #{@entity.name}") %>
 
-<%#  render partial: 'entities/header', locals: { entity: @entity } %>
+<%=  render partial: 'entities/header', locals: { entity: @entity } %>
 
-<div class="row mt-4 bg-light">
-  <div class="col p-2">
-    <p>Help us expand the LittleSis database by identifying donors in the FEC's dataset</p>
-    <%= form_with url: fec_entity_match_contributions_path(@entity), method: :get, class: 'input-group' do |form| %>
-      <%= form.text_field "q",  value: @query, class: "form-control", placeholder: 'DOE, JANE' %>
-      <div class="input-group-append">
-        <%= form.submit "Search", class: 'btn btn-outline-secondary' %>
-      </div>
-    <% end %>
-  </div>
-</div>
+<% if @entity.person? %>
 
-<div class="row">
-  <div class="col mt-4 p-1">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Name</th></tr>
-          <th>Location</th>
-          <th>Employment</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= render partial: 'fec_contribution', collection: @contributions %>
-      </tbody>
-    </table>
+  <div class="row mt-4 bg-light" data-controller="match-contributions" data-match-contributions-entity-name-value="<%= @entity.person.last_first %>">
+    <div class="col p-2">
+      <p>Help us expand the LittleSis database by identifying donors in the FEC's dataset</p>
+      <p>Try searching for <a class="link-blue cursor-pointer" data-action="match-contributions#example_search"><%= @entity.person.last_first %></a></p>
+      <%= form_with url: fec_entity_match_contributions_path(@entity), method: :get, class: 'input-group' do |form| %>
+        <%= form.text_field "query",  value: @query, class: "form-control" %>
+        <div class="input-group-append">
+          <%= form.submit "Search", class: 'btn btn-outline-secondary' %>
+        </div>
+      <% end %>
+    </div>
   </div>
-</div>
+
+  <div class="row">
+    <div class="col mt-4 p-1">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Employment</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'fec_contribution', collection: @contributions %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<% else %>
+  <p>Only contributions from <em>people</em> can be imported at this time.</p>
+<% end %>

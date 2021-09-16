@@ -21,12 +21,14 @@ class FECController < ApplicationController
   before_action :set_entity, only: %i[contributions match_contributions donor_match]
 
   def contributions
-    @contributions = FECContributionsQuery.run(@entity)
+    # @contributions = FECContributionsQuery.run(@entity)
   end
 
   def match_contributions
-    @query = params[:q] || @entity.name
-    @contributions = ExternalDataset::FECContribution.search_by_name(@query).limit(2500)
+    @query = params[:query]
+    if @query&.strip.present?
+      # @contributions = ExternalDataset.search_by_name(@query).limit(2500)
+    end
   end
 
   # required params: donor_id, sub_ids
