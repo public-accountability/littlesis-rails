@@ -398,16 +398,6 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  resources :external_entities, only: %i[show update] do
-    get 'random', on: :collection, action: :random
-    get '/:dataset/random', on: :collection, action: :random, constraints: DatasetConstraint.new
-    get '/:dataset/:id', on: :collection, action: :show, constraints: DatasetConstraint.new(check_id: true)
-  end
-
-  resources :external_relationships, only: %i[show update] do
-    get 'random', on: :collection, action: :random
-  end
-
   match 'relationship/view/id/:id', via: :get, constraints: {id: /[0-9]+/}, to: 'relationships/routes#redirect_to_canonical'
 
   match "*path",

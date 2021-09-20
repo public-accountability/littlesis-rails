@@ -14,7 +14,7 @@ module ExternalDataset
       Utility.download_file(url: @source_url, path: @json_file)
     end
 
-    def self.extract
+    def self.transform
       Utility.save_hash_array_to_csv(@csv_file,
                                      JSON.parse(File.read(@json_file)).map do |x|
                                        {

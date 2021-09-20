@@ -5,7 +5,7 @@ module FEC
     def self.run
       FEC.logger.info "Making CSVS"
 
-      Parallel.each(FEC.tables_with_years) do |table|
+      Parallel.each(FEC.tables_with_years, in_processes: FEC.configuration[:processes]) do |table|
         make_csv(table)
       end
     end

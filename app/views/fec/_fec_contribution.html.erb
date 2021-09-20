@@ -1,17 +1,16 @@
 <tr>
-  <td><%= fec_contribution.name  %></td>
-  <td><%= fec_contribution.location  %></td>
-  <td><%= fec_contribution.employment  %></td>
+  <td><%= fec_contribution.name %></td>
+  <td><%= fec_contribution.location %></td>
+  <td><%= fec_contribution.employment %></td>
   <td>
     <% if fec_contribution.fec_match.present? %>
       <p>Already imported</p>
     <% else  %>
       <button>import</button>
       <%#= form_with url: fec_entity_donor_match_path(@entity), method: :post do |form| %>
-        <%#= form.hidden_field "external_entity_id", value: fec_donor.external_entity.id %>
-        <%#= form.submit "import", class: 'btn btn-outline-primary' %>
+      <%#= form.hidden_field "external_entity_id", value: fec_donor.external_entity.id %>
+      <%#= form.submit "import", class: 'btn btn-outline-primary' %>
       <%# end  %>
     <% end  %>
   </td>
-</tr
->
+</tr>

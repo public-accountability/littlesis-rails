@@ -71,7 +71,7 @@ module ExternalDataset
       Utility.stream_file_if_not_exists(url: SOURCE_URL, path: LOCALPATH)
     end
 
-    def self.extract
+    def self.transform
       CSV.open(CSVPATH, 'w') do |outcsv|
         CSV.foreach(LOCALPATH, headers: true) do |row|
           row['DATE'] = format_date(row['DATE'])

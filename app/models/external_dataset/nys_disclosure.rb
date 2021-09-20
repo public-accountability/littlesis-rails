@@ -4,7 +4,7 @@ module ExternalDataset
   # Steps for a importing NYS Campaign Finance
   #   - go to publicreporting.elections.ny.gov download and all 4 ALL_REPORTS files
   #   - place those files in <Rails-root>/data/external_data/original/nys
-  #   - littlesis data extract nys_disclosures
+  #   - littlesis data transform nys_disclosures
   #   - littlesis data load nys_disclosures
   class NYSDisclosure < ApplicationRecord
     extend DatasetInterface
@@ -17,8 +17,8 @@ module ExternalDataset
       raise NotImplementedError, "this dataset requires manual downloading via a browser"
     end
 
-    def self.extract
-      NYSDisclosureExtractor.run
+    def self.transform
+      NYSDisclosureTransformer.run
     end
 
     def self.load

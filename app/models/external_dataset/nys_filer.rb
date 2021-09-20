@@ -14,7 +14,7 @@ module ExternalDataset
       # Utility.stream_file_if_not_exists(url: @source_url, path: @zip_file)
     end
 
-    def self.extract
+    def self.transform
       FileUtils.mkdir_p ROOT_DIR.join('csv/nys')
 
       CSV.open(ROOT_DIR.join('csv/nys').join('nys_filers.csv').to_s, 'w') do |csv_writer|

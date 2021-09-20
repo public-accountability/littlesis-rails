@@ -11,8 +11,6 @@ module FEC
       Database.enable_dangerous_sqlite3_settings
       Importer.run
       DataCleaner.run
-      # DataProcessor.run
-      # CsvDataProcessor.run
       Database.index!
       # Database.fulltext_index!
       Database.disable_dangerous_sqlite3_settings
@@ -39,7 +37,11 @@ module FEC
         end
 
         opts.on("--years=YEAR_MIN,YEAR_MAX", "Year range") do |years|
-          FEC.configuration[:years] = Range.new(*years.split(',').map(&:to_i))
+          if /\d{4}/.match? years
+            FEC.configuration[:years] = [years.to_i]
+          else
+            FEC.configuration[:years] = Range.new(*years.split(',').map(&:to_i))
+          end
         end
 
         # opts.on("--recheck", "Check for new data from FEC") do |x|

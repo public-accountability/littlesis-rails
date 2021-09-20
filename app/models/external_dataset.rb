@@ -5,6 +5,8 @@ module ExternalDataset
   ROOT_DIR = Rails.root.join('data/external_data')
   DATASETS = %i[nycc nyc_contributions nys_disclosures nys_filers fec_candidates fec_committees fec_contributions].freeze
 
+  mattr_reader(:datasets) { DATASETS }
+
   mattr_reader :descriptions do
     {
       iapd_advisors: 'Investor Advisor Corporations Registered with the SEC',
@@ -25,6 +27,11 @@ module ExternalDataset
     const_get(dname.to_s.classify)
   end
 
+  # creates shortcuts. For example: ExternalDataset.nys_filers, ExternalDataset.nycc
+  DATASETS.each do |dname|
+    define_singleton_method(dname) { fetch_dataset_class(dname) }
+  end
+
   module DatasetInterface
     def dataset=(dataset)
       unless ExternalDataset::DATASETS.include?(dataset)
@@ -38,7 +45,7 @@ module ExternalDataset
 
     # interface
 
-    def self.create_table
+    def create_table
       raise NotImplementedError
     end
 
@@ -46,7 +53,7 @@ module ExternalDataset
       raise NotImplementedError
     end
 
-    def extract
+    def transform
       raise NotImplementedError
     end
 
@@ -59,7 +66,7 @@ module ExternalDataset
     end
 
     def report
-      puts "There are #{count} rows in #{table_name}"
+      puts "There are #{ActiveSupport::NumberHelper.number_to_delimited(count)} rows in #{table_name}"
     end
 
     # utility

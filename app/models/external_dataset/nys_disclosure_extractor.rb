@@ -47,7 +47,7 @@
 # 45 dist_off_cand_bal_prop
 
 module ExternalDataset
-  class NYSDisclosureExtractor
+  class NYSDisclosureTransformer
     FILES = [
       %w[ALL_REPORTS_CountyCandidate COUNTY_CANDIDATE],
       %w[ALL_REPORTS_CountyCommittee COUNTY_COMMITTEE],
