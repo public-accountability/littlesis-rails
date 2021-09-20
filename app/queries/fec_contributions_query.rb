@@ -2,10 +2,6 @@
 
 module FECContributionsQuery
   def self.run(entity)
-    ExternalRelationship
-      .include(:external_data)
-      .fec_contributions
-      .matched
-      .where(entity1: entity)
+    raise Exceptions::LittleSisError, "Can only get contributions for people" if entity.org?
   end
 end
