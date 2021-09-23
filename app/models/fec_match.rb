@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# FECMatch connects a ExternalDataset::FECContribution with up to 3 Entities:
+# a donor (Person), committee (Org), and candidate (Person).
 class FECMatch < ApplicationRecord
   # FEC transaction record
   belongs_to :fec_contribution,
@@ -15,23 +17,36 @@ class FECMatch < ApplicationRecord
   # The associated candidate for the recipient (not all committees will have one)
   belongs_to :candidate, class_name: 'Entity', optional: true
 
-  after_create do
-    create_committee_relationship
-    update_committee_relationship
-    create_candidate_relationship
-    update_candidate_relationship
+  belongs_to :committee_relationship, class_name: 'Relationship'
+  belongs_to :candidate_relationship, class_name: 'Relationship', optional: true
+
+  before_create :find_or_create_committee_relationship, :find_or_create_candidate_relationship
+
+  def find_or_create_committee_relationship
+    return committee_relationship if committee_relationship.present?
+
+    found_committee_r = Relationship.find_by(committee_relationship_attrs)
+
+    return found_committee_r if found_committee_r.present?
+
+    log_debug "Creating Committee Relationship: #{committee_relationship_attrs}"
+    create_committee_relationship!(committee_relationship_attrs).tap do |r|
+      r.add_reference(fec_contribution.reference_attributes).save!
+    end
   end
 
-  def committee_relationship
-    Relationship.find_by(committee_relationship_attrs)
-  end
+  def find_or_create_candidate_relationship
+    return candidate_relationship if candidate_relationship.present?
 
-  def create_committee_relationship
-    unless committee_relationship
-      Rails.logger.debug "Creating relationship: #{committee_relationship_attrs}"
-      Relationship.create!(committee_relationship_attrs).tap do |r|
-        r.add_reference(fec_contribution.reference_attributes).save!
-      end
+    found_candidate_r = Relationship.find_by(candidate_relationship_attrs)
+
+    # maybe add reference to existing relationship here?
+
+    return found_candidate_r if found_candidate_r.present?
+
+    log_debug "Creating Candidate Relationship: #{candidate_relationship_attrs}"
+    create_candidate_relationship!(candidate_relationship_attrs).tap do |r|
+      r.add_reference(fec_contribution.reference_attributes).save!
     end
   end
 
@@ -42,28 +57,10 @@ class FECMatch < ApplicationRecord
                       .map(&:fec_contribution)
                       .sort_by(&:date)
 
-    committee_relationship.update!(amount: contributions.map(&:amount).sum,
-                                   start_date: contributions.first.date,
-                                   end_date: contributions.last.date,
-                                   filings: contributions.size)
+    committee_relationship.update!(relationship_attrs_from_contributions(contributions))
 
     contributions.map(&:reference_attributes).each do |attrs|
       committee_relationship.add_reference(attrs).save
-    end
-  end
-
-  def candidate_relationship
-    return if candidate.nil?
-
-    Relationship.find_by(candidate_relationship_attrs)
-  end
-
-  def create_candidate_relationship
-    if candidate.present? && candidate_relationship.nil?
-      Rails.logger.debug "Creating relationship: #{candidate_relationship_attrs}"
-      Relationship.create!(candidate_relationship_attrs).tap do |r|
-        r.add_reference(fec_contribution.reference_attributes).save!
-      end
     end
   end
 
@@ -76,10 +73,7 @@ class FECMatch < ApplicationRecord
                       .map(&:fec_contribution)
                       .sort_by(&:date)
 
-    candidate_relationship.update!(amount: contributions.map(&:amount).sum,
-                                   start_date: contributions.first.date,
-                                   end_date: contributions.last.date,
-                                   filings: contributions.size)
+    candidate_relationship.update!(relationship_attrs_from_contributions(contributions))
 
     contributions.map(&:reference_attributes).each do |attrs|
       candidate_relationship.add_reference(attrs).save
@@ -105,6 +99,15 @@ class FECMatch < ApplicationRecord
     Rails.logger.info(stats)
   end
 
+  def relationship_attrs_from_contributions(contributions)
+    {
+      amount: contributions.map(&:amount).sum,
+      start_date: contributions.first.date,
+      end_date: contributions.last.date,
+      filings: contributions.size
+    }
+  end
+
   private
 
   def committee_relationship_attrs
@@ -119,5 +122,9 @@ class FECMatch < ApplicationRecord
       entity: donor,
       related: candidate,
       description1: 'Campaign Contribution' }
+  end
+
+  def log_debug(msg)
+    Rails.logger.debug { "[FECMatch\##{id}] #{msg}" }
   end
 end
