@@ -55,6 +55,8 @@ describe FECMatch do
     expect(fec_match.candidate_relationship).to eq candidate_r
   end
 
-  it 'finds existing recipient'
-  it 'creates new recipient if needed'
+  it 'finds existing comnmittees and candidates' do
+    # FECMatch.create!(fec_contribution: fec_contribution, donor)
+
+  end
 end

@@ -2,6 +2,10 @@
 
 # FECMatch connects a ExternalDataset::FECContribution with up to 3 Entities:
 # a donor (Person), committee (Org), and candidate (Person).
+#
+# This can be created with only two associations: an FECContribution and Entity (donor),
+# in which it will use the FEC data to find existing LittleSis enities for the comittee and candidate,
+# and will create those if none are found.
 class FECMatch < ApplicationRecord
   # FEC transaction record
   belongs_to :fec_contribution,
@@ -20,7 +24,10 @@ class FECMatch < ApplicationRecord
   belongs_to :committee_relationship, class_name: 'Relationship'
   belongs_to :candidate_relationship, class_name: 'Relationship', optional: true
 
-  before_create :find_or_create_committee_relationship, :find_or_create_candidate_relationship
+  before_create :find_or_create_recipient,
+                :find_or_create_candidate,
+                :find_or_create_committee_relationship,
+                :find_or_create_candidate_relationship
 
   def self.migration!
     raise Exceptions::LittleSisError, "do not run on production yet" if Rails.env.production?
@@ -102,6 +109,18 @@ class FECMatch < ApplicationRecord
         r.add_reference(fec_contribution.reference_attributes).save!
       end
     end
+  end
+
+  def find_or_create_recipient
+    return if recipient.present?
+
+    self.recipient = fec_contribution.fec_committee.create_littlesis_entity
+  end
+
+  def find_or_create_candidate
+    return if candidate.present? || fec_contribution.fec_committee.candidate.nil?
+
+    self.candidate = fec_contribution.fec_committee.candidate.create_littlesis_entity
   end
 
   # attribute helpers
