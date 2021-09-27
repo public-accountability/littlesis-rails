@@ -22,32 +22,23 @@ class FECMatch < ApplicationRecord
 
   before_create :find_or_create_committee_relationship, :find_or_create_candidate_relationship
 
-  def find_or_create_committee_relationship
-    return committee_relationship if committee_relationship.present?
+  def self.migration!
+    raise Exceptions::LittleSisError, "do not run on production yet" if Rails.env.production?
 
-    found_committee_r = Relationship.find_by(committee_relationship_attrs)
+    stats = { missing: 0, already_imported: 0, missing_donor: 0, error: 0, created: 0 }
 
-    return found_committee_r if found_committee_r.present?
+    enumerator = if Rails.env.development?
+                   OsMatch.joins(:os_donation).where("os_donations.cycle = '2012'").order('random()').limit(100).each
+                 else
+                   OsMatch.all.find_each
+                 end
 
-    log_debug "Creating Committee Relationship: #{committee_relationship_attrs}"
-    create_committee_relationship!(committee_relationship_attrs).tap do |r|
-      r.add_reference(fec_contribution.reference_attributes).save!
+    enumerator.each do |os_match|
+      result = OsMatchMigrationService.run(os_match)
+      stats[result] += 1
     end
-  end
 
-  def find_or_create_candidate_relationship
-    return candidate_relationship if candidate_relationship.present?
-
-    found_candidate_r = Relationship.find_by(candidate_relationship_attrs)
-
-    # maybe add reference to existing relationship here?
-
-    return found_candidate_r if found_candidate_r.present?
-
-    log_debug "Creating Candidate Relationship: #{candidate_relationship_attrs}"
-    create_candidate_relationship!(candidate_relationship_attrs).tap do |r|
-      r.add_reference(fec_contribution.reference_attributes).save!
-    end
+    Rails.logger.info(stats)
   end
 
   def update_committee_relationship
@@ -80,24 +71,40 @@ class FECMatch < ApplicationRecord
     end
   end
 
-  def self.migration!
-    raise Exceptions::LittleSisError, "do not run on production yet" if Rails.env.production?
+  private
 
-    stats = { missing: 0, already_imported: 0, missing_donor: 0, error: 0, created: 0 }
+  def find_or_create_committee_relationship
+    return if committee_relationship.present?
 
-    enumerator = if Rails.env.development?
-                   OsMatch.joins(:os_donation).where("os_donations.cycle = '2012'").order('random()').limit(100).each
-                 else
-                   OsMatch.all.find_each
-                 end
+    found_committee_r = Relationship.find_by(committee_relationship_attrs)
 
-    enumerator.each do |os_match|
-      result = OsMatchMigrationService.run(os_match)
-      stats[result] += 1
+    if found_committee_r.present?
+      self.committee_relationship = found_committee_r
+    else
+      log_debug "Creating Committee Relationship: #{committee_relationship_attrs}"
+      create_committee_relationship!(committee_relationship_attrs).tap do |r|
+        r.add_reference(fec_contribution.reference_attributes).save!
+      end
     end
-
-    Rails.logger.info(stats)
   end
+
+  def find_or_create_candidate_relationship
+    return if candidate_relationship.present? || candidate.nil?
+
+    found_candidate_r = Relationship.find_by(candidate_relationship_attrs)
+
+    if found_candidate_r.present?
+      # maybe add reference to existing relationship here?
+      self.candidate_relationship = found_candidate_r
+    else
+      log_debug "Creating Candidate Relationship: #{candidate_relationship_attrs}"
+      create_candidate_relationship!(candidate_relationship_attrs).tap do |r|
+        r.add_reference(fec_contribution.reference_attributes).save!
+      end
+    end
+  end
+
+  # attribute helpers
 
   def relationship_attrs_from_contributions(contributions)
     {
@@ -107,8 +114,6 @@ class FECMatch < ApplicationRecord
       filings: contributions.size
     }
   end
-
-  private
 
   def committee_relationship_attrs
     { category_id: Relationship::DONATION_CATEGORY,
