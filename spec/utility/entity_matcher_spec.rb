@@ -203,7 +203,7 @@ describe EntityMatcher, :sphinx do
 
       it 'sets name when provided string' do
         expect(subject.new(name).name)
-          .to eql NameParser.new(name).to_indifferent_hash
+          .to eq NameParser.new(name).to_h.with_indifferent_access
       end
 
       it 'if passed a name with only one word, it is assumed to be the last name' do

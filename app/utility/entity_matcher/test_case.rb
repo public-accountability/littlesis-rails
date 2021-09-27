@@ -90,7 +90,7 @@ module EntityMatcher
           @entity = input
           @name = @entity.person.name_attributes.with_indifferent_access
         when String
-          @name = NameParser.new(input).to_indifferent_hash
+          @name = NameParser.new(input).to_h.with_indifferent_access
         when Hash
           validate_input_hash(input)
           @name = BLANK_NAME_HASH.merge(input)

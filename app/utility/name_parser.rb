@@ -190,10 +190,6 @@ class NameParser
     }
   end
 
-  def to_indifferent_hash
-    ActiveSupport::HashWithIndifferentAccess.new(to_h)
-  end
-
   def valid?
     @first.present? && @last.present?
   end
