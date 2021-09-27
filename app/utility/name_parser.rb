@@ -350,6 +350,11 @@ class NameParser
       if ends_with_comma(parts[0]) && prefix?(parts[1])
         @last, @prefix, @first = parts
 
+      # LAST, FIRST PREFIX
+      # This format is found in FEC's candidate data
+      elsif ends_with_comma(parts[0]) && prefix?(parts[2])
+        @last, @first, @prefix = parts
+
       # LAST, FIRST MIDDLE
       elsif ends_with_comma(parts[0]) && !prefix?(parts[1])
         @last, @first, @middle = parts
