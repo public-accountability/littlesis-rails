@@ -15,18 +15,19 @@ describe FECMatch do
     it { is_expected.to have_db_column(:sub_id) }
     it { is_expected.to have_db_column(:donor_id) }
     it { is_expected.to have_db_column(:recipient_id) }
-    it { is_expected.to have_db_column(:candidate_id) }
+    # it { is_expected.to have_db_column(:committee_relationship_id) }
+    # it { is_expected.to have_db_column(:candidate_relationship_id) }
   end
 
-  describe '#committee_relationship' do
-    it 'creates a new relationship relationships' do
-      expect { fec_match.save! }.to change(Relationship, :count).by(1)
-    end
+  # describe '#committee_relationship' do
+  #   it 'creates a new relationship relationships' do
+  #     expect { fec_match.save! }.to change(Relationship, :count).by(1)
+  #   end
 
-    it 'finds existing relationship' do
-      existing_relationship
-      expect { fec_match.save! }.not_to change(Relationship, :count)
-      expect(fec_match.committee_relationship).to eq existing_relationship
-    end
-  end
+  #   it 'finds existing relationship' do
+  #     existing_relationship
+  #     expect { fec_match.save! }.not_to change(Relationship, :count)
+  #     expect(fec_match.committee_relationship).to eq existing_relationship
+  #   end
+  # end
 end

@@ -10,6 +10,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+
+--
 -- Name: network_map_link(bigint, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1387,7 +1401,7 @@ CREATE TABLE public.external_data_fec_contributions (
     memo_text text,
     fec_year smallint NOT NULL,
     id integer NOT NULL,
-    name_tsvector tsvector
+    name_tsvector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, name)) STORED
 );
 
 
@@ -1531,6 +1545,25 @@ CREATE TABLE public.external_data_nycc (
     district_office text,
     legislative_office text
 );
+
+
+--
+-- Name: external_data_nycc_district_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.external_data_nycc_district_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: external_data_nycc_district_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.external_data_nycc_district_seq OWNED BY public.external_data_nycc.district;
 
 
 --
@@ -4414,6 +4447,13 @@ ALTER TABLE ONLY public.external_data_nyc_contributions ALTER COLUMN id SET DEFA
 
 
 --
+-- Name: external_data_nycc district; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.external_data_nycc ALTER COLUMN district SET DEFAULT nextval('public.external_data_nycc_district_seq'::regclass);
+
+
+--
 -- Name: external_data_nys_filers id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5228,6 +5268,14 @@ ALTER TABLE ONLY public.external_data_fec_contributions
 
 ALTER TABLE ONLY public.external_data_nyc_contributions
     ADD CONSTRAINT external_data_nyc_contributions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: external_data_nycc external_data_nycc_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.external_data_nycc
+    ADD CONSTRAINT external_data_nycc_pkey PRIMARY KEY (district);
 
 
 --
@@ -8216,6 +8264,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210810192930'),
 ('20210810193020'),
 ('20210810194132'),
-('20210825171731');
+('20210825171731'),
+('20210920185602');
 
 

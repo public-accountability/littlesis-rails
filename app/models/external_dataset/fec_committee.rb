@@ -37,6 +37,8 @@ module ExternalDataset
       Entity.create!(primary_ext: 'Org', name: cmte_nm.titleize).tap do |entity|
         entity.add_extension('PoliticalFundraising')
         entity.external_links.create!(link_type: :fec_committee, link_id: cmte_id)
+
+        Rails.logger.info "Created LittleSis entity\##{entity.id} for FEC committee \"#{cmte_nm.titleize}\" (FECCommittee\##{id})"
       end
 
       reload_entity
