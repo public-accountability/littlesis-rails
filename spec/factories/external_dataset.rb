@@ -1,11 +1,11 @@
 FactoryBot.define do
   factory :external_dataset_fec_contribution, class: 'ExternalDataset::FECContribution' do
-    sub_id { Faker::Number.number(digits: 19) }
+    sub_id { Faker::Number.number(digits: 12) }
     cmte_id { "C00431445" }
     amndt_ind { "A" }
     rpt_tp { "M9" }
     transaction_pgi { "P" }
-    image_num { Faker::Number.number(digits: 19).to_s }
+    image_num { Faker::Number.number(digits: 10).to_s }
     transaction_tp { "15" }
     entity_tp { "IND" }
     name { "#{Faker::Name.last_name.upcase}, #{Faker::Name.first_name.upcase}" }
