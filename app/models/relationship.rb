@@ -91,6 +91,10 @@ class Relationship < ApplicationRecord
   has_many :ny_matches, inverse_of: :relationship
   has_many :ny_disclosures, through: :ny_matches
 
+  # FEC Matches
+  # has_many :fec_committee_matches, class_name: 'FECMatch', foreign_key: 'committee_relationship_id', inverse_of: :committee_relationship
+  # has_many :fec_candidate_matches, class_name: 'FECMatch', foreign_key: 'candidate_relationship_id', inverse_of: :candidate_relationship
+
   # External Data
   # has_many :external_relationships, dependent: :nullify
   # has_many :external_data, through: :external_relationships

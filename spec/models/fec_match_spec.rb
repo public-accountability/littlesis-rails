@@ -15,8 +15,8 @@ describe FECMatch do
     it { is_expected.to have_db_column(:sub_id) }
     it { is_expected.to have_db_column(:donor_id) }
     it { is_expected.to have_db_column(:recipient_id) }
-    # it { is_expected.to have_db_column(:committee_relationship_id) }
-    # it { is_expected.to have_db_column(:candidate_relationship_id) }
+    it { is_expected.to have_db_column(:committee_relationship_id) }
+    it { is_expected.to have_db_column(:candidate_relationship_id) }
   end
 
   # describe '#committee_relationship' do
