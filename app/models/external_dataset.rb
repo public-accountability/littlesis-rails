@@ -79,6 +79,10 @@ module ExternalDataset
       Rails.logger.info sql
       ApplicationRecord.connection.exec_query(Arel.sql(sql))
     end
+
+    def random
+      order('random()')
+    end
   end
 
   module FECData

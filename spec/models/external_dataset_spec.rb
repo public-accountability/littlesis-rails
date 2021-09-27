@@ -20,4 +20,22 @@ describe ExternalDataset, type: :model do
       expect(fec_committee.entity).to be_a Entity
     end
   end
+
+  describe ExternalDataset::FECCandidate do
+    let(:fec_candidate) { create(:external_dataset_fec_candidate) }
+
+    it 'can find littlesis entity through external links' do
+      entity = create(:entity_person, name: 'Barack Obama').tap do |e|
+        e.external_links.create!(link_type: :fec_candidate, link_id: fec_candidate.cand_id)
+      end
+
+      expect(fec_candidate.entity).to eq entity
+    end
+
+    it 'can create new littlesis entities' do
+      expect(fec_candidate.entity).to be nil
+      expect { fec_candidate.create_littlesis_entity }.to change(Entity, :count).by(1)
+      expect(fec_candidate.entity.name).to eq "Barack Obama"
+    end
+  end
 end

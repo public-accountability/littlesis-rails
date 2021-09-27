@@ -40,4 +40,22 @@ FactoryBot.define do
     cand_id { "P80003338" }
     fec_year { 2012 }
   end
+
+  factory :external_dataset_fec_candidate, class: 'ExternalDataset::FECCandidate' do
+     cand_id { "P80003338" }
+     cand_name { "OBAMA, BARACK" }
+     cand_pty_affiliation {  "DEM" }
+     cand_election_yr { 2012 }
+     cand_office_st { "US" }
+     cand_office { "P" }
+     cand_office_district { "00" }
+     cand_ici { "I" }
+     cand_status {  "C" }
+     cand_pcc { "C00431445" }
+     cand_st1 { "PO Box 8102" }
+     cand_city { "CHICAGO" }
+     cand_st { "IL" }
+     cand_zip { "60680" }
+     fec_year { 2012 }
+  end
 end
