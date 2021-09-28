@@ -1,6 +1,8 @@
+
 describe FECMatch do
   let(:fec_contribution) { create(:external_dataset_fec_contribution) }
   let(:fec_committee) { create(:external_dataset_fec_committee) }
+  let(:fec_candidate) { create(:external_dataset_fec_candidate) }
   let(:donor) { create(:entity_person, :with_person_name) }
   let(:committee_entity) do
     create(:entity_org, name: fec_committee.cmte_nm.titleize).tap do |e|
@@ -55,8 +57,30 @@ describe FECMatch do
     expect(fec_match.candidate_relationship).to eq candidate_r
   end
 
-  it 'finds existing comnmittees and candidates' do
-    # FECMatch.create!(fec_contribution: fec_contribution, donor)
+  it 'creates new committees (created w/o providing a recipient)' do
+    fec_contribution; fec_committee; donor;
+    expect do
+      FECMatch.create!(fec_contribution: fec_contribution, donor: donor)
+    end.to change(Entity, :count).by(1)
+    fec_match = FECMatch.last
+    expect(fec_match.recipient.name).to eq "Obama For America"
+    expect(fec_match.recipient.external_links.fec_committee.first.link_id).to eq "C00431445"
+  end
 
+  it 'creates new candidates' do
+    fec_contribution; fec_committee; fec_candidate; donor; committee_entity;
+
+    expect do
+      FECMatch.create!(fec_contribution: fec_contribution, donor: donor, recipient: committee_entity)
+    end.to change(Entity, :count).by(1)
+
+    fec_match = FECMatch.last
+    expect(fec_match.candidate.name).to eq "Barack Obama"
+    expect(fec_match.candidate.external_links.fec_candidate.first.link_id).to eq "P80003338"
+  end
+
+  it 'finds existing committees and candidates' do
+    fec_contribution; fec_committee; donor; committee_entity; candidate;
+    FECMatch.create!(fec_contribution: fec_contribution, donor: donor)
   end
 end
