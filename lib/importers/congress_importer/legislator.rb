@@ -33,40 +33,38 @@ class CongressImporter
 
     def import!
       CongressImporter.transaction do
-        if (@entity = legislator_matcher.entity)
-          @entity.website = @website if @website
-          @entity.start_date = @birthday if @birthday
-          @entity.assign_attribute_unless_present(:blurb, generate_blurb)
-          @entity.person.assign_attribute_unless_present(:name_middle, dig('name', 'middle'))
-          @entity.person.gender_id = @gender
-          if @entity.changed?
-            @entity.last_user_id = CONGRESS_BOT_USER
-            @entity.save!
-          end
+        @entity = legislator_matcher.entity
 
-          if @official_full_name && !@entity.also_known_as.map(&:downcase).include?(@official_full_name.downcase)
-            @entity.aliases.create!(name: @official_full_name)
-          end
+        unless @entity.present?
+          @entity = Entity.create!(name: generate_name,
+                                   primary_ext: 'Person')
+          @entity.person.update!(person_attributes)
+        end
 
-          @entity.add_extension('ElectedRepresentative')
-          @entity.elected_representative.update!(elected_representative_attributes)
-        else
-          @entity = create_new_entity
+        @entity.website = @website if @website
+        @entity.start_date = @birthday if @birthday
+        @entity.assign_attribute_unless_present(:blurb, generate_blurb)
+        @entity.person.assign_attribute_unless_present(:name_middle, dig('name', 'middle'))
+        @entity.person.gender_id = @gender
+        @entity.save!
+
+        if @official_full_name && @entity.also_known_as.map(&:downcase).exclude?(@official_full_name.downcase)
+          @entity.aliases.create!(name: @official_full_name)
+        end
+
+        @entity.add_extension('ElectedRepresentative')
+        @entity.elected_representative.update!(elected_representative_attributes)
+
+        fec_candidate_ids.each do |fec_id|
+          @entity.external_links.fec_candidate.find_or_create_by!(link_id: fec_id)
         end
       end
     end
 
     private
 
-    def entity_attributes
-      LsHash.new(
-        name: generate_name,
-        primary_ext: 'Person',
-        blurb: generate_blurb,
-        website: @website,
-        start_date: @birthday,
-        last_user_id: CONGRESS_BOT_USER
-      ).remove_nil_vals
+    def fec_candidate_ids
+      dig('id', 'fec') || []
     end
 
     def person_attributes
@@ -84,16 +82,8 @@ class CongressImporter
       LsHash.new(
         bioguide_id: dig('id', 'bioguide'),
         govtrack_id: dig('id', 'govtrack'),
-        crp_id: dig('id', 'opensecrets'),
-        fec_ids: dig('id', 'fec')
+        crp_id: dig('id', 'opensecrets')
       ).remove_nil_vals
-    end
-
-    def create_new_entity
-      entity = Entity.create!(entity_attributes)
-      entity.person.update!(person_attributes)
-      entity.add_extension('ElectedRepresentative', elected_representative_attributes)
-      entity
     end
 
     def generate_name

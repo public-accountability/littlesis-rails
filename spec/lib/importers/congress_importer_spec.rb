@@ -32,16 +32,6 @@ describe 'CongressImporter' do
     let(:sherrod_brown) { CongressImporter::Legislator.new(legislators_current[0]) }
 
     describe 'helper methods' do
-      specify '#entity_attributes' do
-        expect(sherrod_brown.send(:entity_attributes))
-          .to eql(LsHash.new(name: 'Sherrod Brown',
-                             blurb: 'US Senator from Ohio',
-                             website: 'https://www.brown.senate.gov',
-                             primary_ext: 'Person',
-                             start_date: '1952-11-09',
-                             last_user_id: CongressImporter::CONGRESS_BOT_USER))
-      end
-
       specify '#person_attributes' do
         expect(sherrod_brown.send(:person_attributes))
           .to eql(LsHash.new(name_first: 'Sherrod',
@@ -53,8 +43,11 @@ describe 'CongressImporter' do
         expect(sherrod_brown.send(:elected_representative_attributes))
           .to eql(LsHash.new(bioguide_id: 'B000944',
                              govtrack_id: 400_050,
-                             fec_ids: %w[H2OH13033 S6OH00163],
                              crp_id: 'N00003535'))
+      end
+
+      specify '#fec_ids' do
+        expect(sherrod_brown.send(:fec_candidate_ids)).to eq %w[H2OH13033 S6OH00163]
       end
     end
 
@@ -84,7 +77,14 @@ describe 'CongressImporter' do
           expect(entity.person.gender).to eql 'Male'
           expect(entity.elected_representative.bioguide_id).to eql 'B000944'
           expect(entity.elected_representative.crp_id).to eql  'N00003535'
-          expect(entity.elected_representative.fec_ids).to eql %w[H2OH13033 S6OH00163]
+          # expect(entity.elected_representative.fec_ids).to eql %w[H2OH13033 S6OH00163]
+        end
+
+        it 'creates external links' do
+          sherrod_brown.import!
+          entity = Entity.last
+          expect(entity.external_links.fec_candidate.count).to eq 2
+          expect(entity.external_links.fec_candidate.map(&:link_id).to_set).to eq Set["H2OH13033", "S6OH00163"]
         end
       end
 
