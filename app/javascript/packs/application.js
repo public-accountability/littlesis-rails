@@ -7,6 +7,12 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
+// needed for bootstrap function like $(..).modal() to work
+// see https://gorails.com/forum/how-to-use-bootstrap-with-webpack-rails-discussion
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
+
+
 import Rails from "@rails/ujs"
 import 'bootstrap'
 import 'trix'
