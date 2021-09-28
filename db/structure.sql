@@ -1093,8 +1093,7 @@ CREATE TABLE public.elected_representatives (
     crp_id character varying(20),
     pvs_id character varying(20),
     watchdog_id character varying(50),
-    entity_id bigint NOT NULL,
-    fec_ids text
+    entity_id bigint NOT NULL
 );
 
 
@@ -8268,6 +8267,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210810194132'),
 ('20210825171731'),
 ('20210920185602'),
-('20210927182338');
+('20210927182338'),
+('20210928204422');
 
 
