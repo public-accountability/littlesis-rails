@@ -68,22 +68,22 @@ class CongressImporter
     end
 
     def person_attributes
-      LsHash.new(
+      with_indifferent_access_and_without_nil_values(
         name_last: dig('name', 'last'),
         name_first: dig('name', 'first'),
         name_middle: dig('name', 'middle'),
         name_suffix: dig('name', 'suffix'),
         name_nick: dig('name', 'nick'),
         gender_id: @gender
-      ).remove_nil_vals
+      )
     end
 
     def elected_representative_attributes
-      LsHash.new(
+      with_indifferent_access_and_without_nil_values(
         bioguide_id: dig('id', 'bioguide'),
         govtrack_id: dig('id', 'govtrack'),
         crp_id: dig('id', 'opensecrets')
-      ).remove_nil_vals
+      )
     end
 
     def generate_name
@@ -98,6 +98,12 @@ class CongressImporter
       "US #{rep_or_sen} from #{state}"
     rescue # rubocop:disable Style/RescueStandardError
       nil
+    end
+
+    private
+
+    def with_indifferent_access_and_without_nil_values(h)
+      h.delete_if { |_k, v| v.nil? }.with_indifferent_access
     end
   end
 end

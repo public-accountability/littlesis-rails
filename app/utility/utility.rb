@@ -147,6 +147,18 @@ module Utility
     end
   end
 
+  # converts all values that resopnd .blank?
+  # to nil, except for false
+  def self.nilify_blank_vals(h)
+    h.transform_values do |val|
+      if val.blank? && val != false
+        nil
+      else
+        val
+      end
+    end
+  end
+
   class SubshellCommandError < Exceptions::LittleSisError; end
   class SQLFileError < Exceptions::LittleSisError; end
 end

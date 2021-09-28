@@ -38,7 +38,7 @@ module Cmp
           entity = find_or_create_entity
           return if entity.nil?
           create_cmp_entity(entity)
-          entity.update! attrs_for(:entity).with_last_user(Cmp::CMP_USER_ID)
+          entity.update! attrs_for(:entity)
           add_extension(entity)
           entity.add_tag(Cmp::CMP_TAG_ID)
           entity.org.update! attrs_for(:org)
@@ -109,7 +109,7 @@ module Cmp
     end
 
     def import_address(entity)
-      attrs = attrs_for(:address).with_last_user(CMP_USER_ID)
+      attrs = attrs_for(:address)
       unless attrs[:city].blank? || attrs[:country_name].blank?
         entity.addresses.find_or_create_by!(attrs)
       end

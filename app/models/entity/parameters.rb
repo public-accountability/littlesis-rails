@@ -25,9 +25,14 @@ class Entity
     end
 
     def new_entity(current_user)
-      LsHash.new(@controller_params.require(:entity).permit(:name, :blurb, :primary_ext).to_h)
-        .with_last_user(current_user)
-        .nilify_blank_vals
+      Utility.nilify_blank_vals(
+        @controller_params
+          .require(:entity)
+          .permit(:name, :blurb, :primary_ext)
+          .to_h
+          .merge(last_user_id: User.derive_last_user_id_from(current_user))
+          .with_indifferent_access
+      )
     end
 
     def need_to_create_new_reference?

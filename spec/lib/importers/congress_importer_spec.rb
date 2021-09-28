@@ -34,16 +34,16 @@ describe 'CongressImporter' do
     describe 'helper methods' do
       specify '#person_attributes' do
         expect(sherrod_brown.send(:person_attributes))
-          .to eql(LsHash.new(name_first: 'Sherrod',
-                             name_last: 'Brown',
-                             gender_id: 2))
+          .to eq({ name_first: 'Sherrod',
+                   name_last: 'Brown',
+                   gender_id: 2 }.with_indifferent_access)
       end
 
       specify '#elected_representative_attributes' do
         expect(sherrod_brown.send(:elected_representative_attributes))
-          .to eql(LsHash.new(bioguide_id: 'B000944',
-                             govtrack_id: 400_050,
-                             crp_id: 'N00003535'))
+          .to eq({ bioguide_id: 'B000944',
+                   govtrack_id: 400_050,
+                   crp_id: 'N00003535' }.with_indifferent_access)
       end
 
       specify '#fec_ids' do
