@@ -25,11 +25,16 @@
             <th>Name</th>
             <th>Location</th>
             <th>Employment</th>
-            <th></th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Recipient</th>
+            <th>Source</th>
+            <th></th> <!-- The "import" button goes here -->
           </tr>
         </thead>
         <tbody>
-          <%= render partial: 'fec_contribution_row', collection: @contributions %>
+          <%= render partial: 'fec_contribution', collection: @contributions %>
         </tbody>
       </table>
     </div>

@@ -127,7 +127,7 @@ class FECMatch < ApplicationRecord
 
   def relationship_attrs_from_contributions(contributions)
     {
-      amount: contributions.sum(&:amount),
+      amount: contributions.sum(&:transaction_amt),
       start_date: contributions.first.date,
       end_date: contributions.last.date,
       filings: contributions.size
