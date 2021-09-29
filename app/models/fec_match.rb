@@ -62,6 +62,8 @@ class FECMatch < ApplicationRecord
 
   # All FEC contributions between Donor & Candidate
   def candidate_contributions
+    return if candidate.nil?
+
     FECMatch
       .includes(:fec_contribution)
       .where(donor: donor, candidate: candidate)
