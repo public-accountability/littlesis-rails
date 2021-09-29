@@ -1400,7 +1400,8 @@ CREATE TABLE public.external_data_fec_contributions (
     memo_text text,
     fec_year smallint NOT NULL,
     id integer NOT NULL,
-    name_tsvector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, name)) STORED
+    name_tsvector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, name)) STORED,
+    date date GENERATED ALWAYS AS (make_date((substr(transaction_dt, 5, 4))::integer, (substr(transaction_dt, 1, 2))::integer, (substr(transaction_dt, 3, 2))::integer)) STORED
 );
 
 
@@ -8268,6 +8269,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210825171731'),
 ('20210920185602'),
 ('20210927182338'),
-('20210928204422');
+('20210928204422'),
+('20210929174042');
 
 

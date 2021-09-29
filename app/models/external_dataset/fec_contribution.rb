@@ -32,12 +32,6 @@ module ExternalDataset
       { name: "FEC Filing #{image_num}", url: reference_url }
     end
 
-    def date
-      if transaction_dt && /^\d{8}$/.match?(transaction_dt)
-        Date.strptime(transaction_dt, '%m%d%Y')
-      end
-    end
-
     unless Rails.env.test?
       def readonly?
         true
@@ -48,6 +42,7 @@ module ExternalDataset
       includes(:fec_match)
         .where("name_tsvector @@ websearch_to_tsquery(?)", query.upcase)
         .or(where(name: query.upcase))
+        .order(date: :desc)
     end
   end
 end
