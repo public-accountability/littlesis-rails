@@ -6,7 +6,7 @@
 
   <div class="row mt-4 bg-light" data-controller="match-contributions" data-match-contributions-entity-name-value="<%= @entity.person.last_first %>">
     <div class="col p-2">
-      <p>Help us expand the LittleSis database by identifying donors in the FEC's dataset</p>
+      <p>Help us expand the LittleSis database by importing campaign finance contributions data from the <abbr title="Federal Election Commission">FEC</abbr></p>
       <p>Try searching for <a class="link-blue cursor-pointer" data-action="match-contributions#example_search"><%= @entity.person.last_first %></a></p>
       <%= form_with url: fec_entity_match_contributions_path(@entity), method: :get, class: 'input-group' do |form| %>
         <%= form.text_field "query",  value: @query, class: "form-control" %>
@@ -16,30 +16,15 @@
       <% end %>
     </div>
   </div>
-
   <div class="row">
     <div class="col mt-4 p-1">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Location</th>
-            <th>Employment</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Type</th>
-            <th>Recipient</th>
-            <th>Source</th>
-            <th></th> <!-- The "import" button goes here -->
-          </tr>
-        </thead>
-        <tbody>
-          <%= render partial: 'fec_contribution', collection: @contributions %>
-        </tbody>
-      </table>
+      <% if @contributions.present? %>
+        <%= render partial: 'fec_contributions_table' %>
+      <% elsif @contributions != nil %>
+        <p>No contributions found</p>
+      <% end %>
     </div>
   </div>
-
 <% else %>
   <p>Only contributions from <em>people</em> can be imported at this time.</p>
 <% end %>

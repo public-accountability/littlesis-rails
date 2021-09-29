@@ -1,0 +1,18 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Location</th>
+      <th>Employment</th>
+      <th>Amount</th>
+      <th>Date</th>
+      <th>Type</th>
+      <th>Recipient</th>
+      <th>Source</th>
+      <th name="import button column"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render partial: 'fec_contribution', collection: @contributions %>
+  </tbody>
+</table>

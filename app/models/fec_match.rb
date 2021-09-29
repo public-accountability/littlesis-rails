@@ -29,6 +29,9 @@ class FECMatch < ApplicationRecord
                 :find_or_create_committee_relationship,
                 :find_or_create_candidate_relationship
 
+  after_create  :update_committee_relationship,
+                :update_candidate_relationship
+
   def self.migration!
     raise Exceptions::LittleSisError, "do not run on production yet" if Rails.env.production?
 
@@ -48,15 +51,27 @@ class FECMatch < ApplicationRecord
     Rails.logger.info(stats)
   end
 
+  # All FEC contributions between Donor & Recipient
+  def committee_contributions
+    FECMatch
+      .includes(:fec_contribution)
+      .where(donor: donor, recipient: recipient)
+      .map(&:fec_contribution)
+      .sort_by(&:date)
+  end
+
+  # All FEC contributions between Donor & Candidate
+  def candidate_contributions
+    FECMatch
+      .includes(:fec_contribution)
+      .where(donor: donor, candidate: candidate)
+      .map(&:fec_contribution)
+      .sort_by(&:date)
+  end
+
   def update_committee_relationship
-    contributions = FECMatch
-                      .includes(:fec_contribution)
-                      .where(donor: donor, recipient: recipient)
-                      .map(&:fec_contribution)
-                      .sort_by(&:date)
-
+    contributions = committee_contributions
     committee_relationship.update!(relationship_attrs_from_contributions(contributions))
-
     contributions.map(&:reference_attributes).each do |attrs|
       committee_relationship.add_reference(attrs).save
     end
@@ -65,12 +80,7 @@ class FECMatch < ApplicationRecord
   def update_candidate_relationship
     return unless candidate_relationship
 
-    contributions = FECMatch
-                      .includes(:fec_contribution)
-                      .where(donor: donor, candidate: candidate)
-                      .map(&:fec_contribution)
-                      .sort_by(&:date)
-
+    contributions = candidate_contributions
     candidate_relationship.update!(relationship_attrs_from_contributions(contributions))
 
     contributions.map(&:reference_attributes).each do |attrs|
