@@ -130,7 +130,7 @@ describe Cmp::CmpPerson do
   describe '#attrs_for' do
     specify do
       expect(subject.send(:attrs_for, :entity))
-        .to eql LsHash.new(name: 'Mr. Oil Executive', start_date: '1960-00-00')
+        .to eq({ name: 'Mr. Oil Executive', start_date: '1960-00-00' }.with_indifferent_access)
     end
   end
 end

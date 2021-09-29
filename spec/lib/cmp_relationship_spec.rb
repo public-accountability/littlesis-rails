@@ -42,7 +42,7 @@ describe Cmp::CmpRelationship do
 
   describe 'initialize' do
     it 'sets @attributes' do
-      expect(subject.attributes).to eql LsHash.new(attributes)
+      expect(subject.attributes).to eq attributes.with_indifferent_access
     end
 
     describe 'status' do

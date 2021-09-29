@@ -6,20 +6,20 @@ module Cmp
     delegate :fetch, to: :attributes
 
     def initialize(attrs)
-      @attributes = LsHash.new(attrs)
+      @attributes = attrs.dup.with_indifferent_access
       @cmpid = @attributes.fetch('cmpid')
     end
 
     protected
 
-    # Symbol -> LsHash
+    # Symbol -> Hash
     def attrs_for(model)
-      LsHash.new(
-        self.class.const_get(:ATTRIBUTE_MAP)
-          .select { |_k, (m, _f)| m == model }
-          .map { |k, (_m, f)| [f, attributes[k]] }
-          .to_h
-      ).remove_nil_vals
+      self.class.const_get(:ATTRIBUTE_MAP)
+        .select { |_k, (m, _f)| m == model }
+        .map { |k, (_m, f)| [f, attributes[k]] }
+        .to_h
+        .delete_if { |_k, v| v.nil? }
+        .with_indifferent_access
     end
 
     private

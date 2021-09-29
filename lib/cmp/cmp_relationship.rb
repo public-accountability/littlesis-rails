@@ -9,7 +9,7 @@ module Cmp
     delegate :[], :fetch, to: :attributes
 
     def initialize(attrs)
-      @attributes = LsHash.new(attrs)
+      @attributes = attrs.dup.with_indifferent_access
       # status indicating timeframe of relationships
       # possible values:
       #   :only_2015, :only_2016, :both_years, :change, :unknown

@@ -51,6 +51,8 @@ describe 'NameParser', :name_parser_helper do
 
     assert_parsed_name 'A.B. Lastname',
                        first: "A.B.", last: 'Lastname'
+
+    assert_parsed_name "MORRISEY, PATRICK MR", first: 'Patrick', last: 'Morrisey', prefix: 'Mr'
   end
 
   describe 'ABBREVIATED_INITIALS' do

@@ -1093,8 +1093,7 @@ CREATE TABLE public.elected_representatives (
     crp_id character varying(20),
     pvs_id character varying(20),
     watchdog_id character varying(50),
-    entity_id bigint NOT NULL,
-    fec_ids text
+    entity_id bigint NOT NULL
 );
 
 
@@ -1807,10 +1806,12 @@ CREATE TABLE public.fec_matches (
     id bigint NOT NULL,
     sub_id bigint NOT NULL,
     donor_id bigint NOT NULL,
-    recipient_id bigint,
+    recipient_id bigint NOT NULL,
     candidate_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    committee_relationship_id bigint NOT NULL,
+    candidate_relationship_id bigint
 );
 
 
@@ -8265,6 +8266,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210810193020'),
 ('20210810194132'),
 ('20210825171731'),
-('20210920185602');
+('20210920185602'),
+('20210927182338'),
+('20210928204422');
 
 

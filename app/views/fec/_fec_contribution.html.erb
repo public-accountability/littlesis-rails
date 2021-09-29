@@ -2,6 +2,20 @@
   <td><%= fec_contribution.name %></td>
   <td><%= fec_contribution.location %></td>
   <td><%= fec_contribution.employment %></td>
+  <td><%= fec_contribution.amount %></td>
+  <td><%= fec_contribution.date %></td>
+  <td><span title="<%= fec_contribution.transaction_type_description %>"><%= fec_contribution.transaction_tp %></span></td>
+  <td>
+    <% if fec_contribution.fec_committee.entity %>
+      <%= entity_link(fec_contribution.fec_committee.entity) %>
+    <% else %>
+      <%=  fec_contribution.recipient %>
+    <% end  %>
+  </td>
+  <td>
+    <%= link_to(fec_contribution.image_num, fec_contribution.reference_url, target: '_blank') %>
+  </td>
+
   <td>
     <% if fec_contribution.fec_match.present? %>
       <p>Already imported</p>
@@ -11,6 +25,6 @@
       <%#= form.hidden_field "external_entity_id", value: fec_donor.external_entity.id %>
       <%#= form.submit "import", class: 'btn btn-outline-primary' %>
       <%# end  %>
-    <% end  %>
+    <% end %>
   </td>
 </tr>

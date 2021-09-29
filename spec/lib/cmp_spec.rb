@@ -2,7 +2,9 @@ require 'cmp'
 
 describe Cmp do
   describe Cmp::CmpEntityImporter do
-    let(:attrs) { LsHash.new(name: Faker::Creature::Cat.name, cmpid: Faker::Number.number(digits: 6)) }
+    let(:attrs) do
+      { name: Faker::Creature::Cat.name, cmpid: Faker::Number.number(digits: 6) }.with_indifferent_access
+    end
     subject { Cmp::CmpEntityImporter.new attrs }
     specify { expect(subject.attributes).to eql attrs }
   end

@@ -9,7 +9,8 @@ NotableEntities = {
   :exxon => 2,
   :cuomo => 36_930,
   :deBlasio => 110_291,
-  :loeffler => 139_907
+  :loeffler => 139_907,
+  :manchin => 34_472
 }.with_indifferent_access
 
 NotableEntities.singleton_class.define_method(:get) do |entity|

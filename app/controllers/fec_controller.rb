@@ -26,8 +26,13 @@ class FECController < ApplicationController
 
   def match_contributions
     @query = params[:query]
+
     if @query&.strip.present?
-      # @contributions = ExternalDataset.search_by_name(@query).limit(2500)
+      @contributions = ExternalDataset
+                         .fec_contributions
+                         .search_by_name(@query)
+                         .limit(2500)
+                         .map { |x| FECContributionPresenter.new(x) }
     end
   end
 
