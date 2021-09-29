@@ -33,7 +33,7 @@
     "bootstrap-select": "^1.13.18",
     "chai": "^4.2.0",
     "core-js": "3.6.5",
-    "datatables.net": "^1.10.21",
+    "datatables.net": "^1.11.3",
     "datatables.net-dt": "^1.10.21",
     "eslint-plugin-mocha": "^8.0.0",
     "eslint-plugin-react": "^7.21.2",
