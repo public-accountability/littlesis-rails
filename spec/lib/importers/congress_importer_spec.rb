@@ -6,15 +6,15 @@ TEST_CURRENT_LEGISLATORS = YAML.load_file(Rails.root.join('spec/testdata/legisla
 
 describe 'CongressImporter' do
   subject { CongressImporter.new }
-
   let(:legislators_current) { TEST_CURRENT_LEGISLATORS }
 
   before do
     stub_current = Rails.root.join('spec/testdata/legislators-current.yaml').to_s
     stub_historical = Rails.root.join('spec/testdata/legislators-historical.yaml').to_s
-    stub_const('CongressImporter::CURRENT_YAML', stub_current)
-    stub_const('CongressImporter::HISTORICAL_YAML', stub_historical)
     stub_const('CongressImporter::CONGRESS_BOT_USER', 1)
+
+    allow(Net::HTTP).to receive(:get).with(URI(CongressImporter::CURRENT_YAML)).and_return(File.read(stub_current))
+    allow(Net::HTTP).to receive(:get).with(URI(CongressImporter::HISTORICAL_YAML)).and_return(File.read(stub_historical))
   end
 
   describe 'initialize' do
@@ -250,157 +250,157 @@ describe 'CongressImporter' do
           expect(&update_or_create_relationship).to change(Membership, :count).by(1)
         end
 
-        it 'sets correct relationship fields' do
-          update_or_create_relationship.call
-          relationship = Relationship.last
-          expect(relationship.entity).to eql sherrod_brown_entity
-          expect(relationship.entity2_id).to eq 12_884
-          expect(relationship.start_date).to eq '1993-01-05'
-          expect(relationship.end_date).to eq '2007-01-03'
-          expect(relationship.is_current).to eql false
-          expect(relationship.description1).to eq 'Representative'
-          expect(relationship.description2).to eq 'Representative'
-          expect(relationship.last_user_id).to eq CongressImporter::CONGRESS_BOT_USER
+          it 'sets correct relationship fields' do
+            update_or_create_relationship.call
+            relationship = Relationship.last
+            expect(relationship.entity).to eql sherrod_brown_entity
+            expect(relationship.entity2_id).to eq 12_884
+            expect(relationship.start_date).to eq '1993-01-05'
+            expect(relationship.end_date).to eq '2007-01-03'
+            expect(relationship.is_current).to eql false
+            expect(relationship.description1).to eq 'Representative'
+            expect(relationship.description2).to eq 'Representative'
+            expect(relationship.last_user_id).to eq CongressImporter::CONGRESS_BOT_USER
+          end
+
+          it 'sets membership.elected_term to be an OpenStruct of term information' do
+            update_or_create_relationship.call
+            expect(Relationship.last.membership.elected_term).to eql term.merge('source' => '@unitedstates')
+          end
         end
+      end # end describe helper methods
 
-        it 'sets membership.elected_term to be an OpenStruct of term information' do
-          update_or_create_relationship.call
-          expect(Relationship.last.membership.elected_term).to eql term.merge('source' => '@unitedstates')
-        end
-      end
-    end # end describe helper methods
+      describe 'import!' do
+        subject { CongressImporter::TermsImporter.new(sherrod_brown) }
 
-    describe 'import!' do
-      subject { CongressImporter::TermsImporter.new(sherrod_brown) }
-
-      before do
-        create(:us_house)
-        create(:us_senate)
-        sherrod_brown_entity
-        allow(CongressImporter::LegislatorMatcher)
-          .to receive(:new).and_return(double(entity: sherrod_brown_entity.reload))
-      end
-
-      let(:sen_term) do
-        { 'type' => 'sen',
-          'start' => '2007-01-04',
-          'end' => '2019-01-03',
-          'state' => 'OH',
-          'party' => 'Democrat',
-          'class' =>  1,
-          'url' =>  'https://www.brown.senate.gov',
-          'address' => '713 Hart Senate Office Building Washington DC 20510',
-          'phone' => '202-224-2315',
-          'fax' => '202-228-6321',
-          'contact_form' => 'http://www.brown.senate.gov/contact/',
-          'office' => '713 Hart Senate Office Building',
-          'state_rank' => 'senior',
-          'rss_url' => 'http://www.brown.senate.gov/rss/feeds/?type=all&amp;',
-          'source' => '@unitedstates' }
-      end
-
-      context 'when the entity has no current relationships' do
-        it 'creates 2 new relationships' do
-          expect { subject.import! }.to change(Relationship, :count).by(2)
-        end
-
-        it 'creates 2 new Memberhsip' do
-          expect { subject.import! }.to change(Membership, :count).by(2)
-        end
-
-        it 'created membership have correct fields' do
-          subject.import!
-          expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_884).membership.elected_term)
-            .to eq('type' => 'rep', 'start' => '1993-01-05', 'end' => '2007-01-03',
-                   'state' => 'OH', 'district' => 13, 'party' => 'Democrat',
-                   'url' => 'http://www.house.gov/sherrodbrown', 'source' => '@unitedstates')
-
-          expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).membership.elected_term)
-            .to eq sen_term
-
-          expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).is_current).to eq false
-        end
-      end
-
-      context 'when the entity has one current relationship that matches' do
-        let!(:relationship) do
-          Relationship.create!(category_id: 3, start_date: '1993-01-00', entity: sherrod_brown_entity, entity2_id: 12_884)
-        end
-
-        it 'creates 1 new relationships' do
-          expect { subject.import! }.to change(Relationship, :count).by(1)
-        end
-
-        it 'creates 1 new Memberhsip' do
-          expect { subject.import! }.to change(Membership, :count).by(1)
-        end
-
-        it 'updates existing relationship' do
-          subject.import!
-          relationship.reload
-          expect(relationship.end_date).to eql '2007-01-03'
-          expect(relationship.membership.elected_term['party']).to eql 'Democrat'
-        end
-      end
-
-      context 'entity has one current relationship that matches and one totally incorrect relationship' do
-        let!(:relationship) do
-          Relationship.create!(category_id: 3, start_date: '1993-01-00', entity: sherrod_brown_entity, entity2_id: 12_884)
-        end
-
-        let!(:invalid_relationship) do
-          Relationship.create!(category_id: 3, start_date: '1950-01-01', entity: sherrod_brown_entity, entity2_id: 12_884)
-        end
-
-        it 'creates 0 new relationships' do
-          expect { subject.import! }.not_to change(Relationship, :count)
-        end
-
-        it 'updates existing relationship' do
-          subject.import!
-          relationship.reload
-          expect(relationship.end_date).to eql '2007-01-03'
-        end
-
-        it 'deletes incorrect relationships' do
-          subject.import!
-          invalid_relationship.reload
-          expect(invalid_relationship.is_deleted).to be true
-          expect(Relationship.where(entity: sherrod_brown_entity, entity2_id: 12_884).count).to eq 1
-          expect(Relationship.where(entity: sherrod_brown_entity, entity2_id: 12_885).count).to eq 1
-          expect(sherrod_brown_entity.reload.relationships.count).to eq 2
-        end
-      end
-    end # end describe 'import!'
-
-    describe '#import_party_memberships!' do
-      subject { CongressImporter::TermsImporter.new(sherrod_brown) }
-
-      before do
-        sherrod_brown_entity
-        create(:democratic_party)
-        allow(CongressImporter::LegislatorMatcher)
-          .to receive(:new).and_return(double(entity: sherrod_brown_entity.reload))
-      end
-
-      context 'when party membership is not yet in LittleSis' do
-        it 'creates a new relationship' do
-          expect { subject.import_party_memberships! }.to change(Relationship, :count).by(1)
-          expect(Relationship.last.entity2_id).to eq 12_886
-        end
-      end
-
-      context 'when party membership is already in LittleSis' do
         before do
-          Relationship.create!(entity: sherrod_brown_entity, entity2_id: 12_886, category_id: 3)
+          create(:us_house)
+          create(:us_senate)
+          sherrod_brown_entity
+          allow(CongressImporter::LegislatorMatcher)
+            .to receive(:new).and_return(double(entity: sherrod_brown_entity.reload))
         end
 
-        it 'does not create a new relationship' do
-          expect { subject.import_party_memberships! }.not_to change(Relationship, :count)
+        let(:sen_term) do
+          { 'type' => 'sen',
+            'start' => '2007-01-04',
+            'end' => '2019-01-03',
+            'state' => 'OH',
+            'party' => 'Democrat',
+            'class' =>  1,
+            'url' =>  'https://www.brown.senate.gov',
+            'address' => '713 Hart Senate Office Building Washington DC 20510',
+            'phone' => '202-224-2315',
+            'fax' => '202-228-6321',
+            'contact_form' => 'http://www.brown.senate.gov/contact/',
+            'office' => '713 Hart Senate Office Building',
+            'state_rank' => 'senior',
+            'rss_url' => 'http://www.brown.senate.gov/rss/feeds/?type=all&amp;',
+            'source' => '@unitedstates' }
+        end
+
+        context 'when the entity has no current relationships' do
+          it 'creates 2 new relationships' do
+            expect { subject.import! }.to change(Relationship, :count).by(2)
+          end
+
+          it 'creates 2 new Memberhsip' do
+            expect { subject.import! }.to change(Membership, :count).by(2)
+          end
+
+          it 'created membership have correct fields' do
+            subject.import!
+            expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_884).membership.elected_term)
+              .to eq('type' => 'rep', 'start' => '1993-01-05', 'end' => '2007-01-03',
+                     'state' => 'OH', 'district' => 13, 'party' => 'Democrat',
+                     'url' => 'http://www.house.gov/sherrodbrown', 'source' => '@unitedstates')
+
+            expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).membership.elected_term)
+              .to eq sen_term
+
+            expect(sherrod_brown_entity.relationships.find_by(entity2_id: 12_885).is_current).to eq false
+          end
+        end
+
+        context 'when the entity has one current relationship that matches' do
+          let!(:relationship) do
+            Relationship.create!(category_id: 3, start_date: '1993-01-00', entity: sherrod_brown_entity, entity2_id: 12_884)
+          end
+
+          it 'creates 1 new relationships' do
+            expect { subject.import! }.to change(Relationship, :count).by(1)
+          end
+
+          it 'creates 1 new Memberhsip' do
+            expect { subject.import! }.to change(Membership, :count).by(1)
+          end
+
+          it 'updates existing relationship' do
+            subject.import!
+            relationship.reload
+            expect(relationship.end_date).to eql '2007-01-03'
+            expect(relationship.membership.elected_term['party']).to eql 'Democrat'
+          end
+        end
+
+        context 'entity has one current relationship that matches and one totally incorrect relationship' do
+          let!(:relationship) do
+            Relationship.create!(category_id: 3, start_date: '1993-01-00', entity: sherrod_brown_entity, entity2_id: 12_884)
+          end
+
+          let!(:invalid_relationship) do
+            Relationship.create!(category_id: 3, start_date: '1950-01-01', entity: sherrod_brown_entity, entity2_id: 12_884)
+          end
+
+          it 'creates 0 new relationships' do
+            expect { subject.import! }.not_to change(Relationship, :count)
+          end
+
+          it 'updates existing relationship' do
+            subject.import!
+            relationship.reload
+            expect(relationship.end_date).to eql '2007-01-03'
+          end
+
+          it 'deletes incorrect relationships' do
+            subject.import!
+            invalid_relationship.reload
+            expect(invalid_relationship.is_deleted).to be true
+            expect(Relationship.where(entity: sherrod_brown_entity, entity2_id: 12_884).count).to eq 1
+            expect(Relationship.where(entity: sherrod_brown_entity, entity2_id: 12_885).count).to eq 1
+            expect(sherrod_brown_entity.reload.relationships.count).to eq 2
+          end
+        end
+      end # end describe 'import!'
+
+      describe '#import_party_memberships!' do
+        subject { CongressImporter::TermsImporter.new(sherrod_brown) }
+
+        before do
+          sherrod_brown_entity
+          create(:democratic_party)
+          allow(CongressImporter::LegislatorMatcher)
+            .to receive(:new).and_return(double(entity: sherrod_brown_entity.reload))
+        end
+
+        context 'when party membership is not yet in LittleSis' do
+          it 'creates a new relationship' do
+            expect { subject.import_party_memberships! }.to change(Relationship, :count).by(1)
+            expect(Relationship.last.entity2_id).to eq 12_886
+          end
+        end
+
+        context 'when party membership is already in LittleSis' do
+          before do
+            Relationship.create!(entity: sherrod_brown_entity, entity2_id: 12_886, category_id: 3)
+          end
+
+          it 'does not create a new relationship' do
+            expect { subject.import_party_memberships! }.not_to change(Relationship, :count)
+          end
         end
       end
-    end
-  end # end CongressImporter::TermsImporter
+    end # end CongressImporter::TermsImporter
 end
 
 # rubocop:enable RSpec/NamedSubject
