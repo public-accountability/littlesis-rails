@@ -12,6 +12,9 @@ module ExternalDataset
     TRANSACTION_TYPES = Hash[*CSV.read(Rails.root.join('data/fec_transaction_types.csv')).flatten]
                           .transform_values(&:to_sym).freeze
 
+    # Only search for these types
+    PERMITTED_TRANSACTION_TYPES = %w[10 13 15 15C 15E 22Y].freeze
+
     belongs_to :fec_committee, ->(contribution) { where(fec_year: contribution.fec_year) },
                class_name: 'ExternalDataset::FECCommittee',
                foreign_key: 'cmte_id',
@@ -40,8 +43,9 @@ module ExternalDataset
 
     def self.search_by_name(query)
       includes(:fec_match)
-        .where("name_tsvector @@ websearch_to_tsquery(?)", query.upcase)
-        .or(where(name: query.upcase))
+        .where(transaction_tp: PERMITTED_TRANSACTION_TYPES)
+        .and(where("name_tsvector @@ websearch_to_tsquery(?)", query.upcase)
+               .or(where(name: query.upcase)))
         .order(date: :desc)
     end
   end
