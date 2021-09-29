@@ -6,15 +6,15 @@ TEST_CURRENT_LEGISLATORS = YAML.load_file(Rails.root.join('spec/testdata/legisla
 
 describe 'CongressImporter' do
   subject { CongressImporter.new }
-
   let(:legislators_current) { TEST_CURRENT_LEGISLATORS }
 
   before do
     stub_current = Rails.root.join('spec/testdata/legislators-current.yaml').to_s
     stub_historical = Rails.root.join('spec/testdata/legislators-historical.yaml').to_s
-    stub_const('CongressImporter::CURRENT_YAML', stub_current)
-    stub_const('CongressImporter::HISTORICAL_YAML', stub_historical)
     stub_const('CongressImporter::CONGRESS_BOT_USER', 1)
+
+    allow(Net::HTTP).to receive(:get).with(URI(CongressImporter::CURRENT_YAML)).and_return(File.read(stub_current))
+    allow(Net::HTTP).to receive(:get).with(URI(CongressImporter::HISTORICAL_YAML)).and_return(File.read(stub_historical))
   end
 
   describe 'initialize' do

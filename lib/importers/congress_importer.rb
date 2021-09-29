@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Security/Open
-
-require 'uri'
-require 'open-uri'
 require_relative 'congress_importer/legislator'
 require_relative 'congress_importer/legislator_matcher'
 require_relative 'congress_importer/terms_importer'
@@ -20,16 +16,13 @@ require_relative 'congress_importer/terms_importer'
 class CongressImporter
   CURRENT_YAML = 'https://theunitedstates.io/congress-legislators/legislators-current.yaml'
   HISTORICAL_YAML = 'https://theunitedstates.io/congress-legislators/legislators-historical.yaml'
-  # CURRENT_YAML = Rails.root.join('data', 'legislators-current.yaml').to_s
-  # HISTORICAL_YAML = Rails.root.join('data', 'legislators-historical.yaml').to_s
-
   CONGRESS_BOT_USER = 10_040
 
   attr_reader :current_reps, :historical_reps, :reps
 
   def initialize
-    open(CURRENT_YAML) { |f| @current_reps = YAML.load_file f }
-    open(HISTORICAL_YAML) { |f| @historical_reps = YAML.load_file f }
+    @current_reps = YAML.safe_load Net::HTTP.get(URI(CURRENT_YAML))
+    @historical_reps = YAML.safe_load Net::HTTP.get(URI(HISTORICAL_YAML))
     # Reps since 1990, returns array of YAML objects
     @reps = (historical_reps_after_1990 | @current_reps).map { |rep| Legislator.new(rep) }
   end
@@ -50,11 +43,9 @@ class CongressImporter
     end
   end
 
-  def self.transaction
+  def self.transaction(&block)
     PaperTrail.request(whodunnit: CONGRESS_BOT_USER.to_s) do
-      ApplicationRecord.transaction do
-        yield
-      end
+      ApplicationRecord.transaction(&block)
     end
   end
 
@@ -66,5 +57,3 @@ class CongressImporter
     end
   end
 end
-
-# rubocop:enable Security/Open

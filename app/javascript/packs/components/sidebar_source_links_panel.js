@@ -38,14 +38,14 @@ var sidebarSourceLinks = (function($){
 
       return $('<li>').append(
           $('<a>', {
-            href: ref.url, 
+            href: ref.url,
             text: displayName,
             target: '_blank'
           }))
   }
 
   // redisplays references list
-  // [{}] -> 
+  // [{}] ->
   function displayReferences(refs) {
     $('#source-links-container').empty()
       refs.forEach(function(ref){
@@ -71,7 +71,7 @@ var sidebarSourceLinks = (function($){
   // [{}] ->
   function updateView(refs) {
     showAllArrows()
-      if (currentPage === 1) { 
+      if (currentPage === 1) {
         hideLeftArrow()
       }
 
@@ -101,13 +101,11 @@ var sidebarSourceLinks = (function($){
 
   function handlers() {
     $('#source-links-left-arrow').click(function(){
-      console.log('you clicked the left arrow')
-        onArrowClick('left')
+      onArrowClick('left')
     })
 
     $('#source-links-right-arrow').click(function(){
-      console.log('you clicked the right arrow')
-        onArrowClick('right')
+      onArrowClick('right')
     })
 
   }
@@ -115,9 +113,8 @@ var sidebarSourceLinks = (function($){
   return {
     init: function(_entityId) {
       entityId = _entityId // set entity_id
-        console.log('initialized with: ' + entityId)
-        handlers()
-        onArrowClick('left')
+      handlers()
+      onArrowClick('left')
     },
     getRefs: getRefs
   }
