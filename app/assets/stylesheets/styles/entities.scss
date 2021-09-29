@@ -118,8 +118,9 @@
 #entity-edited-history {
     color: #444;
     font-size: 12px;
-    padding-top: 7px;
-    margin-top: 0.25em;
+    // white-space: nowrap;
+    // padding-top: 7px;
+    // margin-top: 0.25em;
 }
 
 #actions {
@@ -134,6 +135,7 @@ div.actions-row {
 #action-buttons {
     display: inline-block;
     height: 27px;
+    // margin-bottom: 1em;
 
     form {
 	display: inline;
