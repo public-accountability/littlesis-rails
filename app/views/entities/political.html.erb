@@ -1,6 +1,9 @@
 <% content_for(:page_title, "#{@entity.name} - Political") %>
 <%= render partial: 'header', locals: { entity: @entity } %>
-<%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
+
+<% if user_signed_in? %>
+  <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
+<% end  %>
 
 <div class="row top-1em">
   <div class="col-md-8 col-sm-8 nopadding">
