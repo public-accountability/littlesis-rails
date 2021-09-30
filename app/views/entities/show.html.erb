@@ -13,9 +13,7 @@
     <div class="mt-2"></div>
   <% end %>
 
-
-  <div class="row top-1em" id="entity-page-container">
-
+  <div class="row" id="entity-page-container">
     <div class="col-md-8 col-sm-8">
       <%= render partial: 'summary', locals: { entity: @entity } %>
       <%= entity_tabs(@entity, @active_tab.to_s) %>

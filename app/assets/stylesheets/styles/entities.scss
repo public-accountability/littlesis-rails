@@ -486,3 +486,15 @@ table.entity-images-table {
         min-height: 200px;
     }
 }
+
+#entity-page-container {
+    margin-top: 6px;
+}
+
+.entity-history-page-link {
+    color: gray;
+
+    &:hover {
+        color: $link_blue;
+    }
+}
