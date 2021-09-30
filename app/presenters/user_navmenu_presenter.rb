@@ -5,45 +5,58 @@ class UserNavmenuPresenter
   def_delegators :@items, :each, :size
   def_delegator 'Rails.application.routes.url_helpers', :user_edits_path
 
-  MENU_ITEMS = [
+  # other pages:
+  # ['Source Code', 'https://github.com/public-accountability/littlesis-rails']
+  # ['Bulk Data', '/bulk_dafta']
+  # ['Toolkit', '/toolkit']
+  # ['Report a bug', '/bug_report']
+
+  ABOUT_MENU = ['About', [['LittleSis', '/about'],
+                          ['Sign Up', '/join'],
+                          ['Help', '/help'],
+                          ['API', '/api'],
+                          ['Disclaimer', '/disclaimer'],
+                          ['Contact Us', '/contact'],
+                          ['Donate', '/donate']]].freeze
+
+  USER_ABOUT_MENU = ['About', [['LittleSis', '/about'],
+                               ['Blog', 'https://news.littlesis.org'],
+                               ['Help', '/help'],
+                               ['API', '/api'],
+                               ['Disclaimer', '/disclaimer'],
+                               ['Contact Us', '/contact'],
+                               ['Donate', '/donate']]].freeze
+
+  ADD_MENU = ['Add', [['Entity', '/entities/new'],
+                      ['List', '/lists/new'],
+                      ['Map', '/maps/new']]].freeze
+
+  EXPLORE_MENU = ['Explore', [['Maps', Rails.application.routes.url_helpers.featured_maps_path],
+                              ['Lists', Rails.application.routes.url_helpers.lists_path(featured: true)],
+                              ['Tags', Rails.application.routes.url_helpers.tags_path]]].freeze
+
+  USER_EXPLORE_MENU = ['Explore', [['Maps', Rails.application.routes.url_helpers.featured_maps_path],
+                                   ['Lists', Rails.application.routes.url_helpers.lists_path(featured: true)],
+                                   ['Tags', Rails.application.routes.url_helpers.tags_path],
+                                   ['Edits', Rails.application.routes.url_helpers.edits_path]]].freeze
+
+  ADMIN_EXPLORE_MENU = ['Explore', [['Maps', Rails.application.routes.url_helpers.featured_maps_path],
+                                    ['Lists', Rails.application.routes.url_helpers.lists_path(featured: true)],
+                                    ['Tags', Rails.application.routes.url_helpers.tags_path],
+                                    ['Edits', Rails.application.routes.url_helpers.edits_path],
+                                    ['Datasets', Rails.application.routes.url_helpers.datasets_path]]].freeze
+  DEFAULT_MENU = [
     ['Login', '/login'],
-    ['Sign Up', '/join'],
-    [
-      'Explore', [['Maps', Rails.application.routes.url_helpers.featured_maps_path],
-                  ['Lists', Rails.application.routes.url_helpers.lists_path(featured: true)],
-                  ['Tags', Rails.application.routes.url_helpers.tags_path],
-                  ['Edits', Rails.application.routes.url_helpers.edits_path]]
-    ],
-    [
-      'Help', [['Toolkit', '/toolkit'],
-               ['Help', '/help'],
-               ['Report a bug', '/bug_report']]
-    ],
-    [
-      'About', [['LittleSis', '/about'],
-                ['Features',  '/features'],
-                ['Our Team', '/team'],
-                ['Blog', 'https://news.littlesis.org'],
-                ['API', '/api'],
-                ['Bulk Data', '/bulk_data'],
-                ['Source Code', 'https://github.com/public-accountability/littlesis-rails'],
-                ['Disclaimer', '/disclaimer'],
-                ['Contact Us', '/contact'],
-                ['Jobs', 'https://public-accountability.org/category/job/'],
-                ['Donate', '/donate']]
-    ],
+    EXPLORE_MENU,
+    ABOUT_MENU,
     ['Blog', 'https://news.littlesis.org']
   ].freeze
-
-  ADD_LINKS = ['Add', [['Entity', '/entities/new'],
-                       ['List', '/lists/new'],
-                       ['Map', '/maps/new']]].freeze
 
   def initialize(user = nil)
     @items = if user
                user_items(user)
              else
-               MENU_ITEMS
+               DEFAULT_MENU
              end
   end
 
@@ -53,9 +66,8 @@ class UserNavmenuPresenter
     [
       user_links(user),
       user_explore(user),
-      ADD_LINKS,
-      MENU_ITEMS[3], # help
-      MENU_ITEMS[4]  # about
+      ADD_MENU,
+      USER_ABOUT_MENU
     ]
   end
 
@@ -75,13 +87,9 @@ class UserNavmenuPresenter
 
   def user_explore(user)
     if user.admin?
-      ['Explore', [['Maps', Rails.application.routes.url_helpers.featured_maps_path],
-                   ['Lists', Rails.application.routes.url_helpers.lists_path(featured: true)],
-                   ['Tags', Rails.application.routes.url_helpers.tags_path],
-                   ['Edits', Rails.application.routes.url_helpers.edits_path],
-                   ['Datasets', Rails.application.routes.url_helpers.datasets_path]]]
+      ADMIN_EXPLORE_MENU
     else
-      MENU_ITEMS[2]
+      USER_EXPLORE_MENU
     end
   end
 end

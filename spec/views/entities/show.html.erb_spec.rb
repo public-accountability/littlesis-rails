@@ -52,19 +52,8 @@ describe 'entities/show.html.erb' do
         expect(rendered).to have_css('#entity-blurb-wrapper', :text => 'testing')
       end
 
-      specify 'actions' do
-        expect(rendered).to have_css('#entity-edited-history')
-        expect(rendered).to have_css('#entity-edited-history strong a', :text => user.username)
+      specify 'update at' do
         expect(rendered).to have_css('#entity-edited-history', :text => 'ago')
-        expect(rendered).to have_css('a[href="/org/' + e.to_param + '/history"]', :text => 'History')
-        expect(rendered).to have_css('#actions')
-        expect(rendered).to have_css('#actions a', :count => 3)
-        expect(rendered).to have_css('a', :text => 'add relationship')
-        expect(rendered).to have_css('a', :text => 'edit')
-        expect(rendered).to have_css('a', :text => 'flag')
-        expect(rendered).not_to have_css('a', :text => 'remove')
-        expect(rendered).not_to have_css('a', :text => 'match donations')
-        expect(rendered).not_to have_css('a', :text => 'add bulk')
       end
     end
 

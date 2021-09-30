@@ -1,12 +1,24 @@
 <div id="profile-page-sidebar">
+
+  <%# cache_unless user_signed_in?, ['relationship_page_sidebar',  @entity.cache_key_with_version], expires_in: 1.day do %>
+  <%# end %>
+
   <%# IMAGE%>
-  <%= cache ['entity_image', user_signed_in?, @entity.id, @entity.featured_image_url, @entity.name]  do %>
-    <div class="row" id="sidebar-image-container">
-      <div class="col-sm-10 col-sm-offset-1">
-	<%= render partial: 'entities/sidebar/image' %>
+  <%#= cache ['entity_image', user_signed_in?, @entity.id, @entity.featured_image_url, @entity.name]  do %>
+  <div class="row" id="sidebar-image-container">
+    <div class="col-sm-10">
+      <%= render partial: 'entities/sidebar/image' %>
+    </div>
+  </div>
+  <%# end %>
+
+  <div class="row mt-3">
+    <div class="col-sm-10">
+      <div id="entity-edited-history">
+        <%= EntityLastEditorPresenter.html(@entity, user_signed_in?) %>
       </div>
     </div>
-  <% end %>
+  </div>
 
   <% cache ['entity_basic_info', @entity.cache_key_with_version] do %>
     <%= profile_page_sidebar('sidebar-basic-info-container', 'Basic info') do %>

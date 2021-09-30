@@ -1,10 +1,10 @@
 <% content_for(:page_title, @page.title) %>
 
-<div class="row mt-4">
+<div class="row littlesis-trix-row">
   <div class="col-12 col-md-8">
     <%= @page.content %>
   </div>
-  
+
   <div class="col-md-4 d-none d-md-block">
     <div class="thin-grey-bottom-border">
       <h3>Data Summary</h3>
@@ -12,4 +12,3 @@
     <%= render partial: 'home/data_summary', locals: { stats: ExtensionRecord.data_summary } %>
   </div>
 </div>
-

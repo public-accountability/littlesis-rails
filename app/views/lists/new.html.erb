@@ -1,53 +1,60 @@
-<h1>Add a list</h1>
+<div class="row">
+  <div class="col">
+    <h1>Add a list</h1>
+  </div>
+</div>
 
-<%= form_for(@list) do |f|  %>
-    <% if @list.errors.any? %>
+
+<div class="row">
+  <div class="col">
+    <%= form_for(@list) do |f|  %>
+      <% if @list.errors.any? %>
         <div id="error_explanation" class="alert alert-warning">
-            <%= pluralize(@list.errors.count, "error") %> prohibited this list from being saved:
-            <ul>
-                <% @list.errors.each do |error| %>
-                  <li><%=  (error.attribute == :base ? '' : error.attribute).to_s.capitalize %> <%= error.message %></li>
-                <% end %>
-            </ul>
+          <%= pluralize(@list.errors.count, "error") %> prohibited this list from being saved:
+          <ul>
+            <% @list.errors.each do |error| %>
+              <li><%=  (error.attribute == :base ? '' : error.attribute).to_s.capitalize %> <%= error.message %></li>
+            <% end %>
+          </ul>
         </div>
-    <% end %>
-    <div class="field">
+      <% end %>
+      <div class="field">
         <%= f.label(:class, "List Name*") %>
         <%= f.text_field :name, class: "form-control"%>
-    </div>
+      </div>
 
-    <div class="field">
+      <div class="field">
         <%= f.label(:short_description, "Short description") %>
         <%= f.text_field :short_description, class: "form-control"%>
-    </div>
+      </div>
 
-    <div class="field">
+      <div class="field">
         <%= f.label(:description, "Description") %>
         <%= f.text_area :description, class: "form-control"%>
-    </div>
+      </div>
 
-    <div class="m-tb-1em">
-      <%= render 'settings', f: f %>
-    </div>
+      <div class="m-tb-1em">
+        <%= render 'settings', f: f %>
+      </div>
 
-     <%= fields_for :ref do |ref_fields|  %>
-         <%=  link_to("/help/sources#q-appropriate", target: "_blank") do%>
-             <p><em>Where is this information coming from?</em></p>
-         <% end %>
-         <div class="field">
-         <%=  ref_fields.label(:url, "Source URL") %>
-         <%=  ref_fields.text_field :url, class: "form-control" %>
-         </div>
-         <div class="field">
-         <%=  ref_fields.label(:name, "Source Display Name") %>
-         <%=  ref_fields.text_field :name, class: "form-control" %>
-         </div>
-     <% end %>
-     <br />
+      <%= fields_for :ref do |ref_fields|  %>
+        <p><em>Where is this information coming from?</em></p>
+        <div class="field">
+          <%=  ref_fields.label(:url, "Source URL") %>
+          <%=  ref_fields.text_field :url, class: "form-control" %>
+        </div>
+        <div class="field">
+          <%=  ref_fields.label(:name, "Source Display Name") %>
+          <%=  ref_fields.text_field :name, class: "form-control" %>
+        </div>
+      <% end %>
+      <br />
 
-     <div class="m-tb-1em">
-       <%= render 'settings_admin', f: f %>
-     </div>
+      <div class="m-tb-1em">
+        <%= render 'settings_admin', f: f %>
+      </div>
 
-    <%= f.submit "Add", class: "btn btn-primary" %>
-<% end %>
+      <%= f.submit "Add", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>

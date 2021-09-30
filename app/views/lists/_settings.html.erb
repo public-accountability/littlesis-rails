@@ -5,9 +5,9 @@
 
   } do %>
 
-  <div class="row">
-    <div class="col-sm-4 col-md-3 mr-2">
-      <%= label_tag 'Access level' %> <br/>
+  <div class="row justify-content-start">
+    <div class="col-sm col-md-4">
+      <%= label_tag 'Access level' %><br/>
 
       <div id="list-config-access-buttons" class="btn-group m-bottom-1em" role="group" aria-label="...">
         <% Permissions::ACCESS_MAPPING.each do |code, name| %>
@@ -22,15 +22,15 @@
       </div>
 
     </div>
-    <div class="col-sm-4 col-md-4">
+    <div class="col-sm my-auto">
         <div class="list-access-level-help" id="list-access-level-help-open">
-      An <b>open list</b> is visible by everyone and can be edited by any LittleSis user who is allowed to modify lists.
+          An <b>open list</b> is visible by everyone and can be edited by any LittleSis user.
         </div>
         <div class="list-access-level-help" id="list-access-level-help-closed">
-      A <b>closed list</b> is visible by everyone, but it can only be edited you.
+          A <b>closed list</b> is visible by everyone, but can only be edited by you.
         </div>
         <div class="list-access-level-help" id="list-access-level-help-private">
-      A <b>private list</b> can only be seen and edited by you.
+          A <b>private list</b> can only be seen and edited by you.
         </div>
     </div>
   </div>

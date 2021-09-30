@@ -13,10 +13,6 @@ describe 'entities/political.html.erb' do
       expect(view).to render_template(partial: 'entities/_header')
     end
 
-    it 'renders actions' do
-      expect(view).to render_template(partial: 'entities/_actions')
-    end
-
     it 'renders summary' do
       expect(view).to render_template(partial: 'entities/_summary')
     end
@@ -33,17 +29,8 @@ describe 'entities/political.html.erb' do
         expect(rendered).to have_css '#entity-name'
       end
 
-      it 'has actions' do
-        expect(rendered).to have_css '#entity-edited-history'
-        expect(rendered).to have_css '#actions a', count: 3
-      end
-
       it 'has tabs' do
         expect(rendered).to have_css '.button-tabs span a', count: 4
-      end
-
-      xit 'has active political tab' do
-        expect(rendered).to have_css '.button-tabs span.active a', text: 'Political', count: 1
       end
 
       it 'has political pie chart div' do
