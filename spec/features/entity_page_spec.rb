@@ -1,11 +1,10 @@
-# rubocop:disable RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
 describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :feature do
   include EntitiesHelper
 
   let(:user) { create_basic_user }
   let(:person) do
     with_versioning_for(user) do
-      create(:entity_person)
+      create(:entity_person, blurb: Faker::Lorem.sentence)
     end
   end
   let(:org) do
@@ -138,7 +137,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     before { visit_page.call }
 
     context 'with an anonymous user' do
-
       it "shows the entity's name" do
         expect(page.find("#entity-name")).to have_text person.name
       end
@@ -147,15 +145,17 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         expect(page.find("#entity-blurb-text")).to have_text person.blurb
       end
 
-      it 'does not link to edit blurb'
-
-      it "shows action buttons" do
-        page_has_selector ".action-button", count: 3
+      it 'does not link to editable blurb' do
+        expect(page).not_to have_selector '#editable-blurb'
       end
 
-      it "shows an edit history" do
-        expect(page.find('#entity-edited-history strong a')[:href]).to eql "/users/#{user.username}"
-        expect(page.find('#entity-edited-history')).to have_text "ago"
+      it "does not have action buttons" do
+        expect(page).not_to have_selector '.action-button'
+      end
+
+      it "shows updated at" do
+        expect(page.find('#entity-edited-history')).not_to have_selector 'a'
+        expect(page.find('#entity-edited-history')).to have_text 'Updated'
       end
     end
 
@@ -166,7 +166,18 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       after { logout(user) }
 
-      it 'has editable blurb'
+      it 'has editable blurb' do
+        expect(page).not_to have_selector '#editable-blurb'
+      end
+
+      it "shows link to edit history" do
+        expect(page.find('#entity-edited-history a')[:href]).to eq concretize_history_entity_path(person)
+        expect(page.find('#entity-edited-history').text).to include 'Updated'
+      end
+
+      it 'has action buttons' do
+        page_has_selector ".action-button", count: 3
+      end
     end
   end # end describe header
 
@@ -719,4 +730,3 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
   end
 end
-# rubocop:enable RSpec/MultipleMemoizedHelpers, RSpec/NestedGroups
