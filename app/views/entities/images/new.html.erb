@@ -1,22 +1,29 @@
-<% content_for(:page_title, raw(@entity.name + ' - upload image')) %>
+<% content_for(:page_title, raw(@entity.name + ' - Add Image')) %>
 <%= render partial: 'entities/header', locals: { entity: @entity } %>
 
-<h3>Add Image</h3>
+<div class="row mt-3">
+  <div class="col">
+    <h3>Add Image</h3>
+  </div>
+</div>
 
-<%= form_for(
-  :image,
-  url: entity_images_path(@entity),
-  method: :post,
-  data: {
-    parsley_validate: true,
-    controller: 'image-editor',
-    image_editor_accepted_extensions_value: Image::VALID_EXTENSIONS.to_a.to_json
-  }
-) do |f| %>
-  <div class="row">
-    <div class="col-sm-7">
+<div class="row">
+  <div class="col-sm-7">
+    <%= form_for(
+      :image,
+      url: entity_images_path(@entity),
+      method: :post,
+      data: {
+        parsley_validate: true,
+        controller: 'image-editor',
+        image_editor_accepted_extensions_value: Image::VALID_EXTENSIONS.to_a.to_json
+      }
+    ) do |f| %>
+
       <div class="image-upload-file-url-box">
-        You must either upload an image from your computer or enter a valid URL:
+        <p>
+          You must either upload an image from your computer or enter a valid URL:
+        </p>
 
         <div class="form-group">
           <%= f.label :file %>
@@ -33,43 +40,40 @@
         <%= f.label :caption %>
         <%= f.text_area :caption, class: "form-control" %> (a short description and/or image credit)
       </div>
-    </div>
-    <div class="col-sm-4">
-      <div class="image-upload-alert" style="display: none;">
-	<p></p>
-      </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="image-upload-alert" style="display: none;">
+      <p></p>
     </div>
   </div>
+</div>
 
-  <dv class="row">
-    <div class="form-horizontal">  
-      <div class="form-group">
-        <div class="col-sm-3">
-          <label>
-            <span style="padding-right: 1.5em">Is free</span><%= f.check_box :is_free %>  
-          </label>
-        </div>
+<div class="row">
+  <div class="form-horizontal">
+    <div class="form-group">
+      <div class="col-sm-3">
+        <label>
+          <span style="padding-right: 1.5em">Is free</span><%= f.check_box :is_free %>
+        </label>
       </div>
-      
-      <div class="form-group">
-        <div class="col-sm-8">
-          <label>
-            <span style="padding-right: 1.5em">Is featured</span><%= f.check_box :is_featured %>
-          </label>
-          <small style="padding-left: 1em">(put this image on the profile page)</small>
-        </div>
-        
-      </div>
-      <div class="form-group">
-        <div class="col-sm-10">
-          <p>By submitting this form, I am ensuring that this content does not violate any copyrights. Please see our policy regarding copyright violations and repeat infringers. </p>
-        </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-8">
+        <label>
+          <span style="padding-right: 1.5em">Is featured</span><%= f.check_box :is_featured %>
+        </label>
+        <small style="padding-left: 1em">(put this image on the profile page)</small>
       </div>
 
-      <div class="actions">
+    </div>
+    <div class="form-group">
+      <div class="col-sm-10">
+        <p>By submitting this form, I am ensuring that this content does not violate any copyrights. Please see our policy regarding copyright violations and repeat infringers. </p>
         <%= f.submit 'Upload', class: "btn btn-primary" %>
       </div>
+    </div>
 
-    </div>
-    </div>
-<% end %>
+    <% end %>
+  </div>
+</div>
