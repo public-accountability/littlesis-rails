@@ -7356,31 +7356,10 @@ CREATE INDEX idx_34370_index_external_data_fec_contributions_on_cmte_id ON publi
 
 
 --
--- Name: idx_34370_index_external_data_fec_contributions_on_employer; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_34370_index_external_data_fec_contributions_on_employer ON public.external_data_fec_contributions USING gin (to_tsvector('simple'::regconfig, employer));
-
-
---
 -- Name: idx_34370_index_external_data_fec_contributions_on_fec_year_and; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX idx_34370_index_external_data_fec_contributions_on_fec_year_and ON public.external_data_fec_contributions USING btree (fec_year, sub_id);
-
-
---
--- Name: idx_34370_index_external_data_fec_contributions_on_name; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_34370_index_external_data_fec_contributions_on_name ON public.external_data_fec_contributions USING gin (to_tsvector('simple'::regconfig, name));
-
-
---
--- Name: idx_34370_index_external_data_fec_contributions_on_transaction_; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_34370_index_external_data_fec_contributions_on_transaction_ ON public.external_data_fec_contributions USING btree (transaction_amt);
 
 
 --
@@ -8270,6 +8249,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210920185602'),
 ('20210927182338'),
 ('20210928204422'),
-('20210929174042');
+('20210929174042'),
+('20211004143011');
 
 
