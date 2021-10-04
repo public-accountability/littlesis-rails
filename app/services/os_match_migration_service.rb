@@ -2,8 +2,19 @@
 
 # Converts OsMatch to an FECMatch
 module OsMatchMigrationService
+  def self.run
+    stats = { missing: 0, already_imported: 0, missing_donor: 0, error: 0, created: 0 }
+
+    OsMatch.find_each do |os_match|
+      result = run_one(os_match)
+      stats[result] += 1
+    end
+
+    Rails.logger.info(stats)
+  end
+
   # return symbols: missing, already_imported, missing_donor, created, error
-  def self.run(os_match)
+  def self.run_one(os_match)
     # fec trans id in OsDonation  = sub_id in new fec tables
     fec_trans_id = os_match.os_donation.fectransid.to_i
     fec_contribution = ExternalDataset.fec_contributions.find_by(sub_id: fec_trans_id)
@@ -18,9 +29,7 @@ module OsMatchMigrationService
       return :missing_donor
     end
 
-    ApplicationRecord.transaction do
-      create_fec_match(fec_contribution: fec_contribution, os_match: os_match)
-    end
+    FECMatch.create!(fec_contribution: fec_contribution, donor: os_match.donor)
 
     :created
   rescue => e
@@ -28,28 +37,8 @@ module OsMatchMigrationService
     :error
   end
 
-  def self.create_fec_match(fec_contribution:, os_match:)
-    if fec_contribution.fec_committee.entity.nil?
-      fec_contribution.fec_committee.create_littlesis_entity
-    end
-
-    fec_match = FECMatch.create!(sub_id: fec_contribution.sub_id,
-                                 donor: os_match.donor,
-                                 recipient: fec_contribution.fec_committee.entity)
-
-    # is the committee associated with a candidate?
-    if fec_contribution.fec_committee.cand_id.present?
-      # is that candidate connected to a LittleSis entity?
-      if (candidate = ExternalLink
-                        .fec_candidate
-                        .find_by(link_id: fec_contribution.fec_committee.cand_id)&.entity)
-        fec_match.update!(candidate: candidate)
-      end
-    end
-  end
-
   # For some contributions, the fec id has changed, but the donation is the same
-  def self.find_by_os_donation_attributes(os_donation)
+  private_class_method def self.find_by_os_donation_attributes(os_donation)
     ExternalDataset.fec_contributions.find_by(
       name: os_donation.contrib,
       fec_year: os_donation.cycle.to_i,
@@ -62,6 +51,4 @@ module OsMatchMigrationService
       zip_code: os_donation.zip
     )
   end
-
-  private_class_method :create_fec_match, :find_by_os_donation_attributes
 end

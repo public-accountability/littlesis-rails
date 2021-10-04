@@ -34,18 +34,35 @@ module FEC
         encoded_line = line_from_csv.encode('UTF-8', invalid: :replace, undef: :replace).scrub!
         line = CSV.parse_line(encoded_line, col_sep: '|', quote_char: "\x00")
         line = line[0..24] if table.name == 'operating_expenditures'
+        line[13] = fix_invalid_date(line[13]) if table.name == 'individual_contributions'
         line.map! { |v| cast_value(v) }
         line.concat([table.year]) # For column FEC_YEAR
       end
     end
 
     # Right now all this does is ensure blank string are stored as null
-    private_class_method def self.cast_value(x)
+    def self.cast_value(x)
       if x.is_a?(String) && x.strip == ''
         nil
       else
         x
       end
     end
+
+    def self.fix_invalid_date(x)
+      return nil if x.blank?
+
+      if x[-4, 4] == '2160'
+        return fix_invalid_date("#{x[...-4]}2016")
+      end
+
+      Date.strptime(x, '%m%d%Y')
+      x
+    rescue Date::Error, TypeError
+      Rails.logger.warn "[FEC] invalid date: #{x}"
+      nil
+    end
+
+    private_class_method :cast_value, :fix_invalid_date
   end
 end
