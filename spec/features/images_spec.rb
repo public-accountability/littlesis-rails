@@ -1,4 +1,4 @@
-describe 'Images' do
+describe 'Images', js: true do
   include EntitiesHelper
 
   before(:all) do # rubocop:disable RSpec/BeforeAfterAll
@@ -21,7 +21,7 @@ describe 'Images' do
 
   after { logout(:user) }
 
-  describe 'adding an image to a entity' do # rubocop:disable RSpec/MultipleMemoizedHelpers
+  describe 'adding an image to a entity' do
     let(:image_caption) { Faker::Creature::Dog.meme_phrase }
     let(:url) { 'https://example.com/example.png' }
     let(:image_data) { File.open(example_png).read }
@@ -36,7 +36,7 @@ describe 'Images' do
     end
 
     it 'uploads an image from a file' do
-      successfully_visits_page concretize_new_entity_image_path(entity)
+      expect(page.current_path).to eq concretize_new_entity_image_path(entity)
 
       attach_file 'image_file', example_png
       fill_in 'image_caption', with: image_caption
@@ -49,11 +49,11 @@ describe 'Images' do
       expect(images.first.caption).to eql image_caption
       expect(images.first.is_featured).to be true
 
-      successfully_visits_page concretize_entity_images_path(entity)
+      expect(page.current_path).to eq concretize_entity_images_path(entity)
     end
 
     it 'uploads an image from a URL' do
-      successfully_visits_page concretize_new_entity_image_path(entity)
+      expect(page.current_path).to eq concretize_new_entity_image_path(entity)
 
       fill_in 'image_caption', with: image_caption
       fill_in 'image_url', with: url
@@ -65,10 +65,10 @@ describe 'Images' do
       expect(images.size).to eq 1
       expect(images.first.caption).to eql image_caption
 
-      successfully_visits_page concretize_entity_images_path(entity)
+      expect(page.current_path).to eq concretize_entity_images_path(entity)
     end
 
-    describe 'visting the crop image page' do # rubocop:disable RSpec/MultipleMemoizedHelpers
+    describe 'visting the crop image page', js: false  do # rubocop:disable RSpec/MultipleMemoizedHelpers
       let(:image) { create(:image, entity: create(:entity_org)) }
 
       before do
@@ -103,7 +103,7 @@ describe 'Images' do
     end
   end
 
-  describe 'removing an image' do
+  describe 'removing an image', js: false do
     let(:image) { create(:image, entity: create(:entity_org)) }
 
     before do
@@ -120,9 +120,5 @@ describe 'Images' do
       expect(page).to show_success 'Image deleted'
       expect(image.reload.is_deleted).to be true
     end
-  end
-
-  describe 'cropping an image' do
-    pending 'unable to implement'
   end
 end
