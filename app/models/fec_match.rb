@@ -32,25 +32,6 @@ class FECMatch < ApplicationRecord
   after_create  :update_committee_relationship,
                 :update_candidate_relationship
 
-  def self.migration!
-    raise Exceptions::LittleSisError, "do not run on production yet" if Rails.env.production?
-
-    stats = { missing: 0, already_imported: 0, missing_donor: 0, error: 0, created: 0 }
-
-    enumerator = if Rails.env.development?
-                   OsMatch.joins(:os_donation).where("os_donations.cycle = '2012'").order('random()').limit(100).each
-                 else
-                   OsMatch.all.find_each
-                 end
-
-    enumerator.each do |os_match|
-      result = OsMatchMigrationService.run(os_match)
-      stats[result] += 1
-    end
-
-    Rails.logger.info(stats)
-  end
-
   # All FEC contributions between Donor & Recipient
   def committee_contributions
     FECMatch
@@ -161,6 +142,6 @@ class FECMatch < ApplicationRecord
   end
 
   def log_debug(msg)
-    Rails.logger.debug { "[FECMatch\##{id}] #{msg}" }
+    Rails.logger.debug { "[FECMatch] #{msg}" }
   end
 end

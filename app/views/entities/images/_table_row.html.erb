@@ -1,4 +1,4 @@
-<% #locals: image %>
+<%# locals: image %>
 
 <% image_deletion_request_modal_id = "image-#{image.id}-deletion-request-modal" %>
 <% image_caption_modal_id = "image-#{image.id}-caption-modal" %>
@@ -10,7 +10,7 @@
 
   <td>
     <p class="image-caption" title="Edit this caption">
-    <span onclick="$('#<%=image_caption_modal_id %>').modal('show')"><%= image.title %></span>
+      <span onclick="$('#<%=image_caption_modal_id %>').modal('show')"><%= image.title %></span>
     </p>
     <em>Posted <%= image.created_at.strftime("%F") %></em></p>
   </td>
@@ -26,7 +26,7 @@
     <br>
 
     <a href="#"' onclick="$('#<%=image_deletion_request_modal_id %>').modal('show')">
-    Request deletion
+      Request deletion
     </a>
 
     <br/>

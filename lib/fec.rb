@@ -6,6 +6,7 @@
 #   bin/rails runner ./lib/scripts/fec --years=2012,2016 --run
 #
 
+require 'csv'
 require 'parallel'
 require 'zip'
 

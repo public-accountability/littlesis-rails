@@ -95,10 +95,6 @@ class Relationship < ApplicationRecord
   # has_many :fec_committee_matches, class_name: 'FECMatch', foreign_key: 'committee_relationship_id', inverse_of: :committee_relationship
   # has_many :fec_candidate_matches, class_name: 'FECMatch', foreign_key: 'candidate_relationship_id', inverse_of: :candidate_relationship
 
-  # External Data
-  # has_many :external_relationships, dependent: :nullify
-  # has_many :external_data, through: :external_relationships
-
   validates :entity1_id, presence: true
   validates :entity2_id, presence: true
   validates :category_id, presence: true

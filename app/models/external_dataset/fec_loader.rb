@@ -30,12 +30,18 @@ module ExternalDataset
     def self.loop_csv_files(dataset_name)
       YEARS.each do |year|
         basename = FILENAME_LOOKUP.fetch(dataset_name) + year + ".csv"
-
-        rails_path = Rails.root.join('data/fec/csv').join(basename)
-        database_path = Pathname.new('/data/fec/csv').join(basename)
-
-        yield database_path
+        yield csv_path_root.join(basename)
       end
+    end
+
+    def self.csv_path_root
+      @csv_path_root ||= if Rails.env.production?
+                           Pathname.new('/var/lib/littlesis/fec')
+                         elsif Rails.env.development?
+                           Pathname.new('/data/fec/csv')
+                         else
+                           Rails.root.join('data/fec/csv')
+                         end
     end
   end
 end

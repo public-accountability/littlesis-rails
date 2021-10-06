@@ -64,6 +64,16 @@ module FEC
           FEC.logger.debug "RUN finished"
           exit
         end
+
+        opts.on('--download', "Download files") do
+          create_directories
+          Downloader.run
+        end
+
+        opts.on('--make-csvs', "Create csvs") do
+          create_directories
+          CsvMaker.run
+        end
       end.parse!
     end
 
