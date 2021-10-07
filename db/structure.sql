@@ -7475,6 +7475,13 @@ CREATE INDEX index_external_data_fec_contributions_on_fec_year ON public.externa
 
 
 --
+-- Name: index_external_data_fec_contributions_on_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_external_data_fec_contributions_on_name ON public.external_data_fec_contributions USING btree (name) WHERE (fec_year >= 2020);
+
+
+--
 -- Name: index_external_data_fec_contributions_on_name_tsvector; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8301,6 +8308,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210929174042'),
 ('20211004143011'),
 ('20211007145212'),
-('20211007152033');
+('20211007152033'),
+('20211007174700');
 
 

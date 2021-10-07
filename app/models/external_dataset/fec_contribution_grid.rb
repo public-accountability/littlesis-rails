@@ -5,7 +5,7 @@ module ExternalDataset
     self.batch_size = nil
 
     scope do
-      ExternalDataset::FECContribution
+      ExternalDataset::FECContribution.all.includes(:fec_match)
     end
 
     TRANSACTION_TYPE_OPTIONS = [
@@ -16,6 +16,8 @@ module ExternalDataset
       ['Inaugural (13)', '13'],
       ['Election Recount Disbursement', '24R']
     ].freeze
+
+    CHECK_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/></svg>'.html_safe.freeze
 
     # %w[15E 15 24T 22Y 10 24I 15C 11 31 20Y 32]
 
@@ -41,9 +43,23 @@ module ExternalDataset
       where('transaction_amt >= ?', value)
     end
 
+    column "name"
+
     column("cmte_id", header: "Committee") do |record|
-      format(record.cmte_id) do |_|
+      format(record.cmte_id) do
         record.fec_committee.display_name
+      end
+    end
+
+    column("transaction_amt", header: 'Amount') do |record|
+      ActiveSupport::NumberHelper.number_to_delimited(record.transaction_amt)
+    end
+
+    column "date", header: 'Date'
+
+    column "littlesis_relationship", header: 'View', html: true do |record|
+      if record.fec_match.present?
+        link_to CHECK_SVG, record.fec_match.committee_relationship.url, target: '_blank'
       end
     end
 
@@ -53,14 +69,13 @@ module ExternalDataset
     # column "image_num"
     column "transaction_tp", header: 'Transaction Type'
     # column "entity_tp"
-    column "name"
+
     column "city", order: false
     column "state"
     column "zip_code"
     column "employer", order: false
     column "occupation", order: false
-    column "date", header: 'Date'
-    column("transaction_amt", header: 'Amount') { |record| ActiveSupport::NumberHelper.number_to_delimited(record.transaction_amt) }
+
     # column  "other_id"
     # column "tran_id", header: 'TransactionID'
     column("file_num", header: 'Filing') do |record|
