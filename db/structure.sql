@@ -7356,13 +7356,6 @@ CREATE INDEX idx_34370_index_external_data_fec_contributions_on_cmte_id ON publi
 
 
 --
--- Name: idx_34370_index_external_data_fec_contributions_on_fec_year_and; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX idx_34370_index_external_data_fec_contributions_on_fec_year_and ON public.external_data_fec_contributions USING btree (fec_year, sub_id);
-
-
---
 -- Name: idx_34391_index_external_data_nys_disclosures_on_filer_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7468,6 +7461,20 @@ CREATE INDEX index_edited_entities_on_round_five_minutes_created_at ON public.ed
 
 
 --
+-- Name: index_external_data_fec_contributions_on_date; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_external_data_fec_contributions_on_date ON public.external_data_fec_contributions USING btree (date);
+
+
+--
+-- Name: index_external_data_fec_contributions_on_fec_year; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_external_data_fec_contributions_on_fec_year ON public.external_data_fec_contributions USING btree (fec_year);
+
+
+--
 -- Name: index_external_data_fec_contributions_on_name_tsvector; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7479,6 +7486,48 @@ CREATE INDEX index_external_data_fec_contributions_on_name_tsvector ON public.ex
 --
 
 CREATE UNIQUE INDEX index_external_data_fec_contributions_on_sub_id ON public.external_data_fec_contributions USING btree (sub_id);
+
+
+--
+-- Name: index_external_data_fec_contributions_on_transaction_tp; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_external_data_fec_contributions_on_transaction_tp ON public.external_data_fec_contributions USING btree (transaction_tp);
+
+
+--
+-- Name: index_fec_matches_on_candidate_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_fec_matches_on_candidate_id ON public.fec_matches USING btree (candidate_id);
+
+
+--
+-- Name: index_fec_matches_on_committee_relationship_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_fec_matches_on_committee_relationship_id ON public.fec_matches USING btree (committee_relationship_id);
+
+
+--
+-- Name: index_fec_matches_on_donor_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_fec_matches_on_donor_id ON public.fec_matches USING btree (donor_id);
+
+
+--
+-- Name: index_fec_matches_on_recipient_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_fec_matches_on_recipient_id ON public.fec_matches USING btree (recipient_id);
+
+
+--
+-- Name: index_fec_matches_on_sub_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_fec_matches_on_sub_id ON public.fec_matches USING btree (sub_id);
 
 
 --
@@ -8250,6 +8299,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20210927182338'),
 ('20210928204422'),
 ('20210929174042'),
-('20211004143011');
+('20211004143011'),
+('20211007145212'),
+('20211007152033');
 
 
