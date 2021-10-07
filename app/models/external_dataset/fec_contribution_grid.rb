@@ -15,7 +15,7 @@ module ExternalDataset
       ['Earmarked (15E)', '15E'],
       ['Inaugural (13)', '13'],
       ['Election Recount Disbursement', '24R']
-    ]
+    ].freeze
 
     # %w[15E 15 24T 22Y 10 24I 15C 11 31 20Y 32]
 
@@ -24,7 +24,7 @@ module ExternalDataset
     filter(:cmte_id, header: 'Committee ID')
 
     filter(:name, :string) do |value|
-      where("to_tsvector(name) @@ websearch_to_tsquery(?)", value)
+      where("name_tsvector @@ websearch_to_tsquery(?)", value)
     end
 
     filter(:employer, :string) do |value|
@@ -59,11 +59,15 @@ module ExternalDataset
     column "zip_code"
     column "employer", order: false
     column "occupation", order: false
-    column "transaction_dt", header: 'Date'
+    column "date", header: 'Date'
     column("transaction_amt", header: 'Amount') { |record| ActiveSupport::NumberHelper.number_to_delimited(record.transaction_amt) }
     # column  "other_id"
-    column "tran_id", header: 'TransactionID'
-    # column "file_num"
+    # column "tran_id", header: 'TransactionID'
+    column("file_num", header: 'Filing') do |record|
+      format(record.file_num) do |val|
+        link_to val, record.reference_url, target: '_blank', rel: 'noopener'
+      end
+    end
     column "memo_cd", order: false
     column "memo_text", order: false
     column "fec_year", header: 'Year'
