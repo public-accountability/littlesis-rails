@@ -21,6 +21,7 @@ class FECController < ApplicationController
     if @query&.strip.present?
       @contributions = ExternalDataset
                          .fec_contributions
+                         .where("fec_year >= 2020")
                          .search_by_name(@query)
                          .limit(2500)
                          .map { |x| FECContributionPresenter.new(x) }

@@ -1,15 +1,17 @@
 <% content_for :page_title, "External Datasets" %>
 
-<div id="datasets-overview">
-  <% ExternalDataset::DATASETS.each do |dataset_name| %>
-    <div class="mt-2">
-      <h3>
-        <%= link_to dataset_name, "/datasets/#{dataset_name}" %>
+<% cache 'external_datasets_overview', expires_in: 12.hours do %>
 
-        <small class="text-muted"><%= ExternalDataset.descriptions[dataset_name] %></small>
-        <span> | </span>
-        <small class="text-primary"><%=  ExternalDataset.const_get(dataset_name.to_s.classify).count %> rows</small>
-      </h3>
-    </div>
-  <% end %>
-</div>
+  <div id="datasets-overview">
+    <% ExternalDataset::DATASETS.each do |dataset_name| %>
+      <div class="mt-2">
+        <h3>
+          <small><%= link_to ExternalDataset.descriptions[dataset_name], "/datasets/#{dataset_name}", class: 'text-muted' %></small>
+          <span> | </span>
+          <small class="text-primary"><%= number_with_delimiter(ExternalDataset.const_get(dataset_name.to_s.classify).count) %> rows</small>
+        </h3>
+      </div>
+    <% end %>
+  </div>
+
+<% end %>

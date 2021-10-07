@@ -6,7 +6,7 @@
 
   <div class="row mt-4 bg-light" data-controller="match-contributions" data-match-contributions-entity-name-value="<%= @entity.person.last_first %>">
     <div class="col p-2">
-      <p>Help us expand the LittleSis database by importing campaign finance contributions data from the <abbr title="Federal Election Commission">FEC</abbr></p>
+      <p>Help us expand the LittleSis database by importing campaign finance contributions data from the <abbr title="Federal Election Commission">FEC</abbr> <span class="text-muted">(2020+)</span></p>
       <p>Try searching for <a class="link-blue cursor-pointer" data-action="match-contributions#example_search"><%= @entity.person.last_first %></a></p>
       <%= form_with url: fec_entity_match_contributions_path(@entity), method: :get, class: 'input-group' do |form| %>
         <%= form.text_field "query",  value: @query, class: "form-control" %>
