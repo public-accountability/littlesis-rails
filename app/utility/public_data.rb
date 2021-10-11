@@ -12,46 +12,8 @@ module PublicData
     save_json(Relationship)
   end
 
-  # def self.entities
-  #   File.open(DIR.join('entities.json'), 'w') do |f|
-  #     f.write '['
-
-  #     Entity.find_each do |e|
-  #       begin
-  #         f.write e.api_data.to_json
-  #         f.write ','
-  #       rescue => err
-  #         Rails.logger.warn "Failed to get api_data for Entity #{e.name_with_id}"
-  #         Rails.logger.warn err.message
-  #       end
-  #     end
-
-  #     f.seek(-1, IO::SEEK_CUR)
-  #     f.write ']'
-  #   end
-  # end
-
-  # def self.relationships
-  #   File.open(DIR.join('relationships.json'), 'w') do |f|
-  #     f.write '['
-
-  #     Relationship.find_each do |r|
-  #       begin
-  #         f.write r.api_data.to_json
-  #         f.write ','
-  #       rescue => err
-  #         Rails.logger.warn "Failed to get api_data for Relationship #{r.id}"
-  #         Rails.logger.warn err.message
-  #       end
-  #     end
-
-  #     f.seek(-1, IO::SEEK_CUR)
-  #     f.write ']'
-  #   end
-  # end
-
   def self.save_json(klass)
-    File.open(Dir.join("#{klass.name.downcase}.json"), 'w') do |f|
+    File.open(DIR.join("#{klass.name.pluralize.downcase}.json"), 'w') do |f|
       f.write '['
 
       klass.find_each do |model|
@@ -65,7 +27,6 @@ module PublicData
       f.seek(-1, IO::SEEK_CUR)
       f.write ']'
     end
-
   end
 
   def self.gzip
