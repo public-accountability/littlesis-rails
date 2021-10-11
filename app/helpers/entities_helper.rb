@@ -128,49 +128,42 @@ module EntitiesHelper
     "[+#{links.count - 1}]"
   end
 
-  def type_select_boxes_person(entity = @entity)
-    boxes_to_html(checkboxes(entity, ExtensionDefinition.person_types))
+  def type_select_boxes_person(entity)
+    checkboxes(checked_ids: entity.extension_records.map(&:definition_id),
+               definitions: ExtensionDefinition.person_types,
+               per_row: 5
+              )
   end
 
-  def org_boxes_tier2(entity = @entity)
-    boxes_to_html(checkboxes(entity, ExtensionDefinition.org_types_tier2), 4)
+  def org_boxes_tier2(entity)
+    checkboxes(checked_ids: entity.extension_records.map(&:definition_id),
+               definitions: ExtensionDefinition.org_types_tier2.to_a,
+               per_row: 3)
   end
 
-  def org_boxes_tier3(entity = @entity)
-    boxes_to_html(checkboxes(entity, ExtensionDefinition.org_types_tier3), 6)
+  def org_boxes_tier3(entity)
+    checkboxes(checked_ids: entity.extension_records.map(&:definition_id),
+               definitions: ExtensionDefinition.org_types_tier3.to_a,
+               per_row: 6)
   end
 
-  # [ content_tag ] => html
-  def boxes_to_html(boxes, slice = 5)
-    boxes.each_slice(slice).reduce('') do |x, box_group|
-      x + content_tag(:div, box_group.reduce(:+), class: 'col-sm-4')
-    end.html_safe
-  end
-
-  def checkboxes(entity, definitions)
-    checked_def_ids = entity.extension_records.map(&:definition_id)
-    definitions.collect do |ed|
-      is_checked = checked_def_ids.include?(ed.id)
-      content_tag(:span, class: 'entity-type-checkbox-wrapper') do
-        glyph_checkbox(is_checked, ed.id) + content_tag(:span, " #{ed.display_name}", class: 'entity-type-name') + tag(:br)
+  # [int], [ExtensionDefinition], int
+  def checkboxes(checked_ids:, definitions:, per_row: 5)
+    definitions.each_slice(per_row).collect do |group|
+      tag.div(class: 'col-sm-4') do
+        group.map do |ed|
+          tag.div(class: 'entity-extension-checkbox-wrapper') do
+            checkbox_class = checked_ids.include?(ed.id) ? 'bi bi-check-square' : 'bi bi-square'
+            tag.i(class: checkbox_class,
+                  data: {
+                    action: 'click->entity-edit#checkType',
+                    definition_id: ed.id
+                  }
+                 ) + tag.span(ed.display_name)
+          end
+        end.join.html_safe
       end
-    end
-  end
-
-  # boolean, [] -> content_tag
-  def glyph_checkbox(checked, def_id)
-    glyphicon_class = ['glyphicon', 'type-checkbox']
-    glyphicon_class.append(if checked then 'glyphicon-check' else 'glyphicon-unchecked' end)
-    content_tag(
-      :span,
-      nil,
-      class: glyphicon_class,
-      aria_hidden: 'true',
-      data: {
-        action: 'click->entity-edit#checkType',
-        definition_id: def_id
-      }
-    )
+    end.join.html_safe
   end
 
   # <FormBuilder Thingy> -> [options for select]
