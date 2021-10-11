@@ -16,7 +16,8 @@ Rails.application.config.assets.precompile += [
   'cmp.scss',
   'oligrapher.scss',
   'swamped.scss',
-  'external_datasets.scss'
+  'external_datasets.scss',
+  'bootstrap-icons.scss'
 ]
 
 Rails.application.config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif *.svg *.eot *.woff *.woff2 *.ttf)
