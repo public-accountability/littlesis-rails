@@ -1,29 +1,29 @@
-<div class="row bottom-1em">
-  <div class="col-sm-3">
-    <strong>Types:</strong>
+<div id="entity-types">
+
+  <div class="row bottom-1em">
+    <div class="col-sm-3">
+      <strong>Types:</strong>
+    </div>
   </div>
-</div>
 
-<div id="tier-two">
-  <div class="row">
-    <%= org_boxes_tier2 %>
+  <div id="tier-two" class="row">
+    <%= org_boxes_tier2(@entity) %>
   </div>
-</div>
 
-<div class="row">
-  <div class="col-sm-3">
-    <a class="collapsed entity-type-toggle" role="button" data-toggle="collapse" data-action="entity-edit#toggleTypesIcon" href="#tier-three" aria-expanded="false" aria-controls="tier-three">
-      <strong>More:  </strong><span class="glyphicon glyphicon-expand" aria-hidden="true" id="type-collapse-icon"></span>
-    </a>
+  <div class="row mt-1 mb-1">
+    <div class="col-sm-3">
+      <a class="collapsed entity-type-toggle" role="button" data-toggle="collapse" data-action="entity-edit#toggleTypesIcon" href="#tier-three" aria-expanded="false" aria-controls="tier-three">
+        <strong>More <i class="bi bi-box-arrow-down ml-1" aria-hidden="true" id="type-collapse-icon"></i></strong>
+      </span>
+      </a>
+    </div>
   </div>
-</div>
 
-<div id="tier-three" class="collapse mb-4">
-  <div class="row">
-    <%= org_boxes_tier3 %>
+  <div id="tier-three" class="collapse mb-4">
+    <div class="row">
+      <%= org_boxes_tier3(@entity) %>
+    </div>
   </div>
+
 </div>
-
-<br />
-
 <%= f.hidden_field(:extension_def_ids, value: @entity.extension_ids_without_primary_stringified) %>

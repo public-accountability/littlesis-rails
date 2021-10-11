@@ -21,7 +21,7 @@ export default class extends Controller {
     this.selectExistingSource()
   }
 
-  togglejustcleaningup(event) {
+  toggleJustCleaningUp(event) {
     if (event.target.checked) {
       this.selectTarget.disabled = true
       this.newReferenceButtonTarget.disabled = true

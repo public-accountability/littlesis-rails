@@ -1,5 +1,7 @@
 #!/usr/bin/env -S rails runner
 
+require 'factory_bot_rails'
+
 unless Rails.env.development?
   raise "#{__FILE__} should only be run in the development environment"
 end

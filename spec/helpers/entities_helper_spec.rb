@@ -37,7 +37,7 @@ describe EntitiesHelper do
       let(:links_group) { LinksGroup.new([], 'keyword', 'heading', 2) }
 
       it 'returns nil' do
-        expect(helper.link_to_all(entity, links_group)).to eql nil
+        expect(helper.link_to_all(entity, links_group)).to be nil
       end
     end
 
@@ -59,42 +59,33 @@ describe EntitiesHelper do
 
   describe '#checkboxes' do
     it 'contains all 7 tier two types' do
-      expect(helper.checkboxes(build(:org), ExtensionDefinition.org_types_tier2)
-               .reduce(:+).scan('<span class="entity-type-name"').count).to eq 7
+      expect(helper
+               .checkboxes(checked_ids: [], definitions: ExtensionDefinition.org_types_tier2)
+               .scan('<span>')
+               .count).to eq 7
     end
 
     it 'contains all 21 tier 3 types' do
-      expect(helper.checkboxes(build(:org), ExtensionDefinition.org_types_tier3)
-               .reduce(:+).scan('<span class="entity-type-name"').count).to eq 21
+      expect(helper
+               .checkboxes(checked_ids: [],
+                           definitions: ExtensionDefinition.org_types_tier3)
+               .scan('<span>')
+               .count).to eq 21
     end
 
     it 'contains all 9 extension person types' do
-      expect(helper.checkboxes(build(:person), ExtensionDefinition.person_types)
-               .reduce(:+).scan('<span class="entity-type-name"').count).to eq 9
+      expect(helper
+               .checkboxes(checked_ids: [],
+                           definitions: ExtensionDefinition.person_types)
+               .scan('<span>')
+               .count).to eq 9
     end
 
     it 'contains one checkbox if org has an extension' do
-      org = create(:org)
+      org = create(:entity_org)
       org.add_extension('Business')
-      expect(helper.checkboxes(org, ExtensionDefinition.org_types_tier2)
-               .reduce(:+).scan('glyphicon-check').count).to eq 1
-
-      expect(helper.checkboxes(org, ExtensionDefinition.org_types_tier2)
-               .reduce(:+).scan('glyphicon-unchecked').count).to eq 6
-    end
-  end
-
-  describe '#glyph_checkbox' do
-    it 'return a checked box if true is passed as first argument' do
-      expect(helper.glyph_checkbox(true, 1)).to include 'glyphicon-check'
-    end
-
-    it 'returns an unchecked box if first argument is false' do
-      expect(helper.glyph_checkbox(false, 1)).to include 'glyphicon-unchecked'
-    end
-
-    it 'has data-definition-id' do
-      expect(helper.glyph_checkbox(false, 15)).to include 'data-definition-id="15"'
+      expect(helper.org_boxes_tier2(org).scan('bi-check-square').count).to eq 1
+      expect(helper.org_boxes_tier2(org).scan('bi-square').count).to eq 6
     end
   end
 

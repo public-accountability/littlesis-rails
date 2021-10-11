@@ -1,7 +1,7 @@
 <div class="row bottom-1em">
   <div class="col-sm-3">
     <a class="collapsed entity-type-toggle" role="button" data-toggle="collapse" href="#person-entity-types" data-action="entity-edit#toggleTypesIcon" aria-expanded="false" aria-controls="person-entity-types">
-      <strong>Types:</strong><span>  <span class="glyphicon glyphicon-collapse-down" aria-hidden="true" id="type-collapse-icon"></span>
+      <strong>Types <i class="bi bi-box-arrow-down ml-1" aria-hidden="true" id="type-collapse-icon"></i></strong>
     </a>
   </div>
 </div>
@@ -9,7 +9,7 @@
 <div id="entity-types">
   <div id="person-entity-types" class="collapse mb-4">
     <div class="row">
-      <%= type_select_boxes_person %>
+      <%= type_select_boxes_person(@entity) %>
     </div>
   </div>
 </div>

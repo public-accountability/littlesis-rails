@@ -8,41 +8,20 @@ module PublicData
 
   def self.run
     FileUtils.mkdir_p DIR
-    entities
-    relationships
+    save_json(Entity)
+    save_json(Relationship)
   end
 
-  def self.entities
-    File.open(DIR.join('entities.json'), 'w') do |f|
+  def self.save_json(klass)
+    File.open(DIR.join("#{klass.name.pluralize.downcase}.json"), 'w') do |f|
       f.write '['
 
-      Entity.find_each do |e|
-        begin
-          f.write e.api_data.to_json
-          f.write ','
-        rescue => err
-          Rails.logger.warn "Failed to get api_data for Entity #{e.name_with_id}"
-          Rails.logger.warn err.message
-        end
-      end
-
-      f.seek(-1, IO::SEEK_CUR)
-      f.write ']'
-    end
-  end
-
-  def self.relationships
-    File.open(DIR.join('relationships.json'), 'w') do |f|
-      f.write '['
-
-      Relationship.find_each do |r|
-        begin
-          f.write r.api_data.to_json
-          f.write ','
-        rescue => err
-          Rails.logger.warn "Failed to get api_data for Relationship #{r.id}"
-          Rails.logger.warn err.message
-        end
+      klass.find_each do |model|
+        f.write model.api_data.to_json
+        f.write ','
+      rescue => err
+        Rails.logger.warn "Failed to get api_data for #{klass.name} #{model.id}"
+        Rails.logger.warn err.message
       end
 
       f.seek(-1, IO::SEEK_CUR)
