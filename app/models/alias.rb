@@ -30,10 +30,6 @@ class Alias < ApplicationRecord
       entity.update!(name: name)
     end
     true
-  rescue => err # rubocop:disable Style/RescueStandardError
-    Rails.logger.warn "Failed to make alias\##{id} primary"
-    Rails.logger.debug err
-    false
   end
 
   private
@@ -45,5 +41,4 @@ class Alias < ApplicationRecord
   def update_entity_timestamp
     entity.touch
   end
-
 end

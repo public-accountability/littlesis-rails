@@ -12,6 +12,7 @@
 # DELETE  /fec/contribution_unmatch   { sub_id: <SUB_ID> }
 class FECController < ApplicationController
   before_action :set_entity, only: %i[contributions match_contributions donor_match]
+  before_action :user_is_matcher?, only: %i[match_contributions donor_match]
 
   def contributions; end
 
@@ -43,4 +44,12 @@ class FECController < ApplicationController
 
   # def candidate
   # end
+
+  private
+
+  def user_is_matcher?
+    unless user_signed_in? && current_user.matcher?
+      raise Exceptions::PermissionError
+    end
+  end
 end
