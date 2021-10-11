@@ -11,7 +11,9 @@
       <%= f.hidden_field :entity_id, value: @entity.id %>
       <div class="form-group">
 	<%= f.text_field :name, {required: true, class: 'form-control'}  %>
-	<%= f.submit 'Add', class: 'btn btn-primary' %>
+        <div class="input-group-append">
+          <%= f.submit 'Add', class: 'btn btn-primary' %>
+        </div>
       </div>
     <% end %>
   </div>
@@ -22,7 +24,7 @@
     <% if @entity.aliases.size > 1 %>
       <p class="mt-1">Click "make primary" to change the entity's default name</p>
     <% end %>
-    
+
     <ul class="list-group">
       <!-- <ul class="list-unstyled"> -->
       <% @entity.aliases.each do |a| %>
