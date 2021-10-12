@@ -16,7 +16,7 @@ class DashboardBulletin < ApplicationRecord
   end
 
   def self.last_bulletin_updated_at
-    DashboardBulletin.reorder('updated_at desc').limit(1).pluck('updated_at').first
+    DashboardBulletin.reorder('updated_at desc').limit(1).pick('updated_at')
   end
 
   private
