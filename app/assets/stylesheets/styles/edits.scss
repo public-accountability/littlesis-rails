@@ -71,31 +71,40 @@ form.alias-form {
   }
 }
 
+.star-empty::before {
+    content: "\f588";
+}
+
+.star-full::before {
+    content: "\f586";
+}
+
 .star-button {
   @extend .empty-button;
 
   > span {
-    @extend .glyphicon;
-    font-size: 15px;
+      @extend .bootstrap-icon;
+      font-size: 15px;
   }
 
   &:hover > span {
     color: $link_blue_hover;
   }
 
-  &:hover > .star {
-    @extend .glyphicon-star-empty;
-  }
-
-  &:hover > .not-star {
-    @extend .glyphicon-star;
-  }
-
   .star {
-      @extend .glyphicon-star;
+      @extend .star-full;
+
+      &:hover {
+          @extend .star-empty;
+      }
   }
+
   .not-star {
-      @extend .glyphicon-star-empty;
+      @extend .star-empty;
+
+      &:hover {
+          @extend .star-empty;
+      }
   }
 }
 
@@ -107,11 +116,5 @@ form.alias-form {
 
   &:hover > span {
     color: $link_blue_hover;
-  }
-
-  > span {
-    @extend .glyphicon;
-    @extend .glyphicon-trash;
-    @extend .ml-1;
   }
 }

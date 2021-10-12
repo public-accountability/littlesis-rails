@@ -20,7 +20,7 @@ $tag_margin: 0.4em;
     margin-top: $tag_margin;
     padding: .3em;
     display: inline-block;
-    list-style: none; 
+    list-style: none;
 }
 
 .big-tag {
@@ -42,7 +42,7 @@ $tag_margin: 0.4em;
 #tags-edit-list, #tags-list {
 
     @extend .list-unstyled;
-    
+
     margin-top: 1em;
 
     .tag-disabled{
@@ -53,9 +53,11 @@ $tag_margin: 0.4em;
     }
 
     .tag-remove-icon {
-	@extend .glyphicon;
-	@extend .glyphicon-remove;
+	@extend .bootstrap-icon;
 	@extend .hvr-pop;
+        &::before {
+            content: "\f62a";
+        }
 	color: $red;
 	cursor: pointer;
 	font-size: 0.7em;
@@ -63,8 +65,12 @@ $tag_margin: 0.4em;
     }
 
     .tag-lock-icon {
-	@extend .glyphicon;
-	@extend .glyphicon-lock;
+	@extend .bootstrap-icon;
+
+        &::before {
+            content: "\f47b";
+        }
+
 	color: black;
 	font-size: 0.7em;
 	margin-left: 0.5em;
@@ -86,13 +92,13 @@ $tag_margin: 0.4em;
     @extend .btn-secondary;
 }
 
-.tag-button-glyph {
-    @extend .glyphicon;
-}
-
 .tags-edit-glyph {
-    @extend .glyphicon;
-    @extend .glyphicon-pencil;
+    @extend .bootstrap-icon;
+
+    &::before {
+        content: "\f4cb";
+    }
+
     padding-left: 1em;
     margin-bottom: 0.5em;
     cursor: pointer;

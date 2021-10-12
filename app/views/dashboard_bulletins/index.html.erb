@@ -1,5 +1,5 @@
 <style>
-  #dashboard-bulletins-table tr > th:nth-child(2) { 
+  #dashboard-bulletins-table tr > th:nth-child(2) {
     width: 40px;
   }
 </style>
@@ -18,8 +18,8 @@
 	  <td><%= link_to bulletin.title, edit_dashboard_bulletin_path(bulletin)  %></td>
 	  <td>
 	    <%= form_for bulletin, method: :delete do |f| %>
-	      <button type="submit" class="btn btn-secondary" aria-label="delete bulletin">
-		<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+	      <button type="submit" class="btn btn-secondary" title="delete bulletin">
+                <i class="bi bi-x-lg"></i>
 	      </button>
 	    <% end %>
 	  </td>

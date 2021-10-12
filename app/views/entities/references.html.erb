@@ -36,7 +36,7 @@
               <%= link_to doc.name, url, 'target' => '_blank', 'rel' => 'noopener', 'title' => url.to_s %>
               <% if user_signed_in? %>
                 <%= link_to edit_document_path(doc) do %>
-	          <span class="glyphicon glyphicon-edit ml-1"></span></td>
+                  <i class="bi bi-pencil-square hvr-pop ml-1"></i>
 	        <% end %>
               <% end %>
             </td>

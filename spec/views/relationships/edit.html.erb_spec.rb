@@ -104,7 +104,7 @@ describe 'relationships/edit.html.erb', type: :view do
     end
 
     it 'has switch icon' do
-      css 'span.glyphicon-retweet', count: 1
+      css 'span.bi-arrow-down-up', count: 1
     end
   end
 
@@ -160,7 +160,7 @@ describe 'relationships/edit.html.erb', type: :view do
     end
 
     it 'does not have switch icon' do
-      not_css 'span.glyphicon-retweet'
+      not_css 'span.bi-arrow-down-up'
     end
   end
 
@@ -182,7 +182,7 @@ describe 'relationships/edit.html.erb', type: :view do
     end
 
     it 'has switch icon' do
-      css 'span.glyphicon-retweet', count: 1
+      css 'span.bi-arrow-down-up', count: 1
     end
   end
 
@@ -216,7 +216,7 @@ describe 'relationships/edit.html.erb', type: :view do
     end
 
     it 'has switch icon' do
-      css 'span.glyphicon-retweet', count: 1
+      css 'span.bi-arrow-down-up', count: 1
     end
   end
 
@@ -233,7 +233,7 @@ describe 'relationships/edit.html.erb', type: :view do
     end
 
     it 'has switch icon' do
-      css 'span.glyphicon-retweet', count: 1
+      css 'span.bi-arrow-down-up', count: 1
     end
   end
 end

@@ -35,13 +35,15 @@
         <% end %>
       </div>
 
-      <% unless  controller_name == 'home' %>
+      <% unless controller_name == 'home' %>
         <div class="col-sm-4 mr-auto">
           <%= form_tag search_maps_path, method: :get do %>
             <div class="input-group input-group-sm mb-3">
               <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search maps", 'aria-label' => 'Search maps' %>
               <div class="input-group-append">
-                <button type="submit" class="btn" type="button" style="border-color: #ccc;"><span class="glyphicon glyphicon-search"></span></button>
+                <button type="submit" class="btn" type="button" style="border-color: #ccc;">
+                  <i class="bi bi-search"></i>
+                </button>
               </div>
             </div>
           <% end %>

@@ -12,11 +12,11 @@ module NetworkMapsHelper
   def network_map_link(map)
     link = link_to(raw(map.name), map_path(map))
     return link unless map.is_private
-    link + content_tag('span', nil, class: "glyphicon glyphicon-lock private-network-map-icon pad-left-05em")
+    link + tag('i', class: "bi bi-lock-fill private-network-map-icon pl-1")
   end
 
   def network_map_feature_btn(map)
-    return tag.span(class: 'glyphicon glyphicon-lock ') if map.is_private
+    return tag.i(class: 'bi bi-lock-fill') if map.is_private
 
     icon_class = map.is_featured ? 'star' : 'not-star'
     button_title = map.is_featured ? 'unfeature this map' : 'feature this map'

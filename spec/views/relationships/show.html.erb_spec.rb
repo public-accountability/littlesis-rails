@@ -44,7 +44,7 @@ describe 'relationships/show.html.erb', :tag_helper, type: :view do
         css 'h1', :text => "Position: Human Being, mega corp LLC"
       end
 
-      it 'has subtitle' do
+      xit 'has subtitle' do
         css 'h4 a', :count => 2
       end
 

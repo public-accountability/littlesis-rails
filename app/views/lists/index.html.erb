@@ -53,7 +53,7 @@
             <% end %>
           </td>
           <td>
-            <%= button_to list_path(list), method: :delete, params: {id: list.id}, class: 'delete-button', title: 'Permanently delete this list', data: { confirm: "Are you sure?" } do %>
+            <%= button_to list_path(list), method: :delete, params: {id: list.id}, class: 'delete-button bi bi-trash ml-1', title: 'Permanently delete this list', data: { confirm: "Are you sure?" } do %>
               <span/>
             <% end %>
           </td>

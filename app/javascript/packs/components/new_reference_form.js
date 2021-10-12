@@ -115,17 +115,14 @@ function collapseFieldsContainer() {
   return $('<div>', { "class": "collapse", "id": "collapseReference", "aria-expanded": "true"});
 }
 
-var toggle = [ '<span class="collapse-toggle" >More <span class="glyphicon glyphicon-menu-down icon-link" aria-hidden="true"></span></span>',
-	       '<span class="collapse-toggle" style="display: none;">Less <span class="glyphicon glyphicon-menu-up icon-link" aria-hidden="true"></span></span>'
-	     ].join('');
+const toggle = [
+  '<span class="collapse-toggle">More <i class="bi bi-caret-down icon-link" aria-hidden="true"></i></span>',
+  '<span class="collapse-toggle" style="display: none;">Less <i class="bi bi-caret-up icon-link" aria-hidden="true"></i></span>'
+].join('');
 
 function collapse() {
   return wrapInFormGroup(
-    $('<div>', { "class": 'col-sm-4' })
-      .append(
-	$('<a>', { "data-toggle": 'collapse', "href": "#collapseReference",  "aria-expanded": "true", "aria-controls": "collapseReference",  "id": "toggle-reference-collapse"})
-	  .append(toggle)
-      )
+    $('<a>', { "data-toggle": 'collapse', "href": "#collapseReference",  "aria-expanded": "true", "aria-controls": "collapseReference",  "id": "toggle-reference-collapse"}).append(toggle)
   );
 }
 

@@ -28,7 +28,7 @@ export const AutocompleteEntity = ({entity}) => {
              </span>
              <span className="entity-search-suggestion-name-link">
                <a href={entity.url} target="_blank">
-                 <span className="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+                 <i class="bi bi-box-arrow-up-right"></i>
                </a>
              </span>
            </div>
@@ -40,13 +40,13 @@ export const AutocompleteEntity = ({entity}) => {
 
 export class AutocompleteBox extends React.Component {
   static propTypes = { "tag": PropTypes.string }
-  
+
   constructor(props) {
     super(props);
     this.state = { "entities": [] };
     this.abortController = new window.AbortController();
   }
-  
+
   componentDidMount () {
     let url = searchUrl(this.props.query, this.props.tag);
 
@@ -99,7 +99,7 @@ export class EntitySearch extends React.Component {
   onClickSearch() {
     let tag = this.props.tag;
     let query = this.state.query;
-    
+
     if (tag) {
       window.location= `/search?q=${query}&tags=${tag}`;
     } else {
@@ -113,7 +113,7 @@ export class EntitySearch extends React.Component {
       this.onClickSearch();
     }
   }
-  
+
   hasQuery() {
     return this.state.query.trim().length >= 3;
   }
@@ -127,7 +127,7 @@ export class EntitySearch extends React.Component {
                     onKeyPress={this.handleKeyPress} />
              <div className="input-group-append">
                <button type="submit" className="btn btn-clear" onClick={this.onClickSearch} >
-	         <span className="glyphicon glyphicon-search"></span>
+	         <i className="bi bi-search"></i>
                </button>
              </div>
            </div>;

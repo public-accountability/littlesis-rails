@@ -515,7 +515,7 @@ export default function ListBulkEntityAdder() {
   function notificationBar(){
     return state.hasNotification() &&
       $('<div>', { id: 'notifications' })
-      .append($('<div>', { class: 'alert-icon' }))
+      .append($('<div>', { class: 'alert-icon bi bi-exclamation-triangle' }))
       .append($('<span>', { text: state.notification }))
   }
 
@@ -614,7 +614,7 @@ export default function ListBulkEntityAdder() {
   function errorWrapperOf(tag, className, errors, input){
     return $(tag, { class: className + (errors ? ' errors' : '') })
       .append(input)
-      .append(errors && $('<div>', { class: 'alert-icon' }))
+      .append(errors && $('<div>', { class: 'alert-icon bi bi-exclamation-triangle' }))
   }
 
   // String, String, [String], Function -> JQueryNode
@@ -663,7 +663,7 @@ export default function ListBulkEntityAdder() {
   // Entity -> JQueryNode
   function deleteButton(entity){
     return $('<div>', {
-      class: 'delete-icon',
+      class: 'delete-icon bi bi-trash',
       title: 'delete row',
       click: function(){ handleDelete(entity) }
     })
@@ -684,7 +684,7 @@ export default function ListBulkEntityAdder() {
       "click": activatePicker,
       "id": anchorId
     })
-      .append($('<div>', { class: 'alert-icon', title: 'resolve duplicates' }))
+      .append($('<div>', { class: 'alert-icon bi bi-exclamation-triangle', title: 'resolve duplicates' }))
       .popover({
         html: true,
         title: 'Similar entities already exist',
@@ -760,7 +760,7 @@ export default function ListBulkEntityAdder() {
       class: 'resolver-picker-result'
     })
       .append($('<a>', {
-        class: 'goto-link-icon',
+        class: 'goto-link-icon bi bi-box-arrow-up-right',
         href: entity.url,
         target: '_blank'
       }))
@@ -881,7 +881,7 @@ export default function ListBulkEntityAdder() {
 
   // Entity, EntityAttr, EntityAttrErrors -> [String]
   function validateAttr(resource, attr, validations, attrErrors){
-    return (utility.get(validations, attr) || []).reduce(  
+    return (utility.get(validations, attr) || []).reduce(
       function(attrErrorsAcc, validation){
         return validation.isValid(utility.get(resource, attr)) ?
           attrErrorsAcc :

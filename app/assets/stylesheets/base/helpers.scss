@@ -46,16 +46,8 @@
   padding-right: 1em;
 }
 
-.pad-left-05em {
-  padding-left: 0.5em;
-}
-
 .pad-left-1em {
   padding-left: 1em;
-}
-
-.pad-right-08em {
-  padding-right: 0.8em;
 }
 
 .no-border-top {
@@ -84,7 +76,7 @@
 
 .small-text {
     font-size: 10px;
-} 
+}
 
 .em-07 {
     font-size: 0.7em;
@@ -171,25 +163,7 @@
 }
 
 .borderless {
-   th, td { 
-    border-top: none !important; 
+   th, td {
+    border-top: none !important;
   }
-}
-
-
-// Animate
-
-.animate-glyphicon {
-    -animation: spin .7s infinite linear;
-    -webkit-animation: spin2 .7s infinite linear;
-}
-
-@-webkit-keyframes spin2 {
-    from { -webkit-transform: rotate(0deg);}
-    to { -webkit-transform: rotate(360deg);}
-}
-
-@keyframes spin {
-    from { transform: scale(1) rotate(0deg);}
-    to { transform: scale(1) rotate(360deg);}
 }
