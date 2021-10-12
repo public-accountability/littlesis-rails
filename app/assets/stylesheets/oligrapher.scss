@@ -3,8 +3,6 @@
 @import "base/helpers";
 @import "base/layout";
 
-.glyphicon-search { &:before { content: "\e003"; } }
-
 .oligrapher-pending-editor-notice {
   background-color: pink;
   text-align: center;

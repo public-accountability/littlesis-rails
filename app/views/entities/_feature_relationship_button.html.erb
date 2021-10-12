@@ -13,7 +13,7 @@
         class: 'star-button',
         title: (relationship.is_featured ? 'unfeature relationship' : 'feature relationship')
       ) do %>
-        <span class="<%= !relationship.is_featured ? 'star' : 'not-star' %>">
+        <span class="<%= relationship.is_featured ? 'star' : 'not-star' %>">
       <% end %>
     </td>
   </div>

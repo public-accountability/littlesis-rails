@@ -185,11 +185,6 @@ form.edit-relationship-form {
 .table-editable {
   position: relative;
 
-  .glyphicon {
-      font-size: 20px;
-      cursor: pointer;
-  }
-
   .reset-name {
       padding-left: 5px;
       font-size: 14px;
@@ -223,9 +218,6 @@ form.edit-relationship-form {
 .table-add {
   &:hover {
     color: #0b0;
-  }
-  span.glyphicon {
-      color: #070;
   }
 }
 

@@ -9,17 +9,17 @@ var entityLink = function(entityData) {
   return utility.createLink(
       utility.entityLink(entityData[0].id, entityData[0].name, entityData[0].primary_ext),
       entityData[0].name
-      ).outerHTML 
+      ).outerHTML
 }
 
 // span w/ class "cycle-entity-match-arrow"
 var rightArrow = function() {
-  return '<span class="glyphicon glyphicon-triangle-right cycle-entity-match-arrow" aria-hidden="true"></span>'
+  return '<span class="bi bi-caret-right cycle-entity-match-arrow" aria-hidden="true"></span>'
 }
 
 /**
  * Takes a datatables row and returns an object with two keys: entity_id, id
- * 
+ *
  * @param {Object} row
  * @returns {Object} params
  */
@@ -113,7 +113,7 @@ export default function EntityMatcher(config) {
 
 /**
  * Returns a copy of the Datatable instance
- * @returns {DataTable} 
+ * @returns {DataTable}
  */
 EntityMatcher.prototype.table = function() {
   return $(this.rootElement).DataTable()
@@ -124,7 +124,7 @@ EntityMatcher.prototype.table = function() {
  * Gets or set cell data
  * @param {Element} element
  * @param {Anything} newData
- * @returns {} 
+ * @returns {}
  */
 EntityMatcher.prototype.cellData = function(element, newData) {
   return this.table()
@@ -136,7 +136,7 @@ EntityMatcher.prototype.cellData = function(element, newData) {
 /**
  * Data for row at given index
  * @param {Integer} rowIndex
- * @returns {Object} 
+ * @returns {Object}
  */
 EntityMatcher.prototype.rowData = function(rowIndex) {
   return this.table().row(rowIndex).data()

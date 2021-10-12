@@ -40,7 +40,7 @@ export default function DonationMatcher() {
 
   matchDonations.sourceLink = function(microfilm) {
     if (microfilm) {
-      return '<a target="_blank" href="http://docquery.fec.gov/cgi-bin/fecimg/?' 
+      return '<a target="_blank" href="http://docquery.fec.gov/cgi-bin/fecimg/?'
         + microfilm + '">' + microfilm + '</a>'
     } else {
       return ''
@@ -111,12 +111,12 @@ export default function DonationMatcher() {
     url += (matchDonations.mode === 'MATCH') ? "/match_donation" : "/unmatch_donation"
 
     $.post(url, {'payload': donations})
-      .done(function(){ 
-        $('#match-donations .toolbar .loading').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>')
+      .done(function(){
+        $('#match-donations .toolbar .loading').html('<span class="bi bi-check" aria-hidden="true"></span>')
         $('#match-donations .toolbar .loading span').fadeOut(1100)
       })
     .fail(function(){
-      $('#match-donations .toolbar .loading').html('<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>')
+      $('#match-donations .toolbar .loading').html('<span class="bi bi-x-lg" aria-hidden="true"></span>')
       $('#match-donations .toolbar .loading span').fadeOut(1000)
     })
   }
@@ -125,12 +125,12 @@ export default function DonationMatcher() {
     $('#match-the-donation').click(function(){
       var selected = table.rows('.selected').data().toArray()
       if (selected.length > 0 ) {
-        $('#match-donations .toolbar .loading').html('<span class="glyphicon glyphicon-cog spin-icon" aria-hidden="true"></span>')
-        matchDonations.matchRequest(selected.map(function(x){ 
+        $('#match-donations .toolbar .loading').html('<span class="bi bi-gear-wide spin-icon" aria-hidden="true"></span>')
+        matchDonations.matchRequest(selected.map(function(x){
           if (matchDonations.mode === 'MATCH') {
-            return x.id 
+            return x.id
           } else {
-            return x.os_match_id 
+            return x.os_match_id
           }
         }))
         table.rows('.selected').remove().draw( false )

@@ -22,8 +22,6 @@ h1#bulk-add-header {
 }
 
 .alert-icon{
-    @extend .glyphicon;
-    @extend .glyphicon-alert;
     color: $maroon;
 }
 
@@ -109,8 +107,6 @@ h1#bulk-add-header {
                     float: right;
                 }
                 .delete-icon {
-                    @extend .glyphicon;
-                    @extend .glyphicon-remove;
                     position: relative;
                     left: calc(100% + 1.5em);
                     color: $maroon;
@@ -151,8 +147,6 @@ h1#bulk-add-header {
             }
             .resolver-popover {
                 .goto-link-icon{
-                    @extend .glyphicon;
-	            @extend .glyphicon-new-window;
                     color: $primary-blue;
                 }
                 .btn {
@@ -170,7 +164,7 @@ h1#bulk-add-header {
                 .resolver-picker-result {
                     padding: 1em 0 0 .5em; // TRBL
                     a {
-                        margin-right: .5em;  
+                        margin-right: .5em;
                     }
                 }
             }

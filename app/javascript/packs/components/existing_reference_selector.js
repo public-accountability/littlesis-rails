@@ -182,7 +182,7 @@ ExistingReferenceWidget.prototype._typeaheadInput = function() {
 const referenceVisitLink = [
   '<div class="reference-visit-link">',
   '<a href="{{url}}" target="_blank">',
-  '<span class="glyphicon glyphicon-new-window"></span>',
+  '<i class="bi bi-box-arrow-up-right hvr-pop"></i>',
   '</a></div>'
 ].join('')
 

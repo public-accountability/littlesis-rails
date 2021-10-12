@@ -1,12 +1,12 @@
 $reference_widget_width: 315px;
 
 #reference-widget-container {
-    
+
     .reference-typeahead {
 	@extend .form-control;
 	width: $reference_widget_width;
     }
-    
+
     .reference-suggestion {
 	position: relative;
 	width: $reference_widget_width;
@@ -33,21 +33,13 @@ $reference_widget_width: 315px;
 	top: 5px;
 	left: ($reference_widget_width - 15px);
 
-	span.glyphicon {
-	    @extend .hvr-pop;
-	    font-size: 12px;
-	}
-	
 	a {
 	    color: black;
 
-	    &:hover { 
+	    &:hover {
 		color: $link_blue;
 	    }
 	}
-	
-
-	
     }
 }
 
@@ -68,7 +60,7 @@ $reference_widget_width: 315px;
 }
 
 .tt-suggestion {
-    &:hover { 
+    &:hover {
 	background: $red_lighter;
     }
 }
