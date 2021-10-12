@@ -86,7 +86,7 @@ export default function RelationshipBulkAdder() {
   // => <Span>
   function addRowIcon() {
     return $('<span>', {class: 'table-add', title: 'add a new row to the table'})
-      .append( $('<span>', {class: 'glyphicon glyphicon-plus'}) )
+      .append( $('<i>', {class: 'bi bi-plus-lg'}) )
       .append( $('<span>', {text: 'Add a row', class: 'cursor-pointer'}))
   }
 
@@ -204,7 +204,7 @@ export default function RelationshipBulkAdder() {
     return $('<div>', { "style": "position: relative" })
       .append(
         $('<span>', {
-          "class": "glyphicon glyphicon-alert similar-relationships-alert",
+          "class": "bi bi-exclamation-triangle similar-relationships-alert",
           "title": "Similar relationships exist!",
           "aria-hidden": true,
           "fadeIn": { duration: 500 },
@@ -271,22 +271,19 @@ export default function RelationshipBulkAdder() {
   //  - makes name, blurb, and type not editable
   //  - adds reset button
   //  - searches for similar relationships via ajax
-  function entitySelect( event, ui ) {
-    if (event) { event.preventDefault() }
-
-    var cell = $(this)
+  function entitySelect(cell, entity) {
     //  requires order of table to be: name -> blurb -> entityType
     var blurb = cell.next()
     var entityType = blurb.next()
     // add link to cell
-    cell.html( $('<a>', { href: ui.item.url, text: ui.item.name, target: '_blank' }))
+    cell.html( $('<a>', { href: entity.url, text: entity.name, target: '_blank' }))
     cell.attr('contenteditable', 'false')
     // store entity id in dataset
-    cell.data('entityid', ui.item.id)
+    cell.data('entityid', entity.id)
     // add reset-field option
     cell.append(
       $('<span>', {
-        'class': 'glyphicon glyphicon-remove reset-name',
+        'class': 'bi bi-x reset-name',
         click: function() {
           cell.empty()  // empty the cell
           blurb.empty() // empty blurb
@@ -302,10 +299,10 @@ export default function RelationshipBulkAdder() {
       })
     )
 
-    blurb.text(ui.item.description ? ui.item.description : '')
+    blurb.text(entity.blurb ? entity.blurb : '')
     blurb.attr('contenteditable', 'false') // disable editing of blurb
-    entityType.find('select').val(ui.item.primary_ext)
-    lookForSimilarRelationship(cell, ui.item.id)
+    entityType.find('select').val(entity.primary_ext)
+    lookForSimilarRelationship(cell, entity.id)
   }
 
 
@@ -415,15 +412,17 @@ export default function RelationshipBulkAdder() {
     if ($('#table tbody tr').length >= 8 && !USER_HAS_BULK_PERMISSIONS) {
       limitAlert()
     } else {
-      var removeTd = $('<td>').append('<span class="table-remove glyphicon glyphicon-remove"></span>')
+      var removeTd = $('<td>').append('<span class="table-remove bi bi-x-lg"></span>')
       var row = $('<tr>').append(relationshipDetails().map(td).concat(removeTd))
       $('#table tbody').append(row)
       // Because we create the select after the dom has loaded, we must initialize it here:
       $('select.entity-autocomplete').select2(entityAutocompleteSelect2Configuration)
       $('select.entity-autocomplete').on('change', function(){
         var selection = $(this).select2('data')[0]
+
         if (selection) {
           $(this).closest('td').next().next().find('select').val(selection.entity.primary_ext)
+          lookForSimilarRelationship($(this).closest('td'), selection.entity.id)
         }
       })
       return row
@@ -436,7 +435,7 @@ export default function RelationshipBulkAdder() {
   // Most types simply need to return the text inside the element.
   // Three exceptions: checkboxes, "tribooleans", and <select>'s
   function extractCellData(cell, rowInfo) {
-    let data
+    let data;
 
     if (rowInfo.type === 'boolean') {
       // Technically we should allow three values for this field: true, false, and null.
@@ -456,6 +455,8 @@ export default function RelationshipBulkAdder() {
         } else {
           data = null // no entity selected
         }
+      } else if (cell.data('entityid')) { // selection matched w/ match names
+        data = Number(cell.data('entityid'))
       } else {
         data = (cell.text() === '') ? null : cell.text()
       }
@@ -852,15 +853,6 @@ export default function RelationshipBulkAdder() {
     }
   }
 
-  // input: {}, <tr>
-  function updateCell(entity, tr) {
-    var cell = $(tr).find('td:first-child').get(0)
-    // entitySelect() is designed to also work with jQuery ui autocomplete
-    // and therefore the entity object must be wraped like such:
-    var ui = { item: entity }
-    entitySelect.call(cell, null, ui)
-  }
-
   // input: int
   // output: <div>
   function skipBtn() {
@@ -870,7 +862,7 @@ export default function RelationshipBulkAdder() {
       "text": 'Skip / Create new entity',
       "click": function() {
         MATCHING_INDEX++
-          entityMatch()
+        entityMatch()
       }
     })
     return $('<div>').append(skip)
@@ -908,9 +900,9 @@ export default function RelationshipBulkAdder() {
                 // this means the user has clicked on the 'view profile' link
                 // and we don't want that to trigger a selection
               } else {
-                updateCell(entity, row)
-                  MATCHING_INDEX++
-                  entityMatch()
+                entitySelect($(row).find('td:first-child'), entity)
+                MATCHING_INDEX++
+                entityMatch()
               }
             }
           }).append(Mustache.render(entityMatchTableRowTemplate, entity))
