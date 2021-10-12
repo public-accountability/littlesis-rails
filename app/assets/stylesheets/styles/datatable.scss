@@ -115,11 +115,13 @@ html #datatable-table_info {
 
 // Delete Entity From List style
 #datatable-table {
-  .glyphicon-remove {
+  .bi-x-lg {
     @extend .hvr-pop;
     color: #aaa;
-  }
-  .glyphicon-remove:hover {
-    color: #666666;
+
+    &:hover {
+        color: #666666;
+    }
+
   }
 }

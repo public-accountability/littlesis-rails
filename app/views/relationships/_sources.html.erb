@@ -1,20 +1,14 @@
-<a href="#add-reference-modal" class="pad-right-08em" data-toggle="modal" ><span title="Add a source" class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-
 <table id="source-links-table">
   <tbody>
     <% relationship.documents.each do |doc|  %>
       <tr>
         <td>
-	  <%=
-	  link_to excerpt( (doc.name.blank? ? doc.url : doc.name) ),
-	    doc.url, 'target' => '_blank'
-	  %>
-
+	  <%= link_to excerpt( (doc.name.blank? ? doc.url : doc.name) ), doc.url, 'target' => '_blank' %>
 	  <% if user_signed_in? %>
             <%= link_to edit_document_path(doc) do %>
-              <span class="glyphicon glyphicon-edit ml-2"></span>
+              <i class="bi bi-pencil-square ml-l hvr-pop"></i>
             <% end %>
-        <% end %>
+          <% end %>
 	</td>
       </tr>
     <% end %>

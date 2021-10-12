@@ -8,9 +8,9 @@
       <li>
         <a data-toggle="collapse"
            href="#external-links-grouped-<%= link_type %>"
-           onclick="$(this).find('span.glyphicon').toggleClass('glyphicon-plus-sign').toggleClass('glyphicon-minus-sign')">
+           onclick="$(this).find('i.bi').toggleClass('bi-plus-circle').toggleClass('bi-dash-circle')">
           <%= ExternalLink::LINK_TYPES.dig(link_type, :grouped_title)  %>
-          <span class="glyphicon glyphicon-plus-sign"></span>
+          <i class="bi bi-plus-circle"></i>
         </a>
         <div class="collapse" id="external-links-grouped-<%= link_type %>">
           <% links.each do |link| %>
