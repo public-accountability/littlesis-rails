@@ -3,7 +3,6 @@
 <% content_for(:head) do %>
   <%= stylesheet_link_tag "cmp" %>
   <%= javascript_pack_tag 'cmp' %>
-  <%= oligrapher_js_tags %>
 <% end %>
 
 <div class="row border-bottom pb-2" id="cmp-header">
@@ -76,7 +75,7 @@
 	    </tr>
 	  </thead>
 	  <tbody>
-	    <% CSV.foreach(Rails.root.join('data', 'cmp_top_50.csv').to_s, headers: true) do |row|  %>
+	    <% @cmp_case_studies.each do |row|  %>
 	      <tr>
 		<th scope="row"><%= row['number'] %></th>
 		<td>
