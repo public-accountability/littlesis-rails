@@ -109,6 +109,8 @@ class ExternalLink < ApplicationRecord
 
   before_validation :parse_id_input
 
+  after_save ->{ entity.touch }, unless: :internal?
+
   def editable?
     LINK_TYPES.dig(link_type, :editable)
   end
