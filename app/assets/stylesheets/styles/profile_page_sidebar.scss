@@ -23,9 +23,10 @@
 }
 
 #profile-page-sidebar {
-    li, td {
+    p, li, td {
 	font-size: 14px;
     }
+
 }
 
 #sidebar-source-links {
@@ -68,4 +69,24 @@
     color: #aaa;
     font-size: 12px;
     padding-top: 3px;
+}
+
+
+#sidebar-featured-resource-container {
+    font-size: 14px;
+
+    .featured-resource {
+        margin-bottom: 6px;
+        display: flex;
+
+        &:first-child {
+            margin-top: 6px;
+        }
+    }
+
+    i {
+        width: 14px;
+        margin-right: 6px;
+    }
+
 }

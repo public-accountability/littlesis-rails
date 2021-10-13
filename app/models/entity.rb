@@ -103,6 +103,8 @@ class Entity < ApplicationRecord
   has_many :ny_filer_entities
   has_many :ny_filers, through: :ny_filer_entities
 
+  has_many :featured_resources, dependent: :destroy
+
   # SCOPES
   scope :people, -> { where(primary_ext: 'Person') }
   scope :orgs, -> { where(primary_ext: 'Org') }

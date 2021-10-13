@@ -40,9 +40,16 @@
 
   <% if user_signed_in? %>
     <%= render partial: 'entities/sidebar/tags' %>
-  <% elsif  @entity.tags.present? && !user_signed_in? %>
+  <% elsif @entity.tags.present? && !user_signed_in? %>
     <%= profile_page_sidebar('sidebar-tags-container', 'Tags') do %>
       <%= display_tags(@entity.tags) %>
+    <% end %>
+  <% end %>
+
+  <%# Featured Resource %>
+  <% if @entity.featured_resources.exists? %>
+    <%= profile_page_sidebar('sidebar-featured-resource-container', 'Eyes On The Ties') do %>
+      <%= render partial: 'entities/sidebar/featured_resource', collection: @entity.featured_resources %>
     <% end %>
   <% end %>
 
