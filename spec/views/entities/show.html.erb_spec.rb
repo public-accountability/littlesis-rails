@@ -69,8 +69,7 @@ describe 'entities/show.html.erb' do
       end
 
       specify do
-        expect(rendered).to have_css('#actions a', :count => 7)
-        expect(rendered).to have_css('a', :text => 'match donations')
+        expect(rendered).to have_css('#actions a', :count => 6)
         expect(rendered).to have_css('a', :text => 'add bulk')
       end
     end
