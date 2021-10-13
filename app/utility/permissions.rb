@@ -68,6 +68,10 @@ class Permissions
     }
   end
 
+  def show_add_bulk_button?
+    @user.admin? || @user.bulker? || (@user.created_at < 2.weeks.ago && @user.sign_in_count > 2)
+  end
+
   private
 
   # ACCESS RULE HELPER
@@ -126,6 +130,7 @@ class Permissions
   def user_is_creator?(item)
     item.versions.find_by(event: 'create')&.whodunnit == @user.id.to_s
   end
+
 
   # RELATIONSHIP HELPERS
 
