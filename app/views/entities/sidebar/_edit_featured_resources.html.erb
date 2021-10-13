@@ -1,0 +1,40 @@
+<div class="modal" tabindex="-1" role="dialog" id="edit-featured-resources">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Featured Resources</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <% entity.featured_resources.each_with_index do |fr| %>
+          <div class="mb-2">
+            <%= link_to truncate(fr.title, length: 30), fr.url, title: fr.url, target: '_blank' %>
+            <%= button_to(featured_resource_path(fr), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-outline-warning border-0 btn-sm ml-1', form: { class: 'd-inline' }) do %>
+              <i class="bi bi-trash text-dark"></i>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="mt-2">
+          <h5>Create a new featured resource:</h5>
+          <%= form_with model: entity.featured_resources.new do |f| %>
+            <div class="form-group">
+              <%= f.label :title %>
+              <%= f.text_field :title, class: 'form-control', required: true %>
+            </div>
+            <div class="form-group">
+              <%= f.label :url %>
+              <%= f.url_field :url, class: 'form-control', required: true, data: { 'parsley-type' => 'url' } %>
+            </div>
+            <%= f.submit "Submit", class: 'btn btn-primary' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= link_to 'Add/Remove Featured Resource', '#', data: { toggle: 'modal', target: '#edit-featured-resources' } %>
