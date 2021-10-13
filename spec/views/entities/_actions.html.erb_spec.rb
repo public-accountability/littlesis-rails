@@ -26,7 +26,6 @@ describe "entities/actions" do
     describe 'org page' do
       specify { css 'a', text: 'remove' }
       specify { css 'a', text: 'add bulk' }
-      specify { not_css 'a', text: 'match donations' }
     end
 
     describe 'person page' do
@@ -34,7 +33,6 @@ describe "entities/actions" do
 
       specify { css 'a', text: 'remove' }
       specify { css 'a', text: 'add bulk' }
-      specify { css 'a', text: 'match donations' }
     end
   end
 end

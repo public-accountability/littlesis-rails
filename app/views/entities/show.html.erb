@@ -8,7 +8,7 @@
   <%= render partial: 'header', locals: { entity: @entity } %>
   <% if user_signed_in?  %>
     <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
-    <!-- <div class="thin-grey-line"></div> -->
+    <%#  <div class="thin-grey-line"></div> %>
   <% else # add spacing %>
     <div class="mt-2"></div>
   <% end %>
@@ -20,7 +20,7 @@
       <%= render partial:  @active_tab.to_s %>
     </div>
 
-    <div class="col-md-4 col-sm-4 hidden-xs">
+    <div class="col-md-4 col-sm-4">
       <%= render partial: 'sidebar' %>
     </div>
   </div>

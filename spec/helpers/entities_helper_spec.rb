@@ -89,33 +89,5 @@ describe EntitiesHelper do
     end
   end
 
-  describe '#show_add_bulk_button' do
-    it 'returns true for admin user' do
-      expect(helper.show_add_bulk_button(create_admin_user)).to be true
-    end
 
-    it 'returns true for bulker' do
-      expect(helper.show_add_bulk_button(create_bulk_user)).to be true
-    end
-
-    it 'returns true for users with accounts older than 2 weeks and who have signed in more than 2 times' do
-      user = create_basic_user
-      expect(user).to receive(:created_at).and_return(1.month.ago)
-      expect(user).to receive(:sign_in_count).and_return(3)
-      expect(helper.show_add_bulk_button(user)).to be true
-    end
-
-    it 'returns false for users with accounts newer than 2 weeks' do
-      user = create_basic_user
-      expect(user).to receive(:created_at).and_return(1.week.ago)
-      expect(helper.show_add_bulk_button(user)).to be false
-    end
-
-    it 'returns false for users wwho have signed in less than 3 times' do
-      user = create_basic_user
-      expect(user).to receive(:created_at).and_return(1.month.ago)
-      expect(user).to receive(:sign_in_count).and_return(2)
-      expect(helper.show_add_bulk_button(user)).to be false
-    end
-  end
 end

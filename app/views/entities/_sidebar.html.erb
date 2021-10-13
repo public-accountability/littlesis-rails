@@ -7,6 +7,7 @@
   <%#= cache ['entity_image', user_signed_in?, @entity.id, @entity.featured_image_url, @entity.name]  do %>
   <div class="row" id="sidebar-image-container">
     <div class="col-sm-10">
+      <div class="thin-grey-line mb-2 d-none d-block d-sm-none"></div>
       <%= render partial: 'entities/sidebar/image' %>
     </div>
   </div>
@@ -27,14 +28,13 @@
   <% end %>
 
   <%# External Links %>
-  <% unless @entity.external_links.count.zero? %>
-    <% cache ['entity_external_links', @entity.id, @entity.external_links.reorder('updated_at desc').limit(1).pluck('updated_at').first ] do %>
+  <% cache ['entity_external_links', @entity.cache_key_with_version ] do %>
+    <% unless @entity.external_links.count.zero? %>
       <%= profile_page_sidebar('sidebar-external-links-container', 'External Links') do %>
 	<%= render partial: 'entities/sidebar/external_links' %>
       <% end %>
     <% end %>
   <% end %>
-
 
   <%# TAGS %>
 
@@ -56,7 +56,7 @@
     <%= render partial: 'entities/sidebar/source_links' %>
   <% end %>
 
-  <% if user_signed_in? && ( current_user.importer? || current_user.admin? ) %>
+  <% if user_signed_in? && ( current_user.importer? || current_user.merger? || current_user.admin? ) %>
     <%= profile_page_sidebar('sidebar-advanced-tools-container', 'Advanced tools') do %>
       <%= link_to 'Match FEC Donations', fec_entity_match_contributions_path(@entity) %>
     <% end %>

@@ -49,6 +49,18 @@ describe ExternalLink, type: :model do
       .to raise_error(TypeError)
   end
 
+  it 'updates entity timestamp after creating' do
+    entity = create(:entity_org)
+    expect { ExternalLink.create!(entity: entity, link_type: :wikipedia, link_id: 'example_wikipedia_page') }
+      .to change { entity.reload.updated_at }
+  end
+
+  it 'does not update entity timestamp for internal links' do
+    entity = create(:entity_org)
+    expect { ExternalLink.create!(entity: entity, link_type: :sapi, link_id: 'example') }
+      .not_to change { entity.reload.updated_at }
+  end
+
   describe 'urls' do
     let(:sec_elink) { build(:sec_external_link) }
     let(:crd_org_elink) { build(:crd_external_link_org) }

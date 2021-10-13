@@ -25,7 +25,7 @@
     <tbody>
       <% (local_assigns[:preview] ? @interlocks.take(5) : @interlocks).each do |org| %>
         <tr>
-          <td><strong><%= entity_hash_link(org) %></strong></td>
+          <td><strong><%= link_to org.name, concretize_entity_path(org) %></strong></td>
           <td><%= number_to_currency(org['total_amount'].to_i, precision: 0) %></td>
           <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
         </tr>

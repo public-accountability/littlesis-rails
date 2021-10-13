@@ -375,6 +375,35 @@ describe Permissions, :tag_helper do
       end
     end
   end
+
+  describe '#show_add_bulk_button?' do
+    it 'returns true for admin user' do
+      expect(create_admin_user.permissions.show_add_bulk_button?).to be true
+    end
+
+    it 'returns true for bulker' do
+      expect(create_bulk_user.permissions.show_add_bulk_button?).to be true
+    end
+
+    it 'returns true for users with accounts older than 2 weeks and who have signed in more than 2 times' do
+      user = create_basic_user
+      user.update_columns(created_at: 1.month.ago, sign_in_count: 3)
+      expect(user.permissions.show_add_bulk_button?).to be true
+    end
+
+    it 'returns false for users with accounts newer than 2 weeks' do
+      user = create_basic_user
+      user.update_columns(created_at: 1.week.ago, sign_in_count: 5)
+      expect(user.permissions.show_add_bulk_button?).to be false
+    end
+
+    it 'returns false for users wwho have signed in less than 3 times' do
+      user = create_basic_user
+      user.update_columns(created_at: 3.week.ago, sign_in_count: 1)
+      expect(user.permissions.show_add_bulk_button?).to be false
+    end
+  end
+
 end # Permissions
 
 describe Permissions::TagAccessRules do
