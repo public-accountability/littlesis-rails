@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/StringLiterals
-
 module EntitiesHelper
   # So we can use the concretize URL helpers outside of contexts that have access to routing
   include Rails.application.routes.url_helpers
@@ -47,34 +45,25 @@ module EntitiesHelper
     end
   end
 
-  def entity_hash_link(entity, name=nil, action=nil)
-    name ||= entity['name']
-    link_to name, Entity.legacy_url(entity['primary_ext'], entity['id'], name, action)
-  end
-
-  def tiny_entity_image(entity)
-    content_tag('div', nil, class: "entity_tiny_image", style: "background-image: url('#{image_path(entity.featured_image_url('small'))}');")
-  end
-
   def active_tab?(tab_name, active_tab)
-    if active_tab.downcase == tab_name.downcase
-      return 'active'
+    if active_tab.casecmp(tab_name).zero?
+      'active'
     else
-      return 'inactive'
+      'inactive'
     end
   end
 
   # Relationships display
 
   def section_heading(links)
-    content_tag(:div, links.heading, class: "subsection") if links.count > 0
+    tag.div(links.heading, class: "subsection") if links.count.positive?
   end
 
   # input: <Entity>, <LinksGroup>
   def link_to_all(entity, links)
     if links.count > 10
-      content_tag :div, class: 'section_meta' do
-        content_tag(:span, "Showing 1-10 of #{links.count} :: ") +
+      tag.div(class: 'section_meta') do
+        tag.span("Showing 1-10 of #{links.count} :: ") +
           link_to('see all', concretize_entity_url(entity, :relationships => links.keyword))
       end
     end
@@ -125,14 +114,14 @@ module EntitiesHelper
 
   def extra_links_count(links)
     return '' if links.count <= 1
+
     "[+#{links.count - 1}]"
   end
 
   def type_select_boxes_person(entity)
     checkboxes(checked_ids: entity.extension_records.map(&:definition_id),
                definitions: ExtensionDefinition.person_types,
-               per_row: 5
-              )
+               per_row: 5)
   end
 
   def org_boxes_tier2(entity)
@@ -173,34 +162,28 @@ module EntitiesHelper
     options_for_select([['', ''], ['Female', 1], ['Male', 2], ['Other', 3]], selected)
   end
 
-  def default_image_url(entity = nil)
-    if (entity || @entity).person?
-      asset_path('system/anon.png')
-    else
-      asset_path('system/anons.png')
-    end
-  end
-
   def profile_image(entity)
-    image_src = entity.has_featured_image ? entity.featured_image_path : default_image_url(entity)
+    image_src = if entity.has_featured_image
+                  entity.featured_image_path
+                elsif entity.person?
+                  asset_path('system/anon.png')
+                else
+                  asset_path('system/anons.png')
+                end
 
     image_tag image_src, alt: entity.name, class: 'entity-profile-image'
   end
 
   # input: string, [string], [block]
   def sidebar_header(title_text, subtitle: nil, addon: '')
-    content = content_tag(:div, class: 'sidebar-title-container thin-grey-bottom-border') do
-      content_tag(:span, title_text, class: 'lead sidebar-title-text') + addon
+    content = tag.div(class: 'sidebar-title-container thin-grey-bottom-border') do
+      tag.span(title_text, class: 'lead sidebar-title-text') + addon
     end
-    return content if subtitle.nil?
-    content + content_tag(:div, subtitle, class: 'section-pointer')
-  end
-
-  def sidebar_industry_links(os_categories)
-    os_categories.to_a
-      .delete_if { |cat| cat.ignore_me_in_view }
-      .collect {  |cat| link_to(cat.category_name, cat.legacy_path) }
-      .join(', ')
+    if subtitle.nil?
+      content
+    else
+      content + tag.div(subtitle, class: 'section-pointer')
+    end
   end
 
   def sidebar_similar_entities(similar_entities)
@@ -208,10 +191,6 @@ module EntitiesHelper
       .collect { |e| link_to(e.name, e.legacy_url) }
       .collect { |link| content_tag(:li, link) }
       .reduce(&:+)
-  end
-
-  def get_form_id(f)
-    f.instance_variable_get('@options')[:html][:id]
   end
 
   # <User> -> Boolean
@@ -223,12 +202,6 @@ module EntitiesHelper
 
   def entity_links(entities)
     safe_join(entities.map { |e| link_to(e.name, concretize_entity_path(e)) }, ', ')
-  end
-
-
-  # Filters refereces to uniq url/name
-  def filter_and_limit_references(refs)
-    refs.uniq { |ref| "#{ref.name}#{ref.source}" }.take(10)
   end
 
   def political_tab_col_left
@@ -247,9 +220,10 @@ module EntitiesHelper
       # { text: 'Political',      path: concretize_political_entity_path(entity) },
       { text: 'Data',           path: concretize_datatable_entity_path(entity) }
     ]
-    content_tag(:div, class: 'button-tabs') do
+
+    tag.div(class: 'button-tabs') do
       tab_contents.map do |tab|
-        content_tag(:span, class: active_tab?(tab[:text], active_tab)) do
+        tag.span(class: active_tab?(tab[:text], active_tab)) do
           link_to tab[:text], tab[:path]
         end
       end.reduce(:+)
@@ -324,9 +298,9 @@ module EntitiesHelper
   end
 
   def profile_page_sidebar(container_id, header_title, **kwargs)
-    content_tag(:div, id: container_id, class: 'row') do
-      content_tag(:div, sidebar_header(header_title, **kwargs), class: 'col-sm-12') +
-        content_tag(:div, class: 'col-sm-12') { yield }
+    tag.div(id: container_id, class: 'row') do
+      tag.div(sidebar_header(header_title, **kwargs), class: 'col-sm-12') +
+        tag.div(class: 'col-sm-12') { yield }
     end
   end
 
@@ -334,5 +308,3 @@ module EntitiesHelper
     entity.in_cmp_strata? && user_signed_in?
   end
 end
-
-# rubocop:enable Style/StringLiterals
