@@ -93,6 +93,7 @@ $tag_margin: 0.4em;
 }
 
 .tags-edit-glyph {
+    @extend .bootstrap-icon;
     @extend .pencil-icon;
 
     padding-left: 1em;

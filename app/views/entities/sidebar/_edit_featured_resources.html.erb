@@ -20,7 +20,9 @@
 
         <div class="mt-2">
           <h5>Create a new featured resource:</h5>
-          <%= form_with model: entity.featured_resources.new do |f| %>
+          <%= form_with model: FeaturedResource.new do |f| %>
+            <%= f.hidden_field :entity_id, value: entity.id %>
+
             <div class="form-group">
               <%= f.label :title %>
               <%= f.text_field :title, class: 'form-control', required: true %>

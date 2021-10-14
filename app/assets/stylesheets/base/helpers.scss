@@ -170,8 +170,6 @@
 
 
 .pencil-icon {
-    @extend .bootstrap-icon;
-
     &::before {
         content: "\f4cb";
     }
