@@ -227,7 +227,7 @@ GEM
       thor (~> 1.0)
     rainbow (3.0.0)
     rake (13.0.6)
-    redis (4.4.0)
+    redis (4.5.0)
     regexp_parser (2.1.1)
     request_store (1.5.0)
       rack (>= 1.4)
@@ -336,6 +336,8 @@ GEM
       riddle (~> 2.3)
     thor (1.1.0)
     tilt (2.0.10)
+    turbo-rails (7.1.0)
+      rails (>= 6.0.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.1.0)
@@ -410,7 +412,7 @@ DEPENDENCIES
   rubyzip
   sassc-rails
   scenic
-  selenium-webdriver (>= 4.0.0.rc1)
+  selenium-webdriver (>= 4.0.0)
   shoulda-callback-matchers (~> 1.1.4)
   shoulda-matchers (>= 4.0.0)
   simplecov
@@ -418,6 +420,7 @@ DEPENDENCIES
   sqlite3
   text (>= 1.3.1)
   thinking-sphinx (~> 5.1)
+  turbo-rails
   validate_url (>= 1.0.13)
   web-console
   webpacker (>= 4.0.2)

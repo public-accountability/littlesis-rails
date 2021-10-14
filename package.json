@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.10.1",
+    "@hotwired/turbo-rails": "^7.0.1",
     "@public-accountability/simplestore": "^0.1.6",
     "@rails/actiontext": "^6.1.3",
     "@rails/ujs": "^6.1.1",

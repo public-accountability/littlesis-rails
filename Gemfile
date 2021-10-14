@@ -37,6 +37,7 @@ gem 'image_processing'
 gem 'mini_magick'
 gem 'sassc-rails'
 gem 'sprockets', '~> 3.0'
+gem 'turbo-rails'
 gem 'webpacker', '>= 4.0.2'
 
 # Search
@@ -50,7 +51,7 @@ gem 'datagrid'
 gem 'validate_url', '>= 1.0.13'
 
 # used for screenshot capture
-gem 'selenium-webdriver', '>= 4.0.0.rc1', require: false
+gem 'selenium-webdriver', '>= 4.0.0', require: false
 
 # Used by StringSimilarity
 gem 'text', '>= 1.3.1'
