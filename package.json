@@ -2,77 +2,39 @@
   "scripts": {
     "test": "mochapack --webpack-config config/webpack/test.js \"spec/javascripts/**/*.js\""
   },
-  "jest": {
-    "roots": [
-      "app/javascript",
-      "spec/javascripts"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "app/javascript"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>spec/javascripts/setupTests.js"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!(@public-accountability/simplestore)/)"
-    ],
-    "transform": {
-      "^.+\\.jsx?$": "babel-jest"
-    }
-  },
   "dependencies": {
-    "@babel/preset-react": "^7.10.1",
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@hotwired/stimulus": "^3.0.1",
     "@hotwired/turbo-rails": "^7.0.1",
-    "@public-accountability/simplestore": "^0.1.6",
     "@rails/actiontext": "^6.1.3",
-    "@rails/ujs": "^6.1.1",
     "@rails/webpacker": "^5.1.1",
-    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "babel-loader": "^8.2.2",
     "bloodhound-js": "^1.2.3",
     "bootstrap": "^4.5.3",
     "bootstrap-select": "^1.13.18",
-    "chai": "^4.2.0",
     "core-js": "3.6.5",
     "datatables.net": "^1.10.21",
     "datatables.net-dt": "^1.10.21",
-    "eslint-plugin-mocha": "^8.0.0",
-    "eslint-plugin-react": "^7.21.2",
     "file-saver": "^2.0.5",
-    "immutable": "^4.0.0-rc.12",
-    "install": "^0.13.0",
     "jquery": "^3.5.1",
-    "jquery-typeahead": "^2.11.1",
-    "jsdom": "^16.4.0",
     "json-loader": "^0.5.7",
     "lodash": "^4.17.19",
-    "marked": "^2.0.0",
     "mustache": "^4.0.1",
-    "node-fetch": "^2.6.1",
     "papaparse": "^5.3.0",
     "parsleyjs": "^2.9.2",
     "popper.js": "^1.16.1",
-    "prop-types": "^15.7.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
     "select2": "^4.0.13",
     "stimulus": "^2.0.0",
     "tinycarousel": "^2.1.8",
     "trix": "^1.2.0",
-    "typeahead.js": "^0.11.1",
-    "webpack-jquery-ui": "^2.0.1"
+    "typeahead.js": "^0.11.1"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.12.1",
-    "@babel/node": "^7.10.1",
-    "babel-jest": "^26.0.1",
-    "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.2",
+    "chai": "^4.3.4",
     "eslint": "^7.15.0",
-    "eslint-plugin-mocha": "^8.0.0",
-    "eslint-plugin-react": "^7.21.2",
-    "jest": "^26.0.1",
-    "jest-fetch-mock": "^3.0.3",
+    "jsdom": "^18.0.0",
     "mocha": "^8.1.1",
     "mochapack": "^2.0.3",
     "webpack-dev-server": "^3.11.0"
