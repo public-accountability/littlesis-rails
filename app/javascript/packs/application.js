@@ -12,14 +12,9 @@
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
 
-
-import Rails from "@rails/ujs"
 import 'bootstrap'
 import 'trix'
 import '@rails/actiontext'
-
-// JS form validation
-import 'parsleyjs'
+import 'parsleyjs'  // JS form validation
 
 import "controllers"
-Rails.start()
