@@ -1800,6 +1800,39 @@ ALTER SEQUENCE public.families_id_seq OWNED BY public.families.id;
 
 
 --
+-- Name: featured_resources; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.featured_resources (
+    id bigint NOT NULL,
+    entity_id bigint NOT NULL,
+    title text NOT NULL,
+    url text NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: featured_resources_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.featured_resources_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: featured_resources_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.featured_resources_id_seq OWNED BY public.featured_resources.id;
+
+
+--
 -- Name: fec_matches; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4491,6 +4524,13 @@ ALTER TABLE ONLY public.families ALTER COLUMN id SET DEFAULT nextval('public.fam
 
 
 --
+-- Name: featured_resources id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.featured_resources ALTER COLUMN id SET DEFAULT nextval('public.featured_resources_id_seq'::regclass);
+
+
+--
 -- Name: fec_matches id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5326,6 +5366,14 @@ ALTER TABLE ONLY public.external_relationships
 
 ALTER TABLE ONLY public.families
     ADD CONSTRAINT families_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: featured_resources featured_resources_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.featured_resources
+    ADD CONSTRAINT featured_resources_pkey PRIMARY KEY (id);
 
 
 --
@@ -7503,6 +7551,13 @@ CREATE INDEX index_external_data_fec_contributions_on_transaction_tp ON public.e
 
 
 --
+-- Name: index_featured_resources_on_entity_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_featured_resources_on_entity_id ON public.featured_resources USING btree (entity_id);
+
+
+--
 -- Name: index_fec_matches_on_candidate_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7795,6 +7850,14 @@ ALTER TABLE ONLY public.active_storage_variant_records
 
 ALTER TABLE ONLY public.active_storage_attachments
     ADD CONSTRAINT fk_rails_c3b3935057 FOREIGN KEY (blob_id) REFERENCES public.active_storage_blobs(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: featured_resources fk_rails_c857c2feab; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.featured_resources
+    ADD CONSTRAINT fk_rails_c857c2feab FOREIGN KEY (entity_id) REFERENCES public.entities(id);
 
 
 --
@@ -8309,6 +8372,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211004143011'),
 ('20211007145212'),
 ('20211007152033'),
-('20211007174700');
+('20211007174700'),
+('20211013191239');
 
 

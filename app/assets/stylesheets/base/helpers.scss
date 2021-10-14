@@ -167,3 +167,10 @@
     border-top: none !important;
   }
 }
+
+
+.pencil-icon {
+    &::before {
+        content: "\f4cb";
+    }
+}

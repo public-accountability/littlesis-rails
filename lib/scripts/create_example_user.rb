@@ -10,6 +10,11 @@ email = Faker::Internet.email
 password = 'password'
 
 user = FactoryBot.create(:user, email: email)
+
+user.create_user_profile!(name_first: Faker::Name.first_name,
+                          name_last: Faker::Name.last_name,
+                          reason: Faker::Music::Prince.lyric)
+
 user.reset_password(password, password)
 user.add_ability!(:edit, :list)
 

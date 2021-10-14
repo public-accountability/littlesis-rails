@@ -316,6 +316,20 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
             .not_to include map_path(private_map)
         end
       end
+
+      context 'with a featured resource' do
+        let(:url) { Faker::Internet.url }
+
+        before do
+          person.featured_resources.create!(title: 'this is a title', url: url)
+          visit_page.call
+        end
+
+        it 'has link to the featured resource' do
+          page_has_selector '#sidebar-featured-resource-container', count: 1
+          expect(page.find('#sidebar-featured-resource-container a')[:href]).to eq(url)
+        end
+      end
     end
 
     describe 'cmp data partner' do

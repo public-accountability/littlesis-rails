@@ -40,9 +40,16 @@
 
   <% if user_signed_in? %>
     <%= render partial: 'entities/sidebar/tags' %>
-  <% elsif  @entity.tags.present? && !user_signed_in? %>
+  <% elsif @entity.tags.present? && !user_signed_in? %>
     <%= profile_page_sidebar('sidebar-tags-container', 'Tags') do %>
       <%= display_tags(@entity.tags) %>
+    <% end %>
+  <% end %>
+
+  <%# Featured Resource %>
+  <% if @entity.featured_resources.exists? %>
+    <%= profile_page_sidebar('sidebar-featured-resource-container', 'Eyes On The Ties') do %>
+      <%= render partial: 'entities/sidebar/featured_resource', collection: @entity.featured_resources %>
     <% end %>
   <% end %>
 
@@ -51,14 +58,25 @@
     <%= render partial: 'entities/sidebar/cmp_data_partner', locals: { entity: @entity } %>
   <% end %>
 
-  <%# SOURCE LINKS %>
+  <%# Source Links %>
   <% cache ['entity_source_links', @entity.cache_key_with_version] do %>
     <%= render partial: 'entities/sidebar/source_links' %>
   <% end %>
 
+  <%# Advanced Tools %>
   <% if user_signed_in? && ( current_user.importer? || current_user.merger? || current_user.admin? ) %>
     <%= profile_page_sidebar('sidebar-advanced-tools-container', 'Advanced tools') do %>
-      <%= link_to 'Match FEC Donations', fec_entity_match_contributions_path(@entity) %>
+      <ul class="list-unstyled">
+        <li>
+          <%= link_to 'Match FEC Donations', fec_entity_match_contributions_path(@entity) %>
+        </li>
+
+        <% if current_user.admin?  %>
+          <li>
+            <%= render partial: 'entities/sidebar/edit_featured_resources', object: @entity, as: :entity %>
+          </li>
+        <% end %>
+      </ul>
     <% end %>
   <% end %>
 

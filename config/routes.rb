@@ -269,11 +269,12 @@ Lilsis::Application.routes.draw do
     end
   end
 
-  ##################
-  # External Links #
-  ##################
+  #########################################
+  # External Links & Featured Resources   #
+  #########################################
 
   resources :external_links, only: %i[create update]
+  resources :featured_resources, only: %i[create destroy]
 
   #########
   # edits #
