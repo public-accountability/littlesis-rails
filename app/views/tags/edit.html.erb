@@ -19,10 +19,11 @@
 <div class="row top-3em">
     <div class="col-sm-6 bg-warning bottom-1em">
 	<h3>Want to remove this tag?</h3>
-	<%= link_to 'Click here to delete the tag',
-	tag_path(@tag),
-	method: :delete,
-	id: 'delete-this-tag',
-	data: { confirm: "This cannot be reversed. Are you sure?" } %>
+	<%= button_to 'Click here to delete the tag',
+	 tag_path(@tag),
+         class:' btn btn-primary',
+	 method: :delete,
+	 id: 'delete-this-tag',
+         form: { onsubmit: "return confirm('This cannot be reversed. Are you sure?')" } %>
     </div>
 </div>

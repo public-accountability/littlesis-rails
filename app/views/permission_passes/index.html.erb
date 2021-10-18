@@ -38,8 +38,10 @@
             </svg>
         <% end %>
         </td>
-        <td><%= link_to 'Edit', edit_permission_pass_path(permission_pass) %></td>
-        <td><%= link_to 'Delete', permission_pass, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Edit', permission_pass_path(permission_pass) %></td>
+        <td>
+          <%= button_to 'Delete', permission_pass_path(permission_pass), method: :delete, form: { onsubmit: "return confirm('Are you sure?')" } %>
+        </td>
       </tr>
     <% end %>
   </tbody>
