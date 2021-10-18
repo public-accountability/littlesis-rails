@@ -93,6 +93,7 @@ class ListsController < ApplicationController
     @table.generate_data
 
     @datatable_config = {
+      list_id: @list.id,
       update_path: list_list_entity_path(@table.list),
       editable: @permissions[:editable],
       ranked_table: @table.ranked?,

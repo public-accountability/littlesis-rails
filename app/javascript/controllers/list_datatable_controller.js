@@ -15,6 +15,7 @@ export default class extends Controller {
   static values = { config: Object, data: Array, tableId: String, pageLength: Number }
 
   initialize() {
+    // see @datatable_config in ListsController
     const config = this.configValue
     const columns = columnConfigs(config)
 
@@ -39,6 +40,34 @@ export default class extends Controller {
     }))
 
     window.open(generateCsvFile(output_data))
+  }
+
+  removeEntity(event) {
+    let url = `/lists/${this.configValue.list_id}/list_entities/${event.target.dataset.listEntityId}`
+
+    if (confirm("Are you sure?")) {
+      fetch(url, {
+        "method": 'DELETE',
+        "credentials": 'same-origin',
+        "headers": {
+          "Content-Type": 'application/json',
+          "X-CSRF-Token": document.getElementsByName('csrf-token')[0].content
+        }
+      }).then(response => {
+        if (response.ok) {
+          $(this.tableIdValue)
+            .DataTable()
+            .rows((idx, data, node) => data.list_entity_id == event.target.dataset.listEntityId)
+            .remove()
+            .draw()
+        } else {
+          console.error('The server failed to remove the list entity')
+        }
+      }).catch(error => {
+        console.error('Could not delete the list entity:', error)
+      })
+
+    }
   }
 }
 
@@ -73,7 +102,7 @@ function escapeCsv(field) {
 
   value = value.replace(/"/g, '""')
   if (value.search(/("|,|\n)/g) >= 0) {
-    value = '"' + value + '"' 
+    value = '"' + value + '"'
   }
   return value
 }

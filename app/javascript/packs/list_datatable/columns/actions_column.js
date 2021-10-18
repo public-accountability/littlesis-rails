@@ -1,6 +1,4 @@
 export function ActionsColumn(config) {
-  const serializer = new XMLSerializer()
-
   if ( config['editable'] ){
     return {
       data: 'actions',
@@ -9,9 +7,12 @@ export function ActionsColumn(config) {
       sortable: false,
       className: 'context',
       render: function(data, type, row) {
-        let remover = document.getElementById('entity_remover').content.cloneNode(true)
-        remover.firstElementChild.href = row.remove_url
-        return serializer.serializeToString(remover)
+
+        if (type === 'display') {
+          return `<button type="button" class="btn btn-outline-warning border-0" data-action="list-datatable#removeEntity" data-list-entity-id="${row.list_entity_id}"><i class="bi bi-x-lg" style="pointer-events: none;"></i></button>`
+        } else {
+          return row.list_entity_id;
+        }
       }
     }
   }
