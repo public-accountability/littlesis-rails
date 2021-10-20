@@ -8,7 +8,7 @@
     "@hotwired/stimulus": "^3.0.1",
     "@hotwired/turbo-rails": "^7.0.1",
     "@rails/actiontext": "^6.1.4-1",
-    "@rails/webpacker": "^5.1.1",
+    "@rails/webpacker": "5.4.3",
     "babel-loader": "^8.2.2",
     "bloodhound-js": "^1.2.3",
     "bootstrap": "^4.5.3",
@@ -36,7 +36,6 @@
     "eslint": "^7.15.0",
     "jsdom": "^18.0.0",
     "mocha": "^8.1.1",
-    "mochapack": "^2.0.3",
-    "webpack-dev-server": "^3.11.0"
+    "mochapack": "^2.0.3"
   }
 }
