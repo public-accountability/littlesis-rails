@@ -57,6 +57,9 @@ application.register("navigation-form", NavigationFormController)
 import NavmenuController from "./navmenu_controller.js"
 application.register("navmenu", NavmenuController)
 
+import NewEntityFormController from "./new_entity_form_controller.js"
+application.register("new-entity-form", NewEntityFormController)
+
 import NysEntitySearchController from "./nys_entity_search_controller.js"
 application.register("nys-entity-search", NysEntitySearchController)
 
