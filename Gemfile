@@ -36,9 +36,11 @@ gem 'bootstrap', '~> 4'
 gem 'image_processing'
 gem 'mini_magick'
 gem 'sassc-rails'
-gem 'sprockets', '~> 3.0'
+gem 'sprockets', '~> 4'
 gem 'turbo-rails'
-gem 'webpacker', '>= 4.0.2'
+gem 'stimulus-rails'
+gem 'jsbundling-rails'
+# gem 'webpacker', '>= 4.0.2'
 
 # Search
 gem 'thinking-sphinx', '~> 5.1'

@@ -1,6 +1,6 @@
-<%= javascript_pack_tag 'components/sidebar_source_links_panel' %>
+<%# javascript_pack_tag 'components/sidebar_source_links_panel' %>
 
-<div class="row" id="sidebar-source-links" data-entity-id="<%= @entity.id %>">
+<div class="row" id="sidebar-source-links" data-entity-id="<%= @entity.id %>" data-controller="sidebar-source-links">
     <div class="col-sm-12">
 	<%= sidebar_header('Source Links', subtitle: 'Articles documenting info on this page') %>
     </div>
@@ -16,10 +16,10 @@
     </div>
 
     <div class="col-sm-12" >
-      <span id="source-links-left-arrow" class="source-links-pager">
+      <span id="source-links-left-arrow" class="source-links-pager" data-action="click->sidebar-source-links#leftArrow">
 	<span class="link-arrow">&laquo;  </span><span class="link-arrow-text">back</span>
       </span>
-      <span id="source-links-right-arrow" class="source-links-pager float-right">
+      <span id="source-links-right-arrow" class="source-links-pager float-right" data-action="click->sidebar-source-links#rightArrow">
 	<span class="link-arrow-text">view more  </span><span class="link-arrow">&raquo;</span>
       </span>
     </div>

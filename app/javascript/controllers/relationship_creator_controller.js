@@ -1,5 +1,5 @@
-import { Controller } from 'stimulus'
-import RelationshipCreationFlow from 'packs/components/relationship_creation_flow'
+import { Controller } from "@hotwired/stimulus"
+import RelationshipCreationFlow from '../src/components/relationship_creation_flow'
 
 export default class extends Controller {
   connect() {

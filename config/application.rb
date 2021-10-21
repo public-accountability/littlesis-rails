@@ -44,7 +44,7 @@ module Lilsis
 
     config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch('redis_url') }
 
-    config.assets.paths << "#{Rails.root}/vendor/assets/images"
+    # config.assets.paths << "#{Rails.root}/vendor/assets/images"
     config.active_job.queue_adapter = :delayed_job
 
     config.action_controller.per_form_csrf_tokens = false

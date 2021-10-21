@@ -1,4 +1,4 @@
-import { Controller } from 'stimulus'
+import { Controller } from "@hotwired/stimulus"
 import Bloodhound from 'bloodhound-js'
 import mustache from 'mustache'
 import typeahead from 'typeahead.js'
@@ -35,7 +35,7 @@ function entitySearch(endpoint) {
     datumTokenizer: Bloodhound.tokenizers.whitespace,
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     remote: {
-      url: endpoint, 
+      url: endpoint,
       wildcard: '%25QUERY'
     }
   })

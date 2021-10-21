@@ -1,6 +1,9 @@
-import { Controller } from 'stimulus'
-import 'select2'
-import utility from 'packs/common/utility'
+import { Controller } from "@hotwired/stimulus"
+import $ from 'jquery'
+import select2 from 'select2'
+import utility from '../src/common/utility'
+
+
 
 export default class extends Controller {
   static targets = [
