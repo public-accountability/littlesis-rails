@@ -1,9 +1,9 @@
 /**
- * 
+ *
  * @param {Integer} id
  * @param {String} name
  * @param {String} ext
- * @returns {String} 
+ * @returns {String}
  */
 
 export function entityLink (id, name, ext) {
@@ -14,17 +14,17 @@ export function entityLink (id, name, ext) {
 };
 
 /**
- * 
+ *
  * @param {integer} x
  * @param {array} to_exclude
- * @returns {array} 
+ * @returns {array}
  */
 export function range(x, toExclude) {
   var range = Array.apply(null, Array(x)).map(function (_, i) {return i;});
   if (Array.isArray(toExclude)) {
     return range.filter(function(x) { return !toExclude.includes(x); });
   } else {
-    return range;    
+    return range;
   }
 };
 
@@ -172,7 +172,7 @@ export function relationshipDetails(category) {
   case 9: // professional
     return [ d1, d2, startDate, endDate, isCurrent ];
   case 10: // ownership
-    return [ 
+    return [
       title, startDate, endDate, isCurrent,
       [ 'Percent Stake', 'percent_stake', 'number'],
       [ 'Shares Owned', 'shares', 'number']
@@ -240,8 +240,6 @@ export function browserCanOpenFiles() {
     return (window.File && window.FileReader && window.FileList && window.Blob);
 };
 
-
-
 /* STRING UTILITIES */
 
 export function capitalize(str) {
@@ -285,14 +283,14 @@ export function removeHashFromId(str) {
 };
 
 
-const usdNumberFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });  
+const usdNumberFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 
 /**
  * Possible options:
  *   - Truncate --> removes cents
  * @param {String|Number} number
  * @param {Object} options
- * @returns {String} 
+ * @returns {String}
  */
 export function formatMoney(number, options = {}) {
   let formattedNumber = usdNumberFormatter.format(number);
@@ -304,198 +302,10 @@ export function formatMoney(number, options = {}) {
   }
 }
 
-
-// OBJECT UTILITIES
-
-// ?Object -> Boolean
-export function isObject(value) {
-  let type = typeof value;
-  return value != null && (type == 'object' || type == 'function');
-};
-
-// Object -> Any
-export function get(obj, key) {
-  let entry = isObject(obj) && Object.getOwnPropertyDescriptor(obj, key);
-  return entry ? entry.value : undefined;
-};
-
-// Object, [String] -> Any
-export function getIn(obj, keys){
-  return keys.reduce(
-    function(acc, key){ return get(acc, key); },
-    obj
-  );
-};
-
-// Object, String, Any -> Object
-export function set(obj, key, value) {
-  var _obj = Object.assign({}, obj);
-  return Object.defineProperty(_obj, key, {
-    configurable: true,
-    enumerable: true,
-    writeable: true,
-    value: value
-  });
-};
-
-
-// Object, [String], Any -> Object
-export function setIn(obj, keys, value){
-  if (keys.length === 0) {
-    return value;
-  };
-
-  return set(obj,
-	     keys[0],
-	     setIn( get(obj, keys[0]), keys.slice(1), value)
-	    );
-};
-
-
-// Object, String -> Object
-export function del(obj, keyToDelete) {
-  return Object.keys(obj).reduce( 
-    function(acc, key) {
-      return key === keyToDelete ?
-        acc :
-        set(acc, key, get(obj, key));
-    },
-    {}
-  );
-};
-
-// Object, [String] -> Object
-export function deleteIn(obj, keys){
-  var leafPath = keys.slice(0, -1);
-  var leafNode = getIn(obj, leafPath);
-  return !(leafPath && leafNode) ?
-    obj :
-    setIn( obj, leafPath, del(leafNode, keys.slice(-1)[0]));
-};
-
-// Object -> Object
-export function stringifyValues(obj) {
-  // stringify all values except booleans
-  // mostly for use in deserializing JSON
-  return Object.keys(obj).reduce(
-    function(acc, k){
-      var val = get(obj, k);
-      return set(
-        acc,
-        k,
-        // only stringify non-boolean existy vals
-        (val === true || val === false) ? val : val && String(val)
-      );
-    },
-    {}
-  );
-};
-
-// [Record] -> { [String]: Record}
-// turn an array of records into a lookup table of records by id
-// see https://github.com/paularmstrong/normalizr
-export function normalize(arr) {
-  return arr.reduce((acc, item) => set(acc, item.id, item), {});
-};
-
-
-/**
- * Returns object with only the permitted keys
- * 
- * @param {Object} obj
- * @param {Array[String]} keys
- * @returns {Object}
- */
-export function pick(obj, keys) {
-  var result = {};
-  keys.forEach(function(k) {
-    result[k] = obj[k];
-  });
-  return result;
-};
-
-/**
- * Returns object without rejected set of keys
- * 
- * @param {Object} obj
- * @param {Array[String]} keys
- * @returns {Object}
- */
-export function omit(obj, keys) {
-  var result = Object.assign({}, obj);
-  keys.forEach(function(k) {
-    delete result[k];
-  });
-  return result;
-};
-
-// Object -> Boolean
-export function exists(obj) {
-  return obj !== undefined && obj !== null;
-};
-
-// Object -> Boolean
-export function isEmpty(obj) {
-  return !Boolean(obj) || !Object.keys(obj).length;
-};
-
-// Browser/DOM Utilities
-
-// Element -> Element
-// leverage `sk-circle` classes in `assets/stylesheets/base/spin.css`
-// IMPORTANT: THIS MUST RETURN A VALUE OR CALLING CODE WILL BREAK!!!
-export function appendSpinner(element) {
-
-  var circle = document.createElement('div');
-  circle.classList.add('sk-circle');
-
-  const circleDiv = i => {
-    let div = document.createElement('div');
-    div.classList.add('sk-child', `sk-circle${i}`);
-    return div;
-  };
-
-  range(13, [0]).forEach(i => circle.appendChild(circleDiv(i)));
-
-  if (element.jquery) {
-    element.append(circle);
-  } else {
-    element.appendChild(circle);
-  }
-  return element;
-};
-
-// Element -> Element
-export function removeSpinner(element){
-  element.querySelector('.sk-circle').remove();
-  return element;
-};
-
-// String -> Void
-export function redirectTo(path) {
-  document.location.replace(path);
-};
-
-// -> Object
-// Returns object representation of the query params of the current page url
-export function currentUrlParams() {
-  if (window.location.search  === '') {
-    return {};
-  }
-
-  return window.location.search
-    .replace('?', '')
-    .split('&')
-    .reduce(function(acc, param) {
-      var pair = param.split('=');
-      return set(acc, pair[0], pair[1]);
-  }, {});
-};
-
 /**
  * Swaps two elements given their ids
  * Thanks to: https://stackoverflow.com/questions/10716986/swap-2-html-elements-and-preserve-event-listeners-on-them
- * @param {String} a ID 
+ * @param {String} a ID
  * @param {String} b ID
  */
 export function swapDomElementsById(aId, bId) {
@@ -531,7 +341,7 @@ export function swapInputTextById(aId, bId) {
  *
  * @param {String} tagName
  * @param {String} text
- * @returns {Element} 
+ * @returns {Element}
  */
 export function createElementWithText(tagName, text) {
   var element = document.createElement(tagName);
@@ -564,7 +374,7 @@ export function createElement(options) {
   if (elementConfig['class']) {
     element.className = elementConfig['class'];
   }
-  
+
   if (elementConfig['id']) {
     element.setAttribute('id', elementConfig['id']);
   }
@@ -598,11 +408,6 @@ export default {
   relationshipCategories, extensionDefinitions, relationshipDetails,
   validDate, validURL, validPersonName, browserCanOpenFiles,
   capitalize, formatIdSelector, removeHashFromId, formatMoney, capitalizeWords,
-  get, getIn, set, setIn, del, deleteIn,
-  normalize, stringifyValues, pick, omit,
-  exists, isObject, isEmpty,
-  appendSpinner, removeSpinner,
-  redirectTo, currentUrlParams,
   swapDomElementsById, swapInputTextById, createElementWithText,
   createElement, createLink
 };
