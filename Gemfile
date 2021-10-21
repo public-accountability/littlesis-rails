@@ -9,6 +9,7 @@ gem 'redis'
 gem 'scenic'
 
 # Utilities
+gem 'csv'
 gem 'bootsnap', '>= 1.4.3', require: false
 gem 'nokogiri'
 gem 'zeitwerk'
@@ -40,7 +41,6 @@ gem 'sprockets', '~> 4'
 gem 'turbo-rails'
 gem 'stimulus-rails'
 gem 'jsbundling-rails'
-# gem 'webpacker', '>= 4.0.2'
 
 # Search
 gem 'thinking-sphinx', '~> 5.1'
