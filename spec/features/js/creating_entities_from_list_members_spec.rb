@@ -33,7 +33,6 @@ feature 'Creating entities from list members page', :sphinx, type: :feature, js:
       fill_in 'Short description', with: 'Real estate tycoon'
       # choose 'Person'
       find('input[name="entity\\[primary_ext\\]"][value="Person"]').click
-      binding.irb
       find('input[value="BusinessPerson"]').check
       click_on 'Add'
     end

@@ -23,7 +23,6 @@ $navbar-height: 130px;
 /* Import bootstrap */
 @import "bootstrap";
 @import "base/bootstrap-migrate.scss";
-
 @import "actiontext";
 
 body {
@@ -57,7 +56,7 @@ div.toe-row {
     li:not(:first-child) {
 	padding-left: 1em;
     }
-    
+
 }
 
 /* Footer */
@@ -81,7 +80,7 @@ div.toe-row {
 	    @include media-breakpoint-up(md) {
 		font-size: 18px;
 	    }
-	    
+
 	}
     }
 
@@ -163,7 +162,7 @@ h1 {
 }
 
 h3, h4, h5, h6 {
-    font-size: 20px; 
+    font-size: 20px;
 }
 
 p {
