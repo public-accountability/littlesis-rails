@@ -5,7 +5,7 @@ import delay from 'lodash/delay'
 
 // Connects to data-controller="new-entity-form"
 export default class extends Controller {
-  static targets = ['personTypes', 'orgTypes', 'otherTypes', 'wait', 'existing', 'nameInput' ]
+  static targets = ['personTypes', 'orgTypes', 'otherTypes', 'wait', 'existing', 'nameInput', 'warning' ]
 
   // connect() {}
 
@@ -28,10 +28,11 @@ export default class extends Controller {
   }
 
   typingEntityName(event) {
-    let entityName = this.nameInputTarget.value || ''
+    let entityName = trim(this.nameInputTarget.value) || ''
 
     if (entityName.length < 4) {
       $(this.waitTarget).hide()
+      $(this.warningTarget).hide()
       return
     }
 
@@ -41,9 +42,16 @@ export default class extends Controller {
 
     let selectedPrimaryExt = this.element.querySelector("input[name=entity\\[primary_ext\\]]:checked").value
 
+    if (selectedPrimaryExt === "Person" && !entityName.includes(' ')) {
+      $(this.warningTarget).show()
+    } else {
+      $(this.warningTarget).hide()
+    }
+
     if (this.lastRequest) {
       clearInterval(this.lastRequest)
     }
+
     this.lastRequest = delay(() => this.findMatches(entityName, selectedPrimaryExt), 300)
   }
 
