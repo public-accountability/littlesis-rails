@@ -1,4 +1,4 @@
-import utility from '../common/utility'
+import utility from '../common/utility.mjs'
 import datatable from 'datatables.net'
 
 export default function DonationMatcher() {

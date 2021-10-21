@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import $ from 'jquery'
 import select2 from 'select2'
-import utility from '../src/common/utility'
+import utility from '../src/common/utility.mjs'
 
 
 

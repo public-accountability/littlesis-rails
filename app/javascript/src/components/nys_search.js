@@ -1,4 +1,4 @@
-import utility from '../common/utility'
+import utility from '../common/utility.mjs'
 
 export default function nysSearch() {
   let nys = {};
@@ -46,8 +46,8 @@ export default function nysSearch() {
       $.getJSON('/search/entity', {q: $('#entity-search').val(), ext: primaryExt }, function(d){
 	if (d.length > 0) {
           createTable(d, primaryExt);
-	} else { 
-          // show create new entity message 
+	} else {
+          // show create new entity message
 	}
       });
     });

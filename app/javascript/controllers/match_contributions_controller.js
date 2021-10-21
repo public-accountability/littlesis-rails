@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import delay from 'lodash/delay'
+import { delay }  from 'lodash-es'
 
 export default class extends Controller {
   static values = { entityName: String }

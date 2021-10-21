@@ -1,4 +1,5 @@
-import { qs } from 'packs/common/http';
+import { qs }  from '../../app/javascript/src/common/http.mjs';
+import assert from 'assert';
 
 describe('qs', () =>{
   it('appends ? to strings', () => {
@@ -8,7 +9,7 @@ describe('qs', () =>{
   it('converts object', () => {
     assert.equal(qs({foo: 'bar', number: 1}), '?foo=bar&number=1');
   });
-  
+
   it('returns blank string otherwise', () => {
     assert.equal(qs(null), '');
   });

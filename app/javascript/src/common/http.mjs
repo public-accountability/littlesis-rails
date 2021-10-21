@@ -1,6 +1,4 @@
-import isString from 'lodash/isString';
-import isPlainObject from 'lodash/isPlainObject';
-import merge from 'lodash/merge';
+import { isString, isPlainObject, merge }  from 'lodash-es'
 
 const jsonHeaders = {
   "Content-Type": "application/json",
@@ -16,7 +14,7 @@ const validateResponse = (res) => {
  * Converts object to query parameter string for HTTP get requests
  *
  * @param {String|Object} queryParams
- * @returns {String} 
+ * @returns {String}
  */
 export function qs(queryParams) {
   if (isString(queryParams) && queryParams.includes('=')) {
@@ -71,7 +69,7 @@ export function lsPost(url, data) {
 
   const token = document.head.querySelector('meta[name="csrf-token"]').content;
   const headers = merge(jsonHeaders, { 'X-CSRF-Token': token });
-  
+
   // 'X-Requested-With': 'XMLHttpRequest',
   return fetch(url, {
     "method": "POST",
