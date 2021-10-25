@@ -17,13 +17,15 @@ export default class extends Controller {
   ]
 
   connect() {
-    $(this.listsDropdownTarget).select2({
-      placeholder: 'Search for a list',
-      ajax: {
-        url: '/lists?editable=true',
-        dataType: 'json'
-      }
-    })
+    if (this.hasListsDropdownTarget) {
+      $(this.listsDropdownTarget).select2({
+        placeholder: 'Search for a list',
+        ajax: {
+          url: '/lists?editable=true',
+          dataType: 'json'
+        }
+      })
+    }
   }
 
   showPencil() {
