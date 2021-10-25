@@ -33,7 +33,6 @@ gem 'delayed_job', '~> 4.1'
 gem 'delayed_job_active_record', '>= 4.1.3'
 
 # Assets and images
-gem 'bootstrap', '~> 4'
 gem 'image_processing'
 gem 'mini_magick'
 gem 'sassc-rails'

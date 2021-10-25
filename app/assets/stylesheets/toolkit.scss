@@ -21,7 +21,7 @@ $container-large-desktop: 900px + $grid-gutter-width;
 $navbar-height: 130px;
 
 /* Import bootstrap */
-@import "bootstrap";
+@import "bootstrap/scss/bootstrap";
 @import "base/bootstrap-migrate.scss";
 @import "actiontext";
 
