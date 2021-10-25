@@ -1,3 +1,5 @@
+import { isObject } from 'lodash-es'
+
 /**
  *
  * @param {Integer} id
