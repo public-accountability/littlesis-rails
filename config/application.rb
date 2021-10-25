@@ -59,6 +59,9 @@ module Lilsis
     config.active_storage.draw_routes = true
 
     config.active_record.schema_format = :sql
+
+    config.assets.css_compressor = :sass
+    config.assets.js_compressor = false
   end
 
   def self.setup_fec

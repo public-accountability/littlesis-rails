@@ -23,7 +23,8 @@
     "typeahead.js": "^0.11.1"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --outdir=app/assets/builds",
+    "build": "esbuild app/javascript/*.* --bundle --minify --target=firefox90,chrome92,edge92 --outdir=app/assets/builds",
+    "build-dev": "esbuild app/javascript/*.* --bundle --outdir=app/assets/builds",
     "test": "mocha spec/javascripts"
   },
   "devDependencies": {
