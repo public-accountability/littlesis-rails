@@ -1,5 +1,5 @@
-import { Controller } from 'stimulus'
-import nysSearch from 'packs/components/nys_search'
+import { Controller } from "@hotwired/stimulus"
+import nysSearch from '../src/components/nys_search'
 
 export default class extends Controller {
   connect() {

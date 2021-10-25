@@ -34,7 +34,7 @@ describe 'lists/list_actions', :type => :view do
     end
 
     it 'does not have delete button' do
-      not_css 'a', text: 'delete'
+      not_css 'input[value="delete"]'
     end
   end
 
@@ -42,7 +42,7 @@ describe 'lists/list_actions', :type => :view do
     before do
       assign(:list, create(:list))
       assign(:permissions, { :editable => true, :configurable => true })
-      render partial: 'lists/list_actions.html.erb', locals: { list: build(:list) }
+      render partial: 'lists/list_actions', locals: { list: build(:list) }
     end
 
     it 'has edit button' do
@@ -50,7 +50,7 @@ describe 'lists/list_actions', :type => :view do
     end
 
     it 'has delete button' do
-      css 'a', text: 'delete'
+      css 'input[value="delete"]'
     end
   end
 end

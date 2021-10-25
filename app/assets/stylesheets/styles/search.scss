@@ -13,7 +13,7 @@ div.search-results {
 	font-size: 15px;
 	font-weight: 800;
     }
-    
+
 }
 
 .entity-search-result-summary {
@@ -44,7 +44,7 @@ div.search-results {
 	&:focus {
 	    outline: 0;
 	}
-    } 
+    }
 }
 
 .entity-search-input-group {
@@ -63,24 +63,26 @@ div.search-results {
     display: block;
 
 }
+select2-container--default .select2-results__option--highlighted[aria-selected]
 
 .entity-search-suggestion {
-    display: block;
-    margin: 10px 0;
-    cursor: pointer;
-    line-height: normal;
-    font-size: 1em;
-    padding-left: 0.4em;
-    padding-right: 0.4em;
-    &:hover {
-        background-color: #ffff66;
-    }
+    // display: block;
+    // margin: 10px 0;
+    // cursor: pointer;
+    // line-height: normal;
+    // font-size: 1em;
+    // padding-left: 0.4em;
+    // padding-right: 0.4em;
+    // &:hover {
+    //     background-color: #ffff66;
+    // }
 }
 
 .entity-search-suggestion-name {}
 
 .entity-search-suggestion-name-text {
 }
+
 .entity-search-suggestion-name-link {
     color: black;
     margin-left: 5px;

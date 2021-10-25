@@ -1,5 +1,5 @@
-import { Controller } from "stimulus"
-import 'select2'
+import { Controller } from "@hotwired/stimulus"
+import $ from 'jquery'
 
 const select2Configuration = {
   "minimumResultsForSearch": 10,

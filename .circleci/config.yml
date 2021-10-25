@@ -47,7 +47,6 @@ jobs:
           paths:
             - node_modules
 
-      - run: bundle exec rake webpacker:compile
       - run: bundle exec rake assets:precompile
       - run: bundle exec rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
 

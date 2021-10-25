@@ -11,26 +11,34 @@
     <% entity = @entity %>
 <% end %>
 
-<%= form_for(entity, url: form_url) do |f| %>
+<div data-controller="new-entity-form">
+  <%= form_for(entity, url: form_url) do |f| %>
     <% if entity.errors.any? %>
-	<div id="error_explanation" class="alert alert-warning">
-	    <%= pluralize(entity.errors.count, "error") %> prohibited this entity from being saved:
+      <div id="error_explanation" class="alert alert-warning">
+	<%= pluralize(entity.errors.count, "error") %> prohibited this entity from being saved:
 
-	    <ul class="list-unstyled">
-		<% entity.errors.each do |attr, msg| %>
-		    <li><%= (attr == :primary_ext ? :type : attr).to_s.capitalize %> <%= msg %></li>
-		<% end %>
-	    </ul>
-	</div>
+	<ul class="list-unstyled">
+	  <% entity.errors.each do |attr, msg| %>
+	    <li><%= (attr == :primary_ext ? :type : attr).to_s.capitalize %> <%= msg %></li>
+	  <% end %>
+	</ul>
+      </div>
     <% end %>
 
     <% if add_relationship %>
-	<%= hidden_field_tag :add_relationship_page, 'TRUE' %>
+      <%= hidden_field_tag :add_relationship_page, 'TRUE' %>
     <% end %>
 
     <div>
-	<%= f.label "Name*", for: :entity_name %>
-	<%= f.text_field :name, class: "form-control", placeholder: "example: Jesse L Jackson, Jr" %>
+      <%= f.label "Name*", for: :entity_name %>
+      <%= f.text_field :name,
+            class: "form-control",
+             placeholder: "example: Jesse L Jackson, Jr",
+             data: {
+               'action' => 'input->new-entity-form#typingEntityName',
+               'new-entity-form-target' => 'nameInput'
+           }
+      %>
     </div>
 
     <div class="mt-2">
@@ -43,54 +51,53 @@
     <br>
 
     <label class="radio-inline">
-	<%= f.radio_button :primary_ext, "Person" %> Person
+      <%= f.radio_button :primary_ext, "Person", data: { 'action' => 'change->new-entity-form#selectPrimaryExt' } %> Person
     </label>
 
     <label class="radio-inline">
-	<%= f.radio_button :primary_ext, "Org" %> Org
+      <%= f.radio_button :primary_ext, "Org", data: { 'action' => 'change->new-entity-form#selectPrimaryExt' } %> Org
     </label>
     <br>
     <br>
 
-    <div id="other-types">
-	<%= f.label "Other types" %>
-	<br>
+    <div data-new-entity-form-target="otherTypes" style="display: none;">
+      <%= f.label "Other types" %>
+      <br>
     </div>
 
-    <div id="person-types">
-	<% ExtensionDefinition.person_types.each do |type| %>
-	    <div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
-	<% end %>
-	<br>
-	<br>
+    <div data-new-entity-form-target="personTypes" style="display: none;">
+      <% ExtensionDefinition.person_types.each do |type| %>
+	<div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
+      <% end %>
+      <br>
+      <br>
     </div>
 
-    <div id="org-types">
-	<% ExtensionDefinition.org_types.each do |type| %>
-	    <div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
-	<% end %>
-	<br>
-	<br>
+    <div data-new-entity-form-target="orgTypes" style="display: none;">
+      <% ExtensionDefinition.org_types.each do |type| %>
+	<div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
+      <% end %>
+      <br>
+      <br>
+    </div>
+
+    <div data-new-entity-form-target="warning" class="alert alert-warning" style="display: none;">
+      <span>Valid names are at least two words</span>
     </div>
 
     <div class="actions">
-	<%= f.submit "Add", class: "btn btn-primary" %>
+      <%= f.submit "Add", class: "btn btn-primary" %>
     </div>
-<% end %>
 
-<template id="validation_errors">
-  <div id="error_explanation" class="alert alert-warning">
-    <ul class="list-unstyled">
-    </ul>
-  </div>
-</template>
 
-<div id="wait" style="display: none;">
-    <br>
+  <% end %>
+
+
+  <div data-new-entity-form-target="wait" style="display: none;" class="mt-2">
     <h3>Wait! Does this entity already exist?</h3>
-    <div id="existing">
+    <div data-new-entity-form-target="existing">
     </div>
     <br>
-</div>
+  </div>
 
-<%= javascript_pack_tag 'components/new_entity_form' %>
+</div>

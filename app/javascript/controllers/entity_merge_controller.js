@@ -1,8 +1,9 @@
-import { Controller } from 'stimulus'
+import { Controller } from "@hotwired/stimulus"
+import $ from 'jquery'
 import mustache from 'mustache'
 
 export default class extends Controller {
-  static targets = [ 'table', 'mergeButton' ] 
+  static targets = [ 'table', 'mergeButton' ]
   static values = { possibleMerges: Array, path: String }
 
   initialize() {

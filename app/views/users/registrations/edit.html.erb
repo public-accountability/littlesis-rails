@@ -72,7 +72,7 @@
 <div class="row mt-1 mb-2">
   <div class="col">
     <div class="float-left">
-      <%= button_to "Cancel my account", users_path, data: { confirm: "Are you sure?" }, method: :delete, class: 'btn btn-danger btn-sm' %>
+      <%= button_to "Cancel my account", users_path, form: { onsubmit: "return confirm('Are you sure?')" }, method: :delete, class: 'btn btn-danger btn-sm' %>
     </div>
   </div>
 </div>

@@ -51,21 +51,9 @@
           <th><%= @list.sort_by.to_s.humanize %></th>
         <% end %>
         <% if @permissions[:editable] %>
-            <th></th>
+          <th></th>
         <% end %>
       </tr>
     </thead>
   </table>
-
-  <template id="entity_remover">
-    <%= link_to(
-      list_list_entity_path(table.list, list_entity_id: 'XYZ'),
-      method: :delete,
-      data: { confirm: 'Are you sure you want to remove this entity from this list?' },
-      class: 'remove_entity'
-    ) do %>
-      <i class="bi bi-x-lg"></i></template>
-    <% end %>
-  </template>
-
 <% end%>

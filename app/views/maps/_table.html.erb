@@ -22,13 +22,14 @@
 	<% if current_user&.admin? %>
 	  <td>
 	    <%= network_map_feature_btn(map) %>
-            <%= link_to(tag.span,
-                        map_path(map),
-                        class: 'delete-button bi bi-trash ml-1',
-                        title: 'Permanently delete this map',
-                        remote: false,
-                        method: :delete,
-                        data: { confirm: "Are you sure?" } ) %>
+            <%= button_to(oligrapher_path(map),
+                          method: 'delete',
+                          class: 'delete-button ml-1',
+                          title: 'Permanently delete this map',
+                          remote: false,
+                          form: { class: 'd-inline', onsubmit: "return confirm('Are you sure?')" } )  do %>
+              <i class="bi bi-trash hvr-pop"></i>
+            <% end %>
           </td>
 	<% end %>
       </tr>

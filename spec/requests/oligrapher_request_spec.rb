@@ -320,9 +320,14 @@ describe "Oligrapher", type: :request do
       end
 
       it 'redirects to new map' do
-        delete "/oligrapher/#{network_map.id}"
+        delete "/oligrapher/#{network_map.id}", as: :json
         expect(response.status).to eq 200
         expect(json['redirect_url']).to eq Rails.application.routes.url_helpers.new_oligrapher_path
+      end
+
+      it 'redirects to new map' do
+        delete "/oligrapher/#{network_map.id}", as: :html
+        expect(response.status).to eq 302
       end
     end
   end

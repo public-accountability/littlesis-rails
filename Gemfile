@@ -9,6 +9,7 @@ gem 'redis'
 gem 'scenic'
 
 # Utilities
+gem 'csv'
 gem 'bootsnap', '>= 1.4.3', require: false
 gem 'nokogiri'
 gem 'zeitwerk'
@@ -36,8 +37,10 @@ gem 'bootstrap', '~> 4'
 gem 'image_processing'
 gem 'mini_magick'
 gem 'sassc-rails'
-gem 'sprockets', '~> 3.0'
-gem 'webpacker', '>= 4.0.2'
+gem 'sprockets', '~> 4'
+gem 'turbo-rails'
+gem 'stimulus-rails'
+gem 'jsbundling-rails'
 
 # Search
 gem 'thinking-sphinx', '~> 5.1'
@@ -50,7 +53,7 @@ gem 'datagrid'
 gem 'validate_url', '>= 1.0.13'
 
 # used for screenshot capture
-gem 'selenium-webdriver', '>= 4.0.0.rc1', require: false
+gem 'selenium-webdriver', '>= 4.0.0', require: false
 
 # Used by StringSimilarity
 gem 'text', '>= 1.3.1'

@@ -53,8 +53,13 @@
             <% end %>
           </td>
           <td>
-            <%= button_to list_path(list), method: :delete, params: {id: list.id}, class: 'delete-button bi bi-trash ml-1', title: 'Permanently delete this list', data: { confirm: "Are you sure?" } do %>
-              <span/>
+            <%= button_to list_path(list),
+             method: :delete,
+             params: {id: list.id},
+             class: 'delete-button ml-1',
+             title: 'Permanently delete this list',
+             form: { onsubmit: "return confirm('Are you sure?')" } do %>
+              <i class="bi bi-trash"></i>
             <% end %>
           </td>
         <% end %>

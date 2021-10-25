@@ -160,7 +160,10 @@ class OligrapherController < ApplicationController
 
   def destroy
     @map.destroy
-    render json: { redirect_url: new_oligrapher_path }
+    respond_to do |format|
+      format.json { render json: { redirect_url: new_oligrapher_path } }
+      format.any { redirect_back(fallback_location: '/maps/all') }
+    end
   end
 
   # Search API

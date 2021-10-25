@@ -36,7 +36,11 @@
     <% end %>
 
     <% if current_user.has_ability?('deleter') %>
-      <%= button_to("remove", entity_image_path(@entity, id: image.id), method: :delete, data: { confirm: "Are you sure?" }, class: 'btn-link') %>
+      <%= button_to("remove",
+                    entity_image_path(@entity, id: image.id),
+                    method: :delete,
+                    class: 'btn-link',
+                    form: { onsubmit: "return confirm('Are you sure?')" }) %>
     <% end %>
 
   </td>

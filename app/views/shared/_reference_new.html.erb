@@ -1,4 +1,17 @@
-<%= javascript_pack_tag 'components/new_reference_modal' %>
+<script>
+ window.addEventListener('DOMContentLoaded', function() {
+   const fileInput = document.querySelector('#reference-form input[type="file"]')
+
+   if (!fileInput) { return }
+
+   fileInput.value = ''
+
+   fileInput.addEventListener('change', function() {
+     document.querySelector('#reference-form input[type="url"]').required = (this.value == '')
+   })
+
+ })
+</script>
 
 <div class="modal fade" id="add-reference-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">

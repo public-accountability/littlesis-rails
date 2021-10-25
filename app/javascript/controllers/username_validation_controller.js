@@ -1,4 +1,4 @@
-import { Controller } from 'stimulus'
+import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   connect() {
@@ -15,7 +15,7 @@ export default class extends Controller {
               return $.Deferred().reject('Username is taken. Please pick a new username.')
           }
         })
-      } 
+      }
     })
   }
 }

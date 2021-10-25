@@ -2,7 +2,7 @@
 <html class="fullscreen">
   <head>
     <title><%= page_title %></title>
-    <%= javascript_pack_tag 'application' %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
 
     <% if content_for?(:head) %>
       <%= yield :head %>

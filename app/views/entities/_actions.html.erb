@@ -7,9 +7,11 @@
       <%= link_to "flag", flag_path, class: "action-button" %>
 
       <% if current_user.permissions.entity_permissions(entity).fetch(:deleteable) %>
-	<%= form_for entity,  method: :delete, id: "remove_entity_#{entity.id}"  do |f| %>
-	  <% f.submit 'remove', data: { confirm: "Are you sure you want to remove this entity?" }, class: 'delete-entity-btn action-button'  %>
-	<% end %>
+        <%= button_to("remove", concretize_entity_path(entity),
+                      method: :delete,
+                      id: "remove_entity_#{entity.id}",
+                      form: { onsubmit: "return confirm('Are you sure you want to remove this entity?')"  },
+                      class: 'delete-entity-btn action-button') %>
 
       <% else %>
         <%= link_to 'remove', new_deletion_requests_entity_path(entity_id: @entity.id) %>

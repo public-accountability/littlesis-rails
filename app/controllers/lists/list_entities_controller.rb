@@ -23,12 +23,17 @@ module Lists
     end
 
     def destroy
+      raise Exceptions::PermissionError unless @list.user_can_edit?(current_user)
+
       ListEntity.find(params[:id]).tap do |le|
         le.current_user = current_user
         le.destroy!
       end
 
-      redirect_to members_list_path(@list)
+      respond_to do |format|
+        format.json { head :ok }
+        format.html { redirect_to members_list_path(@list) }
+      end
     end
 
     private

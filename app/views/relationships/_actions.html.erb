@@ -1,12 +1,12 @@
 <div id="actions" class="col-md-8 col-sm-6 hidden-xs">
   <div id="action-buttons">
-    <% if signed_in %>        
+    <% if signed_in %>
       <%= link_to "edit", edit_relationship_path(@relationship)  %>
     <% end %>
     <%= link_to "flag", flag_path %>
 
     <% if signed_in && current_user.permissions.relationship_permissions(@relationship).fetch(:deleteable) %>
-      <%= button_to "remove", relationship_path(@relationship), method: :delete, data: { confirm: "Are you sure you want to remove this relationship?" } %>
+      <%= button_to "remove", relationship_path(@relationship), method: :delete, form: { onsubmit: "return confirm('Are you sure you want to remove this relationship?')" } %>
     <% end %>
 
     <% if user_admin? %>

@@ -1,5 +1,5 @@
-import { Controller } from 'stimulus'
-import EntityMatcher from 'packs/components/entity_matcher'
+import { Controller } from "@hotwired/stimulus"
+import EntityMatcher from '../src/components/entity_matcher'
 
 const columns = [
   { "data": 'name', "title": 'Name', "name": 'name'},

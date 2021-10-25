@@ -138,7 +138,7 @@ class ApplicationController < ActionController::Base
 
   def render_html_not_found(exception)
     if request.format == :html
-      render 'errors/not_found', status: :not_found
+      render 'errors/not_found', status: :not_found, layout: 'application'
     else
       raise exception
     end

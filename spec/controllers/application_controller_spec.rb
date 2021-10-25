@@ -54,6 +54,7 @@ describe ApplicationController, type: :controller do
       end
     end
   end
+
   describe 'errors' do
     describe 'permission errors' do
       controller do

@@ -24,20 +24,11 @@ Rails.application.configure do
   # Disable Rails's static asset server (Apache or nginx will already do this).
   config.public_file_server.enabled = false
 
-  # Compress JavaScripts and CSS.
+  # Compress CSS
   config.assets.css_compressor = :sass
 
   # Whether to fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
-
-  # moved to config/initializers/assets.rb
-  # config.assets.precompile += %w(*.png *.jpg *.jpeg *.gif *.svg *.eot *.woff *.ttf)
-  # config.assets.digest = true
-  # config.assets.version = '1.0'
-
-  # Specifies the header that your server uses for sending files.
-  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
-  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
