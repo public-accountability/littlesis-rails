@@ -10,8 +10,6 @@ class MapsController < ApplicationController
   before_action :enforce_slug, only: [:show]
   before_action :admins_only, only: [:feature]
 
-  before_action :set_oligrapher_version, only: %i[new show embedded_v2]
-
   before_action -> { check_permission 'editor' }, only: %i[create]
 
   protect_from_forgery except: [:create, :clone]
@@ -77,32 +75,7 @@ class MapsController < ApplicationController
   end
 
   def embedded_v2
-    return redirect_to(embedded_oligrapher_path(@map)) if @map.version3?
-
-    check_private_access
-    response.headers.delete('X-Frame-Options')
-
-    @configuration = {
-      url: map_url(@map),
-      isEditor: false,
-      isLocked: true,
-      isEmbedded: true,
-      embedded: {
-        headerPct: embedded_params.fetch(:header_pct, EMBEDDED_HEADER_PCT),
-        annotationPct: embedded_params.fetch(:annotation_pct, EMBEDDED_ANNOTATION_PCT),
-        logoUrl: "https://dfl6orqdcqt4f.cloudfront.net/assets/lilsis-logo-trans-200-74169fd94db9637c31388ad2060b48720f94450b40c45c23a3889cf480f02c52.png",
-        linkUrl: map_url(@map),
-        linkText: "View this map on LittleSis"
-      },
-      data: {
-	title: @map.title.gsub('"', '\"'),
-        graph: @map.graph_data.to_json,
-        annotations: @map.annotations_data || '[]'
-      },
-      startAnnotation: embedded_params.fetch(:slide, 1).to_i - 1
-    }
-
-    render layout: 'embedded_oligrapher'
+    redirect_to(embedded_oligrapher_path(@map))
   end
 
   def embedded
@@ -232,11 +205,5 @@ class MapsController < ApplicationController
 
   def embedded_params
     params.permit(:header_pct, :annotation_pct, :slide)
-  end
-
-  def set_oligrapher_version
-    if params.key?(:oligrapher_version) && OLIGRAPHER_VERSION_REGEX.match?(params[:oligrapher_version])
-      @oligrapher_version = params[:oligrapher_version]
-    end
   end
 end

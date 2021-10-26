@@ -25,23 +25,4 @@ describe MapsController, type: :controller do
 
     it { is_expected.to redirect_to(embedded_map_path(map)) }
   end
-
-  describe '#embedded_v2' do
-    let(:map) { build(:network_map, title: 'a map') }
-
-    before do
-      allow(controller).to receive(:user_signed_in?).and_return(true)
-      allow(NetworkMap).to receive(:find).once.with("10-a-map").and_return(map)
-    end
-
-    it 'uses first slide by default' do
-      get :embedded_v2, params: { id: '10-a-map' }
-      expect(assigns(:configuration)[:startAnnotation]).to eq 0
-    end
-
-    it 'converts slide param 3 to starting index 2' do
-      get :embedded_v2, params: { id: '10-a-map', slide: 3 }
-      expect(assigns(:configuration)[:startAnnotation]).to eq 2
-    end
-  end
 end

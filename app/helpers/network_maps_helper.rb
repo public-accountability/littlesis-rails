@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 module NetworkMapsHelper
-  def oligrapher_js_tags
-    content_tag(:script, nil, src: "/js/oligrapher/oligrapher-#{@oligrapher_version}.js") +
-      content_tag(:script, nil, src: "/js/oligrapher/oligrapher_littlesis_bridge-#{@oligrapher_version}.js")
-  end
-
   # used on /maps and user pages
   def network_map_link(map)
     link = link_to(raw(map.name), map_path(map))
