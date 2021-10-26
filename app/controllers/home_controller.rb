@@ -4,7 +4,7 @@ class HomeController < ApplicationController
   include SpamHelper
 
   before_action :authenticate_user!,
-                except: [:dismiss, :index, :flag, :token, :newsletter_signup, :pai_signup]
+                except: [:dismiss, :index, :flag, :token, :newsletter_signup, :pai_signup, :test]
 
   skip_before_action :verify_authenticity_token, only: [:pai_signup]
 
@@ -93,6 +93,10 @@ class HomeController < ApplicationController
     else
       redirect_to request.headers['referer']
     end
+  end
+
+  def test
+    head :ok
   end
 
   private
