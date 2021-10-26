@@ -58,7 +58,7 @@ Capybara.raise_server_errors = false
 Capybara.ignore_hidden_elements = false
 Capybara.server = :puma, { Silent: true } # Remove crummy test output
 Capybara.default_max_wait_time = ENV["CI"] ? 15 : 5
-Capybara.default_host = "#{Lilsis::Application.default_url_options[:protocol]}://#{Lilsis::Application.default_url_options[:host]}"
+Capybara.default_host = "#{LittleSis::Application.default_url_options[:protocol]}://#{LittleSis::Application.default_url_options[:host]}"
 
 Capybara.javascript_driver = :headless_firefox
 Capybara.javascript_driver = :headless_chrome if ENV['LITTLESIS_USE_CHROME']

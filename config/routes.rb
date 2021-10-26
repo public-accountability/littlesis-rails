@@ -1,4 +1,4 @@
-Lilsis::Application.routes.draw do
+LittleSis::Application.routes.draw do
 
   # match "*path", to: "errors#maintenance", via: :all
 

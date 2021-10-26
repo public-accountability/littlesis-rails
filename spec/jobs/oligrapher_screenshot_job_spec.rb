@@ -17,7 +17,7 @@ describe OligrapherScreenshotJob do
   context 'with public map' do
     let(:map) { create(:network_map_version3, user_id: 1) }
     let(:driver) { instance_double('Selenium::WebDriver::Firefox::Marionette::Driver') }
-    let(:map_url) { Lilsis::Application.routes.url_helpers.oligrapher_url(map) }
+    let(:map_url) { LittleSis::Application.routes.url_helpers.oligrapher_url(map) }
 
     it 'saves screenshot to database' do
       expect(driver).to receive(:execute_script).with(/hideAnnotations/)

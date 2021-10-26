@@ -118,15 +118,17 @@ module ApplicationHelper
   end
 
   def show_donation_banner?
-    if APP_CONFIG['donation_banner_display'] == 'everywhere'
-      true
-    elsif APP_CONFIG['donation_banner_display'] == 'homepage' &&
-          controller_name == 'home' &&
-          controller.action_name == 'index'
-      true
-    else
-      false
+    if Rails.application.config.littlesis[:donation_banner_display] == 'everywhere'
+      return true
     end
+
+    if Rails.application.config.littlesis[:donation_banner_display] == 'homepage' &&
+       controller_name == 'home' &&
+       controller.action_name == 'index'
+      return true
+    end
+
+    false
   end
 
   def show_stars?

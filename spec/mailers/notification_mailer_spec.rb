@@ -15,11 +15,11 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'has correct to' do
-      expect(mail.to).to eq [APP_CONFIG['notification_to']]
+      expect(mail.to).to eq [Rails.application.config.littlesis[:notification_to]]
     end
 
     it 'has correct from' do
-      expect(mail.from).to eq [APP_CONFIG['default_from_email']]
+      expect(mail.from).to eq [Rails.application.config.littlesis[:default_from_email]]
     end
 
     it 'has correct reply_to' do
@@ -57,7 +57,7 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'has correct to' do
-      expect(mail.to).to eq [APP_CONFIG['notification_to']]
+      expect(mail.to).to eq [Rails.application.config.littlesis[:notification_to]]
     end
 
     it 'has username' do
@@ -150,11 +150,11 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'has correct to' do
-      expect(mail.to).to eq [APP_CONFIG['notification_to']]
+      expect(mail.to).to eq [Rails.application.config.littlesis[:notification_to]]
     end
 
     it 'has correct from' do
-      expect(mail.from).to eq [APP_CONFIG['default_from_email']]
+      expect(mail.from).to eq [Rails.application.config.littlesis[:default_from_email]]
     end
 
     it 'has params contents' do

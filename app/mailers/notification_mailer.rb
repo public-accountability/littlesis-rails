@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NotificationMailer < ApplicationMailer
-  DEFAULT_TO = APP_CONFIG['notification_to']
+  DEFAULT_TO = Rails.application.config.littlesis[:notification_to]
 
   def contact_email(params)
     @name = params[:name]

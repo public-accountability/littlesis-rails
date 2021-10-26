@@ -8,7 +8,7 @@ module HomeHelper
     return asset_path 'netmap-org.png' if map.thumbnail.blank?
 
     if map.thumbnail.slice(0, 7) == '/images'
-      "#{APP_CONFIG['image_host']}#{map.thumbnail}"
+      "#{Rails.application.config.littlesis[:image_host]}#{map.thumbnail}"
     else
       map.thumbnail
     end

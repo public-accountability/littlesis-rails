@@ -2,10 +2,8 @@
 
 module NetworkMapsHelper
   def oligrapher_js_tags
-    version = @oligrapher_version || NetworkMap::OLIGRAPHER_VERSION
-
-    content_tag(:script, nil, src: "/js/oligrapher/oligrapher-#{version}.js") +
-      content_tag(:script, nil, src: "/js/oligrapher/oligrapher_littlesis_bridge-#{version}.js")
+    content_tag(:script, nil, src: "/js/oligrapher/oligrapher-#{@oligrapher_version}.js") +
+      content_tag(:script, nil, src: "/js/oligrapher/oligrapher_littlesis_bridge-#{@oligrapher_version}.js")
   end
 
   # used on /maps and user pages

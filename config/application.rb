@@ -6,14 +6,11 @@ require 'rails/all'
 # Assets should be precompiled for production (so we don't need the gems loaded then)
 Bundler.require(*Rails.groups)
 
-APP_CONFIG = YAML.load(
-  ERB.new(File.new("#{Dir.getwd}/config/lilsis.yml").read).result
-).fetch(Rails.env).with_indifferent_access
-
-APP_CONFIG.freeze unless Rails.env.test?
-
-module Lilsis
+module LittleSis
   class Application < Rails::Application
+    config.littlesis = config_for(:lilsis)
+    # config.littlesis = config_for(:littlesis)
+
     config.load_defaults 6.0
     config.autoloader = :zeitwerk
 
@@ -23,11 +20,11 @@ module Lilsis
     end
 
     default_url_options = {
-      host: APP_CONFIG.fetch('host', 'littlesis.org'),
-      protocol: APP_CONFIG.fetch('protocol', 'https')
+      host: config.littlesis.fetch(:host, 'littlesis.org'),
+      protocol: config.littlesis.fetch(:protocol, 'https')
     }
 
-    Lilsis::Application.default_url_options = default_url_options
+    LittleSis::Application.default_url_options = default_url_options
     routes.default_url_options = default_url_options
     config.action_controller.default_url_options = default_url_options
     config.action_mailer.default_url_options = default_url_options
@@ -42,7 +39,7 @@ module Lilsis
 
     config.i18n.fallbacks = [:en]
 
-    config.cache_store = :redis_cache_store, { url: APP_CONFIG.fetch('redis_url') }
+    config.cache_store = :redis_cache_store, { url: config.littlesis[:redis_url] }
 
     # config.assets.paths << "#{Rails.root}/vendor/assets/images"
     config.active_job.queue_adapter = :delayed_job

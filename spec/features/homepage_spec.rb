@@ -61,7 +61,11 @@ describe 'Homepage' do
 
     context 'with beta enabled' do
       before do
-        stub_const('APP_CONFIG', APP_CONFIG.merge('beta' => true))
+        Rails.application.config.littlesis.beta = true
+      end
+
+      after do
+        Rails.application.config.littlesis.beta = false
       end
 
       it 'hides donation button' do

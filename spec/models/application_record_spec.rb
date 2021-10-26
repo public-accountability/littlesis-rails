@@ -35,7 +35,7 @@ describe ApplicationRecord do
 
     context 'Entity does not have current_user set' do
       it 'calls touch_by with system user' do
-        expect(org).to receive(:touch_by).with(APP_CONFIG.fetch('system_user_id'))
+        expect(org).to receive(:touch_by).with(User.system_user_id)
         org.touch_by_current_user
       end
     end

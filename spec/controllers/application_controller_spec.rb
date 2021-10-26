@@ -129,7 +129,11 @@ describe ApplicationController, type: :controller do
 
   describe 'When edits are disabled' do
     before do
-      expect(APP_CONFIG).to receive(:[]).with('noediting').and_return(true)
+      Rails.application.config.littlesis.noediting = true
+    end
+
+    after do
+      Rails.application.config.littlesis.noediting = false
     end
 
     it 'blocks users who can edit' do

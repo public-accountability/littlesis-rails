@@ -17,7 +17,7 @@ class Image < ApplicationRecord
   scope :featured, -> { where(is_featured: true) }
   scope :persons, -> { joins(:entity).where(entity: { primary_ext: 'Person' }) }
 
-  IMAGE_HOST = APP_CONFIG.fetch('image_host')
+  IMAGE_HOST = Rails.application.config.littlesis.fetch(:image_host)
   IMAGE_SIZES = { small: 50, profile: 200, large: 1024, original: nil }.freeze
   IMAGE_TYPES = IMAGE_SIZES.keys.freeze
 
@@ -33,7 +33,7 @@ class Image < ApplicationRecord
 
   DATA_URL_PREFIX_REGEX = /image\/(jpeg|jpg|png|gif);base64/i
 
-  DEFAULT_FILE_TYPE = APP_CONFIG['default_image_file_type'] || 'jpg'
+  DEFAULT_FILE_TYPE = Rails.application.config.littlesis.fetch(:default_image_file_type, 'jpg')
 
   before_soft_delete :unfeature, if: :is_featured
 

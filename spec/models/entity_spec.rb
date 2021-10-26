@@ -671,7 +671,7 @@ describe Entity, :tag_helper do
       it 'defaults to system user if provided user is nil' do
         entity.update_timestamp_for(nil)
         expect(entity.updated_at).to be > 1.second.ago
-        expect(entity.last_user_id).to eql APP_CONFIG.fetch('system_user_id')
+        expect(entity.last_user_id).to eq User.system_user_id
       end
 
       it 'returns self' do

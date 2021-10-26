@@ -59,19 +59,19 @@ Rails.application.configure do
   config.assets.initialize_on_precompile = true
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  config.action_controller.asset_host = "https://#{APP_CONFIG['asset_host']}"
+  config.action_controller.asset_host = "https://#{config.littlesis[:asset_host]}"
   config.assets.prefix = '/assets'
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.perform_deliveries = !APP_CONFIG['beta']
+  config.action_mailer.perform_deliveries = !config.littlesis.beta
   config.action_mailer.smtp_settings = {
-    address:              APP_CONFIG['smtp_address'],
-    port:                 APP_CONFIG['smtp_port'],
-    domain:               APP_CONFIG['smtp_domain'],
-    user_name:            APP_CONFIG['smtp_user_name'],
-    password:             APP_CONFIG['smtp_password'],
-    authentication:       APP_CONFIG['smtp_authentication'],
+    address:              config.littlesis[:smtp_address],
+    port:                 config.littlesis[:smtp_port],
+    domain:               config.littlesis[:smtp_domain],
+    user_name:            config.littlesis[:smtp_user_name],
+    password:             config.littlesis[:smtp_password],
+    authentication:       config.littlesis[:smtp_authentication],
     ssl: true
   }
 

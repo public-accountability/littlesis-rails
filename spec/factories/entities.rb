@@ -107,7 +107,7 @@ FactoryBot.define do
   end
 
   trait :with_last_user_id do
-    last_user_id { APP_CONFIG['system_user_id'] }
+    last_user_id { 1 }
   end
 
   trait :with_person_name do

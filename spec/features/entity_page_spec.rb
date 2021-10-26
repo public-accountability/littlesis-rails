@@ -566,7 +566,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
           let(:people) do
             Array.new(Entity::PER_PAGE + 2) do
-              create(:entity_person, last_user_id: APP_CONFIG['system_user_id'])
+              create(:entity_person, last_user_id: User.system_user_id)
             end
           end
 

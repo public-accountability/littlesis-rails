@@ -18,7 +18,7 @@ Rails.application.configure do
   config.eager_load = false
   # config.enable_dependency_loading = true
 
-  Lilsis::Application.default_url_options[:host] = 'test.host'
+  LittleSis::Application.default_url_options[:host] = 'test.host'
   routes.default_url_options[:host] = 'test.host'
   config.action_controller.default_url_options[:host] = 'test.host'
   config.action_mailer.default_url_options[:host] = 'test.host'

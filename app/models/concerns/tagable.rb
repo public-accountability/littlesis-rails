@@ -39,16 +39,16 @@ module Tagable
 
   # CRUD METHODS
 
-  def add_tag(name_or_id, user_id = APP_CONFIG['system_user_id'])
+  def add_tag(name_or_id, user_id = Rails.application.config.littlesis[:system_user_id])
     t = Tagging
-        .find_or_initialize_by(tag_id:         parse_tag_id!(name_or_id),
-                               tagable_class:  self.class.name,
-                               tagable_id:     id)
+          .find_or_initialize_by(tag_id:         parse_tag_id!(name_or_id),
+                                 tagable_class:  self.class.name,
+                                 tagable_id:     id)
     t.update(last_user_id: user_id) unless t.persisted?
     self
   end
 
-  def add_tag_without_callbacks(name_or_id, user_id = APP_CONFIG['system_user_id'])
+  def add_tag_without_callbacks(name_or_id, user_id = Rails.application.config.littlesis[:system_user_id])
     Tagging.skip_callback(:save, :after, :update_tagable_timestamp)
     add_tag(name_or_id, user_id)
   ensure

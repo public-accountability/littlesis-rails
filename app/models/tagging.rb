@@ -18,7 +18,7 @@ class Tagging < ApplicationRecord
   after_destroy :populate_to_sphinx
 
   # TODO: replace this with touch_by
-  def update_tagable_timestamp(last_user_id = APP_CONFIG['system_user_id'])
+  def update_tagable_timestamp(last_user_id = Rails.application.config.littlesis[:system_user_id])
     if tagable.last_user_id == last_user_id
       tagable.touch
     else

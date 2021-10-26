@@ -175,17 +175,21 @@ class User < ApplicationRecord
       input.id
     else
       if allow_invalid
-        APP_CONFIG['system_user_id']
+        system_user_id
       else
         raise TypeError, "Invalid class. Provided: #{input.class}"
       end
     end
   end
 
+  def self.system_user_id
+    Rails.application.config.littlesis.fetch(:system_user_id)
+  end
+
   def self.system_user
     return @_system_user if defined?(@_system_user)
 
-    @_system_user = User.find(APP_CONFIG['system_user_id'])
+    @_system_user = User.find(system_user_id)
   end
 
   def self.system_users
@@ -204,6 +208,8 @@ class User < ApplicationRecord
   private
 
   def set_default_network_id
-    self.default_network_id = APP_CONFIG.fetch('default_network_id', 79) if default_network_id.nil?
+    if default_network_id.nil?
+      self.default_network_id = Rails.application.config.littlesis.fetch(:default_network_id, 79)
+    end
   end
 end

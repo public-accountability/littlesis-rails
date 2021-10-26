@@ -22,7 +22,7 @@ shared/_nav_menu_search renders the search box
         <% end  %>
       </div>
 
-      <% if APP_CONFIG['beta'] %>
+      <% if Rails.application.config.littlesis[:beta] %>
         <div id="navbar-beta-notice" class="navbar-right-menu-item mr-2">
           <span>
             <abbr title="This is a beta version of LittleSis used for testing.&#10;Changes are not synced with our regular site.">

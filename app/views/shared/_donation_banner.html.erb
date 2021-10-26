@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-md fixed-top navbar-light" id="donation-banner-container">
   <div id="donation-banner-wrapper">
     <p class="text-center">
-      <%= raw APP_CONFIG['donation_banner_html'] %>
+      <%= raw Rails.application.config.littlesis[:donation_banner_html] %>
     </p>
   </div>
 </nav>
