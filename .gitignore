@@ -20,15 +20,6 @@
 .cache/
 .log/
 
-# Ignore vim swap files
-*.swp
-
-# Ignore database configuration
-/config/database.yml
-
-# Ignore secret configuration
-/config/lilsis.yml
-/config/secrets.yml
 
 # Ignore sphinx indexes
 /db/sphinx
@@ -52,6 +43,7 @@
 .pry_history
 .irb-history
 .gem
+*.swp
 
 # Generated test error files
 spec/testdata/*_errors.txt
@@ -62,11 +54,9 @@ coverage
 # rdoc
 doc/
 
-# Passenger files
-.passenger/
-
 # ignore json stored in the top level
 /*.json
+!/package.json
 
 # Everything in the data folder is ignored outright
 /data/*
@@ -80,17 +70,11 @@ doc/
 !/data/swamped.json
 !/data/fec_transaction_types.csv
 
-# webpacker
-!/package.json
-/public/packs
-/public/packs-test
+# javascript
 /node_modules
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
-
-app/assets/stylesheets/styles/*.css
-app/assets/stylesheets/styles/*.css.map
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key

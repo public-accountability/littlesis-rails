@@ -8,8 +8,7 @@ Bundler.require(*Rails.groups)
 
 module LittleSis
   class Application < Rails::Application
-    config.littlesis = config_for(:lilsis)
-    # config.littlesis = config_for(:littlesis)
+    config.littlesis = config_for(:littlesis)
 
     config.load_defaults 6.0
     config.autoloader = :zeitwerk
