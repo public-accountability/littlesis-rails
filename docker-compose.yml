@@ -3,6 +3,10 @@ version: '3'
 volumes:
   postgres-data:
 
+networks:
+  default:
+    name: littlesis
+
 services:
   app:
     image: littlesis:latest
@@ -39,8 +43,9 @@ services:
     ports:
       - '127.0.0.1:5432:5432'
     environment:
-      POSTGRES_PASSWORD: themanbehindthemanbehindthethrone
-      POSTGRES_USER: littlesis
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-themanbehindthemanbehindthethrone}"
+      POSTGRES_USER: "${POSTGRES_USER:-littlesis}"
+      POSTGRES_DB: "${POSTGRES_DB:-littlesis}"
 
   nginx:
     image: nginx:latest
