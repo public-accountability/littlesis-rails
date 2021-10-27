@@ -1,6 +1,6 @@
 describe ToolkitController, type: :controller do
-  after(:all) { ToolkitPage.delete_all }
-  before(:all) { ToolkitPage.delete_all }
+  # after(:all) { ToolkitPage.delete_all }
+  # before(:all) { ToolkitPage.delete_all }
 
   it { is_expected.to route(:get, '/toolkit').to(action: :index) }
   it { is_expected.to route(:get, '/toolkit/new').to(action: :new) }
@@ -11,7 +11,7 @@ describe ToolkitController, type: :controller do
   it { is_expected.to route(:patch, '/toolkit/123').to(action: :update, id: '123') }
 
   describe 'display' do
-    before(:all) do
+    before do
       ToolkitPage.create!(name: 'interesting_facts', title: 'interesting facts', content: '# interesting facts')
     end
 

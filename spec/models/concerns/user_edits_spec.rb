@@ -111,8 +111,6 @@ describe UserEdits do
   end # UserEdits::Edits
 
   describe 'Active users' do
-    before(:all) { PaperTrail::Version.delete_all }
-
     let(:user_one) { create_really_basic_user }
     let(:user_two) { create_really_basic_user }
 

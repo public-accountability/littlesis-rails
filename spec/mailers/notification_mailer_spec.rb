@@ -1,8 +1,6 @@
 # rubocop:disable RSpec/NamedSubject
 
 describe NotificationMailer, type: :mailer do
-  before(:all) { ActiveJob::Base.queue_adapter = :test } # rubocop:disable RSpec/BeforeAfterAll
-
   describe '#contact_email' do
     let(:params) do
       { name: 'me', email: 'email@email.com', message: 'hey', subject: 'hi' }

@@ -1,8 +1,6 @@
 # rubocop:disable RSpec/NestedGroups, RSpec/InstanceVariable
 
 describe Permissions, :tag_helper do
-  seed_tags
-
   describe 'initalizing with user with edit and list permissions' do
     let(:user) { create_basic_user }
     let(:permission) { Permissions.new(user) }
@@ -40,6 +38,8 @@ describe Permissions, :tag_helper do
     let(:view_only_access) { { viewable: true, editable: false } }
 
     before do
+      TagSpecHelper::TAGS.each { |t| Tag.create!(t) }
+
       access_rules = { tag_ids: [open_tag.id, closed_tag.id] }
       owner.user_permissions.create(resource_type: 'Tag',
                                     access_rules: access_rules)
