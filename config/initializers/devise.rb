@@ -3,7 +3,7 @@
 # see https://github.com/heartcombo/devise and https://github.com/imhta/rails_6_devise_example
 # for examples
 Devise.setup do |config|
-  config.mailer_sender = APP_CONFIG['default_from_email']
+  config.mailer_sender = Rails.application.config.littlesis[:default_from_email]
   config.mailer = "Devise::Mailer"
 
   require 'devise/orm/active_record'

@@ -1,0 +1,27 @@
+production:
+  adapter: postgresql
+  encoding: unicode
+  reconnect: true
+  sslmode: prefer
+  pool: 10
+  database: <%= Rails.application.credentials.database[:name] %>
+  username: <%= Rails.application.credentials.database[:username] %>
+  password: <%= Rails.application.credentials.database[:password] %>
+  host: <%= Rails.application.credentials.database[:host] %>
+
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: littlesis
+  pool: 10
+  username: littlesis
+  password: themanbehindthemanbehindthethrone
+  host: postgres
+
+test:
+  adapter: postgresql
+  encoding: unicode
+  database: littlesis_test
+  username: littlesis
+  password: themanbehindthemanbehindthethrone
+  host: postgres

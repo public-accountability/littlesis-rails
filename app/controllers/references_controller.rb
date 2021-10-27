@@ -13,7 +13,7 @@ class ReferencesController < ApplicationController
       # added, and don't want to confuse the user by having
       # an edit not show up on the modifications page.
       # This is why the system user is being used.
-      @referenceable.touch_by(APP_CONFIG['system_user_id'])
+      @referenceable.touch_by(Rails.application.config.littlesis.fetch(:system_user_id))
 
       respond_to do |format|
         format.html { redirect_back(fallback_location: after_create_reference_fallback_location) }

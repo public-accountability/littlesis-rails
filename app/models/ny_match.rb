@@ -34,7 +34,7 @@ class NyMatch < ApplicationRecord
   # input: int, int, int (optional)
   # output: NyMatch
   # Matches the NY disclosure with the donor.
-  def self.match(disclosure_id, donor_id, matched_by=APP_CONFIG['system_user_id'])
+  def self.match(disclosure_id, donor_id, matched_by=Rails.application.config.littlesis[:system_user_id])
     m = find_or_initialize_by(ny_disclosure_id: disclosure_id, donor_id: donor_id)
     if m.new_record?
       m.matched_by = matched_by
@@ -90,7 +90,7 @@ class NyMatch < ApplicationRecord
 
   def last_user_id_for_relationship
     if matched_by.nil? || (persisted? && updated_at < 1.minute.ago)
-      APP_CONFIG['system_user_id']
+      Rails.application.config.littlesis[:system_user_id]
     else
       matched_by
     end

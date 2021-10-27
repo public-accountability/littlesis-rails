@@ -1,5 +1,4 @@
 describe 'lists/header', :tag_helper, type: :view do
-  seed_tags
 
   let(:tags) { [] }
   let(:list) do
@@ -24,7 +23,7 @@ describe 'lists/header', :tag_helper, type: :view do
   end
 
   context 'list has 1 tag' do
-    let(:tags) { Tag.all.take(1) }
+    let(:tags) { [Tag.create!(TagSpecHelper::OIL_TAG)] }
 
     it 'renders tag partial' do
       expect(view).to render_template(:partial => "lists/_tags", :locals => { tags: tags })
@@ -32,7 +31,7 @@ describe 'lists/header', :tag_helper, type: :view do
   end
 
   context 'list has 3 tag' do
-    let(:tags) { Tag.all.take(3) }
+    let(:tags) { TagSpecHelper::TAGS.map { |t| Tag.create!(t) } }
 
     it 'renders template lists/tags with the title' do
       expect(view).to render_template(:partial => "lists/_tags",

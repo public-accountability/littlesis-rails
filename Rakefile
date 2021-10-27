@@ -3,4 +3,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Lilsis::Application.load_tasks
+LittleSis::Application.load_tasks

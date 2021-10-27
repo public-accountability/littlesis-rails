@@ -31,8 +31,7 @@ describe TagsHelper, type: :helper do
     end
 
     context "when edited by The System" do
-      let(:system) { User.find(APP_CONFIG["system_user_id"]) }
-      let(:edit_event) { { "editor" => system } }
+      let(:edit_event) { { "editor" => User.system_user } }
 
       it { is_expected.to eql "System" }
     end

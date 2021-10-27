@@ -1,5 +1,7 @@
 feature "Editing Tags", :tag_helper, type: :feature do
-  seed_tags
+  before do
+    TagSpecHelper::TAGS.each { |t| Tag.create!(t) }
+  end
 
   let(:admin) { create_admin_user }
   let(:normal_user) { create_really_basic_user }

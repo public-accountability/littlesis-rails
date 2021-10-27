@@ -9,8 +9,6 @@ class NetworkMap < ApplicationRecord
 
   LS_DATA_SOURCE_BASE_URL = "#{Rails.application.default_url_options[:protocol]}://#{Rails.application.default_url_options[:host]}"
 
-  OLIGRAPHER_VERSION = APP_CONFIG['oligrapher_version']
-
   attribute :graph_data, OligrapherGraphData::Type.new
   serialize :editors, Array
 

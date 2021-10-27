@@ -2,53 +2,40 @@ version: 2.1
 
 jobs:
   rspec:
+    machine:
+      image: ubuntu-2004:202107-02
+#      docker_layer_caching: true
     environment:
       RAILS_ENV: test
       COVERAGE: yes
+      POSTGRES_PASSWORD: littlesis
+      POSTGRES_USER: littlesis
+      POSTGRES_DB: littlesis_test
     resource_class: medium
-    docker:
-      - image: ruby:3.0.2-buster
-        environment:
-          RAILS_ENV: test
-
-      - image: postgres:13
-        environment:
-          POSTGRES_PASSWORD: littlesis
-          POSTGRES_USER: littlesis
-          POSTGRES_DB: littlesis_test
-
     steps:
       - checkout
-      - run: bin/ci_setup.sh
-      - run: bin/docker_setup.sh
+      - run: cp config/database.ci.yml config/database.yml
+      - run: mkdir -p tmp tmp/rspec tmp/small/ tmp/profile tmp/large/ tmp/original/
 
       - restore_cache:
-          keys:
-            - gem-cache-v1-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          name: Restore LittleSis Docker cache
+          key: littlesis-docker-{{ checksum "Dockerfile" }}-{{ checksum "yarn.lock" }}-{{ checksum "Gemfile.lock" }}
 
-      - run: bundle install --path vendor/bundle
-
-      - save_cache:
-          key: gem-cache-v1-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
-
-      - run: bundle exec rake db:reset
-      - run: bundle exec rake tmp:clear
-
-      - restore_cache:
-          keys:
-            - node-modules-cache-v1-{{ checksum "yarn.lock" }}
-
-      - run: bundle exec rake yarn:install
+      - run: test -f littlesis-docker.tar.gz || docker build -t littlesis:latest .
+      - run: test -f littlesis-docker.tar.gz || docker save littlesis:latest | gzip > littlesis-docker.tar.gz
 
       - save_cache:
-          key: node-modules-cache-v1-{{ checksum "yarn.lock" }}
+          key: littlesis-docker-{{ checksum "Dockerfile" }}-{{ checksum "yarn.lock" }}-{{ checksum "Gemfile.lock" }}
           paths:
-            - node_modules
+            - littlesis-docker.tar.gz
 
-      - run: bundle exec rake assets:precompile
-      - run: bundle exec rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
+      - run: test -z "$(docker image ls -q littlesis:latest)" && docker load -i littlesis-docker.tar.gz || true
+      - run: docker-compose up -d
+      - run: docker-compose exec postgres pg_isready --timeout=10
+      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake db:reset
+      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake tmp:clear
+      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake assets:precompile
+      - run: docker-compose exec -e RAILS_ENV=test -e COVERAGE=true app bundle exec rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
 
       - store_test_results:
           path: tmp/rspec
@@ -58,7 +45,7 @@ jobs:
 
   mocha:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2004:202107-02
     steps:
       - run: curl -o- -L https://yarnpkg.com/install.sh | bash
       - checkout

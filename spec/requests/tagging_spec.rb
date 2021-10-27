@@ -1,5 +1,7 @@
 describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
-  seed_tags
+  before do
+    TagSpecHelper::TAGS.each { |t| Tag.create!(t) }
+  end
 
   let(:entity) { create(:org) }
   let(:list) { create(:list) }

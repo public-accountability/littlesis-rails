@@ -42,6 +42,6 @@ class OligrapherScreenshotJob < ApplicationJob
   end
 
   def map_url(map)
-    Lilsis::Application.routes.url_helpers.oligrapher_url(map)
+    LittleSis::Application.routes.url_helpers.oligrapher_url(map)
   end
 end

@@ -1,21 +1,7 @@
 defaults: &defaults
-  aws_key: ''
-  aws_secret: ''
-  aws_region: 'us-east-1'
-  aws_s3_base: "https://s3.amazonaws.com"
-  aws_s3_bucket: "littlesis-dev"
   default_from_email: dev@littlesis.org
   default_to_email: dev@littlesis.org
-  admins_only: false
-  netmap_api_key: freeapiforlittlesisdevs
-  netmap_default_width: 960
-  netmap_default_height: 550
-  google_site_verification:
-  google_analytics_id:
-  default_image_file_type: jpg
   system_user_id: 1
-  default_network_id: 79
-  cloudfront_distribtion_id:
   smtp_address: "mail.littlesis.org"
   smtp_port: 465
   smtp_domain: "littlesis.org"
@@ -27,22 +13,20 @@ defaults: &defaults
   notification_password: ""
   notification_to: "test@littlesis.org"
   carousel_list_id: 404
-  restricted_ips:
-    - 192.0.2.1
   action_network_api_key: 'your-action-network-api-key-here'
   redis_url: "redis://redis:6379/0/cache"
+  default_image_file_type: jpg
   donation_banner_display: false # use 'everywhere' to display on all pages and 'homepage' for just the homepage
   donation_banner_html: |
-    <b>LittleSis</b> is turning <b>10</b> years old! <a href="https://littlesis.org/donate/">Become a $10/month sustaining donor</a> and we’ll send you an anniversary t-shirt!
-  oligrapher_version: 0.4.3
+    Will you <a href="https://littlesis.org/donate/">pitch in</a> to support LittleSis's power mapping tools?
+  host: littlesis.org
   asset_host: "127.0.0.1:8080"
   image_host: "https://littlesis.org"
   image_root: public/images
-  host: littlesis.org
   protocol: https
-  image_host: "https://littlesis.org"
-  image_root: public/images
   beta: false
+  noediting: false
+  firefox_binary: /opt/firefox
 
 test:
   <<: *defaults
@@ -52,7 +36,7 @@ test:
   donation_banner_display: false
   oligrapher_version: 0.0.1
   image_root: tmp
-  host: 'test.host'
+  host: 'localhost:8080'
   protocol: http
 
 development:
@@ -63,3 +47,20 @@ development:
 
 production:
   <<: *defaults
+  redis_url: redis://127.0.0.1:6379/0/cache
+  image_host: https://littlesis.org
+  image_root: public/images
+  host: littlesis.org
+  protocol: https
+  beta: False
+  carousel_list_id: 1257
+  action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
+  smtp_address: <%= Rails.application.credentials.smtp_address %>
+  smtp_domain: <%= Rails.application.credentials.smtp_domain %>
+  smtp_user_name: <%= Rails.application.credentials.smtp_user_name %>
+  smtp_password: <%= Rails.application.credentials.smtp_password %>
+  notification_email: <%= Rails.application.credentials.notification_user_name %>
+  notification_user_name: <%= Rails.application.credentials.notification_user_name %>
+  notification_password: <%= Rails.application.credentials.notification_password %>
+  notification_to: <%= Rails.application.credentials.notification_to %>
+  restricted_ips: <%= Rails.application.credentials.restricted_ips %>

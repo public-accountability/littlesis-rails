@@ -23,7 +23,7 @@ class ApplicationRecord < ActiveRecord::Base
     if current_user.present?
       touch_by current_user
     else
-      touch_by APP_CONFIG.fetch('system_user_id')
+      touch_by User.system_user_id
     end
   end
 
@@ -75,6 +75,6 @@ class ApplicationRecord < ActiveRecord::Base
   protected
 
   def set_last_user_id
-    self.last_user_id = APP_CONFIG.fetch('system_user_id') unless self.last_user_id.present?
+    self.last_user_id = User.system_user_id unless self.last_user_id.present?
   end
 end

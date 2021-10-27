@@ -247,7 +247,7 @@ describe 'Tags', :tagging_helper, type: :feature do
 
         context "tags were added by both system and an analyst" do
           let(:user) { create_basic_user }
-          let(:person) { create(:entity_person).add_tag(tag.id, APP_CONFIG["system_user_id"]) }
+          let(:person) { create(:entity_person).add_tag(tag.id, User.system_user_id) }
           let(:list) { create(:list).add_tag(tag.id, user.id) }
           let(:setup) { proc { list; person; } }
           let(:text) { page.all("#tag-homepage-edits-table tbody tr").map(&:text).join(' ') }

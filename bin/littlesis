@@ -1,0 +1,494 @@
+#!/bin/bash
+set -e
+
+rails_repo="$(realpath $(dirname $(dirname $(readlink -f $BASH_SOURCE))))"
+rails_env="${RAILS_ENV:-development}"
+docker_compose="docker-compose --file=$rails_repo/docker-compose.yml"
+bundle_path="bundle"
+delayed_job="bin/delayed_job"
+
+database_name="${LITTLESIS_DATABASE_NAME:-littlesis}"
+database_user="${LITTLESIS_DATABASE_USER:-littlesis}"
+database_password="${LITTLESIS_DATABASE_PASSWORD:-themanbehindthemanbehindthethrone}"
+database_host="${LITTLESIS_DATABASE_HOST:-127.0.0.1}"
+
+case $1 in
+    --test|-t)
+        shift
+        rails_env="test"
+        ;;
+    --development|-d)
+        shift
+        rails_env="development"
+        ;;
+    --production|-P)
+        shift
+        rails_env="production"
+        ;;
+esac
+
+if [ "$rails_env" == "test" ];then
+    database_name="littlesis_test"
+elif [ "$rails_env" == "production" ];then
+    if [ $USER != 'littlesis' ];then
+        fail "Must be run as the littlesis unix user in production"
+    fi
+
+    bundle_path="/home/littlesis/.rbenv/shims/bundle"
+    delayed_job="bin/delayed_job -n 2"
+fi
+
+set_environment_to_test() {
+    if ! [ "$rails_env" == "test" ]; then
+        echo "Setting RAILS_ENV to test" 1>&2
+        rails_env="test"
+        database_name="littlesis_test"
+    fi
+}
+
+export RAILS_ENV=$rails_env
+
+GIT="git -C $rails_repo"
+
+show_help() {
+    cat << EOF
+Usage: littlesis <command>
+
+Commands
+           up                start docker containers
+           down              stop docker containers
+           delete            deletes database by removing docker volumes
+           status            local status information
+           docker <cmd>      run any docker docker command (i.e  docker ps)
+           build             build docker images
+           bash              interative bash shell
+           cmd <cmd>         run aribary shell commands in app docker
+           bin <file>        execute file in bin/ by name
+           script <file>     execute file in lib/scripts by name
+           console           launch rails console
+           logs <LOG>        follow log. options: rails, nginx, docker
+           redis             start redis cli
+           delayed_job <cmd> run delayed_job commands
+           run-sql <file>    execute sql file with user & db = littlesis
+           data              ETL utilities for external data
+           fec               runs FEC data cli
+           update-crontab    cron tasks are in schedule.rb
+
+The following aliases are available
+           git
+           rspec
+           rails
+           runner
+           bundle
+           pumactl
+           yarn
+           psql | pg_dump | pg_restore
+
+Testing:
+           test              run test suite
+           coverage          open simplecov report
+Development:
+           setup-clone       clones littlesis-rails
+           setup-database    recreates littlesis database
+           reset-test-db     drops and re-creates littlesis_test
+           search            searches rails files
+           pull-request      fetch pull request by number
+
+Production:
+           deploy           deploys to latest commit on main
+
+
+Use --test, --production, --development to set RAILS_ENV
+           littlesis --test rake db:migrate
+
+EOF
+}
+
+warn() {
+    echo -e "\e[1;45m$1\e[0m" 1>&2
+}
+
+fail() {
+    echo "$1" 1>&2
+    exit 1
+}
+
+short_help() {
+    echo "Usage: littlesis [COMMAND]"
+    echo "Helpful shortcuts to the LittleSis development environment"
+    echo "More information: littlesis help"
+}
+
+database_connection() {
+    echo "postgresql://$database_user:$database_password@$database_host/$database_name"
+}
+
+setup_database() {
+    echo "The current rails environment is $rails_env"
+    echo "This will delete the entire database"
+    read -r -n 1 -p "are you sure (y/n)? " answer
+
+    if [[ "$answer" =~ ^[Yy]$ ]];then
+        bundle_exec rake db:reset
+    fi
+}
+
+nginx_logs() {
+    local log_file="/var/log/nginx/${1:-access}.log"
+
+    if [ "$rails_env" == "production" ];then
+        tail -f "$log_file"
+    else
+        $docker_compose exec nginx /bin/sh -c "tail -f $log_file"
+    fi
+}
+
+rails_coverage() {
+    local cov_file=file://$rails_repo/coverage/index.html
+
+    if [ -x "$(command -v firefox)" ];then
+        firefox --new-window $cov_file > /dev/null 2>&1
+    elif [ -x "$(command -v chromium)" ];then
+        chromium --new-window $cov_file > /dev/null 2>&1
+    else
+        fail 'Could not find firefox or chromium'
+    fi
+}
+
+redis_cli() {
+    if [ "$rails_env" == "production" ]
+    then
+        /usr/bin/redis-cli
+    else
+        $docker_compose exec app /usr/bin/redis-cli -h redis
+    fi
+}
+
+littlesis_fetch_pull_request() {
+    [ -z "$1" ] && fail "please provide a pull request number"
+    $GIT fetch origin pull/$1/head:pull-request-$1
+}
+
+littlesis_status() {
+    local rails_git_commit=$($GIT rev-parse --short HEAD)
+    local rails_git_branch=$($GIT rev-parse --abbrev-ref HEAD)
+
+    echo "On Rails commit $rails_git_commit on branch $rails_git_branch"
+
+    if [ "$rails_env" == "production" ]
+    then
+        if systemctl is-active -q littlesis;then
+            echo "littlesis.service is active"
+        else
+            fail "littlesis.service is not active"
+        fi
+    else
+        local services_running="$(docker_compose ps --services --filter "status=running" | sed '/^$/d' | wc -l)"
+
+        if [ "$services_running" == '4' ];then
+            echo "Docker containers are running :)"
+        else
+            echo "$services_running / 4 docker containers are running :("
+        fi
+    fi
+
+    if bundle_exec rake ts:status | grep -q 'is currently running'
+    then
+        echo "Manticore is running"
+    else
+        warn "Manticore is not running. Try rake ts:start"
+    fi
+}
+
+littlesis_docker_build() {
+    sh -c "cd $rails_repo && docker build -t littlesis:latest ."
+}
+
+app_exec_docker() {
+    $docker_compose exec -e "RAILS_ENV=$rails_env" app "$@"
+}
+
+app_exec_production() {
+    /bin/sh -c "export RAILS_ENV=production; cd $rails_repo; $*"
+}
+
+web_app_exec() {
+    if [ "$rails_env" == "production" ]
+    then
+        app_exec_production "$@"
+    else
+        app_exec_docker "$@"
+    fi
+}
+
+bundle_exec() {
+    web_app_exec "$bundle_path" exec "$@"
+}
+
+run_postgres_cmd() {
+    if [ "$rails_env" == "production" ]
+    then
+        PGUSER="$database_user" PGPASSWORD="$database_password" PGHOST="$database_host" PGDATABASE="$database_name" "$@"
+    else
+        $docker_compose run -e PGUSER="$database_user" -e PGPASSWORD="$database_password" -e PGHOST="postgres" -e PGDATABASE="$database_name" --rm postgres "$@"
+    fi
+}
+
+exec_sql_file() {
+    sql_file="$1"
+
+    if ! test -f "$sql_file"
+    then
+        echo "$sql_file is not a file"
+        return 1
+    fi
+
+    run_postgres_cmd psql $(database_connection) < "$sql_file"
+}
+
+git_files_changed () {
+    $GIT diff --name-only "$remote_commit" "$local_commit" | grep -q "$1"
+}
+
+deploy() {
+    if [ ! "$($GIT ls-files -m | wc -l)" = '0' ]
+    then
+        echo "The following files have been modified: "
+        $GIT ls-files -m
+        read -p "Are you sure you want to deploy? (y/n)" -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]
+        then
+            return 1
+        fi
+    fi
+
+    read -p 'Which branch? ' -e -i 'main' branch
+    $GIT fetch origin "$branch"
+
+    remote_commit=$($GIT rev-parse "origin/${branch}")
+    local_commit=$($GIT rev-parse @)
+
+    if test "$remote_commit" = "$local_commit"
+    then
+        echo "No upstream changes"
+        return 0
+    fi
+
+    git_subject=$($GIT log --format=%s -n 1 "$remote_commit")
+
+    echo "Deploying $remote_commit on $branch: $git_subject"
+
+    $GIT checkout $branch
+    $GIT pull
+
+    if git_files_changed "db/migrate";then
+        cat << EOF
++-----------------------------------------------------------+
+  These changes likely require a database update,
+  which will NOT happen automatically by this script.
+  To perform a migration run: "bundle exec rake db:migrate"
++-----------------------------------------------------------+
+EOF
+    fi
+
+    if git_files_changed "Gemfile";then
+        echo "Installing new gems"
+        web_app_exec "$bundle_path" install
+    fi
+
+    if git_files_changed 'yarn.lock';then
+        echo 'Updating javascripting packages'
+        bin/yarn
+    fi
+
+    if git_files_changed "oligrapher.rb";then
+        bundle_exec rails runner 'OligrapherAssetsService.new.run'
+    fi
+
+
+    if git_files_changed 'assets' || git_files_changed 'packs' || git_files_changed 'yarn.lock' || git_files_changed 'javascript'
+    then
+        echo "Precompiling assets"
+        bundle_exec rake assets:precompile
+    fi
+
+    echo "Restarting delayed job"
+    bundle_exec "$delayed_job" restart
+
+    echo "Restarting LittleSis"
+    bundle_exec pumactl -p tmp/puma.pid restart
+}
+
+case $1 in
+    docker|docker_compose|docker-compose)
+        shift
+        $docker_compose "$@"
+        ;;
+    up)
+        $docker_compose up -d
+        ;;
+    down)
+        $docker_compose down
+        ;;
+    delete)
+        $docker_compose down -v
+        ;;
+    build)
+        littlesis_docker_build
+        ;;
+    pause|unpause|ps|top)
+        $docker_compose "$1"
+        ;;
+    status)
+        littlesis_status
+        ;;
+    pumactl)
+        shift
+        bundle_exec pumactl -p tmp/puma.pid "$@"
+        ;;
+    test|rspec)
+        shift
+        set_environment_to_test
+        bundle_exec rspec "$@"
+        ;;
+    cmd)
+        shift
+        web_app_exec "$@"
+        ;;
+    bundle)
+        shift
+        web_app_exec "$bundle_path" "$@"
+        ;;
+    yarn)
+        shift
+        bundle_exec bin/yarn "$@"
+        ;;
+    bin)
+        shift
+        scriptpath="/littlesis/bin/$1"
+        shift
+
+        if [ "$rails_env" == "production" ];then
+            scriptpath="/var/www/$scriptpath"
+        fi
+
+        web_app_exec "$scriptpath" "$@"
+        ;;
+    script)
+        shift
+        scriptpath="/littlesis/lib/scripts/$1"
+        shift
+
+        if [ "$rails_env" == "production" ];then
+            scriptpath="/var/www/$scriptpath"
+        fi
+
+        web_app_exec "$scriptpath" "$@"
+        ;;
+    search)
+        shift
+        rg -e "$1" "$rails_repo"
+        ;;
+    git)
+        shift
+        $GIT "$@"
+        ;;
+    console|c)
+        bundle_exec rails c
+        ;;
+    rails|rake|rspec)
+        bundle_exec "$@"
+        ;;
+    runner)
+        shift
+        bundle_exec rails runner "$@"
+        ;;
+    delayed_job|delayed-job|dj)
+        shift
+        bundle_exec "$delayed_job" "$@"
+        ;;
+    logs)
+        shift
+        case $1 in
+            rails)
+                tail -f "$rails_repo/log/$rails_env.log"
+                ;;
+            nginx)
+                nginx_logs "$2"
+                ;;
+            docker)
+                $docker_compose logs --follow
+                ;;
+            *)
+                fail "invalid log: $1. options: rails, nginx, docker"
+                ;;
+        esac
+        ;;
+    reset-test-db)
+        set_environment_to_test
+        bundle_exec rake db:reset
+        ;;
+    data)
+        shift
+        bundle_exec rails runner lib/scripts/data.rb -- "$@"
+        ;;
+    cov|coverage)
+        rails_coverage
+        ;;
+    redis)
+        redis_cli
+        ;;
+    fec)
+        shift
+        bundle_exec rails runner lib/scripts/fec "$@"
+        ;;
+    pull-request)
+        shift
+        littlesis_fetch_pull_request "$1"
+        exit
+        ;;
+    setup-clone)
+        clone_repo
+        ;;
+    setup-database)
+        if ! [ "$rails_env" == "production" ];then
+            setup_database
+        fi
+        ;;
+    run-sql)
+        shift
+        exec_sql_file "$1"
+        ;;
+    update-crontab)
+        bundle_exec whenever --update-crontab
+        ;;
+    deploy)
+        if [ "$rails_env" == "production" ];then
+            deploy
+        else
+            fail "deploy can only be run in production"
+        fi
+        ;;
+    psql|pg_dump|pg_restore)
+        run_postgres_cmd "$@"
+        ;;
+    pgcli)
+        # This is run outside of docker unlike psql
+        shift
+        pgcli $(database_connection) "$@"
+        ;;
+    bash)
+        web_app_exec /bin/bash --login
+        ;;
+    -h|help|--help)
+        show_help
+        ;;
+    ?*) # End of all options.
+        fail "Invalid option"
+        ;;
+    *)
+        # short_help
+        echo $rails_repo
+        ;;
+esac

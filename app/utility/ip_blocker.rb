@@ -3,11 +3,11 @@
 # Checks if IP in listed in the configuration `restricted_ips`
 # Used by confirmations to block ip rangers where spam bots sign up.
 module IpBlocker
-  if APP_CONFIG['restricted_ips'].blank?
+  if Rails.application.config.littlesis[:restricted_ips].blank?
     define_singleton_method(:restricted?) { |ip| false }
   else
 
-    IPS = APP_CONFIG['restricted_ips'].map do |ip|
+    IPS = Rails.application.config.littlesis[:restricted_ips].map do |ip|
       begin
         IPAddr.new(ip)
       rescue IPAddr::InvalidAddressError

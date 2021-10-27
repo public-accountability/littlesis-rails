@@ -2,7 +2,7 @@
 
 # Very simple wrapper around File, used by Image
 class ImageFile
-  IMAGE_ROOT = APP_CONFIG['image_root']
+  IMAGE_ROOT = Rails.application.config.littlesis[:image_root]
 
   attr_reader :path, :type, :filename
 

@@ -5,7 +5,7 @@
 # can add users and email address to LittleSis
 #
 module ActionNetwork
-  API_KEY = APP_CONFIG.fetch('action_network_api_key').dup.freeze
+  API_KEY = Rails.application.config.littlesis.fetch(:action_network_api_key).dup.freeze
   API_INFO_URL = 'https://actionnetwork.org/api/v2'
   PEOPLE_URL = 'https://actionnetwork.org/api/v2/people'
 

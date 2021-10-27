@@ -25,7 +25,7 @@ describe Tagging, type: :model do
     it 'sets last_user_id to be the system\'s default user' do
       org.update_columns(updated_at: 1.day.ago, last_user_id: user.id)
       expect { org.add_tag(tag.id) }
-        .to change { org.reload.last_user_id }.to(APP_CONFIG['system_user_id'])
+        .to change { org.reload.last_user_id }.to(User.system_user_id)
     end
   end
 

@@ -6,6 +6,10 @@ describe Tag, :pagination_helper do
   it { should have_db_column(:description) }
   it { should have_many(:taggings) }
 
+  after(:all) do
+    Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
+  end
+
   describe 'validations' do
     let(:tag) { build(:tag) }
     subject { tag }
@@ -209,7 +213,7 @@ describe Tag, :pagination_helper do
 
     describe 'recent edits' do
       let(:user) { create_basic_user }
-      let(:system_user) { User.find(APP_CONFIG["system_user_id"]) }
+      let(:system_user) { User.system_user }
       let(:tag) { create(:tag) }
 
       let(:entities) { Array.new(2) { create(:entity_org) } }

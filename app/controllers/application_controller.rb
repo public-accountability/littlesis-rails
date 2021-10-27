@@ -69,7 +69,9 @@ class ApplicationController < ActionController::Base
   def check_permission(name)
     raise Exceptions::PermissionError unless current_user.present?
     raise Exceptions::RestrictedUserError if current_user.restricted?
-    raise Exceptions::EditingDisabled if APP_CONFIG['noediting'] && !current_user.essential?
+    if Rails.application.config.littlesis[:noediting] && !current_user.essential?
+      raise Exceptions::EditingDisabled
+    end
     raise Exceptions::PermissionError unless current_user.has_ability?(name)
   end
 

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe Entity, :tag_helper do
-  seed_tags
-
   def public_company
     org = create(:entity_org)
     org.aliases.create!(name: 'another name')
@@ -213,6 +211,11 @@ describe Entity, :tag_helper do
     end
 
     let(:association_data) { company.get_association_data }
+
+    before do
+      Tag.create!(TagSpecHelper::OIL_TAG)
+      Tag.create!(TagSpecHelper::NYC_TAG)
+    end
 
     it 'has extension ids' do
       expect(association_data['extension_ids']).to eql [2, 13]
@@ -671,7 +674,7 @@ describe Entity, :tag_helper do
       it 'defaults to system user if provided user is nil' do
         entity.update_timestamp_for(nil)
         expect(entity.updated_at).to be > 1.second.ago
-        expect(entity.last_user_id).to eql APP_CONFIG.fetch('system_user_id')
+        expect(entity.last_user_id).to eq User.system_user_id
       end
 
       it 'returns self' do
@@ -1009,6 +1012,10 @@ describe Entity, :tag_helper do
   end
 
   describe 'Tagging' do
+    before do
+      Tag.create!(TagSpecHelper::OIL_TAG)
+    end
+
     it 'can tag a person with oil' do
       person = create(:entity_person)
       expect { person.add_tag('oil') }.to change(Tagging, :count).by(1)
