@@ -2,9 +2,33 @@
 
 ## About
 
-[LittleSis](https://littlesis.org) is a free database of who-knows-who at the heights of business and government. It is a public wiki and purpose-built database for researching powerful organizations, tracking conflicts of interest, and visualizing networks of political influence. LittleSis started in 2009 and our database contains over 1.5 million relationships between over 400 thousand people and organizations.
+[LittleSis](https://littlesis.org) is a free database of who-knows-who at the heights of business and government. It is a public wiki and purpose-built database for researching powerful organizations, tracking conflicts of interest, and visualizing networks of political influence. LittleSis started in 2009 and our database contains over 1.6 million relationships between over 400 thousand people and organizations.
 
-LittleSis.org is operated by the [Public Accountability Initiative](https://public-accountability.org), an independent non-profit organization. The project is currently maintained by [ziggy](mailto:ziggy@littlesis.org).
+LittleSis is a project of [The Public Accountability Initiative](https://public-accountability.org/), a non-profit public interest research organization focused on corporate and government accountability. Visit [Eyes on the Ties](https://news.littlesis.org) to read our research or follow [@twittlesis](https://twitter.com/twittlesis) on twitter.
+
+This repository [littlesis-rails](https://github.com/public-accountability/littlesis-rails) is our core application. See [public-accountability/oligrapher](https://github.com/public-accountability/oligrapher) for our javascript mapping tool.
 
 
-This repository, [littlesis-rails](https://github.com/public-accountability/littlesis-rails), is our core application. Visit [public-accountability/littlesis-main](https://github.com/public-accountability/littlesis-main) for installation instructions and [public-accountability/oligrapher](https://github.com/public-accountability/oligrapher) for our javascript/react mapping tool.
+## Project history & software
+
+Matthew Skomarovsky co-founded LittleSis and was the initial developer behind the project. LittleSis started in 2009 as a [PHP application](https://github.com/littlesis-org/littlesis). The port to Ruby on Rails began in 2013 and finished in 2017.
+
+Ziggy ([@aepyornis](https://github.com/aepyornis)) joined in 2016 and currently maintains the project.
+
+Along the way, Austin ([@aguestuser](https://github.com/aguestuser)) worked on on oligrapher and the rails codebase. Liz ([@lizstarin](https://github.com/lizstarin)) helped port PHP code to rails and
+developed the chrome extension. Pea ([@misfist](https://github.com/misfist)) coded our wordpress sites. Since 2020, Rob [@robjlucas](https://github.com/robjlucas) has contributed to the rails application.
+
+
+
+| Key software |               |
+|:------------:|:-------------:|
+| Application  | Ruby on Rails |
+| Database     | Postgresql    |
+| Web Server   | Puma, Nginx   |
+| Search       | Manticore     |
+| Cache        | Redis         |
+| Blog         | Wordpress     |
+| OS           | Debian        |
+
+
+[Developer Instructions](./DEVELOPMENT.md)

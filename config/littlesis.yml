@@ -51,6 +51,7 @@ production:
   image_host: https://littlesis.org
   image_root: public/images
   host: littlesis.org
+  asset_host: littlesis.org
   protocol: https
   beta: False
   carousel_list_id: 1257
