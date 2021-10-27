@@ -21,8 +21,8 @@ jobs:
           name: Restore LittleSis Docker cache
           key: littlesis-docker-{{ checksum "Dockerfile" }}-{{ checksum "yarn.lock" }}-{{ checksum "Gemfile.lock" }}
 
-      - run: docker build -t littlesis:latest .
-      - run: docker save littlesis:latest | gzip > littlesis-docker.tar.gz
+      - run: test -f littlesis-docker.tar.gz || docker build -t littlesis:latest .
+      - run: test -f littlesis-docker.tar.gz || docker save littlesis:latest | gzip > littlesis-docker.tar.gz
 
       - save_cache:
           key: littlesis-docker-{{ checksum "Dockerfile" }}-{{ checksum "yarn.lock" }}-{{ checksum "Gemfile.lock" }}
@@ -35,7 +35,7 @@ jobs:
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake db:reset
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake tmp:clear
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake assets:precompile
-      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
+      - run: docker-compose exec -e RAILS_ENV=test -e COVERAGE=true app bundle exec rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
 
       - store_test_results:
           path: tmp/rspec
