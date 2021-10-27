@@ -3,6 +3,5 @@ test:
   database: littlesis_test
   username: littlesis
   password: littlesis
-  host: 127.0.0.1
+  host: postgres
   encoding: utf8
-  local_infile: true
