@@ -6,6 +6,10 @@ describe Tag, :pagination_helper do
   it { should have_db_column(:description) }
   it { should have_many(:taggings) }
 
+  after(:all) do
+    Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
+  end
+
   describe 'validations' do
     let(:tag) { build(:tag) }
     subject { tag }

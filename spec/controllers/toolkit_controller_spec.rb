@@ -1,7 +1,4 @@
 describe ToolkitController, type: :controller do
-  # after(:all) { ToolkitPage.delete_all }
-  # before(:all) { ToolkitPage.delete_all }
-
   it { is_expected.to route(:get, '/toolkit').to(action: :index) }
   it { is_expected.to route(:get, '/toolkit/new').to(action: :new) }
   it { is_expected.to route(:get, '/toolkit/some_page').to(action: :display, page_name: 'some_page') }

@@ -1,11 +1,11 @@
 describe UpdateEntityNetworkMapCollectionsJob, type: :job do
   include ActiveJob::TestHelper
 
-  before(:all) do
+  before do
     EntityNetworkMapCollection.remove_all
   end
 
-  after(:all) do
+  after  do
     EntityNetworkMapCollection.remove_all
   end
 
