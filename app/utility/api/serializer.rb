@@ -11,7 +11,7 @@ module Api
 
     def initialize(model, exclude: nil)
       @model = model
-      @model_info = MODEL_INFO[@model.class.name.downcase]
+      @model_info = MODEL_INFO[@model.class.name.downcase] || {}
       # Common Fields + model-specific fields defined in api.yml + method argument
       @ignore = MODEL_INFO[:common][:ignore].dup
       @ignore.concat(@model_info[:ignore]) if @model_info[:ignore]
