@@ -2,6 +2,7 @@ version: '3'
 
 volumes:
   postgres-data:
+    name: rails_postgres-data
 
 networks:
   default:

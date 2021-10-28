@@ -19,6 +19,8 @@
 /tmp
 .cache/
 .log/
+/log
+!/log/.keep
 
 
 # Ignore sphinx indexes

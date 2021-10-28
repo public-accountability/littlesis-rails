@@ -1,4 +1,5 @@
 defaults: &defaults
+  query_log_min_msec: 200
   morphology: stem_en
   min_infix_len: 3
   min_word_len: 2

@@ -2,43 +2,30 @@
 
 module Api
   class Serializer
+    MODEL_INFO = YAML.safe_load(File.new(Rails.root.join('config', 'api.yml')).read).with_indifferent_access.freeze
+
+    extend Forwardable
     attr_reader :attributes
-    MODEL_INFO = YAML.safe_load(File.new(Rails.root.join('config', 'api.yml')).read).freeze
 
-    def initialize(model, exclude: [])
+    def_delegator :@attributes, :[], :to_h
+
+    def initialize(model, exclude: nil)
       @model = model
-      @exclude = Array.wrap(exclude).map(&:to_s)
-      @class_name = @model.class.name.downcase
-      @fields = MODEL_INFO.dig(@class_name, 'fields')&.reject { |f| @exclude.include?(f) }
-      @ignore = attributes_to_ignore
-      set_attributes
-    end
+      @model_info = MODEL_INFO[@model.class.name.downcase] || {}
+      # Common Fields + model-specific fields defined in api.yml + method argument
+      @ignore = MODEL_INFO[:common][:ignore].dup
+      @ignore.concat(@model_info[:ignore]) if @model_info[:ignore]
+      @ignore.concat(Array.wrap(exclude).map(&:to_s)) if exclude.present?
 
-    private
+      @attributes = @model.attributes
 
-    def set_attributes
-      @attributes = @model.attributes.delete_if { |k, _| @ignore.include?(k) }
-      model_specific_attributes unless @fields.nil?
-      isoify_updated_at
-    end
-
-    def model_specific_attributes
-      @fields.each do |(field_name, code)|
-        @attributes.store(field_name, @model.instance_eval("self.#{code}"))
+      # Some models have additional fields defined in api.yml
+      @model_info[:fields]&.each do |(field_name, code)|
+        @attributes.store(field_name.to_s, @model.instance_eval("self.#{code}"))
       end
-    end
 
-    def attributes_to_ignore
-      model_ignores = MODEL_INFO[@class_name].try(:fetch, 'ignore')
-      return common_ignores if model_ignores.blank?
-      common_ignores + model_ignores
-    end
+      @attributes.delete_if { |k| @ignore.include?(k) }
 
-    def common_ignores
-      MODEL_INFO['common']['ignore']
-    end
-
-    def isoify_updated_at
       if @model.respond_to?(:updated_at) && @attributes.key?('updated_at')
         @attributes.store('updated_at', @model.updated_at&.iso8601)
       end
