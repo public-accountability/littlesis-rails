@@ -16,16 +16,24 @@ class CongressImporter
 
       bioguide_id = @legislator.dig('id', 'bioguide')
       govtrack_id = @legislator.dig('id', 'govtrack')
+      fec_ids = @legislator.dig('id', 'fec')
 
-      if bioguide_id
+      if fec_ids.present?
+        @entity = ExternalLink.find_by(link_type: :fec_candidate, link_id: fec_ids)&.entity
+      end
+
+      if bioguide_id && !entity
         @entity = ElectedRepresentative.find_by(bioguide_id: bioguide_id)&.entity
       end
 
-      if !@entity && govtrack_id
+      if govtrack_id && !@entity
         @entity = ElectedRepresentative.find_by(govtrack_id: govtrack_id)&.entity
       end
 
-      @entity ||= match_by_name
+      unless @entity
+        @entity = match_by_name
+      end
+
       freeze
     end
 

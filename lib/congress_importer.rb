@@ -7,7 +7,7 @@ require_relative 'congress_importer/terms_importer'
 # Processes congressional legistors yaml files and matches
 # each legistor with existing LittleSis entities
 #
-# rake task                            method
+# rake task                            methodq
 #-----------------------------------------------------------------------------------------------
 # legislators:import                   import_all                   Legislator#import!
 # legislators:import_relationships     import_all_relationships     TermsImporter#import!
