@@ -2,17 +2,19 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   connect() {
-    this.init()
-  }
-
-  init(event) {
     Parsley.addValidator('username', {
       validateString: function(value) {
-        let xhr = $.post('/users/check_username', {username: value})
-
-        return xhr.then(function(json) {
+        return $.ajax({
+          "url":  '/users/check_username',
+          "method": 'POST',
+          "data": { "username": value },
+          "headers": {
+            "X-CSRF-Token": document.getElementsByName('csrf-token')[0].content
+          },
+          "datatype": 'json'
+        }).then(function(json) {
           if (!json.valid) {
-              return $.Deferred().reject('Username is taken. Please pick a new username.')
+            return $.Deferred().reject('Username is taken or invalid. Please pick a new username.')
           }
         })
       }
