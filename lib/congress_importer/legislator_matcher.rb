@@ -22,7 +22,7 @@ class CongressImporter
         @entity = ExternalLink.find_by(link_type: :fec_candidate, link_id: fec_ids)&.entity
       end
 
-      if bioguide_id && !entity
+      if bioguide_id && !@entity
         @entity = ElectedRepresentative.find_by(bioguide_id: bioguide_id)&.entity
       end
 
