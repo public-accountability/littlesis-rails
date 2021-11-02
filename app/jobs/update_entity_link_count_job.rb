@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-namespace :entities do
-  desc "update link counts for all entities"
-  task update_link_counts: :environment do
+class UpdateEntityLinkCountJob < ApplicationJob
+  def perform
     sql = <<~SQL.squish
       SELECT entities.id as id, entities.link_count as entities_link_count, link_counts.link_count as link_link_count
       FROM  (SELECT entity1_id, COUNT(id) AS link_count

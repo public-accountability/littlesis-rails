@@ -28,8 +28,4 @@ class NyFilerEntity < ApplicationRecord
     disclosure_count = NyDisclosure.where(filer_id: ny_filer.filer_id).count
     UnmatchedNyFiler.create(ny_filer_id: ny_filer.id, disclosure_count: disclosure_count)
   end
-
-  handle_asynchronously :rematch_existing_matches
-  handle_asynchronously :delete_from_unmatched_ny_filers
-  handle_asynchronously :add_to_unmatched_ny_filers
 end

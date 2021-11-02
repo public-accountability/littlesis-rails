@@ -44,8 +44,10 @@ Rails.application.configure do
   config.web_console.allowed_ips = ['172.0.0.0/8']
   config.web_console.whiny_requests = false
 
-  config.good_job.execution_mode = :async  # :external
+  config.good_job.execution_mode = :async # :external
+  config.good_job.enable_cron = true
   config.good_job.max_threads = 1
+
 
   # TODO: Maybe enable this?
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
