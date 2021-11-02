@@ -1,39 +1,24 @@
 # frozen_string_literal: true
 
-require 'importers'
+require 'congress_importer'
 
 namespace :legislators do
   desc 'import legislators'
   task import: :environment do
-    begin
-      ThinkingSphinx::Callbacks.suspend!
-      importer = CongressImporter.new
-      importer.import_all
-    ensure
-      ThinkingSphinx::Callbacks.resume!
-    end
+    importer = CongressImporter.new
+    importer.import_all
   end
 
   desc 'import legislator relationships'
   task import_relationships: :environment do
-    begin
-      ThinkingSphinx::Callbacks.suspend!
-      importer = CongressImporter.new
-      importer.import_all_relationships
-    ensure
-      ThinkingSphinx::Callbacks.resume!
-    end
+    importer = CongressImporter.new
+    importer.import_all_relationships
   end
 
   desc 'import legislator party memberships'
   task import_party_memberships: :environment do
-    begin
-      ThinkingSphinx::Callbacks.suspend!
-      importer = CongressImporter.new
-      importer.import_party_memberships
-    ensure
-      ThinkingSphinx::Callbacks.resume!
-    end
+    importer = CongressImporter.new
+    importer.import_party_memberships
   end
 
   desc 'Display statics about matches '
@@ -59,7 +44,7 @@ namespace :legislators do
     importer = CongressImporter.new
     importer.match_all
 
-    importer.reps.select { |l| l.match_type == :none }. each do |legislator|
+    importer.reps.select { |l| l.match_type == :none }.each do |legislator|
       name = legislator['name'].slice('first', 'last').to_a.map(&:second).join(' ')
       bioguide = legislator['id']['bioguide']
       puts "#{name} (#{bioguide})"

@@ -1,4 +1,4 @@
-require 'importers'
+require 'congress_importer'
 
 describe CongressImporter::LegislatorMatcher do
   let(:person) do
@@ -9,6 +9,7 @@ describe CongressImporter::LegislatorMatcher do
     CongressImporter::Legislator.new(
       { 'id' => { 'bioguide' => 'A000103',
                   'thomas' => '00010',
+                  'fec' => ["S8AR00112", "H2AR01022"],
                   'govtrack' => 400_761,
                   'icpsr' => 12_000,
                   'wikipedia' => 'William Vollie Alexander Jr.',
@@ -38,13 +39,15 @@ describe CongressImporter::LegislatorMatcher do
       'name_suffix' => 'Jr.' }
   end
 
+  it 'finds by fec id' do
+    person.external_links.create!(link_type: :fec_candidate, link_id: "H2AR01022")
+    expect(CongressImporter::LegislatorMatcher.new(legislator).entity).to eq person
+  end
+
   it 'finds match with bioguide id' do
     person.create_elected_representative!(bioguide_id: 'A000103')
 
-    # binding.pry
-    expect(CongressImporter::LegislatorMatcher.new(legislator).entity)
-      .to eq person
-
+    expect(CongressImporter::LegislatorMatcher.new(legislator).entity).to eq person
   end
 
   it 'finds match with govtrak id' do

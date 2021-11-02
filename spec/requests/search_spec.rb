@@ -52,7 +52,7 @@ describe 'Entity Search', :sphinx, type: :request do
     end
   end
 
-  describe_unless_on_circleci 'Limiting search by tag' do
+  describe 'Limiting search by tag' do
     it 'returns both apple entities when searching for oil tag' do
       get '/search/entity', params: { q: 'apple', tags: 'oil' }
       expect(response).to have_http_status :ok

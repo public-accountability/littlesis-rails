@@ -1,4 +1,4 @@
-require 'importers'
+require 'congress_importer'
 
 # rubocop:disable RSpec/NamedSubject
 

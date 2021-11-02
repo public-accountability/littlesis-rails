@@ -15,7 +15,8 @@ class CongressImporter
     def initialize(legislator)
       @_legislator = legislator
       @_distilled_terms = DistilledTerms.new(distilled_rep_terms, distilled_sen_terms)
-      @entity = legislator.legislator_matcher.entity
+      @entity = @_legislator.legislator_matcher.entity
+
       unless @entity
         raise Exceptions::LittleSisError, "Could not find a matching entity for #{legislator}"
       end

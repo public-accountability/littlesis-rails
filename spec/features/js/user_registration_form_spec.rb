@@ -1,79 +1,69 @@
-feature 'User registration form', type: :feature, js: true do
-  before do
-    visit new_user_registration_path
-  end
+describe 'user registration', js: true do
+  describe_unless_on_ci 'User Registration' do
 
-  scenario 'user submits form without filling it out and is taken to the first required field' do
-    within '#new_user' do
-      click_on 'Sign up'
+    before do
+      visit new_user_registration_path
     end
-    expect(page).to have_css('#user_user_profile_attributes_name_first:focus')
-  end
 
-  scenario 'user is prompted to accept the terms of use' do
-    within '#new_user' do
-      fill_in 'First Name', with: 'Oedipa'
-      fill_in 'Last Name', with: 'Maas'
-      fill_in 'Email', with: 'oedipa@maas.net'
-      fill_in 'Username', with: 'oedipa'
-      fill_in 'Password (Minimum 8 letters)', with: 'trolleron'
-      fill_in 'Password confirmation', with: 'volauvent'
-      fill_in 'about-you-input', with: 'investigating Trystero and related matters'
+    scenario 'user submits form without filling it out and is taken to the first required field' do
+      expect(page).not_to have_css('#user_user_profile_attributes_name_first:focus')
+      click_on 'Sign up'
+      expect(page).to have_css('#user_user_profile_attributes_name_first:focus')
+    end
+
+    scenario 'user is prompted to accept the terms of use' do
+      find('#user_user_profile_attributes_name_first').send_keys('Oedipa')
+      find('#user_user_profile_attributes_name_last').send_keys('Maas')
+      find('#user_email').send_keys('oedipa@maas.net')
+      find('#user_username').send_keys('oedipa')
+      find('#user_password').send_keys('trolleron')
+      find('#user_password_confirmation').send_keys('trolleron')
+      find('#about-you-input').send_keys('investigating Trystero and related matters')
       fill_in_math_captcha('math_captcha')
       click_on 'Sign up'
 
       expect(page).to have_css('.parsley-required', text: 'Unfortunately, you have to accept the terms first')
     end
-  end
 
-  scenario 'user enters a too-short password' do
-    within '#new_user' do
-      fill_in 'First Name', with: 'Oedipa'
-      fill_in 'Last Name', with: 'Maas'
-      fill_in 'Email', with: 'oedipa@maas.net'
-      fill_in 'Username', with: 'oedipa'
-      fill_in 'Password (Minimum 8 letters)', with: 'wamp'
-      fill_in 'Password confirmation', with: 'wamp'
-      fill_in 'about-you-input', with: 'investigating Trystero and related matters'
+    scenario 'user enters a too-short password' do
+      find('#user_user_profile_attributes_name_first').send_keys('Oedipa')
+      find('#user_user_profile_attributes_name_last').send_keys('Maas')
+      find('#user_email').send_keys('oedipa@maas.net')
+      find('#user_username').send_keys('oedipa')
+      find('#user_password').send_keys('short')
+      find('#user_password_confirmation').send_keys('short')
+      find('#about-you-input').send_keys('investigating Trystero and related matters')
       fill_in_math_captcha('math_captcha')
       find('#terms_of_use').check
       click_on 'Sign up'
-
       expect(page).to have_css('.parsley-minlength', text: 'Passwords must be at least 8 characters')
     end
-  end
 
-  scenario 'user enters a bad password confirmation' do
-    within '#new_user' do
-      fill_in 'First Name', with: 'Oedipa'
-      fill_in 'Last Name', with: 'Maas'
-      fill_in 'Email', with: 'oedipa@maas.net'
-      fill_in 'Username', with: 'oedipa'
-      fill_in 'Password (Minimum 8 letters)', with: 'wampwamp'
-      fill_in 'Password confirmation', with: 'pwampwam'
-      fill_in 'about-you-input', with: 'investigating Trystero and related matters'
+    scenario 'user enters a bad password confirmation' do
+      find('#user_user_profile_attributes_name_first').send_keys('Oedipa')
+      find('#user_user_profile_attributes_name_last').send_keys('Maas')
+      find('#user_email').send_keys('oedipa@maas.net')
+      find('#user_username').send_keys('oedipa')
+      find('#user_password').send_keys('4Wm45Csff4WbdiC')
+      find('#user_password_confirmation').send_keys('a_different_password')
+      find('#about-you-input').send_keys('investigating Trystero and related matters')
       fill_in_math_captcha('math_captcha')
       find('#terms_of_use').check
       click_on 'Sign up'
-
       expect(page).to have_css('.parsley-equalto', text: 'Your password and password confirmation do not match :(')
     end
-  end
 
-  scenario 'user is prompted to fill out "about you"' do
-    within '#new_user' do
-      fill_in 'First Name', with: 'Oedipa'
-      fill_in 'Last Name', with: 'Maas'
-      fill_in 'Email', with: 'oedipa@maas.net'
-      fill_in 'Username', with: 'oedipa'
-      fill_in 'Password (Minimum 8 letters)', with: 'wampwamp'
-      fill_in 'Password confirmation', with: 'wampwamp'
+    scenario 'user is prompted to fill out "about you"' do
+      find('#user_user_profile_attributes_name_first').send_keys('Oedipa')
+      find('#user_user_profile_attributes_name_last').send_keys('Maas')
+      find('#user_email').send_keys('oedipa@maas.net')
+      find('#user_username').send_keys('oedipa')
+      find('#user_password').send_keys('4Wm45Csff4WbdiC')
+      find('#user_password_confirmation').send_keys('4Wm45Csff4WbdiC')
       fill_in_math_captcha('math_captcha')
       find('#terms_of_use').check
-
       click_on 'Sign up'
+      expect(page).to have_css('#about-you-input:focus')
     end
-
-    expect(page).to have_css('#about-you-input:focus')
   end
 end
