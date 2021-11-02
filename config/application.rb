@@ -41,7 +41,7 @@ module LittleSis
     config.cache_store = :redis_cache_store, { url: config.littlesis[:redis_url] }
 
     # config.assets.paths << "#{Rails.root}/vendor/assets/images"
-    config.active_job.queue_adapter = :delayed_job
+    config.active_job.queue_adapter = :good_job
 
     config.action_controller.per_form_csrf_tokens = false
 

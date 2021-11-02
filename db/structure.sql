@@ -1548,25 +1548,6 @@ CREATE TABLE public.external_data_nycc (
 
 
 --
--- Name: external_data_nycc_district_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.external_data_nycc_district_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: external_data_nycc_district_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.external_data_nycc_district_seq OWNED BY public.external_data_nycc.district;
-
-
---
 -- Name: external_data_nys_disclosures; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1895,6 +1876,29 @@ CREATE SEQUENCE public.generic_id_seq
 --
 
 ALTER SEQUENCE public.generic_id_seq OWNED BY public.generic.id;
+
+
+--
+-- Name: good_jobs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.good_jobs (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    queue_name text,
+    priority integer,
+    serialized_params jsonb,
+    scheduled_at timestamp without time zone,
+    performed_at timestamp without time zone,
+    finished_at timestamp without time zone,
+    error text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    active_job_id uuid,
+    concurrency_key text,
+    cron_key text,
+    retried_good_job_id uuid,
+    cron_at timestamp without time zone
+);
 
 
 --
@@ -4482,13 +4486,6 @@ ALTER TABLE ONLY public.external_data_nyc_contributions ALTER COLUMN id SET DEFA
 
 
 --
--- Name: external_data_nycc district; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.external_data_nycc ALTER COLUMN district SET DEFAULT nextval('public.external_data_nycc_district_seq'::regclass);
-
-
---
 -- Name: external_data_nys_filers id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5313,14 +5310,6 @@ ALTER TABLE ONLY public.external_data_nyc_contributions
 
 
 --
--- Name: external_data_nycc external_data_nycc_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.external_data_nycc
-    ADD CONSTRAINT external_data_nycc_pkey PRIMARY KEY (district);
-
-
---
 -- Name: external_data_nys_filers external_data_nys_filers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5390,6 +5379,14 @@ ALTER TABLE ONLY public.fec_matches
 
 ALTER TABLE ONLY public.generic
     ADD CONSTRAINT generic_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: good_jobs good_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.good_jobs
+    ADD CONSTRAINT good_jobs_pkey PRIMARY KEY (id);
 
 
 --
@@ -7593,6 +7590,48 @@ CREATE UNIQUE INDEX index_fec_matches_on_sub_id ON public.fec_matches USING btre
 
 
 --
+-- Name: index_good_jobs_on_active_job_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_active_job_id_and_created_at ON public.good_jobs USING btree (active_job_id, created_at);
+
+
+--
+-- Name: index_good_jobs_on_concurrency_key_when_unfinished; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_concurrency_key_when_unfinished ON public.good_jobs USING btree (concurrency_key) WHERE (finished_at IS NULL);
+
+
+--
+-- Name: index_good_jobs_on_cron_key_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_cron_key_and_created_at ON public.good_jobs USING btree (cron_key, created_at);
+
+
+--
+-- Name: index_good_jobs_on_cron_key_and_cron_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_good_jobs_on_cron_key_and_cron_at ON public.good_jobs USING btree (cron_key, cron_at);
+
+
+--
+-- Name: index_good_jobs_on_queue_name_and_scheduled_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_queue_name_and_scheduled_at ON public.good_jobs USING btree (queue_name, scheduled_at) WHERE (finished_at IS NULL);
+
+
+--
+-- Name: index_good_jobs_on_scheduled_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_scheduled_at ON public.good_jobs USING btree (scheduled_at) WHERE (finished_at IS NULL);
+
+
+--
 -- Name: index_links_on_entity1_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8373,6 +8412,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211007145212'),
 ('20211007152033'),
 ('20211007174700'),
-('20211013191239');
+('20211013191239'),
+('20211102185306');
 
 

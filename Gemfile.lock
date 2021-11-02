@@ -90,7 +90,6 @@ GEM
     concurrent-ruby (1.1.9)
     crass (1.0.6)
     csv (3.2.1)
-    daemons (1.4.1)
     database_cleaner (2.0.1)
       database_cleaner-active_record (~> 2.0.0)
     database_cleaner-active_record (2.0.1)
@@ -99,11 +98,6 @@ GEM
     database_cleaner-core (2.0.1)
     datagrid (1.6.3)
       rails (>= 4.0)
-    delayed_job (4.1.9)
-      activesupport (>= 3.0, < 6.2)
-    delayed_job_active_record (4.1.6)
-      activerecord (>= 3.0, < 6.2)
-      delayed_job (>= 3.0, < 5)
     devise (4.8.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -117,6 +111,8 @@ GEM
       launchy (~> 2.1)
       mail (~> 2.7)
     erubi (1.10.0)
+    et-orbi (1.2.6)
+      tzinfo
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.2.0)
@@ -125,8 +121,19 @@ GEM
     faker (2.19.0)
       i18n (>= 1.6, < 2)
     ffi (1.15.4)
+    fugit (1.5.2)
+      et-orbi (~> 1.1, >= 1.1.8)
+      raabro (~> 1.4)
     globalid (0.5.2)
       activesupport (>= 5.0)
+    good_job (2.6.0)
+      activejob (>= 5.2.0)
+      activerecord (>= 5.2.0)
+      concurrent-ruby (>= 1.0.2)
+      fugit (>= 1.1)
+      railties (>= 5.2.0)
+      thor (>= 0.14.1)
+      zeitwerk (>= 2.0)
     htmlentities (4.3.4)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
@@ -183,6 +190,7 @@ GEM
     public_suffix (4.0.6)
     puma (5.5.2)
       nio4r (~> 2.0)
+    raabro (1.4.0)
     racc (1.6.0)
     rack (2.2.3)
     rack-mini-profiler (2.3.3)
@@ -364,15 +372,13 @@ DEPENDENCIES
   bootsnap (>= 1.4.3)
   capybara (>= 3.14.0)
   csv
-  daemons
   database_cleaner
   datagrid
-  delayed_job (~> 4.1)
-  delayed_job_active_record (>= 4.1.3)
   devise (~> 4.7)
   email_spec
   factory_bot_rails (~> 6.0)
   faker (>= 2.13)
+  good_job
   image_processing
   jsbundling-rails
   kaminari

@@ -27,10 +27,7 @@ gem 'paper_trail', '~> 11'
 # Pagination
 gem 'kaminari'
 
-# Delayed job
-gem 'daemons' # Required by delayed_job
-gem 'delayed_job', '~> 4.1'
-gem 'delayed_job_active_record', '>= 4.1.3'
+gem 'good_job'
 
 # Assets and images
 gem 'image_processing'
