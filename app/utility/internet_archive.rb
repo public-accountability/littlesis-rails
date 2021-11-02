@@ -7,15 +7,16 @@ require 'net/http'
 # In the future we could expand this class to
 # also replace dead links in the database
 class InternetArchive
-  HEADERS = { 'Accept' => 'application/json' }.freeze
-
   # Saves a url to the Internet Archive
   def self.save_url(url)
-    Net::HTTP.start('web.archive.org', 443, use_ssl: true) do |http|
-      request = Net::HTTP::Get.new("/save/#{url}", HEADERS)
-      http.request(request)
+    return unless Rails.env.production?
+
+    response = Net::HTTP.get_response(URI("https://web.archive.org/save/#{url}"))
+
+    if response.is_a?(Net::HTTPRedirection)
+      Rails.logger.info "Saved to internet archive: #{response['location']}"
+    else
+      Rails.logger.warn "Failed to submit URL #{url} to the Internet Archive"
     end
-  rescue
-    Rails.logger.warn "Failed to submit URL #{url} to the Internet Archive"
   end
 end
