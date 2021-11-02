@@ -1,5 +1,5 @@
 describe 'user registration', js: true do
-  describe_unless_on_circleci 'User Registration' do
+  describe_unless_on_ci 'User Registration' do
 
     before do
       visit new_user_registration_path

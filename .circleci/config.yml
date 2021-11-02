@@ -35,7 +35,7 @@ jobs:
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake db:reset
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake tmp:clear
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake assets:precompile
-      - run: docker-compose exec -e RAILS_ENV=test -e COVERAGE=true app bundle exec rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
+      - run: docker-compose exec -e RAILS_ENV=test -e COVERAGE=true -e CI=true app bundle exec rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
 
       - store_test_results:
           path: tmp/rspec

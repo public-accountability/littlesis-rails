@@ -1,3 +1,4 @@
+
 # frozen_string_literal: true
 
 module RspecHelpers
@@ -188,8 +189,8 @@ module RspecHelpers
       end
     end
 
-    def describe_unless_on_circleci(...)
-      if ENV['CIRCLECI']
+    def describe_unless_on_ci(...)
+      if ENV['CI']
         xdescribe(...)
       else
         describe(...)
