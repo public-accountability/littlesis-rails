@@ -3,7 +3,7 @@ production:
   encoding: unicode
   reconnect: true
   sslmode: prefer
-  pool: 10
+  pool: 15
   database: <%= Rails.application.credentials.database[:name] %>
   username: <%= Rails.application.credentials.database[:username] %>
   password: <%= Rails.application.credentials.database[:password] %>
@@ -13,7 +13,7 @@ development:
   adapter: postgresql
   encoding: unicode
   database: littlesis
-  pool: 10
+  pool: 15
   username: littlesis
   password: themanbehindthemanbehindthethrone
   host: postgres
