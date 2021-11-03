@@ -27,10 +27,7 @@ gem 'paper_trail', '~> 11'
 # Pagination
 gem 'kaminari'
 
-# Delayed job
-gem 'daemons' # Required by delayed_job
-gem 'delayed_job', '~> 4.1'
-gem 'delayed_job_active_record', '>= 4.1.3'
+gem 'good_job'
 
 # Assets and images
 gem 'image_processing'
@@ -94,5 +91,4 @@ end
 gem 'roo', "~> 2.8.1", require: false
 gem 'rubyzip', require: false
 gem 'sqlite3', require: false
-gem 'whenever', '~> 1.0.0', require: false
 gem 'parallel', require: false

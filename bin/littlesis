@@ -5,7 +5,6 @@ rails_repo="$(realpath $(dirname $(dirname $(readlink -f $BASH_SOURCE))))"
 rails_env="${RAILS_ENV:-development}"
 docker_compose="docker-compose --file=$rails_repo/docker-compose.yml"
 bundle_path="bundle"
-delayed_job="bin/delayed_job"
 
 database_name="${LITTLESIS_DATABASE_NAME:-littlesis}"
 database_user="${LITTLESIS_DATABASE_USER:-littlesis}"
@@ -35,7 +34,6 @@ elif [ "$rails_env" == "production" ];then
     fi
 
     bundle_path="/home/littlesis/.rbenv/shims/bundle"
-    delayed_job="bin/delayed_job -n 2"
 fi
 
 set_environment_to_test() {
@@ -68,7 +66,6 @@ Commands
            console           launch rails console
            logs <LOG>        follow log. options: rails, nginx, docker
            redis             start redis cli
-           delayed_job <cmd> run delayed_job commands
            run-sql <file>    execute sql file with user & db = littlesis
            data              ETL utilities for external data
            fec               runs FEC data cli
@@ -313,11 +310,9 @@ EOF
         bundle_exec rake assets:precompile
     fi
 
-    echo "Restarting delayed job"
-    bundle_exec "$delayed_job" restart
-
     echo "Restarting LittleSis"
     bundle_exec pumactl -p tmp/puma.pid restart
+
 }
 
 case $1 in

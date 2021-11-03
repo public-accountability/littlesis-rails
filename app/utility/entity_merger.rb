@@ -38,12 +38,9 @@ class EntityMerger
       @child_entities.each(&:merge!)
       @party_members.each(&:merge!)
       @cmp_entity&.save!
-      @os_categories.each(&:save!)
       @relationships.each(&:merge!)
       @locations.each(&:save!)
       merge_os_donations!
-      merge_ny_donations!
-      transfer_ny_filer_entity!
       replace_os_match_cmte_id!
       set_merged_id_and_delete
     end
@@ -102,7 +99,6 @@ class EntityMerger
     merge_references
     merge_tags
     merge_articles
-    merge_os_categories
     merge_child_entities
     merge_party_members
     merge_cmp_entity
@@ -216,13 +212,6 @@ class EntityMerger
                   .map { |ae| ae.tap { |x| x.entity_id = dest.id } }
   end
 
-  def merge_os_categories
-    @os_categories = source
-                       .os_entity_categories
-                       .reject { |oec| dest.os_entity_categories.where(category_id: oec.category_id).exists? }
-                       .map { |oec| oec.tap(&set_dest_entity_id) }
-  end
-
   MergedRelationship = Struct.new(:relationship, :docs) do
     def merge!
       relationship.save!
@@ -282,27 +271,6 @@ class EntityMerger
 
   def replace_os_match_cmte_id!
     OsMatch.where(cmte_id: source.id).update_all(cmte_id: dest.id)
-  end
-
-  def transfer_ny_filer_entity!
-    NyFilerEntity.where(entity_id: source.id).update_all(entity_id: dest.id)
-  end
-
-  def merge_ny_donations!
-    @ny_match_relationships.each do |rel|
-      if rel.entity1_id == source.id
-        ny_disclosure_ids = rel.ny_matches.map(&:ny_disclosure_id)
-        rel.ny_matches.each(&:unmatch!)
-        ny_disclosure_ids.each { |i| NyMatch.match(i, dest.id) }
-      elsif rel.entity2_id == source.id
-        rel.ny_matches.each { |m| m.update!(recip_id: dest.id) }
-        rel.update!(entity2_id: dest.id)
-        rel.links.where(is_reverse: false).update_all(entity2_id: dest.id)
-        rel.links.where(is_reverse: true).update_all(entity1_id: dest.id)
-      else
-        raise Exceptions::ThatsWeirdError
-      end
-    end
   end
 
   def set_merged_id_and_delete

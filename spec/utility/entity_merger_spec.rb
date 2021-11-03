@@ -509,49 +509,6 @@ describe EntityMerger, :merging_helper do
     end
   end
 
-  describe 'Os Entity Category' do
-    subject(:merger) { EntityMerger.new(source: source_org, dest: dest_org) }
-
-    let(:os_category) { build(:os_category_private_equity) }
-
-    context 'with a new category id' do
-      before do
-        OsEntityCategory.create!(category_id: os_category.category_id, entity_id: source_org.id, source: 'OpenSecrets')
-        merger.merge_os_categories
-      end
-
-      it 'changes os_entity_category entity id' do
-        expect(merger.os_categories.length).to be 1
-        expect(merger.os_categories.first).to be_a OsEntityCategory
-        expect(merger.os_categories.first.entity_id).to eql dest_org.id
-      end
-
-      describe 'merge!' do
-        reset_merger
-
-        it 'transfers the OsEntityCategory' do
-          expect { merger.merge! }.to change { dest_org.os_entity_categories.count }.from(0).to(1)
-        end
-
-        it 'does not create new OsEntitycategory' do
-          expect { merger.merge! }.not_to change(OsEntityCategory, :count)
-        end
-      end
-    end
-
-    context 'when there are no new category ids' do
-      before do
-        OsEntityCategory.create!(category_id: os_category.category_id, entity_id: source_org.id, source: 'OpenSecrets')
-        OsEntityCategory.create!(category_id: os_category.category_id, entity_id: dest_org.id, source: 'OpenSecrets')
-        merger.merge_os_categories
-      end
-
-      it '@os_categories is empty' do
-        expect(merger.os_categories).to be_empty
-      end
-    end
-  end
-
   describe 'merging child entities' do
     let!(:child_entities) { Array.new(2) { create(:entity_org, parent_id: source_org.id) } }
 
@@ -648,44 +605,6 @@ describe EntityMerger, :merging_helper do
 
         it 'creates 1 new relationships' do
           expect { merger.merge! }.to change { dest_org.reload.relationships.count }.by(1)
-        end
-      end
-    end
-
-    context 'when source has 2 relationships, one is a ny match relationship' do
-      subject(:merger) { EntityMerger.new(source: source_person, dest: dest_person) }
-
-      let(:filer_id) { SecureRandom.hex(2) }
-      let(:ny_filer) { create(:ny_filer, filer_id: filer_id) }
-      let(:nys_politician) { create(:entity_person) }
-
-      let(:ny_filer_entity) do
-        NyFilerEntity.create!(filer_id: filer_id, entity_id: nys_politician.id, ny_filer: ny_filer)
-      end
-
-      let(:ny_disclosure) { create(:ny_disclosure, filer_id: filer_id) }
-
-      before do
-        ny_filer_entity
-        create(:generic_relationship, entity: create(:entity_org), related: source_person)
-        NyMatch.match(ny_disclosure.id, source_person.id)
-        merger.merge_relationships
-      end
-
-      it 'skips os match relationships' do
-        expect(source_person.relationships.count).to eq 2
-        expect(merger.relationships.length).to eq 1
-      end
-
-      it 'adds ny_match relationship to ny_match_relationships' do
-        expect(merger.ny_match_relationships.length).to eq 1
-      end
-
-      describe 'merge!' do
-        reset_merger
-
-        it 'creates 2 new relationships' do
-          expect { merger.merge! }.to change { dest_person.reload.relationships.count }.by(2)
         end
       end
     end
@@ -872,60 +791,6 @@ describe EntityMerger, :merging_helper do
       end
     end
   end
-
-  describe 'NY donations' do
-    subject(:merger) { EntityMerger.new(source: source_person, dest: dest_person) }
-
-    let(:filer_id) { SecureRandom.hex(2) }
-    let(:ny_filer) { create(:ny_filer, filer_id: filer_id) }
-    let(:nys_politician) { create(:entity_person) }
-    let(:ny_disclosures) { Array.new(2) { create(:ny_disclosure, filer_id: filer_id) } }
-
-    context 'when the source has two ny matches' do
-      before do
-        NyFilerEntity.create!(filer_id: filer_id, entity_id: nys_politician.id, ny_filer: ny_filer)
-        ny_disclosures.map(&:id).map { |i| NyMatch.match(i, source_person.id) }
-      end
-
-      it 'transfers matches' do
-        expect(NyMatch.where(donor_id: source_person.id).count).to eq 2
-        expect(NyMatch.where(donor_id: dest_person.id).count).to eq 0
-        merger.merge!
-        expect(NyMatch.where(donor_id: source_person.id).count).to eq 0
-        expect(NyMatch.where(donor_id: dest_person.id).count).to eq 2
-      end
-    end
-
-    context 'when source is a ny politician' do
-      let(:random_donor) { create(:entity_person) }
-      let(:matches) { ny_disclosures.map { |nyd| NyMatch.match(nyd.id, random_donor.id) } }
-      let(:relationship) { matches.first.relationship }
-
-      before do
-        NyFilerEntity.create!(filer_id: filer_id, entity_id: source_person.id, ny_filer: ny_filer)
-      end
-
-      it 'changes ny_matches' do
-        matches.each { |m| expect(m.recip_id).to eql source_person.id }
-        merger.merge!
-        matches.each { |m| expect(m.reload.recip_id).to eql dest_person.id }
-      end
-
-      it 'updates the relationship' do
-        expect(relationship.entity2_id).to eq source_person.id
-        merger.merge!
-        expect(relationship.reload.entity2_id).to eq dest_person.id
-      end
-
-      it 'changes the NyFilerEntity' do
-        expect(NyFilerEntity.find_by(entity_id: source_person.id).nil?).to be false
-        expect(NyFilerEntity.find_by(entity_id: dest_person.id).nil?).to be true
-        merger.merge!
-        expect(NyFilerEntity.find_by(entity_id: source_person.id).nil?).to be true
-        expect(NyFilerEntity.find_by(entity_id: dest_person.id).nil?).to be false
-      end
-    end
-  end # end nys donations
 
   describe 'external links' do
     context 'when source has an external link' do

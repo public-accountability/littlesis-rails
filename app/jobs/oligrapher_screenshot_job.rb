@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class OligrapherScreenshotJob < ApplicationJob
-  def perform(map_id)
+  def perform(map_id, wait_after: 0)
     require 'firefox' # in lib/ not autoloaded
 
     map = NetworkMap.find(map_id)
@@ -25,6 +25,8 @@ class OligrapherScreenshotJob < ApplicationJob
     rescue Net::ReadTimeout
       Rails.logger.warn "Net::ReadTimeout while trying to take screenshot of map #{map_id}"
     end
+
+    sleep wait_after
   end
 
   private
