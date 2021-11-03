@@ -64,12 +64,12 @@ module LittleSis
         cron: "30 6 * * * *", # at 6:30am every day
         class: "OligrapherScreenshotSchedulingJob",
         args: [:missing],
-        description: "Schedule jobs for network Maps missing screenshots",
+        description: "Schedule jobs for network Maps missing screenshots"
       },
       update_link_counts: {
         cron: "30 4 * * * *", # at 4:30am every day
         class: "UpdateEntityLinkCountJob",
-        description: "Update Entity.link_count",
+        description: "Update Entity.link_count"
       }
     }
   end
