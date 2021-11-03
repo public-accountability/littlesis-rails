@@ -20,11 +20,15 @@ class CongressImporter
 
   attr_reader :current_reps, :historical_reps, :reps
 
-  def initialize
+  def initialize(include_historical: true)
     @current_reps = YAML.safe_load Net::HTTP.get(URI(CURRENT_YAML))
-    @historical_reps = YAML.safe_load Net::HTTP.get(URI(HISTORICAL_YAML))
-    # Reps since 1990, returns array of YAML objects
-    @reps = (historical_reps_after_1990 | @current_reps).map { |rep| Legislator.new(rep) }
+    if include_historical
+      @historical_reps = YAML.safe_load Net::HTTP.get(URI(HISTORICAL_YAML))
+      # Reps since 1990, returns array of YAML objects
+      @reps = (historical_reps_after_1990 | @current_reps).map { |rep| Legislator.new(rep) }
+    else
+      @reps = @current_reps.map { |rep| Legislator.new(rep) }
+    end
   end
 
   def import_all
