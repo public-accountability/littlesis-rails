@@ -33,6 +33,12 @@ application.register("entity-page", EntityPageController)
 import EntityTagsController from "./entity_tags_controller.js"
 application.register("entity-tags", EntityTagsController)
 
+import Fec__ContributionsTableController from "./fec/contributions_table_controller.js"
+application.register("fec--contributions-table", Fec__ContributionsTableController)
+
+import Fec__MatchContributionsController from "./fec/match_contributions_controller.js"
+application.register("fec--match-contributions", Fec__MatchContributionsController)
+
 import HomeDatatablesController from "./home_datatables_controller.js"
 application.register("home-datatables", HomeDatatablesController)
 

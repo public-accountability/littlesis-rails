@@ -393,10 +393,15 @@ LittleSis::Application.routes.draw do
 
   namespace :fec do
     constraints(id: /[0-9]+(-[^\/]+)?/) do
-      get '/entities/:id/contributions', action: :contributions, as: :entity_contributions
-      get '/entities/:id/match_contributions', action: :match_contributions, as: :entity_match_contributions
-      post '/entities/:id/donor_match', action: :donor_match, as: :entity_donor_match
-      delete '/contribution_unmatch', action: :contribution_unmatch
+      get '/entities/:id/contributions', action: :contributions, as: :contributions
+      get '/entities/:id/match_contributions', action: :match_contributions, as: :match_contributions
+
+      get '/fec_matches/:id', action: :fec_match, as: :match
+      get '/committies/:cmte_id', action: :committees
+      get '/candidates/:cand_id', action: :candidates
+
+      post '/fec_matches', action: :create_fec_match, as: :create_match
+      delete '/fec_matches/:id', action: :delete_fec_match, as: :delete_match
     end
   end
 
