@@ -9,7 +9,11 @@
 # GET     /fec/candidates/:cand_id
 # Action
 # POST    /fec/fec_matches { entity_id:, fec_contribution_id: }
+# POST    /fec/fec_contributions/:id/hide_entity { entity_id }
+# POST    /fec/fec_contributions/:id/show_entity { entity_id }
+# POST    /fec/fec_contributions/clear_hidden { entity_id }
 # DELETE  /fec/fec_matches/:id
+# The action routes return Turbo Frames. See views/_fec_contribution_actions.
 class FECController < ApplicationController
   before_action :user_is_matcher?, except: %i[contributions committee candidate]
 
@@ -32,7 +36,6 @@ class FECController < ApplicationController
     end
   end
 
-  # returns turbo-frame for fec contribution actions
   def create_fec_match
     @entity = Entity.find(params[:entity_id])
     @fec_contribution = ExternalDataset.fec_contributions.find(params[:fec_contribution_id])
@@ -46,6 +49,24 @@ class FECController < ApplicationController
     @entity = @fec_match.donor
     @fec_match.destroy!
     render partial: 'fec_contribution_actions', locals: { fec_contribution: @fec_contribution.reload.as_presenter, entity_id: @entity.id }
+  end
+
+  def hide_entity
+    @fec_contribution = ExternalDataset.fec_contributions.find(params[:id])
+    @entity = Entity.find(params.require(:entity_id))
+    @fec_contribution.hide_entity(@entity)
+    render partial: 'fec_contribution_actions', locals: { fec_contribution: @fec_contribution.reload.as_presenter, entity_id: @entity.id }
+  end
+
+  def show_entity
+    @fec_contribution = ExternalDataset.fec_contributions.find(params[:id])
+    @entity = Entity.find(params.require(:entity_id))
+    @fec_contribution.show_entity(@entity)
+    render partial: 'fec_contribution_actions', locals: { fec_contribution: @fec_contribution.reload.as_presenter, entity_id: @entity.id }
+  end
+
+  def clear_hidden
+    @entity = Entity.find(params.require(:entity_id))
   end
 
   def fec_match

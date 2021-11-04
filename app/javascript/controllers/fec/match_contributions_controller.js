@@ -9,14 +9,24 @@ export default class extends Controller {
     delay(() => this.element.querySelector('form').submit(), 300)
   }
 
-  toggleHideMatched(event) {
-    if (event.target.classList.contains('bi-toggle-off')) {
-      event.target.classList.remove('bi-toggle-off')
-      event.target.classList.add('bi-toggle-on')
-    } else {
-      event.target.classList.remove('bi-toggle-on')
-      event.target.classList.add('bi-toggle-off')
-    }
+  toggleIncludeHidden(event) {
+    this.toggleClasses(event.target)
     $('#fec-contributions-table').DataTable().draw()
   }
+
+  toggleHideMatched(event) {
+    this.toggleClasses(event.target)
+    $('#fec-contributions-table').DataTable().draw()
+  }
+
+  toggleClasses(target) {
+    if (target.classList.contains('bi-toggle-off')) {
+      target.classList.remove('bi-toggle-off')
+      target.classList.add('bi-toggle-on')
+    } else {
+      target.classList.remove('bi-toggle-on')
+      target.classList.add('bi-toggle-off')
+    }
+  }
+
 }

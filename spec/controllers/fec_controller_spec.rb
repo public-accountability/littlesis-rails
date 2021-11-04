@@ -10,11 +10,11 @@ describe FECController, type: :controller do
     end
 
     it do
-      is_expected.to route(:post, '/fec/entities/123/donor_match').to(action: :donor_match, id: 123)
+      is_expected.to route(:post, '/fec/fec_matches').to(action: :create_fec_match)
     end
 
     it do
-      is_expected.to route(:delete, '/fec/contribution_unmatch').to(action: :contribution_unmatch)
+      is_expected.to route(:delete, '/fec/fec_matches/123').to(action: :delete_fec_match, id: 123)
     end
   end
 end

@@ -400,6 +400,8 @@ LittleSis::Application.routes.draw do
       get '/committies/:cmte_id', action: :committees
       get '/candidates/:cand_id', action: :candidates
 
+      post '/fec_contributions/:id/hide_entity', action: :hide_entity
+      post '/fec_contributions/:id/show_entity', action: :show_entity
       post '/fec_matches', action: :create_fec_match, as: :create_match
       delete '/fec_matches/:id', action: :delete_fec_match, as: :delete_match
     end
