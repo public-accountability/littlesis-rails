@@ -10,4 +10,6 @@ import select2 from 'select2'
 select2($)
 dt(window, jQuery)
 
+
+import "@hotwired/turbo-rails"
 import "./controllers"

@@ -19,7 +19,24 @@
     <div class="row">
       <div class="col mt-4 p-1">
         <% if @contributions.present? %>
-          <%= render partial: 'fec_contributions_table' %>
+          <table class="table table-borderless" id="fec-contributions-table" data-controller="fec--contributions-table" data-fec--contributions-table-entity-id-value="<%= @entity.id %>">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Employment</th>
+                <th data-searchable="false">Amount</th>
+                <th>Date</th>
+                <th data-searchable="false">Type</th>
+                <th>Recipient</th>
+                <th data-searchable="false" data-orderable="false">Source</th>
+                <th data-searchable="false" data-orderable="false" name="import button column"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= render partial: 'fec_contribution', collection: @contributions %>
+            </tbody>
+          </table>
         <% elsif @contributions != nil %>
           <p>No contributions found</p>
         <% end %>

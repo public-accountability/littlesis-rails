@@ -35,6 +35,10 @@ module ExternalDataset
       { name: "FEC Filing #{image_num}", url: reference_url }
     end
 
+    def as_presenter
+      FECContributionPresenter.new(self)
+    end
+
     unless Rails.env.test?
       def readonly?
         true

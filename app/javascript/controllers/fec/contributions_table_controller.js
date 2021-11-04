@@ -18,7 +18,7 @@ export default class extends Controller {
     // removes any row that is already matched
     $.fn.dataTable.ext.search.push( (settings, data, rowIndex, row) => {
       if ($('.fec-controls i').hasClass('bi-toggle-on')) {
-        return !row[8].includes('fec-view-relationship')
+        return !$('#fec-contributions-table').DataTable().row(rowIndex).node().querySelector('td:nth-child(9) i.fec-view-relationship')
       } else {
         return true
       }

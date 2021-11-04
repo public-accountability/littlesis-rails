@@ -28,20 +28,24 @@ class FECController < ApplicationController
                          .where("fec_year >= 2020")
                          .search_by_name(@query)
                          .limit(3000)
-                         .map { |x| FECContributionPresenter.new(x) }
+                         .map(&:as_presenter)
     end
   end
 
+  # returns turbo-frame for fec contribution actions
   def create_fec_match
     @entity = Entity.find(params[:entity_id])
-
-    FECMatch.create!(donor: @entity,
-                     fec_contribution: ExternalDataset.fec_contributions.find(params[:fec_contribution_id]))
-
-    redirect_to fec_match_contributions_path(id: @entity.id, query: params[:query])
+    @fec_contribution = ExternalDataset.fec_contributions.find(params[:fec_contribution_id])
+    FECMatch.create!(donor: @entity, fec_contribution: @fec_contribution)
+    render partial: 'fec_contribution_actions', locals: { fec_contribution: @fec_contribution.as_presenter, entity_id: @entity.id }
   end
 
   def delete_fec_match
+    @fec_match = FECMatch.find(params[:id])
+    @fec_contribution = @fec_match.fec_contribution
+    @entity = @fec_match.donor
+    @fec_match.destroy!
+    render partial: 'fec_contribution_actions', locals: { fec_contribution: @fec_contribution.reload.as_presenter, entity_id: @entity.id }
   end
 
   def fec_match

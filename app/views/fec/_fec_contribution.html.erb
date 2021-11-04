@@ -17,25 +17,6 @@
   </td>
 
   <td>
-    <div class="d-flex flex-row fec-contribution-actions">
-      <% if fec_contribution.matched? %>
-        <div class="p-1">
-          <%= link_to tag.i(class: 'bi bi-check-square-fill fec-view-relationship'),
-           fec_contribution.fec_match.committee_relationship,
-           title: 'View relationship',
-           target: '_blank' %>
-        </div>
-        <div class="p-1">
-          <%= link_to tag.i(class: 'bi bi-eraser fec-remove-match'), "#", title: "Remove match" %>
-        </div>
-      <% else  %>
-        <div class="p-1">
-          <%= link_to tag.i(class: 'bi bi-check-square fec-create-match'), "#", title: "Match this contribution" %>
-        </div>
-        <div class="p-1">
-          <%= link_to tag.i(class: 'bi bi-dash-square fec-hide-contribution'), "#", title: "Hide this contribution" %>
-        </div>
-      <% end %>
-    </div>
+    <%= render partial: 'fec_contribution_actions', locals: { fec_contribution: fec_contribution, entity_id: @entity.id } %>
   </td>
 </tr>
