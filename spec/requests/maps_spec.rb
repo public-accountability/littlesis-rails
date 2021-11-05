@@ -5,7 +5,8 @@ describe 'Maps', :sphinx, type: :request do
     before { get "/maps/#{map.id}-so-many-connections" }
 
     it 'redirects to oligrapher#show' do
-      expect(response).to redirect_to oligrapher_path(map)
+      expect(response).to have_http_status :found
+      expect(response['location']).to include "/oligrapher/#{map.id}-so-many-connections"
     end
   end
 

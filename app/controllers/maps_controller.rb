@@ -75,11 +75,11 @@ class MapsController < ApplicationController
   end
 
   def embedded_v2
-    redirect_to(embedded_oligrapher_path(@map))
+    redirect_to(embedded_oligrapher_url(@map))
   end
 
   def embedded
-    redirect_to(embedded_oligrapher_path(@map))
+    redirect_to(embedded_oligrapher_url(@map))
   end
 
   def map_json
@@ -93,16 +93,16 @@ class MapsController < ApplicationController
   end
 
   def show
-    redirect_to(oligrapher_path(@map))
+    redirect_to(oligrapher_url(@map))
   end
 
   def raw
     # old map page for iframe embeds, forward to new embed page
-    redirect_to embedded_map_path(@map)
+    redirect_to embedded_map_url(@map)
   end
 
   def new
-    redirect_to new_oligrapher_path
+    redirect_to new_oligrapher_url
   end
 
   ##
