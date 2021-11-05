@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-# Entity Pages
-# GET     /fec/entities/:id/contributions  entity_fec_contributions_path
-# GET     /fec/entities/:id/match_contributions   entity_fec_match_contributions_path
+# Pages
+# GET     /fec/entities/:id/match_contributions
 # Information
+# GET     /fec/entities/:id/contributions
 # GET     /fec_match/:id
 # GET     /fec/committies/:cmte_id
 # GET     /fec/candidates/:cand_id
 # Action
+#   the action routes return Turbo Frames. See views/_fec_contribution_actions.
 # POST    /fec/fec_matches { entity_id:, fec_contribution_id: }
 # POST    /fec/fec_contributions/:id/hide_entity { entity_id }
 # POST    /fec/fec_contributions/:id/show_entity { entity_id }
 # POST    /fec/fec_contributions/clear_hidden { entity_id }
 # DELETE  /fec/fec_matches/:id
-# The action routes return Turbo Frames. See views/_fec_contribution_actions.
 class FECController < ApplicationController
   before_action :user_is_matcher?, except: %i[contributions committee candidate]
 
@@ -65,9 +65,9 @@ class FECController < ApplicationController
     render partial: 'fec_contribution_actions', locals: { fec_contribution: @fec_contribution.reload.as_presenter, entity_id: @entity.id }
   end
 
-  def clear_hidden
-    @entity = Entity.find(params.require(:entity_id))
-  end
+  # def clear_hidden
+  #   # @entity = Entity.find(params.require(:entity_id))
+  # end
 
   def fec_match
     render json: FECMatch.find(params[:id])

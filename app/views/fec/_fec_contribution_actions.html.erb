@@ -9,7 +9,7 @@
       </div>
       <div class="p-1">
         <%= form_with url: "/fec/fec_matches/#{fec_contribution.fec_match.id}", method: :delete do |f| %>
-          <button class="bg-transparent border-0 p-0">
+          <button title="Remove this matched contribution" class="bg-transparent border-0 p-0">
             <i class="bi bi-eraser fec-remove-match"></i>
           </button>
         <% end %>
