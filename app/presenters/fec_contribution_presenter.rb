@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 class FECContributionPresenter < SimpleDelegator
+  def matched?
+    if has_attribute?(:is_matched)
+      read_attribute(:is_matched)
+    else
+      fec_match.present?
+    end
+  end
+
   def amount
     ActiveSupport::NumberHelper.number_to_currency(transaction_amt, precision: 0)
   end

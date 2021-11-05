@@ -68,7 +68,7 @@
     <%= profile_page_sidebar('sidebar-advanced-tools-container', 'Advanced tools') do %>
       <ul class="list-unstyled">
         <li>
-          <%= link_to 'Match FEC Donations', fec_entity_match_contributions_path(@entity) %>
+          <%= link_to 'Match FEC Donations', fec_match_contributions_path(@entity) %>
         </li>
 
         <% if current_user.admin?  %>

@@ -10,6 +10,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Name: intarray; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS intarray WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION intarray; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION intarray IS 'functions, operators, and index support for 1-D arrays of integers';
+
+
+--
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -1401,7 +1415,8 @@ CREATE TABLE public.external_data_fec_contributions (
     fec_year smallint NOT NULL,
     id integer NOT NULL,
     name_tsvector tsvector GENERATED ALWAYS AS (to_tsvector('english'::regconfig, name)) STORED,
-    date date GENERATED ALWAYS AS (make_date((substr(transaction_dt, 5, 4))::integer, (substr(transaction_dt, 1, 2))::integer, (substr(transaction_dt, 3, 2))::integer)) STORED
+    date date GENERATED ALWAYS AS (make_date((substr(transaction_dt, 5, 4))::integer, (substr(transaction_dt, 1, 2))::integer, (substr(transaction_dt, 3, 2))::integer)) STORED,
+    hidden_entities integer[]
 );
 
 
@@ -7520,6 +7535,13 @@ CREATE INDEX index_external_data_fec_contributions_on_fec_year ON public.externa
 
 
 --
+-- Name: index_external_data_fec_contributions_on_hidden_entities; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_external_data_fec_contributions_on_hidden_entities ON public.external_data_fec_contributions USING gist (hidden_entities);
+
+
+--
 -- Name: index_external_data_fec_contributions_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8413,6 +8435,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211007152033'),
 ('20211007174700'),
 ('20211013191239'),
-('20211102185306');
+('20211102185306'),
+('20211104202533');
 
 

@@ -35,11 +35,33 @@ module ExternalDataset
       { name: "FEC Filing #{image_num}", url: reference_url }
     end
 
-    unless Rails.env.test?
-      def readonly?
-        true
+    def as_presenter
+      FECContributionPresenter.new(self)
+    end
+
+    def hide_entity(entity_or_id)
+      entity_id = Entity.entity_id_for(entity_or_id)
+
+      if hidden_entities.nil?
+        update!(hidden_entities: [entity_id])
+      elsif hidden_entities.exclude?(entity_id)
+        update!(hidden_entities: hidden_entities + [entity_id])
       end
     end
+
+    def show_entity(entity_or_id)
+      entity_id = Entity.entity_id_for(entity_or_id)
+
+      if hidden_entities&.include?(entity_id)
+        update!(hidden_entities: hidden_entities - [entity_id])
+      end
+    end
+
+    # unless Rails.env.test?
+    #   def readonly?
+    #     true
+    #   end
+    # end
 
     def self.search_by_name(query)
       includes(:fec_match)

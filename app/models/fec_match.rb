@@ -29,8 +29,8 @@ class FECMatch < ApplicationRecord
                 :find_or_create_committee_relationship,
                 :find_or_create_candidate_relationship
 
-  after_create  :update_committee_relationship,
-                :update_candidate_relationship
+  after_create  :update_committee_relationship, :update_candidate_relationship
+  after_destroy :cleanup_relationships
 
   # All FEC contributions between Donor & Recipient
   def committee_contributions
@@ -114,6 +114,21 @@ class FECMatch < ApplicationRecord
     return if candidate.present? || fec_contribution.fec_committee.candidate.nil?
 
     self.candidate = fec_contribution.fec_committee.candidate.create_littlesis_entity
+  end
+
+  # After a match is removed, the relationships are removed if there are no more remaining
+  def cleanup_relationships
+    if committee_contributions.present?
+      update_committee_relationship
+    else
+      committee_relationship.soft_delete
+    end
+
+    if candidate_contributions.present?
+      update_candidate_relationship
+    else
+      candidate_relationship&.soft_delete
+    end
   end
 
   # attribute helpers

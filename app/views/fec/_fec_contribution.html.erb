@@ -17,18 +17,6 @@
   </td>
 
   <td>
-    <% if fec_contribution.fec_match.present? %>
-      <%= link_to fec_contribution.fec_match.committee_relationship, target: '_blank' do %>
-        <em>imported</em>
-      <% end %>
-      <%#  <button class="btn btn-outline-primary" disabled>imported</button> %>
-    <% else  %>
-      <!-- <button>import</button> -->
-      <%= form_with url: fec_entity_donor_match_path(@entity), method: :post do |form| %>
-        <%= form.hidden_field "fec_contribution_id", value: fec_contribution.id %>
-        <%= form.hidden_field "query", value: @query %>
-        <%= form.submit "import", class: 'btn btn-outline-primary' %>
-      <% end  %>
-    <% end %>
+    <%= render partial: 'fec_contribution_actions', locals: { fec_contribution: fec_contribution, entity_id: @entity.id } %>
   </td>
 </tr>

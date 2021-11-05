@@ -180,7 +180,7 @@ littlesis_status() {
             fail "littlesis.service is not active"
         fi
     else
-        local services_running="$(docker_compose ps --services --filter "status=running" | sed '/^$/d' | wc -l)"
+        local services_running="$($docker_compose ps --services --filter "status=running" | sed '/^$/d' | wc -l)"
 
         if [ "$services_running" == '4' ];then
             echo "Docker containers are running :)"
@@ -398,10 +398,6 @@ case $1 in
     runner)
         shift
         bundle_exec rails runner "$@"
-        ;;
-    delayed_job|delayed-job|dj)
-        shift
-        bundle_exec "$delayed_job" "$@"
         ;;
     logs)
         shift

@@ -1,0 +1,44 @@
+<turbo-frame id="fec-contribution-actions-<%= fec_contribution.id %>">
+  <div class="d-flex flex-row fec-contribution-actions">
+    <% if fec_contribution.matched? %>
+      <div class="p-1">
+        <%= link_to tag.i(class: 'bi bi-check-square-fill fec-view-relationship'),
+         fec_contribution.fec_match.committee_relationship,
+         title: 'View relationship',
+         target: '_blank' %>
+      </div>
+      <div class="p-1">
+        <%= form_with url: "/fec/fec_matches/#{fec_contribution.fec_match.id}", method: :delete do |f| %>
+          <button title="Remove this matched contribution" class="bg-transparent border-0 p-0">
+            <i class="bi bi-eraser fec-remove-match"></i>
+          </button>
+        <% end %>
+      </div>
+    <% else  %>
+      <div class="p-1">
+        <%= form_with url: '/fec/fec_matches' do |f| %>
+          <%= f.hidden_field "entity_id", value: entity_id %>
+          <%= f.hidden_field "fec_contribution_id", value: fec_contribution.id %>
+          <button title="Match this contribution" class="bg-transparent border-0 p-0"><i class="bi bi-check-square fec-create-match"></i></button>
+        <% end %>
+      </div>
+      <div class="p-1">
+        <% if fec_contribution.hidden_entities&.include?(entity_id) %>
+          <%= form_with url: "/fec/fec_contributions/#{fec_contribution.id}/show_entity" do |f| %>
+            <%= f.hidden_field "entity_id", value: entity_id %>
+            <button title="Show this contribution" class="bg-transparent border-0 p-0">
+              <i class="bi bi-plus-square fec-show-contribution"></i>
+            </button>
+          <% end %>
+        <% else %>
+          <%= form_with url: "/fec/fec_contributions/#{fec_contribution.id}/hide_entity" do |f| %>
+            <%= f.hidden_field "entity_id", value: entity_id %>
+            <button title="Hide this contribution" class="bg-transparent border-0 p-0">
+              <i class="bi bi-dash-square fec-hide-contribution"></i>
+            </button>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</turbo-frame>

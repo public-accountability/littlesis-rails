@@ -83,4 +83,29 @@ describe FECMatch do
     fec_contribution; fec_committee; donor; committee_entity; candidate;
     FECMatch.create!(fec_contribution: fec_contribution, donor: donor)
   end
+
+  it 'removes relationship after destroy' do
+    fec_contribution; fec_committee; donor; committee_entity;
+    expect(Relationship.exists?(entity1_id: donor.id, entity2_id: committee_entity.id)).to be false
+    fec_match = FECMatch.create!(fec_contribution: fec_contribution, donor: donor, recipient: committee_entity)
+    expect(Relationship.exists?(entity1_id: donor.id, entity2_id: committee_entity.id)).to be true
+    expect(fec_contribution.reload.fec_match.present?).to be true
+    fec_match.destroy!
+    expect(Relationship.exists?(entity1_id: donor.id, entity2_id: committee_entity.id)).to be false
+    expect(fec_contribution.reload.fec_match.present?).to be false
+  end
+
+  it 'changes relationship after destroy when there are remaining contributions' do
+    fec_contribution; fec_committee; donor; committee_entity;
+    fec_contribution2 = create(:external_dataset_fec_contribution)
+    expect(Relationship.exists?(entity1_id: donor.id, entity2_id: committee_entity.id)).to be false
+    fec_match1 = FECMatch.create!(fec_contribution: fec_contribution, donor: donor, recipient: committee_entity)
+    fec_match2 = FECMatch.create!(fec_contribution: fec_contribution2, donor: donor, recipient: committee_entity)
+    expect(fec_match1.committee_relationship).to eq fec_match2.committee_relationship
+    expect(fec_match1.committee_relationship.reload.filings).to eq 2
+    fec_match2.destroy!
+    expect(fec_match1.committee_relationship.reload.filings).to eq 1
+    expect(ExternalDataset.fec_contributions.find(fec_contribution.id).fec_match.present?).to be true
+    expect(ExternalDataset.fec_contributions.find(fec_contribution2.id).fec_match.present?).to be false
+  end
 end
