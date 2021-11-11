@@ -50,11 +50,18 @@ class OligrapherAssetsService
   def run
     # return self if !@force && build_file_exists?
 
+    # Build oligrapher
     Dir.chdir REPO_DIR do
       git "checkout --force -q #{@commit}"
       system('yarn install --silent') || error("Yarn install failed for commit #{@commit}")
       build_cmd = "yarn run build-prod --env output_path=#{ASSET_DIR} && yarn run build-prod-one --env output_path=#{ASSET_DIR} "
       system(build_cmd) || error("Failed to build for commit #{@commit}")
+    end
+
+    # Compress
+    Dir.glob(Pathname.new(OligrapherAssetsService::ASSET_DIR).join("oligrapher-#{@commit}*.{js,css,map}")).each do |f|
+      system("gzip --keep #{f}") unless File.exist?(f + ".gz")
+      system("brotli --keep #{f}") unless File.exist?(f + ".br")
     end
 
     self

@@ -2,6 +2,7 @@ FROM ruby:3.0.2-bullseye
 LABEL maintainer="dev@littlesis.org"
 
 RUN apt-get update && apt-get upgrade -y && apt-get -y install \
+    brotli \
     build-essential \
     coreutils \
     cron \
@@ -10,6 +11,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     git \
     gnupg \
     grep \
+    gzip \
     imagemagick \
     libdbus-glib-1-dev \
     libgtk-3-0 \
