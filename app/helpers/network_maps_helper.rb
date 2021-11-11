@@ -3,7 +3,7 @@
 module NetworkMapsHelper
   # used on /maps and user pages
   def network_map_link(map)
-    link = link_to(raw(map.name), map_path(map))
+    link = link_to(raw(map.name), oligrapher_url(map))
     return link unless map.is_private
     link + tag('i', class: "bi bi-lock-fill private-network-map-icon pl-1")
   end
