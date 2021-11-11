@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-# Create compiled oligrapher assets in public/oligrapher,
-# with the file name oligrapher-`git commit sha`.js
+# Create compiled oligrapher assets in public/oligrapher
 # for example:
 #     public/oligrapher/oligrapher-24dadc5401c717cbf63fab3489ad7a9a748d0b38.js
 #
-# example: OligrapherAssetsService.new(<commit-hash>).run
+# example: OligrapherAssetsService.run(<commit-hash>)
 #
 class OligrapherAssetsService
   attr_accessor :commit
@@ -13,52 +12,49 @@ class OligrapherAssetsService
   REPO = 'https://github.com/public-accountability/oligrapher'
   REPO_DIR = Rails.root.join('tmp', Rails.env.production? ? 'oligrapher' : 'oligrapher-test').to_s
   ASSET_DIR = Rails.root.join('public/oligrapher').to_s
+  BRANCH = '3.0'
 
   def self.setup_repo
     FileUtils.mkdir_p REPO_DIR
     FileUtils.mkdir_p ASSET_DIR
-    system "git clone #{REPO} #{REPO_DIR}" unless File.exist?("#{REPO_DIR}/.git")
+    system("git clone #{REPO} #{REPO_DIR}") unless File.exist?("#{REPO_DIR}/.git")
   end
 
-  def self.latest_commit
-    setup_repo
+  def self.fetch_all
+    `git -C #{REPO_DIR} fetch --all --quiet`
+  end
+
+  def self.current_commit
     `git -C #{REPO_DIR} rev-parse HEAD`.strip
   end
 
-  def initialize(commit = Oligrapher::VERSION, skip_fetch: false, development: false, force: false)
+  def self.latest_commit
+    fetch_all
+    `git -C #{REPO_DIR} rev-parse origin/#{BRANCH}`.strip
+  end
+
+  def self.run(commit = nil)
+    new(commit || latest_commit).run
+  end
+
+  def initialize(commit, skip_fetch: false, development: false, force: false)
     self.class.setup_repo
     @commit = commit
     @development = development
     @force = force
-    git 'fetch --all --quiet' unless skip_fetch
-
     # validate commit
     error '@commit is blank' if @commit.blank?
     git "rev-parse --quiet --verify #{@commit} > /dev/null"
   end
 
   def run
-    return self if !@force && build_file_exists?
+    # return self if !@force && build_file_exists?
 
     Dir.chdir REPO_DIR do
       git "checkout --force -q #{@commit}"
       system('yarn install --silent') || error("Yarn install failed for commit #{@commit}")
-
-      build_cmd = [
-        'yarn run webpack',
-        "--env output_path=#{ASSET_DIR}",
-        "--env filename=#{oligrapher_filename}"
-      ]
-
-      if @development
-        build_cmd << '--env development'
-        build_cmd << '--env api_url=http://127.0.0.1:8081'
-      else
-        build_cmd << '--env production'
-        build_cmd << '--env public_path=/oligrapher/'
-      end
-
-      system(build_cmd.join(' ')) || error("Failed to build for commit #{@commit}")
+      build_cmd = "yarn run build-prod --env output_path=#{ASSET_DIR} && yarn run build-prod-one --env output_path=#{ASSET_DIR} "
+      system(build_cmd) || error("Failed to build for commit #{@commit}")
     end
 
     self

@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 module Oligrapher
-  VERSION = 'd15361fb8fbb37b26e576f8c2ebbec4f77bb76fd'
-
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
                                       Relationship::MEMBERSHIP_CATEGORY,
@@ -77,6 +75,14 @@ module Oligrapher
     ::OligrapherLockService
       .new(map: map, current_user: current_user)
       .as_json
+  end
+
+  def self.javascript_asset_path
+    path = +"/oligrapher/assets/oligrapher-"
+    path << Rails.application.config.littlesis.oligrapher_commit
+    path << ".bundle" if Rails.application.config.littlesis.oligrapher_use_bundle
+    path << ".js"
+    path.freeze
   end
 
   module Node

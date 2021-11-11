@@ -15,10 +15,7 @@ describe OligrapherAssetsService do
     service = OligrapherAssetsService.new(commit, skip_fetch: true)
     expect(service).to receive(:system).with(/checkout --force -q/).and_call_original
     expect(service).to receive(:system).with('yarn install --silent').and_return(true)
-    expect(service).to receive(:system)
-                         .with("yarn run webpack --env output_path=#{OligrapherAssetsService::ASSET_DIR} --env filename=#{filename} --env production --env public_path=/oligrapher/")
-                         .and_return(true)
-
+    expect(service).to receive(:system).with(/yarn run/).and_return(true)
     service.run
   end
 
@@ -26,10 +23,7 @@ describe OligrapherAssetsService do
     service = OligrapherAssetsService.new(commit, skip_fetch: true)
     expect(service).to receive(:system).with(/checkout --force -q/).and_call_original
     expect(service).to receive(:system).with('yarn install --silent').and_return(true)
-    expect(service).to receive(:system)
-                         .with("yarn run webpack --env output_path=#{OligrapherAssetsService::ASSET_DIR} --env filename=#{filename} --env production --env public_path=/oligrapher/")
-                         .and_return(false)
-
+    expect(service).to receive(:system).with(/yarn run/).and_return(false)
     expect { service.run }.to raise_error(Exceptions::OligrapherAssetsError)
   end
 end
