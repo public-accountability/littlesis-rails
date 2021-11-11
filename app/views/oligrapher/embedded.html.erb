@@ -2,7 +2,6 @@
 <% content_for(:hide_footer, true) %>
 
 <%= content_for(:head) do %>
-  <script src="<%= Oligrapher.javascript_asset_path %>"></script>
   <%= og_tags(title: @map.name, image: asset_path('netmap-org.png'), url: oligrapher_url(@map)) %>
 <% end %>
 
