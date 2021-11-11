@@ -13,7 +13,6 @@ class OligrapherController < ApplicationController
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
   before_action :check_editor, only: %i[update]
-  before_action :set_oligrapher_version
 
   rescue_from ActiveRecord::RecordNotFound, with: :map_not_found
   rescue_from Exceptions::PermissionError, with: :map_not_found
@@ -248,10 +247,6 @@ class OligrapherController < ApplicationController
       .permit(:title, :description, :is_private, :is_cloneable, :list_sources, :annotations_data, :settings)
       .merge(graph_data: params[:graph_data]&.permit!&.to_h)
       .merge(oligrapher_version: 3)
-  end
-
-  def set_oligrapher_version
-    @oligrapher_version = Oligrapher::VERSION
   end
 
   def editor_data

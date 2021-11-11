@@ -33,7 +33,7 @@ gem 'image_processing'
 gem 'mini_magick'
 gem 'sassc-rails'
 gem 'sprockets', '~> 4'
-gem 'turbo-rails'
+gem 'turbo-rails', '> 0.8', '< 7.0.0'
 gem 'stimulus-rails'
 gem 'jsbundling-rails'
 
