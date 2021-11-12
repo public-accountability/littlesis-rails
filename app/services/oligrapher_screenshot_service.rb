@@ -15,7 +15,7 @@ module OligrapherScreenshotService
       svg = tempfile.read.strip
 
       if valid_svg?(svg)
-        map.update_columns(screenshot: scale_svg(svg))
+        map.update_columns(screenshot: reset_dimensions(svg))
       else
         Rails.logger.warn "Failed to get a valid svg image (NetworkMap\##{map.id})"
       end
@@ -28,10 +28,11 @@ module OligrapherScreenshotService
     map
   end
 
-  def self.scale_svg(svg)
+  # remove height & width attributes so svg can be scaled
+  def self.reset_dimensions(svg)
     document = Nokogiri::XML(svg)
-    document.root['height'] = '161px'
-    document.root['width'] = '280px'
+    document.root['height'] = nil
+    document.root['width'] = nil
     document.to_s
   end
 
@@ -46,5 +47,5 @@ module OligrapherScreenshotService
     LittleSis::Application.routes.url_helpers.oligrapher_url(map)
   end
 
-  private_class_method :scale_svg, :valid_svg?, :map_url
+  private_class_method :reset_dimensions, :valid_svg?, :map_url
 end
