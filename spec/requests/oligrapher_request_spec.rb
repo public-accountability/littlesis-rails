@@ -143,7 +143,7 @@ describe "Oligrapher", type: :request do
     end
 
     context 'when map has a saved screenshot' do
-      let(:map) { create(:network_map_version3, screenshot: svg, user: user)}
+      let(:map) { create(:network_map_version3, screenshot: svg, user: user) }
 
       it 'serves image' do
         get screenshot_oligrapher_path(map)
@@ -154,11 +154,13 @@ describe "Oligrapher", type: :request do
     end
 
     context 'when map is missing a screenshot' do
-      let(:map) { create(:network_map_version3, screenshot: nil, user: user)}
+      let(:map) { create(:network_map_version3, screenshot: nil, user: user) }
 
       it 'renders 404' do
         get screenshot_oligrapher_path(map)
-        expect(response).to have_http_status 404
+        expect(response).to have_http_status :ok
+        expect(response.media_type).to eq 'image/png'
+        expect(response.body).to eq File.read(Rails.root.join('app/assets/images/netmap-org.png'))
       end
     end
   end
