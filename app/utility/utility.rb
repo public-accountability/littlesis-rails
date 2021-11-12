@@ -2,8 +2,8 @@
 
 require 'csv'
 require 'tempfile'
-
-# Helper functions used by scripts and rake tasks
+require 'timeout'
+require 'open3'
 
 module Utility
   def self.current_git_commit
@@ -26,9 +26,9 @@ module Utility
 
     output = `psql -b -v ON_ERROR_STOP=1 #{psql_connection_string} < #{path}`
 
-      if $?.exitstatus != 0
-        ColorPrinter.print_red output
-        raise SQLFileError, output
+    if $?.exitstatus != 0
+      ColorPrinter.print_red output
+      raise SQLFileError, output
     end
   end
 
@@ -57,6 +57,29 @@ module Utility
     else
       raise SubshellCommandError, (fail_message || cmd)
     end
+  end
+
+  # Timeout.timeout will leave subprcessing running
+  # see https://stackoverflow.com/questions/8292031/ruby-timeouts-and-system-commands
+  # returns nil if timeout occurs or the stdout of command
+  def self.cmd_with_timeout(seconds, cmd)
+    stdin, stdout, wait_thr = nil
+
+    begin
+      Timeout.timeout(seconds) do
+        stdin, stdout, wait_thr = Open3.popen2(cmd)
+        stdin.close
+        wait_thr.join
+      end
+    rescue Timeout::Error
+      return nil
+    end
+
+    stdout.read
+  ensure
+    stdin.close unless stdin&.closed?
+    stdout.close unless stdout&.closed?
+    wait_thr.exit if wait_thr&.status
   end
 
   # This will convert the contents of a text file UTF-8, replacing any
@@ -117,33 +140,6 @@ module Utility
   def self.zip_entry_each_line(zip:, file:, &block)
     Zip::File.open(zip) do |zip_file|
       zip_file.get_entry(file).get_input_stream.each(&block)
-    end
-  end
-
-  def self.run_pgloader(command)
-    puts command
-    Utility.with_tmp_file(command) do |tmp|
-      system "pgloader #{tmp.path}", exception: true
-    end
-  end
-
-  def self.yes_no_converter(x)
-    return nil if x.nil?
-
-    if x.strip.casecmp('Y').zero?
-      true
-    elsif x.strip.casecmp('N').zero?
-      false
-    end
-  end
-
-  def self.one_zero_converter(x)
-    return nil if x.nil?
-
-    if x.strip == '1'
-      true
-    elsif x.strip == '0'
-      false
     end
   end
 

@@ -104,31 +104,13 @@ describe Utility do
     end
   end
 
-  describe 'yes_no_converter' do
-    it 'converts Y to true' do
-      expect(Utility.yes_no_converter('Y')).to be true
+  describe 'cmd_with_timeout' do
+    specify do
+      expect(Utility.cmd_with_timeout(0.01, 'sh -c "sleep 1 && echo foo"')).to be_nil
     end
 
-    it 'converts N to false' do
-      expect(Utility.yes_no_converter('N ')).to be false
-    end
-
-    it 'returns nil otherwise' do
-      expect(Utility.yes_no_converter('0')).to be_nil
-    end
-  end
-
-  describe 'one_zero_converter' do
-    it 'converts 1 to true' do
-      expect(Utility.one_zero_converter('1')).to be true
-    end
-
-    it 'converts 0 to false' do
-      expect(Utility.one_zero_converter('0 ')).to be false
-    end
-
-    it 'returns nil otherwise' do
-      expect(Utility.one_zero_converter('blah')).to be_nil
+    specify do
+      expect(Utility.cmd_with_timeout(0.1, 'echo foo')).to eq "foo\n"
     end
   end
 end
