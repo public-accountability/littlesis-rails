@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'tempfile'
+
 module OligrapherScreenshotService
   def self.run(map)
     if map.is_private?
@@ -7,16 +9,23 @@ module OligrapherScreenshotService
       return nil
     end
 
-    cmd = "#{Rails.root.join('lib/scripts/oligrapher_screenshot.js')} #{map_url(map)}"
-    svg = `#{cmd}`.strip
+    tempfile = Tempfile.new
 
-    if !$CHILD_STATUS.success?
-      Rails.logger.warn "oligrapher_screenshot.js failed (NetworkMap\##{map.id})"
-    elsif !valid_svg?(svg)
-      Rails.logger.warn "Failed to get a valid svg image (NetworkMap\##{map.id})"
+    if system("#{Rails.root.join('lib/scripts/oligrapher_screenshot.js')} #{map_url(map)} > #{tempfile.path}")
+      svg = tempfile.read.strip
+
+      if valid_svg?(svg)
+        map.update_columns(screenshot: scale_svg(svg))
+      else
+        Rails.logger.warn "Failed to get a valid svg image (NetworkMap\##{map.id})"
+      end
     else
-      map.update_columns(screenshot: scale_svg(svg))
+      Rails.logger.warn "oligrapher_screenshot.js failed (NetworkMap\##{map.id})"
     end
+
+    tempfile.close
+    tempfile.unlink
+    map
   end
 
   def self.scale_svg(svg)
