@@ -59,29 +59,6 @@ module Utility
     end
   end
 
-  # Timeout.timeout will leave subprcessing running
-  # see https://stackoverflow.com/questions/8292031/ruby-timeouts-and-system-commands
-  # returns nil if timeout occurs or the stdout of command
-  def self.cmd_with_timeout(seconds, cmd)
-    stdin, stdout, wait_thr = nil
-
-    begin
-      Timeout.timeout(seconds) do
-        stdin, stdout, wait_thr = Open3.popen2(cmd)
-        stdin.close
-        wait_thr.join
-      end
-    rescue Timeout::Error
-      return nil
-    end
-
-    stdout.read
-  ensure
-    stdin.close unless stdin&.closed?
-    stdout.close unless stdout&.closed?
-    wait_thr.exit if wait_thr&.status
-  end
-
   # This will convert the contents of a text file UTF-8, replacing any
   # invalid characters with empty strings.
   # All file operations are done streaming, and is safe to use on large files.

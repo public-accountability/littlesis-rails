@@ -103,14 +103,4 @@ describe Utility do
       expect(File.open(file.path).read).to eql 'A'
     end
   end
-
-  describe 'cmd_with_timeout' do
-    specify do
-      expect(Utility.cmd_with_timeout(0.01, 'sh -c "sleep 1 && echo foo"')).to be_nil
-    end
-
-    specify do
-      expect(Utility.cmd_with_timeout(0.1, 'echo foo')).to eq "foo\n"
-    end
-  end
 end

@@ -9,7 +9,7 @@
     "bootstrap": "^4",
     "datatables.net": "^1.11.3",
     "datatables.net-dt": "^1.11.3",
-    "esbuild": "^0.13.8",
+    "esbuild": "^0.13.13",
     "file-saver": "^2.0.5",
     "jquery": "^3.6.0",
     "lodash-es": "^4.17.21",
