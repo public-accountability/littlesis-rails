@@ -60,10 +60,11 @@ class OligrapherController < ApplicationController
   end
 
   def screenshot
+    check_private_access
     if @map.screenshot.present?
       render inline: @map.screenshot, content_type: 'image/svg+xml'
     else
-      head :not_found
+      render file: "#{Rails.root}/app/assets/images/netmap-org.png", layout: false
     end
   end
 
