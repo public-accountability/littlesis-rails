@@ -13,6 +13,7 @@ services:
     image: littlesis:latest
     stdin_open: true
     tty: true
+    init: true
     shm_size: '2gb'
     ports:
       - "127.0.0.1:8080:8080"

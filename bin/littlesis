@@ -205,6 +205,10 @@ app_exec_docker() {
     $docker_compose exec -e "RAILS_ENV=$rails_env" app "$@"
 }
 
+app_run_docker() {
+    $docker_compose run --rm -e "RAILS_ENV=$rails_env" app "$@"
+}
+
 app_exec_production() {
     /bin/sh -c "export RAILS_ENV=production; cd $rails_repo; $*"
 }
@@ -390,7 +394,8 @@ case $1 in
         $GIT "$@"
         ;;
     console|c)
-        bundle_exec rails c
+        # bundle_exec rails c
+        app_run_docker bundle exec rails c
         ;;
     rails|rake|rspec)
         bundle_exec "$@"

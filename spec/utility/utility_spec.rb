@@ -103,32 +103,4 @@ describe Utility do
       expect(File.open(file.path).read).to eql 'A'
     end
   end
-
-  describe 'yes_no_converter' do
-    it 'converts Y to true' do
-      expect(Utility.yes_no_converter('Y')).to be true
-    end
-
-    it 'converts N to false' do
-      expect(Utility.yes_no_converter('N ')).to be false
-    end
-
-    it 'returns nil otherwise' do
-      expect(Utility.yes_no_converter('0')).to be_nil
-    end
-  end
-
-  describe 'one_zero_converter' do
-    it 'converts 1 to true' do
-      expect(Utility.one_zero_converter('1')).to be true
-    end
-
-    it 'converts 0 to false' do
-      expect(Utility.one_zero_converter('0 ')).to be false
-    end
-
-    it 'returns nil otherwise' do
-      expect(Utility.one_zero_converter('blah')).to be_nil
-    end
-  end
 end

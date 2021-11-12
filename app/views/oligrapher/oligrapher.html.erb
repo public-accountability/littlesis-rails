@@ -1,6 +1,12 @@
 <%= content_for(:page_title, @map.name) %>
 <% content_for(:head) do %>
-  <%= og_tags(title: @map.name, url: oligrapher_url(@map), image: asset_path('netmap-org.png')) %>
+  <%= og_tags(title: @map.name,
+              url: oligrapher_url(@map),
+              image: screenshot_oligrapher_url(@map)) %>
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@twittlesis" />
+
 <% end %>
 
 <% if @is_pending_editor %>
