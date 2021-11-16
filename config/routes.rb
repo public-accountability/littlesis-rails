@@ -2,7 +2,7 @@ LittleSis::Application.routes.draw do
 
   # match "*path", to: "errors#maintenance", via: :all
 
-  devise_for :users, controllers: { confirmations: 'users/confirmations'  }, :skip => [:sessions, :registrations]
+  devise_for :users, controllers: { confirmations: 'users/confirmations', passwords: 'users/passwords' }, :skip => [:sessions, :registrations]
   as :user do
     get '/login' => 'users/sessions#new', :as => :new_user_session
     post '/login' => 'users/sessions#create', :as => :user_session
