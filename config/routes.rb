@@ -198,13 +198,14 @@ LittleSis::Application.routes.draw do
       action: 'show',
       as: 'share_map'
 
-  resources :oligrapher, only: [:new, :show, :create, :update, :destroy], controller: 'oligrapher' do
+  resources :oligrapher, except: [:edit], controller: 'oligrapher' do
     collection do
       get '/get_edges', action: :get_edges
       get '/find_connections', action: :find_connections
       get '/find_nodes', action: :find_nodes
       get '/get_interlocks', action: :get_interlocks
       get '/example', action: :example
+      get '/about' => "pages#oligrapher"
     end
 
     member do
@@ -365,7 +366,6 @@ LittleSis::Application.routes.draw do
   resources :pages, only: [:new, :create, :edit, :update, :index, :show]
   get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
   # Other Pages
-  get "/oligrapher" => "pages#oligrapher"
   get "/donate" => "pages#donate"
   get "/swamped" => "pages#swamped"
   post "/swamped" => "pages#swamped"
