@@ -1,0 +1,17 @@
+<% content_for(:head) do %>
+  <%= javascript_include_tag "oligrapher_chart", defer: true %>
+<% end  %>
+
+<div class="row oligrapher-chart-heading-row">
+  <div class="col">
+    <h1>Explore Maps<h1>
+    <h3 style="height: 30px"><small id="oligrapher-chart-subheader"></small></h3>
+  </div>
+</div>
+
+
+<div class="row" id="oligrapher-chart-row">
+  <div class="col">
+    <div id="oligrapher-chart"></div>
+  </div>
+</div>

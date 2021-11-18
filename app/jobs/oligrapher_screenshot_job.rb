@@ -2,7 +2,6 @@
 
 class OligrapherScreenshotJob < ApplicationJob
   def perform(map_id)
-    map = NetworkMap.find(map_id)
-    OligrapherScreenshotService.run(map)
+    NetworkMap.find(map_id).take_screenshot
   end
 end

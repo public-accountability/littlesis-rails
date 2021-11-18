@@ -16,14 +16,14 @@ class NetworkMap < ApplicationRecord
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
-  belongs_to :user, foreign_key: 'user_id', inverse_of: :network_maps, optional: true
+  belongs_to :user, inverse_of: :network_maps, optional: true
 
-  scope :featured, -> { where(is_featured: true, oligrapher_version: 2) }
-  scope :public_scope, -> { where(is_private: false, oligrapher_version: 2) }
+  scope :featured, -> { where(is_private: false, is_featured: true) }
+  scope :public_scope, -> { where(is_private: false) }
   scope :private_scope, -> { where(is_private: true) }
-  scope :with_description, -> { where.not(description: [nil, '']) }
-  scope :with_annotations, -> { where.not(annotations_data: '[]') }
-  scope :without_annotations, -> { where(annotations_data: '[]') }
+  # scope :with_description, -> { where.not(description: [nil, '']) }
+  # scope :with_annotations, -> { where.not(annotations_data: '[]') }
+  # scope :without_annotations, -> { where(annotations_data: '[]') }
 
   validates :title, presence: true
 
@@ -91,10 +91,24 @@ class NetworkMap < ApplicationRecord
     documents.map { |d| "<div><a href=\"#{d.url}\">#{d.name}</a></div>"}.join("\n")
   end
 
-  # enques job to take screenshot
-  def take_screenshot
-    OligrapherScreenshotJob.perform_later(id)
+  def screenshot_path
+    Rails.root.join('public/images/oligrapher', "#{id}.png")
   end
+
+  def screenshot_exists?
+    File.file?(screenshot_path)
+  end
+
+  def take_screenshot
+    if is_private?
+      Rails.logger.debug { "Cannot take a screenshot of a private map (#{id})" }
+      return nil
+    end
+    system "#{Rails.root.join('lib/scripts/oligrapher_screenshot.js')} #{url}"
+  end
+
+  # enques job to take screenshot
+  # OligrapherScreenshotJob.perform_later(id)
 
   # Creates these functions:
   #  edge_ids, node_ids, numeric_edge_ids, numeric_node_ids
@@ -260,10 +274,27 @@ class NetworkMap < ApplicationRecord
     pending_editor_ids.include?(user.id)
   end
 
+  def url
+    LittleSis::Application.routes.url_helpers.oligrapher_url(self)
+  end
+
   # input: <User> --> NetworkMap::ActiveRecord_Relation
   def self.scope_for_user(user)
     where arel_table[:is_private].eq(false)
             .or(arel_table[:user_id].eq(user.id))
+  end
+
+  def self.index_maps
+    Rails.cache.fetch("network_map_index_maps", expires_in: 6.hours) do
+      featured.limit(200).filter(&:screenshot_exists?).map do |m|
+        {
+          id: m.id,
+          screenshot: "/images/oligrapher/#{m.id}.png",
+          url: m.url,
+          title: m.name
+        }
+      end
+    end
   end
 
   private

@@ -8,7 +8,7 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  before_action :authenticate_user!, except: %i[show find_nodes find_connections get_edges get_interlocks embedded screenshot]
+  before_action :authenticate_user!, except: %i[index show find_nodes find_connections get_edges get_interlocks embedded screenshot]
   before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot]
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
@@ -18,6 +18,16 @@ class OligrapherController < ApplicationController
   rescue_from Exceptions::PermissionError, with: :map_not_found
 
   # Pages
+
+  def index
+    respond_to do |format|
+      format.html
+      format.json do
+        expires_in 6.hours, :public => true
+        render :json => NetworkMap.index_maps
+      end
+    end
+  end
 
   def show
     check_private_access
@@ -61,13 +71,24 @@ class OligrapherController < ApplicationController
 
   def screenshot
     check_private_access
-    if @map.screenshot.present?
+
+    if @map.screenshot_exists?
       expires_in 2.minutes, :public => true
-      render body: @map.screenshot, content_type: 'image/svg+xml'
+      render file: @map.screenshot_path, layout: false
     else
       render file: "#{Rails.root}/app/assets/images/netmap-org.png", layout: false
     end
   end
+
+  # def svg_screenshot
+  #   check_private_access
+  #   if @map.screenshot.present?
+  #     expires_in 2.minutes, :public => true
+  #     render body: @map.screenshot, content_type: 'image/svg+xml'
+  #   else
+  #     render file: "#{Rails.root}/app/assets/images/netmap-org.png", layout: false
+  #   end
+  # end
 
   # Crud actions
 
