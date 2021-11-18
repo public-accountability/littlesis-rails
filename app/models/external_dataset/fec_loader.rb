@@ -16,6 +16,12 @@ module ExternalDataset
       fec_contributions: %w[cmte_id amndt_ind rpt_tp transaction_pgi image_num transaction_tp entity_tp name city state zip_code employer occupation transaction_dt transaction_amt other_id tran_id file_num memo_cd memo_text sub_id fec_year]
     }.freeze
 
+    UNIQUE_KEY_LOOKUP = {
+      fec_candidates: 'cand_id',
+      fec_committees: 'cmte_id',
+      fec_contributions: 'sub_id'
+    }.freeze
+
     def self.run(model)
       loop_csv_files(model.dataset_name) do |filepath|
         Rails.logger.info "FEC: Processing #{filepath}"
@@ -27,10 +33,46 @@ module ExternalDataset
       end
     end
 
+    def self.create_update_files
+      [FECCandidate, FECCommittee, FECContribution].each do |model|
+        create_update_file(model, '22')
+      end
+    end
+
+    def self.load_update_files
+      [FECCandidate, FECCommittee, FECContribution].each do |model|
+        filepath = csv_path_root.join(FILENAME_LOOKUP.fetch(model.dataset_name) + year + "_update.csv")
+
+        model.run_query <<~SQL
+          COPY #{model.table_name} (#{COLUMNS_LOOKUP[model.dataset_name].join(',')})
+          FROM '#{filepath}' WITH CSV
+        SQL
+      end
+    end
+
+    # .run uses COPY to directly load the entire file, but we sometimes want to re-download
+    # the latest files and then only copy into postgres the new rows
+    # year is a 2-digit string, i.e. 22
+    def self.create_update_file(model, year)
+      outfile = csv_path_root.join(FILENAME_LOOKUP.fetch(model.dataset_name) + year + "_update.csv")
+      csvfile = csv_path_root.join(FILENAME_LOOKUP.fetch(model.dataset_name) + year + ".csv")
+      fec_year = "20#{year}".to_i
+      key = UNIQUE_KEY_LOOKUP.fetch(model.dataset_name)
+
+      File.open(outfile, 'w') do |update_file|
+        File.foreach(csvfile) do |line|
+          row = COLUMNS_LOOKUP[model.dataset_name].zip(CSV.parse_line(line)).to_h
+
+          unless model.exists?('fec_year' => fec_year, key => row.fetch(key))
+            update_file.write line
+          end
+        end
+      end
+    end
+
     def self.loop_csv_files(dataset_name)
       YEARS.each do |year|
-        basename = FILENAME_LOOKUP.fetch(dataset_name) + year + ".csv"
-        yield csv_path_root.join(basename)
+        yield csv_path_root.join(FILENAME_LOOKUP.fetch(dataset_name) + year + ".csv")
       end
     end
 
