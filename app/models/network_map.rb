@@ -285,13 +285,15 @@ class NetworkMap < ApplicationRecord
   end
 
   def self.index_maps
-    featured.limit(100).filter(&:screenshot_exists?).map do |m|
-      {
-        id: m.id,
-        screenshot: "/images/oligrapher/#{m.id}.png",
-        url: m.url,
-        title: m.name
-      }
+    Rails.cache.fetch("network_map_index_maps", expires_in: 6.hours) do
+      featured.limit(200).filter(&:screenshot_exists?).map do |m|
+        {
+          id: m.id,
+          screenshot: "/images/oligrapher/#{m.id}.png",
+          url: m.url,
+          title: m.name
+        }
+      end
     end
   end
 

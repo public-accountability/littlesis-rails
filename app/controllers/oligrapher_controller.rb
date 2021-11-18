@@ -22,7 +22,10 @@ class OligrapherController < ApplicationController
   def index
     respond_to do |format|
       format.html
-      format.json { render :json => NetworkMap.index_maps }
+      format.json do
+        expires_in 6.hours, :public => true
+        render :json => NetworkMap.index_maps
+      end
     end
   end
 
