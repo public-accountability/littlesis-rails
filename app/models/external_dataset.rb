@@ -86,9 +86,19 @@ module ExternalDataset
   end
 
   module FECData
-    # use FEC::Cli to download and extract FEC data
     def load
       FECLoader.run(self)
+    end
+  end
+
+  module YearScopes
+    extend ActiveSupport::Concern
+
+    # Creates ActiveRecord scopes -- y22, y20, etc.  -- for filtering by fec_year
+    included do
+      (10..22).to_a.delete_if(&:odd?).each do |year|
+        send :scope, "y#{year}", -> { where(fec_year: "20#{year}".to_i) }
+      end
     end
   end
 end

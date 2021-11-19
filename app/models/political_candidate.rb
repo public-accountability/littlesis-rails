@@ -14,7 +14,11 @@ class PoliticalCandidate < ApplicationRecord
     ExternalDataset.fec_candidates.where(cand_id: fec_candidate_ids).map { |cand| cand.principle_committee.cmte_id }.uniq
   end
 
-  def latest_committee
+  def latest_principle_committee
     ExternalDataset.fec_committees.where(cmte_id: principle_committee_ids).order(fec_year: :desc).first
+  end
+
+  def principle_committee(fec_year = 2022)
+    ExternalDataset.fec_committees.find_by(cmte_id: principle_committee_ids, fec_year: fec_year)
   end
 end
