@@ -17,10 +17,6 @@ describe EntitiesController, type: :controller do
     it { is_expected.to route(:delete, '/entities/1').to(action: :destroy, id: 1) }
     it { is_expected.to route(:get, '/entities/1/political').to(action: :political, id: 1) }
     it { is_expected.to route(:get, '/entities/1/references').to(action: :references, id: 1) }
-    it { is_expected.to route(:get, '/entities/1/match_donations').to(action: :match_donations, id: 1) }
-    it { is_expected.to route(:post, '/entities/1/match_donation').to(action: :match_donation, id: 1) }
-    it { is_expected.to route(:post, '/entities/1/unmatch_donation').to(action: :unmatch_donation, id: 1) }
-    it { is_expected.to route(:get, '/entities/1/review_donations').to(action: :review_donations, id: 1) }
     it { is_expected.to route(:post, '/entities/1/tags').to(action: :tags, id: 1) }
 
     context 'with primary extensions' do
