@@ -6,8 +6,7 @@ class EntityMerger
   attr_reader :source, :dest, :extensions,
               :contact_info, :lists, :images,
               :aliases, :document_ids, :tag_ids,
-              :articles, :os_categories,
-              :child_entities, :party_members, :cmp_entity,
+              :articles, :child_entities, :party_members, :cmp_entity,
               :relationships, :potential_duplicate_relationships,
               :os_match_relationships, :ny_match_relationships,
               :external_links
@@ -354,7 +353,6 @@ class EntityMerger
     @aliases = []
     @document_ids = []
     @tag_ids = []
-    @os_categories = []
     @child_entities = []
     @party_members = []
     @relationships = []

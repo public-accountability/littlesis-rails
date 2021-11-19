@@ -5,8 +5,8 @@ export function MasterSearchColumn(){
     visible: false,
     searchable: true,
     render: function(data, type, row) {
-      var keys = ['name', 'blurb', 'types', 'industries']
-        return keys.map(function(key) { return row[key] }).join('  ');
+      var keys = ['name', 'blurb', 'types']
+      return keys.map(function(key) { return row[key] }).join('  ');
     }
   }
 }

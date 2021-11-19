@@ -2,7 +2,6 @@ export class Search {
   constructor(datatable){
     let map = {
       '#datatable-type': 'types:name',
-      '#datatable-industry': 'industries:name',
       '#datatable-interlock': 'interlock_ids:name',
       '#datatable-list-interlock': 'list_interlock_ids:name'
     }
