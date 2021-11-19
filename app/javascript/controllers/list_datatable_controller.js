@@ -90,7 +90,6 @@ function columnConfigs(config) {
       ActionsColumn(config),
       IdColumn,
       BasicColumn('types'),
-      BasicColumn('industries'),
       MasterSearchColumn(),
       BasicColumn('interlock_ids'),
       BasicColumn('list_interlock_ids')

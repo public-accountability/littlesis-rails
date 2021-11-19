@@ -58,8 +58,6 @@ class Entity < ApplicationRecord
 
   has_many :extension_records, inverse_of: :entity, dependent: :destroy
   has_many :extension_definitions, through: :extension_records, inverse_of: :entities
-  has_many :os_entity_categories, inverse_of: :entity
-  has_many :os_categories, through: :os_entity_categories, inverse_of: :entities
   has_many :article_entities, inverse_of: :entity, dependent: :destroy
   has_many :articles, through: :article_entities, inverse_of: :entities
 
@@ -396,10 +394,6 @@ class Entity < ApplicationRecord
 
   def affiliations
     relateds.where('links.category_id IN (1, 3)')
-  end
-
-  def industries
-    os_categories.map(&:industry_name).uniq
   end
 
   def add_region(region)

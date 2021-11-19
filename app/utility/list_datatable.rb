@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class ListDatatable
   include RelationshipsHelper
   include ApplicationHelper
   include Rails.application.routes.url_helpers
   include EntitiesHelper
 
-  attr_reader :list, :links, :types, :industries, :entities, :interlocks, :list_interlocks
+  attr_reader :list, :links, :types, :entities, :interlocks, :list_interlocks
 
   def initialize(list, force_interlocks=false)
     @list = list
@@ -12,7 +14,6 @@ class ListDatatable
     @force_interlocks = force_interlocks
     @num_interlocks = @num_lists = 20
     @types = []
-    @industries = []
     @lists = []
   end
 
@@ -50,14 +51,13 @@ class ListDatatable
   end
 
   def get_data
-    list_entities = ListEntity.includes(entity: [:extension_definitions, :os_categories]).where(list_id: @list.id, entity: { is_deleted: false })
+    list_entities = ListEntity.includes(entity: [:extension_definitions]).where(list_id: @list.id, entity: { is_deleted: false })
     @total_entities = list_entities.count
 
     @data = Rails.cache.fetch(cache_key, expires_in: 2.weeks) do
       list_entities.map do |le|
         entity = le.entity
         @types = @types.concat(entity.types)
-        @industries = @industries.concat(entity.industries)
         list_entity_data(le, extract_interlock_ids(entity), extract_list_interlock_ids(entity))
       end
     end
@@ -75,7 +75,6 @@ class ListDatatable
       blurb: list_entity.entity.blurb,
       blurb_excerpt: excerpt(list_entity.entity.blurb, 70 - list_entity.entity.name.length),
       types: list_entity.entity.types.join(","),
-      industries: list_entity.entity.industries.join(','),
       interlock_ids: interlock_ids,
       list_interlock_ids: list_interlock_ids
     }.merge(sort_column(list_entity.entity))
@@ -92,10 +91,6 @@ class ListDatatable
   def prepare_options
     @types.uniq!
     @types = [["Entity Type", ""]].concat(ExtensionDefinition.order(:tier).pluck(:display_name).select { |t| @types.include?(t) }.map { |t| [t, t] })
-    @industries -= ["Other", "Unknown", "Non-contribution"]
-    @industries.uniq!
-    @industries.sort!
-    @industries = [["Industry", ""]].concat(@industries)
   end
 
   def ranked?

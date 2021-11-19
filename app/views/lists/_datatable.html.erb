@@ -14,46 +14,37 @@
     <select id="datatable-type" class="form-control">
       <%= options_for_select(table.types) %>
     </select>
-      <% if table.industries.count > 1 %>
-      <select id="datatable-industry" class="form-control">
-        <%= options_for_select(table.industries) %>
-      </select>
-      <% end %>
-      <% if table.interlocks? %>
+    <% if table.interlocks? %>
       <select id="datatable-interlock" class="form-control">
         <%= options_for_select(table.interlocks) %>
       </select>
-      <% end %>
-      <% if table.lists? %>
+    <% end %>
+    <% if table.lists? %>
       <select id="datatable-list-interlock" class="form-control">
         <%= options_for_select(table.list_interlocks) %>
       </select>
-      <% end %>
-      <div id="datatable-filters-line2">
-        <input id="datatable-search" class="form-control" type="text" placeholder="search">
-      </div>
+    <% end %>
+    <div class="buttons ml-2">
+      <%= link_to('Export CSV', '#', class: 'btn btn-primary', data: {action: 'click->list-datatable#exportCsv'}) %>
     </div>
   </div>
+</div>
 
-  <div class="buttons">
-    <%= link_to('Export CSV', '#', class: 'btn btn-primary', data: {action: 'click->list-datatable#exportCsv'}) %>
-  </div>
-
-  <table id="datatable-table" class: "table table-striped table-bordered list-datatable">
-    <thead>
-      <tr>
-        <% if table.ranked? %>
-          <th class="invisible">default_sort_position</th>
-          <th>Rank</th>
-        <% end %>
-        <th>Name</th>
-        <% if @list.sort_by %>
-          <th><%= @list.sort_by.to_s.humanize %></th>
-        <% end %>
-        <% if @permissions[:editable] %>
-          <th></th>
-        <% end %>
-      </tr>
-    </thead>
-  </table>
+<table id="datatable-table" class: "table table-striped table-bordered list-datatable">
+  <thead>
+    <tr>
+      <% if table.ranked? %>
+        <th class="invisible">default_sort_position</th>
+        <th>Rank</th>
+      <% end %>
+      <th>Name</th>
+      <% if @list.sort_by %>
+        <th><%= @list.sort_by.to_s.humanize %></th>
+      <% end %>
+      <% if @permissions[:editable] %>
+        <th></th>
+      <% end %>
+    </tr>
+  </thead>
+</table>
 <% end%>

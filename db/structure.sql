@@ -2863,39 +2863,6 @@ ALTER SEQUENCE public.os_candidates_id_seq OWNED BY public.os_candidates.id;
 
 
 --
--- Name: os_categories; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.os_categories (
-    id bigint NOT NULL,
-    category_id character varying(10) NOT NULL,
-    category_name character varying(100) NOT NULL,
-    industry_id character varying(10) NOT NULL,
-    industry_name character varying(100) NOT NULL,
-    sector_name character varying(100) NOT NULL
-);
-
-
---
--- Name: os_categories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.os_categories_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: os_categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.os_categories_id_seq OWNED BY public.os_categories.id;
-
-
---
 -- Name: os_committees; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2997,39 +2964,6 @@ CREATE SEQUENCE public.os_donations_id_seq
 --
 
 ALTER SEQUENCE public.os_donations_id_seq OWNED BY public.os_donations.id;
-
-
---
--- Name: os_entity_categories; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.os_entity_categories (
-    id bigint NOT NULL,
-    entity_id bigint NOT NULL,
-    category_id character varying(10) NOT NULL,
-    source character varying(200),
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: os_entity_categories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.os_entity_categories_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: os_entity_categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.os_entity_categories_id_seq OWNED BY public.os_entity_categories.id;
 
 
 --
@@ -4739,13 +4673,6 @@ ALTER TABLE ONLY public.os_candidates ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- Name: os_categories id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.os_categories ALTER COLUMN id SET DEFAULT nextval('public.os_categories_id_seq'::regclass);
-
-
---
 -- Name: os_committees id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -4757,13 +4684,6 @@ ALTER TABLE ONLY public.os_committees ALTER COLUMN id SET DEFAULT nextval('publi
 --
 
 ALTER TABLE ONLY public.os_donations ALTER COLUMN id SET DEFAULT nextval('public.os_donations_id_seq'::regclass);
-
-
---
--- Name: os_entity_categories id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.os_entity_categories ALTER COLUMN id SET DEFAULT nextval('public.os_entity_categories_id_seq'::regclass);
 
 
 --
@@ -5613,14 +5533,6 @@ ALTER TABLE ONLY public.os_candidates
 
 
 --
--- Name: os_categories os_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.os_categories
-    ADD CONSTRAINT os_categories_pkey PRIMARY KEY (id);
-
-
---
 -- Name: os_committees os_committees_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5634,14 +5546,6 @@ ALTER TABLE ONLY public.os_committees
 
 ALTER TABLE ONLY public.os_donations
     ADD CONSTRAINT os_donations_pkey PRIMARY KEY (id);
-
-
---
--- Name: os_entity_categories os_entity_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.os_entity_categories
-    ADD CONSTRAINT os_entity_categories_pkey PRIMARY KEY (id);
 
 
 --
@@ -6800,20 +6704,6 @@ CREATE INDEX idx_17029_index_os_candidates_on_feccandid ON public.os_candidates 
 
 
 --
--- Name: idx_17045_unique_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX idx_17045_unique_id_idx ON public.os_categories USING btree (category_id);
-
-
---
--- Name: idx_17045_unique_name_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX idx_17045_unique_name_idx ON public.os_categories USING btree (category_name);
-
-
---
 -- Name: idx_17051_index_os_committees_on_cmte_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6832,27 +6722,6 @@ CREATE INDEX idx_17051_index_os_committees_on_cmte_id_and_cycle ON public.os_com
 --
 
 CREATE INDEX idx_17051_index_os_committees_on_recipid ON public.os_committees USING btree (recipid);
-
-
---
--- Name: idx_17069_category_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_17069_category_id_idx ON public.os_entity_categories USING btree (category_id);
-
-
---
--- Name: idx_17069_entity_id_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_17069_entity_id_idx ON public.os_entity_categories USING btree (entity_id);
-
-
---
--- Name: idx_17069_uniqueness_idx; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX idx_17069_uniqueness_idx ON public.os_entity_categories USING btree (entity_id, category_id);
 
 
 --
@@ -8436,6 +8305,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211007174700'),
 ('20211013191239'),
 ('20211102185306'),
-('20211104202533');
+('20211104202533'),
+('20211119155729');
 
 
