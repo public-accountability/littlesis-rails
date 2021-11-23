@@ -165,7 +165,7 @@ LittleSis::Application.routes.draw do
     end
   end
 
-  get '/maps', to: redirect('/maps/featured')
+  get '/maps', to: redirect('/oligrapher')
 
   resources :maps, only: [:show, :new] do
     member do
@@ -198,7 +198,6 @@ LittleSis::Application.routes.draw do
       get '/find_connections', action: :find_connections
       get '/find_nodes', action: :find_nodes
       get '/get_interlocks', action: :get_interlocks
-      get '/example', action: :example
       get '/about' => "pages#oligrapher"
     end
 

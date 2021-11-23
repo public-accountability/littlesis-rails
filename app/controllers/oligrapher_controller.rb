@@ -17,8 +17,7 @@ class OligrapherController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :map_not_found
   rescue_from Exceptions::PermissionError, with: :map_not_found
 
-  # Pages
-
+  # Explore Maps Page
   def index
     respond_to do |format|
       format.html
@@ -43,26 +42,6 @@ class OligrapherController < ApplicationController
     render layout: 'embedded_oligrapher'
   end
 
-  def example
-    @configuration = {
-      settings: { debug: true },
-      display: { modes: { editor: true } },
-      attributes: {
-        title: "Blank Map",
-        date: "January 12, 2018",
-        subtitle: "",
-        user: { name: "LittleSis User", url: "http://littlesis.org/user/test" },
-        settings: { private: false },
-        links: [
-          { text: "Edit", url: "https://littlesis.org/oligrapher/edit" },
-          { text: "Clone", url: "https://littlesis.org/oligrapher/clone" },
-          { text: "Disclaimer", url: "https://littlesis.org/oligrapher/disclaimer" }
-        ]
-      }
-    }
-    render 'oligrapher/example', layout: 'oligrapher3'
-  end
-
   def new
     @map = NetworkMap.new(oligrapher_version: 3, title: 'Untitled Map', user: current_user)
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
@@ -79,18 +58,6 @@ class OligrapherController < ApplicationController
       render file: "#{Rails.root}/app/assets/images/netmap-org.png", layout: false
     end
   end
-
-  # def svg_screenshot
-  #   check_private_access
-  #   if @map.screenshot.present?
-  #     expires_in 2.minutes, :public => true
-  #     render body: @map.screenshot, content_type: 'image/svg+xml'
-  #   else
-  #     render file: "#{Rails.root}/app/assets/images/netmap-org.png", layout: false
-  #   end
-  # end
-
-  # Crud actions
 
   # POST /oligrapher
   #  { graph_data: {...}, attributes: { title, description, is_private, is_cloneable } }
@@ -116,7 +83,6 @@ class OligrapherController < ApplicationController
       render json: @map.errors, status: :bad_request
     end
   end
-
 
   # Action Endpoints - API requests from Oligrapher
 
@@ -184,7 +150,7 @@ class OligrapherController < ApplicationController
     @map.destroy
     respond_to do |format|
       format.json { render json: { redirect_url: new_oligrapher_path } }
-      format.any { redirect_back(fallback_location: '/maps/all') }
+      format.any { redirect_back(fallback_location: '/maps') }
     end
   end
 
