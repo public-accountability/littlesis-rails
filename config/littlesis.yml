@@ -29,6 +29,7 @@ defaults: &defaults
   firefox_binary: /opt/firefox
   oligrapher_commit: "889838d5d743316ab843cae550f45325cb44db55"
   oligrapher_use_bundle: true
+  opensecrets_api_key:
 
 test:
   <<: *defaults
@@ -46,6 +47,7 @@ development:
   image_host: "http://127.0.0.1:8081"
   host: 'localhost:8081'
   protocol: http
+  opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>
 
 production:
   <<: *defaults
@@ -67,3 +69,4 @@ production:
   notification_password: <%= Rails.application.credentials.notification_password %>
   notification_to: <%= Rails.application.credentials.notification_to %>
   restricted_ips: <%= Rails.application.credentials.restricted_ips %>
+  opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>
