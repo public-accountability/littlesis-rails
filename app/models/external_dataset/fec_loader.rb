@@ -26,13 +26,14 @@ module ExternalDataset
       loop_csv_files(model.dataset_name) do |filepath|
         Rails.logger.info "FEC: Processing #{filepath}"
 
-        model.run_query <<~SQL
+        model.run_query <<~SQL.squish
           COPY #{model.table_name} (#{COLUMNS_LOOKUP[model.dataset_name].join(',')})
           FROM '#{filepath}' WITH CSV
         SQL
       end
     end
 
+    # This can takes more than 8 hours
     def self.create_update_files
       [FECCandidate, FECCommittee, FECContribution].each do |model|
         create_update_file(model, '22')
@@ -41,9 +42,9 @@ module ExternalDataset
 
     def self.load_update_files
       [FECCandidate, FECCommittee, FECContribution].each do |model|
-        filepath = csv_path_root.join(FILENAME_LOOKUP.fetch(model.dataset_name) + year + "_update.csv")
+        filepath = csv_path_root.join "#{FILENAME_LOOKUP[model.dataset_name]}22_update.csv"
 
-        model.run_query <<~SQL
+        model.run_query <<~SQL.squish
           COPY #{model.table_name} (#{COLUMNS_LOOKUP[model.dataset_name].join(',')})
           FROM '#{filepath}' WITH CSV
         SQL
@@ -80,7 +81,7 @@ module ExternalDataset
       @csv_path_root ||= if Rails.env.production?
                            Pathname.new('/var/lib/littlesis/fec')
                          elsif Rails.env.development?
-                           Pathname.new('/data/fec/csv')
+                           Pathname.new('/data/fec/csv') # Rails.root.join('data/fec/csv')
                          else
                            Rails.root.join('data/fec/csv')
                          end

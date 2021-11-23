@@ -12,9 +12,6 @@ application.register("carousel", CarouselController)
 import ClipboardController from "./clipboard_controller.js"
 application.register("clipboard", ClipboardController)
 
-import DonationMatcherController from "./donation_matcher_controller.js"
-application.register("donation-matcher", DonationMatcherController)
-
 import EntityAutocompleteController from "./entity_autocomplete_controller.js"
 application.register("entity-autocomplete", EntityAutocompleteController)
 

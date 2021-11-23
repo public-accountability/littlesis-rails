@@ -105,13 +105,7 @@ LittleSis::Application.routes.draw do
           get ':tab', to: 'entities#show', constraints: {tab: /interlocks|giving/}, as: 'tab'
           get 'political'
           get 'datatable'
-          get 'match_donations'
-          get 'review_donations'
-          post 'match_donation'
-          post 'unmatch_donation'
-          get 'contributions'
           get 'references'
-          get 'potential_contributions'
           get 'edits' => redirect("/#{path_prefix}/%{id}/history")
           get 'history' => 'edits#entity'
           get 'add_relationship'

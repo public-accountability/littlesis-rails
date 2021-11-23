@@ -18,7 +18,8 @@ module ExternalDataset
     belongs_to :fec_committee, ->(contribution) { where(fec_year: contribution.fec_year) },
                class_name: 'ExternalDataset::FECCommittee',
                foreign_key: 'cmte_id',
-               primary_key: 'cmte_id'
+               primary_key: 'cmte_id',
+               inverse_of: :contributions
 
     has_one :fec_match,
             foreign_key: 'sub_id',

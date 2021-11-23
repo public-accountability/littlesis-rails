@@ -3,7 +3,6 @@
 class Entity < ApplicationRecord
   include SoftDelete
   include Referenceable
-  include Political
   include Api::Serializable
   include EntityPaths
   include Tagable

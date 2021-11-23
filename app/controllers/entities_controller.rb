@@ -31,7 +31,7 @@ class EntitiesController < ApplicationController
   def political
   end
 
-  # THE DATA 'tab'
+  # "data" table
   def datatable
   end
 
@@ -94,48 +94,6 @@ class EntitiesController < ApplicationController
                    .order(created_at: :desc)
                    .page(params[:page] || 1)
                    .per(20)
-  end
-
-  # ------------------------------ #
-  # Open Secrets Donation Matching #
-  # ------------------------------ #
-
-  def match_donations
-    redirect_to fec_entity_match_contributions_path(@entity)
-  end
-
-  def review_donations
-  end
-
-  def match_donation
-    params[:payload].each do |donation_id|
-      match = OsMatch.find_or_create_by(os_donation_id: donation_id, donor_id: params[:id])
-      match.update(matched_by: current_user.id)
-    end
-    @entity.update(last_user_id: current_user.id)
-    render json: { status: 'ok' }
-  end
-
-  def unmatch_donation
-    check_permission 'importer'
-    params[:payload].each do |os_match_id|
-      OsMatch.find(os_match_id).destroy
-    end
-    @entity.update(last_user_id: current_user.id)
-    render json: { status: 'ok' }
-  end
-
-  # ------------------------------ #
-  # Open Secrets Contributions     #
-  # ------------------------------ #
-
-  def contributions
-    expires_in(5.minutes, public: true)
-    render json: @entity.contribution_info
-  end
-
-  def potential_contributions
-    render json: @entity.potential_contributions
   end
 
   def validate
