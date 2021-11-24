@@ -1,8 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
-import nysSearch from '../src/components/nys_search'
+import datatable from 'datatables.net'
 
 export default class extends Controller {
-  connect() {
-    nysSearch().filerSearch()
+  initialize() {
   }
 }
