@@ -72,7 +72,7 @@ GEM
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
     bindex (0.8.1)
-    bootsnap (1.9.1)
+    bootsnap (1.9.3)
       msgpack (~> 1.0)
     builder (3.2.4)
     capybara (3.36.0)
@@ -433,4 +433,4 @@ DEPENDENCIES
   zeitwerk
 
 BUNDLED WITH
-   2.2.22
+   2.2.32
