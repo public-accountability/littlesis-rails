@@ -30,10 +30,10 @@ module Datatables
         @order = nil
       end
 
-      @dataset = @params[:dataset]&.downcase
+      @dataset = @params[:dataset]&.downcase&.to_sym
       @matched = @params[:matched]&.downcase&.to_sym || :all
 
-      if @dataset && !ExternalData.dataset?(@dataset)
+      if @dataset && ExternalDataset.datasets.exclude?(@dataset)
         raise Exceptions::LittleSisError, 'Invalid Dataset'
       end
 
