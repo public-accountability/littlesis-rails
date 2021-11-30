@@ -12,10 +12,6 @@ describe OligrapherController, type: :controller do
   end
 
   it do
-    is_expected.to route(:get, '/oligrapher/example').to(action: :example)
-  end
-
-  it do
     is_expected.to route(:post, '/oligrapher').to(action: :create)
   end
 

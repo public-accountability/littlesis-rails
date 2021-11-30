@@ -76,7 +76,7 @@ describe 'Maps' do
     before { visit '/maps' }
 
     scenario 'redirecting to /maps/featured' do
-      successfully_visits_page '/maps/featured'
+      successfully_visits_page '/oligrapher'
     end
   end
 
