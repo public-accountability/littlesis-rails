@@ -1,0 +1,19 @@
+<% content_for :page_title, "Oligrapher Grid" %>
+
+<div class="row">
+  <div class="col">
+    <%= datagrid_form_for @grid, url: '/oligrapher/grid' %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= datagrid_table @grid %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= paginate(@grid.assets) %>
+  </div>
+</div>

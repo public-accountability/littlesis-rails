@@ -31,6 +31,11 @@ class OligrapherController < ApplicationController
   def search
   end
 
+  def grid
+    @grid = Oligrapher::Grid.new(params.fetch('oligrapher_grid', {}))
+    @grid.scope { |scope| scope.page(params[:page] || 1).per(25) }
+  end
+
   def show
     check_private_access
     @is_pending_editor = (current_user && @map.has_pending_editor?(current_user))

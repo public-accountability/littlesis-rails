@@ -200,6 +200,7 @@ LittleSis::Application.routes.draw do
       get '/get_interlocks', action: :get_interlocks
       get '/about' => "pages#oligrapher"
       get '/search', action: :search
+      get '/grid', action: :grid
     end
 
     member do
