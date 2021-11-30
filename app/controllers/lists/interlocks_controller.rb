@@ -21,41 +21,31 @@ module Lists
       @others = entities - @companies - @govt_bodies
     end
 
-    def show # rubocop:disable Metrics/AbcSize
-      @results = @list.interlocks(options).page(page).per(page_number)
-
-      Kaminari.paginate_array(
-        @results.to_a,
-        total_count: @list.interlocks_count(options)
-      ).page(page).per(page_number)
-
-      @interlocks = interlocks_results(options)
+    # interlocks tag
+    def show
+      options = get_options(params.fetch(:interlocks_tab))
+      results = @list.interlocks(options).page(page).per(page_number)
+      count = @list.interlocks_count(options)
+      @interlocks = Kaminari.paginate_array(results.to_a, total_count: count).page(page).per(page_number)
 
       render params.fetch(:interlocks_tab)
     end
 
     private
 
-    def interlocks_results(options)
-      results = @list.interlocks(options).page(page).per(page_number)
-      count = @list.interlocks_count(options)
-      Kaminari.paginate_array(results.to_a, total_count: count).page(page).per(page_number)
-    end
-
-    def options # rubocop:disable Metrics/MethodLength
-      @options ||= case params.fetch(:interlocks_tab)
-                   when 'companies'
-                     OPTIONS.merge(degree2_type: 'Business')
-                   when 'government'
-                     OPTIONS.merge(degree2_type: 'GovernmentBody')
-                   when 'other_orgs'
-                     OPTIONS.merge(exclude_degree2_types: %w[Business GovernmentBody])
-                   when 'giving'
-                     OPTIONS.merge(category_ids: [Relationship::DONATION_CATEGORY], sort: :amount)
-                   when 'funding'
-                     OPTIONS.merge(category_ids: [Relationship::DONATION_CATEGORY], order: 1,
-                                   sort: :amount)
-                   end
+    def get_options(tab)
+      case tab
+      when 'companies'
+        OPTIONS.merge(degree2_type: 'Business')
+      when 'government'
+        OPTIONS.merge(degree2_type: 'GovernmentBody')
+      when 'other_orgs'
+        OPTIONS.merge(exclude_degree2_types: %w[Business GovernmentBody])
+      when 'giving'
+        OPTIONS.merge(category_ids: [Relationship::DONATION_CATEGORY], sort: :amount)
+      when 'funding'
+        OPTIONS.merge(category_ids: [Relationship::DONATION_CATEGORY], order: 1, sort: :amount)
+      end
     end
 
     def set_list

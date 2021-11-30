@@ -1,172 +1,18 @@
-.feature-map-form-container {
-    margin-left: 5px;
-    form {
-	display: inline;
-    }
-
-}
-
-/* map pages */
-
-.fullscreen #oligrapher {
-  padding: 0;
-}
-
-.fullscreen #oligrapher .row {
-  margin: 0;
-}
-
-.fullscreen #oligrapher .row > div {
-  padding: 0;
-}
-
-#oligrapher {
-  padding: 15px;
-}
-
-#oligrapher div:focus {
-  outline: none;
-}
-
-#oligrapherTitle, #oligrapherTitle input {
-  font-weight: 200;
-}
-
-#oligrapherLogo {
-  position: absolute;
-  bottom: 0px;
-  right: 10px;
-  width: 100px;
-}
-
-#oligrapher {
-  padding: 15px;
-}
-
-#oligrapherGraphCol {
-  padding-left: 20px;
-}
-
-#oligrapherShowAnnotations {
-  right: 10px;
-}
-
-/* .nodeCircle circle.handle { */
-/*   fill: #8bc8f0; */
-/* } */
-
-#oligrapherDeleteButton, #oligrapherCancelButton {
-  position: fixed;
-  bottom: 26px;
-  left: 105px;
-}
-
-#oligrapher.embedded {
-
-  #oligrapherHeader {
-    margin-bottom: 0;
-    margin-top: 3px;
-    padding-left: 13px;
-    z-index: 1000;
-  }
-
-  #oligrapherTitle {
-    font-size: 30px;
-    margin-bottom: 2px;
-
-    a {
-      color: black;
-    }
-  }
-
-  #oligrapherGraphContainer {
-    border: 0;
-  }
-
-  #oligrapherHideAnnotationsButton {
-    display: none;
-  }
-
-  #oligrapherGraphAnnotations {
-      position: absolute;
-      max-height: 120px;
+table.oligrapher_grid {
     width: 100%;
-    bottom: 0px;
-  }
-
-  #oligrapherNavButtons {
-    margin: 0;
-    margin-bottom: 5px;
-
-    button {
-      font-size: 12px;
-      padding: 6px;
-      border: 1px solid #ddd;
-      margin-right: 0px;
-      margin-left: 5px;
-      opacity: 1;
-    }
-  }
-
-  #oligrapherGraphAnnotation {
-    background-color: #fdfdfd;
-    border-top: 1px dotted #ccc;
-    padding: 10px;
-    height: calc(100% - 30px);
-    overflow: auto;
-    font-size: 12px;
-    line-height: 14px;
-
-    h2 {
-      font-size: 20px;
-      font-weight: normal;
-      margin-top: 5px;
-      margin-bottom: 15px;
-    }
-  }
 }
 
-#embed-code {
-  display: none;
-  position: absolute;
-  z-index: 100;
-  text-align: left;
-  margin-top: 10px;
-  background-color: #eee;
-  padding: 10px;
-  width: 500px;
-  box-sizing: content-box;
+// .fullscreen #oligrapher {
+//   padding: 0;
+// }
 
-  input {
-    width: 50px;
-    margin-bottom: 10px;
-  }
+// .fullscreen #oligrapher .row {
+//   margin: 0;
+// }
 
-  textarea {
-    width: 500px;
-    height: 120px;
-  }
-}
-
-.clickplz:enabled:not(:focus) {
-  animation: clickplz 3s;
-  -webkit-animation: clickplz 3s;
-  animation-iteration-count: infinite;
-  -webkit-animation-iteration-count: infinite;
-}
-
-@keyframes clickplz {
-  0%   { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
-  50%  { color: #666; background-color:#ffd; text-shadow: 0 0 9px rgba(255,255,128,0.75); }
-  100% { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
-}
-
-@-webkit-keyframes clickplz {
-  0%   { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
-  50%  { color: #666; background-color:#ffd; text-shadow: 0 0 9px rgba(255,255,128,0.75); }
-  100% { color: #666; background-color:#eee; text-shadow: 0 0 9px rgba(255,255,255,0); }
-}
-
+// .fullscreen #oligrapher .row > div {
+//   padding: 0;
+// }
 
 .oligrapher-display-image {
     height: 250px;

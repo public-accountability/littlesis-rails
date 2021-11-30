@@ -1,4 +1,4 @@
-xdescribe Datatables do
+describe Datatables do
   describe Datatables::Params do
     let(:controller_params) do
       ActionController::Parameters.new(

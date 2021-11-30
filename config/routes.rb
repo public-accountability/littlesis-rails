@@ -77,7 +77,7 @@ LittleSis::Application.routes.draw do
     end
 
     resources :interlocks, only: :index, controller: 'lists/interlocks'
-    get ':interlocks_tab', to: 'lists/interlocks#show', constraints: {interlocks_tab: /companies|government|other_orgs|giving|funding/}, as: 'interlocks_tab'
+    get ':interlocks_tab', to: 'lists/interlocks#show', constraints: { interlocks_tab: /companies|government|other_orgs|giving|funding/ }, as: 'interlocks_tab'
     resources :entities, only: :create, controller: 'lists/entities'
     resources :entity_associations, path: 'entities/bulk', only: [:new, :create], controller: 'lists/entity_associations'
     resources :list_entities, only: [:create, :update, :destroy], controller: 'lists/list_entities'
@@ -165,7 +165,7 @@ LittleSis::Application.routes.draw do
     end
   end
 
-  get '/maps', to: redirect('/maps/featured')
+  get '/maps', to: redirect('/oligrapher')
 
   resources :maps, only: [:show, :new] do
     member do
@@ -198,8 +198,9 @@ LittleSis::Application.routes.draw do
       get '/find_connections', action: :find_connections
       get '/find_nodes', action: :find_nodes
       get '/get_interlocks', action: :get_interlocks
-      get '/example', action: :example
       get '/about' => "pages#oligrapher"
+      get '/search', action: :search
+      get '/grid', action: :grid
     end
 
     member do
@@ -277,25 +278,6 @@ LittleSis::Application.routes.draw do
   #########
 
   get "/edits" => "edits#index"
-
-  #######
-  # NYS #
-  #######
-
-  scope '/nys' do
-    get "/" => "nys#index"
-    post "/match_donations" => "nys#match_donations"
-    post "/unmatch_donations" => "nys#unmatch_donations"
-    get "/candidates" => "nys#candidates"
-    get "/pacs" => "nys#pacs"
-    get "/:type/new" => "nys#new_filer_entity", constraints: { type: /pacs|candidates/ }
-    post "/:type/new" => "nys#create", constraints: { type: /pacs|candidates/ }
-    post "/ny_filer_entity" => "nys#create_ny_filer_entity"
-    get "/potential_contributions" => "nys#potential_contributions"
-    get "/contributions" => "nys#contributions"
-    get 'match' => 'nys#match'
-    get '/datatable' => 'nys#datatable'
-  end
 
   #########
   # Merge #

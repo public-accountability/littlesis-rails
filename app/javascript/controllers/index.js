@@ -63,12 +63,6 @@ application.register("navmenu", NavmenuController)
 import NewEntityFormController from "./new_entity_form_controller.js"
 application.register("new-entity-form", NewEntityFormController)
 
-import NysEntitySearchController from "./nys_entity_search_controller.js"
-application.register("nys-entity-search", NysEntitySearchController)
-
-import NysFilerSearchController from "./nys_filer_search_controller.js"
-application.register("nys-filer-search", NysFilerSearchController)
-
 import OligrapherController from "./oligrapher_controller.js"
 application.register("oligrapher", OligrapherController)
 
