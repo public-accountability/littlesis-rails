@@ -77,7 +77,7 @@ LittleSis::Application.routes.draw do
     end
 
     resources :interlocks, only: :index, controller: 'lists/interlocks'
-    get ':interlocks_tab', to: 'lists/interlocks#show', constraints: {interlocks_tab: /companies|government|other_orgs|giving|funding/}, as: 'interlocks_tab'
+    get ':interlocks_tab', to: 'lists/interlocks#show', constraints: { interlocks_tab: /companies|government|other_orgs|giving|funding/ }, as: 'interlocks_tab'
     resources :entities, only: :create, controller: 'lists/entities'
     resources :entity_associations, path: 'entities/bulk', only: [:new, :create], controller: 'lists/entity_associations'
     resources :list_entities, only: [:create, :update, :destroy], controller: 'lists/list_entities'

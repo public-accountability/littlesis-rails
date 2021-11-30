@@ -1,5 +1,5 @@
 <% if companies.count > 0 %>
-<h3>Companies</h3>
+  <h3>Companies</h3>
 <% if local_assigns[:preview] %>
   <%= paginate_preview(companies, 5, list_interlocks_tab_path(@list, :companies)) %>
 <% else %>
