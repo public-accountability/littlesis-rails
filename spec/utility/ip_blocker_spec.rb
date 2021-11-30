@@ -3,7 +3,7 @@ describe IpBlocker do
     before do
       Rails.application.config.littlesis.restricted_ips = nil
       Object.send :remove_const, :IpBlocker if Module.const_defined?(:IpBlocker)
-      load 'ip_blocker'
+      load Rails.root.join('app/utility/ip_blocker.rb')
     end
 
     it 'defines .restricted? and always returns false' do
@@ -15,7 +15,7 @@ describe IpBlocker do
     before do
       Rails.application.config.littlesis.restricted_ips = ['192.0.2.0/24', '192.0.3.0/24']
       Object.send :remove_const, :IpBlocker if Module.const_defined?(:IpBlocker)
-      load 'ip_blocker'
+      load Rails.root.join('app/utility/ip_blocker.rb')
     end
 
     it 'returns true if given ip is in restricted range' do
@@ -31,7 +31,7 @@ describe IpBlocker do
     before do
       Rails.application.config.littlesis.restricted_ips = ['192.0.2.0/24', 'FAKE']
       Object.send :remove_const, :IpBlocker if Module.const_defined?(:IpBlocker)
-      load 'ip_blocker'
+      load Rails.root.join('app/utility/ip_blocker.rb')
     end
 
     after do
