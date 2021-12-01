@@ -1,16 +1,3 @@
 User-agent: *
-Crawl-delay: 20
-Disallow: /login
-Disallow: /search
-
-User-agent: SemrushBot
-Disallow: /
-
-User-agent: XoviBot
-Disallow: /
-
-User-agent: dotbot
-Disallow: /
-
-User-agent: AhrefsBot
-Disallow: /
+Crawl-delay: 10
+Sitemap: https://littlesis.org/sitemap/sitemap.xml

@@ -169,6 +169,10 @@ class List < ApplicationRecord
     self
   end
 
+  def url
+    Rails.application.routes.url_helpers.members_list_url(self)
+  end
+
   private
 
   def add_one_entity(entity_or_id)
