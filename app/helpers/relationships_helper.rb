@@ -77,9 +77,13 @@ module RelationshipsHelper
   end
 
   def reverse_link
-    link_to(reverse_direction_relationship_path(@relationship), method: :post, class: 'relationship-reverse-link', id: 'relationship-reverse-link') do
-      content_tag(:span, nil, { 'class' => 'bi bi-arrow-down-up icon-link hvr-pop', 'aria-hidden' => true, 'title' => 'switch' }) +
-        content_tag(:span, 'switch', style: 'padding-left: 5px')
+    data = { "controller" => 'reverse-link',
+             "reverse-link-url-value" => reverse_direction_relationship_path(@relationship) }
+
+    tag.div(id: 'relationship-reverse-link', data: data) do
+      tag.button(data: { action: "click->reverse-link#onClick" }, class: 'bg-transparent border-0') do
+        tag.span('class' => 'bi bi-arrow-down-up icon-link hvr-pop') + tag.span('switch', style: 'padding-left: 5px')
+      end
     end
   end
 

@@ -397,7 +397,7 @@ describe RelationshipsController, type: :controller do
     let(:rel) { build(:relationship, id: rand(1000)) }
 
     before do
-      expect(rel).to receive(:reverse_direction)
+      expect(rel).to receive(:reverse_direction!)
       expect(Relationship).to receive(:find).with('1').and_return(rel)
       post :reverse_direction, params: { id: 1 }
     end

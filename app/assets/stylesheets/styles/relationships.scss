@@ -76,6 +76,13 @@ form.edit-relationship-form {
 
 }
 
+#relationship-reverse-link {
+    span {
+        color: $link_blue;
+        cursor: pointer;
+    }
+}
+
 #source-links-table {
     @extend .table;
     @extend .table-sm;

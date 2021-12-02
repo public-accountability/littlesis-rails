@@ -122,8 +122,11 @@ class RelationshipsController < ApplicationController
 
   # POST /relationships/:id/reverse_direction
   def reverse_direction
-    @relationship.reverse_direction
-    redirect_to :action => "edit", :id => @relationship.id
+    @relationship.reverse_direction!
+    respond_to do |format|
+      format.html { redirect_to :action => "edit", :id => @relationship.id }
+      format.json { render json: { status: 'ok' } }
+    end
   end
 
   def find_similar
