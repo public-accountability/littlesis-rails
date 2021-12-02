@@ -44,8 +44,8 @@ describe 'Edit Relationship Page', type: :feature do
         expect(page.all(selector).map(&:text)).to eql ['Member:', 'Organization:']
       end
 
-      it 'has reverse link' do
-        page_has_selector '.relationship-reverse-link', count: 1
+      it 'has reverse relationship link' do
+        page_has_selector '#relationship-reverse-link', count: 1
       end
     end
   end # end 'user is logged in'
