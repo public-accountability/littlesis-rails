@@ -78,6 +78,9 @@ application.register("relationship-creator", RelationshipCreatorController)
 import RelationshipsDatatableController from "./relationships_datatable_controller.js"
 application.register("relationships-datatable", RelationshipsDatatableController)
 
+import ReverseLinkController from "./reverse_link_controller.js"
+application.register("reverse-link", ReverseLinkController)
+
 import SidebarSourceLinksController from "./sidebar_source_links_controller.js"
 application.register("sidebar-source-links", SidebarSourceLinksController)
 
