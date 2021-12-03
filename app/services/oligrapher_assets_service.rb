@@ -34,7 +34,8 @@ class OligrapherAssetsService
   end
 
   def self.run(commit = nil)
-    new(commit || latest_commit).run
+    fetch_all
+    new(commit || Rails.application.config.littlesis.oligrapher_commit).run
   end
 
   def initialize(commit, skip_fetch: false, development: false, force: false)
