@@ -3,24 +3,27 @@
 namespace :maps do
   namespace :screenshot do
     desc 'create screenshots for all maps missing thumbnails'
-    task missing: :environment do
+    task :missing, [:force] => :environment do |_t, args|
+      args.with_defaults(force: false)
       NetworkMap.where(is_private: false).order(updated_at: :desc).find_each(batch_size: 100) do |map|
-        map.take_screenshot unless map.screenshot_exists?
+        if args[:force] || !map.screenshot_exists?
+          map.take_screenshot
+        end
       end
     end
 
+    desc 're-take screenshots for all featured thumbnails'
     task featured: :environment do
       NetworkMap.featured.each do |map|
         ColorPrinter.print_blue "Taking Screenshot for #{map.to_param}"
-        map.take_screenshot # unless map.screenshot_exists?
+        map.take_screenshot
       end
     end
 
     desc 'create screenshots for maps updated in the past X hours'
     task :recent, [:hours] => :environment do |_t, args|
-      hours = args[:hours].nil? ? 25 : args[:hours].to_i
-
-      NetworkMap.where('updated_at > ?', hours.hours.ago).each(&:take_screenshot)
+      args.with_defaults(hours: 25)
+      NetworkMap.where('updated_at > ?', hours.to_i.hours.ago).each(&:take_screenshot)
     end
   end
 
