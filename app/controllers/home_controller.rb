@@ -54,6 +54,7 @@ class HomeController < ApplicationController
     if request.post?
       @flag_form = FlagForm.new(flag_params)
       @flag_form.create_flag
+      redirect_to home_dashboard_path, notice: 'Your flag message has been sent. Thank you!'
     else
       @flag_form = FlagForm.new(page: request.referer, email: current_user&.email)
     end
