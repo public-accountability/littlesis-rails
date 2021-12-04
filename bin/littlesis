@@ -394,8 +394,12 @@ case $1 in
         $GIT "$@"
         ;;
     console|c)
-        # bundle_exec rails c
-        app_run_docker bundle exec rails c
+        if [ "$rails_env" == "production" ]
+        then
+            bundle_exec rails c
+        else
+            app_run_docker bundle exec rails c
+        fi
         ;;
     rails|rake|rspec)
         bundle_exec "$@"

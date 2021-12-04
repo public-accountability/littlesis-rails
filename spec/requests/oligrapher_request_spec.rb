@@ -146,13 +146,13 @@ describe 'GET /oligrapher/:id/screenshot' do
     let(:map) { create(:network_map_version3, user: user) }
 
     before do
-      FileUtils.cp Rails.root.join('spec/testdata/40x60.png'), map.screenshot_path
+      FileUtils.cp Rails.root.join('spec/testdata/40x60.jpeg'), map.screenshot_path
     end
 
     it 'serves image' do
       get screenshot_oligrapher_path(map)
       expect(response).to have_http_status :ok
-      expect(response.media_type).to eq 'image/png'
+      expect(response.media_type).to eq 'image/jpeg'
     end
   end
 

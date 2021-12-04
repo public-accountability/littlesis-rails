@@ -92,7 +92,7 @@ class NetworkMap < ApplicationRecord
   end
 
   def screenshot_path
-    Rails.root.join('public/images/oligrapher', "#{id}.png")
+    Rails.root.join('public/images/oligrapher', "#{id}.jpeg")
   end
 
   def screenshot_exists?
@@ -289,7 +289,7 @@ class NetworkMap < ApplicationRecord
       featured.limit(200).filter(&:screenshot_exists?).map do |m|
         {
           id: m.id,
-          screenshot: "/images/oligrapher/#{m.id}.png",
+          screenshot: "/images/oligrapher/#{m.id}.jpeg",
           url: m.url,
           title: m.name
         }
