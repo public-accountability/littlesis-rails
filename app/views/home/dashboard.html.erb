@@ -1,8 +1,13 @@
 <% content_for(:page_title, "Dashboard") %>
 
-<div class="row no-gutters mt-5">
+<% content_for :head  do %>
+  <%= stylesheet_link_tag "profile", media: "all" %>
+<% end %>
+
+
+<div class="row mt-5">
   <div class="col-12">
-    <h1>LittleSis Dashboard</h1>
+    <h1>Dashboard</h1>
   </div>
 </div>
 

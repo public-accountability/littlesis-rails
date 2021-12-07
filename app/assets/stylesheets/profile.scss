@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'AveriaBold';
+  src: font-url('AveriaSerifLibre-Bold.ttf') format('truetype');
+}
+
+@font-face {
+ font-family: 'Averia';
+  src: font-url('AveriaSerifLibre-Regular.ttf') format('truetype');
+}
+
+
+h1 {
+    font-family: 'AveriaBold';
+}
+
+h3, h4 {
+    font-family: 'Averia';
+}
