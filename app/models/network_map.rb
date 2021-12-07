@@ -9,6 +9,8 @@ class NetworkMap < ApplicationRecord
 
   LS_DATA_SOURCE_BASE_URL = "#{Rails.application.default_url_options[:protocol]}://#{Rails.application.default_url_options[:host]}"
 
+  DEFAULT_FORMAT = 'jpeg'
+
   attribute :graph_data, OligrapherGraphData::Type.new
   serialize :editors, Array
 
@@ -91,12 +93,16 @@ class NetworkMap < ApplicationRecord
     documents.map { |d| "<div><a href=\"#{d.url}\">#{d.name}</a></div>"}.join("\n")
   end
 
-  def screenshot_path
-    Rails.root.join('public/images/oligrapher', "#{id}.jpeg")
+  def screenshot_url(format: DEFAULT_FORMAT)
+    "#{Rails.application.config.littlesis.image_host}/images/oligrapher/#{id}.#{format}"
   end
 
-  def screenshot_exists?
-    File.file?(screenshot_path)
+  def screenshot_path(format: DEFAULT_FORMAT)
+    Rails.root.join('public/images/oligrapher', "#{id}.#{format}")
+  end
+
+  def screenshot_exists?(format: DEFAULT_FORMAT)
+    File.file?(screenshot_path(format: format))
   end
 
   def take_screenshot

@@ -3,9 +3,9 @@ import range from 'lodash-es/range'
 import sample from 'lodash-es/sample'
 import shuffle from 'lodash-es/shuffle'
 
-const row = document.getElementById('oligrapher-chart-row')
-const width = document.getElementById('oligrapher-chart').offsetWidth
-const height = 2000
+// const row = document.getElementById('oligrapher-chart-row')
+// const width = document.getElementById('oligrapher-chart').offsetWidth
+
 
 function transformData(data) {
   let d = data.map((x, i) => {
@@ -21,6 +21,9 @@ function transformData(data) {
 }
 
 function tree(data) {
+  const height = 2000
+  const width = document.getElementById('oligrapher-chart').offsetWidth
+
   const svg = d3
       .select("#oligrapher-chart")
       .append("svg:svg")

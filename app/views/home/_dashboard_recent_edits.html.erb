@@ -1,0 +1,41 @@
+<turbo-frame id="dashboard-recent-edits">
+  <% edited_entities =  EditedEntity.recently_edited_entities(page: page, user_id: user_id).to_a %>
+
+  <% unless edited_entities.empty? && page == 1 %>
+
+    <h4 class="mt-3 mb-2">
+      Your Recent Edits
+      <% unless edited_entities.size < 15 && page == 1 %>
+        <small class="arrows">
+          <% if page > 1 %>
+            <a href="/home/dashboard/edits?page=<%= page - 1 %>">
+              <i class="bi bi-arrow-left"></i>
+            </a>
+          <% else %>
+            <i class="bi bi-arrow-left disabled"></i>
+          <% end %>
+          <% if edited_entities.size >= 15 %>
+            <a href="/home/dashboard/edits?page=<%= page + 1 %>">
+              <i class="bi bi-arrow-right"></i>
+            </a>
+          <% else %>
+            <i class="bi bi-arrow-right disabled"></i>
+          <% end %>
+        </small>
+      <% end %>
+    </h4>
+
+    <div data-turbo="false">
+      <% edited_entities.each do |edited_entity| %>
+        <div class="dashboard-entity d-flex">
+          <div class="flex-shrink-0 pr-2">
+            <%= entity_link(edited_entity.entity, target: '_blank') %>
+          </div>
+          <div class="text-truncate">
+	    <%= edited_entity.entity.blurb %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</trubo-frame>

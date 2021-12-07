@@ -25,7 +25,7 @@ describe 'home/dashboard', type: :feature do
 
       expect(page).to show_success('Signed in successfully.')
 
-      expect(page).to have_css('h1', text: 'LittleSis Dashboard')
+      expect(page).to have_css('h1', text: 'Dashboard')
     end
   end
 
@@ -74,7 +74,7 @@ describe 'home/dashboard', type: :feature do
     after { logout(:user) }
 
     it 'contains links to maps, lists, tags and edits' do
-      %w[Maps Lists Tags Edits].each do |option|
+      %w[maps lists tags edits].each do |option|
         page_has_selector '#dashboard-explore > a', text: option
       end
     end
@@ -94,40 +94,36 @@ describe 'home/dashboard', type: :feature do
         visit '/home/dashboard'
       end
 
-      it  'page has default map image' do
+      it 'page has default map image' do
         successfully_visits_page home_dashboard_path
-        page_has_selector 'div.dashboard-map-thumbnail', count: 1
-        expect(page.find('.dashboard-map-thumbnail img')['src']).to include 'netmap-org'
-        expect(page).not_to have_selector '#dashboard-maps-row div.pagination'
+        page_has_selector '.dashboard-map-img', count: 1
+        expect(page.find('.dashboard-map-img')['src']).to include 'netmap-org'
+        expect(page).not_to have_selector 'small[name="dashboard-map-arrows"]'
       end
     end
 
-    context 'when user has more maps than the limit shown per page' do
-      def page_has_n_maps(n)
-        page_has_selector '#dashboard-maps-row div.pagination', count: 1
-        page_has_selector 'div.dashboard-map', count: n
-      end
-
+    context 'when user has more maps than the limit shown per page', js: true do
       before do
-        # see https://github.com/rspec/rspec-mocks/issues/1079#issuecomment-215620243
-        # for details on why string interpolation is needed
-        stub_const("#{UserDashboardPresenter}::DASHBOARD_MAPS_PER_PAGE", 2)
-        create_list(:network_map, 3, user_id: current_user.id)
+        5.times do
+          create(:network_map, user_id: current_user.id)
+        end
       end
 
       specify 'visiting page 1' do
         visit '/home/dashboard'
-        page_has_n_maps(2)
+        page_has_selector '.dashboard-map-img', count: 4
       end
 
       specify 'visiting page 2' do
-        visit '/home/dashboard?map_page=2'
-        page_has_n_maps(1)
+        visit '/home/dashboard'
+        page_has_selector '.dashboard-map-img', count: 4
+        find('[name="dashboard-map-arrows"] .bi-arrow-right').click
+        page_has_selector '.dashboard-map-img', count: 1
       end
     end
   end
 
-  describe 'viewing list of lists' do
+  xdescribe 'viewing list of lists' do
     before { login_as(current_user, :scope => :user) }
 
     after { logout(:user) }
