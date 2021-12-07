@@ -3,7 +3,7 @@
 <%= render partial: 'entities/header', locals: { entity: @entity } %>
 
 <% if @entity.person? %>
-  <div data-controller="fec--match-contributions" data-fec--match-contributions-entity-name-value="<%= @entity.person.last_first %>">
+  <div data-turbo="true" data-controller="fec--match-contributions" data-fec--match-contributions-entity-name-value="<%= @entity.person.last_first %>">
     <div class="row mt-4 bg-light">
       <div class="col p-2">
         <p>Help us expand the LittleSis database by importing campaign finance contributions data from the <abbr title="Federal Election Commission">FEC</abbr> <span class="text-muted">(2020+)</span></p>

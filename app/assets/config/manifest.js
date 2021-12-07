@@ -7,5 +7,6 @@
 //= link oligrapher.css
 //= link cmp.css
 //= link profile.css
+//= link dashboard.css
 //= link_tree ../images
 //= link_tree ../builds

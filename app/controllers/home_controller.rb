@@ -18,10 +18,21 @@ class HomeController < ApplicationController
   ].freeze
 
   def dashboard
-    @user_dashboard = UserDashboardPresenter.new(current_user,
-                                                 map_page: params[:map_page],
-                                                 list_page: params[:list_page])
+    @user_dashboard = UserDashboardPresenter.new(current_user)
   end
+
+  # turbo streams ↴
+
+  def dashboard_edits
+    render partial: 'dashboard_recent_edits',
+           locals: { page: params[:page]&.to_i || 1, user_id: current_user.id }
+  end
+
+  def dashboard_maps
+    render partial: 'dashboard_maps', locals: { page: params[:page]&.to_i || 1, current_user: current_user }
+  end
+
+  # ⮥
 
   # Sends CSRF token to browser extension
   def token

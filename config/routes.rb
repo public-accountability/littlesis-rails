@@ -238,10 +238,13 @@ LittleSis::Application.routes.draw do
   get "/search" => "search#basic"
   get "/search/entity" => "search#entity_search"
 
+  get "/home/token" => "home#token"
   get "/home/maps" => "home#maps"
   get "/home/lists" => "home#lists"
+
   get "/home/dashboard" => "home#dashboard"
-  get "/home/token" => "home#token"
+  get "/home/dashboard/edits" => "home#dashboard_edits"
+  get "/home/dashboard/maps" => "home#dashboard_maps"
 
   post "/home/dismiss",
     controller: 'home',

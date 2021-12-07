@@ -1,0 +1,91 @@
+@import 'bootstrap/scss/_functions';
+@import 'bootstrap/scss/_variables';
+@import 'bootstrap/scss/mixins/_breakpoints';
+
+@font-face {
+    font-family: 'AveriaBold';
+    src: font-url('AveriaSerifLibre-Bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Averia';
+    src: font-url('AveriaSerifLibre-Regular.ttf') format('truetype');
+}
+
+
+#dashboard {
+    h1 {
+        font-family: 'AveriaBold';
+    }
+
+    h3, h4 {
+        font-family: 'Averia';
+    }
+
+
+
+    small.arrows {
+        i {
+            cursor: pointer;
+        }
+
+        .disabled {
+            color: lightgray;
+            cursor: default;
+        }
+
+
+    }
+}
+
+#dashboard-bulletins {
+
+    margin-top: 1em;
+
+    @include media-breakpoint-up(md) {
+        magin-left: 3em;
+        margin-top: 0;
+    }
+
+    .card  {
+        margin-bottom: 1.5em;
+
+        .trix-content {
+            padding: 0;
+        }
+    }
+}
+
+
+#dashboard-search-form {
+
+    @include media-breakpoint-up(lg) {
+        padding-right: 6em;
+    }
+
+    // input {
+    //     font-size: 0.8em;
+    //     width: 100%;
+    //     max-width: 275px;
+
+    //     @include media-breakpoint-up(lg) {
+    //         max-width: 350px;
+    //     }
+    // }
+}
+
+
+
+
+
+#dashboard-explore {}
+
+// .dashboard-entity {
+//   margin-bottom: 0.4em;
+//   line-height: 17px;
+// }
+
+// .dashboard-entity-link {
+//   font-size: 14px;
+//   font-weight: bold;
+// }

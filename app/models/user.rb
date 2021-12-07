@@ -94,8 +94,8 @@ class User < ApplicationRecord
     UserEdits::Edits.new(self, page: page)
   end
 
-  def edited_entities(page = 1)
-    UserEdits::Edits.new(self, page: page, per_page: 10).edited_entities
+  def edited_entities(page = 1, per_page: 10)
+    UserEdits::Edits.new(self, page: page, per_page: per_page).edited_entities
   end
 
   ###############
