@@ -18,7 +18,6 @@ class HomeController < ApplicationController
   ].freeze
 
   def dashboard
-    @user_dashboard = UserDashboardPresenter.new(current_user)
   end
 
   # turbo streams ↴

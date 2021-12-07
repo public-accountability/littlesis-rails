@@ -29,10 +29,10 @@
       <% end %>
     </h4>
 
-    <div class="">
+    <div>
       <% maps.each_slice(2) do |group| %>
 
-        <div class="row">
+        <div class="row" data-turbo="false">
           <% group.each do |map| %>
             <% image_path = if map.is_private
             asset_path('lock-128.png')
@@ -42,7 +42,7 @@
               asset_path('netmap-org.png')
             end %>
             <div class="col-6">
-              <a href="<%= map.url %>" title="<%= map.title %>">
+              <a href="<%= map.url %>" title="<%= map.title %>" target="_blank">
                 <%= image_tag image_path, class: 'img-responsive border dashboard-map-img', style: 'height: 200px;' %>
                 <p class="text-truncate"><%= map.title %></p>
               </a>

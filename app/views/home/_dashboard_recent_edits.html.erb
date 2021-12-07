@@ -25,11 +25,11 @@
       <% end %>
     </h4>
 
-    <div>
+    <div data-turbo="false">
       <% edited_entities.each do |edited_entity| %>
         <div class="dashboard-entity d-flex">
           <div class="flex-shrink-0 pr-2">
-            <%= entity_link(edited_entity.entity) %>
+            <%= entity_link(edited_entity.entity, target: '_blank') %>
           </div>
           <div class="text-truncate">
 	    <%= edited_entity.entity.blurb %>
