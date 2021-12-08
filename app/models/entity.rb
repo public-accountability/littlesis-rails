@@ -217,17 +217,15 @@ class Entity < ApplicationRecord
     @featured_image ||= images.featured.first
   end
 
-  def featured_image_url(type = nil)
+  def featured_image_url(type = 'profile')
     return unless has_featured_image
 
-    type = (featured_image.has_square ? 'square' : 'profile') if type.nil?
     featured_image.image_url(type)
   end
 
-  def featured_image_path(type = nil)
+  def featured_image_path(type = 'profile')
     return unless has_featured_image
 
-    type = (featured_image.has_square ? 'square' : 'profile') if type.nil?
     featured_image.image_path(type)
   end
 

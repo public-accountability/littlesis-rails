@@ -5,7 +5,6 @@
 #  images/small/prefix/filename.jpg
 #  images/profile/prefix/filename.jpg
 #  images/large/prefix/filename.jpg
-#  images/square/prefix/filename/jpg
 class Image < ApplicationRecord
   include SoftDelete
 
@@ -31,7 +30,7 @@ class Image < ApplicationRecord
   VALID_MIME_TYPES = MIME_TYPES.values.freeze
   VALID_EXTENSIONS = %w[jpg jpeg svg png].to_set.freeze
 
-  DATA_URL_PREFIX_REGEX = /image\/(jpeg|jpg|png|gif);base64/i
+  DATA_URL_PREFIX_REGEX = %r{image/(jpeg|jpg|png);base64}i
 
   DEFAULT_FILE_TYPE = Rails.application.config.littlesis.fetch(:default_image_file_type, 'jpg')
 
@@ -78,15 +77,22 @@ class Image < ApplicationRecord
   end
 
   def original_exists?
+    return false if url.nil?
+
     Utility.head_request(url).code == '200'
   rescue Net::HTTPBadResponse, SocketError, Net::ProtocolError
     false
   end
 
-  def filename(type=nil)
-    return read_attribute(:filename) unless type == "square"
-    fn = read_attribute(:filename)
-    fn.chomp(File.extname(fn)) + '.jpg'
+  def download_again
+    if original_exists?
+      original = Image.save_image_to_tmp(url)
+      # Convert to jpeg unless format is a png or jpg
+      unless %w[png jpeg jpg].include?(File.extname(original).delete('.').downcase)
+        original = convert_to_jpg(original_image_path)
+      end
+      Image.create_image_variations(filename, original)
+    end
   end
 
   def self.random_filename(file_type = nil)
@@ -97,6 +103,7 @@ class Image < ApplicationRecord
 
   class InvalidFileExtensionError < StandardError; end
   class InvalidDataUrlError < StandardError; end
+  class CorruptImageFileError < StandardError; end
   class RemoteImageRequestFailure < StandardError; end
   class ImagePathMissingExtension < StandardError; end
 
@@ -137,23 +144,29 @@ class Image < ApplicationRecord
 
   def self.save_data_url_to_tmp(url)
     prefix, encoded_data = url[5..].split(',')
-    # binding.pry
     raise InvalidDataUrlError unless DATA_URL_PREFIX_REGEX.match?(prefix)
 
     ext = DATA_URL_PREFIX_REGEX.match(prefix)[1]
     file_path = Rails.root.join('tmp', "#{Digest::MD5.hexdigest(url)}.#{ext}").to_s
-    File.open(file_path, 'wb') { |file| file.write  Base64.decode64(encoded_data) }
+    File.open(file_path, 'wb') { |file| file.write Base64.decode64(encoded_data) }
     file_path
   end
 
   # Downloads url and saves images to temporary file
   #
-  # String (url) --> String (file path) | false
+  # String (url) --> String (file path) | throws
   def self.save_image_to_tmp(url)
-    if url[0..4].casecmp('data:').zero?
-      save_data_url_to_tmp(url)
+    localpath = if url[0..4].casecmp('data:').zero?
+                  save_data_url_to_tmp(url)
+                else
+                  save_http_to_tmp(url)
+                end
+
+    # Check that file exists and can be edited by MiniMagick
+    if localpath.blank? || Utility.file_is_empty_or_nonexistent(localpath) || !MiniMagick::Image.new(localpath).valid?
+      raise RemoteImageRequestFailure
     else
-      save_http_to_tmp(url)
+      localpath
     end
   end
 
@@ -176,23 +189,30 @@ class Image < ApplicationRecord
   # a url without an extension may work if the url returns a valid mime type
   def self.new_from_url(url)
     raise Exceptions::LittleSisError, 'Image.new_from_url called with a blank url' if url.blank?
+
     url_scheme = URI(url).scheme
     raise Exceptions::LittleSisError, 'Invalid url scheme' unless %w[http https data].include?(url_scheme)
 
+    # Download and save original
     original_image_path = save_image_to_tmp(url)
 
-    raise RemoteImageRequestFailure if original_image_path.blank?
+    # Convert to jpeg unless format is a png or jpg
+    unless %w[png jpeg jpg].include?(File.extname(original_image_path).delete('.').downcase)
+      original_image_path = convert_to_jpg(original_image_path)
+    end
 
-    original_file = MiniMagick::Image.open(original_image_path)
+    dimensions = Image::Dimensions.new(*MiniMagick::Image.new(original_image_path).dimensions)
 
-    filename = random_filename(file_ext_from(original_image_path))
+    filename = filename || random_filename(file_ext_from(original_image_path))
     create_image_variations(filename, original_image_path)
     new(filename: filename,
         url: url_scheme == 'data' ? nil : url,
-        width: original_file.width,
-        height: original_file.height)
+        width: dimensions.width,
+        height: dimensions.height)
   ensure
-    File.delete(original_image_path) if original_image_path.present? && File.exist?(original_image_path)
+    if original_image_path.present? && File.exist?(original_image_path)
+      File.delete(original_image_path)
+    end
   end
 
   def self.create_image_variations(filename, original_file, check_first: true)
@@ -219,6 +239,21 @@ class Image < ApplicationRecord
       end
     end
     :created
+  end
+
+  # Converts local file to jpg
+  # Image.convert_to_jpg('/tmp/image.svg') saves /tmp/image.jpg and deletes original
+  def self.convert_to_jpg(path)
+    output_path = "#{path[0...path.rindex('.')]}.jpg"
+
+    image = MiniMagick::Image.new(path)
+
+    if image.valid?
+      image.format('jpg').write(output_path)
+      output_path
+    else
+      raise CorruptImageFileError
+    end
   end
 
   # inputs:

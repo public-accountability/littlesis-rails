@@ -316,7 +316,7 @@ describe Image, type: :model do
       end
 
       it 'raises error if image cannot be downloaded' do
-        expect(Image).to receive(:save_image_to_tmp).with(url).and_return(false)
+        expect(Image).to receive(:save_http_to_tmp).with(url).and_return(false)
         expect { Image.new_from_url(url) }.to raise_error(Image::RemoteImageRequestFailure)
       end
 

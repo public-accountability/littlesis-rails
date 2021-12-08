@@ -23,7 +23,7 @@ namespace :maps do
     desc 'create screenshots for maps updated in the past X hours'
     task :recent, [:hours] => :environment do |_t, args|
       args.with_defaults(hours: 25)
-      NetworkMap.where('updated_at > ?', hours.to_i.hours.ago).each(&:take_screenshot)
+      NetworkMap.where('updated_at > ?', args[:hours].to_i.hours.ago).each(&:take_screenshot)
     end
   end
 

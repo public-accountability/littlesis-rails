@@ -74,10 +74,9 @@ class User < ApplicationRecord
     raise Exceptions::UserCannotEditError unless can_edit?
   end
 
-  def image_url(type = nil)
+  def image_url(type = 'profile')
     return ApplicationController.helpers.image_url('system/anon.png') if image.nil?
 
-    type = (image.has_square ? 'square' : 'profile') if type.nil?
     image.image_path(type)
   end
   alias image_path image_url
