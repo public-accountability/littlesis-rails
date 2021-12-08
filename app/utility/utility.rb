@@ -96,11 +96,20 @@ module Utility
   end
 
   # GET HTTP request, saving the response body to a local file (streaming)
-  def self.stream_file(url:, path:)
+  def self.stream_file(url:, path:, redirects: 0)
     uri = URI(url)
     Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       http.request(Net::HTTP::Get.new(uri)) do |response|
+        if response.is_a?(Net::HTTPRedirection)
+          if redirects > 5
+            response.error!
+          else
+            return stream_file(url: response['location'], path: path, redirects: redirects + 1)
+          end
+        end
+
         response.value # this raises an error if the response is not successful
+
         File.open(path, 'wb') do |file|
           response.read_body do |fragment|
             file.write(fragment)

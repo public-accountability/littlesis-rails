@@ -77,9 +77,22 @@ class Image < ApplicationRecord
   end
 
   def original_exists?
+    return false if url.nil?
+
     Utility.head_request(url).code == '200'
   rescue Net::HTTPBadResponse, SocketError, Net::ProtocolError
     false
+  end
+
+  def download_again
+    if original_exists?
+      original = Image.save_image_to_tmp(url)
+      # Convert to jpeg unless format is a png or jpg
+      unless %w[png jpeg jpg].include?(File.extname(original).delete('.').downcase)
+        original = convert_to_jpg(original_image_path)
+      end
+      Image.create_image_variations(filename, original)
+    end
   end
 
   def self.random_filename(file_type = nil)
@@ -190,7 +203,7 @@ class Image < ApplicationRecord
 
     dimensions = Image::Dimensions.new(*MiniMagick::Image.new(original_image_path).dimensions)
 
-    filename = random_filename(file_ext_from(original_image_path))
+    filename = filename || random_filename(file_ext_from(original_image_path))
     create_image_variations(filename, original_image_path)
     new(filename: filename,
         url: url_scheme == 'data' ? nil : url,
