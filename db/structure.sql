@@ -38,6 +38,17 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
+-- Name: is_numeric(text); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.is_numeric(t text) RETURNS boolean
+    LANGUAGE sql IMMUTABLE
+    AS $_$
+   SELECT t ~ '^\d+$'
+$_$;
+
+
+--
 -- Name: network_map_link(bigint, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -2029,7 +2040,6 @@ CREATE TABLE public.images (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     is_deleted boolean DEFAULT false NOT NULL,
-    has_square boolean DEFAULT false NOT NULL,
     address_id bigint,
     raw_address character varying(200),
     has_face boolean DEFAULT false NOT NULL,
@@ -8306,6 +8316,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211013191239'),
 ('20211102185306'),
 ('20211104202533'),
-('20211119155729');
+('20211119155729'),
+('20211208180233');
 
 

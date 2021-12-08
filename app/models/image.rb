@@ -82,12 +82,6 @@ class Image < ApplicationRecord
     false
   end
 
-  def filename(type=nil)
-    return read_attribute(:filename) unless type == "square"
-    fn = read_attribute(:filename)
-    fn.chomp(File.extname(fn)) + '.jpg'
-  end
-
   def self.random_filename(file_type = nil)
     file_type = DEFAULT_FILE_TYPE if file_type.nil?
     file_type.slice!(0) if file_type[0] == '.'
