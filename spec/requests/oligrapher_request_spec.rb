@@ -157,7 +157,7 @@ describe 'GET /oligrapher/:id/screenshot' do
   end
 
   context 'when map is missing a screenshot' do
-    let(:map) { create(:network_map_version3, screenshot: nil, user: user) }
+    let(:map) { create(:network_map_version3, user: user) }
 
     before do
       File.delete(map.screenshot_path) if File.file?(map.screenshot_path)

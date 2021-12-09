@@ -89,7 +89,6 @@ describe 'home/dashboard', type: :feature do
       before do
         create(:network_map,
                user_id: current_user.id,
-               screenshot: nil,
                is_private: false)
         visit '/home/dashboard'
       end
