@@ -2550,19 +2550,15 @@ CREATE TABLE public.network_maps (
     is_featured boolean DEFAULT false NOT NULL,
     zoom character varying(255) DEFAULT '1'::character varying NOT NULL,
     is_private boolean DEFAULT false NOT NULL,
-    thumbnail text,
     delta boolean DEFAULT true NOT NULL,
     index_data text,
     secret character varying(255),
     graph_data text,
     annotations_data text,
-    annotations_count bigint DEFAULT 0 NOT NULL,
     list_sources boolean DEFAULT false NOT NULL,
     is_cloneable boolean DEFAULT true NOT NULL,
-    oligrapher_version smallint DEFAULT 2 NOT NULL,
     editors text,
-    settings text,
-    screenshot text
+    settings text
 );
 
 
@@ -8317,6 +8313,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211102185306'),
 ('20211104202533'),
 ('20211119155729'),
-('20211208180233');
+('20211208180233'),
+('20211209202625');
 
 

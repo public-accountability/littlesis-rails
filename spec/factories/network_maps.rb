@@ -12,6 +12,5 @@ FactoryBot.define do
     graph_data { { "nodes" => {}, "edges" => {}, "captions" => {} } }
     is_private { false }
     is_cloneable { true }
-    oligrapher_version { 3 }
   end
 end

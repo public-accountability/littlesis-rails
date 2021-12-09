@@ -84,7 +84,7 @@ class MapsController < ApplicationController
 
   def map_json
     check_private_access
-    attributes_to_return = ["id", "user_id", "created_at", "updated_at", "title", "description", "width", "height", "zoom", "is_private", "graph_data", "annotations_data", "annotations_count"]
+    attributes_to_return = ["id", "user_id", "created_at", "updated_at", "title", "description", "width", "height", "zoom", "is_private", "graph_data", "annotations_data"]
     to_hash_if = lambda { |k,v| ["graph_data", "annotations_data"].include?(k) ?  ActiveSupport::JSON.decode(v) : v }
 
     render json: @map.attributes
