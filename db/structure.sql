@@ -2558,7 +2558,8 @@ CREATE TABLE public.network_maps (
     list_sources boolean DEFAULT false NOT NULL,
     is_cloneable boolean DEFAULT true NOT NULL,
     editors text,
-    settings text
+    settings text,
+    search_tsvector tsvector
 );
 
 
@@ -7550,6 +7551,13 @@ CREATE INDEX index_links_on_relationship_id ON public.links USING btree (relatio
 
 
 --
+-- Name: index_network_maps_on_search_tsvector; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_network_maps_on_search_tsvector ON public.network_maps USING gin (search_tsvector);
+
+
+--
 -- Name: index_relationships_on_is_featured; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8314,6 +8322,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211104202533'),
 ('20211119155729'),
 ('20211208180233'),
-('20211209202625');
+('20211209202625'),
+('20211209205525');
 
 
