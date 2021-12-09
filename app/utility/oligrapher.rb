@@ -33,7 +33,6 @@ module Oligrapher
         user: current_user.present? ? { id: current_user.id, name: current_user.username } : nil,
         settings: settings_data(map),
         editors: is_owner ? editor_data(map) : confirmed_editor_data(map),
-        version: map.oligrapher_version,
         shareUrl: is_owner ? map.share_path : nil,
         lock: lock_data(map, current_user)
       }
@@ -70,8 +69,6 @@ module Oligrapher
   end
 
   def self.lock_data(map, current_user)
-    return nil unless map.oligrapher_version == 3
-
     ::OligrapherLockService
       .new(map: map, current_user: current_user)
       .as_json

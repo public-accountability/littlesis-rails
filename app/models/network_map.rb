@@ -31,25 +31,26 @@ class NetworkMap < ApplicationRecord
 
   before_create :generate_secret, :set_defaults
 
-  before_save :set_index_data
+  # before_save :set_index_data
   before_save :start_update_entity_network_map_collections_job, if: :update_network_map_collection?
+  # after_save :update_tsvector_column
 
-  def set_index_data
-    self.index_data = generate_index_data
-  end
+  # def set_index_data
+  #   self.index_data = generate_index_data
+  # end
 
   # TODO: simplify and rewrite this
-  def generate_index_data
-    entities_text = entities.pluck(:name, :blurb).flatten.compact.join(', ')
-    return entities_text if captions.blank?
+  # def generate_index_data
+  # entities_text = entities.pluck(:name, :blurb).flatten.compact.join(', ')
+  # return entities_text if captions.blank?
 
-    if oligrapher_version == 3
-      captions_text = captions.map { |c| c['text'] }.join(', ')
-    else
-      captions_text = captions.map { |c| c['display']['text'] }.join(', ')
-    end
-    "#{entities_text}, #{captions_text}"
-  end
+  # if oligrapher_version == 3
+  #   captions_text = captions.map { |c| c['text'] }.join(', ')
+  # else
+  #   captions_text = captions.map { |c| c['display']['text'] }.join(', ')
+  # end
+  # "#{entities_text}, #{captions_text}"
+  # end
 
   def destroy
     soft_delete
@@ -202,10 +203,6 @@ class NetworkMap < ApplicationRecord
   def share_path
     return nil unless persisted?
     url_helpers.share_oligrapher_path(id: id, secret: secret)
-  end
-
-  def version3?
-    oligrapher_version == 3
   end
 
   # Editor methods

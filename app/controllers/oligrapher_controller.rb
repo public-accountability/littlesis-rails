@@ -51,7 +51,7 @@ class OligrapherController < ApplicationController
   end
 
   def new
-    @map = NetworkMap.new(oligrapher_version: 3, title: 'Untitled Map', user: current_user)
+    @map = NetworkMap.new(title: 'Untitled Map', user: current_user)
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
     render 'oligrapher/new', layout: 'oligrapher3'
   end
@@ -144,7 +144,6 @@ class OligrapherController < ApplicationController
 
     map = @map.dup
     map.update!(
-      oligrapher_version: 3,
       is_featured: false,
       is_private: true,
       user_id: current_user.id,
@@ -235,7 +234,7 @@ class OligrapherController < ApplicationController
   private
 
   def new_oligrapher_params
-    oligrapher_params.merge!(oligrapher_version: 3, user_id: current_user.id)
+    oligrapher_params.merge!(user_id: current_user.id)
   end
 
   def oligrapher_params
@@ -243,7 +242,6 @@ class OligrapherController < ApplicationController
       .require(:attributes)
       .permit(:title, :description, :is_private, :is_cloneable, :list_sources, :annotations_data, :settings)
       .merge(graph_data: params[:graph_data]&.permit!&.to_h)
-      .merge(oligrapher_version: 3)
   end
 
   def editor_data

@@ -1,6 +1,6 @@
 describe 'Maps', :sphinx, type: :request do
   describe 'redirecting version 3 map' do
-    let(:map) { create(:network_map, user: create(:user), oligrapher_version: 3) }
+    let(:map) { create(:network_map, user: create(:user)) }
 
     before { get "/maps/#{map.id}-so-many-connections" }
 
