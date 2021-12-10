@@ -76,6 +76,7 @@ module Oligrapher
 
   def self.javascript_asset_path
     path = +"/oligrapher/assets/oligrapher-"
+    path << 'dev-' if Rails.env.development?
     path << Rails.application.config.littlesis.oligrapher_commit
     path << ".bundle" if Rails.application.config.littlesis.oligrapher_use_bundle
     path << ".js"

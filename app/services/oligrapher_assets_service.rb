@@ -41,7 +41,7 @@ class OligrapherAssetsService
   def initialize(commit, skip_fetch: false, development: false, force: false)
     self.class.setup_repo
     @commit = commit
-    @development = development
+    @development = development || Rails.env.development?
     @force = force
     # validate commit
     error '@commit is blank' if @commit.blank?
@@ -55,7 +55,8 @@ class OligrapherAssetsService
     Dir.chdir REPO_DIR do
       git "checkout --force -q #{@commit}"
       system('yarn install --silent') || error("Yarn install failed for commit #{@commit}")
-      build_cmd = "yarn run build-prod --env output_path=#{ASSET_DIR} && yarn run build-prod-one --env output_path=#{ASSET_DIR} "
+      script = @development ? 'build-dev' : 'build-prod'
+      build_cmd = "yarn run #{script} --env output_path=#{ASSET_DIR} && yarn run #{script}-one --env output_path=#{ASSET_DIR} "
       system(build_cmd) || error("Failed to build for commit #{@commit}")
     end
 

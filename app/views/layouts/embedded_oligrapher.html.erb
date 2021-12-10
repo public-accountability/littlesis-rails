@@ -2,7 +2,7 @@
 <html class="fullscreen">
   <head>
     <title><%= page_title %></title>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <%= javascript_include_tag "application", defer: true %>
     <script src="<%= Oligrapher.javascript_asset_path %>"></script>
 
     <% if content_for?(:head) %>
