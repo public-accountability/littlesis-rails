@@ -1,0 +1,50 @@
+<turbo-frame id="oligrapher-search-results">
+  <div>
+    <% unless @query&.strip.blank? %>
+      <% results = OligrapherSearchService.run(@query, user_id: @current_user_id) %>
+
+      <% if results.present?  %>
+
+        <table class="table no-top-border" id="oligrapher-search-results-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Last Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% results.each do |map| %>
+              <tr>
+                <td>
+                  <span class="text-truncate">
+                    <%= network_map_link(map) %>
+                  </span>
+                  <% if map.screenshot_exists? %>
+                    <i class="bi bi-image cursor-pointer"></i>
+                  <% end %>
+                  <span>
+                  </span>
+                </td>
+                <td>edited <em><%= time_ago_in_words(map.updated_at) %> </em> ago by <%= user_link(map.user) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+        <script>
+         $(document).ready(function() {
+           $('#oligrapher-search-results-table').DataTable({
+             "ordering": false,
+             "info": false,
+             "searching": false,
+             "lengthChange": false
+           })
+         })
+        </script>
+
+      <% else %>
+        <p class="mt-2"><em>No maps found</em></p>
+      <% end %>
+    <% end %>
+  </div>
+  <turbo-frame id="oligrapher-search-results">

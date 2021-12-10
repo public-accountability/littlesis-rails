@@ -39,6 +39,13 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
+  def saved_change_to_any_attribute?(*args)
+    until args.length.zero?
+      return true if saved_change_to_attribute?(args.shift)
+    end
+    false
+  end
+
   # Takes an array of ids and generates a lookup hash where the
   # ActiveReocrd id is the key and the value is the ActiveRecord object.
   # If ignore is set to true,  `where` is used instead of `find`, suppressing

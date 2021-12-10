@@ -1,9 +1,41 @@
 <% content_for(:page_title, 'Search Maps') %>
 
-
 <div class="row">
   <div class="col">
-    <table data-controller="oligrapher-search">
-    </table>
+    <h1>Search Maps</h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col" data-turbo="true">
+    <%= form_with url: "/oligrapher/perform_search", method: :get, data: { 'turbo-frame' => 'oligrapher-search-results' } do |form| %>
+      <div class="d-flex">
+        <div>
+          <div class="input-group">
+          <input type="text" name="query" class="form-control">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+          </div>
+        </div>
+        <% if user_signed_in? %>
+          <div>
+            <label class="personal-map-search ml-2 pl-1 pt-1" title="Search your maps only">
+              <input type="checkbox" name="personal_search" checked="<%= @current_user_id.present? %>">
+                <span></span>
+            </label>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<div class="row mt-1">
+  <div class="col" data-turbo="true">
+    <%= render partial: 'search_results' %>
   </div>
 </div>

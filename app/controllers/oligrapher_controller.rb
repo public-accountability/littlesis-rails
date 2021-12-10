@@ -31,6 +31,12 @@ class OligrapherController < ApplicationController
   def search
   end
 
+  def perform_search
+    @query = params[:query]
+    @current_user_id = current_user.id if user_signed_in? && params[:personal_search]
+    render partial: 'search_results'
+  end
+
   def grid
     @grid = Oligrapher::Grid.new(params.fetch('oligrapher_grid', {}))
     @grid.scope { |scope| scope.page(params[:page] || 1).per(25) }

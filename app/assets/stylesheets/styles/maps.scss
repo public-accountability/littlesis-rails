@@ -56,3 +56,31 @@ table.oligrapher_grid {
     z-index: 1000;
     background: white;
 }
+
+label.personal-map-search {
+    input {
+        display: none;
+    }
+
+    cursor: pointer;
+    height: 100%;
+
+    span::before {
+        @extend .bootstrap-icon;
+        font-size: 1.2rem;
+        content: "\f4e1";
+    }
+
+    &:hover span::before {
+        content: "\f4dd";
+    }
+
+
+    input:checked + span:before {
+        content: "\f4da";
+    }
+
+    &:hover input:checked + span:before {
+        content: "\f4d8";
+    }
+}
