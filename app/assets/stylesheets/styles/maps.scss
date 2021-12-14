@@ -57,13 +57,21 @@ table.oligrapher_grid {
     background: white;
 }
 
-label.personal-map-search {
+
+div.map-search-input-group {
+    button:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+}
+
+.personal-map-search {
+    cursor: pointer;
+    height: 100%;
+
     input {
         display: none;
     }
-
-    cursor: pointer;
-    height: 100%;
 
     span::before {
         @extend .bootstrap-icon;
@@ -76,11 +84,11 @@ label.personal-map-search {
     }
 
 
-    input:checked + span:before {
+    &.checked span::before {
         content: "\f4da";
     }
 
-    &:hover input:checked + span:before {
+    &.checked:hover span::before {
         content: "\f4d8";
     }
 }

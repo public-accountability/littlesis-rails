@@ -11,16 +11,26 @@
     <%= form_with url: "/oligrapher/perform_search", method: :get, data: { 'turbo-frame' => 'oligrapher-search-results' } do |form| %>
       <div class="d-flex">
         <div>
-          <div class="input-group">
-          <input type="text" name="query" class="form-control">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="submit">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
-          </div>
-        </div>
-        <% if user_signed_in? %>
+          <div class="input-group map-search-input-group">
+            <input type="text" name="query" class="form-control">
+
+            <div class="input-group-append">
+
+              <input class="d-none" type="checkbox" name="personal_search" checked="<%= @current_user_id.present? %>">
+
+              <button class="btn btn-outline-secondary personal-map-search<%= @current_user_id.present? ? ' checked' : '' %>"
+                      onClick="$(this).toggleClass('checked'); $(this).siblings('input').prop('checked', !$(this).siblings('input').prop('checked')); return false;" type="button">
+                <span></span>
+              </button>
+
+              <button class="btn btn-outline-secondary" type="submit">
+                <i class="bi bi-search"></i>
+              </button>
+
+            </div>
+          </div> <!-- input-group -->
+        </div><!--  -->
+        <% if false && user_signed_in? %>
           <div>
             <label class="personal-map-search ml-2 pl-1 pt-1" title="Search your maps only">
               <input type="checkbox" name="personal_search" checked="<%= @current_user_id.present? %>">
