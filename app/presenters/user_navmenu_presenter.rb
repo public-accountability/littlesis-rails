@@ -1,15 +1,20 @@
 # frozen_string_literal: true
 
 class UserNavmenuPresenter
-  extend Forwardable
-  def_delegators :@items, :each, :size
-  def_delegator 'Rails.application.routes.url_helpers', :user_edits_path
+  attr_reader :items
+
+  class << self
+    delegate :tags_path, :lists_path, :edits_path, :datasets_path, :featured_maps_path, to: 'Rails.application.routes.url_helpers'
+  end
+
+  delegate :each, :size, to: :@items
 
   # other pages:
-  # ['Source Code', 'https://github.com/public-accountability/littlesis-rails']
-  # ['Bulk Data', '/bulk_dafta']
-  # ['Toolkit', '/toolkit']
-  # ['Report a bug', '/bug_report']
+  # Source Code https://github.com/public-accountability/littlesis-rails
+  # Bulk Data /bulk_data'
+  # Toolkit /toolkit
+  # Report a bug /bug_report
+  # featured maps featured_maps_path
 
   ABOUT_MENU = ['About', [['LittleSis', '/about'],
                           ['Sign Up', '/join'],
@@ -31,20 +36,20 @@ class UserNavmenuPresenter
                       ['List', '/lists/new'],
                       ['Map', '/maps/new']]].freeze
 
-  EXPLORE_MENU = ['Explore', [['Maps', Rails.application.routes.url_helpers.featured_maps_path],
-                              ['Lists', Rails.application.routes.url_helpers.lists_path(featured: true)],
-                              ['Tags', Rails.application.routes.url_helpers.tags_path]]].freeze
+  EXPLORE_MENU = ['Explore', [['Maps', '/oligrapher'],
+                              ['Lists', lists_path(featured: true)],
+                              ['Tags', tags_path]]].freeze
 
-  USER_EXPLORE_MENU = ['Explore', [['Maps', Rails.application.routes.url_helpers.featured_maps_path],
-                                   ['Lists', Rails.application.routes.url_helpers.lists_path(featured: true)],
-                                   ['Tags', Rails.application.routes.url_helpers.tags_path],
-                                   ['Edits', Rails.application.routes.url_helpers.edits_path]]].freeze
+  USER_EXPLORE_MENU = ['Explore', [['Maps', '/oligrapher'],
+                                   ['Lists', lists_path(featured: true)],
+                                   ['Tags', tags_path],
+                                   ['Edits', edits_path]]].freeze
 
-  ADMIN_EXPLORE_MENU = ['Explore', [['Maps', Rails.application.routes.url_helpers.featured_maps_path],
-                                    ['Lists', Rails.application.routes.url_helpers.lists_path(featured: true)],
-                                    ['Tags', Rails.application.routes.url_helpers.tags_path],
-                                    ['Edits', Rails.application.routes.url_helpers.edits_path],
-                                    ['Datasets', Rails.application.routes.url_helpers.datasets_path]]].freeze
+  ADMIN_EXPLORE_MENU = ['Explore', [['Maps', '/oligrapher'],
+                                    ['Lists', lists_path(featured: true)],
+                                    ['Tags', tags_path],
+                                    ['Edits', edits_path],
+                                    ['Datasets', datasets_path]]].freeze
   DEFAULT_MENU = [
     ['Login', '/login'],
     EXPLORE_MENU,
@@ -65,7 +70,7 @@ class UserNavmenuPresenter
   def user_items(user)
     [
       user_links(user),
-      user_explore(user),
+      (user.admin? ? ADMIN_EXPLORE_MENU : USER_EXPLORE_MENU),
       ADD_MENU,
       USER_ABOUT_MENU
     ]
@@ -76,20 +81,12 @@ class UserNavmenuPresenter
       user.username, [
         ['Maps', '/home/maps'],
         ['Lists', '/home/lists'],
-        ['Edits', user_edits_path(username: user.username)],
+        ['Edits', Rails.application.routes.url_helpers.user_edits_path(username: user.username)],
         :divider,
         (user.admin? ? ['Admin', '/admin'] : nil),
         ['Settings', '/users/edit'],
         ['Logout', '/logout']
       ].compact
     ]
-  end
-
-  def user_explore(user)
-    if user.admin?
-      ADMIN_EXPLORE_MENU
-    else
-      USER_EXPLORE_MENU
-    end
   end
 end
