@@ -21,7 +21,7 @@
 
             <div class="input-group-append">
               <% if user_signed_in? %>
-                <input class="d-none" type="checkbox" name="personal_search" checked="<%= @current_user_id.present? %>">
+                <input class="d-none" autocomplete='off' type="checkbox" name="personal_search" <%= @current_user_id.present? ? 'checked' : ''%>>
 
                 <button class="btn btn-outline-secondary personal-map-search<%= @current_user_id.present? ? ' checked' : '' %>"
                         onClick="$(this).toggleClass('checked'); $(this).siblings('input').prop('checked', !$(this).siblings('input').prop('checked')); return false;" type="button">
