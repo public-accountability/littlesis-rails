@@ -45,13 +45,7 @@ class SearchService
   def maps
     return @maps if defined?(@maps)
 
-    @maps = NetworkMap.search(
-      "@(title,description,index_data) #{@escaped_query}",
-      per_page: 10,
-      with: { is_deleted: false, is_private: false },
-      order: "is_featured DESC",
-      populate: true
-    )
+    @maps = OligrapherSearchService.run(@query, limit: 10)
   end
 
   private

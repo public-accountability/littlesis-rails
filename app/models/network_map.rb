@@ -2,7 +2,6 @@
 
 class NetworkMap < ApplicationRecord
   include SoftDelete
-  # ThinkingSphinx::Callbacks.append(self, :behaviours => [:real_time])
 
   LS_DATA_SOURCE_BASE_URL = "#{Rails.application.default_url_options[:protocol]}://#{Rails.application.default_url_options[:host]}"
   DEFAULT_FORMAT = 'jpeg'

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module OligrapherSearchService
-  LIMIT = 100
+  LIMIT = 150
 
-  def self.run(query, user_id: nil)
+  def self.run(query, user_id: nil, limit: LIMIT)
     query = query&.strip
     tsquery_sql = ApplicationRecord.sanitize_sql_for_assignment(["websearch_to_tsquery(?)", query])
 
@@ -16,6 +16,6 @@ module OligrapherSearchService
       relation = relation.where(is_private: false).order(Arel.sql("is_featured DESC, rank DESC"))
     end
 
-    relation.to_a
+    relation.limit(limit).to_a
   end
 end
