@@ -66,6 +66,9 @@ application.register("new-entity-form", NewEntityFormController)
 import OligrapherController from "./oligrapher_controller.js"
 application.register("oligrapher", OligrapherController)
 
+import OligrapherSearchController from "./oligrapher_search_controller.js"
+application.register("oligrapher-search", OligrapherSearchController)
+
 import ReferenceWidgetController from "./reference_widget_controller.js"
 application.register("reference-widget", ReferenceWidgetController)
 

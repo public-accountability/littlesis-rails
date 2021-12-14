@@ -5,7 +5,7 @@
 
       <% if results.present?  %>
 
-        <table class="table no-top-border" id="oligrapher-search-results-table">
+        <table class="table no-top-border" id="oligrapher-search-results-table" data-oligrapher-search-target="table">
           <thead>
             <tr>
               <th>Title</th>
@@ -16,11 +16,15 @@
             <% results.each do |map| %>
               <tr>
                 <td>
-                  <span class="text-truncate">
-                    <%= network_map_link(map) %>
+                  <span class="text-truncate" data-turbo="false">
+                    <%= link_to(map.name, oligrapher_url(map), target: '_blank' ) %>
                   </span>
                   <% if map.screenshot_exists? %>
-                    <i class="bi bi-image cursor-pointer" title="Preview"></i>
+                    <i class="bi bi-image cursor-pointer"
+                       title="Preview"
+                       data-oligrapher-search-target="preview"
+                       data-screenshoturl="<%= map.screenshot_url %>">
+                    </i>
                   <% end %>
                   <span>
                   </span>
@@ -30,18 +34,6 @@
             <% end %>
           </tbody>
         </table>
-
-        <script>
-         $(document).ready(function() {
-           $('#oligrapher-search-results-table').DataTable({
-             "ordering": false,
-             "info": false,
-             "searching": false,
-             "lengthChange": false
-           })
-         })
-        </script>
-
       <% else %>
         <p class="mt-2"><em>No maps found</em></p>
       <% end %>

@@ -69,10 +69,6 @@ div.map-search-input-group {
     cursor: pointer;
     height: 100%;
 
-    input {
-        display: none;
-    }
-
     span::before {
         @extend .bootstrap-icon;
         font-size: 1.2rem;
