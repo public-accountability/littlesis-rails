@@ -5,16 +5,26 @@ require 'congress_importer'
 TEST_CURRENT_LEGISLATORS = YAML.load_file(Rails.root.join('spec/testdata/legislators-current.yaml')).freeze
 
 describe 'CongressImporter' do
-  subject { CongressImporter.new }
+  subject { CongressImporter.new(include_historical: true) }
   let(:legislators_current) { TEST_CURRENT_LEGISLATORS }
+
+  original_current = CongressImporter::DATA[:current][:path]
+  original_historical = CongressImporter::DATA[:historical][:path]
 
   before do
     stub_current = Rails.root.join('spec/testdata/legislators-current.yaml').to_s
     stub_historical = Rails.root.join('spec/testdata/legislators-historical.yaml').to_s
     stub_const('CongressImporter::CONGRESS_BOT_USER', 1)
 
-    allow(Net::HTTP).to receive(:get).with(URI(CongressImporter::CURRENT_YAML)).and_return(File.read(stub_current))
-    allow(Net::HTTP).to receive(:get).with(URI(CongressImporter::HISTORICAL_YAML)).and_return(File.read(stub_historical))
+    allow(CongressImporter).to receive(:download).and_return(nil)
+
+    CongressImporter::DATA[:current][:path] = stub_current
+    CongressImporter::DATA[:historical][:path] = stub_historical
+  end
+
+  after do
+    CongressImporter::DATA[:current][:path] = original_current
+    CongressImporter::DATA[:historical][:path] = original_historical
   end
 
   describe 'initialize' do

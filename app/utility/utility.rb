@@ -2,7 +2,6 @@
 
 require 'csv'
 require 'tempfile'
-require 'timeout'
 require 'open3'
 
 module Utility

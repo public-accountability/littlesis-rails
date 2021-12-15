@@ -7,16 +7,18 @@
 # The matched entity is stored on the attribute .entity
 class CongressImporter
   class LegislatorMatcher
-    attr_reader :entity
+    attr_reader :entity, :matched_by_name
 
     # legistator = CongressImporter::Legislator
     def initialize(legislator)
       @legislator = legislator
+      @matched_by_name = false
       @entity = nil
 
       bioguide_id = @legislator.dig('id', 'bioguide')
       govtrack_id = @legislator.dig('id', 'govtrack')
       fec_ids = @legislator.dig('id', 'fec')
+      wikipedia = @legislator.dig('id', 'wikipedia')&.tr(' ', '_')
 
       if fec_ids.present?
         @entity = ExternalLink.find_by(link_type: :fec_candidate, link_id: fec_ids)&.entity
@@ -30,8 +32,13 @@ class CongressImporter
         @entity = ElectedRepresentative.find_by(govtrack_id: govtrack_id)&.entity
       end
 
-      unless @entity
+      if wikipedia && !@entity
+        @entity = ExternalLink.wikipedia.find_by(link_id: wikipedia)&.entity
+      end
+
+      if @entity.nil?
         @entity = match_by_name
+        @matched_by_name = @entity.present?
       end
 
       freeze
