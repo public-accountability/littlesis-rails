@@ -8,7 +8,7 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  before_action :authenticate_user!, only: %i[search new create update editors confirm_editor lock release_lock clone destroy]
+  before_action :authenticate_user!, only: %i[new create update editors confirm_editor lock release_lock clone destroy]
   before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot]
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]

@@ -29,7 +29,7 @@
                   <span>
                   </span>
                 </td>
-                <td>edited <em><%= time_ago_in_words(map.updated_at) %> </em> ago by <%= user_link(map.user) %></td>
+                <td>edited <%= time_ago_in_words(map.updated_at) %> ago by <%= user_link(map.user) %></td>
               </tr>
             <% end %>
           </tbody>

@@ -8,6 +8,7 @@ module OligrapherSearchService
     tsquery_sql = ApplicationRecord.sanitize_sql_for_assignment(["websearch_to_tsquery(?)", query])
 
     relation = NetworkMap
+                 .includes(:user)
                  .select("id, title, updated_at, created_at, is_private, is_featured, user_id, ts_rank(search_tsvector, #{tsquery_sql}) as rank")
                  .where("search_tsvector @@ #{tsquery_sql}")
     if user_id
