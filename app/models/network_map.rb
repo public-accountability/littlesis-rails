@@ -1,20 +1,14 @@
 # frozen_string_literal: true
 
-# rubocop:disable Rails/SafeNavigation
-
 class NetworkMap < ApplicationRecord
   include SoftDelete
 
-  ThinkingSphinx::Callbacks.append(self, :behaviours => [:real_time])
-
   LS_DATA_SOURCE_BASE_URL = "#{Rails.application.default_url_options[:protocol]}://#{Rails.application.default_url_options[:host]}"
-
   DEFAULT_FORMAT = 'jpeg'
 
   attribute :graph_data, OligrapherGraphData::Type.new
   serialize :editors, Array
-
-  has_paper_trail on: [:update, :destroy], skip: [:screenshot]
+  has_paper_trail skip: [:search_tsvector]
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
@@ -23,32 +17,16 @@ class NetworkMap < ApplicationRecord
   scope :featured, -> { where(is_private: false, is_featured: true) }
   scope :public_scope, -> { where(is_private: false) }
   scope :private_scope, -> { where(is_private: true) }
-  # scope :with_description, -> { where.not(description: [nil, '']) }
-  # scope :with_annotations, -> { where.not(annotations_data: '[]') }
-  # scope :without_annotations, -> { where(annotations_data: '[]') }
 
   validates :title, presence: true
 
   before_create :generate_secret, :set_defaults
 
-  before_save :set_index_data
   before_save :start_update_entity_network_map_collections_job, if: :update_network_map_collection?
+  after_save :update_tsvector_column, if: -> { saved_change_to_any_attribute?(:title, :description, :annotations_data, :grpah_data) }
 
-  def set_index_data
-    self.index_data = generate_index_data
-  end
-
-  # TODO: simplify and rewrite this
-  def generate_index_data
-    entities_text = entities.pluck(:name, :blurb).flatten.compact.join(', ')
-    return entities_text if captions.blank?
-
-    if oligrapher_version == 3
-      captions_text = captions.map { |c| c['text'] }.join(', ')
-    else
-      captions_text = captions.map { |c| c['display']['text'] }.join(', ')
-    end
-    "#{entities_text}, #{captions_text}"
+  def update_tsvector_column
+    NetworkMap.where(id: id).update_all("search_tsvector = get_network_map_search_tsvector(id)")
   end
 
   def destroy
@@ -112,9 +90,6 @@ class NetworkMap < ApplicationRecord
     end
     system "#{Rails.root.join('lib/scripts/oligrapher_screenshot.js')} #{url}"
   end
-
-  # enques job to take screenshot
-  # OligrapherScreenshotJob.perform_later(id)
 
   # Creates these functions:
   #  edge_ids, node_ids, numeric_edge_ids, numeric_node_ids
@@ -202,10 +177,6 @@ class NetworkMap < ApplicationRecord
   def share_path
     return nil unless persisted?
     url_helpers.share_oligrapher_path(id: id, secret: secret)
-  end
-
-  def version3?
-    oligrapher_version == 3
   end
 
   # Editor methods
@@ -303,6 +274,10 @@ class NetworkMap < ApplicationRecord
     end
   end
 
+  def self.update_search_tsvector
+    NetworkMap.update_all("search_tsvector = get_network_map_search_tsvector(id)")
+  end
+
   private
 
   def after_soft_delete
@@ -319,5 +294,3 @@ class NetworkMap < ApplicationRecord
       .perform_later(id, remove: entities_removed_from_graph, add: entities.pluck(:id))
   end
 end
-
-# rubocop:enable Rails/SafeNavigation

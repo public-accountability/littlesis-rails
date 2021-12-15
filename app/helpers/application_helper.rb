@@ -102,6 +102,10 @@ module ApplicationHelper
     link_to name, concretize_entity_path(entity), class: html_class, id: html_id, target: target
   end
 
+  def homepage_headline_h3(text)
+    content_tag(:div, content_tag(:h3, text), class: 'thin-grey-bottom-border mb-3')
+  end
+
   # Input: [References], Integer | nil
   def references_select(references, selected_id = nil)
     return nil if references.nil?

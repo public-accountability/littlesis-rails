@@ -13,10 +13,6 @@ class OligrapherLockService
     @current_user = current_user
     @permission_denied = true
 
-    unless @map.oligrapher_version == 3
-      raise Error, "map \##{@map.id} is not version 3"
-    end
-
     if @map.can_edit?(@current_user)
       @permission_denied = false
     end

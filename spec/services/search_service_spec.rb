@@ -78,16 +78,11 @@ describe SearchService do
   end
 
   it 'searches maps' do
-    expect(NetworkMap).to receive(:search)
-                            .with("@(title,description,index_data) foo",
-                                  per_page: 10,
-                                  populate: true,
-                                  with: { is_deleted: false, is_private: false },
-                                  order: "is_featured DESC"
-                                 )
-                            .once
-
-    SearchService.new('foo').maps
+    create(:network_map, title: 'all about foo', user: User.system_user)
+    create(:network_map, title: 'all about bar', user: User.system_user)
+    maps = SearchService.new('foo').maps
+    expect(maps.length).to eq 1
+    expect(maps.first.title).to eq 'all about foo'
   end
 
   context 'with featured and non-featured lists' do
@@ -121,16 +116,11 @@ describe SearchService do
   end
 
   context 'with featured and non-featured maps' do
-    describe 'search', :sphinx do
+    describe 'search' do
       before do
-        setup_sphinx
         create(:network_map, title: 'my interesting map', is_featured: false, user: create(:user))
         create(:network_map_version3, title: 'some other map', is_featured: true, user: create(:user))
         create(:network_map, title: 'yet another map', is_featured: false, user: create(:user))
-      end
-
-      after do
-        teardown_sphinx
       end
 
       it 'puts featured maps at the top of the results' do

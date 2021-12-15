@@ -24,37 +24,9 @@ describe NetworkMap, type: :model do
     JSON
   end
 
-  it { is_expected.to have_db_column(:oligrapher_version) }
   it { is_expected.to have_db_column(:editors) }
-  it { is_expected.to have_db_column(:screenshot) }
   it { is_expected.to belong_to(:user).optional }
   it { is_expected.to validate_presence_of(:title) }
-
-  describe '#generate_index_data' do
-    let(:e1) { create(:person, :with_person_name, blurb: 'xyz') }
-    let(:e2) { create(:person, :with_person_name, blurb: nil) }
-    let(:graph_data) do
-      OligrapherGraphData.new(id: 'abcdefg',
-                nodes: {
-                  e1.id => Oligrapher.legacy_entity_to_node(e1),
-                  e2.id => Oligrapher.legacy_entity_to_node(e2)
-                },
-                edges: {},
-                captions: { '1' => { id: 1, display: { text: "Caption 1" } } })
-    end
-
-    let(:network_map) { build(:network_map, graph_data: graph_data) }
-
-    before do
-      allow(e1).to receive(:featured_image).and_return(nil)
-      allow(e2).to receive(:featured_image).and_return(nil)
-    end
-
-    it 'generates string of index data' do
-      expect(network_map.generate_index_data)
-        .to eql "#{e1.name}, xyz, #{e2.name}, Caption 1"
-    end
-  end
 
   describe '#documents' do
     let(:relationships) do

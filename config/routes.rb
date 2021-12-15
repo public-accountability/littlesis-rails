@@ -192,6 +192,11 @@ LittleSis::Application.routes.draw do
       action: 'show',
       as: 'share_map'
 
+  get "/oligrapher/:id/share/:secret",
+      controller: 'oligrapher',
+      action: 'show',
+      as: 'share_oligrapher'
+
   resources :oligrapher, except: [:edit], controller: 'oligrapher' do
     collection do
       get '/get_edges', action: :get_edges
@@ -200,6 +205,7 @@ LittleSis::Application.routes.draw do
       get '/get_interlocks', action: :get_interlocks
       get '/about' => "pages#oligrapher"
       get '/search', action: :search
+      get '/perform_search', action: :perform_search
       get '/grid', action: :grid
     end
 
@@ -215,10 +221,6 @@ LittleSis::Application.routes.draw do
     end
   end
 
-  get "/oligrapher/:id/share/:secret",
-    controller: 'oligrapher',
-    action: 'show',
-    as: 'share_oligrapher'
 
   get '/relationships/bulk_add' => 'relationships#bulk_add'
   post '/relationships/bulk_add' => 'relationships#bulk_add!'
@@ -247,9 +249,9 @@ LittleSis::Application.routes.draw do
   get "/home/dashboard/maps" => "home#dashboard_maps"
 
   post "/home/dismiss",
-    controller: 'home',
-    action: 'dismiss',
-    as: 'dismiss_helper'
+       controller: 'home',
+       action: 'dismiss',
+       as: 'dismiss_helper'
 
   resources :documents, only: [:edit, :update]
 
@@ -263,9 +265,9 @@ LittleSis::Application.routes.draw do
     member do
       get '/edits' => 'tags#edits'
       get '/:tagable_category' => 'tags#show',
-        constraints: {
-        tagable_category: /#{Tagable.categories.join('|')}/
-      }
+          constraints: {
+            tagable_category: /#{Tagable.categories.join('|')}/
+          }
     end
   end
 
@@ -295,149 +297,149 @@ LittleSis::Application.routes.draw do
   #########
 
   namespace :api do
-    get '/' => 'api#index'
-    get '/entities/search' => 'entities#search'
+  get '/' => 'api#index'
+  get '/entities/search' => 'entities#search'
 
-    resources :entities, only: [:show] do
-      member do
-        get 'relationships'
-        get 'connections'
-        get 'extensions'
-        get 'lists'
-      end
-    end
-
-    resources :relationships, only: [:show]
-  end
-
-  #############
-  #  Toolkit  #
-  #############
-
-  get '/toolkit' => 'toolkit#index'
-  get '/toolkit/new' => 'toolkit#new'
-  get '/toolkit/pages' => 'toolkit#pages'
-  get '/toolkit/index', to: redirect('/toolkit')
-  post '/toolkit' => 'toolkit#create'
-  get '/toolkit/:page_name/edit' => 'toolkit#edit', :as => 'toolkit_edit'
-  patch '/toolkit/:id' => 'toolkit#update', :as => 'toolkit_update'
-  get '/toolkit/:page_name' => 'toolkit#display', :as => 'toolkit_display'
-
-  ################
-  #  HELP PAGES  #
-  ################
-
-  get '/help' => 'help_pages#index'
-  get '/help/new' => 'help_pages#new'
-  get '/help/pages' => 'help_pages#pages'
-  get '/help/index', to: redirect('/help')
-  post '/help' => 'help_pages#create'
-  get '/help/:page_name/edit' => 'help_pages#edit', :as => 'help_edit'
-  patch '/help/:id' => 'help_pages#update', :as => 'help_update'
-  get '/help/:page_name' => 'help_pages#display', :as => 'help_display'
-
-  #########
-  # Pages #
-  #########
-
-  # Editable Pages
-  get "/pages/:page/edit" => "pages#edit_by_name", constraints: { page: /[A-z]+[^\/]+/ }
-  resources :pages, only: [:new, :create, :edit, :update, :index, :show]
-  get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
-  # Other Pages
-  get "/donate" => "pages#donate"
-  get "/swamped" => "pages#swamped"
-  post "/swamped" => "pages#swamped"
-  get '/bulk_data' => 'pages#bulk_data'
-  get '/public_data/:file' => 'pages#public_data', constraints: { file: /(entities|relationships)\.json(\.gz)?/ }
-
-  ############
-  # Partners #
-  ############
-
-  scope :partners do
-    get '/corporate-mapping-project' => 'partners#cmp'
-  end
-
-  ##############################
-  # external entities and data #
-  ##############################
-
-  get '/external_data/:dataset' => 'external_data#dataset', constraints: DatasetConstraint.new
-  # Overview page
-  get '/datasets' => 'datasets#index'
-  # Table Of ExternalEntites/ExternalRelationships for the given dataset
-  # get '/datasets/:dataset' => 'datasets#dataset', constraints: DatasetConstraint.new, as: 'dataset'
-  get '/datasets/:dataset' => 'datasets#show', constraints: DatasetConstraint.new, as: 'dataset'
-
-  namespace :fec do
-    constraints(id: /[0-9]+(-[^\/]+)?/) do
-      get '/entities/:id/contributions', action: :contributions, as: :contributions
-      get '/entities/:id/match_contributions', action: :match_contributions, as: :match_contributions
-
-      get '/fec_matches/:id', action: :fec_match, as: :match
-      get '/committies/:cmte_id', action: :committees
-      get '/candidates/:cand_id', action: :candidates
-
-      post '/fec_contributions/:id/hide_entity', action: :hide_entity
-      post '/fec_contributions/:id/show_entity', action: :show_entity
-      post '/fec_matches', action: :create_fec_match, as: :create_match
-      delete '/fec_matches/:id', action: :delete_fec_match, as: :delete_match
+  resources :entities, only: [:show] do
+    member do
+      get 'relationships'
+      get 'connections'
+      get 'extensions'
+      get 'lists'
     end
   end
 
-  match 'relationship/view/id/:id', via: :get, constraints: {id: /[0-9]+/}, to: 'relationships/routes#redirect_to_canonical'
+  resources :relationships, only: [:show]
+end
 
-  match "*path",
-        to: "errors#not_found",
-        via: :all,
-        constraints: ->(req) { req.path.exclude? 'rails/active_storage' }
+#############
+#  Toolkit  #
+#############
 
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
+get '/toolkit' => 'toolkit#index'
+get '/toolkit/new' => 'toolkit#new'
+get '/toolkit/pages' => 'toolkit#pages'
+get '/toolkit/index', to: redirect('/toolkit')
+post '/toolkit' => 'toolkit#create'
+get '/toolkit/:page_name/edit' => 'toolkit#edit', :as => 'toolkit_edit'
+patch '/toolkit/:id' => 'toolkit#update', :as => 'toolkit_update'
+get '/toolkit/:page_name' => 'toolkit#display', :as => 'toolkit_display'
 
-  # You can have the root of your site routed with "root"
-  # root to: 'welcome#index'
+################
+#  HELP PAGES  #
+################
 
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
+get '/help' => 'help_pages#index'
+get '/help/new' => 'help_pages#new'
+get '/help/pages' => 'help_pages#pages'
+get '/help/index', to: redirect('/help')
+post '/help' => 'help_pages#create'
+get '/help/:page_name/edit' => 'help_pages#edit', :as => 'help_edit'
+patch '/help/:id' => 'help_pages#update', :as => 'help_update'
+get '/help/:page_name' => 'help_pages#display', :as => 'help_display'
 
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
+#########
+# Pages #
+#########
 
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
+# Editable Pages
+get "/pages/:page/edit" => "pages#edit_by_name", constraints: { page: /[A-z]+[^\/]+/ }
+resources :pages, only: [:new, :create, :edit, :update, :index, :show]
+get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
+# Other Pages
+get "/donate" => "pages#donate"
+get "/swamped" => "pages#swamped"
+post "/swamped" => "pages#swamped"
+get '/bulk_data' => 'pages#bulk_data'
+get '/public_data/:file' => 'pages#public_data', constraints: { file: /(entities|relationships)\.json(\.gz)?/ }
 
-  # Example resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
+############
+# Partners #
+############
 
-  # Example resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
+scope :partners do
+  get '/corporate-mapping-project' => 'partners#cmp'
+end
 
-  # Example resource route with more complex sub-resources:
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', on: :collection
-  #     end
-  #   end
+##############################
+# external entities and data #
+##############################
 
-  # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
+get '/external_data/:dataset' => 'external_data#dataset', constraints: DatasetConstraint.new
+# Overview page
+get '/datasets' => 'datasets#index'
+# Table Of ExternalEntites/ExternalRelationships for the given dataset
+# get '/datasets/:dataset' => 'datasets#dataset', constraints: DatasetConstraint.new, as: 'dataset'
+get '/datasets/:dataset' => 'datasets#show', constraints: DatasetConstraint.new, as: 'dataset'
+
+namespace :fec do
+  constraints(id: /[0-9]+(-[^\/]+)?/) do
+    get '/entities/:id/contributions', action: :contributions, as: :contributions
+    get '/entities/:id/match_contributions', action: :match_contributions, as: :match_contributions
+
+    get '/fec_matches/:id', action: :fec_match, as: :match
+    get '/committies/:cmte_id', action: :committees
+    get '/candidates/:cand_id', action: :candidates
+
+    post '/fec_contributions/:id/hide_entity', action: :hide_entity
+    post '/fec_contributions/:id/show_entity', action: :show_entity
+    post '/fec_matches', action: :create_fec_match, as: :create_match
+    delete '/fec_matches/:id', action: :delete_fec_match, as: :delete_match
+  end
+end
+
+match 'relationship/view/id/:id', via: :get, constraints: {id: /[0-9]+/}, to: 'relationships/routes#redirect_to_canonical'
+
+match "*path",
+      to: "errors#not_found",
+      via: :all,
+      constraints: ->(req) { req.path.exclude? 'rails/active_storage' }
+
+# The priority is based upon order of creation: first created -> highest priority.
+# See how all your routes lay out with "rake routes".
+
+# You can have the root of your site routed with "root"
+# root to: 'welcome#index'
+
+# Example of regular route:
+#   get 'products/:id' => 'catalog#view'
+
+# Example of named route that can be invoked with purchase_url(id: product.id)
+#   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
+
+# Example resource route (maps HTTP verbs to controller actions automatically):
+#   resources :products
+
+# Example resource route with options:
+#   resources :products do
+#     member do
+#       get 'short'
+#       post 'toggle'
+#     end
+#
+#     collection do
+#       get 'sold'
+#     end
+#   end
+
+# Example resource route with sub-resources:
+#   resources :products do
+#     resources :comments, :sales
+#     resource :seller
+#   end
+
+# Example resource route with more complex sub-resources:
+#   resources :products do
+#     resources :comments
+#     resources :sales do
+#       get 'recent', on: :collection
+#     end
+#   end
+
+# Example resource route within a namespace:
+#   namespace :admin do
+#     # Directs /admin/products/* to Admin::ProductsController
+#     # (app/controllers/admin/products_controller.rb)
+#     resources :products
+#   end
 end

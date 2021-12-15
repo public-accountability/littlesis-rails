@@ -1,9 +1,49 @@
 <% content_for(:page_title, 'Search Maps') %>
 
-
 <div class="row">
   <div class="col">
-    <table data-controller="oligrapher-search">
-    </table>
+    <div class="d-flex align-items-center">
+        <h1>Search Maps</h1>
+        <div class="ml-auto pr-1">
+          <a class="btn btn-sm btn-outline-primary"  href="/oligrapher">Explore</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col" data-turbo="true">
+    <%= form_with url: "/oligrapher/perform_search", method: :get, data: { 'turbo-frame' => 'oligrapher-search-results' } do |form| %>
+      <div class="d-flex">
+        <div>
+          <div class="input-group map-search-input-group">
+            <input type="text" name="query" class="form-control">
+
+            <div class="input-group-append">
+              <% if user_signed_in? %>
+                <input class="d-none" autocomplete='off' type="checkbox" name="personal_search" <%= @current_user_id.present? ? 'checked' : ''%>>
+
+                <button class="btn btn-outline-secondary personal-map-search<%= @current_user_id.present? ? ' checked' : '' %>"
+                        onClick="$(this).toggleClass('checked'); $(this).siblings('input').prop('checked', !$(this).siblings('input').prop('checked')); return false;" type="button">
+                  <span></span>
+                </button>
+              <% end %>
+
+              <button class="btn btn-outline-secondary" type="submit">
+                <i class="bi bi-search"></i>
+              </button>
+
+            </div><!-- input-group-append -->
+          </div> <!-- input-group -->
+        </div><!-- flex child -->
+      </div><!-- flex parent -->
+    <% end %> <!-- form -->
+  </div><!-- col -->
+</div><!-- row -->
+
+
+<div class="row mt-1">
+  <div class="col" data-turbo="true" data-controller="oligrapher-search">
+    <%= render partial: 'search_results' %>
   </div>
 </div>

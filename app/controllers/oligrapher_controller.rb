@@ -8,7 +8,7 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  before_action :authenticate_user!, only: %i[search new create update editors confirm_editor lock release_lock clone destroy]
+  before_action :authenticate_user!, only: %i[new create update editors confirm_editor lock release_lock clone destroy]
   before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot]
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
@@ -31,6 +31,12 @@ class OligrapherController < ApplicationController
   def search
   end
 
+  def perform_search
+    @query = params[:query]
+    @current_user_id = current_user.id if user_signed_in? && params[:personal_search]
+    render partial: 'search_results'
+  end
+
   def grid
     @grid = Oligrapher::Grid.new(params.fetch('oligrapher_grid', {}))
     @grid.scope { |scope| scope.page(params[:page] || 1).per(25) }
@@ -51,7 +57,7 @@ class OligrapherController < ApplicationController
   end
 
   def new
-    @map = NetworkMap.new(oligrapher_version: 3, title: 'Untitled Map', user: current_user)
+    @map = NetworkMap.new(title: 'Untitled Map', user: current_user)
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
     render 'oligrapher/new', layout: 'oligrapher3'
   end
@@ -144,7 +150,6 @@ class OligrapherController < ApplicationController
 
     map = @map.dup
     map.update!(
-      oligrapher_version: 3,
       is_featured: false,
       is_private: true,
       user_id: current_user.id,
@@ -235,7 +240,7 @@ class OligrapherController < ApplicationController
   private
 
   def new_oligrapher_params
-    oligrapher_params.merge!(oligrapher_version: 3, user_id: current_user.id)
+    oligrapher_params.merge!(user_id: current_user.id)
   end
 
   def oligrapher_params
@@ -243,7 +248,6 @@ class OligrapherController < ApplicationController
       .require(:attributes)
       .permit(:title, :description, :is_private, :is_cloneable, :list_sources, :annotations_data, :settings)
       .merge(graph_data: params[:graph_data]&.permit!&.to_h)
-      .merge(oligrapher_version: 3)
   end
 
   def editor_data

@@ -38,6 +38,41 @@ COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
+-- Name: get_network_map_search_tsvector(bigint); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.get_network_map_search_tsvector(network_map_id bigint) RETURNS tsvector
+    LANGUAGE sql
+    AS $_$
+        SELECT setweight(to_tsvector(coalesce(network_maps.title,'')), 'A')  ||
+                      setweight(to_tsvector(coalesce(network_maps.description,'')), 'B') ||
+                      setweight(to_tsvector(coalesce(array_to_string(annotations.content, ' '), '')), 'C') ||
+                      setweight(to_tsvector(coalesce(array_to_string(entities.names, ' '), '')), 'C')
+        FROM network_maps,
+              LATERAL (
+                SELECT array_agg(entities.name) as names
+                -- array_agg(entities.blurb) as blurbs
+                FROM (
+                       SELECT json_object_keys(graph_data::json -> 'nodes') as keys
+                       FROM network_maps as sub
+                       WHERE sub.id = network_maps.id
+                ) AS nodes
+                INNER JOIN entities on entities.id = keys::bigint
+                WHERE nodes.keys ~ '^\d+$'
+              ) as entities,
+              LATERAL (
+                SELECT array_agg(content.content) as content
+                FROM  (
+                        SELECT regexp_replace((json_array_elements(annotations_data::json)->> 'text') || ' ' || (json_array_elements(annotations_data::json)->> 'header'), E'<[^>]+>', '', 'gi') AS content
+                        FROM network_maps as sub
+                        WHERE sub.id = network_maps.id
+                      ) as content
+             ) as annotations
+        WHERE network_maps.id = network_map_id
+$_$;
+
+
+--
 -- Name: is_numeric(text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -2550,19 +2585,16 @@ CREATE TABLE public.network_maps (
     is_featured boolean DEFAULT false NOT NULL,
     zoom character varying(255) DEFAULT '1'::character varying NOT NULL,
     is_private boolean DEFAULT false NOT NULL,
-    thumbnail text,
     delta boolean DEFAULT true NOT NULL,
     index_data text,
     secret character varying(255),
     graph_data text,
     annotations_data text,
-    annotations_count bigint DEFAULT 0 NOT NULL,
     list_sources boolean DEFAULT false NOT NULL,
     is_cloneable boolean DEFAULT true NOT NULL,
-    oligrapher_version smallint DEFAULT 2 NOT NULL,
     editors text,
     settings text,
-    screenshot text
+    search_tsvector tsvector
 );
 
 
@@ -7554,6 +7586,13 @@ CREATE INDEX index_links_on_relationship_id ON public.links USING btree (relatio
 
 
 --
+-- Name: index_network_maps_on_search_tsvector; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_network_maps_on_search_tsvector ON public.network_maps USING gin (search_tsvector);
+
+
+--
 -- Name: index_relationships_on_is_featured; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8317,6 +8356,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211102185306'),
 ('20211104202533'),
 ('20211119155729'),
-('20211208180233');
+('20211208180233'),
+('20211209202625'),
+('20211209205525');
 
 

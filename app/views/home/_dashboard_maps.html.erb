@@ -1,6 +1,6 @@
 <turbo-frame id="dashboard-maps">
   <% maps_per_page = 4 %>
-  <% maps = current_user.network_maps.order(updated_at: :desc).page(page).per(maps_per_page) %>
+  <% maps = current_user.network_maps.order(created_at: :desc).page(page).per(maps_per_page) %>
 
   <% unless maps.empty? && page == 1 %>
 

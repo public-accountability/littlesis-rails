@@ -157,7 +157,7 @@ describe 'GET /oligrapher/:id/screenshot' do
   end
 
   context 'when map is missing a screenshot' do
-    let(:map) { create(:network_map_version3, screenshot: nil, user: user) }
+    let(:map) { create(:network_map_version3, user: user) }
 
     before do
       File.delete(map.screenshot_path) if File.file?(map.screenshot_path)
@@ -214,7 +214,6 @@ describe 'POST /oligrapher' do
 
   it 'creates a new NetworkMap' do
     expect { post '/oligrapher', params: params }.to change(NetworkMap, :count).by(1)
-    expect(NetworkMap.last.oligrapher_version).to eq 3
     expect(NetworkMap.last.user_id).to eq user.id
   end
 
@@ -284,7 +283,6 @@ describe 'POST /oligrapher/:id/clone' do
 
     it 'creates a new NetworkMap' do
       expect { post "/oligrapher/#{network_map.id}/clone" }.to change(NetworkMap, :count).by(1)
-      expect(NetworkMap.last.oligrapher_version).to eq 3
       expect(NetworkMap.last.user_id).to eq user2.id
       expect(NetworkMap.last.graph_data).to eq network_map.graph_data
     end

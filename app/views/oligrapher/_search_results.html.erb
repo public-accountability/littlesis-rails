@@ -1,0 +1,42 @@
+<turbo-frame id="oligrapher-search-results">
+  <div>
+    <% unless @query&.strip.blank? %>
+      <% results = OligrapherSearchService.run(@query, user_id: @current_user_id) %>
+
+      <% if results.present?  %>
+
+        <table class="table no-top-border" id="oligrapher-search-results-table" data-oligrapher-search-target="table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Last Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% results.each do |map| %>
+              <tr>
+                <td>
+                  <span class="text-truncate" data-turbo="false">
+                    <%= link_to(map.name, oligrapher_url(map), target: '_blank' ) %>
+                  </span>
+                  <% if map.screenshot_exists? %>
+                    <i class="bi bi-image cursor-pointer"
+                       title="Preview"
+                       data-oligrapher-search-target="preview"
+                       data-screenshoturl="<%= map.screenshot_url %>">
+                    </i>
+                  <% end %>
+                  <span>
+                  </span>
+                </td>
+                <td>edited <%= time_ago_in_words(map.updated_at) %> ago by <%= user_link(map.user) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p class="mt-2"><em>No maps found</em></p>
+      <% end %>
+    <% end %>
+  </div>
+  <turbo-frame id="oligrapher-search-results">
