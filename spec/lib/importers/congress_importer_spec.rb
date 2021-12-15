@@ -95,6 +95,8 @@ describe 'CongressImporter' do
           entity = Entity.last
           expect(entity.external_links.fec_candidate.count).to eq 2
           expect(entity.external_links.fec_candidate.map(&:link_id).to_set).to eq Set["H2OH13033", "S6OH00163"]
+          expect(entity.external_links.fec_candidate.map(&:link_id).to_set).to eq Set["H2OH13033", "S6OH00163"]
+          expect(entity.external_links.wikipedia.first&.link_id).to eq 'Sherrod_Brown'
         end
       end
 

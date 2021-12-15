@@ -36,8 +36,7 @@ class CongressImporter
         @entity = legislator_matcher.entity
 
         unless @entity.present?
-          @entity = Entity.create!(name: generate_name,
-                                   primary_ext: 'Person')
+          @entity = Entity.create!(name: generate_name, primary_ext: 'Person')
           @entity.person.update!(person_attributes)
         end
 
@@ -57,6 +56,10 @@ class CongressImporter
 
         fec_candidate_ids.each do |fec_id|
           @entity.external_links.fec_candidate.find_or_create_by!(link_id: fec_id)
+        end
+
+        if (wikipedia_id = dig('id', 'wikipedia')&.tr(' ', '_'))
+          add_wikipedia_id(wikipedia_id)
         end
       end
     end
@@ -98,6 +101,22 @@ class CongressImporter
       "US #{rep_or_sen} from #{state}"
     rescue # rubocop:disable Style/RescueStandardError
       nil
+    end
+
+    def add_wikipedia_id(wikipedia_id)
+      wikipedia_external_link = ExternalLink.wikipedia.find_by(link_id: wikipedia_id)
+
+      if wikipedia_external_link
+        if wikipedia_external_link.entity != @entity
+          Rails.logger.warn "Wikipedia link \"#{wikipedia_id}\" is connected to #{wikipedia_external_link.entity.name_with_id}. Expected #{@entity.name_with_id}."
+        end
+      else
+        if @entity.external_links.wikipedia.exists?
+          Rails.logger.warn "#{@entity.name_with_id} already has wikipedia id #{@entity.external_links.wikipedia.first.link_id}. Cannot add wikipedia_id \"#{wikipedia_id}\"."
+        else
+          @entity.external_links.wikipedia.find_or_create_by!(link_id: wikipedia_id)
+        end
+      end
     end
 
     private
