@@ -50,14 +50,7 @@ class MapsController < ApplicationController
   end
 
   def search
-    @maps = NetworkMap
-              .search(LsSearch.escape(params.fetch(:q, '')),
-                      order: 'updated_at DESC, id DESC',
-                      with: { is_private: false })
-              .page(params[:page].presence || 1)
-              .per(20)
-
-    render :index
+    redirect_to(search_oligrapher_index_path)
   end
 
   def user
