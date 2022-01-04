@@ -58,9 +58,18 @@ def docker_compose(*args)
 end
 
 def app_exec(cmd, bin: false)
-  raise "not yet implemented" if $rails_env == 'production'
-  cmd = "/littlesis/bin/#{cmd}" if bin
-  docker_compose 'exec', "-e RAILS_ENV=#{$rails_env}", 'app', cmd
+  bin_path = $rails_env == 'production' ? '/var/www/littlesis/bin' : '/littlesis/bin'
+  cmd = "#{bin_path}/#{cmd}" if bin
+
+  if $rails_env == 'production'
+    `#{cmd}`
+  else
+    docker_compose 'exec', "-e RAILS_ENV=#{$rails_env}", 'app', cmd
+  end
+end
+
+def app_exec_bin(cmd)
+  app_exec(cmd, bin: true)
 end
 
 def git(cmd)
@@ -72,6 +81,7 @@ def status
   current_branch = git("rev-parse --abbrev-ref HEAD").chomp
 
   puts "On commit #{current_commit} on branch #{current_branch}"
+  puts "Rails Environment \033[1m#{$rails_env}\033[0m"
 
   running_services = Dir.chdir(REPO) { `docker-compose ps --services --filter status=running` }.split("\n")
 
@@ -82,6 +92,7 @@ end
 
 def deploy
   raise "Cannot deploy unless mode = production" unless $rails_env == 'production'
+
   Dir.chdir(REPO)
 
   modified_files = git("ls-files -m").split("\n")
@@ -121,21 +132,21 @@ def deploy
   end
 
   if changed_files.include?('Gemfile') || changed_files.include?('Gemfile.lock')
-    `bin/bundle install`
+    app_exec_bin 'bundle install'
   end
 
   if changed_files.include?('yarn.lock')
-    `bin/yarn`
+    app_exec_bin 'yarn'
   end
 
   # TODO detech changes to Rails.application.config.littlesis.oligrapher_commit and run OligrapherAssetsService.run
 
   if changed_files.include?('yarn.lock') || changed_files.any? { |f| f.include?('assets') || f.include?('javascript') }
-    `bin/rake assets:precompile`
+    app_exec_bin 'rake assets:precompile'
   end
 
   puts "Restarting LittleSis"
-  `bin/pumactl -p tmp/puma.pid restart`
+  app_exec_bin 'pumactl -p tmp/puma.pid restart'
 end
 
 opts = GetoptLong.new(
@@ -163,6 +174,8 @@ opts.each do |name, val|
   end
 end
 
+ENV['RAILS_ENV'] = $rails_env
+
 rest = ARGV[1..].join(' ')
 
 case ARGV.first
@@ -181,29 +194,29 @@ when 'delete'
 when 'build'
   Dir.chdir(REPO) { exec "docker build -t littlesis:latest ." }
 when 'pumactl'
-  app_exec "pumactl -p tmp/puma.pid #{rest}", bin: true
+  app_exec_bin "pumactl -p tmp/puma.pid #{rest}"
 when 'test', 'rspec'
-  app_exec "rspec #{rest}", bin: true
+  app_exec_bin "rspec #{rest}"
 when 'rails'
-  app_exec "rails #{rest}", bin: true
+  app_exec_bin "rails #{rest}"
 when 'bundle'
-  app_exec "bundle #{rest}", bin: true
+  app_exec_bin "bundle #{rest}"
 when 'yarn'
-  app_exec "yarn #{rest}", bin: true
+  app_exec_bin "yarn #{rest}"
 when 'rake'
-  app_exec "rake #{rest}", bin: true
+  app_exec_bin "rake #{rest}"
 when 'runner'
-  app_exec "rails runner #{rest}", bin: true
+  app_exec_bin "rails runner #{rest}"
 when 'bash'
   app_exec "/bin/bash --login #{rest}"
 when 'console', 'c'
-  app_exec "rails c #{rest}", bin: true
+  app_exec_bin "rails c #{rest}"
 when 'redis'
   app_exec "/usr/bin/redis-cli -h redis"
 when 'data'
-  app_exec "rails runner lib/scripts/data.rb #{rest}", bin: true
+  app_exec_bin "rails runner lib/scripts/data.rb #{rest}"
 when 'fec'
-  app_exec "rails runner lib/scripts/fec.rb #{rest}", bin: true
+  app_exec_bin "rails runner lib/scripts/fec.rb #{rest}"
 when 'git'
   puts git(rest)
 when 'rg', 'search'
