@@ -44,9 +44,8 @@ def database_connection
 end
 
 def setup_folders
-  %w[data data/external_data data/external_data/original data/external_data/csv public/images
-     public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher
-     public/oligrapher].each do |folder|
+  %w[data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images
+     public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher].each do |folder|
     FileUtils.mkdir_p folder
   end
 end
@@ -62,7 +61,9 @@ def app_exec(cmd, bin: false)
   cmd = "#{bin_path}/#{cmd}" if bin
 
   if $rails_env == 'production'
-    `#{cmd}`
+    Dir.chdir(REPO) do
+      puts `#{cmd}`
+    end
   else
     docker_compose 'exec', "-e RAILS_ENV=#{$rails_env}", 'app', cmd
   end
@@ -76,17 +77,30 @@ def git(cmd)
   Dir.chdir(REPO) { `git #{cmd}` }
 end
 
+def systemd_service_check(service)
+  status = system("systemctl is-active -q #{service}") ? '✓' : 'X'
+  puts "[#{status}] #{service}"
+end
+
 def status
   current_commit = git("rev-parse --short HEAD").chomp
   current_branch = git("rev-parse --abbrev-ref HEAD").chomp
 
-  puts "On commit #{current_commit} on branch #{current_branch}"
+  puts "commit #{current_commit} on branch #{current_branch}"
   puts "Rails Environment \033[1m#{$rails_env}\033[0m"
 
-  running_services = Dir.chdir(REPO) { `docker-compose ps --services --filter status=running` }.split("\n")
+  if $rails_env == 'production'
+    systemd_service_check 'littlesis'
+    systemd_service_check 'littlesis-goodjob'
+    systemd_service_check 'redis'
+    systemd_service_check 'nginx'
+    app_exec_bin 'rake ts:status'
+  else
+    running_services = Dir.chdir(REPO) { `docker-compose ps --services --filter status=running` }.split("\n")
 
-  %w[redis postgres app nginx].each do |service|
-    puts "[#{running_services.include?(service) ? '✓' : 'X'}] #{service} "
+    %w[redis postgres app nginx].each do |service|
+      puts "[#{running_services.include?(service) ? '✓' : 'X'}] #{service} "
+    end
   end
 end
 
