@@ -44,9 +44,9 @@ def database_connection
 end
 
 def setup_folders
-  %w[data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images
+  %w[tmp data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images
      public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher].each do |folder|
-    FileUtils.mkdir_p folder
+    FileUtils.mkdir_p File.join(REPO, folder)
   end
 end
 
@@ -56,7 +56,7 @@ def docker_compose(*args)
   end
 end
 
-def app_exec(cmd, bin: false)
+def app_exec(cmd, bin: false, run: false)
   bin_path = $rails_env == 'production' ? '/var/www/littlesis/bin' : '/littlesis/bin'
   cmd = "#{bin_path}/#{cmd}" if bin
 
@@ -65,7 +65,11 @@ def app_exec(cmd, bin: false)
       puts `#{cmd}`
     end
   else
-    docker_compose 'exec', "-e RAILS_ENV=#{$rails_env}", 'app', cmd
+    if run
+      docker_compose 'run', '--rm', "-e RAILS_ENV=#{$rails_env}", 'app', cmd
+    else
+      docker_compose 'exec', "-e RAILS_ENV=#{$rails_env}", 'app', cmd
+    end
   end
 end
 
@@ -171,14 +175,19 @@ opts = GetoptLong.new(
   ['--branch', GetoptLong::REQUIRED_ARGUMENT]
 )
 
+def set_env_to_test
+  $rails_env = 'test'
+  $database[:name] = 'littlesis_test'
+  ENV['RAILS_ENV'] = $rails_env
+end
+
 opts.each do |name, val|
   case name
   when '--help'
     help
     exit
   when '--test'
-    $rails_env = 'test'
-    $database[:name] = 'littlesis_test'
+    set_env_to_test
   when '--development'
     $rails_env = 'development'
   when '--production'
@@ -190,12 +199,17 @@ end
 
 ENV['RAILS_ENV'] = $rails_env
 
+if ARGV.empty?
+  help
+  exit
+end
+
 rest = ARGV[1..].join(' ')
 
 case ARGV.first
 when 'help'
   help
-when 'setup'
+when 'setup-folders'
   setup_folders
 when 'docker', 'docker_compose', 'docker-compose'
   docker_compose rest
@@ -210,6 +224,7 @@ when 'build'
 when 'pumactl'
   app_exec_bin "pumactl -p tmp/puma.pid #{rest}"
 when 'test', 'rspec'
+  set_env_to_test
   app_exec_bin "rspec #{rest}"
 when 'rails'
   app_exec_bin "rails #{rest}"
@@ -224,7 +239,7 @@ when 'runner'
 when 'bash'
   app_exec "/bin/bash --login #{rest}"
 when 'console', 'c'
-  app_exec_bin "rails c #{rest}"
+  app_exec "rails c #{rest}", bin: true, run: true
 when 'redis'
   app_exec "/usr/bin/redis-cli -h redis"
 when 'data'
@@ -241,4 +256,7 @@ when 'status'
   status
 when 'deploy'
   deploy
+else
+  puts "Invalid Command: #{ARGV.first}"
+  exit 1
 end

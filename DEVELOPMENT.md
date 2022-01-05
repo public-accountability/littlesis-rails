@@ -4,11 +4,11 @@ Our development setup is docker-based. To install the requirements on debian use
 
 ### Helper Program bin/littlesis
 
-`bin/littlesis` is a helper bash program that will let you easily interact with the docker containers to do common development tasks such as starting the rails console, running tests, starting sphinx, and viewing logs without having to remember esoteric docker & bash commands.
+`bin/littlesis` is a helper program that will let you easily interact with the docker containers to do common development tasks such as starting the rails console, running tests, starting sphinx, and viewing logs without having to remember esoteric docker & bash commands.
 
 To see the script's features run: `bin/littlesis help`
 
-Although not necessary, it is suggested to create symlink for `bin/littlesis`: `sudo ln -s bin/littlesis /usr/local/bin/littlesis`
+Although not necessary, it is suggested to create symlink for `bin/littlesis`: `sudo ln -s (readlink -f bin/littlesis) /usr/local/bin/littlesis`
 
 ### Installation Steps
 
@@ -18,9 +18,10 @@ Although not necessary, it is suggested to create symlink for `bin/littlesis`: `
 
 3) Start the docker containers: `littlesis up`
 
-4) Setup the database:  `littlesis setup-database`
+4) Create folders:  `littlesis setup-folders`
 
-5) Load a copy of the development database `zcat littlesis_developemnt_db.sql.gz | littlesis psql`
+5) Load a copy of the database `zcat littlesis.sql.gz | littlesis psql`.
+   Afterwards, if needed, run `littlesis psql < lib/sql/clean_users.sql`
 
 6) Compile assets: `littlesis rake assets:precompile`
 
@@ -28,7 +29,7 @@ Although not necessary, it is suggested to create symlink for `bin/littlesis`: `
 
 The app is accessible at `localhost:8080` and `localhost:8081`. 8080 goes to directly to puma. 8081 is nginx.
 
-8) Setup the testing database: `littlesis reset-test-db`
+8) Setup the testing database: `littlesis --test rake db:reset`
 
 9) Compile test assets: `littlesis --test rake assets:precompile`
 
@@ -52,14 +53,12 @@ Clear logs:  `littlesis rake log:clear`
 
 Clear cache: `littlesis runner Rails.cache.clear`
 
-Start DelayedJob: `littlesis delayed_job start`
-
 Login as system user:
 
 * username: `user1@email.com`
 * password: `password`
 
-Create new user: `littlesis script create_example_user.rb`
+Create new user: `littlesis runner lib/scripts/create_example_user.rb`
 
 Reset user password:  `User.find_by(email: <EMAIL>).send_reset_password_instructions`
 

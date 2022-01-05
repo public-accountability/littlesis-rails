@@ -4,10 +4,10 @@ production:
   reconnect: true
   sslmode: prefer
   pool: 15
-  database: <%= Rails.application.credentials.database[:name] %>
-  username: <%= Rails.application.credentials.database[:username] %>
-  password: <%= Rails.application.credentials.database[:password] %>
-  host: <%= Rails.application.credentials.database[:host] %>
+  database: <%= Rails.application.credentials.dig(:database, :name) %>
+  username: <%= Rails.application.credentials.dig(:database, :username) %>
+  password: <%= Rails.application.credentials.dig(:database, :password) %>
+  host: <%= Rails.application.credentials.dig(:database, :host) %>
 
 development:
   adapter: postgresql
