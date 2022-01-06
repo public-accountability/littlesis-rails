@@ -5,7 +5,7 @@ class CmpEntity < ApplicationRecord
   enum entity_type: [:org, :person]
   validates :strata, inclusion: { in: (1..10) }, allow_nil: true
 
-  has_paper_trail
+  has_paper_trail versions: { class_name: 'ApplicationVersion' }
 
   def self.in_strata
     where.not(strata: nil)

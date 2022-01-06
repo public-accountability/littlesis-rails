@@ -12,7 +12,7 @@ class List < ApplicationRecord
 
   IGNORE_FIELDS = %i[is_admin is_featured last_user_id delta access featured_list_id].freeze
 
-  has_paper_trail ignore: IGNORE_FIELDS, on: %i[create destroy update]
+  has_paper_trail ignore: IGNORE_FIELDS, on: %i[create destroy update], versions: { class_name: 'ApplicationVersion' }
 
   belongs_to :user, foreign_key: 'creator_user_id', inverse_of: :lists, optional: true
 

@@ -175,7 +175,7 @@ describe Entity, :tag_helper do
 
         it 'creates two versions: one for the Org model and one for the Entity model' do
           org
-          expect { org.soft_delete }.to change { PaperTrail::Version.count }.by(2)
+          expect { org.soft_delete }.to change { ApplicationVersion.count }.by(2)
         end
 
         it 'sets the event type of the version to be soft_delete' do
@@ -604,7 +604,7 @@ describe Entity, :tag_helper do
       with_versioning do
         it 'does not create a version' do
           expect { entity.update_timestamp_for(new_user) }
-            .not_to change { PaperTrail::Version.count }
+            .not_to change { ApplicationVersion.count }
         end
       end
     end

@@ -7,7 +7,8 @@ class Person < ApplicationRecord
   serialize :nationality, Array
 
   has_paper_trail on: [:update, :destroy],
-                  meta: { entity1_id: :entity_id }
+                  meta: { entity1_id: :entity_id },
+                  versions: { class_name: 'ApplicationVersion' }
 
   belongs_to :entity, inverse_of: :person, touch: true, optional: true
   validates :name_last, length: { maximum: 50 }, presence: true

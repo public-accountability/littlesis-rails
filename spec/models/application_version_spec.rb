@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-
-describe PaperTrail::Version do
+describe ApplicationVersion do
   describe '#entity_edit?' do
     it 'returns true for entity version' do
       expect(build(:entity_version).entity_edit?).to be true

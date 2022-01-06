@@ -8,7 +8,8 @@ class ListEntity < ApplicationRecord
                   meta: {
                     entity1_id: :entity_id,
                     other_id: :list_id
-                  }
+                  },
+                  versions: { class_name: 'ApplicationVersion' }
 
   belongs_to :list, -> { unscope(where: :is_deleted) }, inverse_of: :list_entities
   belongs_to :entity, inverse_of: :list_entities

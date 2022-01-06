@@ -28,7 +28,7 @@ class Document < ApplicationRecord
     after_create -> { InternetArchiveJob.perform_later(url) }, :unless => :primary_source?
   end
 
-  has_paper_trail on: [:update, :destroy]
+  has_paper_trail on: [:update, :destroy], versions: { class_name: 'ApplicationVersion' }
 
   PER_PAGE = 20
 

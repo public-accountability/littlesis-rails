@@ -22,7 +22,7 @@ gem 'rack-rewrite', '~> 1.5.1'
 gem 'devise', '~> 4.7'
 
 # Versioning
-gem 'paper_trail', '~> 11'
+gem 'paper_trail'
 
 # Pagination
 gem 'kaminari'

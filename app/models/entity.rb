@@ -26,7 +26,8 @@ class Entity < ApplicationRecord
                     :association_data => proc { |e|
                       e.get_association_data.to_yaml if e.paper_trail_event == 'soft_delete'
                     }
-                  }
+                  },
+                  :versions => { class_name: 'ApplicationVersion' }
 
   has_many :aliases, inverse_of: :entity, dependent: :destroy
   has_many :images, inverse_of: :entity, dependent: :destroy

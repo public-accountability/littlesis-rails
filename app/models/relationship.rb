@@ -18,7 +18,8 @@ class Relationship < ApplicationRecord
                     :association_data => proc { |r|
                       r.get_association_data.to_yaml if r.paper_trail_event == 'soft_delete'
                     }
-                  }
+                  },
+                  versions: { class_name: 'ApplicationVersion' }
 
   POSITION_CATEGORY = 1
   EDUCATION_CATEGORY = 2

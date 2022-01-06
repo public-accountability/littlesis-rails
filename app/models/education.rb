@@ -4,7 +4,7 @@ class Education < ApplicationRecord
   belongs_to :relationship, inverse_of: :education, optional: true
   belongs_to :degree, optional: true
 
-  has_paper_trail on: [:update, :destroy]
+  has_paper_trail on: [:update, :destroy], versions: { class_name: 'ApplicationVersion' }
 
   SELECT_OPTIONS = ['Undergraduate', 'Graduate', 'High School'].freeze
 end

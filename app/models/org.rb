@@ -2,7 +2,8 @@
 
 class Org < ApplicationRecord
   has_paper_trail on: [:update, :destroy],
-                  meta: { entity1_id: :entity_id }
+                  meta: { entity1_id: :entity_id },
+                  versions: { class_name: 'ApplicationVersion' }
 
   belongs_to :entity, inverse_of: :org, touch: true
 

@@ -5,7 +5,8 @@ class Tagging < ApplicationRecord
   private_constant :GET_TAGABLE_ID_IF_ENTITY
 
   has_paper_trail meta: { entity1_id: GET_TAGABLE_ID_IF_ENTITY },
-                  on:  %i[create destroy update]
+                  on:  %i[create destroy update],
+                  versions: { class_name: 'ApplicationVersion' }
 
   belongs_to :tagable, polymorphic: true, foreign_type: :tagable_class, optional: true
   belongs_to :last_user, class_name: "User", foreign_key: "last_user_id"

@@ -5,7 +5,8 @@ class ExtensionRecord < ApplicationRecord
 
   has_paper_trail on: [:create, :destroy],
                   unless: proc { |er| [1, 2].include? er.definition_id },
-                  meta: { entity1_id: :entity_id }
+                  meta: { entity1_id: :entity_id },
+                  versions: { class_name: 'ApplicationVersion' }
 
   belongs_to :entity, inverse_of: :extension_records, touch: true, optional: true
   belongs_to :extension_definition, foreign_key: 'definition_id', inverse_of: :extension_records

@@ -44,14 +44,14 @@ module UserEdits
 
     class_methods do # rubocop:disable Metrics/BlockLength
       def uniq_active_users(since: 30.days.ago)
-        PaperTrail::Version
+        ApplicationVersion
           .where('versions.created_at >= ? AND whodunnit IS NOT NULL', since)
           .pluck(Arel.sql('distinct whodunnit'))
           .count
       end
 
       def active_users(since: 30.days.ago, page: 1, per_page: UserEdits::ACTIVE_USERS_PER_PAGE)
-        versions = PaperTrail::Version
+        versions = ApplicationVersion
                      .select(
                        Arel.sql(<<~SELECT)
                          whodunnit,
@@ -102,7 +102,7 @@ module UserEdits
     end
 
     def recent_edits
-      @recent_edits ||= PaperTrail::Version
+      @recent_edits ||= ApplicationVersion
                           .where(whodunnit: @user.id, item_type: EDITABLE_TYPES)
                           .order(id: :desc)
                           .page(@page)
@@ -123,7 +123,7 @@ module UserEdits
     private
 
     def version_arel_table
-      PaperTrail::Version.arel_table
+      ApplicationVersion.arel_table
     end
 
     #  {
