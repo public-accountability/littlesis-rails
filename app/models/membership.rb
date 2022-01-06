@@ -6,7 +6,7 @@
 class Membership < ApplicationRecord
   serialize :elected_term, Hash
 
-  has_paper_trail on: [:update, :destroy]
+  has_paper_trail on: [:update, :destroy], versions: { class_name: 'ApplicationVersion' }
   belongs_to :relationship, inverse_of: :membership
 
   def self.with_elected_term

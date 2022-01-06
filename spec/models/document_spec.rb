@@ -78,7 +78,7 @@ describe Document, type: :model do
   describe 'recording history with paper trail' do
     with_versioning do
       it 'does not record create events' do
-        expect { create(:document) }.not_to change { PaperTrail::Version.count }
+        expect { create(:document) }.not_to change { ApplicationVersion.count }
       end
 
       it 'records update events' do

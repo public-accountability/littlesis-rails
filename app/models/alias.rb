@@ -4,7 +4,8 @@ class Alias < ApplicationRecord
   extend WithoutPaperTrailVersioning
   attr_accessor :skip_update_entity_callback
   has_paper_trail on: [:create, :destroy],
-                  meta: { entity1_id: :entity_id }
+                  meta: { entity1_id: :entity_id },
+                  versions: { class_name: 'ApplicationVersion' }
 
   belongs_to :entity, inverse_of: :aliases
 

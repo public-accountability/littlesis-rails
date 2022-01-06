@@ -49,25 +49,25 @@ describe Alias, type: :model do
       before { org }
 
       it 'stores entity metadata with version' do
-        expect { create_alias.call }.to change { PaperTrail::Version.count }.by(1)
+        expect { create_alias.call }.to change { ApplicationVersion.count }.by(1)
         expect(Alias.last.versions.last.entity1_id).to eql org.id
       end
 
       it 'can skip versioning using without_versioning' do
         expect { Alias.without_versioning { create_alias.call } }
-          .not_to change { PaperTrail::Version.count }
+          .not_to change { ApplicationVersion.count }
         # verifying that it re-enables versioning:
-        expect { create_alias.call }.to change { PaperTrail::Version.count }.by(1)
+        expect { create_alias.call }.to change { ApplicationVersion.count }.by(1)
       end
 
       it 'records destory events' do
         a = create_alias.call
-        expect { a.destroy }.to change { PaperTrail::Version.count }.by(1)
+        expect { a.destroy }.to change { ApplicationVersion.count }.by(1)
       end
 
       xit 'does not record update events' do
         a = create_alias.call
-        expect { a.update!(name: Faker::Company.name) }.not_to change { PaperTrail::Version.count }
+        expect { a.update!(name: Faker::Company.name) }.not_to change { ApplicationVersion.count }
       end
     end
   end

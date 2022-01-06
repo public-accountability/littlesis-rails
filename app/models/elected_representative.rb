@@ -3,7 +3,8 @@
 # fields: bioguide_id, govtrack_id, crp_id, pvs_id, watchdog_id, entity_id
 class ElectedRepresentative < ApplicationRecord
   has_paper_trail on: [:update],
-                  meta: { entity1_id: :entity_id }
+                  meta: { entity1_id: :entity_id },
+                  versions: { class_name: 'ApplicationVersion' }
 
   belongs_to :entity, inverse_of: :elected_representative
 end

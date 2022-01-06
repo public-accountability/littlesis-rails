@@ -186,7 +186,7 @@ GEM
     nokogiri (1.12.5-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
-    paper_trail (11.1.0)
+    paper_trail (12.1.0)
       activerecord (>= 5.2)
       request_store (~> 1.1)
     parallel (1.21.0)
@@ -396,7 +396,7 @@ DEPENDENCIES
   money
   mysql2 (~> 0.5.2)
   nokogiri
-  paper_trail (~> 11)
+  paper_trail
   parallel
   pg
   puma (>= 5)

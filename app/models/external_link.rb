@@ -95,8 +95,10 @@ class ExternalLink < ApplicationRecord
   belongs_to :entity
 
   has_paper_trail on:  %i[create destroy update],
+                  if: ->(el) { el.editable? },
                   meta: { entity1_id: :entity_id },
-                  if: ->(el) { el.editable? }
+                  versions: { class_name: 'ApplicationVersion' }
+
 
   PLACEHOLDER = '{}'
   WIKIPEDIA_REGEX = Regexp.new 'https?:\/\/en.wikipedia.org\/wiki\/?(.+)', Regexp::IGNORECASE

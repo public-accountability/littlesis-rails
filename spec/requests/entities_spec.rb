@@ -172,7 +172,7 @@ describe 'Entity Requests', type: :request do
         before { person }
 
         it 'should not create a new paper_trail' do
-          expect(&patch_request).not_to change { PaperTrail::Version.count }
+          expect(&patch_request).not_to change { ApplicationVersion.count }
         end
       end
     end

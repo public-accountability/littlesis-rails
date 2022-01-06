@@ -27,7 +27,7 @@ class User < ApplicationRecord
          :rememberable,
          :trackable
 
-  has_paper_trail only: %i[username about_me], on: %i[update]
+  has_paper_trail only: %i[username about_me], on: %i[update], versions: { class_name: 'ApplicationVersion' }
 
   # Core associations
   has_one :user_profile, inverse_of: :user, dependent: :destroy

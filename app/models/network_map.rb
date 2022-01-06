@@ -8,7 +8,7 @@ class NetworkMap < ApplicationRecord
 
   attribute :graph_data, OligrapherGraphData::Type.new
   serialize :editors, Array
-  has_paper_trail skip: [:search_tsvector]
+  has_paper_trail skip: [:search_tsvector], versions: { class_name: 'ApplicationVersion' }
 
   delegate :url_helpers, to: 'Rails.application.routes'
 
