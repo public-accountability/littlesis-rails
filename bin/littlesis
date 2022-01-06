@@ -62,7 +62,11 @@ def app_exec(cmd, bin: false, run: false)
 
   if $rails_env == 'production'
     Dir.chdir(REPO) do
-      puts `#{cmd}`
+      if run
+        exec cmd
+      else
+        puts `#{cmd}`
+      end
     end
   else
     if run
