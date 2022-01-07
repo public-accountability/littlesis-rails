@@ -5,6 +5,14 @@ jobs:
     machine:
       image: ubuntu-2004:202111-02
       docker_layer_caching: true
+
+    environment:
+      RAILS_ENV: test
+      COVERAGE: yes
+      POSTGRES_PASSWORD: littlesis
+      POSTGRES_USER: littlesis
+      POSTGRES_DB: littlesis_test
+
     steps:
       - checkout
       - run: cp config/database.ci.yml config/database.yml
