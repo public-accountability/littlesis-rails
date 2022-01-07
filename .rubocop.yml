@@ -74,6 +74,7 @@ Style/FrozenStringLiteralComment:
   EnforcedStyle: always
   Exclude:
     - 'spec/**/*.rb'
+    - 'lib/tasks/*.rake'
     - 'app/indices/*.rb'
 
 Style/HashSyntax:

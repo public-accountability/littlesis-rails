@@ -109,6 +109,7 @@ def status
     %w[redis postgres app nginx].each do |service|
       puts "[#{running_services.include?(service) ? '✓' : 'X'}] #{service} "
     end
+    app_exec_bin 'rake ts:status'
   end
 end
 
