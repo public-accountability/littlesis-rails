@@ -1,45 +1,10 @@
-$reference_widget_width: 315px;
+$reference_widget_width: 300px;
 
 #reference-widget-container {
+    width: $reference_widget_width;
 
-    .reference-typeahead {
-	@extend .form-control;
-	width: $reference_widget_width;
-    }
-
-    .reference-suggestion {
-	position: relative;
-	width: $reference_widget_width;
-	font-size: 12px;
-	cursor: pointer;
-	padding-left: 0.3em;
-	padding-right: 15px;
-
-	.reference-suggestion-name {
-	    z-index: 80;
-	}
-
-	.reference-suggestion-url {
-	    @extend .text-muted;
-	    padding-top: 0.2em;
-	    padding-bottom: 0.2em;
-	    z-index: 80;
-	}
-    }
-
-    .reference-visit-link {
-	position: absolute;
-	z-index: 100;
-	top: 5px;
-	left: ($reference_widget_width - 15px);
-
-	a {
-	    color: black;
-
-	    &:hover {
-		color: $link_blue;
-	    }
-	}
+    select {
+        width: $reference_widget_width;
     }
 }
 

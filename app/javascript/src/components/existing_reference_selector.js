@@ -1,231 +1,52 @@
-import $ from 'jquery'
-import Bloodhound from 'bloodhound-js'
-import mustache from 'mustache'
-import typeahead from 'typeahead.js'
+import { lsFetch } from '../common/http.mjs'
 
-// CONSTANTS
 const REFERENCES_PER_PAGE = 75
-const REQUEST_URL = '/references/recent'
-const TYPEAHEAD_OPTIONS = {
-  minLength: 0,
-  highlight: true,
-  limit: 8
+const REQUEST_URL = "/references/recent"
+const CONTAINER_DIV = "#reference-widget-container"
+
+function formatDocument(document) {
+  return $(
+    `<span title="${document.url}">${document.name}</span>`
+  )
 }
 
-/**
- * Reference Widget
- * Use:  new ReferenceWidget([entity_ids], { options })
- * @param {Array|Integer|String} entityIds
- * @param {Object} userOptions
- */
-function ExistingReferenceWidget(entityIds, userOptions) {
-  this.options = mergeOptions(ExistingReferenceWidget.DEFAULT_OPTIONS, userOptions)
-  this.entityIds = [].concat(entityIds).map(function(n) { return Number(n); })
-  this.documents = null
-  this.selection = null
-  this.render = this._render.bind(this)
-  this.init()
-}
+export default class ExistingReferenceWidget {
+  constructor(entityIds) {
+    this.entityIds = [].concat(entityIds).map(Number)
+    this.documents = null
+    this.render = this.render.bind(this)
+    this.getDocs().then(this.render)
+  }
 
-// STATIC VALUES
-ExistingReferenceWidget.TYPEAHEAD_INPUT_ID = 'ref-widget-typeahead'
-ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR = '#' + ExistingReferenceWidget.TYPEAHEAD_INPUT_ID
-ExistingReferenceWidget.DEFAULT_OPTIONS = {
-  "containerDiv": "#reference-widget-container",
-  "afterRender": function() {},
-  "afterSelect": function() {}
-}
+  getDocs() {
+    const url = REQUEST_URL + '?' +  $.param({ "entity_ids": this.entityIds,
+                                               "per_page": REFERENCES_PER_PAGE,
+                                               "exclude_type": 'fec' })
+    return lsFetch(url)
+      .then(data => this.documents = data)
+      .catch(() => console.error("failed to get references from /references/recent"))
+  }
 
-ExistingReferenceWidget.prototype.init = function() {
-  this.getDocs().then(this.render);
-};
+  render() {
+    $(CONTAINER_DIV).html("<select> <option></option></select>")
 
-/**
- * Replaces contents of container with a typeahead
- */
-ExistingReferenceWidget.prototype._render = function() {
-  var self = this;
-  $(this.options.containerDiv).html(this._typeaheadInput());
-
-  // render the typeahead in to the div
-  $(ExistingReferenceWidget.TYPEAHEAD_INPUT_SELECTOR)
-    .typeahead(TYPEAHEAD_OPTIONS, this._typeaheadConfig())
-    .on('typeahead:selected', function (e, datum) {
-      // set 'selection' property after picked
-      self.selection = datum;
-      self.options.afterSelect(datum);
+    $(`${CONTAINER_DIV} > select`).select2({
+      "data": this.documents.map(d => Object.assign(d, { "text": d.name })),
+      "placeholder": "Select a reference",
+      "allowClear": true,
+      "templateResult": formatDocument
     })
-    .on('typeahead:render', function (e) {
-      // 'unselect' if suggestion is re-rendered
-      self.selection = null;
-    });
 
-  this.options.afterRender();
-};
+  }
 
-///////////////////////////
-// TYPEAHEAD COMPONENTS ///
-//////////////////////////
+  get selection() {
+    let value = $(`${CONTAINER_DIV} > select`).val()
 
-/**
- * Prepares Bloodhound search with provided references data
- * @param {Array[References]} data
- * @returns {Bloodhound}
- */
-function documentBloodhound(data) {
-  return new Bloodhound({
-    local: data,
-    identify: function(doc) { return doc.id; },
-    queryTokenizer: function(q) {
-      return Bloodhound.tokenizers.whitespace(q.toLowerCase());
-    },
-    datumTokenizer: function(d) {
-      return flatten(
-	[d.name, d.url]
-	  .filter(function(x) { return x !== null; })
-	  .map(function(x) {
-	    return Bloodhound.tokenizers.whitespace(x.toLowerCase());
-	  })
-      );
-    }
-  });
-}
-
-/**
- * Returns function to be used as the 'source' of typeahead
- * see https://typeahead.js.org/examples/#default-suggestions for docs on default suggestions
- * @param {Array[References]} data
- * @returns {Function}
- */
-function referenceSource(data) {
-  var bloodhound = documentBloodhound(data);
-  var defaultIds = data.slice(0,8).map(function(doc) { return doc.id; });
-  return function(q, sync) {
-    if (q === '') {
-      sync(bloodhound.get(defaultIds));
+    if (value) {
+      return Number(value)
     } else {
-      bloodhound.search(q, sync);
+      return null
     }
-  };
-}
-
-/**
- * Provides a configuartion object for typeahead
- * Requires `this.documents` to be set
- * @param {Array} references
- * @returns {Object} Configuration for typeahead
- */
-ExistingReferenceWidget.prototype._typeaheadConfig = function() {
-  if (!Array.isArray(this.documents)) {
-    throw 'Documents are missing or invalid :(';
   }
 
-  return {
-    name: 'references',
-    source: referenceSource(this.documents),
-    displayKey: 'name',
-    templates: {
-      empty: '<span class="reference-suggestion"><span class="reference-empty">No matches found</span></span>',
-      suggestion: suggestion
-    }
-  };
-};
-
-
-/**
- * Retrives recent documents via an ajax call to /references/recent
- * Sets this.documents if successful.
- * @returns {Promise}
- */
-ExistingReferenceWidget.prototype.getDocs = function() {
-  var self = this;
-  var url = this._recentReferencesUrl();
-
-  return new Promise(function(resolve, reject){
-    $.getJSON(url)
-     .done(function(data) {
-       self.documents = data;
-       resolve(data);
-     })
-     .fail(function(){
-       reject('failed to get references from /references/recent');
-     });
-  });
-};
-
-
-ExistingReferenceWidget.prototype._recentReferencesUrl = function() {
-  return REQUEST_URL + '?' +  $.param({ "entity_ids": this.entityIds,
-                                        "per_page": REFERENCES_PER_PAGE,
-                                        "exclude_type": 'fec' })
 }
-
-
-///////////////////
-// DOM ELEMENTS ///
-//////////////////
-
-/**
- * Input with id ref-widget-typeahead
- * @returns {<input>}
- */
-ExistingReferenceWidget.prototype._typeaheadInput = function() {
-  return $('<input>', {
-    "type": 'text',
-    "placeholder": 'Search recent references',
-    "id": ExistingReferenceWidget.TYPEAHEAD_INPUT_ID,
-    "class": 'reference-typeahead'
-  });
-};
-
-
-const referenceVisitLink = [
-  '<div class="reference-visit-link">',
-  '<a href="{{url}}" target="_blank">',
-  '<i class="bi bi-box-arrow-up-right hvr-pop"></i>',
-  '</a></div>'
-].join('')
-
-const suggestionRender = [
-  '<div class="reference-suggestion" title="{{url}}">',
-  referenceVisitLink,
-  '<div class="reference-suggestion-name">{{name}}</div>',
-  '<div class="reference-suggestion-url">{{trimUrl}}</div>',
-  '</div>'
-].join('')
-
-/**
- *
- * @param {Object} doc
- * @returns {String} html for suggestion
- */
-function suggestion(doc) {
-  var data = Object.assign({}, doc, {
-    trimUrl: trimUrl(doc.url)
-  })
-
-
-  return mustache.render(suggestionRender, data)
-}
-
-
-function trimUrl(url) {
-  if (!url) { return '' }
-
-  var without_schema = url.replace('https://', '').replace('http://', '')
-  if (without_schema.length < 38) {
-    return without_schema
-  } else {
-    return (without_schema.slice(0,35) + '...')
-  }
-}
-
-function mergeOptions(defaultOptions, provided) {
-  return Boolean(provided) ? Object.assign({}, defaultOptions, provided) : defaultOptions;
-}
-
-function flatten(arrays) {
-  return Array.prototype.concat.apply([], arrays);
-}
-
-export default ExistingReferenceWidget
