@@ -2,6 +2,8 @@ import $ from 'jquery'
 
 // helper functions for searchcing with select2
 
+export const ENTITY_SEARCH_URL = "/search/entity"
+
 export function entitySearchSuggestion(entity) {
   return $(
     `<div class="entity-search-suggestion">
