@@ -10,7 +10,7 @@ module LittleSis
   class Application < Rails::Application
     config.littlesis = config_for(:littlesis)
 
-    config.load_defaults 6.0
+    config.load_defaults 6.1
     config.autoloader = :zeitwerk
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do

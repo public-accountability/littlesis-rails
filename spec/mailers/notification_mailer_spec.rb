@@ -35,7 +35,7 @@ describe NotificationMailer, type: :mailer do
 
     it 'sends email later' do
       expect { mail.deliver_later }
-        .to have_enqueued_job.on_queue('mailers')
+        .to have_enqueued_job.on_queue('default')
     end
   end
 
@@ -101,7 +101,7 @@ describe NotificationMailer, type: :mailer do
 
     it 'sends email later' do
       expect { mail.deliver_later }
-        .to have_enqueued_job.on_queue('mailers')
+        .to have_enqueued_job.on_queue('default')
     end
   end
 
@@ -125,7 +125,7 @@ describe NotificationMailer, type: :mailer do
     end
 
     it 'sends email later' do
-      expect { mail.deliver_later }.to have_enqueued_job.on_queue('mailers')
+      expect { mail.deliver_later }.to have_enqueued_job.on_queue('default')
     end
   end
 
