@@ -118,3 +118,13 @@ form.alias-form {
     color: $link_blue_hover;
   }
 }
+
+$reference_widget_width: 300px;
+
+#reference-widget-container {
+    width: $reference_widget_width;
+
+    select {
+        width: $reference_widget_width;
+    }
+}

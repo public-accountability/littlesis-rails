@@ -1,4 +1,4 @@
-import { lsFetch } from '../common/http.mjs'
+import { get } from '../common/http.mjs'
 
 const REFERENCES_PER_PAGE = 75
 const REQUEST_URL = "/references/recent"
@@ -19,10 +19,9 @@ export default class ExistingReferenceWidget {
   }
 
   getDocs() {
-    const url = REQUEST_URL + '?' +  $.param({ "entity_ids": this.entityIds,
-                                               "per_page": REFERENCES_PER_PAGE,
-                                               "exclude_type": 'fec' })
-    return lsFetch(url)
+    return get(REQUEST_URL, { "entity_ids": this.entityIds,
+                              "per_page": REFERENCES_PER_PAGE,
+                              "exclude_type": 'fec' })
       .then(data => this.documents = data)
       .catch(() => console.error("failed to get references from /references/recent"))
   }

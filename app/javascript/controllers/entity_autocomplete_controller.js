@@ -1,51 +1,57 @@
 import { Controller } from "@hotwired/stimulus"
-import Bloodhound from 'bloodhound-js'
-import mustache from 'mustache'
-import typeahead from 'typeahead.js'
+import { entitySearchSuggestion, processResults, ENTITY_SEARCH_URL } from '../src/common/search.mjs'
+import Http from '../src/common/http.mjs'
 
-export default class extends Controller {
-  static values = { endpoint: String, inputId: String, templates: Object }
-
-  connect() {
-    const inputElement = $(this.inputIdValue)
-    const templates = this.templatesValue
-
-    inputElement.typeahead(null, {
-      async: true,
-      name: 'entities',
-      source: entitySearch(this.endpointValue),
-      limit: 8,
-      display: 'name',
-      templates: {
-        empty: $(templates['empty_message']).html(),
-        suggestion: function(data) {
-          return mustache.render($(templates['entity_suggestion']).html(), data)
-        }
-      }
-    })
-
-    inputElement.bind('typeahead:select', function(ev, suggestion) {
-      renderForm($($(templates['form']).html()), suggestion.id).submit()
-    })
-  }
-}
-
-function entitySearch(endpoint) {
-  return new Bloodhound({
-    datumTokenizer: Bloodhound.tokenizers.whitespace,
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    remote: {
-      url: endpoint,
-      wildcard: '%25QUERY'
-    }
+function selectEntity(element, attributes) {
+  // see: https://select2.org/programmatic-control/add-select-clear-items#preselecting-options-in-an-remotely-sourced-ajax-select2
+  let option = new Option(attributes.name, attributes.id, true, true)
+  $(element).append(option).trigger('change')
+  $(element).trigger({
+    type: 'select2:select',
+    params: { data: attributes }
   })
 }
 
-function renderForm(template, entityId) {
-  const action = template.attr('action').replace(/XXX/, entityId)
-  template.attr('action', action)
-  template.children('[name=entity_id]').val(entityId)
+function addEntityToList(entityId, listId) {
+  Http
+    .post(`/lists/${listId}/list_entities`, { "entity_id": entityId })
+    .then(() => window.location.reload())
+}
 
-  $(document.body).append(template)
-  return template
+export default class extends Controller {
+  static values = {
+    preselected: Number,
+    listid: Number
+  }
+
+  initialize() {
+    $(this.element).select2({
+      templateResult: entitySearchSuggestion,
+      minimumInputLength: 3,
+      placeholder: "Search for a person or org",
+      allowClear: true,
+      ajax: {
+        url: ENTITY_SEARCH_URL,
+        processResults: processResults
+      }
+    })
+
+    // For the list actions toolbar:  after selection, it gets automatically added to the list
+    if (this.listidValue) {
+      $(this.element).on('select2:select', (event) => {
+        addEntityToList(event.params.data.id, this.listidValue)
+      })
+    }
+
+    // $(this.element).on('select2:unselect', () => {
+    //   $(this.element).closest('form').submit()
+    // })
+
+    // If data-entity-autocomplete-preselected-value is configured, retrive the entity info from our api and automatically select
+    if (this.hasPreselectedValue && this.preselectedValue > 0) {
+      Http
+        .get(`/api/entities/${this.preselectedValue}`)
+        .then(response => selectEntity(this.element, response.data.attributes))
+    }
+  }
 }

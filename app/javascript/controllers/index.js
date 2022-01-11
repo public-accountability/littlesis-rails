@@ -13,9 +13,6 @@ application.register("carousel", CarouselController)
 import ClipboardController from "./clipboard_controller.js"
 application.register("clipboard", ClipboardController)
 
-import EntityAutocomplete2Controller from "./entity_autocomplete2_controller.js"
-application.register("entity-autocomplete2", EntityAutocomplete2Controller)
-
 import EntityAutocompleteController from "./entity_autocomplete_controller.js"
 application.register("entity-autocomplete", EntityAutocompleteController)
 

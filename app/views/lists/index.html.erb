@@ -8,8 +8,8 @@
   <div>
     <input class="form-control d-inline" id="list-search" type="text" name="q" value="<%= params[:q] %>" placeholder="list name">
 
-    <select data-controller="entity-autocomplete2" style="width: 250px;" name="entity_id"
-            data-entity-autocomplete2-preselected-value="<%= params[:entity_id] %>">
+    <select data-controller="entity-autocomplete" style="width: 250px;" name="entity_id"
+            data-entity-autocomplete-preselected-value="<%= params[:entity_id] %>">
     </select>
 
     <input type="submit" value="Search" class="btn btn-secondary">
