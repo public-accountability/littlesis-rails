@@ -56,6 +56,7 @@ end
 
 Capybara.raise_server_errors = false
 Capybara.ignore_hidden_elements = false
+Capybara.disable_animation = true
 Capybara.server = :puma, { Silent: true } # Remove crummy test output
 Capybara.default_max_wait_time = ENV["CI"] ? 15 : 5
 Capybara.default_host = "#{LittleSis::Application.default_url_options[:protocol]}://#{LittleSis::Application.default_url_options[:host]}"

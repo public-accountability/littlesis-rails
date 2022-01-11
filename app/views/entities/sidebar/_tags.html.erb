@@ -1,6 +1,6 @@
 <% tags = @entity.tags_for(current_user) %>
 
-<div data-controller="entity-tags">
+<div data-controller="entity-tags" data-turbo="false">
   <div class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-entity-tags-target="modal" id="entity-tags-modal">
     <div class="modal-dialog">
       <div class="modal-content">
