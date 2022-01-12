@@ -17,7 +17,6 @@
   <% if @permissions[:editable] %>
     <% if has_ability?('bulker') %>
       <%= link_to('add bulk', new_list_entity_association_path(list), class: 'btn btn-clear') %>
-
     <% end %>
 
     <select data-controller="entity-autocomplete"

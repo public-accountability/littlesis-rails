@@ -142,6 +142,8 @@ td.lists_table_name {
 
 #search-lists, div.list-actions  {
     .select2-container .select2-selection--single {
-        height: 38px !important
+        height: 38px !important;
+        border: 1px solid #ced4da;
+
     };
 }

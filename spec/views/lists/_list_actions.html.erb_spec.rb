@@ -29,8 +29,8 @@ describe 'lists/list_actions', :type => :view do
       not_css 'a', text: 'edit'
     end
 
-    it 'has entity input' do
-      css 'input#add-entity-input', count: 1
+    it 'has entity select' do
+      css 'select', count: 1
     end
 
     it 'does not have delete button' do
