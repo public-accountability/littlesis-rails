@@ -1,4 +1,3 @@
-import datatable from 'datatables.net'
 import NewReferenceForm from './new_reference_form'
 import ExistingReferenceWidget from './existing_reference_selector'
 import utility from '../common/utility.mjs'
@@ -272,7 +271,7 @@ export default function RelationshipCreationFlow(){
     };
 
     if (existingReferences.selection) {
-      return { "document_id": existingReferences.selection.id };
+      return { "document_id": existingReferences.selection };
     };
 
     return { "document_id": null };

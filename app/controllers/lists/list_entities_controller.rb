@@ -19,7 +19,10 @@ module Lists
         le.save!
       end
 
-      redirect_to members_list_path(@list)
+      respond_to do |format|
+        format.json { render json: { status: 'ok' } }
+        format.all { redirect_to members_list_path(@list) }
+      end
     end
 
     def destroy

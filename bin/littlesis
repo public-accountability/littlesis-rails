@@ -26,6 +26,7 @@ Commands
            delete           deletes database by removing docker volumes
            build            build littlesis docker image
            bash             interative bash shell
+           watch            follow rails logs
            console          launch rails console
            redis            launch redi cli
 
@@ -37,6 +38,16 @@ LittleSis
 Aliases:  bundle, pumactl, rspec, rails, yarn, git rg
 
 TEXT
+end
+
+def set_env_to_test
+  $rails_env = 'test'
+  $database[:name] = 'littlesis_test'
+  ENV['RAILS_ENV'] = $rails_env
+end
+
+def production_environment?
+  $rails_env == 'production'
 end
 
 def database_connection
@@ -97,7 +108,7 @@ def status
   puts "commit #{current_commit} on branch #{current_branch}"
   puts "Rails Environment \033[1m#{$rails_env}\033[0m"
 
-  if $rails_env == 'production'
+  if production_environment?
     systemd_service_check 'littlesis'
     systemd_service_check 'littlesis-goodjob'
     systemd_service_check 'redis'
@@ -114,7 +125,7 @@ def status
 end
 
 def deploy
-  raise "Cannot deploy unless mode = production" unless $rails_env == 'production'
+  raise "Cannot deploy unless mode = production" unless production_environment?
 
   Dir.chdir(REPO)
 
@@ -172,6 +183,21 @@ def deploy
   app_exec_bin 'pumactl -p tmp/puma.pid restart'
 end
 
+def watch
+  prefix = if production_environment?
+             "/var/www/littlesis"
+           else
+             "/littlesis"
+           end
+
+  logfile = "#{prefix}/log/#{$rails_env}.log"
+
+  app_exec "/usr/bin/tail -f #{logfile}", run: true
+end
+
+
+# Start processing options
+
 opts = GetoptLong.new(
   ['--help', '-h', GetoptLong::NO_ARGUMENT],
   ['--test', '-t', GetoptLong::NO_ARGUMENT],
@@ -179,12 +205,6 @@ opts = GetoptLong.new(
   ['--production', '-P', GetoptLong::NO_ARGUMENT],
   ['--branch', GetoptLong::REQUIRED_ARGUMENT]
 )
-
-def set_env_to_test
-  $rails_env = 'test'
-  $database[:name] = 'littlesis_test'
-  ENV['RAILS_ENV'] = $rails_env
-end
 
 opts.each do |name, val|
   case name
@@ -261,6 +281,8 @@ when 'status'
   status
 when 'deploy'
   deploy
+when 'watch'
+  watch
 else
   puts "Invalid Command: #{ARGV.first}"
   exit 1

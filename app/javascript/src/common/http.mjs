@@ -3,74 +3,53 @@ import { isString, isPlainObject, merge }  from 'lodash-es'
 const jsonHeaders = {
   "Content-Type": "application/json",
   "Accept": "application/json"
-};
+}
 
 const validateResponse = (res) => {
-  if (res.status >= 200 && res.status < 300) { return res; }
-  throw `response failed with status code: ${res.status}`;
-};
+  if (res.status >= 200 && res.status < 300) {
+    return res
+  }
+  throw `response failed with status code: ${res.status}`
+}
 
-/**
- * Converts object to query parameter string for HTTP get requests
- *
- * @param {String|Object} queryParams
- * @returns {String}
- */
+// String | Object | Any --> String
 export function qs(queryParams) {
   if (isString(queryParams) && queryParams.includes('=')) {
-    return `?${queryParams}`;
+    return `?${queryParams}`
   }
-
   if (isPlainObject(queryParams)) {
-    let urlSearchParams = new URLSearchParams();
+    let urlSearchParams = new URLSearchParams()
 
     for (var key in queryParams) {
-      urlSearchParams.set(key, queryParams[key]);
+      urlSearchParams.set(key, queryParams[key])
     }
 
-    return '?' + urlSearchParams.toString();
+    return '?' + urlSearchParams.toString()
   }
 
-  return '';
-};
+  return ''
+}
 
-
-/**
- * HTTP GET request to LittleSis Server
- * @param {String} url
- * @returns {Promise}
- */
-export function lsFetch(url) {
-  return fetch(url, {
+// String, (String, Object, Nil) --> Promise<Json>
+export function get(url, params) {
+  return fetch(url + qs(params), {
     "credentials": 'same-origin',
     "headers": jsonHeaders
   })
     .then(validateResponse)
-    .then(response => response.json());
+    .then(response => response.json())
 }
 
-export const get = (url, params) => lsFetch(url + qs(params));
-
-/**
- * HTTP POST request to LittleSis Server
- * @param {String} url
- * @returns {Promise}
- */
-export function lsPost(url, data) {
-  var body;
-
-  if (isString(data)) {
-    body = data;
-  } else if (isPlainObject(data)) {
-    body = JSON.stringify(data);
-  } else {
-    throw "lsPost called with invalid data";
+// String, Object --> Promise<Json>
+export function post(url, data) {
+  if (!isPlainObject(data)) {
+    throw "Post called with invalid data"
   }
 
-  const token = document.head.querySelector('meta[name="csrf-token"]').content;
-  const headers = merge(jsonHeaders, { 'X-CSRF-Token': token });
+  const body = JSON.stringify(data)
+  const token = document.head.querySelector('meta[name="csrf-token"]').content
+  const headers = merge({}, jsonHeaders, { 'X-CSRF-Token': token })
 
-  // 'X-Requested-With': 'XMLHttpRequest',
   return fetch(url, {
     "method": "POST",
     "credentials": 'same-origin',
@@ -82,6 +61,6 @@ export function lsPost(url, data) {
 }
 
 export default {
-  lsFetch: lsFetch,
-  get: get
-};
+  get: get,
+  post: post
+}

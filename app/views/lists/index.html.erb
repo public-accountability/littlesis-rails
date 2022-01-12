@@ -4,22 +4,17 @@
   Lists are collections of people and/or organizations that don't belong to a formal group. Many of them were originally compiled by media organizations, frequently in order to rank people by power, wealth, or influence.
 </div>
 
-<%= form_tag(lists_path, method: :get) do %>
-  <div class="form-inline">
-    <input id="list-search" type="text" name="q" class="form-control" value="<%= params[:q] %>" placeholder="list name">
-    <input id="list-entity-search" type="text" class="form-control" value="<%= @entity&.name %>" placeholder="entity name">
+<%= form_tag(lists_path, method: :get, id: 'search-lists') do %>
+  <div>
+    <input class="form-control d-inline" id="list-search" type="text" name="q" value="<%= params[:q] %>" placeholder="list name">
+
+    <select data-controller="entity-autocomplete" style="width: 250px;" name="entity_id"
+            data-entity-autocomplete-preselected-value="<%= params[:entity_id] %>">
+    </select>
+
     <input type="submit" value="Search" class="btn btn-secondary">
   </div>
 <% end %>
-
-<%= render partial: 'shared/entity_autocomplete',
-    locals: {
-      input_id: '#list-entity-search',
-      enable_missing_entity_creation: false,
-      http_method: 'get',
-      form_path: lists_path(entity_id: "XXX"),
-      query_path: search_entity_path(q: '%QUERY')
-    } %>
 <br>
 
 <%= paginate @lists %>

@@ -8,7 +8,7 @@
                   form: {
                     class: 'd-inline',
                     onsubmit: "return confirm('Are you sure you want to delete this list?')"
-                  })
+    })
     %>
   <% else %>
     <%= link_to 'request removal', new_deletion_requests_list_path(list_id: @list.id), class: 'btn btn-clear' %>
@@ -19,16 +19,10 @@
       <%= link_to('add bulk', new_list_entity_association_path(list), class: 'btn btn-clear') %>
     <% end %>
 
-    <input id="add-entity-input" type="text" class="form-control" placeholder="add entity">
-
-    <%= render partial: 'shared/entity_autocomplete',
-        locals: {
-          input_id: '#add-entity-input',
-          enable_missing_entity_creation: true,
-          http_method: 'post',
-          form_path: list_list_entities_path(@list),
-          query_path: search_entity_path(q: '%QUERY', exclude_list: @list.id)
-        }
-    %>
+    <select data-controller="entity-autocomplete"
+            style="width: 250px; height: 38px;"
+            name="add-to-list"
+            data-entity-autocomplete-listid-value="<%= @list.id %>">
+    </select>
   <% end %>
 </div>

@@ -56,7 +56,7 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
     before { login_as user, scope: :user }
     after { logout(:user) }
 
-    describe_unless_on_ci 'Adding and removing tags' do
+    describe 'Adding and removing tags' do
       before do
         Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
         create(:finance_tag)
@@ -70,15 +70,21 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
       it 'user adds tags to an entity' do
         visit person_path(person)
         expect(page).to have_css('#tags-container li', count: 0)
-
-        find('#tags-edit-button').click
-        find('#entity-tags-modal .select2-container').click
+        expect(find('#entity-tags-modal').visible?).to be false
+        # binding.irb
+        find('#tags-edit-button').click                                            # click pencil icon
+        expect(find('#entity-tags-modal').visible?).to be true
+        expect(page).not_to have_selector('.select2-results')
+        find('#entity-tags-modal .select2-container').click                        # click inside search modal
+        expect(page).to have_selector('.select2-results ul li', count: 2)
+        # Add two tags
         find('.select2-container--open .select2-results__option', text: 'finance').click
         find('#entity-tags-modal .select2-container').click
         find('.select2-container--open .select2-results__option', text: 'real-estate').click
+
         find('#entity-tags-modal .modal-header').click
         find('#entity-tags-modal input.btn[type="submit"]').click
-        expect(page).to have_css('#tags-container li', count: 2)
+        expect(page).to have_selector('#tags-list li ', count: 2)
       end
 
       it 'user removes a tag from an entity' do
@@ -91,7 +97,6 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
         find('#entity-tags-modal .modal-header').click
         find('#entity-tags-modal input.btn[type="submit"]').click
         expect(page).to have_css('#tags-container li', count: 0)
-
       end
     end
 
