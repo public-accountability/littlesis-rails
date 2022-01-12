@@ -52,17 +52,6 @@
     margin-bottom: 1em;
 }
 
-#homepage-oligrapher-images {
-    display: inherit;
-    div {
-	text-align: center;
-    }
-    img {
-	@extend .img-fluid;
-    }
-}
-
-
 #data-summary-table {
   td {
     vertical-align: bottom;
