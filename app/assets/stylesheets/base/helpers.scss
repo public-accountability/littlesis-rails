@@ -1,6 +1,24 @@
 /* helper css utilities */
 // Padding and margins
 
+// icons are loaded in sperate css file, bootstrap-icon.scss,
+// however this is also copied over so that we can use "@extend bootstrap-icon" in styles.
+.bootstrap-icon {
+    &::before {
+        display: inline-block;
+        font-family: bootstrap-icons !important;
+        font-style: normal;
+        font-weight: normal !important;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        vertical-align: -.125em;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+
 .top-1em {
   padding-top: 1em;
 }
@@ -25,10 +43,6 @@
   margin-right: 1em;
 }
 
-.m-right-3em {
-  margin-right: 3em;
-}
-
 .m-bottom-1em {
     margin-bottom: 1em;
 }
@@ -50,19 +64,6 @@
   padding-left: 1em;
 }
 
-.no-border-top {
-    border-top: 0;
-}
-
-.nopadding {
-   // padding: 0 !important;
-   // margin: 0 !important;
-}
-
-.double-left-padding {
-    // padding-left: 30px;
-}
-
 .col-centered {
     float: none;
     margin: 0 auto;
@@ -82,19 +83,11 @@
     font-size: 0.7em;
 }
 
-// Colors
-
-.grey-text {
-    color: $gray;
-}
-
-
 // link helpers
 
 .link-blue {
   color: $link_blue;
 }
-
 
 .icon-link {
     color: black;
@@ -106,7 +99,17 @@
 }
 
 
+.bg-info {
+    background-color: rgb(217, 237, 247) !important;
+}
+
+
 // Position
+
+// .hidden {
+//     @extend .d-none;
+// }
+
 
 .position-relative {
   position: relative;
@@ -130,6 +133,47 @@
     border: none;
     padding: 0;
 }
+
+
+.btn-xs {
+    padding  : .25rem .4rem;
+    font-size  : .875rem;
+    line-height  : .5;
+    border-radius : .2rem;
+}
+
+.btn-red {
+    // @extend .btn-secondary;
+    background-color: $red;
+
+    &:hover {
+	background-color: $red_light;
+    }
+}
+
+.btn-clear {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+
+    &:hover {
+	color: #333;
+	background-color: #e6e6e6;
+	border-color: #adadad;
+    }
+
+    &:focus, &.focus {
+	box-shadow: 0 0 0 $btn-focus-width rgba(#333, .5);
+    }
+
+    &.disabled, &:disabled {
+	color: #333;
+	background-color: transparent;
+    }
+}
+
+
+
 
 // Borders and boxes
 

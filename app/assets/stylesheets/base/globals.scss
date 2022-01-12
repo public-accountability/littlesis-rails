@@ -21,10 +21,24 @@ $tiny_image_size: 35px;
 $small_image_size: 50px;
 $old_blue: rgb(51, 122, 183);
 
+$gray-base:              #000;
+$gray-darker:            lighten($gray-base, 13.5%); // #222
+$gray-dark:              lighten($gray-base, 20%);   // #333
+$gray:                   lighten($gray-base, 33.5%); // #555
+$gray-light:             lighten($gray-base, 46.7%); // #777
+$gray-lighter: lighten($gray-base, 93.5%); // #eee
+
 // customize bootstrap variables:
 //$primary: $old_blue !default;
-$primary: $logo_blue_light !default;
+$primary: $logo_blue_light;
 
 //$font-size-base: 0.9rem;
 // $navbar_height: 55px;
 $header_color: $light_gray2;
+
+$font-family-sans-serif: Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, system-ui, -apple-system;
+
+@font-face {
+    font-family: Roboto;
+    src: font-url('Roboto-Regular.ttf') format('truetype');
+}

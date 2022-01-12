@@ -62,7 +62,7 @@
     }
 
     td {
-	@extend .no-border-top;
+	border-top: 0;
 	padding: 0;
 	em {
 	    font-size: 12px;
