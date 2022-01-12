@@ -1,22 +1,32 @@
-<%= cache_unless user_signed_in?, 'anonymous_user_navmenu' do %>
+<% items = UserNavmenuPresenter.new(current_user) %>
 
-  <% items = UserNavmenuPresenter.new(current_user) %>
-
-  <% if items.size > 0 %>
-    <ul class="nav mr-auto ml-2">
-      <% items.each do |(header_text, url_or_links)| %>
-        <% if url_or_links.is_a? String %>
-	  <%= navbar_item dropdown: false do %>
-	    <%= navbar_header_link header_text, href: url_or_links, dropdown: false %>
-	  <% end %>
-        <%  else %>
-	  <%= navbar_item do %>
-	    <%= navbar_header_link header_text %>
-	    <%= navbar_dropdown url_or_links %>
-	  <% end %>
-
-        <% end %>
-      <% end %>
-    </ul>
+<ul class="nav mr-auto">
+  <% items.each do |(header_text, url_or_links)| %>
+    <% if url_or_links.is_a?(String) %>
+      <li class="nav-item">
+        <a href="<%= url_or_links %>" class="nav-link">
+          <%= header_text  %>
+        </a>
+      </li>
+    <%  else %>
+      <% navmenu_id = "navmenu-dropdown-#{header_text}" %>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="<%= navmenu_id %>">
+          <%= header_text %>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="<%= navmenu_id %>">
+          <% url_or_links.each do |dropdown_link| %>
+            <li>
+              <% if dropdown_link == :divider  %>
+                <div class="dropdown-divider"></div>
+              <% else %>
+                <% link_text, href = dropdown_link %>
+                <a class="dropdown-item" href="<%= href %>"><%= link_text %></a>
+              <% end %>
+            </li>
+          <% end  %>
+        </ul>
+      </li>
+    <% end %>
   <% end %>
-<% end %>
+</ul>

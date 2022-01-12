@@ -18,7 +18,7 @@
     <% end %>
 
     <% unless flash.empty? %>
-      <div class="container mt-3">
+      <div class="container mt-2">
         <div class="col-6">
           <% flash.each do |type, content| %>
             <% Array.wrap(content).each do |message| %>
@@ -29,7 +29,7 @@
       </div>
     <% end %>
 
-    <div class="container mt-3">
+    <div class="container mt-2">
       <%= yield %>
     </div>
 
@@ -42,6 +42,7 @@
         </div>
       </div>
     <% end %>
+
   </body>
 
 </html>
