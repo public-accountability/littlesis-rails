@@ -3,14 +3,6 @@
 <%= render partial: 'header', locals: { list: @list } %>
 <% person_count = @list.entities.people.count %>
 
-<% if notice %>
-  <div class="alert alert-success alert-dismissable w-50">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <%= notice %>
-  </div>
-  <div class="w-100"></div>
-<% end %>
-
 <%= render partial: 'list_actions', locals: { list: @list, person_count: person_count } %>
 
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :members } %>

@@ -59,12 +59,14 @@ module ApplicationHelper
     end
   end
 
-  def flash_class(key)
-    {
-      'notice' => 'alert-success',
-      'alert' => 'alert-warning',
-      'errors' => 'alert-danger'
-    }[key]
+  def alert_div(message:, type:)
+    flash_class =  { 'notice' => 'alert-success',
+                     'alert' => 'alert-warning',
+                     'errors' => 'alert-danger' }[type.to_s]
+
+    tag.div(class: ['alert', 'alert-dismissible', 'fade', 'show', flash_class], role: 'alert') do
+      tag.span(message) + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>'.html_safe
+    end
   end
 
   def dashboard_panel(heading: '', color: 'rgba(0, 0, 0, 0.03)', &block)
