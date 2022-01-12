@@ -27,7 +27,7 @@
 
   input, select {
     @extend .form-control;
-    @extend .mr-2;
+    @extend .me-2;
   }
 
   #relationships-filters-checkboxes {
@@ -41,7 +41,8 @@
   }
 
   #relationships-filters-line2, #relationships-filters-line1 {
-    @extend .form-inline;
+    // discontinued in bootstrap5
+      // @extend .form-inline;
   }
 
   #relationships-filters-line2 {

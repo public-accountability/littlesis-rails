@@ -43,7 +43,8 @@ nav.navbar  {
 
 
     #navbar-search {
-	@extend .form-inline;
+        // discontinued in bootstrap5
+	// @extend .form-inline;
 
 	input {
 	    max-width: 200px;
@@ -153,7 +154,7 @@ div.form-group .btn {
 }
 
 #oligrapher-update-notice {
-    @extend .mr-3;
+    @extend .me-3;
     span {
         font-weight: 800;
         font-size: 11px;
