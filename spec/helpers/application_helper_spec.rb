@@ -18,13 +18,6 @@ describe ApplicationHelper, :type => :helper do
     end
   end
 
-  describe 'yes_or_no' do
-    it 'turns boolean into yes or no' do
-      expect(helper.yes_or_no(true)).to eq 'yes'
-      expect(helper.yes_or_no(false)).to eq 'no'
-    end
-  end
-
   describe 'references_select' do
     let(:references) { Array.new(2) { build(:reference) } }
     let(:selected_id) { nil }
