@@ -3,22 +3,25 @@
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :sources } %>
 
 <div class="row">
-    <div id="list-sources">
-	<% @list.documents.each do |doc| %>
-	    <%= link_to(doc.name.presence || doc.url, doc.url) %><br>
-	<% end %>
-    </div>
+  <div id="list-sources">
+    <% @list.documents.each do |doc| %>
+      <%= link_to(doc.name.presence || doc.url, doc.url) %><br>
+    <% end %>
+  </div>
 </div>
 
 <% if user_signed_in? %>
 
-    <%= render partial: 'shared/reference_new', locals: {model: @list } %>
+  <%= render partial: 'shared/reference_new', locals: { model: @list } %>
 
-    <div class="row top-3em">
-	<button type="button"
-		class="btn btn-secondary m-left-1em"
-		data-toggle="modal"
-		data-target="#add-reference-modal">Add a new source</button>
+  <div class="row top-3em">
+    <div class="col-3">
+      <button type="button"
+	      class="btn btn-primary"
+	      data-bs-toggle="modal"
+	      data-bs-target="#add-reference-modal">Add a new source</button>
     </div>
-    
+
+  </div>
+
 <% end %>
