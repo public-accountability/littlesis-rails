@@ -96,9 +96,7 @@ feature "Signing up for an account", type: :feature do
       expect(page.status_code).to eq 200
       page_has_selector 'h2', text: 'Get Involved!'
 
-      within '.flash-messages' do
-        expect(page).to have_css('.alert-danger', text: 'Username has already been taken')
-      end
+      expect(page).to have_css('.alert-danger', text: 'Username has already been taken')
     end
   end
 
@@ -121,8 +119,6 @@ feature "Signing up for an account", type: :feature do
     expect([User.count, UserProfile.count]).to eq counts
     expect(page.status_code).to eq 200
 
-    within '.flash-messages' do
-      expect(page).to have_css('.alert-danger', text: 'Failed to solve the math problem')
-    end
+    expect(page).to have_css('.alert-danger', text: 'Failed to solve the math problem')
   end
 end
