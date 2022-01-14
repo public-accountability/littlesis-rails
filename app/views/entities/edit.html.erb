@@ -1,25 +1,17 @@
 <% content_for(:page_title, 'Edit: ' + @entity.name ) %>
 
-<% if notice %>
-  <div class="row no-gutters mt-5">
-    <div class="col-6">
-      <div class="alert alert-success"><%= notice %></div>
-    </div>
-  </div>
-<% end %>
-
 <%= render partial: 'header', locals: { entity: @entity } %>
-<%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
+<%= render partial: 'actions', locals: { entity: @entity } %>
 
 <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder, data: {controller: "entity-edit"} do |f| %>
 
-  <div class="row top-1em mb-2">
-    <div class="col-md-6 col-sm-6 col-xs-12">
+  <div class="row mb-2">
+    <div class="col-sm-12 col-md-6">
       <%= render partial: 'shared/editing/reference_widget',
                  locals: { documents: RecentEntityReferencesQuery.run(@entity) } %>
     </div>
 
-    <div class="col-sm-4 col-sm-offset-1 col-xs-12">
+    <div class="col-sm-12 col-md-5 col-md-offset-1">
       <%= render partial: 'edit_errors' %>
     </div>
   </div>
