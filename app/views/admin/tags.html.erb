@@ -1,18 +1,18 @@
 <div class="row">
-    <h1>Current Tags:</h1>
-    <div class="col-sm-12">
-	<%= render partial: 'tag_table' %>
-    </div>
+  <h1>Current Tags:</h1>
+  <div class="col-sm-12">
+    <%= render partial: 'tag_table' %>
+  </div>
 </div>
 
 <div class="row">
-    <h2>
-	<a role="button" data-toggle="collapse" href="#tag-form-container">
-	    Create a new tag
-	</a>
-    </h2>
-    
-    <div class="col-sm-6 collapse" id="tag-form-container">
-	<%= render partial: 'tags/tag_form', locals: { tag: Tag.new } %>
-    </div>
+  <h2>
+    <a role="button" data-bs-toggle="collapse" href="#tag-form-container">
+      Create a new tag
+    </a>
+  </h2>
+
+  <div class="col-sm-6 collapse" id="tag-form-container">
+    <%= render partial: 'tags/tag_form', locals: { tag: Tag.new } %>
+  </div>
 </div>
