@@ -240,6 +240,25 @@ module EntitiesHelper
     end
   end
 
+  # Creates html for edit entity form:
+  # <div class="<%= input_div_wrapper_class %>">
+  #   <div class="<%= left_col_class %>">
+  #     LABEL
+  #   </div>
+  #   <div class="<%= right_col_class %>">
+  #     INPUT
+  #   </div>
+  # </div>
+  def edit_entity_form_section(label, input)
+    input_div_wrapper_class = 'row mb-3'
+    left_col_class = 'col-2'
+    right_col_class = 'col-6'
+
+    tag.div(class: input_div_wrapper_class) do
+      tag.div(label, class: left_col_class) + tag.div(input, class: right_col_class)
+    end
+  end
+
   private
 
   def connections_title_and_subtitle(connection_type, e)
