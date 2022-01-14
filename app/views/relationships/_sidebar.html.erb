@@ -1,0 +1,50 @@
+<% if user_signed_in? %>
+  <%= render partial: 'shared/reference_new', locals: {model: @relationship, reference: @reference } %>
+<% end %>
+
+<div class="row">
+  <div class="relationship-updated-at-text">
+    <em><%= "Updated #{time_ago_in_words(@relationship.updated_at)} ago" %></em>
+  </div>
+</div>
+
+<div class="row mt-2">
+  <h4>
+    Source Links
+    <% if user_signed_in? %>
+      <a href="#add-reference-modal" data-bs-toggle="modal" >
+        <i class="bi bi-plus" title="Add a source" aira-hidden="true"></i>
+      </a>
+    <% end %>
+  </h4>
+</div>
+
+<div class="row">
+  <%= render partial: 'sources', locals: {relationship: @relationship } %>
+</div>
+
+<% if @relationship.tags.present? || user_signed_in? %>
+
+  <div class="row mt-1" id="relationship-sidebar-tags">
+    <h4>
+      Tags
+      <% if user_signed_in? %>
+        <%= tags_controls %>
+      <% end %>
+    </h4>
+    <%= content_tag :div,
+      {
+        data: {
+          controller: "tags",
+          tags_data_value: (@relationship.tags_for(current_user) || {}).to_json,
+          tags_endpoint_value: tags_relationship_path(@relationship)
+        }
+      } do %>
+      <%= display_tags(@relationship.tags) %>
+      <br/>
+      <span id="tags-controls"></span>
+    <% end %>
+
+  </div>
+
+<% end %>

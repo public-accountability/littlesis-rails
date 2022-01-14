@@ -1,59 +1,35 @@
 <% content_for(:page_title, @relationship.name) %>
 
-<%= render partial: 'header' %>
+<div class="row">
+  <div class="col">
+    <h1 class="relationship-title-link" >
+      <%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %>
+    </h1>
+  </div>
+</div>
 
-<% cache_unless user_signed_in?, ['subtitle_details_sources', @relationship] do %>
-  <div class="row" style="padding-top: 5px;">
-    <div class="col-md-6 col-12 col-sm-6">
-      <div class="row">
-	<div class="col">
-          <%= render partial: 'subtitle', locals: { relationship: @relationship } %>
-	</div>
-      </div>
-      <div class="row top-1em">
-        <div class="col-md-10 col-sm-10 col-10">
-          <%= render partial: 'details', locals: { details: @relationship.details } %>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4 col-sm-4 offset-sm-2 top-1em col-12 float-right">
-      <div class="row">
-	<h4 class="relationship-sidebar-title">
-          Source Links
-          <a href="#add-reference-modal" data-toggle="modal" >
-            <i class="bi bi-plus" title="Add a source" aira-hidden="true"></i>
-          </a>
-        </h4>
-	<%= render partial: 'sources', locals: {relationship: @relationship } %>
-      </div>
-
-      <% if @relationship.tags.present? || user_signed_in? %>
-
-	<div class="row">
-	  <h4 class="relationship-sidebar-title">Tags</h4>
-
-	  <%= tags_controls if user_signed_in? %>
-
-    <%= content_tag :div,
-      {
-        data: {
-          controller: "tags",
-          tags_data_value: (@relationship.tags_for(current_user) || {}).to_json,
-          tags_endpoint_value: tags_relationship_path(@relationship)
-        }
-      } do %>
-      <%= display_tags(@relationship.tags) %>
-      <br/>
-      <span id="tags-controls"></span>
-    <% end %>
-
-	</div>
-
-      <% end %>
-    </div>
+<% if user_signed_in? %>
+  <div class="row mb-2">
+    <%= render partial: 'actions' %>
   </div>
 <% end %>
 
-<% if user_signed_in? %>
-  <%= render partial: 'shared/reference_new', locals: {model: @relationship, reference: @reference } %>
-<% end %>
+<div class="row">
+  <div class="col-12 col-sm-6">
+    <div class="row">
+      <div class="col">
+        <%= render partial: 'subtitle', locals: { relationship: @relationship } %>
+      </div>
+    </div>
+
+    <div class="row top-1em">
+      <div class="col mr-4">
+        <%= render partial: 'details', locals: { details: @relationship.details } %>
+      </div>
+    </div>
+  </div> <%# end left column %>
+
+  <div class="col-12  col-sm-4 offset-sm-1">
+    <%= render partial: 'sidebar' %>
+  </div>
+</div>

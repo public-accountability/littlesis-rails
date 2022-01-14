@@ -1,42 +1,32 @@
-<div id="actions" class="col-md-8 col-sm-6 hidden-xs">
-  <div id="action-buttons">
-    <% if signed_in %>
-      <%= link_to "edit", edit_relationship_path(@relationship)  %>
-    <% end %>
-    <%= link_to "flag", flag_path %>
+<div id="relationship-action-buttons" class="col-md-8 col-sm-6">
+  <%= link_to "edit", edit_relationship_path(@relationship), class: 'action-button', title: 'Edit this relationship'  %>
+  <%= link_to "flag", flag_path, class: 'action-button', title: 'Report an issue'  %>
 
-    <% if signed_in && current_user.permissions.relationship_permissions(@relationship).fetch(:deleteable) %>
-      <%= button_to "remove", relationship_path(@relationship), method: :delete, form: { onsubmit: "return confirm('Are you sure you want to remove this relationship?')" } %>
-    <% end %>
+  <% if current_user.permissions.relationship_permissions(@relationship).fetch(:deleteable) %>
+    <%= button_to "remove", relationship_path(@relationship),
+     class: 'action-button',
+     method: :delete,
+     form: { onsubmit: "return confirm('Are you sure you want to remove this relationship?')" },
+     form_class: 'd-inline',
+     title: 'Delete this relationship'
+    %>
+  <% end %>
 
-    <% if user_admin? %>
-      <td>
-        <%= button_to(
-          ( @relationship.is_featured ? 'unfeature' : 'feature' ),
-          relationship_path(@relationship),
-          method: :patch,
-          params: {
-            relationship: {
-              is_featured: !@relationship.is_featured
-            },
-            reference: {just_cleaning_up: true}
-          },
-          title: (@relationship.is_featured ? 'unfeature relationship' : 'feature relationship')
-        ) %>
-      </td>
-    <% end %>
-  </div>
-</div>
-
-<div id="entity-edited-history" class="col-md-4 col-sm-6 col-xs-6 hidden-xs hidden-sm">
-  Edited by<strong>
-  <% if @relationship.last_user.nil? %>
-    <% @relationship.last_user = User.find(1) %>
-  <% end  %>
-  <%= link_to @relationship.last_user.username, user_page_path(@relationship.last_user) %>
-  </strong>
-  <%= time_ago_in_words(@relationship.updated_at) %> ago
-
-  <%# The relationship modifications page still needs to be implemented in rails %>
-  <%#= link_to "History", @relationship.legacy_url("modifications") %>
+  <% if current_user.admin? %>
+    <%= button_to(
+      ( @relationship.is_featured ? 'unfeature' : 'feature' ),
+      relationship_path(@relationship),
+      method: :patch,
+      class: 'action-button',
+      params: {
+        relationship: {
+          is_featured: !@relationship.is_featured
+        },
+        reference: {just_cleaning_up: true}
+      },
+      title: (@relationship.is_featured ? 'unfeature relationship' : 'feature relationship'),
+      form_class: 'd-inline',
+      title: "#{@relationship.is_featured ? 'Unfeature' : 'Feature'} this relationship"
+    ) %>
+  <% end %>
 </div>

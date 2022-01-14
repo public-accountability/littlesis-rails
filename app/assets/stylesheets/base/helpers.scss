@@ -173,6 +173,26 @@
 }
 
 
+.action-button {
+    cursor: pointer;
+    font-size: 14px;
+    top: -6px;
+    color: #444;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-right: 3px;
+    -moz-border-radius:10px;
+    border-radius: 10px;
+
+    &:hover {
+	color: #000;
+	background-color: #ddf;
+	text-decoration: none;
+    }
+}
 
 
 // Borders and boxes
