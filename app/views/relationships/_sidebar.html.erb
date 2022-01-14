@@ -25,26 +25,45 @@
 
 <% if @relationship.tags.present? || user_signed_in? %>
 
-  <div class="row mt-1" id="relationship-sidebar-tags">
+  <div data-controller="edit-tags" class="row mt-1" id="relationship-sidebar-tags" data-turbo="false">
     <h4>
       Tags
       <% if user_signed_in? %>
-        <%= tags_controls %>
+        <span class="tags-edit-glyph ms-2" data-bs-toggle="modal" data-bs-target="#edit-tags-modal">
+        </span>
       <% end %>
     </h4>
-    <%= content_tag :div,
-      {
-        data: {
-          controller: "tags",
-          tags_data_value: (@relationship.tags_for(current_user) || {}).to_json,
-          tags_endpoint_value: tags_relationship_path(@relationship)
-        }
-      } do %>
-      <%= display_tags(@relationship.tags) %>
-      <br/>
-      <span id="tags-controls"></span>
+
+    <%= tag.div display_tags(@relationship.tags),
+     data: {
+       controller: "tags",
+       tags_data_value: (@relationship.tags_for(current_user) || {}).to_json,
+       tags_endpoint_value: tags_relationship_path(@relationship)
+     } %>
+
+    <% if user_signed_in? %>
+      <% tags = @relationship.tags_for(current_user) %>
+      <div class="modal" tabindex="-1" aria-hidden="true" data-edit-tags-target="modal" id="edit-tags-modal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h6>Add or remove tags</h6>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+              <%= form_with url: tags_relationship_path(@relationship) do |f| %>
+
+                <select name="tags[ids][]" multiple="multiple" data-edit-tags-target="select" autocomplete="off">
+                  <%= options_for_select(tags.fetch(:byId).values.delete_if { |t| t[:restricted] }.map { |t| [ t[:name], t[:id].to_s ] }, tags.fetch(:current).map(&:to_s)) %>
+                </select>
+
+                <%= f.submit "Update", class: 'btn btn-sm btn-primary mt-3' %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
     <% end %>
-
   </div>
-
 <% end %>

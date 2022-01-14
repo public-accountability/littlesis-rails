@@ -1,22 +1,22 @@
 <% tags = @entity.tags_for(current_user) %>
 
-<div data-controller="entity-tags" data-turbo="false">
-  <div class="modal" tabindex="-1" role="dialog" aria-hidden="true" data-entity-tags-target="modal" id="entity-tags-modal">
+<div data-controller="edit-tags" data-turbo="false">
+  <div class="modal" tabindex="-1" aria-hidden="true" data-edit-tags-target="modal" id="edit-tags-modal">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h6>Add or remove tags</h6>
-          <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
           <%= form_with url: tags_entity_path(@entity) do |f| %>
 
-            <select name="tags[ids][]" class="form-control" multiple="multiple" data-entity-tags-target="select" autocomplete="off">
+            <select name="tags[ids][]" multiple="multiple" data-edit-tags-target="select" autocomplete="off">
               <%= options_for_select(tags.fetch(:byId).values.delete_if { |t| t[:restricted] }.map { |t| [ t[:name], t[:id].to_s ] }, tags.fetch(:current).map(&:to_s)) %>
             </select>
 
-            <%= f.submit "Update", class: 'btn btn-sm btn-primary' %>
+            <%= f.submit "Update", class: 'btn btn-sm btn-primary mt-3' %>
           <% end %>
         </div>
       </div>
@@ -24,8 +24,8 @@
   </div>
 
   <% tag_edit_controls = capture do %>
-    <span id="tags-controls">
-      <span id="tags-edit-button" class="tags-edit-glyph" data-action="click->entity-tags#open">
+    <span id="tags-controls" class="ms-2">
+      <span id="tags-edit-button" class="tags-edit-glyph" data-bs-toggle="modal" data-bs-target="#edit-tags-modal">
       </span>
     </span>
   <% end %>

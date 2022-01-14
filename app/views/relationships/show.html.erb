@@ -1,6 +1,6 @@
 <% content_for(:page_title, @relationship.name) %>
 
-<div class="row">
+<div class="row mb-3 mt-3">
   <div class="col">
     <h1 class="relationship-title-link" >
       <%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %>
@@ -9,7 +9,7 @@
 </div>
 
 <% if user_signed_in? %>
-  <div class="row mb-2">
+  <div class="row mb-3">
     <%= render partial: 'actions' %>
   </div>
 <% end %>
