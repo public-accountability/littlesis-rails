@@ -10,6 +10,12 @@
   </div>
 </div>
 
+<% if user_signed_in? %>
+  <div class="row mb-3">
+    <%= render partial: 'actions' %>
+  </div>
+<% end %>
+
 
 <%= form_for @relationship, method: 'patch', html: { class: 'edit-relationship-form' }, builder: LsFormBuilder do |f| %>
   <div class="row mt-4 mb-4">

@@ -42,7 +42,7 @@ RUN npm --global install yarn
 # Firefox and Geckodriver
 RUN curl -L "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" | tar xjf - -C /opt
 RUN printf "#!/bin/sh\nexec /opt/firefox/firefox \$@\n" > /usr/local/bin/firefox && chmod +x /usr/local/bin/firefox && firefox -version
-RUN curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.28.0/geckodriver-v0.28.0-linux64.tar.gz" | tar xzf - -C /usr/local/bin
+RUN curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz" | tar xzf - -C /usr/local/bin
 
 RUN mkdir -p /littlesis
 WORKDIR /littlesis
@@ -50,7 +50,7 @@ WORKDIR /littlesis
 COPY ./Gemfile.lock ./Gemfile ./
 RUN bundle install --jobs=2
 
-COPY ./package.json ./
+COPY ./package.json ./yarn.lock
 RUN yarn install
 
 EXPOSE 8080
