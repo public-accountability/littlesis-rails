@@ -11,17 +11,25 @@
       <span class="related_entity_blurb"><%= link[0].related.blurb %></span>
     </div>
 
+    <% collapse_link_id = "relationship-collapse-#{link[0].id}" %>
+
     <div class="related_entity_relationship">
       <span>  •  <%= link_to link[0].link_content, relationship_path(link[0].relationship) %></span>
-      <span class="toggle" data-action="click->entity-page#toggleRelationship"><%= extra_links_count(link) %></span>
-    </div>
-
-    <div class="collapse">
-      <% link.drop(1).each do |l| %>
-        <div class="related_entity_relationship">
-          <span>  •  <%= link_to l.link_content, relationship_path(l.relationship) %></span>
-        </div>
+      <% if link.length > 1 %>
+        <a data-bs-toggle="collapse" href="#<%= collapse_link_id %>" role="button" aria-expanded="false" aria-controls="<%= collapse_link_id %>">
+          <%= extra_links_count(link) %>
+        </a>
       <% end %>
     </div>
+
+    <% if link.length > 1 %>
+      <div class="collapse" id="<%= collapse_link_id %>">
+        <% link.drop(1).each do |l| %>
+          <div class="related_entity_relationship">
+            <span>  •  <%= link_to l.link_content, relationship_path(l.relationship) %></span>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 </div>
