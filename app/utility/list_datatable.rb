@@ -6,22 +6,19 @@ class ListDatatable
   include Rails.application.routes.url_helpers
   include EntitiesHelper
 
-  attr_reader :list, :links, :types, :entities, :interlocks, :list_interlocks
+  attr_reader :list, :links, :entities, :interlocks, :list_interlocks
 
   def initialize(list, force_interlocks=false)
     @list = list
     @entity_ids = @list.entity_ids
     @force_interlocks = force_interlocks
     @num_interlocks = @num_lists = 20
-    @types = []
-    @lists = []
   end
 
   def generate_data
     get_interlocks
     get_lists
     get_data
-    prepare_options
   end
 
   def data
@@ -57,7 +54,6 @@ class ListDatatable
     @data = Rails.cache.fetch(cache_key, expires_in: 2.weeks) do
       list_entities.map do |le|
         entity = le.entity
-        @types = @types.concat(entity.types)
         list_entity_data(le, extract_interlock_ids(entity), extract_list_interlock_ids(entity))
       end
     end
@@ -88,9 +84,18 @@ class ListDatatable
     end
   end
 
-  def prepare_options
-    @types.uniq!
-    @types = [["Entity Type", ""]].concat(ExtensionDefinition.order(:tier).pluck(:display_name).select { |t| @types.include?(t) }.map { |t| [t, t] })
+  def types
+    return @types unless @types.nil?
+
+    if @data.present?
+      entity_types = @data.map { |h| h[:types].split(',') }.flatten.uniq || []
+
+      @types = [["Entity Type", ""]].concat(
+                 ExtensionDefinition.order(:tier).pluck(:display_name).select { |t| entity_types.include?(t) }.map { |t| [t, t] }
+               )
+    else
+      [["Entity Type", ""]]
+    end
   end
 
   def ranked?
