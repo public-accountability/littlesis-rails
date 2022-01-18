@@ -29,7 +29,7 @@ describe "Relationship Page", :type => :feature do
       let!(:tags) { relationship.add_tag(tag.id) }
       before { visit "/relationships/#{relationship.id}" }
       it { is_expected.to have_selector '#tags-container' }
-      it { is_expected.not_to have_selector '#tags-edit-button' }
+      it { is_expected.not_to have_selector 'span.tags-edit-glyph' }
     end
   end
 
@@ -45,7 +45,7 @@ describe "Relationship Page", :type => :feature do
     after { logout(user) }
 
     it { is_expected.to have_selector '#tags-container' }
-    it { is_expected.to have_selector '#tags-edit-button' }
+    it { is_expected.to have_selector 'span.tags-edit-glyph' }
     it { is_expected.to have_selector '#tags-list li', text: tag.name }
   end
 

@@ -83,7 +83,7 @@ describe 'Featured relationship admin', type: :feature do
 
         expect(relationships.last.reload.is_featured).to be true
 
-        within '#action-buttons' do
+        within '#relationship-action-buttons' do
           click_button 'unfeature'
         end
 
