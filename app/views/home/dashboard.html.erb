@@ -5,7 +5,7 @@
 <% end %>
 
 <div class="row" id="dashboard">
-  <div class="col-md-8 col-sm">
+  <div class="col-md-8 col-sm-12">
 
     <h1 class="pb-1">Dashboard</h1>
 
@@ -16,12 +16,10 @@
       <%= link_to("edits", edits_path, class: "btn btn-clear") %>
     </div>
 
-
-    <form action="/search" method="get" id="dashboard-search-form" class="input-group mb-4">
-      <input type="text" name="q" class="form-control" placeholder="search for a name" aria-label="Entity Search">
-
-      <div class="input-group-append">
-        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+    <form action="/search" method="get" id="dashboard-search-form" class="input-group mb-4" style="max-width: 344px;">
+      <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="search for a name" aria-label="Entity Search">
+        <button class="btn btn-clear" type="submit"><i class="bi bi-search"></i></button>
       </div>
     </form>
 

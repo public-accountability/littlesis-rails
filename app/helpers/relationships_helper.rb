@@ -28,22 +28,6 @@ module RelationshipsHelper
     end
   end
 
-  def d1_label(f, relationship)
-    f.label(:discription1, d1_label_text(relationship), class: 'form-label')
-  end
-
-  # input: <FormBuilder thingy>, symbol
-  def radio_buttons_producer(form, column)
-    content_tag(:div, class: 'relationship-radio-buttons') do
-      form.radio_button(column, 'true') +
-        form.label(column, 'Yes') +
-        form.radio_button(column, 'false') +
-        form.label(column, 'No') +
-        form.radio_button(column, '') +
-        form.label(column, 'Unknown')
-    end
-  end
-
   # family, transaction, social, professional, hiearchy, generic
   def requires_description_fields
     [4, 6, 8, 9, 11, 12].include? @relationship.category_id
@@ -54,7 +38,7 @@ module RelationshipsHelper
     content_tag(:div, id: 'description-fields') do
       [entity_link(@relationship.entity, html_id: 'df-forward-link-entity1'),
        ' is ',
-       f.text_field(:description1, oninput: 'description1Validation(this)', pattern: '(.{1}){0,100}'),
+       f.text_field(:description1, pattern: '(.{1}){0,100}'),
        ' of ',
        entity_link(@relationship.related, html_id: 'df-forward-link-entity2'),
        tag(:br),
@@ -62,7 +46,7 @@ module RelationshipsHelper
        reverse_link_if,
        entity_link(@relationship.related, html_id: 'df-backward-link-entity2'),
        ' is ',
-       f.text_field(:description2, oninput: 'description1Validation(this)', pattern: '(.{1}){0,100}'),
+       f.text_field(:description2, pattern: '(.{1}){0,100}'),
        ' of ',
        entity_link(@relationship.entity, html_id: 'df-backward-link-entity1')].reduce(:+)
     end
