@@ -5,15 +5,13 @@
 </div>
 
 <div class="row">
-  <div class="col-sm-12 col-md-10 col-lg-8">
+  <div class="col-8 col-sm-7 col-md-6">
     <p> Create a new alias:</p>
-    <%= form_for @entity.aliases.new, :html => { class: 'form-inline' } do |f| %>
+    <%= form_for @entity.aliases.new do |f| %>
       <%= f.hidden_field :entity_id, value: @entity.id %>
-      <div class="form-group">
-	<%= f.text_field :name, {required: true, class: 'form-control'}  %>
-        <div class="input-group-append">
-          <%= f.submit 'Add', class: 'btn btn-primary' %>
-        </div>
+      <div class="input-group">
+	<%= f.text_field :name, { required: true, class: 'form-control' }  %>
+        <%= f.submit 'Add', class: 'btn btn-primary' %>
       </div>
     <% end %>
   </div>
