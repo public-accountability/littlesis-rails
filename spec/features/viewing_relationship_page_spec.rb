@@ -1,4 +1,4 @@
-qdescribe "Relationship Page", :type => :feature do
+describe "Relationship Page", :type => :feature do
   let(:user) { create_basic_user }
   let(:org) { create(:entity_org) }
   let(:person) { create(:entity_person) }

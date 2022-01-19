@@ -306,10 +306,8 @@ div.actions-row {
 
 /* add relationship page */
 
-.category-select-button {
-    @extend .btn;
-    @extend .btn-light;
-    @extend .border;
+.category-select-button.active {
+    background-color: #dae0e5;
 }
 
 #results-table tbody tr:hover {

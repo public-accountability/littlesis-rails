@@ -9,112 +9,107 @@
      data-school="<%= @entity.school?.to_s %>">
 </div>
 
-<div class="row mt-2">
-  <div class="col-sm-11 col-md-8 col-lg-6" data-controller="relationship-creator">
-    <h2 class="rel-search"
-        style="cursor: default"
-        title="Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below."
-    >Create a new relationship</h2>
+<div class="mt-3"
+     data-controller="relationship-creator"
+     data-relationship-creator-entity1-id-value="<%= @entity.id %>"
+     data-relationship-creator-entity1-name-value="<%= @entity.name %>"
+     data-relationship-creator-entity1-url-value="<%= @entity.url %>"
+     data-relationship-creator-entity1-type-value="<%= @entity.primary_ext %>"
+     data-relationship-creator-entity1-school="<%= @entity.school?.to_s %>">
 
-    <div class="hidden rel-add">
-      <h3 class="text-center">Creating a new relationship between <br /><strong><%= @entity.name %></strong><br /> <em>and</em> <br /><strong><span id="relationship-with-name"></span></strong></h3>
+  <div class="row" data-relationship-creator-target="searchContainer">
+    <div class="d-flex flex-column">
+      <h2  title="Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.">
+        Create a new relationship
+      </h2>
+
+      <div class="input-group" style="max-width: 400px;">
+        <input type="text" class="form-control" data-relationship-creator-target="search" placeholder="Name" aria-label="Name to search">
+        <button class="btn btn-primary" type="button" data-action="click->relationship-creator#search">Search</button>
+      </div>
     </div>
+  </div>
 
-    <div class="input-group rel-search add-relationship-entity-search-input-group">
-      <input type="text" class="form-control" placeholder="Name" aria-label="Name to search" id="name-to-search">
-      <div class="input-group-append">
-        <button class="btn btn-primary" id="search-button">Search</button>
+  <div class="row" data-relationship-creator-target="creatingInfo">
+  </div>
+
+  <div data-relationship-creator-target="nothingFound" class="row mt-3" style="display: none">
+    <div class="">
+      <p>Can't find what you are looking for? <a href="/entities/new">Click here to create a new entity</a></p>
+    </div>
+  </div>
+
+  <div data-relationship-creator-target="results">
+    <!-- DataTable -->
+  </div>
+
+  <div class="row" data-relationship-creator-target="form" style="display: none">
+    <div class="col-sm-3">
+      <p><strong>Relationship Category:</strong></p>
+      <div id="category-selection"></div>
+
+      <div>
+        <a href="#explain-categories-modal" data-bs-toggle="modal" data-bs-target="#explain-categories-modal">Explain Categories</a>
       </div>
     </div>
 
+    <div class="col-sm-6 col-sm-offset-1" id="reference">
+      <div class="row">
+        <div class="col-sm-12">
+	  <p><strong>Where is this info coming from?</strong></p>
+        </div>
+        <div class="col-sm-12">
+	  <div data-action="click->relationship-creator#toggleReference" id="toggle-reference-form" class="btn-group btn-group-toggle">
+	    <button name="find-reference" class="btn btn-sm btn-secondary active">Find Reference</button>
+	    <button name="create-reference" class="btn btn-sm btn-outline-secondary">Create Reference</button>
+	  </div>
+        </div>
+      </div>
+
+      <div class="thin-grey-bottom-border top-1em m-bottom-1em"></div>
+
+      <div class="row" id="existing-reference-container">
+        <div class="col-sm-10">
+	  <div id="reference-widget-container"></div>
+        </div>
+      </div>
+
+      <div class="row" style="display: none;" id="new-reference-container">
+        <div class="col-sm-10">
+	  <div id="new-reference-form"></div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="row" >
+        <div class="col-sm-4 top-1em">
+	  <button data-action="click->relationship-creator#submit"type="button" class="btn btn-primary" id="create-relationship-btn">Create Relationship</button>
+        </div>
+      </div>
+
+      <!-- SIMILAR RELATIONSHIPS -->
+      <div class="row" data-relationship-creator-target="similarRelationships" style="display: none">
+        <div class="col-sm-10 top-1em"  style="height: 20px;">
+	  <div id="similar-relationships"
+               role="button"
+               data-bs-toggle="collapse"
+               data-bs-target="#similarRelationshipsDetails">
+            <i class="bi bi-exclamation-triangle"></i><span class="text-danger pl-2">Similar relationships exist!</span>
+	  </div>
+
+          <div class="collapse" id="similarRelationshipsDetails">
+          </div>
+
+        </div>
+      </div>
+
+    </div> <!-- end of col-sm-6  -->
+
+    <!-- errors -->
+    <div class="col-sm-4 col-sm-offset-1">
+      <div id="errors-container" class="top-3em"></div>
     </div>
+
+  </div> <!-- end of add-relationship-row  -->
+
 </div>
-
-<div class="row rel-search rel-results hidden" id="search-results-row">
-  <div class="col-sm-12">
-    <table id="results-table" class="compact hover" cellspacing="0" width="100%"></table>
-  </div>
-</div>
-
-<div class="row rel-search rel-results hidden">
-  <div class="col-sm-8">
-    <p>Can't find what you are looking for?  <a href="#" id="cant-find-new-entity-link">Click here to create a new entity</a></p>
-  </div>
-</div>
-
-<div class="row rel-new-entity hidden mt-4">
-
-  <div class="col-sm-12 col-md-7 col-lg-6">
-    <h5><strong>Nothing Found</strong></h5>
-    <h6>Try searching again <em>or</em> if you can't find the entity you are looking for, create it now:</h6>
-    <%= render partial: 'new_entity_form', locals: { add_relationship: true, form_url: url_for(action: :create) } %>
-  </div>
-
-  <div class="col-sm-12 col-md-5 col-lg-6 mt-2" id="new-entity-errors">
-  </div>
-</div>
-
-<div class="row rel-add hidden bottom-3em" id="add-relationship-row">
-  <div class="col-sm-3">
-    <p><strong>Relationship Category:</strong></p>
-    <div id="category-selection"></div>
-
-    <div class="top-1em pad-left-1em">
-      <%= link_to "Explain Categories", "#", data: {toggle: 'modal', target: '#explain-categories-modal' } %>
-    </div>
-  </div>
-
-  <div class="col-sm-6 col-sm-offset-1" id="reference">
-
-    <div class="row">
-      <div class="col-sm-12">
-	<p><strong>Where is this info coming from?</strong></p>
-      </div>
-      <div class="col-sm-12">
-	<div id="toggle-reference-form" class="btn-group btn-group-toggle">
-	  <button class="btn btn-sm btn-secondary active">Find Reference</button>
-	  <button class="btn btn-sm btn-outline-secondary">Create Reference</button>
-	</div>
-      </div>
-    </div>
-
-    <div class="thin-grey-bottom-border top-1em m-bottom-1em"></div>
-
-    <div class="row" id="existing-reference-container">
-      <div class="col-sm-10">
-	<div id="reference-widget-container"></div>
-      </div>
-    </div>
-    <div class="row" style="display: none;" id="new-reference-container">
-      <div class="col-sm-10">
-	<div id="new-reference-form"></div>
-      </div>
-    </div>
-
-    <!-- Submit Button -->
-    <div class="row" >
-      <div class="col-sm-4 top-1em">
-	<button type="button" class="btn btn-primary" id="create-relationship-btn">Create Relationship</button>
-      </div>
-    </div>
-
-    <!-- SIMILAR RELATIONSHIPS -->
-    <div class="row" >
-      <div class="col-sm-10 top-1em"  style="height: 20px;">
-	<span id="similar-relationships"
-	      class="hidden cursor-pointer"
-	      data-toggle="popover"
-	      data-placement="right">
-          <i class="bi bi-exclamation-triangle"></i><span class="text-danger pl-2">Similar relationships exist!</span>
-	</span>
-      </div>
-    </div>
-
-  </div> <!-- end of col-sm-6  -->
-
-  <!-- errors -->
-  <div class="col-sm-4 col-sm-offset-1">
-    <div id="errors-container" class="top-3em"></div>
-  </div>
-
-</div> <!-- end of add-relationship-row  -->
