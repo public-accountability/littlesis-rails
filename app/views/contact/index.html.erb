@@ -5,35 +5,35 @@
 </div>
 
 <div class="row">
-  <div class="col-sm-12 col-md-6">
+  <div class="col-sm-12 col-md-8 col-lg-6">
     <%= form_for(@contact, url: contact_path, multipart: true, id: 'contact-us-form') do |f| %>
 
-      <div class="form-group">
-        <%= f.label :name %>
+      <div class="mb-2">
+        <%= f.label :name, class: 'form-label' %>
         <%= f.text_field(:name, class: 'form-control') %>
       </div>
 
-      <div class="form-group">
-        <%= f.label :email %>
+      <div class="mb-2">
+        <%= f.label :email, class: 'form-label' %>
         <%= f.email_field(:email, required: true, readonly: user_signed_in?, class: 'form-control') %>
       </div>
 
-      <div class="form-group">
-        <%= f.label :subject %>
+      <div class="mb-2">
+        <%= f.label :subject, class: 'form-label' %>
         <%select_options = ["", "Something's Broken", "Innacurate Data", "Feature request", "I want to contribute", "Press inquiry", "Other"] %>
         <%= f.select :subject, options_for_select(select_options), class: 'form-control' %>
       </div>
 
-      <div class="form-group">
-        <%= f.label :message %>
+      <div class="mb-2">
+        <%= f.label :message, class: 'form-label' %>
         <%= f.text_area :message, size: '40x8', class: 'form-control'  %>
       </div>
 
-      <div class="form-group">
+      <div class="mb-2">
         <%= render partial: '/application/honeypot', locals: {f: f} %>
       </div>
 
-      <div class="form-group">
+      <div class="mb-2">
         <% unless user_signed_in?  %>
           <%= render partial: '/application/math_captcha', locals: {f: f, input_class: 'form-control', label_class: '' } %>
         <% end %>

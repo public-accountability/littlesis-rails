@@ -2,8 +2,8 @@
 
 module RegistrationsHelper
   REGISTRATIONS_FORM_CLASSES = {
-    :group => 'form-group row',
-    :column => 'col-6'
+    :group => 'row',
+    :column => 'col-sm-12 col-md-10 col-lg-8'
   }.freeze
 
   def registrations_form_group(group_class: REGISTRATIONS_FORM_CLASSES[:group], column_class: REGISTRATIONS_FORM_CLASSES[:column])
