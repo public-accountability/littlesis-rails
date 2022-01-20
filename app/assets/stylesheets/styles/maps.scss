@@ -2,26 +2,6 @@ table.oligrapher_grid {
     width: 100%;
 }
 
-// .fullscreen #oligrapher {
-//   padding: 0;
-// }
-
-// .fullscreen #oligrapher .row {
-//   margin: 0;
-// }
-
-// .fullscreen #oligrapher .row > div {
-//   padding: 0;
-// }
-
-.oligrapher-display-image {
-    height: 250px;
-}
-
-.oligrapher-row, .oligrapher-row card {
-    height: 420px;
-}
-
 #oligrapher-chart-subheader {
     overflow: hidden;
 }
@@ -78,7 +58,6 @@ div.map-search-input-group {
     &:hover span::before {
         content: "\f4dd";
     }
-
 
     &.checked span::before {
         content: "\f4da";

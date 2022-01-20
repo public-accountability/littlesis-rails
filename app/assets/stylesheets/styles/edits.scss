@@ -128,3 +128,7 @@ $reference_widget_width: 300px;
         width: $reference_widget_width;
     }
 }
+
+#add-reference-modal .form-group input {
+  width: 80%;
+}
