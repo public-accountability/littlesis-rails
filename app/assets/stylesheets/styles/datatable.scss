@@ -76,53 +76,15 @@
   margin-bottom: 5px;
 }
 
-////////////////////////
-// List Members Page //
-//////////////////////
+// // Delete Entity From List style
+// #datatable-table {
+//   .bi-x-lg {
+//     @extend .hvr-pop;
+//     color: #aaa;
 
-#datatable-filters-line2 {
-  margin-top: 5px;
-}
+//     &:hover {
+//         color: #666666;
+//     }
 
-#datatable-search {
-  width: 200px;
-}
-
-#datatable-amount {
-  width: 75px;
-}
-
-.buttons {
-  float: left;
-  margin-right: 10px;
-  margin-top: 7px;
-  margin-bottom: 7px;
-  display: inline-block;
-
-  a {
-    margin-right: 5px;
-  }
-}
-
-#datatable-filters select {
-  max-width: 280px;
-}
-
-html #datatable-table_info {
-  clear: none;
-  margin-top: 3px;
-}
-
-
-// Delete Entity From List style
-#datatable-table {
-  .bi-x-lg {
-    @extend .hvr-pop;
-    color: #aaa;
-
-    &:hover {
-        color: #666666;
-    }
-
-  }
-}
+//   }
+// }

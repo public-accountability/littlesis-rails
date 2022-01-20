@@ -34,7 +34,7 @@ describe 'lists', type: :feature do
     scenario 'visiting the list page' do
       visit list_path(list)
       successfully_visits_page(list_path(List.first) + '/members')
-      expect(page.find('#list-name')).to have_text list.name
+      expect(page.find('#list-header')).to have_text list.name
       expect(page).not_to have_selector '#list-tags-container'
     end
 

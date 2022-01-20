@@ -1,66 +1,88 @@
-<%= render partial: 'index_header' %>
-
-<div class="alert alert-info">
-  Lists are collections of people and/or organizations that don't belong to a formal group. Many of them were originally compiled by media organizations, frequently in order to rank people by power, wealth, or influence.
+<div class="row mt-3 mb-3" id="list-index-header">
+  <div class="col">
+    <div class="d-flex flex-column">
+      <h1 class="d-inline">
+        Lists
+        <% if user_signed_in?  %>
+          <div class="d-inline p-2 rounded">
+            <%= link_to 'Your Lists', home_lists_path, class: 'btn btn-clear btn-sm mr-1' %>
+            <%= link_to 'Create', new_list_path, class: 'btn btn-clear btn-sm mr-1' %>
+          </div>
+        <% end %>
+      </h1>
+    </div>
+  </div>
 </div>
 
-<%= form_tag(lists_path, method: :get, id: 'search-lists') do %>
-  <div>
-    <input class="form-control d-inline" id="list-search" type="text" name="q" value="<%= params[:q] %>" placeholder="list name">
+<div class="row" id="list-search-container">
+  <div class="col">
+    <%= form_tag(lists_path, method: :get, id: 'search-lists') do %>
+      <div class="d-flex">
+        <input class="col-form-control d-inline me-2" id="list-search" type="text" name="q" value="<%= params[:q] %>" placeholder="list name">
 
-    <select data-controller="entity-autocomplete" style="width: 250px;" name="entity_id"
-            data-entity-autocomplete-preselected-value="<%= params[:entity_id] %>">
-    </select>
+        <select data-controller="entity-autocomplete" style="width: 250px;;" name="entity_id"
+                data-entity-autocomplete-preselected-value="<%= params[:entity_id] %>">
+        </select>
 
-    <input type="submit" value="Search" class="btn btn-secondary">
-  </div>
-<% end %>
-<br>
-
-<%= paginate @lists %>
-
-<table id="lists" class="table no-top-border dataTable">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Entities</th>
-      <th>Description</th>
-      <th><%= link_to 'Created', {sort_by: :created_at, order: (params[:order] == 'desc' ? 'asc' : 'desc')}, class: "created_at sorting" %></th>
-      <th colspan='2'/>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @lists.each do |list| %>
-      <tr id="list_<%= list.id %>">
-        <td class="lists_table_name"><%= list_link(list) %></td>
-        <td><%= list.entity_count %></td>
-        <% if list.short_description %>
-          <td><%= list.short_description %></td>
-        <% else %>
-          <td><%= list.description %></td>
-        <% end %>
-        <td class="created"><%= l list.created_at %></td>
-        <% if current_user&.admin? %>
-          <td>
-            <%= button_to list_path(list), method: :patch, params: {list: {id: list.id, is_featured: !list.is_featured}}, class: 'star-button' do %>
-              <span class="<%= list.is_featured ? 'star' : 'not-star' %>">
-            <% end %>
-          </td>
-          <td>
-            <%= button_to list_path(list),
-             method: :delete,
-             params: {id: list.id},
-             class: 'delete-button ml-1',
-             title: 'Permanently delete this list',
-             form: { onsubmit: "return confirm('Are you sure?')" } do %>
-              <i class="bi bi-trash"></i>
-            <% end %>
-          </td>
-        <% end %>
-      </tr>
+        <input type="submit" value="Search" class="btn btn-secondary ms-2">
+      </div>
     <% end %>
-  </tbody>
-</table>
+  </div>
+</div>
 
-<%= paginate @lists %>
+<div class="row mt-3">
+  <div class="col">
+    <%= paginate @lists %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <table id="lists" class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Entities</th>
+          <th>Description</th>
+          <th><%= link_to 'Created', {sort_by: :created_at, order: (params[:order] == 'desc' ? 'asc' : 'desc')}, class: "created_at sorting" %></th>
+          <th colspan='2'/>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @lists.each do |list| %>
+          <tr id="list_<%= list.id %>">
+            <td class="lists_table_name"><%= list_link(list) %></td>
+            <td><%= list.entity_count %></td>
+            <% if list.short_description %>
+              <td><%= list.short_description %></td>
+            <% else %>
+              <td><%= list.description %></td>
+            <% end %>
+            <td class="created"><%= l list.created_at %></td>
+            <% if current_user&.admin? %>
+              <td>
+                <%= button_to list_path(list), method: :patch, params: {list: {id: list.id, is_featured: !list.is_featured}}, class: 'star-button' do %>
+                  <span class="<%= list.is_featured ? 'star' : 'not-star' %>"></span>
+                <% end %>
+              </td>
+              <td>
+                <%= button_to list_path(list),
+                 method: :delete,
+                 params: {id: list.id},
+                 class: 'delete-button ml-1',
+                 title: 'Permanently delete this list',
+                 form: { onsubmit: "return confirm('Are you sure?')" } do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @lists %>
+
+  </div>
+</div>

@@ -1,12 +1,13 @@
 <% content_for(:page_title, raw(@list.name)) %>
 
 <%= render partial: 'header', locals: { list: @list } %>
-<% person_count = @list.entities.people.count %>
-
-<%= render partial: 'list_actions', locals: { list: @list, person_count: person_count } %>
-
+<%= render partial: 'list_actions', locals: { list: @list, person_count: @list.entities.people.count } %>
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :members } %>
 
-<% cache( [@list.cache_key_with_version, 'members'], expires_in: 1.day) do %>
-  <%= render partial: 'datatable', locals: { table: @table, editable: @editable } %>
-<% end %>
+<div class="row">
+  <div class="col">
+    <% cache( [@list.cache_key_with_version, 'members'], expires_in: 1.day) do %>
+      <%= render partial: 'datatable', locals: { table: @table, editable: @editable } %>
+    <% end %>
+  </div>
+</div>

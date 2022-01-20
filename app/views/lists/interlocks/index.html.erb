@@ -1,14 +1,24 @@
-<% content_for(:page_title, raw(@list.name + ' - Interlocks')) %>
+<% content_for(:page_title, "#{@list.name} - Interlocks") %>
 
 <%= render partial: 'lists/header', locals: { list: @list } %>
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :interlocks } %>
 
-<%= dismissable_alert('list_interlocks_alert', 'list-tab-alert') do %>
-  People on this list have the most positions in the following organizations.
-<% end %>
-
 <% cache( [@list.cache_key_with_version, 'interlocks' ], expires_in: 1.day) do %>
-  <%= render partial: "companies", locals: { companies: @companies, preview: true } %>
-  <%= render partial: "government", locals: { govt_bodies: @govt_bodies, preview: true } %>
-  <%= render partial: "other_orgs", locals: { others: @others, preview: true } %>
+  <div class="row">
+    <div class="col">
+      <%= render partial: "companies", locals: { companies: @companies, preview: true } %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <%= render partial: "government", locals: { govt_bodies: @govt_bodies, preview: true } %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <%= render partial: "other_orgs", locals: { others: @others, preview: true } %>
+    </div>
+  </div>
 <% end %>

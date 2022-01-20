@@ -1,23 +1,23 @@
 <% if companies.count > 0 %>
   <h3>Companies</h3>
-<% if local_assigns[:preview] %>
-  <%= paginate_preview(companies, 5, list_interlocks_tab_path(@list, :companies)) %>
-<% else %>
-  <%= paginate(companies) %>
-<% end %>
-<table class="table interlocks-table">
-  <thead>
-    <th>Company</th>
-    <th>People</th>
-  </thead>
-  <tbody>
-    <% (local_assigns[:preview] ? companies.take(5) : companies).each do |org| %>
-      <tr>
-        <td><strong><%= link_to org.name, concretize_entity_path(org) %></strong></td>
-        <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-<br>
+  <% if local_assigns[:preview] %>
+    <%= paginate_preview(companies, 5, list_interlocks_tab_path(@list, :companies)) %>
+  <% else %>
+    <%= paginate(companies) %>
+  <% end %>
+  <table class="table interlocks-table">
+    <thead>
+      <th>Company</th>
+      <th>People</th>
+    </thead>
+    <tbody>
+      <% (local_assigns[:preview] ? companies.take(5) : companies).each do |org| %>
+        <tr>
+          <td><strong><%= link_to org.name, concretize_entity_path(org) %></strong></td>
+          <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br>
 <% end %>
