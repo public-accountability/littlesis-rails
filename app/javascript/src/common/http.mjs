@@ -47,7 +47,7 @@ export function post(url, data) {
   }
 
   const body = JSON.stringify(data)
-  const token = document.head.querySelector('meta[name="csrf-token"]').content
+  const token = document.head.querySelector('meta[name="csrf-token"]')?.content
   const headers = merge({}, jsonHeaders, { 'X-CSRF-Token': token })
 
   return fetch(url, {
