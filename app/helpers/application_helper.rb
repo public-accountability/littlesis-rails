@@ -19,10 +19,6 @@ module ApplicationHelper
     end
   end
 
-  def yes_or_no(value)
-    value ? "yes" : "no"
-  end
-
   def notice_if_notice
     raw "<div class='alert alert-success'>#{notice}</div>" if notice
   end

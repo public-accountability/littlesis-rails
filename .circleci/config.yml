@@ -3,33 +3,21 @@ version: 2.1
 jobs:
   rspec:
     machine:
-      image: ubuntu-2004:202107-02
-#      docker_layer_caching: true
+      image: ubuntu-2004:202111-02
+      docker_layer_caching: true
+
     environment:
       RAILS_ENV: test
       COVERAGE: yes
       POSTGRES_PASSWORD: littlesis
       POSTGRES_USER: littlesis
       POSTGRES_DB: littlesis_test
-    resource_class: medium
+
     steps:
       - checkout
       - run: cp config/database.ci.yml config/database.yml
       - run: mkdir -p tmp tmp/rspec tmp/small/ tmp/profile tmp/large/ tmp/original/
-
-      - restore_cache:
-          name: Restore LittleSis Docker cache
-          key: littlesis-docker-{{ checksum "Dockerfile" }}-{{ checksum "yarn.lock" }}-{{ checksum "Gemfile.lock" }}
-
-      - run: test -f littlesis-docker.tar.gz || docker build -t littlesis:latest .
-      - run: test -f littlesis-docker.tar.gz || docker save littlesis:latest | gzip > littlesis-docker.tar.gz
-
-      - save_cache:
-          key: littlesis-docker-{{ checksum "Dockerfile" }}-{{ checksum "yarn.lock" }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - littlesis-docker.tar.gz
-
-      - run: test -z "$(docker image ls -q littlesis:latest)" && docker load -i littlesis-docker.tar.gz || true
+      - run: docker build -t littlesis:latest .
       - run: docker-compose up -d
       - run: docker-compose exec postgres pg_isready --timeout=10
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake db:reset
@@ -45,7 +33,7 @@ jobs:
 
   mocha:
     machine:
-      image: ubuntu-2004:202107-02
+      image: ubuntu-2004:202111-02
     steps:
       - run: curl -o- -L https://yarnpkg.com/install.sh | bash
       - checkout
