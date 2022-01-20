@@ -1,22 +1,18 @@
 import { Controller } from "@hotwired/stimulus"
+import { post } from '../src/common/http.mjs'
+
+const errorMsg = 'Username is taken or invalid. Please pick a new username.'
 
 export default class extends Controller {
-  connect() {
+  initialize() {
     Parsley.addValidator('username', {
       validateString: function(value) {
-        return $.ajax({
-          "url":  '/users/check_username',
-          "method": 'POST',
-          "data": { "username": value },
-          "headers": {
-            "X-CSRF-Token": document.getElementsByName('csrf-token')[0].content
-          },
-          "datatype": 'json'
-        }).then(function(json) {
-          if (!json.valid) {
-            return $.Deferred().reject('Username is taken or invalid. Please pick a new username.')
-          }
-        })
+        return post('/users/check_username', { "username": value })
+          .then(res => {
+            if (!res.valid) {
+              throw errorMsg
+            }
+          })
       }
     })
   }

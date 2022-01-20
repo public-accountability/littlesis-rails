@@ -39,7 +39,7 @@
 <% label_class = 'form-label' %>
 <% input_class = 'form-control' %>
 
-<%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {data: {parsley_validate: true, controller: 'tooltip username-validation'}}) do |f| %>
+<%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {data: { parsley_validate: true, controller: 'username-validation'}}) do |f| %>
   <%= f.fields_for :user_profile do |profile_fields| %>
     <%= registrations_form_group do %>
       <%= profile_fields.label :name_first, 'First Name', class: label_class   %>
