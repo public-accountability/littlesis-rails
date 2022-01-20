@@ -1,8 +1,5 @@
 @import "base/globals.scss";
 
-/* Toolkit Font */
-@import url('https://fonts.googleapis.com/css?family=Montserrat');
-
 /* Toolkit Vars  */
 $page_background_color: #fffcf7;
 $navbar_background_color: #fff;
@@ -22,8 +19,14 @@ $navbar-height: 130px;
 
 /* Import bootstrap */
 @import "bootstrap/scss/bootstrap";
-@import "base/bootstrap-migrate.scss";
 @import "actiontext";
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: font-url('montserrat.woff2') format('woff2')
+}
 
 body {
     font-family: 'Montserrat', sans-serif;

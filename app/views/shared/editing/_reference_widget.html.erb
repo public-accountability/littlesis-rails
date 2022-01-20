@@ -11,22 +11,22 @@ Also see controllers/reference_widget_controller.js
 
     <div class="card-body" data-reference-widget-target="existingSource">
       <% if local_assigns.fetch(:show_just_cleaning_up, true) %>
-        <div class="form-group">
-          <label class="pr-1">
+        <div class="mb-2">
+          <label>
             Just Cleaning Up:
             <input type="checkbox"
                    data-action="change->reference-widget#toggleJustCleaningUp"
                    data-reference-widget-target="justCleaningUp"
                    name="reference[just_cleaning_up]"
-                   class="align-middle"
+                   class="ms-1"
                    required="required" />
           </label>
         </div>
       <% end %>
 
-      <div class="form-group">
-        <label class="pr-2">Existing Source:</label>
-        <select style="width: 50%" data-reference-widget-target="select" name="reference[document_id]"  class="form-control">
+      <div class="mb-2">
+        <label class="pe-2">Existing Source:</label>
+        <select style="max-width: 200px;" data-reference-widget-target="select" name="reference[document_id]"  class="form-control w-50 d-inline">
           <option></option>
           <% selected_document_id = local_assigns.fetch(:selected, nil) %>
           <%= documents.each do |d| %>
@@ -35,7 +35,7 @@ Also see controllers/reference_widget_controller.js
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="mb-2">
         <button class="btn btn-primary"
                 type="button"
                 id="reference-widget-create-new-reference"
@@ -45,12 +45,28 @@ Also see controllers/reference_widget_controller.js
     </div>
 
     <div class="card-body new-document" style="display: none;" data-reference-widget-target="newDocument">
-      <% d = { reference_widget_target: 'newDocumentInput' }  %>
-      <%= bootstrap_form_group_input 'Url:', type: 'url', size: 3, input_name: 'reference[url]', label_data: d %>
-      <%= bootstrap_form_group_input 'Name:', type: 'text', size: 3, input_name: 'reference[name]', label_data: d %>
+      <div class="row mb-2">
+        <div class="col-2">
+          <label class="col-form-label">Url</label>
+        </div>
+        <div class="col-auto mw-2">
+          <input class="form-control" type="url" name="reference[url]" data-reference-widget-target="newDocumentInput" />
+        </div>
+      </div>
 
-      <div>
-        <button class="btn btn-primary" type="button" data-action="reference-widget#toggleExistingSource">Use existing source</button>
+      <div class="row mb-2">
+        <div class="col-2">
+          <label class="col-form-label">Name</label>
+        </div>
+        <div class="col-auto mw-2">
+          <input class="form-control" type="text" name="reference[name]" data-reference-widget-target="newDocumentInput" />
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-auto">
+          <button class="btn btn-primary" type="button" data-action="reference-widget#toggleExistingSource">Use existing source</button>
+        </div>
       </div>
     </div>
   </div>

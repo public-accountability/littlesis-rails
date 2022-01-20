@@ -17,8 +17,12 @@
     </div>
 
     <div class="row mt-3" id="dots-connected-search">
-      <%= render partial: 'shared/nav_menu_search',
-      locals: { placeholder: 'Search for a name', btn_class: 'btn btn-red' } %>
+      <form action="/search" method="get" role="search" id="navbar-search">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Search for a name">
+          <button class="btn btn-red" type="submit" ><i class="bi bi-search"></i></button>
+        </div>
+      </form>
     </div>
 
 </div>

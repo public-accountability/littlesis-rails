@@ -3,10 +3,10 @@
   "private": "true",
   "dependencies": {
     "@hotwired/stimulus": "^3.0.1",
-    "@hotwired/turbo-rails": "^7.1.0",
+    "@hotwired/turbo-rails": "^7.1.1",
+    "@popperjs/core": "^2",
     "@rails/actiontext": "^6.1.4-3",
-    "bloodhound-js": "^1.2.3",
-    "bootstrap": "^4",
+    "bootstrap": "^5",
     "d3": "^7.2.1",
     "datatables.net": "^1.11.3",
     "datatables.net-dt": "^1.11.3",
@@ -17,8 +17,7 @@
     "mustache": "^4.2.0",
     "papaparse": "^5.3.1",
     "parsleyjs": "^2.9.2",
-    "popper.js": "^1.16.1",
-    "puppeteer": "^13.0.0",
+    "puppeteer": "^13.1.1",
     "select2": "^4.1.0-rc.0",
     "sharp": "^0.29.3",
     "tinycarousel": "^2.1.8",
@@ -30,6 +29,6 @@
     "test": "mocha spec/javascripts"
   },
   "devDependencies": {
-    "mocha": "^9.1.3"
+    "mocha": "^9.1.4"
   }
 }

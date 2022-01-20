@@ -96,7 +96,6 @@ $tag_margin: 0.4em;
     @extend .bootstrap-icon;
     @extend .pencil-icon;
 
-    padding-left: 1em;
     margin-bottom: 0.5em;
     cursor: pointer;
     &:hover { color: $red; }
@@ -212,4 +211,26 @@ input#tag_name {
             padding-left: 1em;
         }
     }
+}
+
+
+#edit-tags-modal {
+
+    .btn {
+        display: block;
+        margin-top: 5px;
+    }
+
+    .select2-container {
+        min-width: 200px;
+    }
+
+    .modal-dialog {
+        max-width: 350px;
+    }
+
+    .modal-content {
+        min-height: 200px;
+    }
+
 }

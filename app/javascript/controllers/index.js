@@ -13,6 +13,9 @@ application.register("carousel", CarouselController)
 import ClipboardController from "./clipboard_controller.js"
 application.register("clipboard", ClipboardController)
 
+import EditTagsController from "./edit_tags_controller.js"
+application.register("edit-tags", EditTagsController)
+
 import EntityAutocompleteController from "./entity_autocomplete_controller.js"
 application.register("entity-autocomplete", EntityAutocompleteController)
 
@@ -27,9 +30,6 @@ application.register("entity-merge", EntityMergeController)
 
 import EntityPageController from "./entity_page_controller.js"
 application.register("entity-page", EntityPageController)
-
-import EntityTagsController from "./entity_tags_controller.js"
-application.register("entity-tags", EntityTagsController)
 
 import Fec__ContributionsTableController from "./fec/contributions_table_controller.js"
 application.register("fec--contributions-table", Fec__ContributionsTableController)

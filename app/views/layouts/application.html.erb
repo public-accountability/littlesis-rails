@@ -17,33 +17,32 @@
       <%= render partial: 'shared/nav_menu' %>
     <% end %>
 
-    <div class="container mt-3">
-      <section class="flash-messages">
-        <% flash.each do |type, content| %>
-          <% if content.is_a? Array %>
-            <% content.each do |message| %>
-              <%= render partial: 'flash', locals: {message: message, type: type} %>
+    <% unless flash.empty? %>
+      <div class="container mt-2">
+        <div class="col-6">
+          <% flash.each do |type, content| %>
+            <% Array.wrap(content).each do |message| %>
+              <%= alert_div(message: message, type: type) %>
             <% end %>
-          <% else %>
-            <%= render partial: 'flash', locals: {message: content, type: type} %>
           <% end %>
-        <% end %>
-      </section>
-    </div>
+        </div>
+      </div>
+    <% end %>
 
-    <div class="container mt-3">
+    <div class="container mt-2">
       <%= yield %>
     </div>
 
     <% unless content_for? :hide_footer %>
       <div class="container mt-3 mb-3">
         <div id="footer">
-	  A project of the <%= link_to('Public Accountability Initiative', 'http://public-accountability.org') %>.
+	  A project of the <%= link_to('Public Accountability Initiative', 'https://public-accountability.org') %>.
 	  More <%= link_to('about LittleSis', '/about') %>.
 	  Read the <%= link_to('disclaimer', '/disclaimer') %>.
         </div>
       </div>
     <% end %>
+
   </body>
 
 </html>

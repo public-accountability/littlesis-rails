@@ -122,7 +122,7 @@ const toggle = [
 
 function collapse() {
   return wrapInFormGroup(
-    $('<a>', { "data-toggle": 'collapse', "href": "#collapseReference",  "aria-expanded": "true", "aria-controls": "collapseReference",  "id": "toggle-reference-collapse"}).append(toggle)
+    $('<a>', { "data-bs-toggle": 'collapse', "href": "#collapseReference",  "aria-expanded": "true", "aria-controls": "collapseReference",  "id": "toggle-reference-collapse"}).append(toggle)
   );
 }
 

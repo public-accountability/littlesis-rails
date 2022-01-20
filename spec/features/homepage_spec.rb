@@ -49,30 +49,4 @@ describe 'Homepage' do
       expect(signup_job).not_to have_received(:perform_later)
     end
   end
-
-  feature 'Beta Version Indicator' do
-    context 'without beta enabled' do
-      it 'shows donation button' do
-        visit '/'
-        page_has_selector '#top_donate_link'
-        page_has_no_selector '#nabar-beta-notice'
-      end
-    end
-
-    context 'with beta enabled' do
-      before do
-        Rails.application.config.littlesis.beta = true
-      end
-
-      after do
-        Rails.application.config.littlesis.beta = false
-      end
-
-      it 'hides donation button' do
-        visit '/'
-        page_has_no_selector '#top_donate_link'
-        page_has_selector '#navbar-beta-notice'
-      end
-    end
-  end
 end

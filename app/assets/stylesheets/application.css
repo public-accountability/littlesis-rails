@@ -1,4 +1,4 @@
-//= require jquery.dataTables.css
-//= require select2/dist/css/select2.min.css
-//= require datagrid
+//= require select2/dist/css/select2.css
+//= require datagrid.css
+//= require datatables.net-dt/css/jquery.dataTables.css
 //= require main.css

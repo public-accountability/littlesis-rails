@@ -1,13 +1,25 @@
-<% label_class = 'form-label' %>
+<% label_class = 'col-form-label' %>
 
 <% content_for(:page_title, 'Edit: ' + @relationship.name ) %>
 
-<%= render partial: 'header' %>
+<div class="row mb-3 mt-3">
+  <div class="col">
+    <h1 class="relationship-title-link" >
+      <%=  link_to @relationship.name, relationship_path(@relationship), class: "link-blue" %>
+    </h1>
+  </div>
+</div>
 
-<%= form_for @relationship, method: 'patch', html: { class: 'edit-relationship-form' } do |f| %>
+<% if user_signed_in? %>
+  <div class="row mb-3">
+    <%= render partial: 'actions' %>
+  </div>
+<% end %>
 
+
+<%= form_for @relationship, method: 'patch', html: { class: 'edit-relationship-form' }, builder: LsFormBuilder do |f| %>
   <div class="row mt-4 mb-4">
-    <div class="col-md-6 col-sm-8 col-xs-12">
+    <div class="col-sm-8 col-md-6">
       <%= render partial: 'shared/editing/reference_widget',
                  locals: {
                    documents: @relationship.documents.to_a,
@@ -22,20 +34,20 @@
     <%= render partial: 'description_fields_display' %>
   <% end  %>
 
-  <div class="w-50 nopadding"><hr></div>
   <div class="w-100 mt-4"></div>
 
   <!-- Postion, Membership, Ownership, Donation -->
   <% if d1_is_title || @relationship.is_donation? %>
-    <div class="form-row">
-      <%= relationship_form_tag(d1_label(f, @relationship), f.text_field(:description1, oninput: 'description1Validation(this)', pattern: '(.{1}){0,100}') ) %>
-    </div>
+    <%= edit_entity_form_section(
+      f.label(:description1, d1_label_text(@relationship), class: 'col-form-label'),
+      f.text_field(:description1, oninput: 'description1Validation(this)', pattern: '(.{1}){0,100}')
+    )
+    %>
   <% end %>
-
 
   <%# description_fields are editable, unlike 'description_fields_display' %>
   <% if requires_description_fields %>
-    <div class="form-row">
+    <div class="row mb-3">
       <div class="col">
 	<%= description_fields(f) %>
       </div>
@@ -43,119 +55,113 @@
   <% end %>
 
 
-  <% if @relationship.is_education?  %>
-    <div class="form-row">
-      <% education_select = f.select :description1, Education::SELECT_OPTIONS, { include_blank: true }, { class: 'selectpicker' } %>
-      <% education_label = f.label(:description1, 'Type', class: label_class)  %>
-      <%= relationship_form_tag(education_label , education_select) %>
-    </div>
+  <% if @relationship.is_education? %>
+    <%= edit_entity_form_section(
+      f.label(:description1, 'Type', class: 'col-form-label'),
+      f.select(:description1, Education::SELECT_OPTIONS, { include_blank: true })
+    )
+    %>
   <% end %>
-
 
   <%# COMMON FIELDS: start_date, end_date, is_current %>
-
-
   <% [ [:start_date, 'Start date'], [:end_date, 'End date'] ].each do |field, text|  %>
-    <div class="form-row">
-      <%= f.label(field, text, class: label_class) %>
-      <div class="form-input-wrapper">
-	<%= f.text_field(field) %>
-	<%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)', class: 'ml-2') %>
-      </div>
-    </div>
+    <%= edit_entity_form_section(
+      f.label(field, text, class: 'col-form-label'),
+      f.text_field(field)
+    )
+    %>
   <% end %>
 
-  <div class="form-row">
-    <%= f.label(:is_current, 'Is current', class: label_class) %>
-    <div class="form-input-wrapper">
-      <%= radio_buttons_producer(f, :is_current) %>
-      <%= content_tag(:small, '(is this relationship ongoing?)') %>
-    </div>
-  </div>
+  <%= edit_entity_form_section(
+    f.label(:is_current, 'Is current', class: 'col-form-label'),
+    f.tri_boolean(:is_current)
+  )
+  %>
 
   <% if @relationship.is_position? %>
     <%= f.fields_for :position do |p_form|  %>
-      <div class="form-row">
-	<%= relationship_form_tag( p_form.label(:is_board, 'Board member', class: label_class), radio_buttons_producer(p_form, :is_board) )%>
-      </div>
-      <div class="form-row">
-	<%= relationship_form_tag( p_form.label(:is_executive, 'Executive', class: label_class), radio_buttons_producer(p_form, :is_executive) )%>
-      </div>
-      <div class="form-row">
-	<%= relationship_form_tag( p_form.label(:is_exmployee, 'Employee', class: label_class), radio_buttons_producer(p_form, :is_employee) + content_tag(:small, '(is it a non-leadership staff position?)') )%>
-      </div>
-      <div class="form-row">
-	<%= relationship_form_tag( p_form.label(:compensation, 'Compensation', class: label_class), p_form.number_field(:compensation) )%>
-      </div>
-    <% end  %>
+      <% [[:is_board, 'Board member', :tri_boolean], [:is_executive, 'Executive', :tri_boolean], [:is_employee, 'Employee', :tri_boolean], [:compensation, 'Compensation', :number_field]].each do |(field, text, type)| %>
+        <%= edit_entity_form_section(
+          p_form.label(field, text, class: label_class),
+          p_form.public_send(type, field)
+        ) %>
+      <% end %>
+    <% end %>
   <% end  %>
 
 
   <% if @relationship.is_education?  %>
-
     <%= f.fields_for :education do |e_form|  %>
-      <div class="form-row">
-	<% degree_select = e_form.select :degree_id, Degree.select_options_cache, { include_blank: true }, { class: 'selectpicker' } %>
-	<% degree_label = f.label(:degree_id, 'Degree', class: label_class)  %>
-	<%= relationship_form_tag(degree_label , degree_select) %>
-      </div>
-      <div class="form-row">
-	<%= relationship_form_tag( e_form.label(:field, 'Field', class: label_class), e_form.text_field(:field) )%>
-      </div>
-      <div class="form-row">
-	<%= relationship_form_tag( e_form.label(:is_dropout, 'Dropout', class: label_class), radio_buttons_producer(e_form, :is_dropout) )%>
-      </div>
-      <% end %>
+      <%= edit_entity_form_section(
+        e_form.label(:degree_id, 'Degree', class: label_class),
+        e_form.select(:degree_id, Degree.select_options_cache, { include_blank: true } )
+      ) %>
+
+      <%= edit_entity_form_section(
+        e_form.label(:field, 'Field', class: label_class),
+        e_form.text_field(:field)
+      ) %>
+
+      <%= edit_entity_form_section(
+        e_form.label(:is_dropout, 'Dropout', class: label_class),
+        e_form.tri_boolean(:is_dropout)
+      ) %>
+    <% end %>
   <% end %>
 
 
   <% if @relationship.is_membership?  %>
-    <div class="form-row">
-      <%= f.fields_for :membership do |membership_form|  %>
-	<%= relationship_form_tag( membership_form.label(:dues, 'Dues', class: label_class), membership_form.number_field(:dues) )%>
-      <% end %>
-    </div>
+    <%= f.fields_for :membership do |membership_form|  %>
+      <%= edit_entity_form_section(
+        membership_form.label(:dues, 'Dues', class: label_class),
+        membership_form.number_field(:dues)
+      )%>
+    <% end %>
   <% end %>
-
 
   <!-- Donation, Transaction, Lobbying -->
   <% if [5, 6, 7].include? @relationship.category_id  %>
-    <div class="form-row">
-      <%= relationship_form_tag( f.label(:amount, 'Amount', class: label_class), f.number_field(:amount) )%>
-    </div>
-    <div class="form-row">
-      <%= relationship_form_tag(
-        f.label(:currency, 'Currency', class: label_class),
-        f.select(:currency, options_for_currency_select, { include_blank: true }, { class: 'selectpicker' })
-      ) %>
-    </div>
+    <%= edit_entity_form_section(
+      f.label(:amount, 'Amount', class: label_class),
+      f.number_field(:amount)
+    ) %>
+
+    <%= edit_entity_form_section(
+      f.label(:currency, 'Currency', class: label_class),
+      f.select(:currency, options_for_currency_select, { include_blank: true } )
+    ) %>
   <% end %>
 
   <% if @relationship.is_donation? || @relationship.is_transaction? %>
-    <div class="form-row">
-      <%= relationship_form_tag( f.label(:goods, 'Goods/services', class: label_class), f.text_area(:goods,  size: '40x5') ) %>
-    </div>
+    <%= edit_entity_form_section(
+      f.label(:goods, 'Goods/services', class: label_class),
+      f.text_area(:goods,  size: '40x5')
+    ) %>
   <% end %>
 
   <% if @relationship.is_ownership? %>
     <%= f.fields_for :ownership do |o_form|  %>
-      <div class="form-row">
-	<%= relationship_form_tag( o_form.label(:percent_stake, 'Percent Stake', class: label_class), o_form.number_field(:percent_stake, within: 0...101) )%>
-      </div>
-      <div class="form-row">
-	<%= relationship_form_tag( o_form.label(:shares, 'Shares', class: label_class), o_form.number_field(:shares) )%>
-      </div>
+      <%= edit_entity_form_section(
+        o_form.label(:percent_stake, 'Percent Stake', class: label_class),
+        o_form.number_field(:percent_stake, within: 0...101)
+      ) %>
+      <%= edit_entity_form_section(
+        o_form.label(:shares, 'Shares', class: label_class),
+        o_form.number_field(:shares)
+      ) %>
     <% end %>
   <% end %>
 
-  <%# notes: common to all %>
-  <div class="form-row">
-    <%= relationship_form_tag( f.label(:goods, 'Notes', class: label_class), f.text_area(:notes,  size: '40x6') )%>
-  </div>
+  <%= edit_entity_form_section(
+    f.label(:notes, 'Notes', class: label_class),
+    f.text_area(:notes,  size: '40x6')
+  ) %>
 
-  <div class="form-row">
-    <%= f.submit 'Update', class: 'btn btn-primary mr-2' %>
-    <%= link_to 'Cancel', relationship_path(@relationship), class: 'btn btn-secondary' %>
+  <div class="row">
+    <div class="col">
+      <%= f.submit 'Update', class: 'btn btn-primary mr-2' %>
+      <%= link_to 'Cancel', relationship_path(@relationship), class: 'btn btn-secondary' %>
+    </div>
   </div>
 
 <% end # end of <form> %>

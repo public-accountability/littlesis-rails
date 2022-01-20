@@ -1,12 +1,16 @@
+// Variables in base/globals custom bootstrap's default variables
+// see node_modules/bootstrap/scss/_variables.scss
 @import "base/globals";
 @import "bootstrap/scss/bootstrap";
-@import "base/bootstrap-migrate";
-@import "base/datatables";
+
+@import "actiontext";
+
 @import "base/helpers";
+@import "base/datatables";
 @import "base/layout";
 @import "base/hover";
 @import "base/spin";
-@import "actiontext";
+
 @import "styles/forms";
 @import "styles/bulk-table";
 @import "styles/carousel";

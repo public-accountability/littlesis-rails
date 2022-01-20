@@ -1,4 +1,4 @@
-<!-- locals: 'entity_alias' -->
+<%# locals: 'entity_alias' %>
 
 <% if entity_alias.persisted? # avoids blank caused by new alias associated with @entity %>
 
@@ -6,9 +6,7 @@
     <%= entity_alias.name %>
 
     <% if entity_alias.is_primary? %>
-
-      <span class="badge badge-primary"">Primary</span>
-
+      <span class="badge bg-primary">Primary</span>
     <% else %>
 
       <%= form_tag make_primary_alias_path(entity_alias), method: :patch, class: 'alias-form' do  %>

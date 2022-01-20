@@ -49,7 +49,7 @@ class EntityLastEditorPresenter
   end
 
   def history_link
-    content_tag(:span, class: 'pl-1') { link_to "#{HISTORY_ICON}".html_safe, concretize_history_entity_path(@entity) }
+    content_tag(:span, class: 'ps-1') { link_to "#{HISTORY_ICON}".html_safe, concretize_history_entity_path(@entity) }
   end
 
   def generate_html_old

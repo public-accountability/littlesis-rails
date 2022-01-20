@@ -67,7 +67,7 @@ describe 'Featured relationship admin', type: :feature do
       end
 
       it 'offers the featured relationship button' do
-        within '#action-buttons' do
+        within '#relationship-action-buttons' do
           expect(page).to have_button 'feature'
         end
       end
@@ -75,7 +75,7 @@ describe 'Featured relationship admin', type: :feature do
       it 'can feature and unfeature the relationship' do
         expect(relationships.last.is_featured).to be false
 
-        within '#action-buttons' do
+        within '#relationship-action-buttons' do
           click_button 'feature'
         end
 
@@ -83,7 +83,7 @@ describe 'Featured relationship admin', type: :feature do
 
         expect(relationships.last.reload.is_featured).to be true
 
-        within '#action-buttons' do
+        within '#relationship-action-buttons' do
           click_button 'unfeature'
         end
 

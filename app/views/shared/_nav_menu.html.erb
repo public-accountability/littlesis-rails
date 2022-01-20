@@ -1,42 +1,32 @@
-<%#
-Main Littlesis Top Navigation Menu
-
-shared/_bootstrap_nav_menu renders the dropdown menu options
-shared/_nav_menu_search renders the search box
-%>
-
-<nav class="navbar navbar-expand-md sticky-top">
-  <div class="<%= @fullscreen ? 'container-fluid' : 'container'  %>">
-    <div class="mr-auto">
+<%# Top Navigation Menu %>
+<nav class="navbar navbar-light sticky-top navbar-expand-lg">
+  <div class="container">
+    <div class="me-auto navbar-brand">
       <%= link_to(image_tag("lilsis-logo-trans-200.png"), signed_in? ? home_dashboard_path : root_path) %>
     </div>
 
-    <div class="collapse navbar-collapse">
-      <div class="mr-auto nav">
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#littlesisNavbarContent"
+            data-bs-target="#top_donate_link"
+            aria-controls="littlesisNavbarContent"  aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="littlesisNavbarContent">
+      <%= cache_unless user_signed_in?, 'anonymous_user_navmenu' do %>
         <%= render partial: 'shared/bootstrap_nav_menu' %>
-      </div>
-
-      <div id="navbar-notice" class="navbar-right-menu-item">
-        <% if content_for? :navbar_notice %>
-          <%= yield :navbar_notice %>
-        <% end  %>
-      </div>
-
-      <% if Rails.application.config.littlesis[:beta] %>
-        <div id="navbar-beta-notice" class="navbar-right-menu-item mr-2">
-          <span>
-            <abbr title="This is a beta version of LittleSis used for testing.&#10;Changes are not synced with our regular site.">
-              <strong>⚠ <%= Utility.current_git_commit %></strong></span>
-            </abbr>
-        </div>
-      <% else %>
-        <div id="top_donate_link" class="navbar-right-menu-item">
-	  <span><strong><%= link_to('Donate', '/donate', id: 'donate-link-button')%></strong></span>
-        </div>
       <% end %>
-
-      <div class="navbar-right-menu-item">
-        <%= render partial: 'shared/nav_menu_search' %>
-      </div>
     </div>
+
+    <div id="top_donate_link" class="collapse navbar-collapse justify-content-end">
+      <div class="me-1"><strong><%= link_to('Donate', '/donate', id: 'donate-link-button')%></strong></div>
+      <form action="/search" method="get" role="search" id="navbar-search">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Search LittleSis">
+          <button class="btn btn-clear" type="submit" ><i class="bi bi-search"></i></button>
+        </div>
+      </form>
+    </div>
+  </div>
 </nav>

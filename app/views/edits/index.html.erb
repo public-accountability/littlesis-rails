@@ -2,12 +2,13 @@
 
 <div class="row">
   <div class="col">
-    <h2 class="d-inline-block">
+    <div class="d-flex">
+      <h2>
       Recent Edits
     </h2>
 
     <% if current_user.admin?  %>
-      <div class="d-inline-block float-right mt-2">
+      <div class="ms-auto mt-2">
         <% if @without_system_users %>
           <a class="btn btn-primary btn-sm" href="/edits?page=<%= @page %>&without_system_users=false">show system edits</a>
         <% else %>
@@ -15,7 +16,7 @@
         <% end %>
       </div>
     <% end %>
-
+      </div>
   </div>
 </div>
 

@@ -10,22 +10,22 @@
   } do %>
 
 <div id="datatable-filters">
-  <div class="form-inline">
-    <select id="datatable-type" class="form-control">
+  <div class="d-flex">
+    <select id="datatable-type" class="form-select me-2">
       <%= options_for_select(table.types) %>
     </select>
     <% if table.interlocks? %>
-      <select id="datatable-interlock" class="form-control">
+      <select id="datatable-interlock" class="form-select me-2">
         <%= options_for_select(table.interlocks) %>
       </select>
     <% end %>
     <% if table.lists? %>
-      <select id="datatable-list-interlock" class="form-control">
+      <select id="datatable-list-interlock" class="form-select me-2">
         <%= options_for_select(table.list_interlocks) %>
       </select>
     <% end %>
-    <div class="buttons ml-2">
-      <%= link_to('Export CSV', '#', class: 'btn btn-primary', data: {action: 'click->list-datatable#exportCsv'}) %>
+    <div>
+      <%= link_to('Export CSV', '#', class: 'btn btn-primary me-2', data: {action: 'click->list-datatable#exportCsv'}) %>
     </div>
   </div>
 </div>

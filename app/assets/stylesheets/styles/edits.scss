@@ -48,7 +48,7 @@ form.alias-form {
     border-spacing: 0.3em;
 
     td {
-      @extend .no-border-top;
+      border-top: 0;
       padding-left: 0;
     }
 

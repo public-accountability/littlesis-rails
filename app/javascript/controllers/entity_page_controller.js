@@ -3,8 +3,6 @@ import $ from 'jquery'
 import select2 from 'select2'
 import utility from '../src/common/utility.mjs'
 
-
-
 export default class extends Controller {
   static targets = [
     'blurbPencil',
@@ -65,10 +63,6 @@ export default class extends Controller {
     $(this.summaryFullTarget).toggle()
     $(this.summaryMoreTarget).toggle()
     $(this.summaryLessTarget).toggle()
-  }
-
-  toggleRelationship(event) {
-    $(event.target).closest('.relationship-section').find('.collapse').collapse('toggle')
   }
 }
 

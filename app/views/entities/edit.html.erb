@@ -1,25 +1,33 @@
+<%
+# layout helpers
+label_class = 'col-form-label'
+
+date_text = {
+  'start' => { 'Org' => 'Start date:', 'Person' => 'Birth date' },
+  'end' => { 'Org' => 'End date:', 'Person' => 'Death date' }
+}
+
+is_current_text = {
+  'Org' => 'Is current?',
+  'Person' => 'Alive?'
+}
+
+%>
+
 <% content_for(:page_title, 'Edit: ' + @entity.name ) %>
 
-<% if notice %>
-  <div class="row no-gutters mt-5">
-    <div class="col-6">
-      <div class="alert alert-success"><%= notice %></div>
-    </div>
-  </div>
-<% end %>
-
 <%= render partial: 'header', locals: { entity: @entity } %>
-<%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
+<%= render partial: 'actions', locals: { entity: @entity } %>
 
 <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder, data: {controller: "entity-edit"} do |f| %>
 
-  <div class="row top-1em mb-2">
-    <div class="col-md-6 col-sm-6 col-xs-12">
+  <div class="row mb-2 mt-2">
+    <div class="col-sm-12 col-md-6">
       <%= render partial: 'shared/editing/reference_widget',
                  locals: { documents: RecentEntityReferencesQuery.run(@entity) } %>
     </div>
 
-    <div class="col-sm-4 col-sm-offset-1 col-xs-12">
+    <div class="col-sm-12 col-md-5 col-md-offset-1">
       <%= render partial: 'edit_errors' %>
     </div>
   </div>
@@ -30,134 +38,105 @@
     <%= render partial: 'type_checkboxes_org', locals: { f: f } %>
   <% end  %>
 
+  <%= edit_entity_form_section(
+    f.label(:blurb, 'Short Description', class: label_class),
+    f.text_field(:blurb, class: 'form-control')
+  ) %>
 
-  <% input_div_wrapper_class = 'entity-form-group' %>
-  <% label_class = 'entity-edit-label' %>
+  <%= edit_entity_form_section(
+    f.label(:summary, 'Summary:', class: label_class),
+    f.text_area(:summary, class: 'form-control', size: '40x6')
+  ) %>
 
-  <div class="<%= input_div_wrapper_class %>">
-    <%= f.label(:blurb, 'Short Description', class: label_class) %>
-    <div class="col-8">
-      <%= f.text_field(:blurb, class: 'form-control') %>
-    </div>
-  </div>
+  <%= edit_entity_form_section(
+    f.label(:start_date, date_text.dig('start', @entity.primary_ext), class: label_class),
+    f.text_field(:start_date) # + content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)')
+  ) %>
 
-  <div class="<%= input_div_wrapper_class %>">
-    <%= f.label(:summary, 'Summary:', class: label_class) %>
-    <div class="col-8">
-      <%= f.text_area(:summary, class: 'form-control', size: '40x6') %>
-    </div>
-  </div>
+  <%= edit_entity_form_section(
+    f.label(:end_date, date_text.dig('end', @entity.primary_ext), class: label_class),
+    f.text_field(:end_date) # + content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)')
+  ) %>
 
-  <% start_date_text = { 'Org' => 'Start date:', 'Person' => 'Birth date' } %>
-  <% end_date_text = { 'Org' => 'End date:', 'Person' => 'Death date' } %>
 
-  <div class="<%= input_div_wrapper_class %>">
-    <%= f.label(:start_date, start_date_text[@entity.primary_ext], class: label_class) %>
-    <div class="col-9">
-      <%= f.text_field(:start_date) %>
-      <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
-    </div>
-    <div class="clearfix"></div>
-  </div>
 
-  <div class="<%= input_div_wrapper_class %>">
-    <%= f.label(:end_date, end_date_text[@entity.primary_ext], class: label_class) %>
-    <div class="col-9">
-      <%= f.text_field(:end_date) %>
-      <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
-    </div>
-    <div class="clearfix"></div>
-  </div>
+  <%= edit_entity_form_section(
+    f.label(:is_current, is_current_text[@entity.primary_ext], class: label_class),
+    f.tri_boolean(:is_current)
+  ) %>
 
-  <% is_current_text = { 'Org' => 'Is current?', 'Person' => 'Alive?' } %>
-
-  <div class="<%= input_div_wrapper_class %>">
-    <%= f.label(:is_current, is_current_text[@entity.primary_ext], class: label_class) %>
-    <div class="col-sm-3">
-      <%= f.tri_boolean(:is_current) %>
-    </div>
-    <div class="clearfix"></div>
-  </div>
-
-  <div class="<%= input_div_wrapper_class %>">
-    <%= f.label(:website, "Website:", class: label_class) %>
-    <div class="col-3">
-      <%= f.url_field(:website) %>
-    </div>
-  </div>
+  <%= edit_entity_form_section(
+    f.label(:website, "Website:", class: label_class),
+    f.url_field(:website)
+  ) %>
 
   <% if @entity.person?  %>
-    <%= render partial: 'person_name_form_components', locals: { f: f, label_class: label_class } %>
+    <%= f.fields_for :person do |person_form| %>
+      <% %i[name_first name_middle name_last name_prefix name_suffix name_nick birthplace].each do |attribute| %>
+        <%= edit_entity_form_section(
+          person_form.label(attribute, Person::DISPLAY_ATTRIBUTES[attribute], class: label_class),
+          person_form.text_field(attribute)
+        ) %>
+      <% end %>
+      <%= edit_entity_form_section(
+        person_form.label(:gender, "Gender:", class: label_class),
+        person_form.select(:gender_id, gender_select_options(person_form))
+      ) %>
+    <% end %>
   <% end %>
-
 
   <% if @entity.has_extension?('PublicCompany') %>
     <%= f.fields_for :public_company do |public_company_form| %>
-      <div class="<%= input_div_wrapper_class %>">
-	<%= public_company_form.label(:ticker, 'Ticker', class: label_class) %>
-	<div class="col-sm-4">
-	  <%= public_company_form.text_field(:ticker) %>
-	</div>
-      </div>
+      <%= edit_entity_form_section(
+        public_company_form.label(:ticker, 'Ticker', class: label_class),
+        public_company_form.text_field(:ticker)
+      ) %>
     <% end %>
   <% end %>
 
   <% if @entity.has_extension?('Business') %>
     <%= f.fields_for :business do |business_form| %>
-      <div class="<%= input_div_wrapper_class %>">
-	      <%= business_form.label(:marketcap, 'Market capitalization', class: label_class) %>
-        <div class="col-sm-4">
-	        <%= business_form.number_field(:marketcap) %>
-	      </div>
-      </div>
-      <div class="<%= input_div_wrapper_class %>">
-	      <%= business_form.label(:assets, 'Assets', class: label_class) %>
-	      <div class="col-sm-4">
-	        <%= business_form.number_field(:assets) %>
-	      </div>
-      </div>
-      <div class="<%= input_div_wrapper_class %>">
-	      <%= business_form.label(:net_income, 'Net income', class: label_class) %>
-	      <div class="col-sm-4">
-	        <%= business_form.number_field(:net_income) %>
-	      </div>
-      </div>
-      <div class="<%= input_div_wrapper_class %>">
-	      <%= business_form.label(:annual_profit, 'Annual profit', class: label_class) %>
-	      <div class="col-sm-4">
-	        <%= business_form.number_field(:annual_profit) %>
-	      </div>
-      </div>
+      <%= edit_entity_form_section(
+        business_form.label(:marketcap, 'Market capitalization', class: label_class),
+        business_form.number_field(:marketcap)
+      ) %>
+      <%= edit_entity_form_section(
+        business_form.label(:assets, 'Assets', class: label_class),
+        business_form.number_field(:assets)
+      ) %>
+      <%= edit_entity_form_section(
+        business_form.label(:net_income, 'Net income', class: label_class),
+        business_form.number_field(:net_income)
+      ) %>
+      <%= edit_entity_form_section(
+        business_form.label(:annual_profit, 'Annual profit', class: label_class),
+        business_form.number_field(:annual_profit)
+      ) %>
     <% end %>
   <% end %>
 
   <% if @entity.has_extension?('School') %>
     <%= f.fields_for :school, @entity.school do |school_form| %>
-      <div class="<%= input_div_wrapper_class %>">
-	<%= school_form.label(:is_private, 'Private School?', class: label_class) %>
-	<div class="col-sm-4">
-	  <%= school_form.tri_boolean(:is_private) %>
-	</div>
-      </div>
+      <%= edit_entity_form_section(
+        school_form.label(:is_private, 'Private School?', class: label_class),
+        school_form.tri_boolean(:is_private)
+      ) %>
     <% end %>
   <% end %>
 
   <%# Regions %>
-  <div class="<%= input_div_wrapper_class %>">
-    <label for="region-select" class="<%= label_class %>">Location: </label>
-    <div class="col-sm-4">
-      <%= f.select(:regions,
-                   options_for_select(Location.regions.to_a, selected: @entity.region_numbers),
-                   { include_blank: true},
-                   { multiple: true }) %>
-    </div>
-  </div>
+  <%= edit_entity_form_section(
+    f.label(:regions, 'Location: ', class: label_class),
+    f.select(:regions,
+             options_for_select(Location.regions.to_a, selected: @entity.region_numbers),
+             { include_blank: true},
+             { multiple: true })
+  ) %>
 
-
-  <div class="<%= input_div_wrapper_class %>">
-    <div class="col-sm-3 nopadding">
+  <div class="row mb-3">
+    <div class="col-8">
       <%= f.submit 'Update', class: 'btn btn-primary' %>
-      <%= link_to 'Cancel', @entity.url, class: 'btn btn-secondary m-left-1em' %>
+      <%= link_to 'Cancel', @entity.url, class: 'btn btn-secondary ms-2' %>
     </div>
   </div>
 <% end  # end form-for %>

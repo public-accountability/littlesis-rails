@@ -3,7 +3,7 @@
 require 'getoptlong'
 require 'fileutils'
 
-REPO = File.expand_path(File.join(__dir__, '../')).freeze
+REPO = File.expand_path('..', __dir__).freeze
 
 $database = {
   name: ENV.fetch('LITTLESIS_DATABASE_NAME', 'littlesis'),
@@ -27,15 +27,26 @@ Commands
            build            build littlesis docker image
            bash             interative bash shell
            watch            follow rails logs
+           status           check status of application components
            console          launch rails console
            redis            launch redi cli
+           data             external data ETL tools
+           fec              FEC data ETL tools
+           deploy           deploys to latest commit on main
+           edit             select file to open with $EDITDOR
 
-LittleSis
-          data              ETL utilities for external data
-          fec               runs FEC data cli
-          deploy            deploys to latest commit on main
-
-Aliases:  bundle, pumactl, rspec, rails, yarn, git rg
+Aliases
+           bundle
+           pumactl
+           rspec
+           rails
+           psql
+           pg_dump
+           pg_restore
+           yarn
+           git
+           rg
+           find
 
 TEXT
 end
@@ -124,6 +135,11 @@ def status
   end
 end
 
+def yes_or_no?(msg)
+  printf "#{msg}\n\e[31mpress 'y' to continue: \e[0m"
+  $stdin.gets.strip.casecmp('y').zero?
+end
+
 def deploy
   raise "Cannot deploy unless mode = production" unless production_environment?
 
@@ -132,9 +148,8 @@ def deploy
   modified_files = git("ls-files -m").split("\n")
 
   if modified_files.count.positive?
-    puts "The following files have been modified:\n#{modified_files.join("\n")}"
-    puts "Are you sure you want to deploy? (y/n)"
-    exit 1 unless $stdin.gets.strip.casecmp('y').zero?
+    puts "The following files have been modified:\n#{modified_files.join("\n")}\n"
+    exit 1 unless yes_or_no?("Are you sure you want to deploy?")
   end
 
   puts "deploying branch #{$deploy_branch}"
@@ -243,7 +258,11 @@ when 'up'
 when 'down'
   docker_compose 'down'
 when 'delete'
-  docker_compose 'down -v'
+  exit 1 if production_environment?
+
+  if yes_or_no?("This is will delete the postgres database.")
+    docker_compose 'down -v'
+  end
 when 'build'
   Dir.chdir(REPO) { exec "docker build -t littlesis:latest ." }
 when 'pumactl'
@@ -266,7 +285,8 @@ when 'bash'
 when 'console', 'c'
   app_exec "rails c #{rest}", bin: true, run: true
 when 'redis'
-  app_exec "/usr/bin/redis-cli -h redis"
+  redis_host = production_environment? ? '127.0.0.1' : 'redis'
+  app_exec "/usr/bin/redis-cli -h #{redis_host}", run: true
 when 'data'
   app_exec_bin "rails runner lib/scripts/data.rb #{rest}"
 when 'fec'
@@ -275,6 +295,17 @@ when 'git'
   puts git(rest)
 when 'rg', 'search'
   Dir.chdir(REPO) { exec "rg #{rest}" }
+when 'find'
+  Dir.chdir(REPO) { exec "find #{rest}" }
+when 'edit'
+  Dir.chdir(REPO) do
+    selected = if rest == ''
+                 `fd | fzf`.chomp
+               else
+                 rest
+               end
+    exec "$EDITOR #{selected}"
+  end
 when 'psql', 'pg_dump', 'pg_restore'
   docker_compose 'run --rm postgres', ARGV.join(' '), database_connection
 when 'status'
