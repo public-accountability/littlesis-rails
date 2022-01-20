@@ -15,7 +15,6 @@ feature "Signing up for an account", type: :feature do
 
     page_has_selector 'h2', text: 'Get Involved!'
     page_has_selector 'h3', text: 'Become an analyst!'
-    expect(page).to have_text "Tell me more about Map the Power!"
     expect(page).to have_text "What are your research interests? What are you hoping to use LittleSis for?"
   end
 
@@ -41,10 +40,9 @@ feature "Signing up for an account", type: :feature do
 
     last_user = User.last
     expect(last_user.newsletter).to be true
-    expect(last_user.map_the_power).to be false
   end
 
-  scenario 'Fills out form and signs up with location field and checks map the power' do
+  scenario 'Fills out form and signs up with location field' do
     location = 'the center of the earth'
 
     fill_in 'user_user_profile_attributes_name_first', :with => user_info.first_name
@@ -58,15 +56,12 @@ feature "Signing up for an account", type: :feature do
     fill_in 'user_user_profile_attributes_location', :with => location
     fill_in_math_captcha('math_captcha')
 
-    find(:css, "#user_map_the_power").set(true)
-
     click_button 'Sign up'
 
     expect(UserProfile.last.location).to eql location
 
     last_user = User.last
     expect(last_user.email).to eql user_info.email
-    expect(last_user.map_the_power).to be true
   end
 
   describe 'Attempting to signup with a username that is already taken' do

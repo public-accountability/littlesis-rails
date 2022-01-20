@@ -136,7 +136,7 @@ export default class extends Controller {
 
   showSearchResults(data) {
     this.nothingFoundTarget.style.display = 'none'
-    $(this.resultsTarget).html('<table class="table compact hover"></table>')
+    $(this.resultsTarget).html('<table class="table compact hover" id="add-relationship-search-results-table"></table>')
     $(this.resultsTarget).find('table').DataTable({
       data: data,
       columns: resultsDataTableColumns,
@@ -196,6 +196,7 @@ export default class extends Controller {
     const errors = this.catchErrors(sd)
 
     if (isEmpty(errors)) {
+      console.log('creating a new relationship:', sd)
       Http.post('/relationships', sd)
         .then(data => {
           window.location.replace("/relationships/" + data.relationship_id + "/edit?new_ref=true")
@@ -205,6 +206,7 @@ export default class extends Controller {
           this.displayErrors({ server: true })
         })
     } else {
+      console.log('cannot create relationship:', errors)
       this.displayErrors(errors)
     }
   }

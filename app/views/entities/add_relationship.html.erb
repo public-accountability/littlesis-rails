@@ -3,12 +3,6 @@
 <%= render partial: 'header', locals: { entity: @entity } %>
 <%= render partial: 'explain_categories_modal' %>
 
-<div id="entity-info"
-     data-entitytype="<%= @entity.primary_ext %>"
-     data-entityid="<%= @entity.id %>"
-     data-school="<%= @entity.school?.to_s %>">
-</div>
-
 <div class="mt-3"
      data-controller="relationship-creator"
      data-relationship-creator-entity1-id-value="<%= @entity.id %>"
@@ -24,8 +18,8 @@
       </h2>
 
       <div class="input-group" style="max-width: 400px;">
-        <input type="text" class="form-control" data-relationship-creator-target="search" placeholder="Name" aria-label="Name to search">
-        <button class="btn btn-primary" type="button" data-action="click->relationship-creator#search">Search</button>
+        <input type="text" class="form-control" data-relationship-creator-target="search" placeholder="Name" aria-label="Name to search" id="add-relationship-search-input">
+        <button class="btn btn-primary" type="button" data-action="click->relationship-creator#search" id="add-relationship-search-btn">Search</button>
       </div>
     </div>
   </div>
@@ -83,7 +77,7 @@
       <!-- Submit Button -->
       <div class="row" >
         <div class="col-sm-4 top-1em">
-	  <button data-action="click->relationship-creator#submit"type="button" class="btn btn-primary" id="create-relationship-btn">Create Relationship</button>
+	  <button data-action="click->relationship-creator#submit" type="button" class="btn btn-primary" id="create-relationship-btn">Create Relationship</button>
         </div>
       </div>
 

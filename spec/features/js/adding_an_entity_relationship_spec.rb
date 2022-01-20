@@ -21,12 +21,10 @@ feature 'Adding an entity relationship', :sphinx, type: :feature, js: true do
     end
     expect(page).to have_css('h2', text: 'Create a new relationship')
 
-    within '.add-relationship-entity-search-input-group' do
-      fill_in 'name-to-search', with: entity2.name
-      click_on 'Search'
-    end
+    fill_in 'add-relationship-search-input', with: entity2.name
+    click_on 'add-relationship-search-btn'
 
-    within '#results-table' do
+    within '#add-relationship-search-results-table' do
       expect(page).to have_text('Graeme Glamp')
       click_on 'select'
     end
@@ -41,8 +39,9 @@ feature 'Adding an entity relationship', :sphinx, type: :feature, js: true do
       click_on 'Create Reference'
       fill_in 'reference-url', with: Faker::Internet.url
       fill_in 'reference-name', with: Faker::Company.name
-      click_on 'Create Relationship'
     end
+
+    click_on 'create-relationship-btn'
 
     expect(page).to have_css('h1', text: "Family: #{entity.name}, #{entity2.name}")
     visit person_path(entity)

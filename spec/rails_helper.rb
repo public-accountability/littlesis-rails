@@ -38,6 +38,9 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
 
+# Selenium::WebDriver.logger.level = :debug
+# Selenium::WebDriver.logger.output = 'tmp/selenium.log'
+
 Capybara.register_driver :headless_chrome do |app|
   options = Selenium::WebDriver::Chrome::Options.new
   options.headless!
@@ -49,9 +52,11 @@ Capybara.register_driver :headless_chrome do |app|
 end
 
 Capybara.register_driver :headless_firefox do |app|
-  options = Selenium::WebDriver::Firefox::Options.new
+  options = Selenium::WebDriver::Firefox::Options.new(log_level: :trace)
   options.headless!
-  Capybara::Selenium::Driver.new(app, browser: :firefox, options: options)
+  options.add_preference('devtools.console.stdout.content', true)
+
+  Capybara::Selenium::Driver.new(app, browser: :firefox, capabilities: [options])
 end
 
 Capybara.raise_server_errors = false
