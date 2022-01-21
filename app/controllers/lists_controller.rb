@@ -17,7 +17,7 @@ class ListsController < ApplicationController
                                   :modifications]
 
   before_action :set_permissions, only: [:members, :references, :edit, :update, :destroy]
-  before_action :set_entity, only: :index
+  # before_action :set_entity, only: :index
   before_action -> { check_access(:viewable) }, only: [:members, :references]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
 
@@ -26,13 +26,17 @@ class ListsController < ApplicationController
   before_action :set_page, only: [:modifications]
 
   def index
-    page = params[:page] || 1
-    per = 20
+    lists_query = ListsIndexQuery.new
+    lists_query.page(params[:page] || 1)
+    lists_query.only_featured if params[:only_featured]
+    lists_query.for_entity(params[:entity_id]) if params[:entity_id]
 
-    @lists = search_lists(available_scope)
-      .force_reorder(params[:sort_by], params[:order])
-      .page(page)
-      .per(per)
+    @lists = lists_query.run(params[:q] || '')
+
+    # @lists = search_lists(available_scope)
+    #            .force_reorder(params[:sort_by], params[:order])
+    #            .page(page)
+    #            .per(per)
 
     respond_to do |format|
       format.html

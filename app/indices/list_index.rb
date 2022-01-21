@@ -5,8 +5,9 @@ ThinkingSphinx::Index.define :list, :with => :real_time do
 
   has is_featured, type: :boolean
   has is_deleted, type: :boolean
-  has is_admin, type: :boolean
-  has access, type: :integer, facet: true
-  has entity_count, type: :integer, facet: true
+  has id, as: :id_number, type: :integer
+  # has is_admin, type: :boolean
+  has access, type: :integer
+  has entity_count, type: :integer
   has updated_at, type: :timestamp
 end

@@ -18,11 +18,21 @@
   <div class="col">
     <%= form_tag(lists_path, method: :get, id: 'search-lists') do %>
       <div class="d-flex">
-        <input class="col-form-control d-inline me-2" id="list-search" type="text" name="q" value="<%= params[:q] %>" placeholder="list name">
+        <input class="col-form-control d-inline me-2"
+               id="list-search"
+               type="text" name="q"
+               value="<%= params[:q] %>"
+               placeholder="list name">
 
         <select data-controller="entity-autocomplete" style="width: 250px;;" name="entity_id"
                 data-entity-autocomplete-preselected-value="<%= params[:entity_id] %>">
         </select>
+
+        <div class="form-check form-switch">
+          <input name="only_featured" class="form-check-input" type="checkbox" role="switch" id="lists-only-featured">
+          <label class="form-check-label" for="lists-only-featured">featured</label>
+        </div>
+
 
         <input type="submit" value="Search" class="btn btn-secondary ms-2">
       </div>
@@ -30,9 +40,10 @@
   </div>
 </div>
 
-<div class="row mt-3">
+<div class="row">
   <div class="col">
     <%= paginate @lists %>
+    <%#= paginate @lists %>
   </div>
 </div>
 
