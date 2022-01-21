@@ -9,5 +9,6 @@ ThinkingSphinx::Index.define :list, :with => :real_time do
   # has is_admin, type: :boolean
   has access, type: :integer
   has entity_count, type: :integer
+  has created_at, type: :timestamp
   has updated_at, type: :timestamp
 end

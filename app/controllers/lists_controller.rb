@@ -26,17 +26,14 @@ class ListsController < ApplicationController
   before_action :set_page, only: [:modifications]
 
   def index
+    params.with_defaults!(order_column: :created_at, order_direction: :desc)
     lists_query = ListsIndexQuery.new
     lists_query.page(params[:page] || 1)
-    lists_query.only_featured if params[:only_featured]
+    lists_query.only_featured if ParamsHelper.cast_to_boolean(params[:featured])
     lists_query.for_entity(params[:entity_id]) if params[:entity_id]
+    lists_query.order_by(params[:order_column].to_sym, params[:order_direction].to_sym)
 
     @lists = lists_query.run(params[:q] || '')
-
-    # @lists = search_lists(available_scope)
-    #            .force_reorder(params[:sort_by], params[:order])
-    #            .page(page)
-    #            .per(per)
 
     respond_to do |format|
       format.html
@@ -117,10 +114,6 @@ class ListsController < ApplicationController
     @list = List.find(params[:id])
   end
 
-  def set_entity
-    @entity = Entity.find(params[:entity_id]) if params[:entity_id].present?
-  end
-
   def list_params # rubocop:disable Metrics/MethodLength
     params.require(:list)
       .permit(
@@ -147,31 +140,31 @@ class ListsController < ApplicationController
     end
   end
 
-  def basic_scope
-    scope = List.viewable(current_user)
+  # def basic_scope
+  #   scope = List.viewable(current_user)
 
-    ActiveModel::Type::Boolean.new.cast(params[:featured]) ? scope.featured : scope
-  end
+  #   ActiveModel::Type::Boolean.new.cast(params[:featured]) ? scope.featured : scope
+  # end
 
-  def available_scope
-    return basic_scope unless @entity
+  # def available_scope
+  #   return basic_scope unless @entity
 
-    basic_scope.where(id: @entity.lists.pluck(:id))
-  end
+  #   basic_scope.where(id: @entity.lists.pluck(:id))
+  # end
 
-  def search_lists(lists)
-    return lists if params[:q].blank?
+  # def search_lists(lists)
+  #   return lists if params[:q].blank?
 
-    ids = List.search_for_ids(
-      Riddle::Query.escape(params[:q]),
-      with: { is_deleted: 0, is_admin: search_admin_param }
-    )
-    lists.where(id: ids)
-  end
+  #   ids = List.search_for_ids(
+  #     Riddle::Query.escape(params[:q]),
+  #     with: { is_deleted: 0, is_admin: search_admin_param }
+  #   )
+  #   lists.where(id: ids)
+  # end
 
-  def search_admin_param
-    current_user&.admin? ? [0, 1] : 0
-  end
+  # def search_admin_param
+  #   current_user&.admin? ? [0, 1] : 0
+  # end
 
   def format_lists(lists)
     { results: lists.map { |l| l.attributes.merge(text: l.name) } }

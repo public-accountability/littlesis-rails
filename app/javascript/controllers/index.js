@@ -52,6 +52,9 @@ application.register("list-datatable", ListDatatableController)
 import ListSettingsController from "./list_settings_controller.js"
 application.register("list-settings", ListSettingsController)
 
+import ListsSearchController from "./lists_search_controller.js"
+application.register("lists-search", ListsSearchController)
+
 import MatchContributionsController from "./match_contributions_controller.js"
 application.register("match-contributions", MatchContributionsController)
 
