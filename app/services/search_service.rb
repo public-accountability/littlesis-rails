@@ -31,11 +31,10 @@ class SearchService
   def lists
     return @lists if defined?(@lists)
 
-    list_is_admin = @admin ? [0, 1] : 0
     @lists = List.search(
       "@(name,description) #{@escaped_query}",
       per_page: 10,
-      with: { is_deleted: false, is_admin: list_is_admin },
+      with: { is_deleted: false  },
       without: { access: Permissions::ACCESS_PRIVATE },
       order: "is_featured DESC",
       populate: true

@@ -54,7 +54,7 @@ describe SearchService do
                       .with("@(name,description) foo",
                             per_page: 10,
                             populate: true,
-                            with: { is_deleted: false, is_admin: 0 },
+                            with: { is_deleted: false },
                             without: { access: Permissions::ACCESS_PRIVATE },
                             order: "is_featured DESC"
                            )
@@ -68,7 +68,7 @@ describe SearchService do
                       .with("@(name,description) foo",
                             per_page: 10,
                             populate: true,
-                            with: { is_deleted: false, is_admin: [0, 1] },
+                            with: { is_deleted: false },
                             without: { access: Permissions::ACCESS_PRIVATE },
                             order: "is_featured DESC"
                            )

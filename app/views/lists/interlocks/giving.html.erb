@@ -1,38 +1,35 @@
-<% content_for(:page_title, raw(@list.name + ' - Interlocks')) %>
+<% content_for(:page_title, "#{@list.name} - Interlocks") %>
 
 <%= render partial: 'lists/header', locals: { list: @list } %>
 <%= render partial: 'lists/tabs', locals: { list: @list, selected_tab: :giving } %>
 
-<%= dismissable_alert('list_giving_alert', 'list-tab-alert') do %>
-  People on this list have donated to following organizations.
-<% end %>
-
-<% cache( [ @list.cache_key_with_version, 'giving', @page ], expires_in: 1.day) do %>
-
-  <% if @interlocks.count > 0 %>
-  <h3>Common Recipients</h3>
-  <% if local_assigns[:preview] %>
-    <%= paginate_preview(@interlocks, 5, giving_list_path) %>
-  <% else %>
-    <%= paginate(@interlocks) %>
+<% if @interlocks.count > 0 %>
+  <% cache( [ @list.cache_key_with_version, 'giving', @page ], expires_in: 1.day) do %>
+    <div class="row">
+      <div class="col">
+        <h3>Common Recipients</h3>
+        <% if local_assigns[:preview] %>
+          <%= paginate_preview(@interlocks, 5, giving_list_path) %>
+        <% else %>
+          <%= paginate(@interlocks) %>
+        <% end %>
+        <table class="table interlocks-table">
+          <thead>
+            <th>Recipient</th>
+            <th>Total</th>
+            <th>People</th>
+          </thead>
+          <tbody>
+            <% (local_assigns[:preview] ? @interlocks.take(5) : @interlocks).each do |org| %>
+              <tr>
+                <td><strong><%= link_to org.name, concretize_entity_path(org) %></strong></td>
+                <td><%= number_to_currency(org['total_amount'].to_i, precision: 0) %></td>
+                <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
   <% end %>
-  <table class="table interlocks-table">
-    <thead>
-      <th>Recipient</th>
-      <th>Total</th>
-      <th>People</th>
-    </thead>
-    <tbody>
-      <% (local_assigns[:preview] ? @interlocks.take(5) : @interlocks).each do |org| %>
-        <tr>
-          <td><strong><%= link_to org.name, concretize_entity_path(org) %></strong></td>
-          <td><%= number_to_currency(org['total_amount'].to_i, precision: 0) %></td>
-          <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-  <br>
-  <% end %>
-
 <% end %>

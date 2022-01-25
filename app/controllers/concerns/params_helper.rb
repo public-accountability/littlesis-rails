@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module ParamsHelper
-  YES_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'True', 'yes', 'Yes', 'YES', 'Y', 'y'].to_set.freeze
-  NO_VALUES = [false, 0, '0', '00', 'f', 'F', 'false', 'False', 'FALSE', 'NO', 'N', 'no', 'No', 'n'].to_set.freeze
+  YES_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'True', 'yes', 'Yes', 'YES', 'Y', 'y', 'on', 'ON'].to_set.freeze
+  NO_VALUES = [false, 0, '0', '00', 'f', 'F', 'false', 'False', 'FALSE', 'NO', 'N', 'no', 'No', 'n', 'off', 'OFF'].to_set.freeze
   NIL_VALUES = [nil, '', 'NULL', 'null', 'NIL', 'nil'].to_set.freeze
 
   private_constant :YES_VALUES

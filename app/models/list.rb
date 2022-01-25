@@ -29,7 +29,7 @@ class List < ApplicationRecord
 
   def self.viewable(user)
     if user
-      public_scope.or(user.lists).order_by_entity_count.order_by_user(user)
+      public_scope.or(user.lists) # .order_by_entity_count.order_by_user(user)
     else
       public_scope
     end

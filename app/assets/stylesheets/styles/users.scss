@@ -1,57 +1,57 @@
 .user_image {
-	height: $user_image_size;
-	width: $user_image_size;
-  background-size: cover;
-  background-position: center center;
-  border-radius: 0.5em;
+    height: $user_image_size;
+    width: $user_image_size;
+    background-size: cover;
+    background-position: center center;
+    border-radius: 0.5em;
 }
 
 .users_image {
-	width: 75px;
+    width: 75px;
 }
 
 .users_username {
-	font-weight: bold;
-	width: 150px;
-	word-wrap: break-word;
-	overflow: auto;
+    font-weight: bold;
+    width: 150px;
+    word-wrap: break-word;
+    overflow: auto;
 }
 
 .users_name_bio {
-  width: 250px;
+    width: 250px;
 }
 
 .users_groups {
-  width: 250px;
-  font-weight: 500;
+    width: 250px;
+    font-weight: 500;
 }
 
 #remember-me-container label {
-  display: inline-block;
-  padding-right: 1em;
+    display: inline-block;
+    padding-right: 1em;
 }
 
 #user-header {
-  margin-top: -14px;
-  margin-bottom: 20px;
+    margin-top: -14px;
+    margin-bottom: 20px;
 }
 
 #user-name {
-  font-size: 42px;
-  line-height: 60px;
-  font-weight: 500;
+    font-size: 42px;
+    line-height: 60px;
+    font-weight: 500;
 
-  a:hover {
-    text-decoration: none;
-  }
+    a:hover {
+        text-decoration: none;
+    }
 }
 
 .permission-name {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .permission-boolean {
-  padding-left: 20px;
+    padding-left: 20px;
 }
 
 .user-page-table {

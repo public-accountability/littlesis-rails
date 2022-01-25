@@ -1940,6 +1940,18 @@ ALTER SEQUENCE public.generic_id_seq OWNED BY public.generic.id;
 
 
 --
+-- Name: good_job_processes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.good_job_processes (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    state jsonb
+);
+
+
+--
 -- Name: good_jobs; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -5359,6 +5371,14 @@ ALTER TABLE ONLY public.generic
 
 
 --
+-- Name: good_job_processes good_job_processes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.good_job_processes
+    ADD CONSTRAINT good_job_processes_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: good_jobs good_jobs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7523,6 +7543,20 @@ CREATE UNIQUE INDEX index_fec_matches_on_sub_id ON public.fec_matches USING btre
 
 
 --
+-- Name: index_good_jobs_jobs_on_finished_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_jobs_on_finished_at ON public.good_jobs USING btree (finished_at) WHERE ((retried_good_job_id IS NULL) AND (finished_at IS NOT NULL));
+
+
+--
+-- Name: index_good_jobs_on_active_job_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_active_job_id ON public.good_jobs USING btree (active_job_id);
+
+
+--
 -- Name: index_good_jobs_on_active_job_id_and_created_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8358,6 +8392,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20211119155729'),
 ('20211208180233'),
 ('20211209202625'),
-('20211209205525');
+('20211209205525'),
+('20220121202742'),
+('20220121202743'),
+('20220121202744'),
+('20220121202745');
 
 

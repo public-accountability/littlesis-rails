@@ -3,36 +3,35 @@
 <%= render partial: 'lists/header', locals: { list: @list } %>
 <%= render partial: 'lists/tabs', locals: { list: @list, selected_tab: :funding } %>
 
-<%= dismissable_alert('list_funding_alert', 'list-tab-alert') do %>
-  People on this list have received money from the following people and organizations.
-<% end %>
-
-<% cache( [ @list.cache_key_with_version, 'funding', @page ], expires_in: 1.day) do %>
-
-  <% if @interlocks.count > 0 %>
-  <h3>Common Donors</h3>
-  <% if local_assigns[:preview] %>
-    <%= paginate_preview(@interlocks, 5, funding_list_path) %>
-  <% else %>
-    <%= paginate(@interlocks) %>
-  <% end %>
-  <table class="table interlocks-table">
-    <thead>
-      <th>Donor</th>
-      <th>Total</th>
-      <th>People</th>
-    </thead>
-    <tbody>
-      <% (local_assigns[:preview] ? @interlocks.take(5) : @interlocks).each do |org| %>
-        <tr>
-          <td><strong><%= link_to org.name, concretize_entity_path(org) %></strong></td>
-          <td><%= number_to_currency(org['total_amount'].to_i, precision: 0) %></td>
-          <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
-        </tr>
+<div class="row">
+  <div class="col">
+    <% cache( [ @list.cache_key_with_version, 'funding', @page ], expires_in: 1.day) do %>
+      <% if @interlocks.count > 0 %>
+        <h3>Common Donors</h3>
+        <% if local_assigns[:preview] %>
+          <%= paginate_preview(@interlocks, 5, funding_list_path) %>
+        <% else %>
+          <%= paginate(@interlocks) %>
+        <% end %>
+        <table class="table interlocks-table">
+          <thead>
+            <th>Donor</th>
+            <th>Total</th>
+            <th>People</th>
+          </thead>
+          <tbody>
+            <% (local_assigns[:preview] ? @interlocks.take(5) : @interlocks).each do |org| %>
+              <tr>
+                <td><strong><%= link_to org.name, concretize_entity_path(org) %></strong></td>
+                <td><%= number_to_currency(org['total_amount'].to_i, precision: 0) %></td>
+                <td><%= raw(Entity.where(id: org['degree1_ids'].split(',')).map { |entity| entity_link(entity) }.join(", ")) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <br>
       <% end %>
-    </tbody>
-  </table>
-  <br>
-  <% end %>
 
-<% end %>
+    <% end %>
+  </div>
+</div>

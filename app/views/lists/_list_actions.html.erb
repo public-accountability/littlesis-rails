@@ -1,28 +1,28 @@
-<div class="list-actions">
-  <% if @permissions[:configurable] %>
-    <%= link_to('edit', edit_list_path(list), class: 'btn btn-clear') %>
-    <%= button_to('delete', list_path(list),
-                  class: 'btn btn-clear',
-                  method: :delete,
-                  remote: false,
-                  form: {
-                    class: 'd-inline',
-                    onsubmit: "return confirm('Are you sure you want to delete this list?')"
-    })
-    %>
-  <% else %>
-    <%= link_to 'request removal', new_deletion_requests_list_path(list_id: @list.id), class: 'btn btn-clear' %>
-  <% end %>
+<div class="row mt-3">
+  <div class="col">
+    <div class="list-actions">
+      <% if @permissions[:configurable] %>
+        <%= link_to('edit', edit_list_path(list), class: 'btn btn-clear') %>
+        <%= button_to('delete', list_path(list),
+                      class: 'btn btn-clear',
+                      method: :delete,
+                      remote: false,
+                      form: {
+                        class: 'd-inline',
+                        onsubmit: "return confirm('Are you sure you want to delete this list?')"
+        })
+        %>
+      <% else %>
+        <%= link_to 'request removal', new_deletion_requests_list_path(list_id: @list.id), class: 'btn btn-clear' %>
+      <% end %>
 
-  <% if @permissions[:editable] %>
-    <% if has_ability?('bulker') %>
-      <%= link_to('add bulk', new_list_entity_association_path(list), class: 'btn btn-clear') %>
-    <% end %>
-
-    <select data-controller="entity-autocomplete"
-            style="width: 250px; height: 38px;"
-            name="add-to-list"
-            data-entity-autocomplete-listid-value="<%= @list.id %>">
-    </select>
-  <% end %>
+      <% if @permissions[:editable] %>
+        <select data-controller="entity-autocomplete"
+                style="width: 250px; height: 38px;"
+                name="add-to-list"
+                data-entity-autocomplete-listid-value="<%= @list.id %>">
+        </select>
+      <% end %>
+    </div>
+  </div>
 </div>
