@@ -1,19 +1,4 @@
 describe 'lists', type: :feature do
-  describe 'index' do
-    before do
-      entity = create(:entity_org)
-      ListEntity.find_or_create_by(list_id: create(:list).id, entity_id: entity.id)
-      ListEntity.find_or_create_by(list_id: create(:list, name: 'my interesting list').id, entity_id: entity.id)
-    end
-
-    specify do
-      visit '/lists'
-      page_has_selector '.alert-info'
-      page_has_selector 'input#list-search'
-      page_has_selector '.lists_table_name', count: 2
-    end
-  end
-
   describe 'list page', type: :feature do
     let(:document_attributes) { attributes_for(:document) }
 
@@ -57,22 +42,6 @@ describe 'lists', type: :feature do
         visit list_path(list)
         expect(page).to have_selector '#list-tags-container'
         expect(page).to have_selector '#tags-list li', text: tag.name
-      end
-    end
-
-    scenario 'sorting lists by date/time created' do
-      visit lists_path
-
-      find('#lists th .created_at.sorting').click
-      expect(page).to have_current_path(lists_path(sort_by: :created_at, order: :desc))
-      within "#lists" do
-        expect(first("tbody tr")[:id]).to eq("list_#{list.id}")
-      end
-
-      find('#lists th .created_at.sorting').click
-      expect(page).to have_current_path(lists_path(sort_by: :created_at, order: :asc))
-      within "#lists" do
-        expect(first("tbody tr")[:id]).to eq("list_#{earlier_list.id}")
       end
     end
 

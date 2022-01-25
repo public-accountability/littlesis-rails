@@ -38,10 +38,5 @@ describe 'lists/header', :tag_helper, type: :view do
                                       :locals => { tags: tags, include_title: true })
       css 'h4', text: 'Tags'
     end
-
-    it 'shows tags on right' do
-      not_css '#list-name div.col-sm-12'
-      css '#list-name div.col-sm-8'
-    end
   end
 end
