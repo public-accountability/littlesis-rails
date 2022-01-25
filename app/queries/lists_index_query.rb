@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-# ThinkingSphinx::Query.escape
-
 class ListsIndexQuery
-  SEARCHABLE_COLUMNS = %i[created_at entity_count].freeze
+  SORTABLE_COLUMNS = %i[created_at entity_count name].freeze
 
   def initialize
     @options = {
@@ -27,9 +25,12 @@ class ListsIndexQuery
   end
 
   def order_by(column, direction = :desc)
-    unless %i[asc desc].include?(direction) && SEARCHABLE_COLUMNS.include?(column)
+    unless %i[asc desc].include?(direction) && SORTABLE_COLUMNS.include?(column)
       raise ArgumentError
     end
+
+    # content fields that are sortable require the suffix "_sort"
+    column = 'name_sort' if column == :name
 
     @options[:order] = "#{column} #{direction}"
     self

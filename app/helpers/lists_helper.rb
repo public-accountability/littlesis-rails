@@ -1,15 +1,22 @@
 # frozen_string_literal: true
 
 module ListsHelper
-  def list_column_icon(direction)
-    case direction&.to_sym
-    when :desc
-      tag(:i, class: "bi bi-sort-down")
-    when :asc
-      tag(:i, class: "bi bi-sort-up")
-    else
-      tag(:i, class: "bi bi-filter")
+  def list_column_icon(column)
+    classes = ['bi', 'list-sort-icon', 'rounded', 'p-1', 'bi-filter']
+    current_ordered_column = params[:order_column].to_sym
+    current_ordered_direction = params[:order_direction].to_sym
+
+    if column == current_ordered_column
+      case current_ordered_direction
+      when :desc
+        classes[-1] = 'bi-sort-down'
+      when :asc
+        classes[-1] = 'bi-sort-up'
+      end
     end
+
+    data = { 'action' => 'click->lists-search#setDirection', 'column' => column }
+    tag.i(class: classes.join(' '), data: data)
   end
 
   # symbol, list -> <ul>

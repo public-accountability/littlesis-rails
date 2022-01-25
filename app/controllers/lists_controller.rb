@@ -31,7 +31,9 @@ class ListsController < ApplicationController
     lists_query.page(params[:page] || 1)
     lists_query.only_featured if ParamsHelper.cast_to_boolean(params[:featured])
     lists_query.for_entity(params[:entity_id]) if params[:entity_id]
-    lists_query.order_by(params[:order_column].to_sym, params[:order_direction].to_sym)
+    unless params[:order_direction].empty?
+      lists_query.order_by(params[:order_column].to_sym, params[:order_direction].to_sym)
+    end
 
     @lists = lists_query.run(params[:q] || '')
 

@@ -111,3 +111,11 @@ td.lists_table_name {
         height: 38px !important;
     }
 }
+
+
+.list-sort-icon {
+    &:hover {
+        background-color: $blue-100;
+        cursor: pointer;
+    }
+}
