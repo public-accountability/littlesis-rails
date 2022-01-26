@@ -103,6 +103,8 @@ LittleSis::Application.routes.draw do
         member do
           # profile page
           get ':tab', to: 'entities#show', constraints: {tab: /interlocks|giving/}, as: 'tab'
+          # new profile page
+          get 'profile'
           get 'political'
           get 'datatable'
           get 'references'

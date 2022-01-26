@@ -13,10 +13,9 @@ class EntitiesController < ApplicationController
 
   EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation].freeze
   IMPORTER_ACTIONS = %i[match_donation match_donations review_donations].freeze
+  PUBLIC_ACTIONS = %i[show datatable political contributions references validate profile].freeze
 
-  before_action :authenticate_user!,
-                except: [:show, :datatable, :political, :contributions, :references,
-                         :validate]
+  before_action :authenticate_user!, except: PUBLIC_ACTIONS
   before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
   before_action :importers_only, only: IMPORTER_ACTIONS
@@ -26,6 +25,10 @@ class EntitiesController < ApplicationController
   before_action :check_delete_permission, only: [:destroy]
 
   def show
+  end
+
+  # new profile page
+  def profile
   end
 
   def political

@@ -7,12 +7,10 @@
     <%= stylesheet_link_tag "application", media: "all" %>
     <%= stylesheet_link_tag "bootstrap-icons", media: "all"  %>
     <%= csrf_meta_tags %>
-    <%= yield :head if content_for?(:head) %>
     <%= javascript_include_tag "application", defer: true %>
+    <%= yield :head if content_for?(:head) %>
   </head>
-
   <body>
-
     <% unless content_for? :hide_top %>
       <%= render partial: 'shared/nav_menu' %>
     <% end %>
@@ -44,5 +42,4 @@
     <% end %>
 
   </body>
-
 </html>
