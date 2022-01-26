@@ -1,4 +1,4 @@
-describe 'entities/show.html.erb' do
+describe 'entities/show' do
   let(:user) { create_basic_user }
 
   let(:entity) do

@@ -1,4 +1,4 @@
-describe 'lists/new.html.erb' do
+describe 'lists/new' do
   describe 'layout with no error' do
     context 'not admin' do
       before do
