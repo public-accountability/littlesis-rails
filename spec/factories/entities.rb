@@ -29,6 +29,14 @@ FactoryBot.define do
     end
   end
 
+  factory :government_entity, class: 'Entity' do
+    name { 'org' }
+    primary_ext { 'Org' }
+    after :create do |entity|
+      entity.add_extension('GovernmentBody')
+    end
+  end
+
   factory :elected, class: 'Entity' do
     name { 'Elected Representative' }
     primary_ext { 'Person' }

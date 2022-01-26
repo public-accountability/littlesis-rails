@@ -34,7 +34,7 @@ class Link
         else
           if entity2_types.include?('Person')
             'offices'
-          elsif entity2_types.include?('Government')
+          elsif entity2_types.include?('GovernmentBody')
             'governments'
           elsif entity2_types.include?('Business')
             'businesses'
@@ -86,13 +86,13 @@ class Link
         if link.is_reverse
           'owners'
         else
-          'holding'
+          'holdings'
         end
       when Relationship::HIERARCHY_CATEGORY
         if link.is_reverse
-          'parents'
-        else
           'children'
+        else
+          'parents'
         end
       when Relationship::GENERIC_CATEGORY
         'generic'

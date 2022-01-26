@@ -11,6 +11,10 @@ class Link < ApplicationRecord
     assign_attributes(subcategory: Subcategory.calculate(self))
   end
 
+  def recalculate_subcategory
+    update_column :subcategory, Subcategory.calculate(self)
+  end
+
   # used by ListDatatable
   def self.interlock_hash(links)
     links.reduce({}) do |hash, link|
@@ -21,7 +25,7 @@ class Link < ApplicationRecord
 
   def self.calculate_subcategory!
     all.includes(:relationship).find_each do |link|
-      link.update_column :subcategory, Subcategory.calculate(link)
+      link.recalculate_subcategory
     end
   end
 

@@ -309,7 +309,12 @@ class Relationship < ApplicationRecord
   #############
 
   def link
-    links.find { |link| link.entity1_id = entity1_id }
+    # links.find { |link| link.entity1_id = entity1_id }
+    links.find { |link| !link.is_reverse }
+  end
+
+  def reverse_link
+    links.find { |link| link.is_reverse }
   end
 
   def reversible?
