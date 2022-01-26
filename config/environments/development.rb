@@ -40,6 +40,10 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = false
   config.active_storage.service = :local
 
+  # Uncomment if you wish to allow Action Cable access from any origin.
+  # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+  # config.action_cable.disable_request_forgery_protection = true
+
   # see: https://github.com/rails/web-console for info on web_console configuration
   config.web_console.allowed_ips = ['172.0.0.0/8']
   config.web_console.whiny_requests = false
@@ -47,8 +51,4 @@ Rails.application.configure do
   config.good_job.execution_mode = :async # :external
   config.good_job.enable_cron = true
   config.good_job.max_threads = 1
-
-
-  # TODO: Maybe enable this?
-  # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 end

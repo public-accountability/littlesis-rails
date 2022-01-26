@@ -5,7 +5,7 @@ describe 'lists/edit.html.erb', type: :view do
                                              :permissions => double(:tag_permissions => {})))
 
     assign(:list, build(:list))
-    render
+    render template: "lists/edit"
   end
 
   it 'contains form' do

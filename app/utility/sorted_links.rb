@@ -170,8 +170,8 @@ class SortedLinks
     links = donation_links(entity1_id, @page, @per_page) if @page.present? && @per_page.present?
     links = donation_links(entity1_id) unless @page.present? && @per_page.present?
     # Rails doesn't particularly document the use of Associations::Preloader on its own...
-    # but hey...what's stopping us?
-    ActiveRecord::Associations::Preloader.new.preload(links, [:relationship, :related])
+    # but hey...what's stopping us? ...well, we had a good run but alas rails 7 put an end to this
+    # ActiveRecord::Associations::Preloader.new.preload(links, [:relationship, :related])
     links
   end
 

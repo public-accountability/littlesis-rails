@@ -1,4 +1,4 @@
-describe 'contact/index.html.erb', type: :view do
+describe 'contact/index', type: :view do
   context 'when user signed in' do
     before do
       allow(view).to receive(:user_signed_in?).and_return(true)

@@ -46,14 +46,15 @@ class EditedEntity < ApplicationRecord
 
     user_id = version.whodunnit&.to_i || User.system_user.id
 
-    base_attributes = { user_id: user_id,
-                        version_id: version.id,
-                        created_at: version.created_at }
+    attributes = { user_id: user_id,
+                   version_id: version.id,
+                   created_at: version.created_at,
+                   entity_id: version.entity1_id }
 
-    EditedEntity.create base_attributes.merge(entity_id: version.entity1_id)
+    EditedEntity.create attributes
 
     if version.entity2_id.present? && (version.entity2_id != version.entity1_id)
-      EditedEntity.create base_attributes.merge(entity_id: version.entity2_id)
+      EditedEntity.create attributes.merge(entity_id: version.entity2_id)
     end
   end
 

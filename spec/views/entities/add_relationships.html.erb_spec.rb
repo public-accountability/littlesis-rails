@@ -1,4 +1,4 @@
-describe 'entities/add_relationship.html.erb' do
+describe 'entities/add_relationship' do
   let(:user) { build(:user) }
   let(:entity) { build(:mega_corp_inc, updated_at: Time.current, last_user: user, id: rand(100)) }
 

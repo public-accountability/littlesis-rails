@@ -1,5 +1,13 @@
 version: 2.1
 
+
+workflows:
+  run_tests:
+    jobs:
+      - mocha
+      - rspec
+      - rspec_js
+
 jobs:
   rspec:
     machine:
@@ -23,13 +31,37 @@ jobs:
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake db:reset
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake tmp:clear
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake assets:precompile
-      - run: docker-compose exec -e RAILS_ENV=test -e COVERAGE=true -e CI=true app bundle exec rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
+      - run: docker-compose exec -e RAILS_ENV=test -e CI=true app bundle exec rspec --tags ~js --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
 
       - store_test_results:
           path: tmp/rspec
 
-      - store_artifacts:
-          path: coverage
+  rspec_js:
+    machine:
+      image: ubuntu-2004:202111-02
+      docker_layer_caching: true
+
+    environment:
+      RAILS_ENV: test
+      COVERAGE: yes
+      POSTGRES_PASSWORD: littlesis
+      POSTGRES_USER: littlesis
+      POSTGRES_DB: littlesis_test
+
+    steps:
+      - checkout
+      - run: cp config/database.ci.yml config/database.yml
+      - run: mkdir -p tmp tmp/rspec tmp/small/ tmp/profile tmp/large/ tmp/original/
+      - run: docker build -t littlesis:latest .
+      - run: docker-compose up -d
+      - run: docker-compose exec postgres pg_isready --timeout=10
+      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake db:reset
+      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake tmp:clear
+      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake assets:precompile
+      - run: docker-compose exec -e RAILS_ENV=test -e CI=true app bundle exec rspec --tags js --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
+
+      - store_test_results:
+          path: tmp/rspec
 
   mocha:
     machine:
@@ -49,9 +81,3 @@ jobs:
             - ~/.cache/yarn
 
       - run: yarn test
-
-workflows:
-  rspec:
-    jobs:
-      - rspec
-      - mocha
