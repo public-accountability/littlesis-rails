@@ -17,24 +17,10 @@ CREATE EXTENSION IF NOT EXISTS intarray WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION intarray; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION intarray IS 'functions, operators, and index support for 1-D arrays of integers';
-
-
---
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
-
-
---
--- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
@@ -49,24 +35,24 @@ CREATE FUNCTION public.get_network_map_search_tsvector(network_map_id bigint) RE
                       setweight(to_tsvector(coalesce(array_to_string(annotations.content, ' '), '')), 'C') ||
                       setweight(to_tsvector(coalesce(array_to_string(entities.names, ' '), '')), 'C')
         FROM network_maps,
-              LATERAL (
-                SELECT array_agg(entities.name) as names
-                -- array_agg(entities.blurb) as blurbs
-                FROM (
-                       SELECT json_object_keys(graph_data::json -> 'nodes') as keys
+             LATERAL (
+               SELECT array_agg(entities.name) as names
+               -- array_agg(entities.blurb) as blurbs
+               FROM (
+                      SELECT json_object_keys(graph_data::json -> 'nodes') as keys
+                      FROM network_maps as sub
+                      WHERE sub.id = network_maps.id
+               ) AS nodes
+               INNER JOIN entities on entities.id = keys::bigint
+               WHERE nodes.keys ~ '^\d+$'
+             ) as entities,
+             LATERAL (
+               SELECT array_agg(content.content) as content
+               FROM  (
+                       SELECT regexp_replace((json_array_elements(annotations_data::json)->> 'text') || ' ' || (json_array_elements(annotations_data::json)->> 'header'), E'<[^>]+>', '', 'gi') AS content
                        FROM network_maps as sub
                        WHERE sub.id = network_maps.id
-                ) AS nodes
-                INNER JOIN entities on entities.id = keys::bigint
-                WHERE nodes.keys ~ '^\d+$'
-              ) as entities,
-              LATERAL (
-                SELECT array_agg(content.content) as content
-                FROM  (
-                        SELECT regexp_replace((json_array_elements(annotations_data::json)->> 'text') || ' ' || (json_array_elements(annotations_data::json)->> 'header'), E'<[^>]+>', '', 'gi') AS content
-                        FROM network_maps as sub
-                        WHERE sub.id = network_maps.id
-                      ) as content
+                     ) as content
              ) as annotations
         WHERE network_maps.id = network_map_id
 $_$;
@@ -253,7 +239,7 @@ CREATE TABLE public.active_storage_blobs (
     content_type character varying(255),
     metadata text,
     byte_size bigint NOT NULL,
-    checksum character varying(255) NOT NULL,
+    checksum character varying(255),
     created_at timestamp without time zone NOT NULL,
     service_name character varying(255) NOT NULL
 );
@@ -8396,6 +8382,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220121202742'),
 ('20220121202743'),
 ('20220121202744'),
-('20220121202745');
+('20220121202745'),
+('20220126173448');
 
 
