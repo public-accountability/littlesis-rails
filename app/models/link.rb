@@ -7,10 +7,6 @@ class Link < ApplicationRecord
   has_many :references, through: :relationship
   has_many :chained_links, class_name: "Link", foreign_key: "entity1_id", primary_key: "entity2_id"
 
-  def self.interlock_hash_from_entities(entity_ids)
-    interlock_hash(where(entity1_id: entity_ids))
-  end
-
   # used by ListDatatable
   def self.interlock_hash(links)
     links.reduce({}) do |hash, link|
@@ -38,6 +34,8 @@ class Link < ApplicationRecord
         #{sanitize_sql_for_conditions(['WHERE degree_one_links.entity1_id IN (?)', entity_ids])}
       LIMIT 20000
     SQL
+
+    return ApplicationRecord.connection.exec_query(sql)
 
     ApplicationRecord.connection.exec_query(sql).map do |h|
       # Un-reverse the entity1/2 positions if this is a reverse link, so that they correspond to the fields of the actual
