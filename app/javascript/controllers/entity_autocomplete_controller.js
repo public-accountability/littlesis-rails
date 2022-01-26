@@ -21,14 +21,15 @@ function addEntityToList(entityId, listId) {
 export default class extends Controller {
   static values = {
     preselected: Number,
-    listid: Number
+    listid: Number,
+    placeholder: { type: String, default: "Search for a person or org" }
   }
 
   initialize() {
     $(this.element).select2({
       templateResult: entitySearchSuggestion,
       minimumInputLength: 3,
-      placeholder: "Search for a person or org",
+      placeholder: this.placeholderValue,
       allowClear: true,
       ajax: {
         url: ENTITY_SEARCH_URL,
@@ -47,7 +48,7 @@ export default class extends Controller {
     //   $(this.element).closest('form').submit()
     // })
 
-    // If data-entity-autocomplete-preselected-value is configured, retrive the entity info from our api and automatically select
+    // If data-entity-autocomplete-preselected-value is configured, retrieve the entity info from our api and automatically select
     if (this.hasPreselectedValue && this.preselectedValue > 0) {
       Http
         .get(`/api/entities/${this.preselectedValue}`)
