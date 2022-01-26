@@ -7,11 +7,21 @@ class Link < ApplicationRecord
   has_many :references, through: :relationship
   has_many :chained_links, class_name: "Link", foreign_key: "entity1_id", primary_key: "entity2_id"
 
+  before_create do
+    assign_attributes(subcategory: Subcategory.calculate(self))
+  end
+
   # used by ListDatatable
   def self.interlock_hash(links)
     links.reduce({}) do |hash, link|
       hash[link.entity2_id] = hash.fetch(link.entity2_id, []).push(link.entity1_id).uniq
       hash
+    end
+  end
+
+  def self.calculate_subcategory!
+    all.includes(:relationship).find_each do |link|
+      link.update_column :subcategory, Subcategory.calculate(link)
     end
   end
 
@@ -35,8 +45,6 @@ class Link < ApplicationRecord
       LIMIT 20000
     SQL
 
-    return ApplicationRecord.connection.exec_query(sql)
-
     ApplicationRecord.connection.exec_query(sql).map do |h|
       # Un-reverse the entity1/2 positions if this is a reverse link, so that they correspond to the fields of the actual
       # relationship object
@@ -58,6 +66,7 @@ class Link < ApplicationRecord
     return 'business' if org_types.include? 'Business'
     return 'other'
   end
+
 
   concerning :Description do
     # The text for the short relationship link that appears on entity profile pages.
