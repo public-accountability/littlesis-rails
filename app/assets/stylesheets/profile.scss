@@ -1,0 +1,50 @@
+@import "base/globals";
+// @import 'bootstrap/scss/_functions';
+// @import 'bootstrap/scss/_variables';
+// @import 'bootstrap/scss/mixins/_breakpoints';
+
+#entity-profile-page {
+
+    .entity-name {}
+
+    .entity-blurb-text {}
+
+    .profile-page-content-col {}
+
+    .profile-page-sidebar-col {}
+
+    .profile-page-tabs {
+        display: flex;
+        justify-content: flex-start;
+        gap: 10px;
+        border-bottom: 1px solid #CC5454;
+
+        // @include media-breakpoint-up(lg) {
+        //     // margin-right: 2rem;
+        // }
+
+        // @include media-breakpoint-up(xl) {
+        //     margin-right: 8rem;
+        // }
+
+        a {
+            text-decoration: none;
+            padding: 10px 10px 4px 10px;
+            background-color: #CC8585;
+            color: white;
+            /* border: 1px solid  #CC8585;/
+            /* border-radius: 8px; */
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+
+            &.active {
+                background-color: #CC5454;
+            }
+
+            &:hover {
+                background-color: #CC5454;
+                /* box-shadow: -4px 4px 10px 1px rgba(204,84,84,0.5); */
+            }
+        }
+    }
+}
