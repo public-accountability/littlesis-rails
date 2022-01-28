@@ -1,9 +1,19 @@
 @import "base/globals";
-// @import 'bootstrap/scss/_functions';
-// @import 'bootstrap/scss/_variables';
-// @import 'bootstrap/scss/mixins/_breakpoints';
+
+$profile_page_fs_entity_heading: 2.75rem;
+$profile_page_fs_subcategory: 1.5rem;
+$profile_page_fs_name: 1rem;
+$profile_page_fs_blurb: 0.8rem;
+$profile_page_fs_relationship: 0.8rem;
 
 #entity-profile-page {
+
+    h1 {
+        font-size: $profile_page_fs_entity_heading;
+        a {
+            text-decoration: none;
+        }
+    }
 
     .entity-name {}
 
@@ -17,20 +27,13 @@
         display: flex;
         justify-content: flex-start;
         gap: 10px;
-        border-bottom: 1px solid #CC5454;
-
-        // @include media-breakpoint-up(lg) {
-        //     // margin-right: 2rem;
-        // }
-
-        // @include media-breakpoint-up(xl) {
-        //     margin-right: 8rem;
-        // }
+        border-bottom: 1px solid $profile_tab_red_active; /* #CC5454; */
 
         a {
             text-decoration: none;
+
             padding: 10px 10px 4px 10px;
-            background-color: #CC8585;
+            background-color: $profile_tab_red;
             color: white;
             /* border: 1px solid  #CC8585;/
             /* border-radius: 8px; */
@@ -38,12 +41,61 @@
             border-top-right-radius: 8px;
 
             &.active {
-                background-color: #CC5454;
+                background-color: $profile_tab_red_active;
             }
 
             &:hover {
-                background-color: #CC5454;
+                background-color: $profile_tab_red_active;
                 /* box-shadow: -4px 4px 10px 1px rgba(204,84,84,0.5); */
+            }
+        }
+    }
+
+    .profile-page-subcategory {
+        h2 {
+            font-size: $profile_page_fs_subcategory;
+        }
+
+    }
+    .profile-page-grouped-link {
+        padding-top: 0.5em;
+        padding-bottom: 0.25em;
+        border-top: 1px solid #ddd;
+
+        &:hover {
+            background-color: #f8f8f8;
+        }
+
+
+        a {
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline dotted $logo_blue_lighter;
+            }
+        }
+
+        .profile-page-other-entity {
+            .other-entity-name {
+                a {
+                    line-height: 24px;
+                    color: #008;
+                    font-size: $profile_page_fs_name;
+                    font-weight: 700;
+                }
+            }
+
+            .other-entity-blurb {
+                cursor: default;
+                padding-left: 0.5em;
+                font-size: $profile_page_fs_blurb;
+                overflow: hidden;
+            }
+        }
+
+        .profile-page-relationships {
+            span {
+                font-size: $profile_page_fs_relationship;
+                line-height: 16px;
             }
         }
     }

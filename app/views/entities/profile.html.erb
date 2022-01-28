@@ -6,8 +6,7 @@
 <% end  %>
 
 <div id="entity-profile-page">
-
-  <div class="row">
+  <div class="row mt-2">
     <div class="col">
       <h1>
         <%= link_to @entity.name, concretize_entity_path(@entity), class: 'entity-name2' %>
@@ -36,11 +35,12 @@
     </div>
   </div>
 
-  <!-- relationship -->
+  <!-- relationships -->
   <div class="row mt-3">
-    <div class="col-sm-12 col-md-8 profile-page-content-col">
 
-      <div class="row">
+    <div class="col-sm-12 col-md-8 profile-page-content-col-4">
+
+      <div class="row mt-1 mb-3">
         <div class="col">
           <div class="profile-page-tabs">
           <a href="#" class="active">Relationships</a>
@@ -52,14 +52,29 @@
       </div>
 
       <% @entity.relationship_collection.each do |subcategory, links| %>
-        <div class="row">
+        <div class="row profile-page-subcategory">
           <div class="col">
             <h2><%= subcategory %></h2>
-            <% links.take(15).each do |link| %>
-              <div>
-                <%= entity_link(link.other_entity(@entity)) %>
+
+            <!-- Relationships for each category -->
+            <% links.take(15).each do |grouped_link| %>
+              <div class="row profile-page-grouped-link">
+                <div class="profile-page-other-entity">
+                  <% other_entity = grouped_link.other_entity(@entity)%>
+                  <span class="other-entity-name">
+                    <%= link_to other_entity.name, concretize_entity_path(other_entity) %>
+                  </span>
+                  <span class="other-entity-blurb">
+                    <%= other_entity.blurb %>
+                  </span>
+                </div>
+
+                <div class="profile-page-relationships">
+                  <span class="ps-2">  •  <%= link_to grouped_link.first.link_content, relationship_path(grouped_link.first.relationship) %></span>
+                </div>
               </div>
             <% end %>
+
           </div>
         </div>
       <% end %>
