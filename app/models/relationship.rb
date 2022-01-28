@@ -276,6 +276,17 @@ class Relationship < ApplicationRecord
     unscoped_entity.id == e['id'] ? unscoped_related : unscoped_entity
   end
 
+  def other_entity(e)
+    this_entity_id = Entity.entity_id_for(e)
+    if this_entity_id == entity1_id
+      related
+    elsif this_entity_id == entity2_id
+      entity
+    else
+      raise Exceptions::LittleSisError, "entity\##{this_entity_id} is not a member of relationship\##{id}"
+    end
+  end
+
   def default_description(order = 1)
     case category_id
     when 5 # donation

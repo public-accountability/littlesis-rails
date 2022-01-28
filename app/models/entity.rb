@@ -37,7 +37,6 @@ class Entity < ApplicationRecord
   # links and relationships
   has_many :links, foreign_key: 'entity1_id', inverse_of: :entity, dependent: :destroy
   has_many :reverse_links, class_name: 'Link', foreign_key: 'entity2_id', inverse_of: :related, dependent: :destroy
-
   has_many :relationships, through: :links
 
   has_many :hierarchy_relationships,
@@ -379,6 +378,20 @@ class Entity < ApplicationRecord
 
   # Utilities - Instance Methods #
 
+  # Links & Relationships
+
+  def relationship_collection
+    RelationshipCollection.new(self)
+  end
+
+  def affiliations
+    relateds.where('links.category_id IN (1, 3)')
+  end
+
+  def link_subcategories
+    @link_subcategories ||= links.select(:subcategory).distinct.pluck(:subcategory)
+  end
+
   def update_link_count
     update(link_count: links.count)
   end
@@ -386,14 +399,6 @@ class Entity < ApplicationRecord
   # Formats entity as "Name (id)"
   def name_with_id
     "#{name} (#{persisted? ? id : '?'})"
-  end
-
-  def name_without_initials
-    name.gsub('.', '').split(' ').select { |part| part.length > 1 }.join(' ')
-  end
-
-  def affiliations
-    relateds.where('links.category_id IN (1, 3)')
   end
 
   def add_region(region)
