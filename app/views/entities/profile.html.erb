@@ -52,16 +52,16 @@
       </div>
 
       <% @entity.relationship_collection.each do |subcategory, links| %>
-        <div class="row profile-page-subcategory">
+        <div class="row profile-page-subcategory mt-2">
           <div class="col">
-            <h2><%= subcategory %></h2>
+            <h2><%= ProfilePage.subcategory_name(subcategory) %></h2>
 
             <!-- Relationships for each category -->
             <% links.take(15).each do |grouped_link| %>
               <div class="row profile-page-grouped-link">
                 <div class="profile-page-other-entity">
                   <% other_entity = grouped_link.other_entity(@entity)%>
-                  <span class="other-entity-name">
+                  <span class="other-entity-name"  title="<%= other_entity.blurb %>">
                     <%= link_to other_entity.name, concretize_entity_path(other_entity) %>
                   </span>
                   <span class="other-entity-blurb">

@@ -1,12 +1,17 @@
 @import "base/globals";
 
 $profile_page_fs_entity_heading: 2.75rem;
-$profile_page_fs_subcategory: 1.5rem;
+$profile_page_fs_subcategory: 1.5rem;  // 18px 1.5rem ?
 $profile_page_fs_name: 1rem;
 $profile_page_fs_blurb: 0.8rem;
 $profile_page_fs_relationship: 0.8rem;
 
 #entity-profile-page {
+
+    h1, h2 {
+        cursor: default;
+    }
+
 
     h1 {
         font-size: $profile_page_fs_entity_heading;
@@ -35,7 +40,6 @@ $profile_page_fs_relationship: 0.8rem;
             padding: 10px 10px 4px 10px;
             background-color: $profile_tab_red;
             color: white;
-            /* border: 1px solid  #CC8585;/
             /* border-radius: 8px; */
             border-top-left-radius: 8px;
             border-top-right-radius: 8px;
@@ -46,7 +50,7 @@ $profile_page_fs_relationship: 0.8rem;
 
             &:hover {
                 background-color: $profile_tab_red_active;
-                /* box-shadow: -4px 4px 10px 1px rgba(204,84,84,0.5); */
+                box-shadow: -4px 4px 10px 1px rgba(204,84,84,0.5);
             }
         }
     }
@@ -54,9 +58,11 @@ $profile_page_fs_relationship: 0.8rem;
     .profile-page-subcategory {
         h2 {
             font-size: $profile_page_fs_subcategory;
+            font-weight: 700;
         }
 
     }
+
     .profile-page-grouped-link {
         padding-top: 0.5em;
         padding-bottom: 0.25em;
@@ -75,6 +81,10 @@ $profile_page_fs_relationship: 0.8rem;
         }
 
         .profile-page-other-entity {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
             .other-entity-name {
                 a {
                     line-height: 24px;
@@ -88,7 +98,6 @@ $profile_page_fs_relationship: 0.8rem;
                 cursor: default;
                 padding-left: 0.5em;
                 font-size: $profile_page_fs_blurb;
-                overflow: hidden;
             }
         }
 
