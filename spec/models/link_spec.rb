@@ -183,6 +183,14 @@ describe Link, type: :model do
       expect(relationship.reverse_link.subcategory).to eq 'board_members'
     end
 
+    specify 'board membership w/ person' do
+      relationship = Relationship.create!(category_id: 1, entity: create(:entity_person), related: create(:entity_person))
+      relationship.position.update!(is_board: true)
+      expect(relationship.link.subcategory).to eq 'board_memberships'
+      expect(relationship.reverse_link.subcategory).to eq 'staff'
+    end
+
+
     specify 'education' do
       relationship = Relationship.create!(category_id: Relationship::EDUCATION_CATEGORY, entity: create(:entity_person), related: create(:entity_org))
       expect(relationship.link.subcategory).to eq 'schools'

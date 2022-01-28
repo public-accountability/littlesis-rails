@@ -12,7 +12,8 @@ NotableEntities = {
   :loeffler => 139_907,
   :manchin => 34_472,
   :amazon => 172,
-  :sanders => 13_568
+  :sanders => 13_568,
+  :obama => 13_503
 }.with_indifferent_access
 
 NotableEntities.singleton_class.define_method(:get) do |entity|

@@ -15,21 +15,23 @@
 # Generic (12)     | generic
 class Link
   module Subcategory
+    SUBCATEGORIES = %i[board_memberships businesses campaign_contributions campaign_contributors children donations donors family generic holdings lobbied_by lobbies members memberships offices owners parents positions schools social staff students transactions].to_set.freeze
     # link --> text
     def self.calculate(link)
       case link.relationship.category_id
       when Relationship::POSITION_CATEGORY
+        entity2_types = link.relationship.related.extension_names.to_set
         if link.relationship.is_board
           if link.is_reverse
-            return 'board_members'
+            if link.relationship.related.person?
+              'staff'
+            else
+              'board_members'
+            end
           else
-            return 'board_memberships'
+            'board_memberships'
           end
-        end
-
-        entity2_types = link.relationship.related.extension_names.to_set
-
-        if link.is_reverse
+        elsif link.is_reverse
           'staff'
         else
           if entity2_types.include?('Person')
