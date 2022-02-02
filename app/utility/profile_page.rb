@@ -3,55 +3,55 @@
 module ProfilePage
   def self.subcategory_name(subcategory)
     case subcategory
-    when "board_members"
+    when :board_members
       "Board Members"
-    when "board_memberships"
+    when :board_memberships
       "Board Memberships"
-    when "businesses"
+    when :businesses
       "Business Positions"
-    when "campaign_contributions"
+    when :campaign_contributions
       "Federal Election Campaign Contributions"
-    when "campaign_contributors"
+    when :campaign_contributors
       "Campaign Contributors"
-    when "children"
+    when :children
       "Child Organizations"
-    when "donations"
+    when :donations
       "Donations"
-    when "donors"
+    when :donors
       "Donors"
-    when "family"
+    when :family
       "Family"
-    when "generic"
+    when :generic
       "Miscellaneous Relationships"
-    when "governments"
+    when :governments
       "Government Positions"
-    when "holdings"
+    when :holdings
       "Holdings"
-    when "lobbied_by"
+    when :lobbied_by
       "Lobbied By"
-    when "lobbies"
+    when :lobbies
       "Lobbying"
-    when "members"
+    when :members
       "Members"
-    when "memberships"
+    when :memberships
       "Memberships"
-    when "offices"
+    when :offices
       "In the office of"
-    when "owners"
+    when :owners
       "Owners"
-    when "parents"
+    when :parents
       "Parents"
-    when "positions"
+    when :positions
       "Positions"
-    when "schools"
+    when :schools
       "Schools"
-    when "social"
+    when :social
       "Social"
-    when "staff"
+    when :staff
       "Leadership & Staff"
-    when "students"
+    when :students
       "Students"
-    when "transactions"
+    when :transactions
       "Services & Transactions"
     end
   end

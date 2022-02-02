@@ -17,10 +17,5 @@ class Link
     def rest
       @links.drop(1)
     end
-
-    def self.create(links)
-      links.group_by(&:entity2_id).map { new(*_2) }
-    end
-
   end
 end

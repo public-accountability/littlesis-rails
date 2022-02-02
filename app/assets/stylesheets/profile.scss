@@ -15,6 +15,7 @@ $profile_page_fs_relationship: 0.8rem;
 
     h1 {
         font-size: $profile_page_fs_entity_heading;
+
         a {
             text-decoration: none;
         }
@@ -116,5 +117,23 @@ $profile_page_fs_relationship: 0.8rem;
     i.bi-arrows-collapse, i.bi-arrows-expand {
         font-size: 1.25rem;
         cusror: pointer;
+    }
+
+
+    .profile-page-subcategory-pagination {
+
+        i {
+
+            cursor: pointer;
+
+            &:hover {
+                color: $link_blue;
+            }
+        }
+
+        a.disabled > i {
+            // color: lightgray;
+            cursor: not-allowed;
+        }
     }
 }

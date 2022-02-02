@@ -1,0 +1,68 @@
+<% subcategory = grouped_links.subcategory.to_s %>
+<% subcategory_domid = "profile-page-#{subcategory}" %>
+<% subcategory_content_domid = "profile-page-#{subcategory}-content" %>
+<% subcategory_pagination_domid = "profile-page-#{subcategory}-pagination" %>
+<% subcategory_collapse_target = "#{subcategory}-collapse" %>
+<% current_page = @subcategory_page || 1  %>
+
+<turbo-frame id="<%= subcategory_domid %>">
+  <div class="row profile-page-subcategory mt-2" data-turbo="true">
+    <div class="col">
+      <h2>
+        <%= grouped_links.subcategory_name %>
+        <i class="bi bi-arrows-collapse"
+           data-bs-target=".<%= subcategory_collapse_target %>"
+           data-bs-toggle="collapse"
+           role="button"
+           aria-expanded="true"
+        ></i>
+      </h2>
+
+      <div class="profile-page-subcategory-pagination collapse show <%= subcategory_collapse_target %>"
+           id="<%= subcategory_pagination_domid  %>"
+           data-controller="profile--subcategory-pagination"
+           data-profile--subcategory-pagination-total-pages-value="<%= grouped_links.total_pages  %>"
+           data-profile--subcategory-pagination-page-value="<%= current_page %>">
+        <% if grouped_links.additional_pages? %>
+          <a href="<%= "/entities/#{@entity.id}/grouped_links/#{subcategory}/#{current_page - 1}" %>" data-profile--subcategory-pagination-target="prevLink">
+            <i class="bi bi-arrow-left" title="previous page"></i>
+          </a>
+
+          <span><em><%= current_page  %> / <%= grouped_links.total_pages %></em></span>
+
+          <a href="<%= "/entities/#{@entity.id}/grouped_links/#{subcategory}/#{current_page + 1}" %>" data-profile--subcategory-pagination-target="nextLink">
+            <i class="bi bi-arrow-right" title="next page"></i>
+          </a>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row profile-page-subcategory-relationships collapse show <%= subcategory_collapse_target %>"
+       id="<%= subcategory_content_domid %>"
+       data-controller="profile--subcategory-toggle"
+       data-subcategory="<%= subcategory %>">
+    <div class="col">
+      <!-- Relationships for each category -->
+      <% grouped_links.page(current_page).each do |grouped_link| %>
+
+        <div class="row profile-page-grouped-link">
+          <div class="profile-page-other-entity">
+            <% other_entity = grouped_link.other_entity(@entity)%>
+            <span class="other-entity-name"  title="<%= other_entity.blurb %>">
+              <%= link_to other_entity.name, concretize_entity_path(other_entity) %>
+            </span>
+            <span class="other-entity-blurb">
+              <%= other_entity.blurb %>
+            </span>
+          </div>
+
+          <div class="profile-page-relationships">
+            <%= render partial: 'grouped_link', object: grouped_link %>
+          </div>
+        </div>
+
+      <% end %>
+    </div>
+  </div>
+</turbo-frame>

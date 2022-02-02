@@ -15,7 +15,7 @@
 # Generic (12)     | generic
 class Link
   module Subcategory
-    SUBCATEGORIES = %i[board_memberships businesses campaign_contributions campaign_contributors children donations donors family generic holdings lobbied_by lobbies members memberships offices owners parents positions schools social staff students transactions].to_set.freeze
+    SUBCATEGORIES = %i[board_members board_memberships businesses campaign_contributions campaign_contributors children donations donors family generic holdings lobbied_by lobbies members memberships offices owners parents positions schools social staff students transactions].to_set.freeze
     # link --> text
     def self.calculate(link)
       case link.relationship.category_id

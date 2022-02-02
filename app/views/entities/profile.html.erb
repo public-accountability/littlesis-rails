@@ -37,9 +37,7 @@
 
   <!-- relationships -->
   <div class="row mt-3">
-
     <div class="col-sm-12 col-md-8 profile-page-content-col-4">
-
       <div class="row mt-1 mb-3">
         <div class="col">
           <div class="profile-page-tabs">
@@ -50,49 +48,10 @@
           </div>
         </div>
       </div>
-      <% @entity.relationship_collection.each do |subcategory, links| %>
-        <% subcategory_domid = "profile-page-#{subcategory}" %>
-        <div class="row profile-page-subcategory mt-2">
-          <div class="col">
-            <h2>
-              <%= ProfilePage.subcategory_name(subcategory) %>
-              <i class="bi bi-arrows-collapse"
-                 data-bs-target="#<%= subcategory_domid %>"
-                 data-bs-toggle="collapse"
-                 role="button"
-                 aria-expanded="true"
-              ></i>
-            </h2>
-          </div>
-        </div>
-
-        <div class="row profile-page-subcategory-relationships collapse show"
-             id="<%= subcategory_domid %>"
-             data-controller="subcategory-toggle"
-             data-subcategory="<%= subcategory %>">
-          <div class="col">
-            <!-- Relationships for each category -->
-            <% links.take(15).each do |grouped_link| %>
-              <div class="row profile-page-grouped-link">
-                <div class="profile-page-other-entity">
-                  <% other_entity = grouped_link.other_entity(@entity)%>
-                  <span class="other-entity-name"  title="<%= other_entity.blurb %>">
-                    <%= link_to other_entity.name, concretize_entity_path(other_entity) %>
-                  </span>
-                  <span class="other-entity-blurb">
-                    <%= other_entity.blurb %>
-                  </span>
-                </div>
-
-                <div class="profile-page-relationships">
-                  <%= render partial: 'grouped_link', object: grouped_link %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      <% end %> <!-- end of RelationshipCollection loop -->
-    </div> <!-- end of main column -->
+      <% @entity.relationship_collection.each do |subcategory, grouped_links| %>
+        <%= render partial: 'grouped_links', object: grouped_links %>
+      <% end %>
+    </div>
 
     <!-- sidebar -->
     <div class="col-sm-12 col-md-4 profile-page-sidebar-col">

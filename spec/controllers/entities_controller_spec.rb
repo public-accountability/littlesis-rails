@@ -19,6 +19,16 @@ describe EntitiesController, type: :controller do
     it { is_expected.to route(:get, '/entities/1/references').to(action: :references, id: 1) }
     it { is_expected.to route(:post, '/entities/1/tags').to(action: :tags, id: 1) }
 
+    it do
+      is_expected.to route(:get, '/entities/1/grouped_links/donations/3')
+                       .to(action: :grouped_links, id: 1, subcategory: 'donations', page: 3)
+    end
+
+    it do
+      is_expected.not_to route(:get, '/entities/1/grouped_links/waves/3')
+                           .to(action: :grouped_links, id: 1, subcategory: 'waves', page: 3)
+    end
+
     context 'with primary extensions' do
       let(:org) { build(:org) }
       let(:person) { build(:person) }

@@ -380,8 +380,8 @@ class Entity < ApplicationRecord
 
   # Links & Relationships
 
-  def relationship_collection
-    RelationshipCollection.new(self)
+  def relationship_collection(**kwargs)
+    RelationshipCollection.new(self, **kwargs)
   end
 
   def affiliations
