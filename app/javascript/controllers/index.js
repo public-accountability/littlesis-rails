@@ -91,6 +91,9 @@ application.register("reverse-link", ReverseLinkController)
 import SidebarSourceLinksController from "./sidebar_source_links_controller.js"
 application.register("sidebar-source-links", SidebarSourceLinksController)
 
+import SubcategoryToggleController from "./subcategory_toggle_controller.js"
+application.register("subcategory-toggle", SubcategoryToggleController)
+
 import TooltipController from "./tooltip_controller.js"
 application.register("tooltip", TooltipController)
 

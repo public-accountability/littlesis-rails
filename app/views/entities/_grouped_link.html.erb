@@ -1,4 +1,6 @@
-<% collapse_id = dom_id(grouped_link.first, :more) %>
+<% if grouped_link.length > 1 %>
+  <% collapse_id = dom_id(grouped_link.first, :more) %>
+<% end %>
 
 <div class="ps-2">
   <span>•</span>

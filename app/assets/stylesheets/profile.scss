@@ -105,13 +105,16 @@ $profile_page_fs_relationship: 0.8rem;
             font-size: $profile_page_fs_relationship;
             line-height: 16px;
 
-            /* span { */
-            /* } */
-
             span.more-relationships {
                 cursor: pointer;
                 color: #008;
+
             }
         }
+    }
+
+    i.bi-arrows-collapse, i.bi-arrows-expand {
+        font-size: 1.25rem;
+        cusror: pointer;
     }
 }
