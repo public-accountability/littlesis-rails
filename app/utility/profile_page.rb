@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# Helpers for the profile page
-
 module ProfilePage
   def self.subcategory_name(subcategory)
     case subcategory
@@ -12,7 +10,7 @@ module ProfilePage
     when "businesses"
       "Business Positions"
     when "campaign_contributions"
-      "Campaign Contributions"
+      "Federal Election Campaign Contributions"
     when "campaign_contributors"
       "Campaign Contributors"
     when "children"

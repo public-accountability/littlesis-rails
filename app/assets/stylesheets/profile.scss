@@ -102,9 +102,15 @@ $profile_page_fs_relationship: 0.8rem;
         }
 
         .profile-page-relationships {
-            span {
-                font-size: $profile_page_fs_relationship;
-                line-height: 16px;
+            font-size: $profile_page_fs_relationship;
+            line-height: 16px;
+
+            /* span { */
+            /* } */
+
+            span.more-relationships {
+                cursor: pointer;
+                color: #008;
             }
         }
     }

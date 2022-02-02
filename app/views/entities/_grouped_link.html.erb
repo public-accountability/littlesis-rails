@@ -1,0 +1,27 @@
+<% collapse_id = dom_id(grouped_link.first, :more) %>
+
+<div class="ps-2">
+  <span>•</span>
+  <%= link_to grouped_link.first.link_content, relationship_path(grouped_link.first.relationship) %>
+  <% if grouped_link.length > 1 %>
+    <span class="more-relationships"
+          role="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#<%= collapse_id %>"
+          aria-controls="<%= collapse_id %>"
+          aria-expanded="false">
+      [+<%= grouped_link.length  - 1 %>]
+    </span>
+  <% end %>
+</div>
+
+<% if grouped_link.length > 1 %>
+  <div class="collapse" id="<%= collapse_id %>">
+    <% grouped_link.rest.each do |link| %>
+      <div class="ps-2">
+        <span>•</span>
+        <%= link_to link.link_content, relationship_path(link.relationship) %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
