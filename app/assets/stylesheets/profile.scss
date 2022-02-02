@@ -59,7 +59,7 @@ $profile_page_fs_relationship: 0.8rem;
     .profile-page-subcategory {
         h2 {
             font-size: $profile_page_fs_subcategory;
-            font-weight: 700;
+            // font-weight: 700;
         }
 
     }
@@ -135,5 +135,28 @@ $profile_page_fs_relationship: 0.8rem;
             // color: lightgray;
             cursor: not-allowed;
         }
+    }
+}
+
+
+#profile-page-sidebar {
+
+    h3 {
+        font-size: $profile_page_fs_subcategory;
+        border-bottom: 1px solid #e7e7e7;
+    }
+
+    .profile-page-sidebar-heading {}
+
+    #tags-edit-button {
+        font-size: 1rem;
+    }
+
+    .sidebar-data-partner p {
+        font-size: $profile_page_fs_blurb;
+    }
+
+    .sidebar-source-links {
+        font-size: $profile_page_fs_blurb;
     }
 }

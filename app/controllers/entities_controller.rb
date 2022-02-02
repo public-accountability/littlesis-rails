@@ -13,7 +13,7 @@ class EntitiesController < ApplicationController
 
   EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation].freeze
   IMPORTER_ACTIONS = %i[match_donation match_donations review_donations].freeze
-  PUBLIC_ACTIONS = %i[show datatable political contributions references validate profile].freeze
+  PUBLIC_ACTIONS = %i[show datatable political contributions references validate profile grouped_links].freeze
 
   before_action :authenticate_user!, except: PUBLIC_ACTIONS
   before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]

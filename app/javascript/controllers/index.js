@@ -73,6 +73,9 @@ application.register("oligrapher", OligrapherController)
 import OligrapherSearchController from "./oligrapher_search_controller.js"
 application.register("oligrapher-search", OligrapherSearchController)
 
+import Profile__ListsDropdownController from "./profile/lists_dropdown_controller.js"
+application.register("profile--lists-dropdown", Profile__ListsDropdownController)
+
 import Profile__SubcategoryPaginationController from "./profile/subcategory_pagination_controller.js"
 application.register("profile--subcategory-pagination", Profile__SubcategoryPaginationController)
 

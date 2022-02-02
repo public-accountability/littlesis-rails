@@ -44,7 +44,7 @@ class List < ApplicationRecord
   end
 
   def self.featured
-    where(is_featured: true)
+    public_scope.where(is_featured: true)
   end
 
   def self.order_by_entity_count
