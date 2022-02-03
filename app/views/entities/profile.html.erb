@@ -1,8 +1,8 @@
 <% content_for(:page_title, @entity.name) %>
-
-<%= content_for :head do %>
-  <% javascript_include_tag "profile", defer: true  %>
-  <% stylesheet_link_tag "profile", media: "all" %>
+<% content_for :head do %>
+  <%= og_tags(title: "LittleSis: #{@entity.name}", url: entity_url(@entity), image: @entity.featured_image_url) %>
+  <%= javascript_include_tag "profile", defer: true  %>
+  <%= stylesheet_link_tag "profile", media: "all" %>
 <% end  %>
 
 <div id="entity-profile-page">
@@ -22,18 +22,22 @@
     </div>
   </div>
 
-  <div class="row mt-1">
-    <div class="col-12 col-md-8">
-      <% if @entity.summary.present? %>
+  <% if user_signed_in? %>
+    <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
+  <% end %>
+
+  <% if @entity.summary.present? %>
+    <div class="row mt-2">
+      <div class="col-12 col-md-8">
         <div id="profile-page-entity-summary-container" class="position-relative" data-controller="profile--entity-summary">
           <p class="collapse" id="profile-page-entity-summary" aria-expanded="false">
             <%= @entity.summary %>
             <a role="button" class="collapsed" data-bs-toggle="collapse" href="#profile-page-entity-summary" aria-expanded="false" aria-controls="profile-page-entity-summary"></a>
           </p>
         </div>
-      <% end %>
+      </div>
     </div>
-  </div>
+  <% end %>
 
   <%# relationships %>
   <div class="row mt-3">
