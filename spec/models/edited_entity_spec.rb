@@ -70,10 +70,10 @@ describe EditedEntity, type: :model do
       version = entity.versions.last
 
       expect(EditedEntity).to receive(:create)
-                                .with(user_id: 1,
-                                      version_id: version.id,
-                                      entity_id: entity.id,
-                                      created_at: version.created_at)
+                                .with({user_id: 1,
+                                       version_id: version.id,
+                                       entity_id: entity.id,
+                                       created_at: version.created_at})
                                 .once
 
       EditedEntity.create_from_version(version)
@@ -82,17 +82,17 @@ describe EditedEntity, type: :model do
     it 'Relationship verison: creates two Edited Entities' do
       version = relationship.versions.last
       expect(EditedEntity).to receive(:create)
-                                .with(user_id: user_id.to_i,
-                                      version_id: version.id,
-                                      entity_id: relationship.entity1_id,
-                                      created_at: version.created_at)
+                                .with({user_id: user_id.to_i,
+                                       version_id: version.id,
+                                       entity_id: relationship.entity1_id,
+                                       created_at: version.created_at})
                                 .once
 
       expect(EditedEntity).to receive(:create)
-                                .with(user_id: user_id.to_i,
-                                      version_id: version.id,
-                                      entity_id: version.entity2_id,
-                                      created_at: version.created_at)
+                                .with({user_id: user_id.to_i,
+                                       version_id: version.id,
+                                       entity_id: version.entity2_id,
+                                       created_at: version.created_at})
                                 .once
 
       EditedEntity.create_from_version(version)
