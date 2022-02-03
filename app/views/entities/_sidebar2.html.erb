@@ -47,13 +47,13 @@
 
   <%# Featured Resource %>
   <% if @entity.featured_resources.exists? %>
-    <div class="row mt-3">
+    <div class="row mt-3 sidebar-featured-resources">
       <div class="col-12">
         <h3 class="profile-page-sidebar-heading">Eyes On The Ties</h3>
       </div>
       <div class="col-12">
         <%= render partial: 'entities/sidebar/featured_resource', collection: @entity.featured_resources %>
-      </div>
+       </div>
     </div>
   <% end %>
 
@@ -71,33 +71,14 @@
   <% end %>
 
   <%# Source Links %>
-  <div class="row sidebar-source-links" data-entity-id="<%= @entity.id %>" data-controller="sidebar-source-links">
+  <div class="row mt-3 sidebar-source-links">
     <div class="col-12">
       <h3 class="profile-page-sidebar-heading">Source Links</h3>
     </div>
-
-    <div class="col-12" >
-      <span class="link-count">Number of documents: <em class="link-count"><%= @entity.documents_count %></em></span>
-      <span class="link-count"><%= link_to " :: see all", concretize_references_entity_path(@entity) %> </span>
-    </div>
-
-    <div class="col-12" >
-      <ul class="list-unstyled" id="source-links-container">
-      </ul>
-    </div>
-
-    <div class="col--12" >
-      <span id="source-links-left-arrow" class="source-links-pager" data-action="click->sidebar-source-links#leftArrow">
-        <span class="link-arrow">&laquo;  </span><span class="link-arrow-text">back</span>
-      </span>
-      <span id="source-links-right-arrow" class="source-links-pager float-right" data-action="click->sidebar-source-links#rightArrow">
-        <span class="link-arrow-text">view more  </span><span class="link-arrow">&raquo;</span>
-      </span>
-    </div>
+    <%= render partial: 'source_links' %>
   </div>
 
-
-  <%# LISTS  %>
+  <%# Lists  %>
   <% if user_signed_in? || @entity.featured_lists.count.positive? %>
     <div class="row mt-3">
       <div class="col-12">

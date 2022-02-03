@@ -3,15 +3,15 @@
 $profile_page_fs_entity_heading: 2.75rem;
 $profile_page_fs_subcategory: 1.5rem;  // 18px 1.5rem ?
 $profile_page_fs_name: 1rem;
-$profile_page_fs_blurb: 0.8rem;
-$profile_page_fs_relationship: 0.8rem;
+$profile_page_fs_small: 0.8rem;
+$profile_page_fs_blurb: $profile_page_fs_small;
+$profile_page_fs_relationship: $profile_page_fs_small;
 
 #entity-profile-page {
 
     h1, h2 {
         cursor: default;
     }
-
 
     h1 {
         font-size: $profile_page_fs_entity_heading;
@@ -22,8 +22,43 @@ $profile_page_fs_relationship: 0.8rem;
     }
 
     .entity-name {}
-
     .entity-blurb-text {}
+
+    #profile-page-entity-summary-container {
+        a.collapsed::after {
+            content: 'more »';
+        }
+
+        a:not(.collapsed)::after {
+            content: '« less';
+        }
+
+        a {
+            position: absolute;
+            right: -5px;
+            bottom: 0;
+        }
+
+    }
+
+    #profile-page-entity-summary {
+        margin-bottom: 2px;
+        padding-right: 60px;
+        line-height: 1rem;
+        font-size: $profile_page_fs_small;
+        text-align: justify;
+        /* text-justify: inter-word; */
+
+        &.collapse:not(.show) {
+            display: block;
+            max-height: 3rem;   /* 3x line height for 3 lines*/
+            overflow: hidden;
+        }
+
+        &.collapsing {
+            height: 3rem;
+        }
+    }
 
     .profile-page-content-col {}
 
@@ -152,11 +187,26 @@ $profile_page_fs_relationship: 0.8rem;
         font-size: 1rem;
     }
 
+    .sidebar-featured-resources {
+        font-size: $profile_page_fs_blurb;
+    }
+
     .sidebar-data-partner p {
         font-size: $profile_page_fs_blurb;
     }
 
     .sidebar-source-links {
+        white-space: nowrap;
+        overflow: hidden;
         font-size: $profile_page_fs_blurb;
+
+        a.disabled {
+            pointer-events: none;
+
+            i {
+                cursor: not-allowed;
+                color: lightgray;
+            }
+        }
     }
 }
