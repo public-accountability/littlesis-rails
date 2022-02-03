@@ -2,10 +2,8 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Add/Remove Featured Resources</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h5 class="modal-title">Update Featured Resources</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <div class="modal-body">
@@ -19,18 +17,20 @@
         <% end %>
 
         <div class="mt-2">
-          <h5>Create a new featured resource:</h5>
+          <p>add a new link:</p>
           <%= form_with model: FeaturedResource.new do |f| %>
             <%= f.hidden_field :entity_id, value: entity.id %>
 
-            <div class="form-group">
+            <div class="mt-2">
               <%= f.label :title %>
               <%= f.text_field :title, class: 'form-control', required: true %>
             </div>
-            <div class="form-group">
+
+            <div class="mt-2 mb-2">
               <%= f.label :url %>
               <%= f.url_field :url, class: 'form-control', required: true, data: { 'parsley-type' => 'url' } %>
             </div>
+
             <%= f.submit "Submit", class: 'btn btn-primary' %>
           <% end %>
         </div>
@@ -39,4 +39,4 @@
   </div>
 </div>
 
-<%= link_to 'Add/Remove Featured Resource', '#', data: { toggle: 'modal', target: '#edit-featured-resources' } %>
+<%= link_to 'Add/Remove Featured Resource', '#', data: { "bs-toggle" =>  'modal', "bs-target" => '#edit-featured-resources' } %>
