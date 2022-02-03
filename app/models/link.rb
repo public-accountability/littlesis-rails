@@ -7,8 +7,12 @@ class Link < ApplicationRecord
   has_many :references, through: :relationship
   has_many :chained_links, class_name: "Link", foreign_key: "entity1_id", primary_key: "entity2_id"
 
-  def self.interlock_hash_from_entities(entity_ids)
-    interlock_hash(where(entity1_id: entity_ids))
+  before_create do
+    assign_attributes(subcategory: Subcategory.calculate(self))
+  end
+
+  def recalculate_subcategory
+    update_column :subcategory, Subcategory.calculate(self)
   end
 
   # used by ListDatatable
@@ -16,6 +20,12 @@ class Link < ApplicationRecord
     links.reduce({}) do |hash, link|
       hash[link.entity2_id] = hash.fetch(link.entity2_id, []).push(link.entity1_id).uniq
       hash
+    end
+  end
+
+  def self.calculate_subcategory!
+    all.includes(:relationship).find_each do |link|
+      link.recalculate_subcategory
     end
   end
 
@@ -60,6 +70,7 @@ class Link < ApplicationRecord
     return 'business' if org_types.include? 'Business'
     return 'other'
   end
+
 
   concerning :Description do
     # The text for the short relationship link that appears on entity profile pages.

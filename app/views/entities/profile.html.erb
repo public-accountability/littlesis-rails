@@ -1,0 +1,62 @@
+<% content_for(:page_title, @entity.name) %>
+
+<%= content_for :head do %>
+  <% javascript_include_tag "profile", defer: true  %>
+  <% stylesheet_link_tag "profile", media: "all" %>
+<% end  %>
+
+<div id="entity-profile-page">
+  <div class="row mt-2">
+    <div class="col">
+      <h1>
+        <%= link_to @entity.name, concretize_entity_path(@entity), class: 'entity-name2' %>
+      </h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="row">
+        <h5 class="entity-blurb-text">
+          <%= @entity.blurb %>
+        </h5>
+      </div>
+
+      <!-- <div class="row pr-4"> -->
+      <%# if @entity.summary.present? %>
+      <!-- <div class="entity-summary"> -->
+      <%#= @entity.summary %>
+      <!-- </div> -->
+      <%# end %>
+      <!-- </div> -->
+      <%# if user_signed_in? %>
+      <%#% render partial: 'editable_blurb', locals: { entity: entity } %>
+      <%# end %>
+    </div>
+  </div>
+
+  <!-- relationships -->
+  <div class="row mt-3">
+    <div class="col-sm-12 col-md-8 profile-page-content-col-4">
+      <div class="row mt-1 mb-3">
+        <div class="col">
+          <div class="profile-page-tabs">
+          <a href="#" class="active">Relationships</a>
+          <a href="#" class="">Interlocks</a>
+          <a href="#">Giving</a>
+          <a href="#">Data</a>
+          </div>
+        </div>
+      </div>
+      <% @entity.relationship_collection.each do |subcategory, grouped_links| %>
+        <%= render partial: 'grouped_links', object: grouped_links %>
+      <% end %>
+    </div>
+
+    <!-- sidebar -->
+    <div class="col-sm-12 col-md-4 profile-page-sidebar-col">
+      <%= render partial: 'sidebar2' %>
+    </div>
+  </div>
+
+</div>

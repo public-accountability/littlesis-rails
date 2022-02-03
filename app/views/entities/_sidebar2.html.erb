@@ -1,0 +1,170 @@
+<div id="profile-page-sidebar">
+
+  <div class="row">
+    <div class="col">
+      <div class="thin-grey-line mb-2 d-none d-block d-sm-none"></div>
+      <div>
+        <%= link_to_if(user_signed_in?, profile_image(@entity), entity_images_path(@entity)) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col">
+      <div id="entity-edited-history">
+        <%= EntityLastEditorPresenter.html(@entity, user_signed_in?) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-12">
+      <h3 class="profile-page-sidebar-heading">Basic Info</h3>
+    </div>
+    <div class="col-12">
+      <%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
+    </div>
+  </div>
+
+  <%# External Links %>
+  <% unless @entity.external_links.count.zero? %>
+    <div class="row mt-3">
+      <div class="col-12">
+        <h3 class="profile-page-sidebar-heading">External Links</h3>
+      </div>
+      <div class="col-12">
+        <%= render partial: 'entities/sidebar/external_links' %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# TAGS %>
+  <% if current_user&.editor? || @entity.tags.present? %>
+    <div class="row mt-3">
+      <%= render partial: 'sidebar_tags' %>
+    </div>
+  <% end %>
+
+  <%# Featured Resource %>
+  <% if @entity.featured_resources.exists? %>
+    <div class="row mt-3">
+      <div class="col-12">
+        <h3 class="profile-page-sidebar-heading">Eyes On The Ties</h3>
+      </div>
+      <div class="col-12">
+        <%= render partial: 'entities/sidebar/featured_resource', collection: @entity.featured_resources %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Data Partners %>
+  <% if show_cmp_data_partner?(@entity) %>
+    <div class="row mt-3 sidebar-data-partner">
+      <div class="col-12">
+        <h3 class="profile-page-sidebar-heading">Data Partner</h3>
+      </div>
+      <div class="col-12">
+        <%= link_to(image_tag('cmp_logo.png', class: 'mt-2'),  'https://www.corporatemapping.ca') %>
+        <p class="mt-2"><%= @entity.name %> is part of the Corporate Mapping Project dataset, a research project investigating Canada's carbon-extractive sector</p>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Source Links %>
+  <div class="row sidebar-source-links" data-entity-id="<%= @entity.id %>" data-controller="sidebar-source-links">
+    <div class="col-12">
+      <h3 class="profile-page-sidebar-heading">Source Links</h3>
+    </div>
+
+    <div class="col-12" >
+      <span class="link-count">Number of documents: <em class="link-count"><%= @entity.documents_count %></em></span>
+      <span class="link-count"><%= link_to " :: see all", concretize_references_entity_path(@entity) %> </span>
+    </div>
+
+    <div class="col-12" >
+      <ul class="list-unstyled" id="source-links-container">
+      </ul>
+    </div>
+
+    <div class="col--12" >
+      <span id="source-links-left-arrow" class="source-links-pager" data-action="click->sidebar-source-links#leftArrow">
+        <span class="link-arrow">&laquo;  </span><span class="link-arrow-text">back</span>
+      </span>
+      <span id="source-links-right-arrow" class="source-links-pager float-right" data-action="click->sidebar-source-links#rightArrow">
+        <span class="link-arrow-text">view more  </span><span class="link-arrow">&raquo;</span>
+      </span>
+    </div>
+  </div>
+
+
+  <%# LISTS  %>
+  <% if user_signed_in? || @entity.featured_lists.count.positive? %>
+    <div class="row mt-3">
+      <div class="col-12">
+        <h3 class="profile-page-sidebar-heading">Lists</h3>
+      </div>
+
+      <% if @entity.featured_lists.count.positive?  %>
+        <div class="col-12">
+          <ul class="list-unstyled">
+            <% @entity.featured_lists.each do |list| %>
+              <li class='sidebar-list'><%= link_to list.name, list_path(list), class: 'link-blue' %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <% if user_signed_in? %>
+        <%= form_for @entity, method: 'post', url: entity_list_entities_path(@entity) do |f| %>
+          <select name="list_id" class="lists-dropdown w-100" data-controller="profile--lists-dropdown" />
+          <%= f.submit 'add to list', class: 'btn btn-sm btn-primary mt-1' %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Network Maps %>
+  <% unless @entity.network_map_collection.empty? %>
+    <% cache(['entity_sidebar_maps', @entity.network_map_collection.maps], expires_in: 1.day) do %>
+      <%= profile_page_sidebar('sidebar-maps-container', 'Network Maps') do %>
+        <ul class="list-unstyled">
+          <% @entity.network_map_collection.records.each do |map| %>
+            <% next unless map.is_featured %>
+            <li><%= link_to map.title, map_path(map) %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <%# Advanced Tools %>
+  <% if user_signed_in? && ( current_user.importer? || current_user.merger? || current_user.admin? ) %>
+    <div class="row mt-3">
+      <div class="col-12">
+        <h3 class="profile-page-sidebar-heading">Advanced Tools</h3>
+      </div>
+      <div class="col-12">
+        <ul class="list-unstyled">
+          <% if current_user.importer?  %>
+            <li>
+              <%= link_to 'Match FEC Donations', fec_match_contributions_path(@entity) %>
+            </li>
+          <% end %>
+
+          <% if current_user.admin?  %>
+            <li>
+              <%= render partial: 'entities/sidebar/edit_featured_resources', object: @entity, as: :entity %>
+            </li>
+          <% end %>
+
+          <% if current_user.merger? %>
+            <li>
+              <%= link_to 'Begin merging process', merge_path(mode: 'search', source: @entity.id) %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+</div>

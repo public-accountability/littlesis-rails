@@ -1,0 +1,162 @@
+@import "base/globals";
+
+$profile_page_fs_entity_heading: 2.75rem;
+$profile_page_fs_subcategory: 1.5rem;  // 18px 1.5rem ?
+$profile_page_fs_name: 1rem;
+$profile_page_fs_blurb: 0.8rem;
+$profile_page_fs_relationship: 0.8rem;
+
+#entity-profile-page {
+
+    h1, h2 {
+        cursor: default;
+    }
+
+
+    h1 {
+        font-size: $profile_page_fs_entity_heading;
+
+        a {
+            text-decoration: none;
+        }
+    }
+
+    .entity-name {}
+
+    .entity-blurb-text {}
+
+    .profile-page-content-col {}
+
+    .profile-page-sidebar-col {}
+
+    .profile-page-tabs {
+        display: flex;
+        justify-content: flex-start;
+        gap: 10px;
+        border-bottom: 1px solid $profile_tab_red_active; /* #CC5454; */
+
+        a {
+            text-decoration: none;
+
+            padding: 10px 10px 4px 10px;
+            background-color: $profile_tab_red;
+            color: white;
+            /* border-radius: 8px; */
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+
+            &.active {
+                background-color: $profile_tab_red_active;
+            }
+
+            &:hover {
+                background-color: $profile_tab_red_active;
+                box-shadow: -4px 4px 10px 1px rgba(204,84,84,0.5);
+            }
+        }
+    }
+
+    .profile-page-subcategory {
+        h2 {
+            font-size: $profile_page_fs_subcategory;
+            // font-weight: 700;
+        }
+
+    }
+
+    .profile-page-grouped-link {
+        padding-top: 0.5em;
+        padding-bottom: 0.25em;
+        border-top: 1px solid #ddd;
+
+        &:hover {
+            background-color: #f8f8f8;
+        }
+
+
+        a {
+            text-decoration: none;
+            &:hover {
+                text-decoration: underline dotted $logo_blue_lighter;
+            }
+        }
+
+        .profile-page-other-entity {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            .other-entity-name {
+                a {
+                    line-height: 24px;
+                    color: #008;
+                    font-size: $profile_page_fs_name;
+                    font-weight: 700;
+                }
+            }
+
+            .other-entity-blurb {
+                cursor: default;
+                padding-left: 0.5em;
+                font-size: $profile_page_fs_blurb;
+            }
+        }
+
+        .profile-page-relationships {
+            font-size: $profile_page_fs_relationship;
+            line-height: 16px;
+
+            span.more-relationships {
+                cursor: pointer;
+                color: #008;
+
+            }
+        }
+    }
+
+    i.bi-arrows-collapse, i.bi-arrows-expand {
+        font-size: 1.25rem;
+        cusror: pointer;
+    }
+
+
+    .profile-page-subcategory-pagination {
+
+        i {
+
+            cursor: pointer;
+
+            &:hover {
+                color: $link_blue;
+            }
+        }
+
+        a.disabled > i {
+            // color: lightgray;
+            cursor: not-allowed;
+        }
+    }
+}
+
+
+#profile-page-sidebar {
+
+    h3 {
+        font-size: $profile_page_fs_subcategory;
+        border-bottom: 1px solid #e7e7e7;
+    }
+
+    .profile-page-sidebar-heading {}
+
+    #tags-edit-button {
+        font-size: 1rem;
+    }
+
+    .sidebar-data-partner p {
+        font-size: $profile_page_fs_blurb;
+    }
+
+    .sidebar-source-links {
+        font-size: $profile_page_fs_blurb;
+    }
+}

@@ -46,6 +46,10 @@ class ApplicationRecord < ActiveRecord::Base
     false
   end
 
+  def self.random
+    order('random()').take
+  end
+
   # Takes an array of ids and generates a lookup hash where the
   # ActiveReocrd id is the key and the value is the ActiveRecord object.
   # If ignore is set to true,  `where` is used instead of `find`, suppressing
@@ -60,12 +64,12 @@ class ApplicationRecord < ActiveRecord::Base
   # example:
   #   execute_one('SELECT COUNT(*) from versions') => 100
   def self.execute_one(sql)
-    connection.execute(sql).values.first.first
+    connection.exec_query(sql).rows.first.first
   end
 
-  # convenience function for running `.connection.execute`
+  # convenience function for running `.connection.exec_query`
   def self.execute_sql(*args)
-    connection.execute(*args)
+    connection.exec_query(*args)
   end
 
   def self.sqlize_array(arr)

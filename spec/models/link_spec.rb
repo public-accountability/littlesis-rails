@@ -148,4 +148,117 @@ describe Link, type: :model do
       expect(link.link_content).not_to include("('")
     end
   end
+
+  describe 'Subcategory'do
+    specify 'businesses' do
+      relationship = Relationship.create!(category_id: 1, entity: create(:entity_person), related: create(:public_company_entity))
+      expect(relationship.link.subcategory).to eq 'businesses'
+      expect(relationship.reverse_link.subcategory).to eq 'staff'
+    end
+
+    specify 'government' do
+      relationship = Relationship.create!(category_id: 1, entity: create(:entity_person), related: create(:government_entity))
+      expect(relationship.link.subcategory).to eq 'governments'
+      expect(relationship.reverse_link.subcategory).to eq 'staff'
+    end
+
+
+    specify 'offices' do
+      relationship = Relationship.create!(category_id: 1, entity: create(:entity_person), related: create(:entity_person))
+      expect(relationship.link.subcategory).to eq 'offices'
+      expect(relationship.reverse_link.subcategory).to eq 'staff'
+    end
+
+    specify 'staff' do
+      relationship = Relationship.create!(category_id: 1, entity: create(:entity_person), related: create(:entity_org))
+      expect(relationship.link.subcategory).to eq 'positions'
+      expect(relationship.reverse_link.subcategory).to eq 'staff'
+    end
+
+    specify 'board memberships' do
+      relationship = Relationship.create!(category_id: 1, entity: create(:entity_person), related: create(:entity_org))
+      expect(relationship.link.subcategory).to eq 'positions'
+      relationship.position.update!(is_board: true)
+      expect(relationship.link.subcategory).to eq 'board_memberships'
+      expect(relationship.reverse_link.subcategory).to eq 'board_members'
+    end
+
+    specify 'board membership w/ person' do
+      relationship = Relationship.create!(category_id: 1, entity: create(:entity_person), related: create(:entity_person))
+      relationship.position.update!(is_board: true)
+      expect(relationship.link.subcategory).to eq 'board_memberships'
+      expect(relationship.reverse_link.subcategory).to eq 'staff'
+    end
+
+
+    specify 'education' do
+      relationship = Relationship.create!(category_id: Relationship::EDUCATION_CATEGORY, entity: create(:entity_person), related: create(:entity_org))
+      expect(relationship.link.subcategory).to eq 'schools'
+      expect(relationship.reverse_link.subcategory).to eq 'students'
+    end
+
+    specify 'membership' do
+      relationship = Relationship.create!(category_id: Relationship::MEMBERSHIP_CATEGORY, entity: create(:entity_org), related: create(:entity_org))
+      expect(relationship.link.subcategory).to eq 'memberships'
+      expect(relationship.reverse_link.subcategory).to eq 'members'
+    end
+
+    specify 'family' do
+      relationship = Relationship.create!(category_id: Relationship::FAMILY_CATEGORY, entity: create(:entity_person), related: create(:entity_person))
+      expect(relationship.link.subcategory).to eq 'family'
+      expect(relationship.reverse_link.subcategory).to eq 'family'
+    end
+
+    specify 'fec donation relationship' do
+      relationship = Relationship.create!(category_id: 5, entity: create(:entity_person), related: create(:entity_org), filings: 2, amount: 1000, description1: 'Campaign Contribution')
+      expect(relationship.link.subcategory).to eq 'campaign_contributions'
+      expect(relationship.reverse_link.subcategory).to eq 'campaign_contributors'
+    end
+
+    specify 'donation relationship' do
+      relationship = Relationship.create!(category_id: 5, entity: create(:entity_person), related: create(:entity_org))
+      expect(relationship.link.subcategory).to eq 'donations'
+      expect(relationship.reverse_link.subcategory).to eq 'donors'
+    end
+
+    specify 'transaction' do
+      relationship = Relationship.create!(category_id: 6, entity: create(:entity_person), related: create(:entity_org))
+      expect(relationship.link.subcategory).to eq 'transactions'
+      expect(relationship.reverse_link.subcategory).to eq 'transactions'
+    end
+
+    specify 'lobbying' do
+      relationship = Relationship.create!(category_id: Relationship::LOBBYING_CATEGORY, entity: create(:entity_person), related: create(:entity_org))
+      expect(relationship.link.subcategory).to eq 'lobbies'
+      expect(relationship.reverse_link.subcategory).to eq 'lobbied_by'
+    end
+
+    specify 'professional & social' do
+      entity1 = create(:entity_person)
+      entity2 = create(:entity_person)
+      social_relationship = Relationship.create!(category_id: Relationship::SOCIAL_CATEGORY, entity: entity1, related: entity2)
+      professional_relationship = Relationship.create!(category_id: Relationship::PROFESSIONAL_CATEGORY, entity: entity1, related: entity2)
+      (social_relationship.links + professional_relationship.links).each do |link|
+        expect(link.subcategory).to eq 'social'
+      end
+    end
+
+    specify 'ownership' do
+      relationship = Relationship.create!(category_id: 10, entity: create(:entity_org), related: create(:entity_org))
+      expect(relationship.link.subcategory).to eq 'holdings'
+      expect(relationship.reverse_link.subcategory).to eq 'owners'
+    end
+
+    specify 'hierarchy' do
+      relationship = Relationship.create!(category_id: 11, entity: create(:entity_org), related: create(:entity_org))
+      expect(relationship.link.subcategory).to eq 'parents'
+      expect(relationship.reverse_link.subcategory).to eq 'children'
+    end
+
+    specify 'generic' do
+      relationship = Relationship.create!(category_id: 12, entity: create(:entity_person), related: create(:entity_person))
+      expect(relationship.links[0].subcategory).to eq 'generic'
+      expect(relationship.links[1].subcategory).to eq 'generic'
+    end
+  end
 end

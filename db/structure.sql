@@ -2142,7 +2142,8 @@ CREATE TABLE public.links (
     entity2_id integer NOT NULL,
     category_id integer NOT NULL,
     relationship_id bigint NOT NULL,
-    is_reverse boolean NOT NULL
+    is_reverse boolean NOT NULL,
+    subcategory text
 );
 
 
@@ -7606,6 +7607,13 @@ CREATE INDEX index_links_on_relationship_id ON public.links USING btree (relatio
 
 
 --
+-- Name: index_links_on_subcategory; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_links_on_subcategory ON public.links USING btree (subcategory);
+
+
+--
 -- Name: index_network_maps_on_search_tsvector; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8383,6 +8391,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220121202743'),
 ('20220121202744'),
 ('20220121202745'),
-('20220126173448');
+('20220126173448'),
+('20220126215216');
 
 

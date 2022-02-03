@@ -5,6 +5,8 @@ class Position < ApplicationRecord
 
   belongs_to :relationship, inverse_of: :position
 
+  after_update -> { relationship.links.each(&:recalculate_subcategory) }, if: :saved_change_to_is_board?
+
   def self.description_indicates_board_membership(description)
     str = description.upcase
     return true if str.include?('MEMBER') || str.include?('CHAIRMAN')

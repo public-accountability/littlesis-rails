@@ -1,5 +1,3 @@
-# rubocop:disable Style/StringLiterals, Layout/SpaceBeforeFirstArg
-
 describe Tagable, type: :model do
   let(:test_tagable) { create(:entity_org) }
   let(:tags) { Array.new(3) { create(:tag) } }
@@ -155,7 +153,6 @@ describe Tagable, type: :model do
     end
   end
 
-
   describe 'removing a tag' do
     it 'removes a tag via active record' do
       mock_taggings = double('taggings')
@@ -205,7 +202,6 @@ describe Tagable, type: :model do
   end
 
   describe 'formating tags for user editing' do
-
     let(:owner) { create_basic_user }
     let(:non_owner) { create_basic_user }
     let(:restricted_tag) { tags.last.tap { |t| t.update(restricted: true) } }
@@ -214,7 +210,7 @@ describe Tagable, type: :model do
     let(:full_access) { { viewable: true, editable: true }.with_indifferent_access }
     let(:view_only_access) { { viewable: true, editable: false }.with_indifferent_access }
 
-    before(:each) do
+    before do
       test_tagable.add_tag(restricted_tag.id)
       owner.permissions.add_permission(Tag, tag_ids: [restricted_tag.id])
       allow(test_tagable).to receive(:tags).and_return([restricted_tag])
@@ -227,7 +223,7 @@ describe Tagable, type: :model do
     end
 
     it "returns all tags in map by stringified ids" do
-      expect(test_tagable.tags_for(owner)[:byId].keys).to eq(tags.map(&:id).map(&:to_s))
+      expect(test_tagable.tags_for(owner)[:byId].keys.to_set).to eq(tags.map(&:id).map(&:to_s).to_set)
     end
 
     it "returns current tags as a list of ids" do
@@ -240,5 +236,3 @@ describe Tagable, type: :model do
     end
   end
 end
-
-# rubocop:enable Style/StringLiterals, Layout/SpaceBeforeFirstArg
