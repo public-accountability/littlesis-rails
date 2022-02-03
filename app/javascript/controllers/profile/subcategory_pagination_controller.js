@@ -15,10 +15,10 @@ export default class extends Controller {
 
     if (this.pageValue === 1) {
       this.prevLinkTarget.classList.add('disabled')
-      this.prevLinkTarget.href = '#'
+      this.prevLinkTarget.href = ''
     } else if (this.pageValue === this.totalPagesValue) {
       this.nextLinkTarget.classList.add('disabled')
-      this.nextLinkTarget.href = '#'
+      this.nextLinkTarget.href = ''
     }
   }
 }
