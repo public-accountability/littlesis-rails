@@ -1,4 +1,4 @@
-FROM ruby:3.0.3-bullseye
+FROM ruby:3.1.0-bullseye
 LABEL maintainer="dev@littlesis.org"
 
 RUN apt-get update && apt-get upgrade -y && apt-get -y install \
