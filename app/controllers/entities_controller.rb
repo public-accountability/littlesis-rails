@@ -34,7 +34,7 @@ class EntitiesController < ApplicationController
   def grouped_links # turbo frame
     @subcategory_page = params.require(:page).to_i
     @subcategory = params.require(:subcategory)
-    @grouped_links = @entity.relationship_collection(scope: { subcategory:  @subcategory }).fetch(@subcategory)
+    @grouped_links = @entity.relationship_collection(scope: { subcategory:  @subcategory }).get(@subcategory)
     render partial: 'grouped_links', object: @grouped_links
   end
 
