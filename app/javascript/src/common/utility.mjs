@@ -404,6 +404,10 @@ export function createLink(href, text) {
   return a;
 };
 
+// source: https://stackoverflow.com/questions/9333379/check-if-an-elements-content-is-overflowing
+export function isOverflowing(element) {
+  return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth
+}
 
 export default {
   range, entityLink, randomDigitStringId, entityInfo,
@@ -411,5 +415,5 @@ export default {
   validDate, validURL, validPersonName, browserCanOpenFiles,
   capitalize, formatIdSelector, removeHashFromId, formatMoney, capitalizeWords,
   swapDomElementsById, swapInputTextById, createElementWithText,
-  createElement, createLink
+  createElement, createLink, isOverflowing
 };

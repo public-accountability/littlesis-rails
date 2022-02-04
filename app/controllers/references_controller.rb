@@ -62,7 +62,7 @@ class ReferencesController < ApplicationController
     return head :bad_request unless params[:entity_id]
 
     render json: RecentEntityReferencesQuery
-             .run([params[:entity_id].to_i],
+             .run(params[:entity_id].to_i,
                   page: value_for_param(:page, 1, :to_i),
                   per_page: value_for_param(:per_page, 10, :to_i))
              .map { |doc| doc.slice(:name, :url) }

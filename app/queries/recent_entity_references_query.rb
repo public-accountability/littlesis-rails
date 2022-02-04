@@ -3,11 +3,7 @@
 # Takes a list of Entity ids and gathers the most recent   references for those entities
 module RecentEntityReferencesQuery
   def self.run(input, page: 1, per_page: 10)
-    entity_ids = if input.is_a?(Entity)
-                   [input.id]
-                 else
-                   input
-                 end
+    entity_ids = Array.wrap(input).map { |x| Entity.entity_id_for(x) }
 
     Document.find_by_sql Reference
                            .select('documents.*')

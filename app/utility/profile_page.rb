@@ -12,7 +12,7 @@ module ProfilePage
     when :campaign_contributions
       "Federal Election Campaign Contributions"
     when :campaign_contributors
-      "Campaign Contributors"
+      "Campaign Donors"
     when :children
       "Child Organizations"
     when :donations

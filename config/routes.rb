@@ -116,7 +116,7 @@ LittleSis::Application.routes.draw do
           get 'grouped_links/:subcategory/:page',
               constraints: { subcategory:  Regexp.new(Link::Subcategory::SUBCATEGORIES.join('|')),  page: /[0-9]+/ },
               to: 'entities#grouped_links'
-
+          get 'source_links'
         end
 
         resources :images, controller: 'entities/images'

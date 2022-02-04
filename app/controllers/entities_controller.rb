@@ -13,7 +13,7 @@ class EntitiesController < ApplicationController
 
   EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation].freeze
   IMPORTER_ACTIONS = %i[match_donation match_donations review_donations].freeze
-  PUBLIC_ACTIONS = %i[show datatable political contributions references validate profile grouped_links].freeze
+  PUBLIC_ACTIONS = %i[show datatable political contributions references validate profile grouped_links source_links].freeze
 
   before_action :authenticate_user!, except: PUBLIC_ACTIONS
   before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
@@ -31,11 +31,15 @@ class EntitiesController < ApplicationController
   def profile
   end
 
-  def grouped_links
+  def grouped_links # turbo frame
     @subcategory_page = params.require(:page).to_i
     @subcategory = params.require(:subcategory)
     @grouped_links = @entity.relationship_collection(scope: { subcategory:  @subcategory }).fetch(@subcategory)
     render partial: 'grouped_links', object: @grouped_links
+  end
+
+  def source_links # turbo frame
+    render partial: 'source_links'
   end
 
   def political

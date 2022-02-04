@@ -1,8 +1,8 @@
 <% content_for(:page_title, @entity.name) %>
-
-<%= content_for :head do %>
-  <% javascript_include_tag "profile", defer: true  %>
-  <% stylesheet_link_tag "profile", media: "all" %>
+<% content_for :head do %>
+  <%= og_tags(title: "LittleSis: #{@entity.name}", url: entity_url(@entity), image: @entity.featured_image_url) %>
+  <%= javascript_include_tag "profile", defer: true  %>
+  <%= stylesheet_link_tag "profile", media: "all" %>
 <% end  %>
 
 <div id="entity-profile-page">
@@ -16,28 +16,33 @@
 
   <div class="row">
     <div class="col">
-      <div class="row">
-        <h5 class="entity-blurb-text">
-          <%= @entity.blurb %>
-        </h5>
-      </div>
-
-      <!-- <div class="row pr-4"> -->
-      <%# if @entity.summary.present? %>
-      <!-- <div class="entity-summary"> -->
-      <%#= @entity.summary %>
-      <!-- </div> -->
-      <%# end %>
-      <!-- </div> -->
-      <%# if user_signed_in? %>
-      <%#% render partial: 'editable_blurb', locals: { entity: entity } %>
-      <%# end %>
+      <h5 class="entity-blurb-text">
+        <%= @entity.blurb %>
+      </h5>
     </div>
   </div>
 
-  <!-- relationships -->
+  <% if user_signed_in? %>
+    <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
+  <% end %>
+
+  <% if @entity.summary.present? %>
+    <div class="row mt-2">
+      <div class="col-12 col-md-8">
+        <div id="profile-page-entity-summary-container" class="position-relative" data-controller="profile--entity-summary">
+          <p class="collapse" id="profile-page-entity-summary" aria-expanded="false">
+            <%= @entity.summary %>
+            <a role="button" class="collapsed" data-bs-toggle="collapse" href="#profile-page-entity-summary" aria-expanded="false" aria-controls="profile-page-entity-summary"></a>
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# relationships %>
   <div class="row mt-3">
-    <div class="col-sm-12 col-md-8 profile-page-content-col-4">
+    <div class="col-sm-12 col-md-8 profile-page-content-col">
+
       <div class="row mt-1 mb-3">
         <div class="col">
           <div class="profile-page-tabs">
@@ -53,10 +58,9 @@
       <% end %>
     </div>
 
-    <!-- sidebar -->
+    <%# sidebar %>
     <div class="col-sm-12 col-md-4 profile-page-sidebar-col">
       <%= render partial: 'sidebar2' %>
     </div>
   </div>
-
 </div>

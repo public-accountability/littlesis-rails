@@ -73,6 +73,9 @@ application.register("oligrapher", OligrapherController)
 import OligrapherSearchController from "./oligrapher_search_controller.js"
 application.register("oligrapher-search", OligrapherSearchController)
 
+import Profile__EntitySummaryController from "./profile/entity_summary_controller.js"
+application.register("profile--entity-summary", Profile__EntitySummaryController)
+
 import Profile__ListsDropdownController from "./profile/lists_dropdown_controller.js"
 application.register("profile--lists-dropdown", Profile__ListsDropdownController)
 
