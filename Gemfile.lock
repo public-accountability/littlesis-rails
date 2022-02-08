@@ -138,7 +138,7 @@ GEM
       raabro (~> 1.4)
     globalid (1.0.0)
       activesupport (>= 5.0)
-    good_job (2.9.4)
+    good_job (2.9.6)
       activejob (>= 5.2.0)
       activerecord (>= 5.2.0)
       concurrent-ruby (>= 1.0.2)
@@ -487,4 +487,4 @@ DEPENDENCIES
   zeitwerk
 
 BUNDLED WITH
-   2.3.4
+   2.3.6
