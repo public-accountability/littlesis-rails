@@ -48,6 +48,7 @@ RUN mkdir -p /littlesis
 WORKDIR /littlesis
 
 COPY ./Gemfile.lock ./Gemfile ./
+RUN bundle update --bundler
 RUN bundle install --jobs=2
 
 COPY ./package.json ./yarn.lock ./

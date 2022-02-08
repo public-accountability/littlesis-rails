@@ -1,7 +1,6 @@
 <% content_for(:page_title, @entity.name) %>
 <% content_for :head do %>
   <%= og_tags(title: "LittleSis: #{@entity.name}", url: entity_url(@entity), image: @entity.featured_image_url) %>
-  <%= javascript_include_tag "profile", defer: true  %>
   <%= stylesheet_link_tag "profile", media: "all" %>
 <% end  %>
 
@@ -53,7 +52,7 @@
           </div>
         </div>
       </div>
-      <% @entity.relationship_collection.each do |subcategory, grouped_links| %>
+      <% @entity.relationship_collection.each do |grouped_links| %>
         <%= render partial: 'grouped_links', object: grouped_links %>
       <% end %>
     </div>
