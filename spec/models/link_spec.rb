@@ -162,7 +162,6 @@ describe Link, type: :model do
       expect(relationship.reverse_link.subcategory).to eq 'staff'
     end
 
-
     specify 'offices' do
       relationship = Relationship.create!(category_id: 1, entity: create(:entity_person), related: create(:entity_person))
       expect(relationship.link.subcategory).to eq 'offices'
@@ -189,7 +188,6 @@ describe Link, type: :model do
       expect(relationship.link.subcategory).to eq 'board_memberships'
       expect(relationship.reverse_link.subcategory).to eq 'staff'
     end
-
 
     specify 'education' do
       relationship = Relationship.create!(category_id: Relationship::EDUCATION_CATEGORY, entity: create(:entity_person), related: create(:entity_org))
@@ -259,6 +257,53 @@ describe Link, type: :model do
       relationship = Relationship.create!(category_id: 12, entity: create(:entity_person), related: create(:entity_person))
       expect(relationship.links[0].subcategory).to eq 'generic'
       expect(relationship.links[1].subcategory).to eq 'generic'
+    end
+  end
+
+  describe '<=>' do
+    let(:entity_org) { create(:entity_org) }
+
+    it 'can only compare links of the same subcategory' do
+      link1 = Link.new(subcategory: 'board_members')
+      link2 = Link.new(subcategory: 'staff')
+      expect { link1 <=> link2 }.to raise_error(Link::MismatchedSubcategoryError)
+    end
+
+    it 'sorts donations amount' do
+      relationship1 = Relationship.create!(category_id: Relationship::DONATION_CATEGORY, entity: create(:entity_person), related: create(:entity_person), amount: 10)
+      relationship2 = Relationship.create!(category_id: Relationship::DONATION_CATEGORY, entity: create(:entity_person), related: create(:entity_person), amount: 20)
+      relationship3 = Relationship.create!(category_id: Relationship::DONATION_CATEGORY, entity: create(:entity_person), related: create(:entity_person), amount: 30)
+      relationship4 = Relationship.create!(category_id: Relationship::DONATION_CATEGORY, entity: create(:entity_person), related: create(:entity_person), amount: nil)
+      expect(relationship1.link <=> relationship2.link).to eql -1
+      expect(relationship1.link <=> relationship3.link).to eq -1
+      expect(relationship1.link <=> relationship4.link).to eq 1
+      expect(relationship3.link <=> relationship2.link).to eq 1
+    end
+
+    it 'sorts by is featured' do
+      relationship1 = Relationship.create!(category_id: Relationship::DONATION_CATEGORY, entity: create(:entity_person), related: create(:entity_person), amount: 10)
+      relationship2 = Relationship.create!(category_id: Relationship::DONATION_CATEGORY, entity: create(:entity_person), related: create(:entity_person), amount: 10)
+      expect(relationship1.link <=> relationship2.link).to eq 0
+      relationship2.update!(is_featured: true)
+      expect(relationship1.link <=> relationship2.link).to eq -1
+    end
+
+    it 'sorts by is current and start date' do
+      relationship1 = Relationship.create!(category_id: 1, entity: create(:entity_person), related: entity_org, start_date: '2010-00-00')
+      relationship2 = Relationship.create!(category_id: 1, entity: create(:entity_person), related: entity_org, start_date: '2015-00-00')
+      expect(relationship1.link <=> relationship2.link).to eq -1
+      relationship1.update!(is_current: true)
+      expect(relationship1.link <=> relationship2.link).to eq 1
+      relationship2.update!(is_current: true)
+      expect(relationship1.link <=> relationship2.link).to eq 0
+    end
+
+    it 'sorts by updated at' do
+      relationship1 = Relationship.create!(category_id: 1, entity: create(:entity_person), related: entity_org, start_date: '2010-00-00')
+      relationship2 = Relationship.create!(category_id: 1, entity: create(:entity_person), related: entity_org, start_date: '2015-00-00')
+      relationship1.update_columns(updated_at: 1.day.ago)
+      expect(relationship1.link <=> relationship2.link).to eq -1
+      expect(relationship2.link <=> relationship1.link).to eq 1
     end
   end
 end

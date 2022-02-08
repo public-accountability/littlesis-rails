@@ -8,7 +8,7 @@ class Link
     # String/Symbol, [<Link>]
     def initialize(subcategory, links)
       @subcategory = subcategory.to_sym
-      grouped_links = links.group_by(&:entity2_id).map { GroupedLink.new(*_2) }
+      grouped_links = links.group_by(&:entity2_id).map { GroupedLink.new(*_2) }.sort!.reverse!
       super(grouped_links)
     end
 
