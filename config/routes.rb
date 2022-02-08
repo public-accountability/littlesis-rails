@@ -112,7 +112,7 @@ LittleSis::Application.routes.draw do
           post 'tags'
 
           # new profile page
-          get 'profile'
+          get 'profile(/:active_tab)', action: :profile,  constraints: { active_tab: /relationships|interlocks|giving|data/ }, as: 'profile'
           get 'grouped_links/:subcategory/:page',
               constraints: { subcategory:  Regexp.new(Link::Subcategory::SUBCATEGORIES.join('|')),  page: /[0-9]+/ },
               to: 'entities#grouped_links'

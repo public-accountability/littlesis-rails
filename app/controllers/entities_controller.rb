@@ -29,6 +29,7 @@ class EntitiesController < ApplicationController
 
   # new profile page
   def profile
+    @active_tab = params[:active_tab]&.to_sym || :relationships
   end
 
   def grouped_links # turbo frame
