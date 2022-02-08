@@ -13,6 +13,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     grep \
     gzip \
     imagemagick \
+    libasound2 \
     libdbus-glib-1-dev \
     libgtk-3-0 \
     libmagickwand-dev \
