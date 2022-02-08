@@ -38,20 +38,22 @@
     </div>
   <% end %>
 
-  <%# relationships %>
   <div class="row mt-3">
     <div class="col-sm-12 col-md-8 profile-page-content-col">
 
+      <%# tabs %>
       <div class="row mt-1 mb-3">
         <div class="col">
           <div class="profile-page-tabs">
-          <a href="#" class="active">Relationships</a>
-          <a href="#" class="">Interlocks</a>
-          <a href="#">Giving</a>
-          <a href="#">Data</a>
+            <a class="active">Relationships</a>
+            <a href="#" class="">Interlocks</a>
+            <a href="#">Giving</a>
+            <a href="#">Data</a>
           </div>
         </div>
       </div>
+
+      <%# relationships %>
       <% @entity.relationship_collection.each do |grouped_links| %>
         <%= render partial: 'grouped_links', object: grouped_links %>
       <% end %>

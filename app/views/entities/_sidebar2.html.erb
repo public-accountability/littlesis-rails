@@ -11,7 +11,34 @@
 
   <div class="row mt-3">
     <div class="col">
-      <div id="entity-edited-history">
+      <div class="dropdown dropstart profile-page-controls d-inline-block">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="profile-page-controls-button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-binoculars"></i>
+        </button>
+
+        <ul class="dropdown-menu" aria-labelledby="profile-page-controls-button" data-controller="profile--controls">
+          <li>
+            <a class="dropdown-item" href="#" data-action="profile--controls#collapse">
+              <i class="bi bi-arrows-collapse"></i><span class="ms-2">collapse</span>
+            </a>
+          </li>
+
+          <li>
+            <a class="dropdown-item" href="#" data-action="profile--controls#expand">
+              <i class="bi bi-arrows-expand"></i><span class="ms-2">expand</span>
+            </a>
+          </li>
+
+          <li>
+            <a class="dropdown-item" href="#">
+              <i class="bi bi-search"></i><span class="ms-2">search</span>
+            </a>
+          </li>
+
+        </ul>
+      </div>
+
+      <div id="entity-edited-history" class="d-inline-block">
         <%= EntityLastEditorPresenter.html(@entity, user_signed_in?) %>
       </div>
     </div>
