@@ -4,9 +4,11 @@ export default class extends Controller {
   static targets = [ "modal", "select" ]
 
   initialize() {
-    $(this.selectTarget).select2({
+    if (this.hasSelectTarget) {
+      $(this.selectTarget).select2({
       dropdownAutoWidth : true,
       dropdownParent: $(this.modalTarget)
-    })
+      })
+    }
   }
 }
