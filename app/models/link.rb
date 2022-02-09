@@ -7,6 +7,8 @@ class Link < ApplicationRecord
   has_many :references, through: :relationship
   has_many :chained_links, class_name: "Link", foreign_key: "entity1_id", primary_key: "entity2_id"
 
+  class MismatchedSubcategoryError <  Exceptions::LittleSisError; end
+
   before_create do
     assign_attributes(subcategory: Subcategory.calculate(self))
   end
@@ -71,6 +73,38 @@ class Link < ApplicationRecord
     return 'other'
   end
 
+  def <=>(other)
+    raise MismatchedSubcategoryError unless subcategory == other.subcategory
+
+    if (featured_compared = Sorting.by_featured(self, other))
+      return featured_compared
+    end
+
+    if %w[campaign_contributions campaign_contributors donors donations transactions].include?(subcategory)
+      amount_compared = Sorting.by_amount(self, other)
+
+      return amount_compared if amount_compared
+    end
+
+    if %w[parents children owners holdings].include?(subcategory)
+      is_current_compared = Sorting.by_is_current(self, other)
+
+      return is_current_compared if is_current_compared
+    end
+
+    if %w[board_members board_memberships businesses offices staff governments positions].include?(subcategory)
+      is_current_compared = Sorting.by_is_current(self, other)
+
+      return is_current_compared if is_current_compared
+
+      startdate_compared = Sorting.by_startdate(self, other)
+
+      return startdate_compared if startdate_compared
+    end
+
+    # fallback to sorting by updated_at
+    relationship.updated_at <=> other.relationship.updated_at
+  end
 
   concerning :Description do
     # The text for the short relationship link that appears on entity profile pages.

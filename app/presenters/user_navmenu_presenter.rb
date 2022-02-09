@@ -50,11 +50,16 @@ class UserNavmenuPresenter
                                     ['Tags', tags_path],
                                     ['Edits', edits_path],
                                     ['Datasets', datasets_path]]].freeze
+
+  FEATURES_MENU = ['Features', [['Blog', 'https://news.littlesis.org'],
+                                ['Toolkit', '/toolkit'],
+                                ['Powerlines', 'https://powerlines101.org']]].freeze
+
   DEFAULT_MENU = [
     ['Login', '/login'],
     EXPLORE_MENU,
     ABOUT_MENU,
-    ['Blog', 'https://news.littlesis.org']
+    FEATURES_MENU
   ].freeze
 
   def initialize(user = nil)

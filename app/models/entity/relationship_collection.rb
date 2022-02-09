@@ -2,6 +2,7 @@
 
 class Entity
   # [Link::GroupedLinkArray]
+  # RelationshipCollection --> Link::GroupedLinkArray --> Link::GroupedLink --> [Links] --> [Relationship]
   class RelationshipCollection
     PAGE_ORDER= [
       :staff,

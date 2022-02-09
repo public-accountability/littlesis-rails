@@ -11,7 +11,11 @@
 
   <div class="row mt-3">
     <div class="col">
-      <div id="entity-edited-history">
+      <% if @active_tab == :relationships %>
+        <%= render partial: 'relationships_controls' %>
+      <% end %>
+
+      <div id="entity-edited-history" class="d-inline-block">
         <%= EntityLastEditorPresenter.html(@entity, user_signed_in?) %>
       </div>
     </div>
@@ -78,7 +82,7 @@
     <%= render partial: 'source_links' %>
   </div>
 
-  <%# Lists  %>
+  <%# Lists %>
   <% if user_signed_in? || @entity.featured_lists.count.positive? %>
     <div class="row mt-3">
       <div class="col-12">

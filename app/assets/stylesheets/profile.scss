@@ -91,6 +91,25 @@ $profile_page_fs_relationship: $profile_page_fs_small;
         }
     }
 
+
+    .profile-page-controls {
+
+        button.dropdown-toggle {
+            border: 0;
+        }
+
+        .btn:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        i {
+            font-size: 1rem;
+        }
+
+    }
+
+
     .profile-page-subcategory {
         h2 {
             font-size: $profile_page_fs_subcategory;
