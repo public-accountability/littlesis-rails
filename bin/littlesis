@@ -286,7 +286,7 @@ when 'console', 'c'
   app_exec "rails c #{rest}", bin: true, run: true
 when 'redis'
   redis_host = production_environment? ? '127.0.0.1' : 'redis'
-  app_exec "/usr/bin/redis-cli -h #{redis_host}", run: true
+  app_exec "/usr/bin/redis-cli -h #{redis_host} #{rest}", run: true
 when 'data'
   app_exec_bin "rails runner lib/scripts/data.rb #{rest}"
 when 'fec'
