@@ -77,7 +77,8 @@ class UserNavmenuPresenter
       user_links(user),
       (user.admin? ? ADMIN_EXPLORE_MENU : USER_EXPLORE_MENU),
       ADD_MENU,
-      USER_ABOUT_MENU
+      USER_ABOUT_MENU,
+      FEATURES_MENU
     ]
   end
 
