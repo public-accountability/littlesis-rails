@@ -76,6 +76,9 @@ application.register("oligrapher-search", OligrapherSearchController)
 import Profile__ControlsController from "./profile/controls_controller.js"
 application.register("profile--controls", Profile__ControlsController)
 
+import Profile__DatatableController from "./profile/datatable_controller.js"
+application.register("profile--datatable", Profile__DatatableController)
+
 import Profile__EntitySummaryController from "./profile/entity_summary_controller.js"
 application.register("profile--entity-summary", Profile__EntitySummaryController)
 
@@ -97,8 +100,8 @@ application.register("relationship-bulk-adder", RelationshipBulkAdderController)
 import RelationshipCreatorController from "./relationship_creator_controller.js"
 application.register("relationship-creator", RelationshipCreatorController)
 
-import RelationshipsDatatableController from "./relationships_datatable_controller.js"
-application.register("relationships-datatable", RelationshipsDatatableController)
+import RelationshipsDatatableLegacyController from "./relationships_datatable_legacy_controller.js"
+application.register("relationships-datatable-legacy", RelationshipsDatatableLegacyController)
 
 import ReverseLinkController from "./reverse_link_controller.js"
 application.register("reverse-link", ReverseLinkController)

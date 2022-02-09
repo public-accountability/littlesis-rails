@@ -37,4 +37,10 @@ class RelationshipCategory < ApplicationRecord
       org_to_org: org_to_org
     }
   end
+
+  def self.lookup
+    @lookup ||= all.map do |rc|
+      [rc.id, rc.attributes.except('created_at', 'updated_at').with_indifferent_access]
+    end.to_h
+  end
 end
