@@ -25,13 +25,13 @@
                placeholder="minium amount"  />
 
         <div class="form-check form-check-inline ms-3">
-          <input class="form-check-input" type="checkbox" id="connections-table-is-current" value="is-current">
-          <label class="form-check-label" for="connections-table-is-current">Is Current</label>
+          <input class="form-check-input" type="checkbox" id="connections-table-is-current-filter" value="is-current" data-action="profile--connections-table#redraw">
+          <label class="form-check-label" for="connections-table-is-current-filter">Is Current</label>
         </div>
 
         <div class="form-check form-check-inline">
-          <input class="form-check-input" type="checkbox" id="connections-table-is-board" value="is-board">
-          <label class="form-check-label" for="connections-table-is-board">Is Board</label>
+          <input class="form-check-input" type="checkbox" id="connections-table-is-board-filter" value="is-board" data-action="profile--connections-table#redraw">
+          <label class="form-check-label" for="connections-table-is-board-filter">Is Board</label>
         </div>
       </div>
     </div>
