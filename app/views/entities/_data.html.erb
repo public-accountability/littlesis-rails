@@ -1,0 +1,57 @@
+<% connections_table = Entity::ConnectionsTable.new(@entity) %>
+
+
+<div data-controller="profile--connections-table">
+  <div class="row bg-light p-1 mb-2">
+    <div class="col-12">
+      <div class="input-group">
+        <%= select_tag 'category', options_for_select(connections_table.category_collection_for_options), include_blank: 'Categories', class: 'form-control m-2' %>
+        <%= select_tag 'extensions', options_for_select(connections_table.extension_definition_collection_for_options), include_blank: 'Types', class: 'form-control m-2' %>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="input-group m-2" >
+        <input class="form-control" style="flex-grow: 0; flex-basis: 200px;" sname="minimum_amount" type="number" min="0" placeholder="minium amount"  />
+
+        <div class="form-check form-check-inline ms-3">
+          <input class="form-check-input" type="checkbox" id="connections-table-is-current" value="is-current">
+          <label class="form-check-label" for="connections-table-is-current">Is Current</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" id="connections-table-is-board" value="is-board">
+          <label class="form-check-label" for="connections-table-is-board">Is Board</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Related Entity</th>
+          <th>Relationship</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% connections_table .each do |relationship| %>
+          <tr>
+            <td><%= link_to relationship[:other_entity][:name], relationship[:other_entity][:url], target: '_blank' %></td>
+            <td>
+              <span title="<%= RelationshipCategory.lookup[relationship[:category_id]][:display_name] %>">
+                <%= ProfilePage.relationship_category_icon(relationship[:category_id]) %>
+              </span>
+              <span class="ml-1"><%= link_to relationship[:label], relationship[:url], target: '_blank' %></span>
+            </td>
+            <td>
+              <span><%= relationship[:date_range][1...-1] %></span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+</div>

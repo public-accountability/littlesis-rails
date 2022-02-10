@@ -73,11 +73,11 @@ application.register("oligrapher", OligrapherController)
 import OligrapherSearchController from "./oligrapher_search_controller.js"
 application.register("oligrapher-search", OligrapherSearchController)
 
+import Profile__ConnectionsTableController from "./profile/connections_table_controller.js"
+application.register("profile--connections-table", Profile__ConnectionsTableController)
+
 import Profile__ControlsController from "./profile/controls_controller.js"
 application.register("profile--controls", Profile__ControlsController)
-
-import Profile__DatatableController from "./profile/datatable_controller.js"
-application.register("profile--datatable", Profile__DatatableController)
 
 import Profile__EntitySummaryController from "./profile/entity_summary_controller.js"
 application.register("profile--entity-summary", Profile__EntitySummaryController)
