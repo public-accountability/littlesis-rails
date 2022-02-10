@@ -1,17 +1,28 @@
 <% connections_table = Entity::ConnectionsTable.new(@entity) %>
 
-
 <div data-controller="profile--connections-table">
   <div class="row bg-light p-1 mb-2">
     <div class="col-12">
       <div class="input-group">
-        <%= select_tag 'category', options_for_select(connections_table.category_collection_for_options), include_blank: 'Categories', class: 'form-control m-2' %>
+        <%= select_tag 'category',
+         options_for_select(connections_table.category_collection_for_options),
+         include_blank: 'Categories',
+         class: 'form-control m-2',
+         data: { action: 'profile--connections-table#changeCategory' }
+        %>
         <%= select_tag 'extensions', options_for_select(connections_table.extension_definition_collection_for_options), include_blank: 'Types', class: 'form-control m-2' %>
       </div>
     </div>
     <div class="col-12">
       <div class="input-group m-2" >
-        <input class="form-control" style="flex-grow: 0; flex-basis: 200px;" sname="minimum_amount" type="number" min="0" placeholder="minium amount"  />
+        <input id="connections-table-minimum-amount-filter"
+               class="form-control"
+               style="flex-grow: 0; flex-basis: 200px;"
+               name="minimum_amount"
+               type="number"
+               min="0"
+               data-action="profile--connections-table#redraw"
+               placeholder="minium amount"  />
 
         <div class="form-check form-check-inline ms-3">
           <input class="form-check-input" type="checkbox" id="connections-table-is-current" value="is-current">
@@ -27,19 +38,28 @@
   </div>
 
   <div class="row">
-    <table class="table table-hover">
+    <table class="table table-hover" data-profile--connections-table-target="table" id="entity-connections-table">
       <thead>
         <tr>
-          <th>Related Entity</th>
-          <th>Relationship</th>
-          <th>Date</th>
+          <th data-name="other_entity">Connected To</th>
+          <th data-orderable="false" data-name="relationships">Relationship</th>
+          <th data-orderable="false" data-searchable="false" data-name="date">Date</th>
+
+          <!-- invisible columns -->
+          <th data-visible="false" data-orderable="false" data-name="category">Category</th>
+          <th data-visible="false" data-orderable="false" data-name="amount">Amount</th>
+          <th data-visible="false" data-orderable="false" data-name="board_member">Board Member</th>
+          <th data-visible="false" data-orderable="false" data-name="is_current">Is Current</th>
+          <th data-visible="false" data-orderable="false" data-name="types">Types</th>
         </tr>
       </thead>
       <tbody>
-        <% connections_table .each do |relationship| %>
+        <% connections_table.each do |relationship| %>
           <tr>
-            <td><%= link_to relationship[:other_entity][:name], relationship[:other_entity][:url], target: '_blank' %></td>
-            <td>
+            <td data-filter="<%= relationship[:other_entity][:name] %>" data-order="<%= relationship[:other_entity][:name] %>" title="<%= relationship[:other_entity][:blurb] %>">
+              <%= link_to relationship[:other_entity][:name], relationship[:other_entity][:url], target: '_blank' %>
+            </td>
+            <td data-filter="<%= relationship[:label] %>">
               <span title="<%= RelationshipCategory.lookup[relationship[:category_id]][:display_name] %>">
                 <%= ProfilePage.relationship_category_icon(relationship[:category_id]) %>
               </span>
@@ -48,6 +68,12 @@
             <td>
               <span><%= relationship[:date_range][1...-1] %></span>
             </td>
+            <!-- invisible columns -->
+            <td><%= "category-id-#{relationship[:category_id]}" %></td>
+            <td><%= relationship[:amount] %></td>
+            <td><%= "is-board-#{relationship[:is_board]}" %></td>
+            <td><%= "is-current-#{relationship[:is_current]}" %></td>
+            <td><%= relationship[:other_entity][:extension_definition_ids].join(' ') %></td>
           </tr>
         <% end %>
       </tbody>
