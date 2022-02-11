@@ -34,7 +34,6 @@
      </div> -->
 
 <div class="row row-cols-1 row-cols-md-3 mt-3 mb-3 g-lg-4" id="homepage-explore-row">
-
   <div class="col">
     <div>
       <%= image_tag "map_the_power_RGB.gif" %>
@@ -42,7 +41,6 @@
 
     <h5 class="mt-2 text-center"><%= link_to "Power research toolkit & trainings", toolkit_path %></h5>
   </div>
-
 
   <div class="col">
     <div>
@@ -70,8 +68,6 @@
   </div>
 </div>
 
-
-<!-- OLIGRAPHER -->
 <%=  render partial: 'oligrapher' %>
 
 <div class="row mb-5 mt-5">
@@ -81,7 +77,6 @@
 </div>
 
 <div class="row mt-4">
-
   <div class="col-sm-7 pb-3">
     <%= homepage_headline_h3 'An involuntary facebook of the 1%'%>
 
@@ -106,14 +101,10 @@
 
     <p>LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from <%= link_to 'foundations', 'http://public-accountability.org/about/funding/', class: 'link-blue' %> and benefit from free software written by the open source community.</p>
     <p>The <%= link_to "code", "https://github.com/public-accountability/littlesis-rails", class: 'link-blue' %> powering LittleSis is free & open source.</p>
-
   </div>
-
   <div class="col-sm-1"></div>
-
   <div class="col-sm-4">
     <%= homepage_headline_h3 'Data Summary' %>
     <%= render partial: 'data_summary', locals: {stats: @stats} %>
   </div>
-
 </div>

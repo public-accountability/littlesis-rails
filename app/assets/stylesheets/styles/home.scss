@@ -36,11 +36,15 @@
 
 
       line-height: 38px;
-      text-decoration: underline;
-      color: $link_blue;
+      text-decoration: underline dotted;
+
+      &:hover {
+          text-decoration: underline solid;
+      }
+      /* color: $link_blue; */
   }
 
-  .homepage-counter {
+  span.homepage-counter > span {
       display: inline;
       background: linear-gradient(to bottom, #fff, #bbb);
       color: #000;
@@ -57,9 +61,6 @@
 
   }
 }
-
-
-
 
 #data-summary-table {
   td {

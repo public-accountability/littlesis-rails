@@ -1,10 +1,10 @@
 <div id="homepage-lists">
   <div class="mb-2">
-    <span>
+    <span class="homepage-counter">
       <% @dots_connected.each do |number| %>
-        <div class="homepage-counter"><%= number %></div>
+        <span><%= number %></span>
       <% end  %>
-    </span><br class="d-none d-sm-block d-xl-none">
+    </span><br class="d-none d-lg-block d-xl-none">
     <span>dots connected</span>
   </div>
 

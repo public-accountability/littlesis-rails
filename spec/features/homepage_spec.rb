@@ -17,7 +17,8 @@ describe 'Homepage' do
 
     scenario 'anonymous user visiting the home page' do
       expect(page.status_code).to eq 200
-      page_has_selector 'h1', text: 'LittleSis* is a free database of who-knows-who at the heights of business and government.'
+      page_has_selector 'h1', text: /LittleSis\* is a free database/
+      page_has_selector 'span.homepage-counter', text: Entity.count.to_s
     end
   end
 
