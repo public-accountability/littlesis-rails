@@ -55,21 +55,4 @@ module ProfilePage
       "Services & Transactions"
     end
   end
-
-  def self.relationship_category_icon(category_id)
-    {
-      Relationship::POSITION_CATEGORY => '🕴',
-      Relationship::EDUCATION_CATEGORY => '🎓',
-      Relationship::MEMBERSHIP_CATEGORY => '🤝',
-      Relationship::FAMILY_CATEGORY => '👪',
-      Relationship::DONATION_CATEGORY => '💸',
-      Relationship::TRANSACTION_CATEGORY => '🧾',
-      Relationship::LOBBYING_CATEGORY => '🏢',
-      Relationship::SOCIAL_CATEGORY => '🍻',
-      Relationship::PROFESSIONAL_CATEGORY => '💼',
-      Relationship::OWNERSHIP_CATEGORY => '👑',
-      Relationship::HIERARCHY_CATEGORY => '🛗',
-      Relationship::GENERIC_CATEGORY => '🏷'
-    }.fetch(category_id)
-  end
 end

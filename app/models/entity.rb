@@ -185,19 +185,23 @@ class Entity < ApplicationRecord
   #    all_attributes - includes extensions attributes (default: false)
   #    image_url - includes featured_image_url (default: false)
   #    image_url_type - default: nil
+  #    send - uses #public_send and adds attribute with results (default: :nil)
   #    except - excludes these fields( default: ['delta', 'last_user_id']
   # returns HashWithIndifferentAccess
-  def to_hash(options = {})
-    options = options.with_indifferent_access
+  def to_hash(**kwargs)
+    options = (kwargs || {})
+                .with_indifferent_access
                 .reverse_merge(url: true,
                                all_attributes: false,
                                image_url: false,
                                image_url_type: nil,
+                               send: nil,
                                except: %w[delta last_user_id])
 
     hash = send(options[:all_attributes] ? :all_attributes : :attributes).with_indifferent_access
     hash[:url] = url if options[:url]
     hash[:image_url] = featured_image_url(options[:image_url_type]) if options[:image_url]
+    hash[options[:send].to_sym] = public_send(options[:send]) if options[:send]
     hash.except!(*options[:except])
   end
 
