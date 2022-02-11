@@ -315,6 +315,10 @@ class Relationship < ApplicationRecord
     RelationshipDetails.new(self).details
   end
 
+  def label
+    @relationship_label ||= RelationshipLabel.new(self)
+  end
+
   #############
   #   LINKS   #
   #############

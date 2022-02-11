@@ -1,0 +1,55 @@
+<% connections_table = Entity::ConnectionsTable.new(@entity) %>
+
+<div data-controller="profile--connections-table" id="connections-table-container">
+  <script id="connections-table-data" type=text/json" data-profile--connections-table-target="json">
+   <%= connections_table.to_json.html_safe %>
+  </script>
+
+  <div class="row bg-light p-1 mb-2">
+    <div class="col-12">
+      <div class="input-group">
+        <%= select_tag 'category',
+                 options_for_select(connections_table.category_collection_for_options),
+         include_blank: 'Categories',
+         class: 'form-control m-2',
+         id: 'connections-table-category-filter',
+         data: { action: 'profile--connections-table#redraw' }
+        %>
+        <%= select_tag 'extensions',
+         options_for_select(connections_table.extension_definition_collection_for_options),
+         include_blank: 'Types',
+         id: 'connections-table-extensions-filter',
+         class: 'form-control m-2',
+         data: { action: 'profile--connections-table#redraw' }
+        %>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="input-group m-2" >
+        <input id="connections-table-minimum-amount-filter"
+               class="form-control"
+               style="flex-grow: 0; flex-basis: 200px;"
+               name="minimum_amount"
+               type="number"
+               min="0"
+               data-action="profile--connections-table#redraw"
+               placeholder="minium amount"  />
+
+        <div class="form-check form-check-inline ms-3">
+          <input class="form-check-input" type="checkbox" id="connections-table-is-current-filter" value="is-current" data-action="profile--connections-table#redraw">
+          <label class="form-check-label" for="connections-table-is-current-filter">Is Current</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="checkbox" id="connections-table-is-board-filter" value="is-board" data-action="profile--connections-table#redraw">
+          <label class="form-check-label" for="connections-table-is-board-filter">Is Board</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <table class="table table-hover" data-profile--connections-table-target="table" id="connections-table-table">
+    </table>
+  </div>
+</div>

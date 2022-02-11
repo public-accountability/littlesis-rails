@@ -549,20 +549,21 @@ describe Entity, :tag_helper do
       end
     end
 
-    describe 'default settings' do
-      specify do
-        h = business.attributes.merge(url: business.url).with_indifferent_access.except(:delta, :last_user_id)
-        expect(business.to_hash).to eq(h)
-      end
+    specify 'default settings' do
+      h = business.attributes.merge(url: business.url).with_indifferent_access.except(:delta, :last_user_id)
+      expect(business.to_hash).to eq(h)
     end
 
-    describe 'with all attributes and no url' do
-      specify do
-        h = business.all_attributes
-              .with_indifferent_access
-              .except(:delta, :last_user_id)
-        expect(business.to_hash(all_attributes: true, url: false)).to eq(h)
-      end
+    specify 'with all attributes and no url' do
+      h = business.all_attributes
+            .with_indifferent_access
+            .except(:delta, :last_user_id)
+      expect(business.to_hash(all_attributes: true, url: false)).to eq(h)
+    end
+
+    specify 'can add results methods' do
+      result = business.to_hash(url: true, send: :extension_definition_ids)
+      expect(result[:extension_definition_ids]).to eq [2, 5]
     end
   end
 

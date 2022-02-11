@@ -44,6 +44,7 @@ Aliases
            pg_dump
            pg_restore
            yarn
+           node
            git
            rg
            find
@@ -306,6 +307,8 @@ when 'edit'
                end
     exec "$EDITOR #{selected}"
   end
+when 'node'
+  app_exec "/usr/bin/node #{rest}", run: true
 when 'psql', 'pg_dump', 'pg_restore'
   docker_compose 'run --rm postgres', ARGV.join(' '), database_connection
 when 'status'

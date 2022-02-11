@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # {
-#   root: [ entity _ids ],
+#   root: [ entity_ids ],
 #   categories: [],
 #   types: [],
 #   interlocks: []
@@ -44,7 +44,6 @@ class RelationshipsDatatable
 
   private
 
-  # returns hash of relationship
   # ---> [{}]
   def load_relationships
     @links.map do |link|
@@ -91,13 +90,11 @@ class RelationshipsDatatable
     end
   end
 
-  # NOTE: a previous version of this query included
-  # an addition where that prohibited relationships
-  # that were to yourself:  ` where.not(entity2_id: @entity_ids) `
+  # a previous version of this query prohibited self-relationships: `where.not(entity2_id: @entity_ids)`
   def load_links
     Link
       .includes(:entity, relationship: :position, related: [:extension_definitions])
       .where(entity1_id: @root_entity_ids)
-      .limit(10_000)
+    # .limit(10_000)
   end
 end
