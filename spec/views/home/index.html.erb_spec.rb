@@ -56,9 +56,8 @@ describe 'home/index.html.erb', type: :view do
     render template: "home/index", layout: "layouts/application"
   end
 
-  it 'has explore row with images and links' do
-    css '#explore-row img', count: 2
-    css '#explore-row a', count: 3
+  it 'has explore row with images' do
+    css '#homepage-explore-row img', count: 3
   end
 
   it 'has correct page title' do

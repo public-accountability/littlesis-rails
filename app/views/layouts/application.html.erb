@@ -16,14 +16,8 @@
     <% end %>
 
     <% unless flash.empty? %>
-      <div class="container mt-2">
-        <div class="col-6">
-          <% flash.each do |type, content| %>
-            <% Array.wrap(content).each do |message| %>
-              <%= alert_div(message: message, type: type) %>
-            <% end %>
-          <% end %>
-        </div>
+      <div class="container mt-4">
+        <%= render partial: 'shared/notice' %>
       </div>
     <% end %>
 
@@ -33,13 +27,10 @@
 
     <% unless content_for? :hide_footer %>
       <div class="container mt-3 mb-3">
-        <div id="footer">
-	  A project of the <%= link_to('Public Accountability Initiative', 'https://public-accountability.org') %>.
-	  More <%= link_to('about LittleSis', '/about') %>.
-	  Read the <%= link_to('disclaimer', '/disclaimer') %>.
+        <div class="row">
+          <div id="footer">A project of the <%= link_to('Public Accountability Initiative', 'https://public-accountability.org') %>. More <%= link_to('about LittleSis', '/about') %>. Read the <%= link_to('disclaimer', '/disclaimer') %>.</div>
         </div>
       </div>
     <% end %>
-
   </body>
 </html>
