@@ -48,6 +48,8 @@ RUN curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.30.0/ge
 RUN mkdir -p /littlesis
 WORKDIR /littlesis
 
+RUN gem update --system
+
 COPY ./Gemfile.lock ./Gemfile ./
 RUN gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
 RUN bundle install --jobs=2
