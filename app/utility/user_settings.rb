@@ -4,11 +4,13 @@
 class UserSettings
   DEFAULTS = {
     default_tag: :oligrapher,
-    show_stars: true  # admin-only setting
+    show_stars: true,  # admin-only setting
+    language: :en
   }.freeze
 
   CONVERTERS = Hash.new(->(x) { x }).tap do |hash|
     hash[:default_tag] = ->(x) { x.to_sym }
+    hash[:langauge] = ->(x) { x.to_sym }
     hash[:show_stars] = ->(x) { ActiveModel::Type::Boolean.new.cast(x) }
   end.with_indifferent_access.freeze
 
