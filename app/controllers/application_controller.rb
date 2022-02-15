@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
 
   before_action :configure_permitted_parameters, if: :devise_controller?
 
+  around_action :switch_locale
+
   rescue_from Exceptions::PermissionError do
     render 'errors/permission', layout: 'application', status: :forbidden
   end
@@ -144,5 +146,12 @@ class ApplicationController < ActionController::Base
     else
       raise exception
     end
+  end
+
+  private
+
+  def switch_locale(&action)
+    locale = params[:locale] || current_user&.settings&.language || I18n.default_locale
+    I18n.with_locale(locale, &action)
   end
 end

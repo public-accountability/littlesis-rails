@@ -1,4 +1,4 @@
-feature 'User Settings' do
+describe 'User Settings' do
   let(:current_user) do
     create(
       :user,
@@ -22,7 +22,7 @@ feature 'User Settings' do
     visit '/users/edit'
   end
 
-  scenario 'user updates own username' do # rubocop:disable RSpec/ExampleLength
+  scenario 'user updates own username' do
     expect(page).to have_css('h2', text: 'Edit your settings')
 
     within '#edit_user' do
@@ -35,7 +35,7 @@ feature 'User Settings' do
     expect(current_user.reload.username).to eq 'waftcap'
   end
 
-  scenario 'user tries to set their username to one that is taken' do # rubocop:disable RSpec/ExampleLength
+  scenario 'user tries to set their username to one that is taken' do
     expect(page).to have_css('h2', text: 'Edit your settings')
 
     within '#edit_user' do
@@ -46,5 +46,13 @@ feature 'User Settings' do
 
     expect(page).to have_text('Username has already been taken')
     expect(current_user.reload.username).to eq 'shrubrocketeer'
+  end
+
+  scenario 'setting language to Spanish', js: true do
+    expect(current_user.settings.language).to eq :en
+    expect(page).to have_css('h2', text: 'Edit your settings')
+    page.select 'Spanish', from: 'user-settings-language'
+    expect(current_user.reload.settings.language).to eq :es
+    # expect(page).to have_css('h2', text: "Edita tu configuración")
   end
 end

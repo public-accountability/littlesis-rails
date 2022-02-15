@@ -1,17 +1,40 @@
-<%= form_with(url: '/users/settings', method: :put) do %>
-  <% if current_user.admin? %>
-    <div class="form-group mb-2">
-      <label class="mr-2 font-weight-bold">Show Stars</label>
+<div>
+  <%= form_with(url: '/users/settings', method: :put) do %>
+    <% if current_user.admin? %>
+      <div class="row mt-2 mb-2">
+        <div class="col">
+          <label class="me-1"><b>Show Stars</b></label>
+          <label class="user-settings-toggle">
+            <input name="settings[show_stars]" type="hidden" value="0" />
 
-      <label class="user-settings-toggle">
-        <input name="settings[show_stars]" type="hidden" value="0" />
-        <input type="checkbox"
-               id="settings_show_stars"
-               name="settings[show_stars]" value="1"
-               onchange="this.closest('form').submit()"
-               <%= @user.settings.show_stars ? 'checked="checked"' : nil %> />
-        <span></span>
-      </label>
+            <input type="checkbox"
+                   id="settings_show_stars"
+                   name="settings[show_stars]"
+                   value="1"
+                   onchange="this.closest('form').submit()"
+                   <%= @user.settings.show_stars ? 'checked="checked"' : nil %> />
+
+            <span></span>
+          </label>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="row mt-2 mb-2">
+      <div class="col-auto">
+        <label class="form-label"><b>Language:</b></label>
+      </div>
+
+      <div class="col-auto">
+        <select id="user-settings-language"
+                class="form-select"
+                name="settings[language]"
+                aria-label="Select Langauge"
+                onchange="this.closest('form').submit()">
+          <%= options_for_select([ ["English", 'en'], ['Spanish', 'es'] ], current_user.settings.language) %>
+        </select>
+      </div>
     </div>
+
   <% end %>
-<% end %>
+</div>
