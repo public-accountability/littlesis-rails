@@ -5,8 +5,9 @@ module ExternalDataset
     extend DatasetInterface
     self.dataset = :nys_filers
     # This url stopped working in Janurary 2021
-    # go to https://publicreporting.elections.ny.gov/DownloadCampaignFinanceData/DownloadCampaignFinanceData and use type filer_id
-    @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
+    # @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
+    # Instead go to https://publicreporting.elections.ny.gov/DownloadCampaignFinanceData/DownloadCampaignFinanceData and manually download the and Filter Data
+    # then place this file, commcand.zip, in data/external_data/original/nys/commcand.zip
     @zip_file = ROOT_DIR.join('original/nys').join('commcand.zip')
 
     def self.download
@@ -25,9 +26,15 @@ module ExternalDataset
     end
 
     def self.load
+      directory = if Rails.env.production?
+                    '/srv'
+                  else
+                    '/data/external_data/csv/nys'
+                  end
+
       run_query <<~SQL
         COPY #{table_name} (filer_id,filer_name,compliance_type_desc,filter_type_desc,filter_status,committee_type_desc,office_desc,district,county_desc,municipality_subdivision_desc,treasurer_first_name,treasurer_middle_name,treasurer_last_name,address,city,state,zipcode)
-        FROM  '#{Pathname.new("/data").join("external_data/csv/nys/nys_filers.csv")}' WITH CSV;
+        FROM  '#{directory}/nys_filers.csv' WITH CSV;
       SQL
     end
   end

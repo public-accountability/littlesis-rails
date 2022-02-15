@@ -128,6 +128,7 @@ module Utility
   end
 
   def self.zip_entry_each_line(zip:, file:, &block)
+    require 'zip'
     Zip::File.open(zip) do |zip_file|
       zip_file.get_entry(file).get_input_stream.each(&block)
     end
