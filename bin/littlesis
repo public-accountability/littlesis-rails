@@ -37,6 +37,7 @@ Commands
 
 Aliases
            bundle
+           gem
            pumactl
            rspec
            rails
@@ -275,6 +276,9 @@ when 'rails'
   app_exec_bin "rails #{rest}"
 when 'bundle'
   app_exec_bin "bundle #{rest}"
+when 'gem'
+  gem_path = production_environment? ? '/home/littlesis/.rbenv/shims/gem' : '/usr/local/bin/gem'
+  app_exec "#{gem_path} #{rest}", run: true
 when 'yarn'
   app_exec_bin "yarn #{rest}"
 when 'rake'
