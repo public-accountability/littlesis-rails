@@ -49,7 +49,7 @@ RUN mkdir -p /littlesis
 WORKDIR /littlesis
 
 COPY ./Gemfile.lock ./Gemfile ./
-RUN gem install bundler
+RUN gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
 RUN bundle install --jobs=2
 
 COPY ./package.json ./yarn.lock ./
