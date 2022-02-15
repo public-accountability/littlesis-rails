@@ -5,14 +5,33 @@
 <div class="ps-2">
   <span>•</span>
   <%= link_to grouped_link.first.link_content, relationship_path(grouped_link.first.relationship) %>
+
   <% if grouped_link.length > 1 %>
     <span class="more-relationships"
           role="button"
           data-bs-toggle="collapse"
           data-bs-target="#<%= collapse_id %>"
           aria-controls="<%= collapse_id %>"
-          aria-expanded="false">
-      [+<%= grouped_link.length  - 1 %>]
+          aria-expanded="false">[+<%= grouped_link.length  - 1 %>]</span>
+  <% end %>
+
+  <% if show_stars? %>
+    <span>
+      <%= button_to(
+        relationship_path(grouped_link.first.relationship),
+        method: :patch,
+        params: {
+          relationship: {
+            is_featured: !grouped_link.first.relationship.is_featured
+          },
+          reference: {just_cleaning_up: true}
+        },
+        class: 'star-button',
+        form_class: 'd-inline-block ms-1',
+        title: (grouped_link.first.relationship.is_featured ? 'unfeature relationship' : 'feature relationship')
+      ) do %>
+        <span class="<%= grouped_link.first.relationship.is_featured ? 'star' : 'not-star' %>"></span>
+      <% end %>
     </span>
   <% end %>
 </div>
