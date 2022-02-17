@@ -39,6 +39,11 @@ class Tag < ApplicationRecord
     end
   end
 
+  # String | Integer -> Tag | throws
+  def self.get!(tag_identifier)
+    get(tag_identifier) or raise Exceptions::NotFoundError
+  end
+
   # String -> [Tag]
   def self.search_by_names(phrase)
     Tag.lookup.keys
@@ -65,7 +70,12 @@ class Tag < ApplicationRecord
     @restricted_tags ||= Tag.where(restricted: true).to_a
   end
 
+
   # INSTANCE METHODS
+
+  def to_param
+    name
+  end
 
   def restricted?
     restricted

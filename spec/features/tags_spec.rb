@@ -3,6 +3,10 @@ describe 'Tags', :tagging_helper, type: :feature do
   let(:tags) { Array.new(2) { create(:tag) } }
   let(:tag) { tags.first }
 
+  after do
+    Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
+  end
+
   # setup helpers
 
   def n_entities (n, subtype = 'Person')
@@ -66,16 +70,22 @@ describe 'Tags', :tagging_helper, type: :feature do
 
   describe "tag homepage" do
 
+    it 'routing tags by name' do
+      create(:tag, name: "foo")
+      visit "/tags/foo"
+      expect(page).to have_http_status :ok
+    end
+
     describe "tabs" do
       let(:tagable_category) { "" }
       let(:tagables) { [] }
-      before(:each) do
+
+      before  do
         tagables
         visit "/tags/#{tag.id}/#{tagable_category}"
       end
 
       context "with no tab specified" do
-
         it "defaults to the entities tab" do
           expect(page).to have_selector("#tag-nav-tab-entities a.active")
         end

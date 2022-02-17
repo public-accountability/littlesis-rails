@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Tagable categories: entities, lists, relationships. See: `Tagable.categories`
 class TagsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show, :edits]
@@ -76,7 +78,7 @@ class TagsController < ApplicationController
   end
 
   def set_tag
-    @tag = Tag.find(params[:id])
+    @tag = Tag.get!(params[:id])
   end
 
   def set_tags
