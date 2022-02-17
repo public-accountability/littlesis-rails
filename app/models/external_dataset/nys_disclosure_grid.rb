@@ -16,6 +16,7 @@ module ExternalDataset
 
     filter(:filing_sched_abbrev, :enum, select: %w[A B C D E F G H I J K L M N O P Q R], header: 'Schedule')
     filter(:org_amt, :float)
+    filter(:filer_id, :integer, header: "Filer ID")
 
     column "filer_id", order: false, header: "Filer ID"
     column "filer_previous_id", order: false, header: "Previous ID"
