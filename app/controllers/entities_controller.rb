@@ -24,7 +24,20 @@ class EntitiesController < ApplicationController
   before_action :set_tab_for_profile_page, only: [:show]
   before_action :check_delete_permission, only: [:destroy]
 
+  # Old profile page
   def show
+    if profile_beta_enabled?
+      @active_tab = params[:tab]&.to_sym || :relationships
+      render :profile
+    end
+  end
+
+  # Old "data" table
+  def datatable
+    if profile_beta_enabled?
+      @active_tab = :data
+      render :profile
+    end
   end
 
   # new profile page
@@ -44,10 +57,6 @@ class EntitiesController < ApplicationController
   end
 
   def political
-  end
-
-  # "data" table
-  def datatable
   end
 
   def create_bulk
@@ -189,5 +198,9 @@ class EntitiesController < ApplicationController
         primary_ext: @entity.primary_ext
       }
     }
+  end
+
+  def profile_beta_enabled?
+    current_user && current_user.admin? && current_user.settings.profile_beta
   end
 end
