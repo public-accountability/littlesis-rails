@@ -15,7 +15,7 @@ class Tag < ApplicationRecord
   validates :name, uniqueness: { case_sensitive: true }, presence: true
   validates :description, presence: true
 
-  before_validation :trim_name_whitespace, on: :create
+  before_validation :normalize_tag_name
 
   # CLASS METHODS
 
@@ -46,15 +46,16 @@ class Tag < ApplicationRecord
 
   # String -> [Tag]
   def self.search_by_names(phrase)
-    Tag.lookup.keys
-      .delete_if { |k| k.is_a? Integer }
-      .select { |tag_name| phrase.downcase.include?(tag_name) }
+    tag_names
+      .select { |tag_name| phrase.downcase.include?(tag_name) || phrase.downcase.include?(tag_name.gsub("-", " ")) }
       .map { |tag_name| lookup[tag_name] }
   end
 
   # String -> Tag | Nil
   # Search through tags find tag by name
   def self.search_by_name(query)
+    query.strip!
+    query.tr!(' ', '-') if query.include?(' ')
     lookup[query.downcase]
   end
 
@@ -62,14 +63,16 @@ class Tag < ApplicationRecord
     @lookup ||= Tag.all.each_with_object({}) do |tag, h|
       h.store(tag.id, tag)
       h.store(tag.name.downcase, tag)
-      h.store(tag.name.downcase.tr('-', ' '), tag) if tag.name.include?('-')
     end
+  end
+
+  def self.tag_names
+    @tag_names ||= lookup.keys.reject { |k| k.is_a? Integer }.freeze
   end
 
   def self.restricted_tags
     @restricted_tags ||= Tag.where(restricted: true).to_a
   end
-
 
   # INSTANCE METHODS
 
@@ -280,7 +283,9 @@ class Tag < ApplicationRecord
       .reduce({}) { |acc, (editor, id)| acc.merge!(id => editor) }
   end
 
-  def trim_name_whitespace
-    self.name = name.strip unless name.nil?
+  def normalize_tag_name
+    unless name.nil?
+      self.name = name.downcase.strip.tr(' ', '-')
+    end
   end
 end

@@ -3,6 +3,10 @@ feature "Editing Tags", :tag_helper, type: :feature do
     TagSpecHelper::TAGS.each { |t| Tag.create!(t) }
   end
 
+  after do
+    Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
+  end
+
   let(:admin) { create_admin_user }
   let(:normal_user) { create_really_basic_user }
   let(:user) { admin }
@@ -25,16 +29,17 @@ feature "Editing Tags", :tag_helper, type: :feature do
     scenario 'Admin can change the description of the tag' do
       fill_in('Description', with: 'prefers profit over people')
       find('form.edit_tag input[name="commit"]').click
-      expect(Tag.find(tag.id).description).to eql 'prefers profit over people'
+      expect(Tag.find(tag.id).description).to eq 'prefers profit over people'
 
       expect(page).to have_current_path admin_tags_path
       expect(page).to have_selector 'div.alert-success', count: 1
     end
 
     scenario 'Admin tries to change the tag name to a name that already exists' do
+      expect(Tag.find(tag.id).name).to eq 'oil'
       fill_in('Name', with: 'nyc')
       find('form.edit_tag input[name="commit"]').click
-      expect(Tag.find(tag.id).name).to eql 'oil'
+      expect(Tag.find(tag.id).name).to eq 'oil'
 
       expect(page).to have_current_path edit_tag_path(tag)
       expect(page).not_to have_selector 'div.alert-success'

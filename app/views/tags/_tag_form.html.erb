@@ -1,7 +1,10 @@
-<%= form_for(tag) do |f| %>
+<%= form_with(model: tag, url: "/tags/#{tag.id}", data: {
+  controller: 'tag-form',
+  tag_form_names_value: JSON.dump(Tag.tag_names.reject { |t| t == tag.name })
+}) do |f| %>
   <div>
-    <%= f.label :name, class: 'form-label' %>:
-    <%= f.text_field :name, class: 'form-control' %>
+    <%= f.label :name, class: 'form-label'%>
+    <%= f.text_field :name, class: 'form-control', data: { parsley_tag_names: true }  %>
   </div>
 
   <div>
@@ -15,5 +18,5 @@
 
   </div>
 
-  <%= f.submit nil, class: 'btn btn-primary' %>
+  <%= f.submit "Submit", class: 'btn btn-primary' %>
 <% end %>

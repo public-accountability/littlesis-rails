@@ -109,6 +109,9 @@ application.register("reverse-link", ReverseLinkController)
 import SidebarSourceLinksController from "./sidebar_source_links_controller.js"
 application.register("sidebar-source-links", SidebarSourceLinksController)
 
+import TagFormController from "./tag_form_controller.js"
+application.register("tag-form", TagFormController)
+
 import TooltipController from "./tooltip_controller.js"
 application.register("tooltip", TooltipController)
 

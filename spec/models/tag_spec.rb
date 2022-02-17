@@ -17,9 +17,14 @@ describe Tag, :pagination_helper do
     describe 'validations' do
       subject { Tag.new(name: 'fake tag name', description: 'all about fake tags') }
 
-      it { should validate_uniqueness_of(:name) }
       it { should validate_presence_of(:name) }
       it { should validate_presence_of(:description) }
+
+      it 'validates uniqueness of name' do
+        Tag.create!(name: 'real-estate', description: 'test')
+        expect{ Tag.create!(name: 'real estate', description: 'test') }.to raise_error(ActiveRecord::RecordInvalid)
+        expect{ Tag.create!(name: ' real-estate ', description: 'test') }.to raise_error(ActiveRecord::RecordInvalid)
+      end
     end
 
     describe "associations" do
@@ -295,13 +300,17 @@ describe Tag, :pagination_helper do
 
     describe '#search_by_name' do
       it 'finds tag by if search includes exact name' do
-        expect(Tag.search_by_name('oil')).to eql @oil
-        expect(Tag.search_by_name('nyc')).to eql @nyc
+        expect(Tag.search_by_name('oil')).to eq @oil
+        expect(Tag.search_by_name('nyc')).to eq @nyc
       end
 
       it 'finds tag regardless of capitalization' do
-        expect(Tag.search_by_name('OIL')).to eql @oil
-        expect(Tag.search_by_name('nYc')).to eql @nyc
+        expect(Tag.search_by_name('OIL')).to eq @oil
+        expect(Tag.search_by_name('nYc')).to eq @nyc
+      end
+
+      it 'finds tag when written with spaces' do
+        expect(Tag.search_by_name('real estate')).to eq @real_estate
       end
 
       it 'return nil if there is no tag' do
@@ -368,7 +377,6 @@ describe Tag, :pagination_helper do
                                  @finance.id => @finance,
                                  'finance' => @finance,
                                  @real_estate.id => @real_estate,
-                                 'real estate' => @real_estate,
                                  'real-estate' => @real_estate)
       end
     end

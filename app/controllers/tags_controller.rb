@@ -28,6 +28,9 @@ class TagsController < ApplicationController
   def update
     if @tag.update(tag_params)
       flash[:notice] = "Tag successfully updated"
+      if @tag.saved_change_to_name?
+        flash[:alert] = "Please tell the site administrator to restart the web application"
+      end
       redirect_to admin_tags_path
     else
       flash[:alert] = "Error: #{@tag.errors.full_messages.join('. ')}"
