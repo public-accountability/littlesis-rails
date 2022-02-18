@@ -47,9 +47,8 @@ class EntitiesController < ApplicationController
 
   def grouped_links # turbo frame
     @subcategory_page = params.require(:page).to_i
-    @subcategory = params.require(:subcategory)
-    @grouped_links = @entity.relationship_collection(scope: { subcategory:  @subcategory }).get(@subcategory)
-    render partial: 'grouped_links', object: @grouped_links
+    @subcategory = params.require(:subcategory).to_sym
+    render partial: 'grouped_links_cache'
   end
 
   def source_links # turbo frame
@@ -201,6 +200,7 @@ class EntitiesController < ApplicationController
   end
 
   def redirect_to_new_profile_page?
-    false
+    true
+    # false
   end
 end
