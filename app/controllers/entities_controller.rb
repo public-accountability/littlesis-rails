@@ -26,7 +26,7 @@ class EntitiesController < ApplicationController
 
   # Old profile page
   def show
-    if profile_beta_enabled?
+    if redirect_to_new_profile_page?
       @active_tab = params[:tab]&.to_sym || :relationships
       render :profile
     end
@@ -34,7 +34,7 @@ class EntitiesController < ApplicationController
 
   # Old "data" table
   def datatable
-    if profile_beta_enabled?
+    if redirect_to_new_profile_page?
       @active_tab = :data
       render :profile
     end
@@ -200,7 +200,7 @@ class EntitiesController < ApplicationController
     }
   end
 
-  def profile_beta_enabled?
-    current_user && current_user.admin? && current_user.settings.profile_beta
+  def redirect_to_new_profile_page?
+    false
   end
 end

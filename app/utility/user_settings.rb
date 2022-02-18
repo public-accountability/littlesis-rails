@@ -6,15 +6,13 @@ class UserSettings
     default_tag: :oligrapher,
     language: :en,
     # admin-only setting
-    show_stars: true,
-    profile_beta: false
+    show_stars: true
   }.freeze
 
   CONVERTERS = Hash.new(->(x) { x }).tap do |hash|
     hash[:default_tag] = ->(x) { x.to_sym }
     hash[:language] = ->(x) { x.to_sym }
     hash[:show_stars] = ->(x) { ActiveModel::Type::Boolean.new.cast(x) }
-    hash[:profile_beta] = ->(x) { ActiveModel::Type::Boolean.new.cast(x) }
   end.with_indifferent_access.freeze
 
   SettingsStruct = Struct.new(*DEFAULTS.keys, keyword_init: true)

@@ -18,25 +18,6 @@
           </label>
         </div>
       </div>
-
-      <div class="row mt-2 mb-2">
-        <div class="col">
-          <label class="me-1"><b>New Profile Page</b></label>
-          <label class="user-settings-toggle">
-            <input name="settings[profile_beta]" type="hidden" value="0" />
-
-            <input type="checkbox"
-                   name="settings[profile_beta]"
-                   value="1"
-                   onchange="this.closest('form').submit()"
-                   <%= @user.settings.profile_beta ? 'checked="checked"' : nil %> />
-
-            <span></span>
-          </label>
-        </div>
-      </div>
-
-
     <% end %>
 
     <div class="row mt-2 mb-2">
