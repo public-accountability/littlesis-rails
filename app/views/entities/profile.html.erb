@@ -24,20 +24,20 @@
         <% end %>
       <% end %>
     <% when :interlocks %>
-      <% cache [@entity, 'interlocks'] do %>
+      <% cache [@entity, 'interlocks', @page] do %>
         <%= render partial: 'connections',
                    locals: {
                      connection_type: :interlocks,
-                     connected_entities: @entity.interlocks(params[:page]),
+                     connected_entities: @entity.interlocks(@page),
                      has_stat: false
                    } %>
       <% end %>
     <% when :giving %>
-      <% cache [@entity, 'giving'] do %>
+      <% cache [@entity, 'giving', @page] do %>
         <%= render partial: 'connections',
                    locals: {
                      connection_type: :giving,
-                     connected_entities: @entity.public_send((@entity.person? ? :similar_donors : :employee_donations), params[:page]),
+                     connected_entities: @entity.public_send((@entity.person? ? :similar_donors : :employee_donations), @page),
 		     has_stat: @entity.org?
                    } %>
       <% end %>

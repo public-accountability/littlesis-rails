@@ -43,6 +43,9 @@ class EntitiesController < ApplicationController
   # new profile page
   def profile
     @active_tab = params[:active_tab]&.to_sym || :relationships
+    if %i[interlocks giving].include?(@active_tab)
+      @page = params[:page]&.to_i || 1
+    end
   end
 
   def grouped_links # turbo frame
