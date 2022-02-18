@@ -47,7 +47,7 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
       fill_in('Name', with: 'cylon')
       fill_in('Description', with: 'spin up those ftl drives')
       page.check('Restricted')
-      click_button('Create Tag')
+      click_button('Submit')
 
       expect(Tag.count).to eq 3
       expect(Tag.last.attributes.slice('name', 'description', 'restricted'))
@@ -64,7 +64,7 @@ describe 'Admin Only Pages', :pagination_helper, :tag_helper, :type => :feature 
       tag_count = Tag.count
       fill_in('Name', with: 'nyc')
       fill_in('Description', with: 'all about nyc')
-      click_button('Create Tag')
+      click_button('Submit')
       expect(page).to have_current_path '/admin/tags'
       expect(page).not_to have_selector 'div.alert-success'
       expect(page).to have_selector 'div.alert-danger', count: 1

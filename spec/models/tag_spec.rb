@@ -6,7 +6,11 @@ describe Tag, :pagination_helper do
   it { should have_db_column(:description) }
   it { should have_many(:taggings) }
 
-  after(:all) do
+  before do
+    Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
+  end
+
+  after do
     Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
   end
 

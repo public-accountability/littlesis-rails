@@ -54,9 +54,7 @@ class Tag < ApplicationRecord
   # String -> Tag | Nil
   # Search through tags find tag by name
   def self.search_by_name(query)
-    query.strip!
-    query.tr!(' ', '-') if query.include?(' ')
-    lookup[query.downcase]
+    lookup[query.strip.tr(' ', '-').downcase]
   end
 
   def self.lookup
@@ -125,7 +123,6 @@ class Tag < ApplicationRecord
   #   event:              Enum('tag_added', 'tagable_updated')
   # }
   # Integer -> [EditsHash]
-
   def recent_edits(page = 1)
     edit_id_hashes = recent_edit_ids(page)
     tagables_by_class_and_id = tagables_by_class_and_id_for(edit_id_hashes)
