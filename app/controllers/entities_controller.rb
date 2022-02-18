@@ -200,7 +200,6 @@ class EntitiesController < ApplicationController
   end
 
   def redirect_to_new_profile_page?
-    true
-    # false
+    Rails.configuration.littlesis.redirect_to_new_profile_page
   end
 end
