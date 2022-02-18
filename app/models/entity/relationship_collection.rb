@@ -44,7 +44,7 @@ class Entity
                  .to_a
                  .group_by(&:subcategory)
                  .map { |k, v| Link::GroupedLinkArray.new(k, v) }
-                 .sort_by! { |x| PAGE_ORDER.index(x) }
+                 .sort_by! { |x| PAGE_ORDER.index(x.subcategory) }
     end
 
     def size
