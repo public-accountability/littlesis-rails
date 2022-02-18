@@ -24,7 +24,20 @@ class EntitiesController < ApplicationController
   before_action :set_tab_for_profile_page, only: [:show]
   before_action :check_delete_permission, only: [:destroy]
 
+  # Old profile page
   def show
+    if redirect_to_new_profile_page?
+      @active_tab = params[:tab]&.to_sym || :relationships
+      render :profile
+    end
+  end
+
+  # Old "data" table
+  def datatable
+    if redirect_to_new_profile_page?
+      @active_tab = :data
+      render :profile
+    end
   end
 
   # new profile page
@@ -34,9 +47,8 @@ class EntitiesController < ApplicationController
 
   def grouped_links # turbo frame
     @subcategory_page = params.require(:page).to_i
-    @subcategory = params.require(:subcategory)
-    @grouped_links = @entity.relationship_collection(scope: { subcategory:  @subcategory }).get(@subcategory)
-    render partial: 'grouped_links', object: @grouped_links
+    @subcategory = params.require(:subcategory).to_sym
+    render partial: 'grouped_links_cache'
   end
 
   def source_links # turbo frame
@@ -44,10 +56,6 @@ class EntitiesController < ApplicationController
   end
 
   def political
-  end
-
-  # "data" table
-  def datatable
   end
 
   def create_bulk
@@ -189,5 +197,9 @@ class EntitiesController < ApplicationController
         primary_ext: @entity.primary_ext
       }
     }
+  end
+
+  def redirect_to_new_profile_page?
+    Rails.configuration.littlesis.redirect_to_new_profile_page
   end
 end

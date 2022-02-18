@@ -18,25 +18,33 @@
     <%# relationships %>
     <% case @active_tab %>
     <% when :relationships %>
-      <% @entity.relationship_collection.each do |grouped_links| %>
-        <%= render partial: 'grouped_links', object: grouped_links %>
+      <% cache_unless(show_stars?, @entity) do %>
+        <% @entity.relationship_collection.each do |grouped_links| %>
+          <%= render partial: 'grouped_links', object: grouped_links %>
+        <% end %>
       <% end %>
     <% when :interlocks %>
-      <%= render partial: 'connections',
-                 locals: {
-                   connection_type: :interlocks,
-                   connected_entities: @entity.interlocks(params[:page]),
-                   has_stat: false
-                 } %>
+      <% cache [@entity, 'interlocks'] do %>
+        <%= render partial: 'connections',
+                   locals: {
+                     connection_type: :interlocks,
+                     connected_entities: @entity.interlocks(params[:page]),
+                     has_stat: false
+                   } %>
+      <% end %>
     <% when :giving %>
-      <%= render partial: 'connections',
-                 locals: {
-                   connection_type: :giving,
-                   connected_entities: @entity.public_send((@entity.person? ? :similar_donors : :employee_donations), params[:page]),
-		   has_stat: @entity.org?
-                 } %>
+      <% cache [@entity, 'giving'] do %>
+        <%= render partial: 'connections',
+                   locals: {
+                     connection_type: :giving,
+                     connected_entities: @entity.public_send((@entity.person? ? :similar_donors : :employee_donations), params[:page]),
+		     has_stat: @entity.org?
+                   } %>
+      <% end %>
     <% when :data %>
-      <%= render partial: 'data' %>
+      <% cache [@entity, 'data'] do %>
+        <%= render partial: 'data' %>
+      <% end %>
     <% end %>
 
   </div> <%# end content-col %>

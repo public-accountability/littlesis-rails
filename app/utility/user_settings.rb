@@ -4,8 +4,9 @@
 class UserSettings
   DEFAULTS = {
     default_tag: :oligrapher,
-    show_stars: true,  # admin-only setting
-    language: :en
+    language: :en,
+    # admin-only setting
+    show_stars: true
   }.freeze
 
   CONVERTERS = Hash.new(->(x) { x }).tap do |hash|

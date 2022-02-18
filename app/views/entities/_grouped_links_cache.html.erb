@@ -1,0 +1,6 @@
+<%# Used to cache /grouped_links paginated requests  %>
+
+<% cache_unless show_stars?, [@entity.cache_key_with_version, @subcategory, @subcategory_page] do  %>
+  <% grouped_links = @entity.relationship_collection(scope: { subcategory:  @subcategory }).get(@subcategory) %>
+  <%= render partial: 'grouped_links', locals: { grouped_links: grouped_links, current_page: @subcategory_page } %>
+<% end %>

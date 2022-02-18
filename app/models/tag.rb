@@ -15,7 +15,7 @@ class Tag < ApplicationRecord
   validates :name, uniqueness: { case_sensitive: true }, presence: true
   validates :description, presence: true
 
-  before_validation :trim_name_whitespace, on: :create
+  before_validation :normalize_tag_name
 
   # CLASS METHODS
 
@@ -28,55 +28,59 @@ class Tag < ApplicationRecord
     }
   end
 
-  # String | Integer -> Tag | nil
-  def self.get(tag_identifier)
-    if tag_identifier.is_a? Integer
-      lookup[tag_identifier]
-    elsif /\A[[:digit:]]+\Z/.match? tag_identifier
-      lookup[tag_identifier.to_i]
-    else
-      search_by_name(tag_identifier)
-    end
-  end
-
   # String -> [Tag]
-  def self.search_by_names(phrase)
-    Tag.lookup.keys
-      .delete_if { |k| k.is_a? Integer }
-      .select { |tag_name| phrase.downcase.include?(tag_name) }
-      .map { |tag_name| lookup[tag_name] }
-  end
-
-  # String -> Tag | Nil
-  # Search through tags find tag by name
-  def self.search_by_name(query)
-    lookup[query.downcase]
-  end
-
-  def self.lookup
-    @lookup ||= Tag.all.each_with_object({}) do |tag, h|
-      h.store(tag.id, tag)
-      h.store(tag.name.downcase, tag)
-      h.store(tag.name.downcase.tr('-', ' '), tag) if tag.name.include?('-')
+  def self.fuzzy_search(phrase)
+    found_names = tag_names.select do |tag_name|
+      phrase.downcase.include?(tag_name) || phrase.downcase.include?(tag_name.gsub('-', ' '))
     end
+
+    where(name: found_names).to_a
+  end
+
+  def self.find_by_name(name)
+    find_by name: name.strip.tr(' ', '-').downcase
+  end
+
+
+  def self.tag_names
+    # @tag_names ||=
+    all.pluck(:name).freeze
   end
 
   def self.restricted_tags
     @restricted_tags ||= Tag.where(restricted: true).to_a
   end
 
+  def self.get(tag_identifier)
+    get!(tag_identifier)
+  rescue ActiveRecord::RecordNotFound
+    nil
+  end
+
+  def self.get!(tag_identifier)
+    if tag_identifier.is_a?(Integer) || /^\d+$/.match?(tag_identifier)
+      find(tag_identifier)
+    else
+      find_by_name(tag_identifier)
+    end
+  end
+
   # INSTANCE METHODS
+
+  def to_param
+    name
+  end
 
   def restricted?
     restricted
   end
 
-  # ANY -> Kaminari::PaginatableArray
+  # tagable_categories: entities | lists | relationships | recent_edits
   def tagables_for_homepage(tagable_category, **kwargs)
     public_send "#{tagable_category}_for_homepage", **kwargs
   end
 
-  # keyword args (person_page, org_page) -> Hash
+  # tagable_category -> {'Person', 'Org' } -> Kaminari::PaginatableArray
   def entities_for_homepage(person_page: 1, org_page: 1)
     %w[Person Org].reduce({}) do |acc, type|
       page = binding.local_variable_get("#{type.downcase}_page").to_i
@@ -112,7 +116,6 @@ class Tag < ApplicationRecord
   #   event:              Enum('tag_added', 'tagable_updated')
   # }
   # Integer -> [EditsHash]
-
   def recent_edits(page = 1)
     edit_id_hashes = recent_edit_ids(page)
     tagables_by_class_and_id = tagables_by_class_and_id_for(edit_id_hashes)
@@ -161,7 +164,7 @@ class Tag < ApplicationRecord
          OFFSET #{(page - 1) * PER_PAGE}
     SQL
 
-    entities = ApplicationRecord.connection.execute(sql).to_a.each_with_object({}) do |row, h|
+    entities = ApplicationRecord.execute_sql(sql).to_a.each_with_object({}) do |row, h|
       h.store row['entity_id'], row['relationship_count']
     end
 
@@ -255,9 +258,9 @@ class Tag < ApplicationRecord
       .transform_values { |tagable_array| tagable_array.map { |h| h['tagable_id'] }.uniq }
       .to_a
       .reduce(base) do |acc, (klass, tagable_ids)|
-        klass.constantize.find(tagable_ids).each { |tagable| acc[klass].store(tagable.id, tagable) }
-        acc
-      end
+      klass.constantize.find(tagable_ids).each { |tagable| acc[klass].store(tagable.id, tagable) }
+      acc
+    end
   end
 
   # type EditorsById = { [id: Integer] => User }
@@ -270,7 +273,9 @@ class Tag < ApplicationRecord
       .reduce({}) { |acc, (editor, id)| acc.merge!(id => editor) }
   end
 
-  def trim_name_whitespace
-    self.name = name.strip unless name.nil?
+  def normalize_tag_name
+    unless name.nil?
+      self.name = name.downcase.strip.tr(' ', '-')
+    end
   end
 end

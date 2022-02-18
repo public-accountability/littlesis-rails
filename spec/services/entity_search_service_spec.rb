@@ -34,13 +34,8 @@ describe EntitySearchService do
 
   describe 'tags' do
     before do
-      Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
       Tag.create!(TagSpecHelper::OIL_TAG)
       Tag.create!(TagSpecHelper::NYC_TAG)
-    end
-
-    after do
-      Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
     end
 
     it 'accepts a single tag as string' do

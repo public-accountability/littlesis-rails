@@ -65,7 +65,7 @@ class EntityVersionPresenter < VersionPresenter
 
   def tag_name
     tag_id = fetch_from_object_or_changeset('tag_id')
-    Tag.lookup.fetch(tag_id).name
+    Tag.find(tag_id).name
   end
 
   def list_name

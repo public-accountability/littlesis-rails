@@ -8,7 +8,7 @@ class SearchController < ApplicationController
     @tag_filter = (params[:tags].presence || params[:tag].presence)
     user_is_admin = current_user&.admin?
 
-    return render(status: :bad_request) if @tag_filter && Tag.get(params[:tags]).nil?
+    # return render(status: :bad_request) if @tag_filter && Tag.get(params[:tags]).nil?
 
     begin
       service = SearchService.new(@query, page: @page, admin: user_is_admin, tag_filter: @tag_filter)

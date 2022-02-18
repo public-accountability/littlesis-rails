@@ -20,7 +20,7 @@ class Entity
           amount: relationship.amount,
           label: relationship.label.label_for_page_of(@entity),
           date_range: relationship.label.display_date_range[1...-1],
-          other_entity: relationship.other_entity(@entity).to_hash(send: :extension_definition_ids)
+          other_entity: relationship.other_entity(@entity).to_hash(send: :extension_definition_ids).symbolize_keys
         }
       end
     end
@@ -28,15 +28,15 @@ class Entity
     def category_collection_for_options
       @relationships
         .map { |h| h[:category_id] }
-        .uniq!
+        .uniq
         .map { |i| [ RelationshipCategory.lookup.dig(i, :display_name), i] }
     end
 
     def extension_definition_collection_for_options
       @relationships
         .map { |h| h.dig(:other_entity, :extension_definition_ids) }
-        .flatten!
-        .uniq!
+        .flatten
+        .uniq
         .map { |i| [ExtensionDefinition.display_names.fetch(i), i] }
     end
   end

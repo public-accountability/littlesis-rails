@@ -16,7 +16,7 @@ class SearchService
   def tags
     return @tags if defined?(@tags)
 
-    @tags = Tag.search_by_names(@query)
+    @tags = Tag.fuzzy_search(@query)
   end
 
   def entities

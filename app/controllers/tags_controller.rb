@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Tagable categories: entities, lists, relationships. See: `Tagable.categories`
 class TagsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show, :edits]
@@ -26,6 +28,9 @@ class TagsController < ApplicationController
   def update
     if @tag.update(tag_params)
       flash[:notice] = "Tag successfully updated"
+      if @tag.saved_change_to_name?
+        flash[:alert] = "Please tell the site administrator to restart the web application"
+      end
       redirect_to admin_tags_path
     else
       flash[:alert] = "Error: #{@tag.errors.full_messages.join('. ')}"
@@ -76,7 +81,7 @@ class TagsController < ApplicationController
   end
 
   def set_tag
-    @tag = Tag.find(params[:id])
+    @tag = Tag.get!(params[:id])
   end
 
   def set_tags

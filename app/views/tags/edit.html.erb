@@ -1,29 +1,24 @@
-<div class="row">
+<div class="row mt-3 mb-3">
+  <div class="col">
     <h1>Editing Tag: <%= @tag.name %></h1>
+  </div>
 </div>
 
-<div class="row">
-    <div class="col-sm-6">
-	<%= notice_or_alert %>
-    </div>
-</div>
-
-
-<div class="row">
-    <div class="col-sm-8">
-	<%= render partial: 'tag_form', locals: { tag: @tag } %>
-    </div>
+<div class="row mb-3">
+  <div class="col-sm-8">
+    <%= render partial: 'tag_form', locals: { tag: @tag } %>
+  </div>
 </div>
 
 
-<div class="row top-3em">
-    <div class="col-sm-6 bg-warning bottom-1em">
-	<h3>Want to remove this tag?</h3>
-	<%= button_to 'Click here to delete the tag',
+<div class="row mt-3  mb-3">
+  <div class="col-sm-6 bg-warning p-2 rounded">
+    <h3>Want to remove this tag?</h3>
+    <%= button_to 'Click here to delete the tag',
 	 tag_path(@tag),
-         class:' btn btn-primary',
-	 method: :delete,
-	 id: 'delete-this-tag',
-         form: { onsubmit: "return confirm('This cannot be reversed. Are you sure?')" } %>
-    </div>
+     class:' btn btn-danger',
+     method: :delete,
+     id: 'delete-this-tag',
+     form: { onsubmit: "return confirm('This cannot be reversed. Are you sure?')" } %>
+  </div>
 </div>
