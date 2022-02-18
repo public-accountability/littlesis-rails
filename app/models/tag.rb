@@ -28,44 +28,23 @@ class Tag < ApplicationRecord
     }
   end
 
-  # String | Integer -> Tag | nil
-  def self.get(tag_identifier)
-    if tag_identifier.is_a? Integer
-      lookup[tag_identifier]
-    elsif /\A[[:digit:]]+\Z/.match? tag_identifier
-      lookup[tag_identifier.to_i]
-    else
-      search_by_name(tag_identifier)
-    end
-  end
-
-  # String | Integer -> Tag | throws
-  def self.get!(tag_identifier)
-    get(tag_identifier) or raise Exceptions::NotFoundError
-  end
-
   # String -> [Tag]
-  def self.search_by_names(phrase)
-    tag_names
-      .select { |tag_name| phrase.downcase.include?(tag_name) || phrase.downcase.include?(tag_name.gsub("-", " ")) }
-      .map { |tag_name| lookup[tag_name] }
-  end
-
-  # String -> Tag | Nil
-  # Search through tags find tag by name
-  def self.search_by_name(query)
-    lookup[query.strip.tr(' ', '-').downcase]
-  end
-
-  def self.lookup
-    @lookup ||= Tag.all.each_with_object({}) do |tag, h|
-      h.store(tag.id, tag)
-      h.store(tag.name.downcase, tag)
+  def self.fuzzy_search(phrase)
+    found_names = tag_names.select do |tag_name|
+      phrase.downcase.include?(tag_name) || phrase.downcase.include?(tag_name.gsub('-', ' '))
     end
+
+    where(name: found_names).to_a
   end
+
+  def self.find_by_name(name)
+    find_by name: name.strip.tr(' ', '-').downcase
+  end
+
 
   def self.tag_names
-    @tag_names ||= lookup.keys.reject { |k| k.is_a? Integer }.freeze
+    # @tag_names ||=
+    all.pluck(:name).freeze
   end
 
   def self.restricted_tags
@@ -82,12 +61,12 @@ class Tag < ApplicationRecord
     restricted
   end
 
-  # ANY -> Kaminari::PaginatableArray
+  # tagable_categories: entities | lists | relationships | recent_edits
   def tagables_for_homepage(tagable_category, **kwargs)
     public_send "#{tagable_category}_for_homepage", **kwargs
   end
 
-  # keyword args (person_page, org_page) -> Hash
+  # tagable_category -> {'Person', 'Org' } -> Kaminari::PaginatableArray
   def entities_for_homepage(person_page: 1, org_page: 1)
     %w[Person Org].reduce({}) do |acc, type|
       page = binding.local_variable_get("#{type.downcase}_page").to_i
@@ -171,7 +150,7 @@ class Tag < ApplicationRecord
          OFFSET #{(page - 1) * PER_PAGE}
     SQL
 
-    entities = ApplicationRecord.connection.execute(sql).to_a.each_with_object({}) do |row, h|
+    entities = ApplicationRecord.execute_sql(sql).to_a.each_with_object({}) do |row, h|
       h.store row['entity_id'], row['relationship_count']
     end
 
@@ -253,36 +232,36 @@ class Tag < ApplicationRecord
   end
 
   # type TagablesByClassAndId = {
-  #   "Relationship" => { [id: Integer] => Relationship }
-  #   "Entity"       => { [id: Integer] => Entity }
-  #   "List"         => { [id: Integer] => List }
-  # }
-  # [EditsIdHash] -> TagablesByClassAndId
-  def tagables_by_class_and_id_for(edits_id_hash)
-    base = { "Relationship" => {}, "Entity" => {}, "List" => {} }
-    edits_id_hash
-      .group_by { |h| h['tagable_class'] }
-      .transform_values { |tagable_array| tagable_array.map { |h| h['tagable_id'] }.uniq }
-      .to_a
-      .reduce(base) do |acc, (klass, tagable_ids)|
-        klass.constantize.find(tagable_ids).each { |tagable| acc[klass].store(tagable.id, tagable) }
-        acc
-      end
-  end
+       #   "Relationship" => { [id: Integer] => Relationship }
+       #   "Entity"       => { [id: Integer] => Entity }
+       #   "List"         => { [id: Integer] => List }
+       # }
+       # [EditsIdHash] -> TagablesByClassAndId
+       def tagables_by_class_and_id_for(edits_id_hash)
+         base = { "Relationship" => {}, "Entity" => {}, "List" => {} }
+         edits_id_hash
+           .group_by { |h| h['tagable_class'] }
+           .transform_values { |tagable_array| tagable_array.map { |h| h['tagable_id'] }.uniq }
+           .to_a
+           .reduce(base) do |acc, (klass, tagable_ids)|
+           klass.constantize.find(tagable_ids).each { |tagable| acc[klass].store(tagable.id, tagable) }
+           acc
+         end
+       end
 
-  # type EditorsById = { [id: Integer] => User }
-  # [EditsIdHash] => EditorsById
-  def editors_by_id(id_hashes)
-    ids = id_hashes.map { |h| h['editor_id'] }
-    User.find(ids)
-      .to_a
-      .zip(ids)
-      .reduce({}) { |acc, (editor, id)| acc.merge!(id => editor) }
-  end
+       # type EditorsById = { [id: Integer] => User }
+       # [EditsIdHash] => EditorsById
+       def editors_by_id(id_hashes)
+         ids = id_hashes.map { |h| h['editor_id'] }
+         User.find(ids)
+           .to_a
+           .zip(ids)
+           .reduce({}) { |acc, (editor, id)| acc.merge!(id => editor) }
+       end
 
-  def normalize_tag_name
-    unless name.nil?
-      self.name = name.downcase.strip.tr(' ', '-')
-    end
-  end
+       def normalize_tag_name
+         unless name.nil?
+           self.name = name.downcase.strip.tr(' ', '-')
+         end
+       end
 end

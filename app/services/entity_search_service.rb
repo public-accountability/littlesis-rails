@@ -77,13 +77,10 @@ class EntitySearchService
     @options[:tags] = @options[:tags].split(',') if @options[:tags].is_a?(String)
 
     @options[:tags].map! do |tag|
-      Tag.get(tag).tap do |t|
-        Rails.logger.warn "[EntitySearchService]: unknown tag: #{tag}" if t.nil?
-      end
-    end
-
-    @options[:tags].compact!
-    @options[:tags].map!(&:id)
+      t = Tag.find_by_name(tag)
+      Rails.logger.warn "[EntitySearchService]: unknown tag: #{tag}" if t.nil?
+      t.id
+    end.compact!
 
     if @options[:tags]&.length&.positive?
       @search_options[:with_all][:tag_ids] = @options[:tags]

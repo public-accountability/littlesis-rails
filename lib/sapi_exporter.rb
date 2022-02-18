@@ -4,7 +4,7 @@ class SapiExporter
   def self.run
     FileUtils.mkdir_p Rails.root.join('data', abbr)
     new(find_linked_entities).run
-    new(Tag.get('anti-gender').entities, 'anti-gender').run
+    new(Tag.find_by_name('anti-gender').entities, 'anti-gender').run
   end
 
   def initialize(entities, label = nil)

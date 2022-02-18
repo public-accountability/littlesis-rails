@@ -1,18 +1,10 @@
 describe Tag, :pagination_helper do
   let(:tags) { Array.new(3) { create(:tag) } }
 
-  it { should have_db_column(:restricted) }
-  it { should have_db_column(:name) }
-  it { should have_db_column(:description) }
-  it { should have_many(:taggings) }
-
-  before do
-    Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
-  end
-
-  after do
-    Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
-  end
+  it { is_expected.to have_db_column(:restricted) }
+  it { is_expected.to have_db_column(:name) }
+  it { is_expected.to have_db_column(:description) }
+  it { is_expected.to have_many(:taggings) }
 
   describe 'validations' do
     let(:tag) { build(:tag) }
@@ -21,19 +13,19 @@ describe Tag, :pagination_helper do
     describe 'validations' do
       subject { Tag.new(name: 'fake tag name', description: 'all about fake tags') }
 
-      it { should validate_presence_of(:name) }
-      it { should validate_presence_of(:description) }
+      it { is_expected.to validate_presence_of(:name) }
+      it { is_expected.to validate_presence_of(:description) }
 
       it 'validates uniqueness of name' do
         Tag.create!(name: 'real-estate', description: 'test')
-        expect{ Tag.create!(name: 'real estate', description: 'test') }.to raise_error(ActiveRecord::RecordInvalid)
-        expect{ Tag.create!(name: ' real-estate ', description: 'test') }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { Tag.create!(name: 'real estate', description: 'test') }.to raise_error(ActiveRecord::RecordInvalid)
+        expect { Tag.create!(name: ' real-estate ', description: 'test') }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
 
     describe "associations" do
       Tagable.classes.each do |klass|
-        it { should have_many(klass.category_sym) }
+        it { is_expected.to have_many(klass.category_sym) }
       end
     end
 
@@ -45,34 +37,38 @@ describe Tag, :pagination_helper do
     end
   end
 
-  describe '#entities_by_relationship_count' do
-    let(:tag) { create(:tag) }
-    let!(:people) do
-      Array.new(4) { |n| create(:entity_person, name: "person#{n} lastname").add_tag(tag.id) }
-    end
-    let!(:orgs) { Array.new(2) { create(:entity_org).add_tag(tag.id) } }
-    before do
-      people.slice(0, 3).each do |person|
-        create(:generic_relationship, entity: people[3], related: person)
-      end
-      create(:generic_relationship, entity: people[1], related: people[2])
-      2.times { create(:generic_relationship, entity: people[1], related: create(:entity_person)) }
-    end
+  # describe '#entities_by_relationship_count' do
+  #   let(:tag) { create(:tag) }
 
-    it 'returns 4 People, correctly sorted' do
-      expect(tag.send(:entities_by_relationship_count, 'Person').length).to eql 4
-      expect(tag.send(:entities_by_relationship_count, 'Person').first).to eq people[3].reload
-      expect(tag.send(:entities_by_relationship_count, 'Person').first.relationship_count).to eq 3
-      expect(tag.send(:entities_by_relationship_count, 'Person').last.relationship_count).to eq 1
-    end
+  #   let(:people) do
+  #     Array.new(4) { |n| create(:entity_person, name: "person#{n} lastname").add_tag(tag.id) }
+  #   end
 
-    it 'returns 2 Orgs' do
-      expect(tag.send(:entities_by_relationship_count, 'Org').length).to eql 2
-    end
-  end
+  #   let(:orgs) { Array.new(2) { create(:entity_org).add_tag(tag.id) } }
+
+  #   before do
+  #     people.slice(0, 3).each do |person|
+  #       create(:generic_relationship, entity: people[3], related: person)
+  #     end
+
+  #     create(:generic_relationship, entity: people[1], related: people[2])
+  #     2.times { create(:generic_relationship, entity: people[1], related: create(:entity_person)) }
+  #   end
+
+  #   it 'returns 4 People, correctly sorted' do
+  #     expect(tag.send(:entities_by_relationship_count, 'Person').length).to eq 4
+  #     expect(tag.send(:entities_by_relationship_count, 'Person').first).to eq people[3].reload
+  #     expect(tag.send(:entities_by_relationship_count, 'Person').first.relationship_count).to eq 3
+  #     expect(tag.send(:entities_by_relationship_count, 'Person').last.relationship_count).to eq 1
+  #   end
+
+  #   it 'returns 2 Orgs' do
+  #     expect(tag.send(:entities_by_relationship_count, 'Org').length).to eq 2
+  #   end
+  # end
 
   describe "Instance methods" do
-    let(:tag) { create(:tag) }
+    let(:tag) { create(:tag, name: 'tagname') }
     let(:restricted_tag) { build(:tag, restricted: true) }
 
     it 'can determine if a tag is restricted' do
@@ -81,93 +77,99 @@ describe Tag, :pagination_helper do
     end
 
     describe "querying tagables for tag homepage" do
-      context "entities" do
-        let!(:people) do
+      describe "entities" do
+        let(:people_list) do
           Array.new(4) { |n| create(:entity_person, name: "person#{n} lastname").add_tag(tag.id) }
         end
-        let!(:orgs) { Array.new(4) { |n| create(:entity_org, name: "org#{n}").add_tag(tag.id) } }
-        let!(:setup_people_relationships) do
+
+        let(:orgs_list) do
+          Array.new(4) { |n| create(:entity_org, name: "org#{n} lastname").add_tag(tag.id) }
+        end
+
+        before do
+          people_list
+          orgs_list
           # creates 4 relationsips: with the following totals:
           # people[0] = 1
           # people[1] = 2
           # people[2] = 2
           # people[3] = 3
-          people.slice(0, 3).each do |person|
-            create(:generic_relationship, entity: people[3], related: person)
-          end
-          create(:generic_relationship, entity: people[1], related: people[2])
-        end
-
-        let(:person_with_the_most_relationships) { people.last.reload }
-        let(:person_with_the_least_relationships) { people.first.reload }
-
-        let!(:setup_org_relationships) do
+          create(:generic_relationship, entity: people_list[3], related: people_list[0])
+          create(:generic_relationship, entity: people_list[3], related: people_list[1])
+          create(:generic_relationship, entity: people_list[3], related: people_list[2])
+          create(:generic_relationship, entity: people_list[1], related: people_list[2])
           # creates 4 relationsips with the following totals:
           # with the following totals:
           # orgs[0] = 1
           # orgs[1] = 2
           # orgs[2] = 2
           # orgs[3] = 3
-          orgs.slice(0, 3).each do |org|
-            create(:generic_relationship, entity: orgs[3], related: org)
-          end
-          create(:generic_relationship, entity: orgs[1], related: orgs[2])
+          create(:generic_relationship, entity: orgs_list[3], related: orgs_list[0])
+          create(:generic_relationship, entity: orgs_list[3], related: orgs_list[1])
+          create(:generic_relationship, entity: orgs_list[3], related: orgs_list[2])
+          create(:generic_relationship, entity: orgs_list[1], related: orgs_list[2])
         end
 
-        let(:org_with_the_most_relationships) { orgs.last.reload }
-        let(:org_with_the_least_relationships) { orgs.first.reload }
+        let(:person_with_the_most_relationships) { people_list.last.reload }
+        let(:person_with_the_least_relationships) { people_list.first.reload }
+        let(:org_with_the_most_relationships) { orgs_list.last.reload }
+        let(:org_with_the_least_relationships) { orgs_list.first.reload }
 
-        context 'sorting' do
-          subject do
+        describe 'sorting' do
+          let(:tagables) do
             tag.tagables_for_homepage('entities')
+
           end
+
           it 'finds people sorted by count' do
-            expect(subject['Person'].length).to eql 4
-            expect(subject['Person'].first).to eql person_with_the_most_relationships
-            expect(subject['Person'].last).to eql person_with_the_least_relationships
+            expect(tagables['Person'].length).to eq 4
+            expect(tagables['Person'].first).to eq person_with_the_most_relationships
+            expect(tagables['Person'].last).to eq person_with_the_least_relationships
           end
 
           it 'finds org sorted by count' do
-            expect(subject['Org'].length).to eql 4
-            expect(subject['Org'].first).to eql org_with_the_most_relationships
-            expect(subject['Org'].last).to eql org_with_the_least_relationships
+            expect(tagables['Org'].length).to eq 4
+            expect(tagables['Org'].first).to eq org_with_the_most_relationships
+            expect(tagables['Org'].last).to eq org_with_the_least_relationships
           end
         end
 
-        context 'pagination' do
+        describe 'pagination' do
           stub_page_limit Tag, limit: 3
 
-          context 'when asking for the default settings: page 1' do
-            subject { tag.tagables_for_homepage 'entities' }
+          describe 'asking for the default settings: page 1' do
+            let(:tagables) { tag.tagables_for_homepage('entities') }
 
             it 'contains 3 people and 3 orgs' do
-              expect(subject['Person'].length).to eql 3
-              expect(subject['Org'].length).to eql 3
+              expect(tagables['Person'].length).to eq 3
+              expect(tagables['Org'].length).to eq 3
             end
           end
 
-          context 'asking for page 2 for both people and orgs' do
-            subject { tag.tagables_for_homepage 'entities', person_page: 2, org_page: 2 }
+          describe 'asking for page 2 for both people and orgs' do
+            let(:tagables) { tag.tagables_for_homepage 'entities', person_page: 2, org_page: 2 }
+
             it 'contains 1 people and 1 org' do
-              expect(subject['Person'].length).to eql 1
-              expect(subject['Org'].length).to eql 1
+              expect(tagables['Person'].length).to eq 1
+              expect(tagables['Org'].length).to eq 1
             end
           end
 
-          context 'asking for page 1 for people and page 2 for orgs' do
-            subject { tag.tagables_for_homepage 'entities', person_page: 1, org_page: 2 }
+          describe 'asking for page 1 for people and page 2 for orgs' do
+            let(:tagables) { tag.tagables_for_homepage 'entities', person_page: 1, org_page: 2 }
+
             it 'contains 3 people and 1 org' do
-              expect(subject['Person'].length).to eql 3
-              expect(subject['Org'].length).to eql 1
+              expect(tagables['Person'].length).to eq 3
+              expect(tagables['Org'].length).to eq 1
             end
           end
         end
       end
 
-      context "lists" do
+      describe "lists" do
+        stub_page_limit Tag, limit: 3
 
         describe "sorting" do
-
           let(:lists) { Array.new(2) { create(:list).add_tag(tag.id) } }
           let(:tagables) { tag.tagables_for_homepage('lists') }
 
@@ -180,22 +182,19 @@ describe Tag, :pagination_helper do
           end
 
           it "appends an `entities_count` field to List models" do
-            expect(tagables.map(&:entity_count)).to eq [1,0]
+            expect(tagables.map(&:entity_count)).to eq [1, 0]
           end
         end
 
         describe "pagination" do
-
-          let(:page_limit){ Tag::PER_PAGE }
-          let(:lists) { Array.new(page_limit + 1) { create(:list).add_tag(tag.id) } }
-          before { lists }
+          let!(:lists) { Array.new(3 + 1) { create(:list).add_tag(tag.id) } }
 
           it "shows records corresponding to a given page" do
             expect(tag.tagables_for_homepage('lists', page: 2).size).to eq 1
           end
 
           it "limits the number of records shown on a given page" do
-            expect(tag.tagables_for_homepage('lists').size).to eq 20
+            expect(tag.tagables_for_homepage('lists').size).to eq 3
           end
         end
       end
@@ -246,15 +245,14 @@ describe Tag, :pagination_helper do
       end
 
       describe 'listing `tag_added` events' do
-
         it 'shows all `tag_added` events' do
           tag.recent_edits.each_with_index do |edit, idx|
             expect(edit)
-              .to eq("tagable"         => tagables[idx],
-                     "tagable_class"   => tagables[idx].class.name,
-                     "event"           => "tag_added",
-                     "event_timestamp" => tagables[idx].taggings.last.created_at,
-                     "editor"          => user)
+              .to eq('tagable' => tagables[idx],
+                     'tagable_class' => tagables[idx].class.name,
+                     'event' => 'tag_added',
+                     'event_timestamp' => tagables[idx].taggings.last.created_at,
+                     'editor' => user)
           end
         end
       end
@@ -280,13 +278,13 @@ describe Tag, :pagination_helper do
   end
 
   describe 'Class Methods' do
-    before(:each) do
-      @oil = build(:oil_tag, :with_tag_id)
-      @nyc = build(:nyc_tag, :with_tag_id)
-      @finance = build(:finance_tag, :with_tag_id)
-      @real_estate = build(:real_estate_tag, :with_tag_id)
-      Tag.instance_variable_set(:@lookup, nil)
-      allow(Tag).to receive(:all).and_return([@oil, @nyc, @finance, @real_estate])
+    let(:oil_tag) { create(:oil_tag) }
+    let(:nyc_tag) { create(:nyc_tag) }
+    let(:finance_tag) { create(:finance_tag) }
+    let(:real_estate_tag) { create(:real_estate_tag) }
+
+    before do
+      oil_tag; nyc_tag; finance_tag; real_estate_tag;
     end
 
     describe('#parse_update_actions') do
@@ -294,94 +292,53 @@ describe Tag, :pagination_helper do
         client_ids = [1, 2, 3].to_set
         server_ids = [2, 3, 4].to_set
         expect(Tag.parse_update_actions(client_ids, server_ids))
-          .to eql(
-                add: [1].to_set,
-                remove: [4].to_set,
-                ignore: [2, 3].to_set
-              )
+          .to eql(add: [1].to_set, remove: [4].to_set, ignore: [2, 3].to_set)
       end
     end
 
-    describe '#search_by_name' do
+    describe '#find_by_name' do
       it 'finds tag by if search includes exact name' do
-        expect(Tag.search_by_name('oil')).to eq @oil
-        expect(Tag.search_by_name('nyc')).to eq @nyc
+        expect(Tag.find_by_name('oil')).to eq oil_tag
+        expect(Tag.find_by_name('nyc')).to eq nyc_tag
       end
 
       it 'finds tag regardless of capitalization' do
-        expect(Tag.search_by_name('OIL')).to eq @oil
-        expect(Tag.search_by_name('nYc')).to eq @nyc
+        expect(Tag.find_by_name('OIL')).to eq oil_tag
+        expect(Tag.find_by_name('nYc')).to eq nyc_tag
       end
 
       it 'finds tag when written with spaces' do
-        expect(Tag.search_by_name('real estate')).to eq @real_estate
+        expect(Tag.find_by_name('real estate')).to eq real_estate_tag
       end
 
       it 'return nil if there is no tag' do
-        expect(Tag.search_by_name('NOTATAG')).to be nil
+        expect(Tag.find_by_name('NOTATAG')).to be nil
       end
     end
 
-    describe '#get' do
-      it 'finds tag by if search includes exact name' do
-        expect(Tag.get('oil')).to eql @oil
+    describe '#fuzzy_search' do
+      specify do
+        expect(Tag.fuzzy_search('')).to be_a Array
       end
 
-      it 'finds tag by integer' do
-        expect(Tag.get(@oil.id)).to eql @oil
+      specify 'phrase contains one tag' do
+        expect(Tag.fuzzy_search("oil barons")).to eq [oil_tag]
       end
 
-      it 'finds tag by string integer' do
-        expect(Tag.get(@oil.id.to_s)).to eql @oil
+      specify 'phrase contains two tag' do
+        expect(Tag.fuzzy_search("oil barons who like finance")).to eq [oil_tag, finance_tag]
       end
 
-      it 'return nil if there is no tag' do
-        expect(Tag.get('foo')).to be nil
-      end
-    end
-
-    describe '#search_by_names' do
-      let(:phrase) { '' }
-      subject { Tag.search_by_names(phrase) }
-
-      it { is_expected.to be_a Array }
-
-      context 'phrase contains one tag' do
-        let(:phrase) { "oil barons" }
-        it { should eql [@oil] }
+      specify 'phrase contains a repeated tag name' do
+        expect(Tag.fuzzy_search("nyc nyc")).to eq [nyc_tag]
       end
 
-      context 'phrase contains two tag' do
-        let(:phrase) { "oil barons who like finance" }
-        it { should eql [@oil, @finance] }
+      specify 'phrase contains real estate' do
+        expect(Tag.fuzzy_search("my rent is too high. DAMN REAL ESTATE INDUSTRY")).to eq [real_estate_tag]
       end
 
-      context 'phrase contains a repeated tag name' do
-        let(:phrase) { "nyc nyc" }
-        it { should eql [@nyc] }
-      end
-
-      context 'phrase contains real estate' do
-        let(:phrase) { "my rent is too high. DAMN REAL ESTATE INDUSTRY" }
-        it { should eql [@real_estate] }
-      end
-
-      context 'phrase is unrelated to tags' do
-        let(:phrase) { "nothing to see here" }
-        it { should eql [] }
-      end
-    end
-
-    describe 'lookup' do
-      it 'returns a hash lookup table of all tags by name and id' do
-        expect(Tag.lookup).to eq(@oil.id => @oil,
-                                 'oil' => @oil,
-                                 @nyc.id => @nyc,
-                                 'nyc' => @nyc,
-                                 @finance.id => @finance,
-                                 'finance' => @finance,
-                                 @real_estate.id => @real_estate,
-                                 'real-estate' => @real_estate)
+      specify 'phrase is unrelated to tags' do
+        expect(Tag.fuzzy_search("nothing to see here")).to eq []
       end
     end
   end # end class method

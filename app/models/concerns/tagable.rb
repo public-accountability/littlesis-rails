@@ -39,7 +39,7 @@ module Tagable
 
   # CRUD METHODS
 
-  def add_tag(name_or_id, user_id = Rails.application.config.littlesis[:system_user_id])
+  def add_tag(name_or_id, user_id = User.system_user_id)
     t = Tagging
           .find_or_initialize_by(tag_id:         parse_tag_id!(name_or_id),
                                  tagable_class:  self.class.name,

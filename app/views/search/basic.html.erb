@@ -9,7 +9,7 @@
       <div>
 	<span class="text-secondary align-bottom">Searching within:</span>
 	<span class="tag-container align-bottom">
-          <%= link_to(@tag_filter, Tag.get(@tag_filter), class: "tag") %>
+          <%= link_to(@tag_filter, Tag.find_by_name(@tag_filter), class: "tag") %>
         </span>
       </div>
     </div>
