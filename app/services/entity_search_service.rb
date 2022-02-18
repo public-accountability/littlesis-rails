@@ -79,7 +79,7 @@ class EntitySearchService
     @options[:tags].map! do |tag|
       t = Tag.find_by_name(tag)
       Rails.logger.warn "[EntitySearchService]: unknown tag: #{tag}" if t.nil?
-      t.id
+      t.try(:id)
     end.compact!
 
     if @options[:tags]&.length&.positive?
