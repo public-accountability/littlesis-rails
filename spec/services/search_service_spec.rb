@@ -28,7 +28,7 @@ describe SearchService do
   end
 
   it 'searches tags' do
-    expect(Tag).to receive(:search_by_names).with('foo').once
+    expect(Tag).to receive(:fuzzy_search).with('foo').once
     service = SearchService.new('foo')
     2.times { service.tags }
   end

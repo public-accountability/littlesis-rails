@@ -81,11 +81,7 @@ class TagsController < ApplicationController
   end
 
   def set_tag
-    @tag = if /^\d+$/.match?(params[:id])
-             Tag.find(params[:id])
-           else
-             Tag.find_by_name(params[:id])
-           end
+    @tag = Tag.get!(params[:id])
   end
 
   def set_tags

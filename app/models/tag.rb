@@ -51,6 +51,20 @@ class Tag < ApplicationRecord
     @restricted_tags ||= Tag.where(restricted: true).to_a
   end
 
+  def self.get(tag_identifier)
+    get!(tag_identifier)
+  rescue ActiveRecord::RecordNotFound
+    nil
+  end
+
+  def self.get!(tag_identifier)
+    if tag_identifier.is_a?(Integer) || /^\d+$/.match?(tag_identifier)
+      find(tag_identifier)
+    else
+      find_by_name(tag_identifier)
+    end
+  end
+
   # INSTANCE METHODS
 
   def to_param
@@ -232,36 +246,36 @@ class Tag < ApplicationRecord
   end
 
   # type TagablesByClassAndId = {
-       #   "Relationship" => { [id: Integer] => Relationship }
-       #   "Entity"       => { [id: Integer] => Entity }
-       #   "List"         => { [id: Integer] => List }
-       # }
-       # [EditsIdHash] -> TagablesByClassAndId
-       def tagables_by_class_and_id_for(edits_id_hash)
-         base = { "Relationship" => {}, "Entity" => {}, "List" => {} }
-         edits_id_hash
-           .group_by { |h| h['tagable_class'] }
-           .transform_values { |tagable_array| tagable_array.map { |h| h['tagable_id'] }.uniq }
-           .to_a
-           .reduce(base) do |acc, (klass, tagable_ids)|
-           klass.constantize.find(tagable_ids).each { |tagable| acc[klass].store(tagable.id, tagable) }
-           acc
-         end
-       end
+  #   "Relationship" => { [id: Integer] => Relationship }
+  #   "Entity"       => { [id: Integer] => Entity }
+  #   "List"         => { [id: Integer] => List }
+  # }
+  # [EditsIdHash] -> TagablesByClassAndId
+  def tagables_by_class_and_id_for(edits_id_hash)
+    base = { "Relationship" => {}, "Entity" => {}, "List" => {} }
+    edits_id_hash
+      .group_by { |h| h['tagable_class'] }
+      .transform_values { |tagable_array| tagable_array.map { |h| h['tagable_id'] }.uniq }
+      .to_a
+      .reduce(base) do |acc, (klass, tagable_ids)|
+      klass.constantize.find(tagable_ids).each { |tagable| acc[klass].store(tagable.id, tagable) }
+      acc
+    end
+  end
 
-       # type EditorsById = { [id: Integer] => User }
-       # [EditsIdHash] => EditorsById
-       def editors_by_id(id_hashes)
-         ids = id_hashes.map { |h| h['editor_id'] }
-         User.find(ids)
-           .to_a
-           .zip(ids)
-           .reduce({}) { |acc, (editor, id)| acc.merge!(id => editor) }
-       end
+  # type EditorsById = { [id: Integer] => User }
+  # [EditsIdHash] => EditorsById
+  def editors_by_id(id_hashes)
+    ids = id_hashes.map { |h| h['editor_id'] }
+    User.find(ids)
+      .to_a
+      .zip(ids)
+      .reduce({}) { |acc, (editor, id)| acc.merge!(id => editor) }
+  end
 
-       def normalize_tag_name
-         unless name.nil?
-           self.name = name.downcase.strip.tr(' ', '-')
-         end
-       end
+  def normalize_tag_name
+    unless name.nil?
+      self.name = name.downcase.strip.tr(' ', '-')
+    end
+  end
 end
