@@ -102,7 +102,11 @@ LittleSis::Application.routes.draw do
       resources path_prefix, controller: 'entities' do
         member do
           # profile page
-          get ':tab', to: 'entities#show', constraints: {tab: /interlocks|giving/}, as: 'tab'
+          # get ':tab', to: 'entities#show', constraints: {tab: /interlocks|giving/}, as: 'tab'
+          # new profile page
+          get ':active_tab', action: :profile,  constraints: { active_tab: /relationships|interlocks|giving|data/ }, as: 'profile'
+          get 'profile(/:active_tab)', action: :profile,  constraints: { active_tab: /relationships|interlocks|giving|data/ }
+
           get 'political'
           get 'datatable'
           get 'references'
@@ -111,8 +115,7 @@ LittleSis::Application.routes.draw do
           get 'add_relationship'
           post 'tags'
 
-          # new profile page
-          get 'profile(/:active_tab)', action: :profile,  constraints: { active_tab: /relationships|interlocks|giving|data/ }, as: 'profile'
+
           get 'grouped_links/:subcategory/:page',
               constraints: { subcategory:  Regexp.new(Link::Subcategory::SUBCATEGORIES.join('|')),  page: /[0-9]+/ },
               to: 'entities#grouped_links'
