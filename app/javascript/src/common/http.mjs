@@ -40,8 +40,8 @@ export function get(url, params) {
     .then(response => response.json())
 }
 
-// String, Object --> Promise<Json>
-export function post(url, data) {
+// String, Object, Options --> Promise<Json>
+export function post(url, data, options = {}) {
   if (!isPlainObject(data)) {
     throw "Post called with invalid data"
   }
@@ -51,7 +51,7 @@ export function post(url, data) {
   const headers = merge({}, jsonHeaders, { 'X-CSRF-Token': token })
 
   return fetch(url, {
-    "method": "POST",
+    "method": (options.patch ? "PATCH" : "POST"),
     "credentials": 'same-origin',
     "headers": headers,
     "body": body
@@ -60,7 +60,12 @@ export function post(url, data) {
     .then(response => response.json());
 }
 
+export function patch(url, data) {
+  return post(url, data, { patch: true })
+}
+
 export default {
   get: get,
-  post: post
+  post: post,
+  patch: patch
 }

@@ -28,9 +28,6 @@ application.register("entity-matcher", EntityMatcherController)
 import EntityMergeController from "./entity_merge_controller.js"
 application.register("entity-merge", EntityMergeController)
 
-import EntityPageController from "./entity_page_controller.js"
-application.register("entity-page", EntityPageController)
-
 import Fec__ContributionsTableController from "./fec/contributions_table_controller.js"
 application.register("fec--contributions-table", Fec__ContributionsTableController)
 
@@ -78,6 +75,9 @@ application.register("profile--connections-table", Profile__ConnectionsTableCont
 
 import Profile__ControlsController from "./profile/controls_controller.js"
 application.register("profile--controls", Profile__ControlsController)
+
+import Profile__EditableBlurbController from "./profile/editable_blurb_controller.js"
+application.register("profile--editable-blurb", Profile__EditableBlurbController)
 
 import Profile__EntitySummaryController from "./profile/entity_summary_controller.js"
 application.register("profile--entity-summary", Profile__EntitySummaryController)
