@@ -18,9 +18,13 @@
     <%# relationships %>
     <% case @active_tab %>
     <% when :relationships %>
-      <% cache_unless(show_stars?, @entity) do %>
-        <% @entity.relationship_collection.each do |grouped_links| %>
-          <%= render partial: 'grouped_links', object: grouped_links %>
+      <% if @entity.links.count.zero? %>
+        <%= render partial: 'no_relationships' %>
+      <% else %>
+        <% cache_unless(show_stars?, @entity) do %>
+          <% @entity.relationship_collection.each do |grouped_links| %>
+            <%= render partial: 'grouped_links', object: grouped_links %>
+          <% end %>
         <% end %>
       <% end %>
     <% when :interlocks %>
