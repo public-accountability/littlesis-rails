@@ -7,7 +7,7 @@
     <div class="row mt-1 mb-3">
       <div class="col">
         <div class="profile-page-tabs">
-          <a href="<%= concretize_profile_entity_path(@entity) %>" class="<%= @active_tab == :relationships ? 'active' : 'inactive' %>">Relationships</a>
+          <a href="<%= concretize_entity_path(@entity) %>" class="<%= @active_tab == :relationships ? 'active' : 'inactive' %>">Relationships</a>
           <a href="<%= concretize_profile_entity_path(@entity, active_tab: :interlocks) %>" class="<%= @active_tab == :interlocks ? 'active' : 'inactive' %>">Interlocks</a>
           <a href="<%= concretize_profile_entity_path(@entity, active_tab: :giving) %>" class="<%= @active_tab == :giving ? 'active' : 'inactive' %>">Giving</a>
           <a href="<%= concretize_profile_entity_path(@entity, active_tab: :data) %>" class="<%= @active_tab == :data ? 'active' : 'inactive' %>">Data</a>
@@ -18,9 +18,13 @@
     <%# relationships %>
     <% case @active_tab %>
     <% when :relationships %>
-      <% cache_unless(show_stars?, @entity) do %>
-        <% @entity.relationship_collection.each do |grouped_links| %>
-          <%= render partial: 'grouped_links', object: grouped_links %>
+      <% if @entity.links.count.zero? %>
+        <%= render partial: 'no_relationships' %>
+      <% else %>
+        <% cache_unless(show_stars?, @entity) do %>
+          <% @entity.relationship_collection.each do |grouped_links| %>
+            <%= render partial: 'grouped_links', object: grouped_links %>
+          <% end %>
         <% end %>
       <% end %>
     <% when :interlocks %>

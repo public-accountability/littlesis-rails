@@ -4,8 +4,8 @@
   <% document_count = @entity.documents_count  %>
 
   <div class="col-12">
-    <span><em><%= number_with_delimiter document_count %></em> documents :: </span>
-    <span><%= link_to "see all", concretize_references_entity_path(@entity) %> </span>
+    <span class="sidebar-source-links-document-count"><em><%= number_with_delimiter document_count %></em> documents :: </span>
+    <span><%= link_to "see all", concretize_references_entity_path(@entity) %></span>
     <% if documents.length == 10 || current_page != 1 %>
       <div class="ms-2 d-inline-block" data-turbo="true">
         <%= link_to(source_links_entity_path(@entity, page: current_page - 1), class: (current_page == 1 ? 'disabled' : '')) do  %>
@@ -20,7 +20,7 @@
   </div>
 
   <div class="col-12">
-    <ul class="list-unstyled" data-turbo="false">
+    <ul class="list-unstyled sidebar-source-links-list" data-turbo="false">
       <% documents.each do |doc|  %>
         <li><%= link_to doc.name, doc.url, target: '_blank', title: doc.url  %></li>
       <% end %>

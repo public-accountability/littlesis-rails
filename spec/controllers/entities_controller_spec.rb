@@ -5,8 +5,8 @@ describe EntitiesController, type: :controller do
 
   describe 'routes' do
     it { is_expected.to route(:get, '/entities/1').to(action: :show, id: 1) }
-    it { is_expected.to route(:get, '/entities/1/interlocks').to(action: :show, id: 1, tab: :interlocks) }
-    it { is_expected.to route(:get, '/entities/1/giving').to(action: :show, id: 1, tab: :giving) }
+    it { is_expected.to route(:get, '/entities/1/interlocks').to(action: :profile, id: 1, active_tab: :interlocks) }
+    it { is_expected.to route(:get, '/entities/1/giving').to(action: :profile, id: 1, active_tab: :giving) }
     it { is_expected.to route(:get, '/entities/1/datatable').to(action: :datatable, id: 1) }
     it { is_expected.to route(:get, '/entities/1/add_relationship').to(action: :add_relationship, id: 1) }
     it { is_expected.to route(:get, '/entities/new').to(action: :new) }
@@ -51,13 +51,13 @@ describe EntitiesController, type: :controller do
     describe '/entity/id' do
       before { get :show, params: { id: entity.id } }
 
-      it { is_expected.to render_template(:show) }
+      it { is_expected.to render_template(:profile) }
     end
 
     describe 'entity/id/datatable' do
       before { get :datatable, params: { id: entity.id } }
 
-      it { is_expected.to render_template(:datatable) }
+      it { is_expected.to render_template(:profile) }
     end
   end
 

@@ -23,7 +23,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       visit url
       expect(page.status_code).to eq 200
       expect(page).to have_current_path url
-      expect(page).to have_selector '#entity-page-container'
+      expect(page).to have_selector '#entity-profile-page'
     end
 
     it 'accepts person a valid entities slug' do
@@ -55,7 +55,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       visit src_url
       expect(page.status_code).to eq 200
       expect(page).to have_current_path dst_url
-      expect(page).to have_selector '#entity-name'
+      expect(page).to have_selector '#entity-profile-page'
     end
 
     %i[alice bob cassie].each do |person|
@@ -71,8 +71,10 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       %i[interlocks giving].each do |tab|
         it "redirects from alice's #{tab} tab to bob's #{tab} tab" do
-          should_redirect(tab_person_path(alice, tab: tab),
-                          tab_person_path(bob, tab: tab))
+          should_redirect(
+            concretize_profile_entity_path(alice, active_tab: tab),
+            concretize_profile_entity_path(bob, active_tab: tab)
+          )
         end
       end
     end
@@ -89,8 +91,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       %i[interlocks giving].each do |tab|
         it "redirects from alice's #{tab} tab to cassie's #{tab} tab" do
-          should_redirect(concretize_tab_entity_path(alice, tab: tab),
-                          concretize_tab_entity_path(cassie, tab: tab))
+          should_redirect(concretize_profile_entity_path(alice, active_tab: tab),
+                          concretize_profile_entity_path(cassie, active_tab: tab))
         end
       end
     end
@@ -110,7 +112,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       %i[interlocks giving].each do |tab|
         it "renders 'not found' when trying to visit alice's #{tab} tab" do
-          visit tab_entity_path(alice, tab: tab)
+          visit concretize_profile_entity_path(alice, active_tab: tab)
           expect(page.status_code).to eq 404
           expect(page).to have_text "Page Not Found"
         end
@@ -138,11 +140,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
     context 'with an anonymous user' do
       it "shows the entity's name" do
-        expect(page.find("#entity-name")).to have_text person.name
+        expect(page).to have_selector 'h1', text: person.name
       end
 
       it "shows a description of the entity" do
-        expect(page.find("#entity-blurb-text")).to have_text person.blurb
+        expect(page.find(".entity-blurb-text")).to have_text person.blurb
       end
 
       it 'does not link to editable blurb' do
@@ -185,7 +187,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     before { visit_page.call }
 
     it "hides the summary field if user has no summary" do
-      expect(page).not_to have_selector("#entity_summary")
+      expect(page).not_to have_selector("#profile-page-entity-summary")
     end
 
     context "with an entity that has a summary" do
@@ -194,7 +196,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       it "shows the summary" do
-        expect(page.find("#entity-summary")).to have_text person.summary
+        expect(page.find("#profile-page-entity-summary")).to have_text person.summary
       end
     end
 
@@ -206,12 +208,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       it "excerpts the summary" do
-        expect(page.find("#entity-summary")).to have_text "a" * Entity::EXCERPT_SIZE
-      end
-
-      it "allows user to hide and show longer version (HACK)" do
-        expect(page).to have_selector ".summary-show-more"
-        expect(page).to have_selector ".summary-show-less", visible: :hidden
+        expect(page.find("#profile-page-entity-summary")).to have_text "a" * Entity::EXCERPT_SIZE
       end
     end
   end
@@ -228,35 +225,17 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
 
     context 'with an anonymous user' do
-      context 'with similar entities' do
-        before do
-          allow(Entity).to receive(:search).and_return([build(:entity_person)])
-          visit_page.call
-        end
-
-        it { is_expected.to have_selector "#sidebar-similar-entities-container" }
-        it { is_expected.to have_text 'Similar Entities' }
-        it { is_expected.not_to have_selector 'a#begin-merging-process-link' }
-      end
-
-      context 'without similar entities' do
-        before do
-          allow(Entity).to receive(:search).and_return([])
-          visit_page.call
-        end
-
-        it { is_expected.not_to have_selector "#sidebar-similar-entities-container" }
-        it { is_expected.not_to have_text 'Similar Entities' }
-      end
-
       context 'without tags' do
         before do
           visit_page.call
         end
 
         it 'has sections' do
-          subject_has_selectors "#sidebar-image-container", "#sidebar-basic-info-container",
-                                "#sidebar-lists-container", "#sidebar-source-links"
+          expect(page).to have_selector 'h3', text: 'Basic Info'
+          expect(page).to have_selector 'h3', text: 'Source Links'
+          expect(page).not_to have_selector 'h3', text: 'Tags'
+          expect(page).not_to have_selector 'h3', text: 'Network Maps'
+          expect(page).to have_selector ".entity-profile-image"
         end
 
         it { is_expected.not_to have_selector 'a.tag' }
@@ -283,8 +262,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         end
 
         scenario 'viewing external links section' do
-          expect(find('#sidebar-external-links-container').text).to include 'External Links'
-          page_has_selector '#sidebar-external-links-container a', count: 1
+          expect(page).to have_selector 'h3', text: 'External Links'
+          # expect(find('#sidebar-external-links-container').text).to include 'External Links'
         end
       end
 
@@ -302,13 +281,14 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         end
 
         it 'has a network maps section' do
-          expect(find('#sidebar-maps-container').text).to include 'Network Maps'
+          expect(page).to have_selector 'h3', text: 'Network Maps'
+          # expect(find('#sidebar-maps-container').text).to include 'Network Maps'
         end
 
         it 'only shows featured maps' do
-          page_has_selector '#sidebar-maps-container li a', count: 1
-          expect(find('#sidebar-maps-container ul > li:nth-child(1) > a')['href'])
-            .to eql map_path(featured_map)
+          page_has_selector '#profile-page-sidebar-maps li a', count: 1
+          expect(find('#profile-page-sidebar-maps ul > li:nth-child(1) > a')['href'])
+            .to eq map_path(featured_map)
         end
 
         it "doesn't show private maps" do
@@ -326,8 +306,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         end
 
         it 'has link to the featured resource' do
-          page_has_selector '#sidebar-featured-resource-container', count: 1
-          expect(page.find('#sidebar-featured-resource-container a')[:href]).to eq(url)
+          page_has_selector '.sidebar-featured-resources', count: 1
+          expect(page.find('.sidebar-featured-resources a')[:href]).to eq(url)
         end
       end
     end
@@ -354,13 +334,13 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       describe 'viewing cmp entity page (in strata)' do
         before { visit concretize_entity_path(entity_in_strata) }
 
-        specify { page_has_selector '#sidebar-data-partner-container' }
+        specify { page_has_selector '.sidebar-data-partner' }
       end
 
       describe 'viewing cmp entity page (NOT in strata)' do
         before { visit concretize_entity_path(entity_not_in_strata) }
 
-        specify { page_has_no_selector '#sidebar-data-partner-container' }
+        specify { page_has_no_selector '.sidebar-data-partner' }
       end
     end
 
@@ -400,16 +380,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
           it { is_expected.to have_selector "#tags-edit-button" }
         end
 
-        context "with similar entities" do
-          before do
-            allow(Entity).to receive(:search).and_return([build(:entity_person)])
-            visit_page.call
-          end
-
-          it { is_expected.to have_selector "#sidebar-similar-entities-container" }
-          it { is_expected.to have_selector 'a#begin-merging-process-link' }
-        end
-
         context "when person has tags" do
           before do
             create_tags.call
@@ -428,10 +398,10 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
     let(:subpage_links) do
       [{ text: 'Relationships',  path: concretize_entity_path(person) },
-       { text: 'Interlocks',     path: concretize_tab_entity_path(person, tab: :interlocks) },
-       { text: 'Giving',         path: concretize_tab_entity_path(person, tab: :giving) },
+       { text: 'Interlocks',     path: concretize_profile_entity_path(person, active_tab: :interlocks) },
+       { text: 'Giving',         path: concretize_profile_entity_path(person, active_tab: :giving) },
        # { text: 'Political',      path: concretize_political_entity_path(person) },
-       { text: 'Data',           path: concretize_datatable_entity_path(person) }]
+       { text: 'Data',           path: concretize_profile_entity_path(person, active_tab: :data) }]
     end
 
     it "has tabs for every subpage" do
@@ -442,37 +412,36 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
     it "defaults to relationships tab" do
       expect(page).to have_current_path concretize_entity_path(person)
-      expect(page.find('div.button-tabs span.active'))
-        .to have_link('Relationships')
+      expect(page.find('div.profile-page-tabs a.active')).to have_text('Relationships')
     end
   end
 
-  describe "Relationship Tab - with category Membership" do
-    let(:org_with_members) { create(:entity_org) }
-    let(:org_with_memberships) { create(:entity_org) }
+  # describe "Relationship Tab - with category Membership" do
+  #   let(:org_with_members) { create(:entity_org) }
+  #   let(:org_with_memberships) { create(:entity_org) }
 
-    before do
-      create(:generic_relationship, entity: org_with_members, related: create(:entity_person))
-      create(:membership_relationship, entity: org_with_memberships, related: org_with_members)
-    end
+  #   before do
+  #     create(:generic_relationship, entity: org_with_members, related: create(:entity_person))
+  #     create(:membership_relationship, entity: org_with_memberships, related: org_with_members)
+  #   end
 
-    context 'when on an entity page with memberships' do
-      before { visit concretize_entity_path(org_with_memberships, relationships: 'memberships') }
+  #   context 'when on an entity page with memberships' do
+  #     before { visit concretize_entity_path(org_with_memberships, relationships: 'memberships') }
 
-      it 'show title Memberships' do
-        # expect(page.find('#relationship_tabs_content')).to have_text 'Memberships', count: 1
-        page_has_selector 'div.subsection', text: 'Memberships', count: 1
-      end
-    end
+  #     it 'show title Memberships' do
+  #       # expect(page.find('#relationship_tabs_content')).to have_text 'Memberships', count: 1
+  #       page_has_selector 'div.subsection', text: 'Memberships', count: 1
+  #     end
+  #   end
 
-    context 'when on an entity page with members' do
-      before { visit concretize_entity_path(org_with_members, relationships: 'members') }
+  #   context 'when on an entity page with members' do
+  #     before { visit concretize_entity_path(org_with_members, relationships: 'members') }
 
-      it 'show title Memberships' do
-        expect(page.find('#relationship_tabs_content')).to have_text 'Members'
-      end
-    end
-  end
+  #     it 'show title Memberships' do
+  #       expect(page.find('#relationship_tabs_content')).to have_text 'Members'
+  #     end
+  #   end
+  # end
 
   describe "relationships tab" do
     before { visit concretize_entity_path(person) }
@@ -481,8 +450,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       it 'shows stub message' do
         successfully_visits_page concretize_entity_path(person)
         page_has_selector '#entity-without-relationships-message'
-        expect(find('#entity-without-relationships-message p a')[:href])
-          .to eql concretize_add_relationship_entity_path(person)
       end
     end
 
@@ -498,9 +465,9 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       scenario 'displays two relationships' do
         successfully_visits_page concretize_entity_path(entity)
         expect(page).not_to have_selector '#entity-without-relationships-message'
-        page_has_selector 'div.relationship-section', count: 2
-        page_has_selector 'div.subsection', text: 'Positions'
-        page_has_selector 'div.subsection', text: 'Other Affiliations'
+        page_has_selector 'h2.profile-page-subcategory-heading', count: 2
+        page_has_selector 'h2.profile-page-subcategory-heading', text: 'Positions'
+        page_has_selector 'h2.profile-page-subcategory-heading', text: 'Miscellaneous Relationships'
       end
     end
   end
@@ -513,7 +480,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       before do
         interlock_people_via_orgs(people, orgs)
-        visit tab_entity_path(root_entity, tab: :interlocks)
+        visit concretize_profile_entity_path(root_entity, active_tab: :interlocks)
       end
 
       describe "table layout" do
@@ -590,7 +557,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       before do
         interlock_orgs_via_people(orgs, people)
-        visit tab_entity_path(root_entity, tab: :interlocks)
+        visit concretize_profile_entity_path(root_entity, active_tab: :interlocks)
       end
 
       it "shows a header and subheader" do
@@ -639,11 +606,12 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       before do
         create_donations_from(donors, recipients)
-        visit tab_entity_path(root_entity, tab: :giving)
+
+        visit concretize_profile_entity_path(root_entity, active_tab: :giving)
       end
 
       it 'shows correct page' do
-        expect(page).to have_current_path tab_entity_path(root_entity, tab: :giving)
+        expect(page).to have_current_path concretize_profile_entity_path(root_entity, active_tab: :giving)
       end
 
       it "shows a header and subheader" do
@@ -691,12 +659,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       before do
         donors.each { |d| create(:position_relationship, entity: d, related: org) }
         create_donations_to(recipients, donors)
-
-        visit tab_entity_path(root_entity, tab: :giving)
+        visit concretize_profile_entity_path(root_entity, active_tab: :giving)
       end
 
       it 'shows correct page' do
-        expect(page).to have_current_path tab_entity_path(org, tab: :giving)
+        expect(page).to have_current_path concretize_profile_entity_path(org, active_tab: :giving)
       end
 
       it "shows a header and subheader" do

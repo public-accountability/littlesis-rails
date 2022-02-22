@@ -1,7 +1,7 @@
 describe 'Featured relationship admin', type: :feature do
   let(:admin) { create_admin_user }
   let(:user) { create_basic_user }
-  let(:org) { create(:org) }
+  let(:org) { create(:entity_org) }
   let!(:relationships) { create_list(:generic_relationship, 5, entity: org, related: create(:person)) }
 
   context 'when logged in as an normal user' do
@@ -15,7 +15,7 @@ describe 'Featured relationship admin', type: :feature do
       end
 
       it 'does not offer the featured relationship button' do
-        expect(page).not_to have_css('.relationship-section .star-button')
+        expect(page).not_to have_css('.star-button')
       end
     end
 
@@ -25,7 +25,7 @@ describe 'Featured relationship admin', type: :feature do
       end
 
       it 'does not offer the featured relationship button' do
-        expect(page).not_to have_css('.relationship-section .star-button')
+        expect(page).not_to have_css('.star-button')
       end
     end
   end
@@ -41,19 +41,19 @@ describe 'Featured relationship admin', type: :feature do
       end
 
       it 'offers the featured relationship button' do
-        expect(page).to have_css('.relationship-section .star-button')
+        expect(page).to have_css('.star-button')
       end
 
       it 'can feature and unfeature a relationship' do
         expect(relationships.last.is_featured).to be false
 
-        all('.relationship-section .star-button').last.click
+        all('.star-button').last.click
 
         expect(page).to show_success('Relationship updated')
 
         expect(relationships.last.reload.is_featured).to be true
 
-        all('.relationship-section .star-button').last.click
+        all('.star-button').last.click
 
         expect(page).to show_success('Relationship updated')
 

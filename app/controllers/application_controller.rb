@@ -49,8 +49,9 @@ class ApplicationController < ActionController::Base
   end
 
   rescue_from Exceptions::MergedEntityError do |e|
-    if params[:tab].present?
-      redirect_to(concretize_tab_entity_path(e.merged_entity, tab: params.fetch(:tab)))
+    tab = params[:active_tab] || params[:tab]
+    if tab.present?
+      redirect_to(concretize_profile_entity_path(e.merged_entity, active_tab: tab))
     else
       redirect_to(concretize_entity_path(e.merged_entity))
     end
