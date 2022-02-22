@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 
-
 export default class extends Controller {
   static targets = [ 'table', 'preview' ]
 
@@ -21,8 +20,7 @@ export default class extends Controller {
         html: true,
         trigger: 'hover',
         template: '<div class="popover" role="tooltip"><div class="popover-body"></div></div>',
-        content: `<img src="${url}" class="img-responsive">`
+        content: `<img src="${url}" class="img-responsive w-100">`
       })
-
   }
 }
