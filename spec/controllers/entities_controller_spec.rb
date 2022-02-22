@@ -51,13 +51,13 @@ describe EntitiesController, type: :controller do
     describe '/entity/id' do
       before { get :show, params: { id: entity.id } }
 
-      it { is_expected.to render_template(:show) }
+      it { is_expected.to render_template(:profile) }
     end
 
     describe 'entity/id/datatable' do
       before { get :datatable, params: { id: entity.id } }
 
-      it { is_expected.to render_template(:datatable) }
+      it { is_expected.to render_template(:profile) }
     end
   end
 
