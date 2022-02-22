@@ -42,7 +42,6 @@ test:
   image_root: tmp
   host: 'localhost:8080'
   protocol: http
-  redirect_to_new_profile_page: false
 
 development:
   <<: *defaults

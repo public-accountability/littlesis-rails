@@ -38,10 +38,10 @@ feature 'Merging entities' do
         successfully_visits_page merge_path(mode: :search, source: source.id)
       end
 
-      it "navigates to merge search page from `similar entities` section" do
-        click_link 'Begin merging process »'
-        successfully_visits_page merge_path(mode: :search, source: source.id)
-      end
+      # it "navigates to merge search page from `similar entities` section" do
+      #   click_link 'Begin merging process »'
+      #   successfully_visits_page merge_path(mode: :search, source: source.id)
+      # end
     end
   end
 

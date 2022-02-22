@@ -43,11 +43,9 @@ feature 'Adding an entity relationship', :sphinx, type: :feature, js: true do
 
     click_on 'create-relationship-btn'
 
-    expect(page).to have_css('h1', text: "Family: #{entity.name}, #{entity2.name}")
+    expect(page).to have_css 'h1', text: "Family: #{entity.name}, #{entity2.name}"
     visit person_path(entity)
 
-    within '#relationship_tabs_content' do
-      expect(page).to have_text entity2.name
-    end
+    expect(page).to have_css '.other-entity-name a', text: entity2.name
   end
 end

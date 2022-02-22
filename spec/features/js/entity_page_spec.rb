@@ -2,26 +2,26 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
   before { setup_sphinx }
   after { teardown_sphinx }
 
-  context 'with an entity with a summary' do
-    let(:entity) { create(:entity_person, summary: Faker::Lorem.paragraph(sentence_count: 10)) }
+  # context 'with an entity with a summary' do
+  #   let(:entity) { create(:entity_person, summary: Faker::Lorem.paragraph(sentence_count: 10)) }
 
-    scenario 'user toggles the summary to read it' do
-      visit person_path(entity)
+  #   scenario 'user toggles the summary to read it' do
+  #     visit person_path(entity)
 
-      within '#entity-summary' do
-        expect(page).to have_selector('.summary-full', visible: :hidden)
-        expect(page).to have_text 'more »'
-        click_on 'more »'
+  #     within '#entity-summary' do
+  #       expect(page).to have_selector('.summary-full', visible: :hidden)
+  #       expect(page).to have_text 'more »'
+  #       click_on 'more »'
 
-        expect(page).to have_selector('.summary-full', visible: :visible)
-        expect(page).to have_text entity.summary
+  #       expect(page).to have_selector('.summary-full', visible: :visible)
+  #       expect(page).to have_text entity.summary
 
-        expect(page).to have_text '« less'
-        click_on '« less'
-        expect(page).to have_selector('.summary-full', visible: :hidden)
-      end
-    end
-  end
+  #       expect(page).to have_text '« less'
+  #       click_on '« less'
+  #       expect(page).to have_selector('.summary-full', visible: :hidden)
+  #     end
+  #   end
+  # end
 
   context 'with multiple relationships to an entity' do
     let(:org) { create(:entity_org, name: 'Limited Inc.') }
@@ -32,22 +32,23 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
     scenario "user toggles to see the hidden relationships" do
       visit org_path(org)
 
-      within '.related_entity' do
-        expect(page).to have_selector('.related_entity_name', text: 'Colander Raclette')
+      expect(page).to have_selector('.other-entity-name', text: 'Colander Raclette')
 
+      within '.profile-page-relationships' do
         expect(page).to have_text '[+2]'
         expect(page).to have_selector('.collapse', visible: :hidden)
-
-        expect(page).to have_selector('a', text: 'Position', count: 2, visible: :hidden)
-
-        find('a[role="button"]').click
-        expect(page).to have_selector('.collapse', visible: :visible)
-
-        expect(page).to have_selector('a', text: 'Position', count: 3, visible: :visible)
-
-        find('a[role="button"]').click
-        expect(page).to have_selector('.collapse', visible: :hidden)
       end
+
+      expect(page).to have_selector('a', text: 'Position', count: 2, visible: :hidden)
+
+      find('.profile-page-relationships span[role="button"]').click
+      expect(page).to have_selector('.profile-page-relationships .collapse', visible: :visible)
+
+      expect(page).to have_selector('a', text: 'Position', count: 3, visible: :visible)
+
+      find('.profile-page-relationships span[role="button"]').click
+      expect(page).to have_selector('.profile-page-relationships .collapse', visible: :hidden)
+      # end
     end
   end
 
@@ -108,12 +109,12 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
         create(:list, name: 'Objectified people')
         visit person_path(person)
 
-        find('#sidebar-lists-container .select2').click
+        find('.sidebar-lists .select2').click
         find('.select2-container--open .select2-search__field').native.send_keys('Objectified')
         find('.select2-container--open .select2-search__field').native.send_keys(:return)
-        find('#sidebar-lists-container .select2-selection').click
+        find('.sidebar-lists .select2-selection').click
         find('.select2-container--open .select2-search__field').native.send_keys(:return)
-        find('#sidebar-lists-container input[value="add to list"]').click
+        find('.sidebar-lists input[value="add to list"]').click
 
         expect(page).to have_selector('.alert-success', text: "Added to list 'Objectified people'")
       end

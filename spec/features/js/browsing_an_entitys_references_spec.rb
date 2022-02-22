@@ -9,26 +9,25 @@ feature "Browsing an entity's references", type: :feature, js: true do
   end
 
   scenario 'browsing references in the sidebar' do
-    expect(page).to have_css('em.link-count', text: 20)
+    expect(page).to have_css('.sidebar-source-links-document-count', text: "20 documents ::")
 
     # Check we have a list of 10 sources visible
-    expect(page).to have_css('#source-links-container a', count: 10)
-    first_source = first('#source-links-container a').text
+    expect(page).to have_css('.sidebar-source-links-list a', count: 10)
+    first_source = first('.sidebar-source-links-list a').text
     expect(references.map { |r| r.document.name }).to include first_source
-    expect(page).to have_css('.link-arrow-text', text: 'view more')
 
     # Click "view more"
-    find('#source-links-right-arrow').click
+    find('.sidebar-source-links .bi-arrow-right').click
 
     # Check we now have a different list of 10
-    expect(page).to have_css('#source-links-container a', count: 10)
-    new_first_source = first('#source-links-container a').text
+    expect(page).to have_css('.sidebar-source-links-list a', count: 10)
+    new_first_source = first('.sidebar-source-links-list a').text
     expect(new_first_source).not_to eq first_source
 
     # Click "back" to view the first list
-    find('#source-links-left-arrow').click
-    expect(page).to have_css('#source-links-container a', count: 10)
-    new_first_source = first('#source-links-container a').text
+    find('.sidebar-source-links .bi-arrow-left').click
+    expect(page).to have_css('.sidebar-source-links-list a', count: 10)
+    new_first_source = first('.sidebar-source-links-list a').text
     expect(new_first_source).to eq first_source
   end
 end
