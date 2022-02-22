@@ -23,7 +23,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       visit url
       expect(page.status_code).to eq 200
       expect(page).to have_current_path url
-      expect(page).to have_selector '#entity-page-container'
+      expect(page).to have_selector '#entity-profile-page'
     end
 
     it 'accepts person a valid entities slug' do
@@ -55,7 +55,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       visit src_url
       expect(page.status_code).to eq 200
       expect(page).to have_current_path dst_url
-      expect(page).to have_selector '#entity-name'
+      expect(page).to have_selector '#entity-profile-page'
     end
 
     %i[alice bob cassie].each do |person|
@@ -71,8 +71,10 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       %i[interlocks giving].each do |tab|
         it "redirects from alice's #{tab} tab to bob's #{tab} tab" do
-          should_redirect(tab_person_path(alice, tab: tab),
-                          tab_person_path(bob, tab: tab))
+          should_redirect(
+            concretize_profile_entity_path(alice, active_tab: tab),
+            concretize_profile_entity_path(bob, active_tab: tab)
+          )
         end
       end
     end
@@ -89,8 +91,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       %i[interlocks giving].each do |tab|
         it "redirects from alice's #{tab} tab to cassie's #{tab} tab" do
-          should_redirect(concretize_tab_entity_path(alice, tab: tab),
-                          concretize_tab_entity_path(cassie, tab: tab))
+          should_redirect(concretize_profile_entity_path(alice, active_tab: tab),
+                          concretize_profile_entity_path(cassie, active_tab: tab))
         end
       end
     end
@@ -110,7 +112,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       %i[interlocks giving].each do |tab|
         it "renders 'not found' when trying to visit alice's #{tab} tab" do
-          visit tab_entity_path(alice, tab: tab)
+          visit concretize_profile_entity_path(alice, active_tab: tab)
           expect(page.status_code).to eq 404
           expect(page).to have_text "Page Not Found"
         end
@@ -138,11 +140,11 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
     context 'with an anonymous user' do
       it "shows the entity's name" do
-        expect(page.find("#entity-name")).to have_text person.name
+        expect(page).to have_selector 'h1', text: person.name
       end
 
       it "shows a description of the entity" do
-        expect(page.find("#entity-blurb-text")).to have_text person.blurb
+        expect(page.find(".entity-blurb-text")).to have_text person.blurb
       end
 
       it 'does not link to editable blurb' do
