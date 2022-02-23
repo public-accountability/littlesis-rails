@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  AVAILABLE_LOCALES = HTTP::Accept::Languages::Locales.new(["en", "es"]).freeze
+
   include ParamsHelper
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -152,7 +154,15 @@ class ApplicationController < ActionController::Base
   private
 
   def switch_locale(&action)
-    locale = params[:locale] || current_user&.settings&.language || I18n.default_locale
+    locale = params[:locale] || current_user&.settings&.language || locale_from_header || I18n.default_locale
     I18n.with_locale(locale, &action)
+  end
+
+  def locale_from_header
+    if request.headers['Accept-Language']
+      (AVAILABLE_LOCALES & HTTP::Accept::Languages.parse(request.headers['Accept-Language'])).first
+    end
+  rescue HTTP::Accept::ParseError
+    nil
   end
 end
