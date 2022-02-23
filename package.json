@@ -10,16 +10,16 @@
     "d3": "^7.2.1",
     "datatables.net": "^1.11.4",
     "datatables.net-dt": "^1.11.4",
-    "esbuild": "^0.14.21",
+    "esbuild": "^0.14.23",
     "file-saver": "^2.0.5",
     "jquery": "^3.6.0",
     "lodash-es": "^4.17.21",
     "mustache": "^4.2.0",
     "papaparse": "^5.3.1",
     "parsleyjs": "^2.9.2",
-    "puppeteer": "^13.2.0",
+    "puppeteer": "^13.4.0",
     "select2": "^4.1.0-rc.0",
-    "sharp": "^0.30.0",
+    "sharp": "^0.30.1",
     "tinycarousel": "^2.1.8",
     "trix": ">=1.3.1"
   },
@@ -29,6 +29,6 @@
     "test": "mocha spec/javascripts"
   },
   "devDependencies": {
-    "mocha": "^9.2.0"
+    "mocha": "^9.2.1"
   }
 }

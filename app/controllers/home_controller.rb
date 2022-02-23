@@ -77,26 +77,22 @@ class HomeController < ApplicationController
   def newsletter_signup
     form = NewsletterSignupForm.new(newsletter_signup_params)
 
-    NewsletterSignupJob.perform_later(form.email, 'newsletter') if form.valid?
+    NewsletterSignupJob.perform_later(form.email) if form.valid?
 
     flash.notice = "Thank you! You've been added to our newsletter."
     redirect_to root_path
   end
 
-  # Signup an email address to the PAI newsletter
-  # redirects to 'referer' if present or 'https://news.littlesis.org'
-  #
+  # Alternative method for signing up to our mailing list
+  # redirects to 'referrer' if present or 'https://news.littlesis.org'
   # POST /home/pai_signup
   def pai_signup
     return head :forbidden if likely_a_spam_bot
 
     pai_signup_ip_limit(request.remote_ip)
 
-    signup_type = params[:tag]&.downcase.eql?('press') ? 'press' : 'pai'
-
     unless Rails.env.development?
-      NewsletterSignupJob.perform_later params.fetch('email'),
-                                        signup_type
+      NewsletterSignupJob.perform_later(params.fetch('email'))
     end
 
     if request.headers['referer'].blank?
