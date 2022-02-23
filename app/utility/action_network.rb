@@ -1,152 +1,200 @@
 # frozen_string_literal: true
 
-##
-# Interacts with the action network api
-# can add users and email address to LittleSis
-#
 module ActionNetwork
   API_KEY = Rails.application.config.littlesis.fetch(:action_network_api_key).dup.freeze
   API_INFO_URL = 'https://actionnetwork.org/api/v2'
   PEOPLE_URL = 'https://actionnetwork.org/api/v2/people'
+  TAGS_URL = 'https://actionnetwork.org/api/v2/tags'
 
-  # Tags are primarily how the LittleSis staff
-  # organizes and sorts  users on action network
+  # Tags allows us to target emails to specific users
   TAGS = {
-    signup: 'LS-Signup',
-    newsletter: 'PAI and LittleSis Updates',
-    map_the_power: 'MTP',
-    pai: 'PAI-Signup',
-    press: 'press'
+    newsletter: {
+      name: 'LS-Newsletter',
+      id: 'b7c2e8c7-0eda-4eef-a97f-4da9bb1d4da6'
+    },
+    map_the_power: {
+      name: 'MTP',
+      id: '0fca0e34-7f87-46e0-bd50-3841c434af46'
+    },
+    tech: {
+      name: "LS-Tech",
+      id: '6a10825a-6793-4110-8199-bd6004c3400d'
+    }
   }.freeze
 
-  # :section: Public API
+  TAGS_BY_ID = TAGS.map { |k, v| [v[:id], k] }.to_h.freeze
 
-  # Signs up a user to Action Network
-  #
-  # User --> Boolean
-  def self.signup(user)
-    post URI.parse(PEOPLE_URL), signup_params(user)
+  module HTTP
+    def self.get(url, query = nil)
+      uri = URI.parse(url)
+      uri.query = query if query
+      http(uri, request(uri, :Get))
+    end
+
+    def self.post(url, data)
+      uri = URI.parse(url)
+      req = request(uri, :Post)
+      req.body = data.to_json
+      http(uri, req)
+    end
+
+    def self.put(url, data)
+      uri = URI.parse(url)
+      req = request(uri, :Put)
+      req.body = data.to_json
+      http(uri, req)
+    end
+
+    def self.delete(url, data = {})
+      uri = URI.parse(url)
+      req = request(uri, :Delete)
+      req.body = data.to_json
+      http(uri, req)
+    end
+
+    # URI,  Net::HTTP::Get --> Hash | raises HTTPRequestFailedError
+    private_class_method def self.http(uri, request)
+      Net::HTTP.start(uri.host, uri.port, :use_ssl => true) do |http|
+        response = http.request(request)
+        if response.is_a? Net::HTTPSuccess
+          return JSON.parse(response.body)
+        else
+          Rails.logger.warn "[ActionNetwork] #{response.body}" if response.body
+          raise Exceptions::HTTPRequestFailedError, "Response code: #{response.code}"
+        end
+      end
+    end
+
+    # Formats a URI into an http request with correct API Headers
+    # UIR, symbol --> Net::HTTPRequest
+    private_class_method def self.request(uri, method)
+      Net::HTTP.const_get(method).new(uri).tap do |request|
+        request['User-Agent'] = 'Mozilla/5.0'
+        request['Content-Type'] = 'application/json'
+        request['OSDI-API-Token'] = API_KEY
+      end
+    end
   end
 
-  # Adds an email address to the LittleSis Newsletter on action network
-  #
-  # String --> Boolean
-  def self.add_email_to_newsletter(email)
-    post URI.parse(PEOPLE_URL), email_params(email, :newsletter)
+  class Activist
+    attr_reader :email
+
+    def initialize(user_or_email)
+      @email = ActionNetwork.email_from_user(user_or_email)
+    end
+
+    def tags
+      return [] if taggings.nil?
+
+      taggings
+        .map { |x| x.dig('_links', 'osdi:tag') }
+        .compact
+        .map { |t| TAGS_BY_ID.fetch(t['href'].split('/').last, nil) }
+        .compact
+    end
+
+    def in_action_network?
+      info.present?
+    end
+
+    def subscribed?
+      in_action_network? && info['email_addresses'].first['status'] == 'subscribed'
+    end
+
+    def subscribe
+      return if subscribed?
+
+      if in_action_network?
+        HTTP.put(endpoint,  { "email_addresses" =>  [ { "status" =>  "subscribed" } ] })
+      else
+        @info = ActionNetwork.signup(@email)
+      end
+    end
+
+    def unsubscribe
+      return unless subscribed?
+
+      HTTP.put(endpoint,  { "email_addresses" =>  [ { "status" =>  "unsubscribed" } ] })
+    end
+
+    def add(list)
+      raise ArgumentError unless TAGS.keys.include?(list)
+
+      return true if tags.include?(list)
+
+      url = "#{TAGS_URL}/#{TAGS.dig(list, :id)}/taggings"
+      data = { '_links' => { 'osdi:person' => endpoint } }
+      HTTP.post(url, data)
+    end
+
+    def remove(list)
+      raise ArgumentError unless TAGS.keys.include?(list)
+
+      return unless tags.include?(list)
+
+      url = taggings
+              .find { |tagging| tagging.dig('_links', 'osdi:tag', 'href')&.split('/')&.last == TAGS.fetch(list).fetch(:id) }
+              .dig('_links', 'self', 'href')
+
+      HTTP.delete(url)
+    end
+
+    private
+
+    def endpoint
+      info.dig('_links', 'self', 'href')
+    end
+
+    def info
+      @info ||= ActionNetwork.find_by_email(@email)
+    end
+
+    def taggings
+      return nil if info.nil?
+
+      @taggings ||= HTTP
+                      .get(info.dig('_links', 'osdi:taggings', 'href'))
+                      .dig('_embedded', 'osdi:taggings')
+    end
   end
 
-  # Adds an email address to the PAI Newsletter
-  #
-  # String --> Boolean
-  def self.add_email_to_pai(email)
-    post URI.parse(PEOPLE_URL), email_params(email, :pai)
-  end
+  def self.signup(user_or_email, lists = [:newsletter])
+    email = email_from_user(user_or_email)
 
-  # Adds an email address to the Press List
-  #
-  # String --> Boolean
-  def self.add_email_to_press(email)
-    post URI.parse(PEOPLE_URL), email_params(email, :press)
+    data = {
+      'person' => {
+        'email_addresses' => [{ 'address' => email }],
+        'status' => 'subscribed'
+      },
+      'add_tags' => lists.map { |list| TAGS.fetch(list).fetch(:name) }
+    }
+
+    HTTP.post(PEOPLE_URL, data)
   end
 
   # Retrieves people from our Action Network Api
   # Int --> Hash
   def self.people(page = 1)
-    uri = URI.parse(PEOPLE_URL)
-    req = request(uri, :Get)
-    req.set_form_data(page: page)
-    http(uri, req)
+    HTTP.get PEOPLE_URL, "page=#{page}"
   end
 
-  # Returns a hash of basic information about ActionNetwork's Api
-  # Not that useful in production, but helpful in development.
+  # String --> Hash
+  def self.find_by_email(email)
+    HTTP.get(PEOPLE_URL, "filter=email_address eq '#{email}'").dig('_embedded', 'osdi:people').first
+  end
+
+  # Returns a hash of basic information about ActionNetwork's API
   def self.api_info
-    uri = URI.parse(API_INFO_URL)
-    http uri, request(uri, :Get)
+    HTTP.get(API_INFO_URL)
   end
 
-  # :section: HTTP Helper Functions
-
-  # Generates hash of user information for submission to action network
-  # User --> Hash
-  def self.signup_params(user)
-    {
-      'person' => {
-        'identifiers' => [action_network_identifier(user)],
-        'family_name' => user.name_last,
-        'given_name' => user.name_first,
-        'email_addresses' => [{ 'address' => user.email }]
-      },
-      'add_tags' => action_network_tags(user)
-    }
-  end
-
-  # Generates hash for action network singups
-  # for an email address interested in joining the newsletter
-  # String, Symbol --> Hash
-  def self.email_params(email, tag)
-    {
-      'person' => {
-        'email_addresses' => [{ 'address' => email }]
-      },
-      'add_tags' => Array.wrap(TAGS.fetch(tag))
-    }
-  end
-
-  # Posts data to Action Network
-  # Suppresses http errors and sends messages to logger
-  # If the request is successful, it returns +true+.
-  # If the request fails, it returns +false+
-  # and sends a warning message to the rails logger.
-  #
-  # URI, Hash --> Boolean
-  def self.post(uri, data)
-    req = request(uri, :Post)
-    req.body = data.to_json
-    Rails.logger.debug http(uri, req)
-    true
-  rescue HTTPRequestFailedError
-    Rails.logger.warn "Post request failed: #{data}"
-    false
-  end
-
-  # Performs a http request and return response as a hash
-  #
-  # URI,  Net::HTTP::Get --> Hash | raises HTTPRequestFailedError
-  def self.http(uri, request)
-    Net::HTTP.start(uri.host, uri.port, :use_ssl => true) do |http|
-      response = http.request(request)
-      if response.is_a? Net::HTTPSuccess
-        return JSON.parse(response.body)
-      else
-        Rails.logger.debug response.body if response.body
-        raise HTTPRequestFailedError, "Response code: #{response.code}"
-      end
+  def self.email_from_user(user_or_email)
+    if user_or_email.is_a?(User)
+      user.email
+    elsif user_or_email.is_a?(String) && Devise.email_regexp.match?(user_or_email)
+      user_or_email
+    else
+      raise Exceptions::LittleSisError, "#{user_or_email} is not a User or an email address"
     end
-  end
-
-  # Formats a URI into an http request with correct API Headers
-  def self.request(uri, method)
-    Net::HTTP.const_get(method).new(uri).tap do |request|
-      request['User-Agent'] = 'Mozilla/5.0'
-      request['Content-Type'] = 'application/json'
-      request['OSDI-API-Token'] = API_KEY
-    end
-  end
-
-  private_class_method def self.action_network_identifier(user)
-    "littlesis_user_id:#{user.id}"
-  end
-
-  private_class_method def self.action_network_tags(user)
-    tags = Array.wrap(TAGS[:signup])
-    tags << TAGS[:newsletter] if user.newsletter
-    tags << TAGS[:map_the_power] if user.map_the_power
-    tags
-  end
-
-  # Any failed response, regardless of the status code,
-  # will raise this error
-  class HTTPRequestFailedError < StandardError
   end
 end
