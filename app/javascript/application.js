@@ -1,8 +1,4 @@
-import jQuery from 'jquery'
-window.$ = jQuery
-window.jQuery = jQuery
-
-import 'bootstrap/dist/js/bootstrap.esm.js'
+import 'bootstrap'
 
 import Parsley from 'parsleyjs/src/parsley'
 window.Parsley = Parsley

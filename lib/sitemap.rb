@@ -48,7 +48,7 @@ module Sitemap
       File.open(Rails.root.join("public/sitemap/entities#{idx.to_s.rjust(2, '0')}.txt"), 'w') do |f|
         group.each do |entity|
           f.puts entity.url
-          %w[interlocks giving datatable references].each do |path|
+          %w[interlocks giving data references].each do |path|
             f.puts "#{entity.url}/#{path}"
           end
         end

@@ -21,6 +21,22 @@ $profile_page_fs_relationship: $profile_page_fs_small;
         }
     }
 
+    .profile-page-editable-blurb {
+        .bi-pencil-fill {
+            display: none;
+            cursor: pointer;
+        }
+
+        &:hover .bi-pencil-fill {
+            display: inline;
+        }
+
+        .bi-pencil-fill:hover  {
+            display: inline;
+            color: $logo_blue_lighter;
+        }
+    }
+
     .entity-name {}
     .entity-blurb-text {}
 

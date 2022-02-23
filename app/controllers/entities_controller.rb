@@ -94,10 +94,13 @@ class EntitiesController < ApplicationController
                             params: params,
                             current_user: current_user)
 
-    if @entity.valid?
-      return render json: { status: 'OK' } if api_request?
+    if api_request? || request.format.json?
+      status = @entity.valid? ? :ok : :bad_request
+      return render json: { status: status }, status: status
+    end
 
-      return redirect_to concretize_entity_path(@entity)
+    if @entity.valid?
+      redirect_to concretize_entity_path(@entity)
     else
       set_entity_references
       render :edit

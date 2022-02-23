@@ -4,7 +4,6 @@
   <%= stylesheet_link_tag "profile", media: "all" %>
 <% end  %>
 
-
 <div id="entity-profile-page">
   <div class="row mt-2">
     <div class="col">
@@ -15,10 +14,18 @@
   </div>
 
   <div class="row">
-    <div class="col">
-      <h5 class="entity-blurb-text">
+    <div class="col profile-page-editable-blurb" data-controller="profile--editable-blurb" data-profile--editable-blurb-entityid-value="<%= @entity.id %>">
+      <h5 class="entity-blurb-text d-inline-block" data-profile--editable-blurb-target="blurb">
         <%= @entity.blurb %>
       </h5>
+      <% if user_signed_in? %>
+        <div class="d-inline-block ms-2">
+          <i class="bi bi-pencil-fill" aria-hidden="true"
+             data-profile--editable-blurb-target="pencil"
+             data-action="click->profile--editable-blurb#editBlurb"
+          ></i>
+        </div>
+      <% end %>
     </div>
   </div>
 
