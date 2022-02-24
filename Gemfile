@@ -47,6 +47,8 @@ gem 'datagrid'
 
 gem 'validate_url', '>= 1.0.13'
 
+gem 'http-accept'
+
 # Used by StringSimilarity
 gem 'text', '>= 1.3.1'
 
