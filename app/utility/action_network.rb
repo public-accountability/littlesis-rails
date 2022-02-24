@@ -190,7 +190,7 @@ module ActionNetwork
 
   def self.email_from_user(user_or_email)
     if user_or_email.is_a?(User)
-      user.email
+      user_or_email.email
     elsif user_or_email.is_a?(String) && Devise.email_regexp.match?(user_or_email)
       user_or_email
     else
