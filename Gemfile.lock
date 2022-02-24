@@ -445,6 +445,7 @@ DEPENDENCIES
   image_processing
   jsbundling-rails
   kaminari
+  kramdown
   memory_profiler
   mini_magick
   money
