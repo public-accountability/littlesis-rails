@@ -356,6 +356,7 @@ LittleSis::Application.routes.draw do
   get "/pages/:page/edit" => "pages#edit_by_name", constraints: { page: %r{[A-z]+[^/]+} }
   resources :pages, only: [:new, :create, :edit, :update, :index, :show]
 
+  get "/newsletter" => "pages#newsletter"
   get "/disclaimer" => "pages#disclaimer"
   get "/about" => "pages#about"
 

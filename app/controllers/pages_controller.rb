@@ -54,6 +54,11 @@ class PagesController < ApplicationController
 
   ## ^^ editable pages
 
+  def newsletter
+    @page = Page.find(5)
+    render :display
+  end
+
   ## pages with translations stored in config/pages
 
   def disclaimer
