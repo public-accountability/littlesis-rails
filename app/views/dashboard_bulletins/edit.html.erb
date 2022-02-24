@@ -1,3 +1,7 @@
+<% content_for(:head) do %>
+  <%= javascript_include_tag "actiontext", defer: true %>
+<% end %>
+
 <% content_for(:page_title, 'Dashboard Bulletin Update') %>
 
 <%= render partial: 'form', locals: {

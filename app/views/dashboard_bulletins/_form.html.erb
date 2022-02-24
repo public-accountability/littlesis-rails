@@ -16,11 +16,10 @@ Required locals: bulletin, title, method, url, submit_text
       </div>
 
       <%= f.label :content %>
-      <%= f.rich_text_area :content, data: {controller: 'action-text'} %>
+      <%= f.rich_text_area :content %>
 
       <%= f.submit submit_text,  class: 'btn btn-primary' %>
       <%= link_to 'Cancel', '/admin', class: 'btn btn-secondary' %>
     <% end %>
   </div>
 </div>
-

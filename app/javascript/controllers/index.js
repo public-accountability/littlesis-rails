@@ -4,9 +4,6 @@
 
 import { application } from "./application"
 
-import ActionTextController from "./action_text_controller.js"
-application.register("action-text", ActionTextController)
-
 import CarouselController from "./carousel_controller.js"
 application.register("carousel", CarouselController)
 

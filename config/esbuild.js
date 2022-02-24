@@ -2,7 +2,7 @@
 // Runs esbuild to compile javascript in app/assets/builds
 // Almost equivalent running this on the command line:
 //  esbuild app/javascript/*.* --bundle --minify --target=firefox78,chrome92,edge92,safari13 --outdir=app/assets/builds --inject:app/javascript/src/common/inject-jquery.js
-// add '--watch' for automatical rebuilds: littlesis yarn build -- --watch
+// add '--watch' for automatic rebuilds: littlesis yarn build -- --watch
 
 const path = require('path')
 const esbuild = require('esbuild')
