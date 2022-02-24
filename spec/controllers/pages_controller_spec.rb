@@ -1,9 +1,8 @@
 describe PagesController, type: :controller do
   it { is_expected.to route(:get, '/oligrapher/about').to(action: :oligrapher) }
   it { is_expected.to route(:get, '/donate').to(action: :donate) }
-  it { is_expected.to route(:get, '/about').to(action: :display, page: 'about') }
-  it { is_expected.not_to route(:post, '/about').to(action: :display, page: 'about') }
-  it { is_expected.to route(:get, '/features').to(action: :display, page: 'features') }
+  it { is_expected.to route(:get, '/about').to(action: :about) }
+  it { is_expected.to route(:get, '/disclaimer').to(action: :disclaimer) }
   it { is_expected.not_to route(:get, '/bad_page').to(action: :display) }
   it { is_expected.to route(:get, '/pages/new').to(action: :new) }
   it { is_expected.to route(:get, '/pages/666').to(action: :show, id: '666') }
@@ -18,15 +17,6 @@ describe PagesController, type: :controller do
   it { is_expected.to route(:get, '/bulk_data').to(action: :bulk_data) }
   it { is_expected.to route(:get, '/public_data/relationships.json.gz').to(action: :public_data, file: 'relationships.json.gz') }
   it { is_expected.not_to route(:get, '/public_data/example.json').to(action: :public_data) }
-
-  describe '#display - GET /features' do
-    before do
-      Page.create!(name: 'features', title: 'features', content: '<h1>features</h1>')
-      get :display, params: { page: 'features' }
-    end
-
-    it { is_expected.to respond_with(200) }
-  end
 
   describe 'create page' do
     let(:params) { { page: { name: 'new_page', title: 'this is a new page' } } }
@@ -53,16 +43,16 @@ describe PagesController, type: :controller do
 
   describe '#update' do
     login_admin
-    let(:page) { Page.create!(name: 'about', title: 'about us', content: '<h1>About Us</h1>') }
-    let(:params) { { id: page.id, page: { title: 'Part One' } } }
+    let(:page) { Page.create!(name: 'news', title: 'news', content: '<h1>news...</h1>') }
+    let(:params) { { id: page.id, page: { title: 'more news' } } }
 
     it 'updates title' do
-      expect { patch :update, params: params }.to change { page.reload.title }.to('Part One')
+      expect { patch :update, params: params }.to change { page.reload.title }.to('more news')
     end
 
     it 'redirects to display page' do
       patch :update, params: params
-      expect(response).to redirect_to '/about'
+      expect(response).to redirect_to '/news'
     end
   end
 end

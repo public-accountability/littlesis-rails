@@ -358,7 +358,6 @@ LittleSis::Application.routes.draw do
 
   get "/disclaimer" => "pages#disclaimer"
   get "/about" => "pages#about"
-  get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
 
   # Other Pages
   get "/donate" => "pages#donate"
