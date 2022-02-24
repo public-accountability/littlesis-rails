@@ -1,0 +1,14 @@
+<% content_for(:page_title, @title) %>
+
+<div class="row">
+  <div class="col-12 col-md-8">
+    <%= @content %>
+  </div>
+
+  <div class="col-md-4 d-none d-md-block">
+    <div class="thin-grey-bottom-border">
+      <h3>Data Summary</h3>
+    </div>
+    <%= render partial: 'home/data_summary', locals: { stats: ExtensionRecord.data_summary } %>
+  </div>
+</div>

@@ -7,16 +7,16 @@ module Pages
     ).to_html.html_safe
   end
 
-  PAGES = %i[disclaimer].freeze
+  LOCALES = %i[en es].freeze
+  PAGES = %i[disclaimer about].freeze
 
   HTML = PAGES.each_with_object({}) do |page, h|
-    h[page] = {
-      en: READER.call(page, :en),
-      es: READER.call(page, :es)
-    }
+    h[page] = {}
+    LOCALES.each { |locale| h[page][locale] = READER.call(page, locale) }
   end.with_indifferent_access.freeze
 
   def self.get(page, locale = :en)
+    locale = :en unless LOCALES.include?(locale)
     HTML.dig(page, locale)
   end
 end

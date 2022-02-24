@@ -62,11 +62,11 @@ class PagesController < ApplicationController
     render :page
   end
 
-  # def about
-  #   @title = I18n.locale == :es ? 'Descargo de responsabilidad' : 'Disclaimer'
-  #   @content = Pages.get(:disclaimer, I18n.locale)
-  #   render :page
-  # end
+  def about
+    @title = I18n.locale == :es ? 'Sobre' : 'About'
+    @content = Pages.get(:about, I18n.locale)
+    render :page
+  end
 
   ## site pages
 

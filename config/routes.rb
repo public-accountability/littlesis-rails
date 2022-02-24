@@ -357,6 +357,7 @@ LittleSis::Application.routes.draw do
   resources :pages, only: [:new, :create, :edit, :update, :index, :show]
 
   get "/disclaimer" => "pages#disclaimer"
+  get "/about" => "pages#about"
   get "/:page" => "pages#display", constraints: PagesConstraint.new, as: 'pages_display'
 
   # Other Pages
