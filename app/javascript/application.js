@@ -1,5 +1,3 @@
-import $ from 'jquery'
-
 import 'bootstrap'
 
 import Parsley from 'parsleyjs/src/parsley'

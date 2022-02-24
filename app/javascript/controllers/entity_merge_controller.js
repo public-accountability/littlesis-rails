@@ -1,5 +1,4 @@
 import { Controller } from "@hotwired/stimulus"
-import $ from 'jquery'
 import mustache from 'mustache'
 
 export default class extends Controller {
