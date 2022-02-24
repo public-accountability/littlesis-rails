@@ -1,5 +1,3 @@
-import $ from 'jquery'
-
 // helper functions for searchcing with select2
 
 export const ENTITY_SEARCH_URL = "/search/entity"
@@ -17,7 +15,6 @@ export function entitySearchSuggestion(entity) {
       </div>
      </div>`)
 }
-
 
 export function processResults(data) {
   let results = data.map(entity => {

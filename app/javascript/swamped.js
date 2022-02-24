@@ -17,7 +17,7 @@ function scrollAnimation() {
 
 function setupEvents() {
   $("#btn-scroll").click(function() { scrollAnimation() })
- $ ("#btn-about").click(function() { $('#modal-about').modal() })
+  $("#btn-about").click(function() { $('#modal-about').modal() })
   $("#btn-tip").click(function() { $('#modal-tip').modal() })
 }
 

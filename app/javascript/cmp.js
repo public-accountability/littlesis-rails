@@ -1,11 +1,5 @@
 /* Javascript for the Corporate Mapping Project landing page */
 
-import $ from 'jquery'
-import dt from 'datatables.net'
-import select2 from 'select2'
-select2($)
-dt(window, $)
-
 import cmp_entities from './src/cmp/data.json'
 
 import { entitySearchSuggestion, processResults } from './src/common/search.mjs'
@@ -20,7 +14,6 @@ const entityLink = (row) => {
 const renderName = (data, type, row, meta) => type === 'display' ? entityLink(row) : data
 
 const columns = [ { "data": "name", "title": "Name", "render": renderName } ];
-
 
 function initializeDatatable() {
   $('#cmp-strata')

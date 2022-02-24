@@ -1,10 +1,12 @@
+import $ from 'jquery'
+
 import 'bootstrap'
 
 import Parsley from 'parsleyjs/src/parsley'
 window.Parsley = Parsley
 
 import dt from 'datatables.net'
-dt(window, jQuery)
+dt(window, $)
 
 import select2 from 'select2'
 select2($)

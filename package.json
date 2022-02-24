@@ -24,8 +24,8 @@
     "trix": ">=1.3.1"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --minify --target=firefox78,chrome92,edge92,safari13 --outdir=app/assets/builds --inject:app/javascript/src/common/inject-jquery.js",
-    "build-dev": "esbuild app/javascript/*.* --bundle --outdir=app/assets/builds --inject:app/javascript/src/common/inject-jquery.js",
+    "build": "config/esbuild.js",
+    "build-analyze": "esbuild app/javascript/*.* --outdir=/tmp --bundle --minify --analyze",
     "test": "mocha spec/javascripts"
   },
   "devDependencies": {
