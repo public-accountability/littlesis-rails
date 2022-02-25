@@ -1,5 +1,3 @@
-import $ from 'jquery'
-
 function scrollAnimation() {
   $('html, body').scrollTop(0)
   $('#btn-scroll').addClass('ratspin').prop('disabled', true)
