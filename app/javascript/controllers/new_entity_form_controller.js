@@ -1,5 +1,4 @@
 import { Controller } from "@hotwired/stimulus"
-import $ from 'jquery'
 import { trim, delay } from 'lodash-es'
 
 // Connects to data-controller="new-entity-form"

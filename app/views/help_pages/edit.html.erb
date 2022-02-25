@@ -1,10 +1,14 @@
+<% content_for(:head) do %>
+  <%= javascript_include_tag "actiontext", defer: true %>
+<% end %>
+
 <h1>Editing: <%= @page.name %></h1>
 
 <%= render partial: "editable_pages/error_alert" %>
 
 <%= form_for @page, method: :patch, url: help_update_path(id: @page.id) do |f| %>
   <%= f.label :content %>
-  <%= f.rich_text_area :content, data: {controller: 'action-text'} %>
+  <%= f.rich_text_area :content %>
   <%= f.submit "Update",  class: 'btn btn-primary' %>
   <%= link_to 'Cancel', help_display_path(@page.name), class: 'btn btn-secondary' %>
 <% end %>

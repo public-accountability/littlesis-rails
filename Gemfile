@@ -14,6 +14,7 @@ gem 'bootsnap', '>= 1.4.3', require: false
 gem 'nokogiri'
 gem 'zeitwerk'
 gem 'rexml'
+gem 'kramdown'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'

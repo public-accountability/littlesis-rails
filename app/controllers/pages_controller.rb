@@ -52,14 +52,38 @@ class PagesController < ApplicationController
     end
   end
 
-  # misc pages
+  ## ^^ editable pages
 
+  def newsletter
+    @page = Page.find(5)
+    render :display
+  end
+
+  ## pages with translations stored in config/pages
+
+  def disclaimer
+    @title = I18n.locale == :es ? 'Descargo de responsabilidad' : 'Disclaimer'
+    @content = Pages.get(:disclaimer, I18n.locale)
+    render :page
+  end
+
+  def about
+    @title = I18n.locale == :es ? 'Sobre' : 'About'
+    @content = Pages.get(:about, I18n.locale)
+    render :page
+  end
+
+  ## site pages
+
+  # /oligrapher
   def oligrapher
   end
 
+  # /donate
   def donate
   end
 
+  # /swamped
   def swamped
     if request.post?
       SwampTip.create!(content: params[:tip])
@@ -70,6 +94,7 @@ class PagesController < ApplicationController
     end
   end
 
+  # /bulk_data
   def bulk_data
   end
 

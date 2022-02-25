@@ -58,7 +58,7 @@ class EntitiesController < ApplicationController
     render partial: 'source_links'
   end
 
-  def political
+  def political  # currently disabled
   end
 
   def create_bulk

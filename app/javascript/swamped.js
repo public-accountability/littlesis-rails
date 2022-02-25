@@ -1,5 +1,3 @@
-import $ from 'jquery'
-
 function scrollAnimation() {
   $('html, body').scrollTop(0)
   $('#btn-scroll').addClass('ratspin').prop('disabled', true)
@@ -17,7 +15,7 @@ function scrollAnimation() {
 
 function setupEvents() {
   $("#btn-scroll").click(function() { scrollAnimation() })
- $ ("#btn-about").click(function() { $('#modal-about').modal() })
+  $("#btn-about").click(function() { $('#modal-about').modal() })
   $("#btn-tip").click(function() { $('#modal-tip').modal() })
 }
 
