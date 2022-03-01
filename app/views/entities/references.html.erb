@@ -1,4 +1,5 @@
 <%= render partial: 'header', locals: { entity: @entity } %>
+
 <% if user_signed_in? %>
   <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 <% end %>
@@ -9,7 +10,7 @@
     <div class="mb-1 pb-1">
       Total: <code><%= number_with_delimiter(@documents.total_count) %></code>
       <% if user_signed_in? %>
-        <a class="ps-2" href="#add-reference-modal" data-toggle="modal" id="add-new-refernce-link">Add a new reference</a>
+        <a class="ps-2" href="#add-reference-modal" data-bs-toggle="modal" id="add-new-refernce-link">Add a new reference</a>
       <% end %>
       <span class="d-inline-block">
         <ul class="pagination pagination-sm">
