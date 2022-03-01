@@ -1,51 +1,24 @@
 <%= render partial: 'header', locals: { entity: @entity } %>
+
 <% if user_signed_in? %>
   <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
 <% end %>
 
 <div class="row mt-1">
   <div class="col">
-    <h5>Source documents for <%= entity_link(@entity) %></h5>
-    <div class="mb-1 pb-1">
-      Total: <code><%= number_with_delimiter(@documents.total_count) %></code>
+    <div>
+      <h2 class="d-inline-block">Source documents</h2>
       <% if user_signed_in? %>
-        <a class="ps-2" href="#add-reference-modal" data-toggle="modal" id="add-new-refernce-link">Add a new reference</a>
+        <a class="ps-2 d-inline-block" href="#add-reference-modal" data-bs-toggle="modal" id="add-new-refernce-link">Create new reference</a>
       <% end %>
-      <span class="d-inline-block">
-        <ul class="pagination pagination-sm">
-          <li class="page-item">
-            <a class="page-link" href="<%= path_to_prev_page(@documents) %>" aria-label="Previous">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-          <li class="page-item" >
-            <a class="page-link" href="<%= path_to_next_page(@documents) %>" aria-label="Previous">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-        </ul>
-      </span>
     </div>
 
-    <table class="table table-hover">
-      <tbody>
-        <% @documents.each do |doc| %>
-          <tr>
-            <td>
-              <% url = doc.primary_source? ? url_for(doc.primary_source_document) : doc.url %>
-              <%= link_to doc.name, url, 'target' => '_blank', 'rel' => 'noopener', 'title' => url.to_s %>
-              <% if user_signed_in? %>
-                <%= link_to edit_document_path(doc) do %>
-                  <i class="bi bi-pencil-square hvr-pop ml-1"></i>
-	        <% end %>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-
-    <%= paginate @documents %>
+    <div data-controller="entity-references-table"
+         data-entity-references-table-entityid-value="<%= @entity.id %>"
+         data-entity-references-table-signedin-value="<%= user_signed_in? %>">
+      <table data-entity-references-table-target="table">
+      </table>
+    </div>
   </div>
 </div>
 

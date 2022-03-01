@@ -246,6 +246,7 @@ LittleSis::Application.routes.draw do
   resources :references, only: [:create, :destroy]
   get "/references/recent" => "references#recent"
   get "/references/entity" => "references#entity"
+  get "/references/documents" => "references#documents"
 
   get "/search" => "search#basic"
   get "/search/entity" => "search#entity_search"

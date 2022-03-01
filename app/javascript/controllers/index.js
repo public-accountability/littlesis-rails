@@ -25,6 +25,9 @@ application.register("entity-matcher", EntityMatcherController)
 import EntityMergeController from "./entity_merge_controller.js"
 application.register("entity-merge", EntityMergeController)
 
+import EntityReferencesTableController from "./entity_references_table_controller.js"
+application.register("entity-references-table", EntityReferencesTableController)
+
 import Fec__ContributionsTableController from "./fec/contributions_table_controller.js"
 application.register("fec--contributions-table", Fec__ContributionsTableController)
 

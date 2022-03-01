@@ -1,5 +1,5 @@
 # skipping due to a selenium error (Selenium::WebDriver::Error::ElementNotInteractableError), caused by bootstrap's modal
-xfeature 'Adding references to entities', type: :feature, js: :true do
+describe 'Entity References', type: :feature, js: :true do
   let(:user) do
     create_basic_user.tap { |user| user.add_ability!(:upload) }
   end
@@ -14,6 +14,8 @@ xfeature 'Adding references to entities', type: :feature, js: :true do
   end
 
   scenario 'Adding a url' do
+    expect(page.find('table[data-entity-references-table-target="table"] tbody tr').text).to eq 'No data available in table'
+
     find('#add-new-refernce-link').click
 
     within '#add-reference-modal' do
@@ -25,6 +27,8 @@ xfeature 'Adding references to entities', type: :feature, js: :true do
     end
 
     expect(entity.reload.documents.last.url).to eq url
+    expect(page.all('table[data-entity-references-table-target="table"] tbody tr').count).to eq 1
+    expect(page.find('table[data-entity-references-table-target="table"] tbody tr td:first-child').text).to include 'example link'
   end
 
   scenario 'Uploading a primary source document' do
