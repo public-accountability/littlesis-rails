@@ -2,8 +2,8 @@
 
 class ReferencesController < ApplicationController
   include ReferenceableController
-  before_action :authenticate_user!, except: [:entity]
-  before_action :set_referenceable, only: [:create]
+  before_action :authenticate_user!, except: [:entity, :documents]
+  before_action :set_referenceable, only: [:create, :documents]
 
   def create
     @referenceable.add_reference(reference_params(:data).to_h)
@@ -40,8 +40,14 @@ class ReferencesController < ApplicationController
     end
   end
 
+  # /references/documents
+  # returns all documents for referenceable
+  def documents
+    render json: @referenceable.documents.map { |d| d.attributes.slice('id', 'url', 'name', 'updated_at', 'created_at') }
+  end
+
   # GET '/references/recent'
-  #
+  # Used by reference selector
   # Required params: entity_ids
   # Optional params: per_page, page,
   # Defaults:
@@ -55,7 +61,9 @@ class ReferencesController < ApplicationController
              .map { |d| d.slice(:id, :name, :url, :publication_date, :excerpt) }
   end
 
+  # GET /references/enity
   # Returns recent source links for the given entity
+  # Used by source links sidebar
   # required params: 'entity_id'
   # optional params: page, per_page defaults: 1, 10
   def entity

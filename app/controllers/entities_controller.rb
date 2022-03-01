@@ -118,11 +118,6 @@ class EntitiesController < ApplicationController
   end
 
   def references
-    @documents = @entity
-                   .documents
-                   .order(created_at: :desc)
-                   .page(params[:page] || 1)
-                   .per(20)
   end
 
   def validate
