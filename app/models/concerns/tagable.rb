@@ -84,7 +84,14 @@ module Tagable
     {
       byId: hashify(add_permissions(Tag.all, user)),
       current: tags.map(&:id).map(&:to_s)
-    }
+    }.tap do |h|
+      h.define_singleton_method(:options) do
+        fetch(:byId)
+          .values
+          .keep_if { |t| t.dig('permissions', 'editable') }
+          .map { |t| [t[:name], t[:id].to_s] }
+      end
+    end
   end
 
   private
