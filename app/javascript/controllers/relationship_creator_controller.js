@@ -112,7 +112,7 @@ export default class extends Controller {
 
   initialize() {
     this.entity1_id = this.entity1IdValue
-    this.entity1_type = this.entity1Typevalue
+    this.entity1_type = this.entity1TypeValue
     this.entity2_id = null
     this.entity2_type = null
     this.newReferenceForm = null
