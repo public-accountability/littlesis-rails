@@ -242,7 +242,7 @@ class Tag < ApplicationRecord
         OFFSET #{(page.to_i - 1) * PER_PAGE}
     SQL
 
-    ApplicationRecord.connection.execute(sql).to_a
+    ApplicationRecord.connection.exec_query(sql).to_a
   end
 
   # type TagablesByClassAndId = {
