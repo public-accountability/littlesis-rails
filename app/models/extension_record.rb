@@ -14,7 +14,7 @@ class ExtensionRecord < ApplicationRecord
   # Returns nested array:
   # [ [ count, display_name ] ]
   def self.stats
-    ApplicationRecord.connection.execute(<<~SQL).to_a.map(&:values)
+    ApplicationRecord.connection.exec_query(<<~SQL.squish).to_a.map(&:values)
       SELECT subquery.c, display_name
       FROM (
            SELECT definition_id, count(*) as c
