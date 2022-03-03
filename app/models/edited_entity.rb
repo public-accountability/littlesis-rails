@@ -24,7 +24,7 @@ class EditedEntity < ApplicationRecord
                      "WHERE user_id NOT IN (#{User.system_users.map(&:id).join(',')})"
                    end
 
-    EditedEntity.includes(:entity, :user).find_by_sql <<~SQL
+    EditedEntity.includes(:entity, :user).find_by_sql <<~SQL.squish
       SELECT edited_entities.*
       FROM (
              SELECT max(id) as id, round_five_minutes(created_at) as d
@@ -59,12 +59,12 @@ class EditedEntity < ApplicationRecord
   end
 
   def self.populate_table
-    ApplicationRecord.connection.execute <<~SQL
-      INSERT INTO edited_entities (user_id, version_id, entity_id, created_at)
-      (SELECT whodunnit::integer, id, entity1_id, created_at FROM versions WHERE entity1_id IS NOT NULL);
+    ApplicationRecord.connection.exec_query(
+      "INSERT INTO edited_entities (user_id, version_id, entity_id, created_at) (SELECT whodunnit::integer, id, entity1_id, created_at FROM versions WHERE entity1_id IS NOT NULL)"
+    )
 
-      INSERT INTO edited_entities (user_id, version_id, entity_id, created_at)
-      (SELECT whodunnit::integer, id, entity2_id, created_at FROM versions WHERE entity2_id IS NOT NULL AND entity2_id != entity1_id);
-   SQL
+    ApplicationRecord.connection.exec_query(
+      "INSERT INTO edited_entities (user_id, version_id, entity_id, created_at) (SELECT whodunnit::integer, id, entity2_id, created_at FROM versions WHERE entity2_id IS NOT NULL AND entity2_id != entity1_id)"
+    )
   end
 end
