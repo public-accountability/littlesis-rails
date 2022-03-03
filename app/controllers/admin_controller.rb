@@ -31,4 +31,14 @@ class AdminController < ApplicationController
     expires_in 20.minutes, public: false
     render file: Rails.root.join('data/tracker/index.html'), layout: false
   end
+
+  def object_space_dump
+    FileUtils.mkdir_p  Rails.root.join("tmp/object_space")
+    filepath = Rails.root.join("tmp/object_space/#{DateTime.current.to_i}.dump").to_s
+    require 'objspace'
+    ObjectSpace.trace_object_allocations_start
+    GC.start
+    ObjectSpace.dump_all(output: File.open(filepath, "w"))
+    render plain: "saved #{filepath}"
+  end
 end
