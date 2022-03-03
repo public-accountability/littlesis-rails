@@ -44,6 +44,7 @@ LittleSis::Application.routes.draw do
     get '/test', action: :test
     get '/entity_matcher', action: :entity_matcher
     get '/tracker', action: :tracker
+    get '/object_space_dump', action: :object_space_dump
   end
 
   resources :dashboard_bulletins, except: [:show]
