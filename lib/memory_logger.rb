@@ -11,6 +11,8 @@ require 'memory_profiler'
 #        around_action :report_memory
 #
 module MemoryLogger
+  @@memory_usage = 0
+
   private
 
   def report_memory(&action)
@@ -20,7 +22,10 @@ module MemoryLogger
   end
 
   def log_memory
-    memory_usage = ActiveSupport::NumberHelper.number_to_human_size(`ps -o rss= -p #{Process.pid}`.to_i)
-    Rails.logger.info "Memory usage: #{memory_usage}"
+    memory_usage = `ps -o rss= -p #{Process.pid}`.to_i
+    memory_diff = memory_usage - @@memory_usage
+    @@memory_usage = memory_usage
+    Rails.logger.info "Memory usage: #{ActiveSupport::NumberHelper.number_to_human_size(memory_usage)}"
+    Rails.logger.info "Memory change: #{memory_diff}"
   end
 end

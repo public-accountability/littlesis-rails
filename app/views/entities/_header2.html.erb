@@ -30,7 +30,7 @@
   </div>
 
   <% if user_signed_in? %>
-    <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
+    <%= render partial: 'actions' %>
   <% end %>
 
   <% if @entity.summary.present? %>
