@@ -28,7 +28,7 @@
     </div>
 
     <div class="mt-3" data-turbo="true">
-      <%= render partial: 'dashboard_maps' , locals: { page: 1, current_user: current_user } %>
+      <%= render partial: 'dashboard_maps' , locals: { maps: @maps, page: 1, maps_per_page: 4 } %>
     </div>
 
   </div> <%# Left Column %>

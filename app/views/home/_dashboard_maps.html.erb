@@ -1,7 +1,4 @@
 <turbo-frame id="dashboard-maps">
-  <% maps_per_page = 4 %>
-  <% maps = current_user.network_maps.order(created_at: :desc).page(page).per(maps_per_page) %>
-
   <% unless maps.empty? && page == 1 %>
 
     <h4 class="mt-3 mb-2">

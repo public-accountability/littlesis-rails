@@ -18,6 +18,7 @@ class HomeController < ApplicationController
   ].freeze
 
   def dashboard
+    @maps = current_user.network_maps.order(created_at: :desc).page(1).per(4)
   end
 
   # turbo streams ↴
@@ -28,7 +29,9 @@ class HomeController < ApplicationController
   end
 
   def dashboard_maps
-    render partial: 'dashboard_maps', locals: { page: params[:page]&.to_i || 1, current_user: current_user }
+    page = params[:page]&.to_i || 1
+    maps = current_user.network_maps.order(created_at: :desc).page(page).per(4)
+    render partial: 'dashboard_maps', locals: { maps: maps, page: page, maps_per_page: 4 }
   end
 
   # ⮥
