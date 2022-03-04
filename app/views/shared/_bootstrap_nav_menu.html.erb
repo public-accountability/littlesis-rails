@@ -1,13 +1,13 @@
-<% items = UserNavmenuPresenter.new(current_user) %>
-
 <ul class="nav mr-auto">
-  <% items.each do |(header_text, url_or_links)| %>
+  <% UserNavmenuPresenter.new(current_user).each do |(header_text, url_or_links)| %>
+
     <% if url_or_links.is_a?(String) %>
       <li class="nav-item">
         <a href="<%= url_or_links %>" class="nav-link">
           <%= header_text  %>
         </a>
       </li>
+
     <%  else %>
       <% navmenu_id = "navmenu-dropdown-#{header_text}" %>
       <li class="nav-item dropdown">
