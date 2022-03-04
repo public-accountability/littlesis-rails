@@ -1,59 +1,79 @@
 #!/usr/bin/env ruby
 
-# original source: https://blog.skylight.io/hunting-for-leaks-in-ruby/
+# adapted from: https://blog.skylight.io/hunting-for-leaks-in-ruby/
 
 require 'set'
 require 'json'
 
-exit 1 if ARGV.length != 3
+def memory_addresses(filepath)
+  addrs = Set.new
 
-root = File.expand_path('./tmp/object_space')
-file1 = "#{root}/#{ARGV[0]}"
-file2 = "#{root}/#{ARGV[1]}"
-file3 = "#{root}/#{ARGV[2]}"
+  File.open(filepath, "r").each_line do |line|
+    parsed = JSON.parse(line)
+    addrs << parsed["address"] if parsed && parsed["address"]
+  end
 
-first_addrs = Set.new
-third_addrs = Set.new
-
-# Get a list of memory addresses from the first dump
-File.open(file1, "r").each_line do |line|
-  parsed = JSON.parse(line)
-  first_addrs << parsed["address"] if parsed && parsed["address"]
+  addrs
 end
 
-# Get a list of memory addresses from the last dump
-File.open(file3, "r").each_line do |line|
-  parsed = JSON.parse(line)
-  third_addrs << parsed["address"] if parsed && parsed["address"]
-end
+# list of all items present in second but not the first
+def diff_two(file1, file2)
+  addrs = memory_addresses(file1)
 
-diff = []
+  diff = []
 
-# Get a list of all items present in both the second and
-# third dumps but not in the first.
-File.open(file2, "r").each_line do |line|
-  parsed = JSON.parse(line)
-  if parsed && parsed["address"]
-    if !first_addrs.include?(parsed["address"]) && third_addrs.include?(parsed["address"])
+  File.open(file2, "r").each_line do |line|
+    parsed = JSON.parse(line)
+
+    if parsed && parsed["address"] && !addrs.include?(parsed["address"])
       diff << parsed
     end
   end
+
+  diff
 end
 
-# Group items
-diff.group_by do |x|
-  [x["type"], x["file"], x["line"]]
-end.map do |x,y|
-  # Collect memory size
-  [x, y.count, y.inject(0){|sum,i| sum + (i['bytesize'] || 0) }, y.inject(0){|sum,i| sum + (i['memsize'] || 0) }]
-end.sort do |a,b|
-  b[1] <=> a[1]
-end.each do |x,y,bytesize,memsize|
-  # Output information about each potential leak
-  puts "Leaked #{y} #{x[0]} objects of size #{bytesize}/#{memsize} at: #{x[1]}:#{x[2]}"
+# list of items present both second and third files but not the first
+def diff_three(file1, file2, file3)
+  first_addrs = memory_addresses(file1)
+  third_addrs = memory_addresses(file3)
+
+  diff = []
+
+  File.open(file2, "r").each_line do |line|
+    parsed = JSON.parse(line)
+
+    if parsed && parsed["address"]
+      if !first_addrs.include?(parsed["address"]) && third_addrs.include?(parsed["address"])
+        diff << parsed
+      end
+    end
+  end
+
+  diff
 end
 
-# Also output total memory usage, because why not?
-memsize = diff.inject(0){|sum,i| sum + (i['memsize'] || 0) }
-bytesize = diff.inject(0){|sum,i| sum + (i['bytesize'] || 0) }
-puts "\n\nTotal Size: #{bytesize}/#{memsize}"
+def group_and_report(diff)
+  # Group items
+  diff.group_by do |x|
+    [x["type"], x["file"], x["line"]]
+  end.map do |x, y|
+    # Collect memory size
+    [x, y.count, y.inject(0){|sum,i| sum + (i['bytesize'] || 0) }, y.inject(0){|sum,i| sum + (i['memsize'] || 0) }]
+  end.sort do |a,b|
+    b[1] <=> a[1]
+  end.each do |x, y,bytesize,memsize|
+    # Output information about each potential leak
+    puts "Leaked #{y} #{x[0]} objects of size #{bytesize}/#{memsize} at: #{x[1]}:#{x[2]}"
+  end
+end
+
+exit 1 unless ARGV.length.between?(2, 3)
+
+if ARGV.length == 2
+  group_and_report diff_two(ARGV[0], ARGV[1])
+elsif ARGV.length == 3
+  group_and_report diff_three(ARGV[0], ARGV[1], ARGV[2])
+else
+  exit 1
+end
