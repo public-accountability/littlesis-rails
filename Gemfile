@@ -72,7 +72,7 @@ group :test do
 end
 
 group :development do
-  gem "debug", ">= 1.0.0"
+  # gem "debug", ">= 1.0.0"
   gem 'rack-mini-profiler', require: false
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
