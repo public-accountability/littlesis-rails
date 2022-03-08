@@ -5,20 +5,20 @@
         <span><%= number %></span>
       <% end  %>
     </span><br class="d-none d-lg-block d-xl-none">
-    <span>dots connected</span>
+    <span><%= t('pages.home.dots_connected') %></span>
   </div>
 
   <div>
     <% HomeController::DOTS_CONNECTED_LISTS.each do |x| %>
-      <% id, title =  x %>
-      ✔ <%= link_to title, List.find(id) %><br />
+      <% id, translation_key =  x %>
+      ✔ <%= link_to t("pages.home.#{translation_key}"), List.find(id) %><br />
     <% end %>
   </div>
 
   <div class="mt-3" id="dots-connected-search">
     <form action="/search" method="get" role="search" id="navbar-search">
       <div class="input-group">
-        <input type="text" name="q" class="form-control" placeholder="Search for a name">
+        <input type="text" name="q" class="form-control" placeholder="<%= t('phrases.search_for_a_name') %>">
         <button class="btn btn-red" type="submit" ><i class="bi bi-search"></i></button>
       </div>
     </form>

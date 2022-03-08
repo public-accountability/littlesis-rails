@@ -8,13 +8,13 @@ class HomeController < ApplicationController
 
   skip_before_action :verify_authenticity_token, only: [:pai_signup]
 
-  # [list_id, 'title' ]
+  # [list_id, 'translation_key' ]
   DOTS_CONNECTED_LISTS = [
-    [41, 'Paid for politicians'],
-    [88, 'Corporate fat cats'],
-    [102, 'Revolving door lobbyists'],
-    [114, 'Secretive Super PACs'],
-    [34, 'Elite think tanks']
+    [41, 'paid_for_politicians'],
+    [88, 'corporate_fat_cats'],
+    [102, 'revolving_door_lobbyists'],
+    [114, 'super_pacs'],
+    [34, 'elite_think_tanks']
   ].freeze
 
   def dashboard
@@ -73,83 +73,83 @@ class HomeController < ApplicationController
     end
   end
 
-  # Adds user newsletter and redirects back to home page.
-  #
-  # POST /home/newsletter_signup
-  #
-  def newsletter_signup
-    form = NewsletterSignupForm.new(newsletter_signup_params)
+      # Adds user newsletter and redirects back to home page.
+      #
+      # POST /home/newsletter_signup
+      #
+      def newsletter_signup
+        form = NewsletterSignupForm.new(newsletter_signup_params)
 
-    NewsletterSignupJob.perform_later(form.email) if form.valid?
+        NewsletterSignupJob.perform_later(form.email) if form.valid?
 
-    flash.notice = "Thank you! You've been added to our newsletter."
-    redirect_to root_path
-  end
-
-  # Alternative method for signing up to our mailing list
-  # redirects to 'referrer' if present or 'https://news.littlesis.org'
-  # POST /home/pai_signup
-  def pai_signup
-    return head :forbidden if likely_a_spam_bot
-
-    pai_signup_ip_limit(request.remote_ip)
-
-    unless Rails.env.development?
-      NewsletterSignupJob.perform_later(params.fetch('email'))
-    end
-
-    if request.headers['referer'].blank?
-      redirect_to 'https://news.littlesis.org'
-    else
-      redirect_to request.headers['referer']
-    end
-  end
-
-  def test
-    head :ok
-  end
-
-  private
-
-  def pai_signup_ip_limit(ip)
-    ip_cache_key = "pai_signup_request_count_for_#{ip}"
-
-    if Rails.cache.read(ip_cache_key).nil?
-      Rails.cache.write(ip_cache_key, 1, :expires_in => 60.minutes)
-    else
-      count = Rails.cache.read(ip_cache_key) + 1
-      if count >= 5
-        Rails.logger.warn "#{ip} has submitted too many requests this hour!"
-        raise Exceptions::PermissionError
-      else
-        Rails.cache.write(ip_cache_key, count, :expires_in => 60.minutes)
+        flash.notice = "Thank you! You've been added to our newsletter."
+        redirect_to root_path
       end
-    end
-  end
 
-  def redirect_to_dashboard_if_signed_in
-    return redirect_to home_dashboard_path if user_signed_in?
-  end
+      # Alternative method for signing up to our mailing list
+      # redirects to 'referrer' if present or 'https://news.littlesis.org'
+      # POST /home/pai_signup
+      def pai_signup
+        return head :forbidden if likely_a_spam_bot
 
-  def carousel_entities
-    return unless List.exists?(Rails.application.config.littlesis.fetch(:carousel_list_id))
+        pai_signup_ip_limit(request.remote_ip)
 
-    Rails.cache.fetch('home_controller_index_carousel_entities', expires_in: 2.hours) do
-      List.find(Rails.application.config.littlesis.fetch(:carousel_list_id)).entities.to_a
-    end
-  end
+        unless Rails.env.development?
+          NewsletterSignupJob.perform_later(params.fetch('email'))
+        end
 
-  def dots_connected
-    Rails.cache.fetch('dots_connected_count', expires_in: 2.hours) do
-      (Person.count + Org.count).to_s.split('')
-    end
-  end
+        if request.headers['referer'].blank?
+          redirect_to 'https://news.littlesis.org'
+        else
+          redirect_to request.headers['referer']
+        end
+      end
 
-  def flag_params
-    params.permit(:email, :page, :message).to_h
-  end
+      def test
+        head :ok
+      end
 
-  def newsletter_signup_params
-    params.require(:newsletter_signup_form).permit(:email, :very_important_wink_wink)
-  end
+      private
+
+      def pai_signup_ip_limit(ip)
+        ip_cache_key = "pai_signup_request_count_for_#{ip}"
+
+        if Rails.cache.read(ip_cache_key).nil?
+          Rails.cache.write(ip_cache_key, 1, :expires_in => 60.minutes)
+        else
+          count = Rails.cache.read(ip_cache_key) + 1
+          if count >= 5
+            Rails.logger.warn "#{ip} has submitted too many requests this hour!"
+            raise Exceptions::PermissionError
+          else
+            Rails.cache.write(ip_cache_key, count, :expires_in => 60.minutes)
+          end
+        end
+      end
+
+      def redirect_to_dashboard_if_signed_in
+        return redirect_to home_dashboard_path if user_signed_in?
+      end
+
+      def carousel_entities
+        return unless List.exists?(Rails.application.config.littlesis.fetch(:carousel_list_id))
+
+        Rails.cache.fetch('home_controller_index_carousel_entities', expires_in: 2.hours) do
+          List.find(Rails.application.config.littlesis.fetch(:carousel_list_id)).entities.to_a
+        end
+      end
+
+      def dots_connected
+        Rails.cache.fetch('dots_connected_count', expires_in: 2.hours) do
+          (Person.count + Org.count).to_s.split('')
+        end
+      end
+
+      def flag_params
+        params.permit(:email, :page, :message).to_h
+      end
+
+      def newsletter_signup_params
+        params.require(:newsletter_signup_form).permit(:email, :very_important_wink_wink)
+      end
 end
