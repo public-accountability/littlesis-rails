@@ -57,7 +57,7 @@ describe EntitiesController, type: :controller do
     describe 'entity/id/datatable' do
       before { get :datatable, params: { id: entity.id } }
 
-      it { is_expected.to render_template(:profile) }
+      it { is_expected.to respond_with 302 }
     end
   end
 
