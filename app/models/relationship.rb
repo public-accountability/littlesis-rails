@@ -356,6 +356,7 @@ class Relationship < ApplicationRecord
   def reverse_direction!
     update!(entity1_id: entity2_id, entity2_id: entity1_id)
     reverse_links(:update!)
+    links.each(&:recalculate_subcategory)
   end
 
   ###############################
