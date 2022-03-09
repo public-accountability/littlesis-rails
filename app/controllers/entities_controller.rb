@@ -16,13 +16,15 @@ class EntitiesController < ApplicationController
   PUBLIC_ACTIONS = %i[show datatable political contributions references validate profile grouped_links source_links].freeze
 
   before_action :authenticate_user!, except: PUBLIC_ACTIONS
-  before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
+  before_action :block_restricted_user_access, only: EDITABLE_ACTIONS + [:new]
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
   before_action :importers_only, only: IMPORTER_ACTIONS
   before_action :set_entity, except: [:new, :create, :show, :create_bulk, :validate]
   before_action :set_entity_for_profile_page, only: [:show]
   before_action :set_tab_for_profile_page, only: [:show]
   before_action :check_delete_permission, only: [:destroy]
+
+  rescue_from Exceptions::RestrictedUserError, with: -> { head :forbidden }
 
   # Old profile page
   def show

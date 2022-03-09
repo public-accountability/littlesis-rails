@@ -8,7 +8,10 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  before_action :authenticate_user!, only: %i[new create update editors confirm_editor lock release_lock clone destroy]
+  AUTHENITICATED_ACTIONS = %i[new create update editors confirm_editor lock release_lock clone destroy].freeze
+
+  before_action :authenticate_user!, only: AUTHENITICATED_ACTIONS
+  before_action :block_restricted_user_access, only: AUTHENITICATED_ACTIONS
   before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot]
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
@@ -16,6 +19,7 @@ class OligrapherController < ApplicationController
 
   rescue_from ActiveRecord::RecordNotFound, with: :map_not_found
   rescue_from Exceptions::PermissionError, with: :map_not_found
+  rescue_from Exceptions::RestrictedUserError, with: -> { head :forbidden }
 
   # Explore Maps Page
   def index
@@ -237,36 +241,36 @@ class OligrapherController < ApplicationController
     end
   end
 
-  private
+private
 
-  def new_oligrapher_params
-    oligrapher_params.merge!(user_id: current_user.id)
+def new_oligrapher_params
+  oligrapher_params.merge!(user_id: current_user.id)
+end
+
+def oligrapher_params
+  params
+    .require(:attributes)
+    .permit(:title, :description, :is_private, :is_cloneable, :list_sources, :annotations_data, :settings)
+    .merge(graph_data: params[:graph_data]&.permit!&.to_h)
+end
+
+def editor_data
+  is_owner ? Oligrapher.editor_data(@map) : Oligrapher.confirmed_editor_data(@map)
+end
+
+def enforce_slug
+  return if params[:secret]
+
+  if @map.title.present? && !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
+    redirect_to oligrapher_path(@map)
   end
+end
 
-  def oligrapher_params
-    params
-      .require(:attributes)
-      .permit(:title, :description, :is_private, :is_cloneable, :list_sources, :annotations_data, :settings)
-      .merge(graph_data: params[:graph_data]&.permit!&.to_h)
+def category_id_param
+  if params[:category_id] && (1..12).cover?(params[:category_id].to_i)
+    params[:category_id].to_i
   end
-
-  def editor_data
-    is_owner ? Oligrapher.editor_data(@map) : Oligrapher.confirmed_editor_data(@map)
-  end
-
-  def enforce_slug
-    return if params[:secret]
-
-    if @map.title.present? && !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
-      redirect_to oligrapher_path(@map)
-    end
-  end
-
-  def category_id_param
-    if params[:category_id] && (1..12).cover?(params[:category_id].to_i)
-      params[:category_id].to_i
-    end
-  end
+end
 end
 
 # Should we have some sort of GraphData validation?

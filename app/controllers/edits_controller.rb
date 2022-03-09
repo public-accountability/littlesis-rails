@@ -2,6 +2,7 @@
 
 class EditsController < ApplicationController
   before_action :authenticate_user!
+  before_action :block_restricted_user_access
   before_action :set_page, only: [:index, :entity]
   before_action :set_entity, only: [:entity]
 
