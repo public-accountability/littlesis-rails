@@ -1,11 +1,11 @@
 <table id="data-summary-table">
-    <tbody>
-        <% stats.each do |stat|  %>
-            <% count, title = stat %>
-            <tr>
-                <td><strong><%= number_with_delimiter(count) %></strong></td>
-                <td class="text-nowrap"><%= title.pluralize %></td>
-            </tr>
-        <% end %>    
-    </tbody>
+  <tbody>
+    <% stats.each do |stat|  %>
+      <% title, count = stat %>
+      <tr>
+        <td><strong><%= number_with_delimiter(count) %></strong></td>
+        <td class="text-nowrap"><%= title.pluralize %></td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>

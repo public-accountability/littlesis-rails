@@ -108,6 +108,7 @@ en:
     professional: professional
     reference: reference
     remove: remove
+    relationships: relationships
     search: search
     service: service
     settings: settings
@@ -223,11 +224,11 @@ en:
       super_pacs: "Secretive Super PACs"
       elite_think_tanks: "Elite think tanks"
       involuntary_facebook: "An involuntary facebook of the 1%"
-      made_for_watchdogs: "Made for watchdogs"
       names_behind_the_news: "Names behind the news"
       think_and_do: "Think and do tank"
-      we_bring_transparency: "We bring transparency to influential social networks by tracking the key relationships of politicians, business leaders, lobbyists, financiers, and their affiliated institutions. We help answer questions such as:"
       names_behind_the_news: "Names behind the news"
+      unique_resource: "A unique resource for investigating cronyism, conflicts of interest, and systemic corruption."
+      made_for_watchdogs: "Made for watchdogs"
 
   # kaminari pagination labels
   views:
