@@ -137,13 +137,6 @@ class ExtensionDefinition < ApplicationRecord
     where(has_fields: true).map(&:id)
   end
 
-  # { id => display_name }
-  def self.display_names
-    @display_names ||= all.each_with_object({}) do |ed, hash|
-      hash.store ed.id, ed.display_name
-    end.freeze
-  end
-
   # { name => id }
   def self.id_lookup
     @id_lookup ||= all.each_with_object({}) do |ed, hash|

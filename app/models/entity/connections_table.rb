@@ -37,7 +37,9 @@ class Entity
         .map { |h| h.dig(:other_entity, :extension_definition_ids) }
         .flatten
         .uniq
-        .map { |i| [ExtensionDefinition.display_names.fetch(i), i] }
+        .map { |i| [ExtensionDefinition::DISPLAY_NAMES.fetch(:en).fetch(i), i] }
+      # ^^ this gets cached so it's set to :en for now
+      # .map { |i| [ExtensionDefinition::DISPLAY_NAMES.fetch(I18n.locale).fetch(i), i] }
     end
   end
 end

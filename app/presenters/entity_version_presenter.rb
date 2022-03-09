@@ -76,8 +76,9 @@ class EntityVersionPresenter < VersionPresenter
   end
 
   def extension_name
-    definition_id = fetch_from_object_or_changeset('definition_id')
-    ExtensionDefinition.display_names.fetch(definition_id)
+    ExtensionDefinition::DISPLAY_NAMES
+      .fetch(I18n.locale)
+      .fetch(fetch_from_object_or_changeset('definition_id').to_i)
   end
 
   def updated_fields_text
