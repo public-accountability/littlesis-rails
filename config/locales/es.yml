@@ -1,5 +1,144 @@
 es:
   littlesis:
-    littlesis: LittleSis en español
+    littlesis: LittleSis
+    pai: Iniciativa pública de responsalibidad
+    eyes_on_the_ties: Buscando Conexiones
+    person: person
+    organization: organization
+    relationship: conexión
+    entity: entidad
+    list: lista
+    map: mapa
+    tag: tetiqueta
+    oligrapher: olígrafo
+    datasets: Bases de datos
+    interlocks: Entramados
+    links: Enlaces
+    external_links: Enlaces externos
+    reference: Referencia
+    document: Documento
+  entity_extensions:
+      Person: Persona
+      Org: Organización
+      PoliticalCandidate: "Candidato (político)"
+      ElectedRepresentative: Representante
+      Business: Negocio
+      GovernmentBody: Cuerpo/organismo de gobierno
+      School: Colegio
+      MembershipOrg: Asociaciones y sociedades
+      Philanthropy: Filantropía
+      NonProfit: organizaciones sin ánimo de lucro
+      PoliticalFundraising: Comité de recaudación con fines políticos
+      PrivateCompany: Compañía privada
+      PublicCompany: Compañía pública
+      IndustryTrade: Asociaciones industriales/comerciales
+      LawFirm: Bufete de abogados
+      LobbyingFirm: Cabildeo
+      PublicRelationsFirm: Relaciones públicas
+      IndividualCampaignCommittee: Comité de campaña individual
+      Pac: PAC
+      OtherCampaignCommittee: Otros comités de campaña
+      MediaOrg: Organización de medios
+      ThinkTank: Think Tank
+      Cultural: Cultura/Arte
+      SocialClub: Clubs sociales
+      ProfessionalAssociation: Asociaciones profesionales
+      PoliticalParty: Partido político
+      LaborUnion: Sindicato
+      Gse: Iniciativas patrocinadas por el gobierno
+      BusinessPerson: Persona de negocios
+      Lobbyist: Cabildo
+      Academic: Académico
+      MediaPersonality: Personalidad mediática
+      ConsultingFirm: Consultoría
+      PublicIntellectual: Intelectual público
+      PublicOfficial: Funcionario público
+      Lawyer: Abogado
+      Couple: Pareja
+      ResearchInstitute: Instituto de investigación académica
+      GovernmentAdvisoryBody: Organismo asesor del gobierno
+      EliteConsensus: Grupo de consenso de élite
+
+  vocab:
+    citations: citas
+    donate: donar
+    join: unirse
+    relationships: conexiones
+    signup: crear
+
+
+
   phrases:
-    edit_your_settings: "Edita tu configuración"
+    a_project_of:
+    add_a_new_entity:
+    add_a_relationship:
+    additional_names:
+    articles_documenting:
+    basic_info:
+    become_an_analyst:
+    cancel:
+    cant_find_what:
+    click_here:
+    connect_this_entity:
+    create_a_new:
+    create_new_reference:
+    creating_new_relationship_between:
+    current_password:
+    data_summary: "Resumen de los datos"
+    disclaimer:
+    edited_by:
+    existing_source":
+    export_csv:
+    get_involved:
+    get_started_map:
+    instructional_videos:
+    just_cleaning_up:
+    lists_of:
+    make_primary:
+    map the power:
+    match_donations:
+    need_your_password:
+    forgot_your_password:
+    recent_edits:
+    related_entity:
+    relationship_category:
+    report_a_bug:
+    search_for_a_name: buscar un nombre
+    send_me_your_newsletter:
+    sign_up_for:
+    source_links:
+    tell_me_more_about:
+    terms:
+    visual_tool:
+    welcome:
+    where_is_this:
+    your_email: Tu email
+    your_lists: Tus listas
+    your_maps: Tus mapas
+    your_recent_edits: Tus cambios recientes
+    your_settings: Tus ajustes
+    edit_your_settings:
+
+  pages:
+    home:
+      littlesis_is: "es una base de datos gratuita del quien-conoce-a-quien en las esferas políticas y de negocios"
+      opposite_of_big_brother: "Lo contrario al Gran Hermano"
+      grassroots_watchdog: "Somos una red de vigilantes comunitarios que trazan las conexiones entre las personas y las organizaciones más poderosas del mundo."
+      power_research: "Herramientas y entrenamiento para investigar el poder"
+      news_and_analysis: "Noticias y análisis de LittleSis"
+      visual_mapping_tool: "Herramienta online de mapeo visual"
+      map_the_power_with_oligrapher: "Haga un mapa del poder con el Oligrafo"
+      oligrapher_is: "El olígrafo es una herramienta para visualizar las redes de influencia usando los datos de LittleSis"
+      oligrapher_get_started: "Crea un nuevo mapa"
+      signup_for: "una cuenta en LittleSis"
+      dots_connected: "Puntos conectados"
+      paid_for_politicians: "Pagado por políticos"
+      corporate_fat_cats: "Peces gordos corporativos"
+      revolving_door_lobbyists: "Puertas giratorias"
+      super_pacs: "Super PACs secretos"
+      elite_think_tanks: "Think tanks de élite"
+      involuntary_facebook: "Un facebook involuntario del 1%"
+      names_behind_the_news: "Nombres detrás de las noticias"
+      unique_resource: "Un recurso único para investigar el amiguismo, los conflictos de intereses y la corrupción sistémica"
+      think_and_do: "Grupo de reflexión y acción"
+      made_for_watchdogs: "Hecho para vigilantes"

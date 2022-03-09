@@ -7,9 +7,9 @@
 <div class="row mt-4" id="homepage-who-we-are-row">
   <div class="col-sm-12 col-lg-9">
     <div class="row">
-      <h1>LittleSis<span style="color: #cc5454;">*</span> is a free database of who&zwj;-&zwj;knows&zwj;-&zwj;who at the heights of business and government.</h1>
-      <div style="font-weight: 300; font-size: 14px; color: #cc5454;"><span style="font-size: 16px; font-weight: bold;">*</span> opposite of Big Brother</div>
-      <div class="mt-3 homepage-subheading"">We're a grassroots watchdog network connecting the dots between the world's most powerful people and organizations.</div>
+      <h1>LittleSis<span style="color: #cc5454;">*</span> <%= t('pages.home.littlesis_is') %></h1>
+      <div style="font-weight: 300; font-size: 14px; color: #cc5454;"><span style="font-size: 16px; font-weight: bold;">*</span> <%= t 'pages.home.opposite_of_big_brother' %></div>
+      <div class="mt-3 homepage-subheading""><%= t 'pages.home.grassroots_watchdog' %></div>
     </div>
 
     <div class="row row-cols-1 row-cols-sm-2 mt-3">
@@ -39,7 +39,7 @@
       <%= image_tag "map_the_power_RGB.gif" %>
     </div>
 
-    <h5 class="mt-2 text-center"><%= link_to "Power research toolkit & trainings", toolkit_path %></h5>
+    <h5 class="mt-2 text-center"><%= link_to t('pages.home.power_research'), toolkit_path %></h5>
   </div>
 
   <div class="col">
@@ -47,14 +47,14 @@
       <%= image_tag "eye-on-ties.png", id: "eyes-on-ties-img" %>
     </div>
 
-    <h5 class="mt-2 text-center"><%= link_to "News and analysis from LittleSis", "https://news.littlesis.org" %></h5>
+    <h5 class="mt-2 text-center"><%= link_to t('pages.home.news_and_analysis'), "https://news.littlesis.org" %></h5>
   </div>
 
   <div class="col">
     <div>
       <%= image_tag "netmap-org.png" %>
     </div>
-    <h5 class="mt-2 text-center"><%= link_to "Visual diagramming tool", "/oligrapher" %></h5>
+    <h5 class="mt-2 text-center"><%= link_to t('pages.home.visual_mapping_tool'), "/oligrapher" %></h5>
   </div>
 </div>
 
@@ -72,13 +72,13 @@
 
 <div class="row mb-5 mt-5">
   <div class="col-sm-12 text-center">
-    <h1 class="big-text text-center">A unique resource for investigating cronyism, conflicts of interest, and systemic corruption.</h1>
+    <h1 class="big-text text-center"><%= t('pages.home.unique_resource') %></h1>
   </div>
 </div>
 
 <div class="row mt-4">
   <div class="col-sm-7 pb-3">
-    <%= homepage_headline_h3 'An involuntary facebook of the 1%'%>
+    <%= homepage_headline_h3  t('pages.home.involuntary_facebook') %>
 
     <p>We bring transparency to influential social networks by tracking the key relationships of politicians, business leaders, lobbyists, financiers, and their affiliated institutions. We help answer questions such as:</p>
     <ul>
@@ -89,22 +89,23 @@
 
     <p>All of this information is public, but scattered. We bring it together in one place. Our data derives from government filings, news articles, and other reputable sources. Some data sets are updated automatically; the rest is filled in by our user community. <%= link_to "More Features", "/features", class: 'link-blue'  %></p>
 
-    <%= homepage_headline_h3 'Names behind the news' %>
+    <%= homepage_headline_h3 t('littlesis.eyes_on_the_ties') %>
 
     <p>Who are the movers and shakers behind the bailouts, government contracts, and austerity policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <%= link_to "Eyes on the Ties", "http://blog.littlesis.org", class: 'link-blue' %></p>
 
-    <%= homepage_headline_h3 'Made for watchdogs' %>
+    <%= homepage_headline_h3 t('pages.home.made_for_watchdogs') %>
 
     <p>We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <% link_to "Get Involved", "/join", class: 'link-blue' %></p>
 
-    <%= homepage_headline_h3 'Think and do tank' %>
+    <%= homepage_headline_h3 t('pages.home.think_and_do') %>
 
     <p>LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from <%= link_to 'foundations', 'http://public-accountability.org/about/funding/', class: 'link-blue' %> and benefit from free software written by the open source community.</p>
     <p>The <%= link_to "code", "https://github.com/public-accountability/littlesis-rails", class: 'link-blue' %> powering LittleSis is free & open source.</p>
   </div>
   <div class="col-sm-1"></div>
+
   <div class="col-sm-4">
-    <%= homepage_headline_h3 'Data Summary' %>
-    <%= render partial: 'data_summary', locals: {stats: @stats} %>
+    <%= homepage_headline_h3 t('phrases.data_summary') %>
+    <%= render partial: 'data_summary', locals: { stats: @stats } %>
   </div>
 </div>

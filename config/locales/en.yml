@@ -58,7 +58,10 @@ en:
       ResearchInstitute: "Academic Research Institute"
       GovernmentAdvisoryBody: "Government Advisory Body"
       EliteConsensus: "Elite Consensus Group"
+
   vocab:
+    donate: donate
+    signup: sign up
     actions: actions
     add: add
     alive: alive
@@ -105,6 +108,7 @@ en:
     professional: professional
     reference: reference
     remove: remove
+    relationships: relationships
     search: search
     service: service
     settings: settings
@@ -202,22 +206,29 @@ en:
       having_problems: If you are having any problems with the registration process please contact us at
       no_confirmation instructions: Didn't receive confirmation instructions?
     home:
-      corporate_fat_cats: "Corporate fat cats"
-      dots_connected: "Dots connected"
-      elite_think_tanks: "Elite think tanks"
-      explore: "Explore trading's, news, & tools"
+      littlesis_is: "is a free database of who-knows-who at the heights of business and government"
+      littlesis_is_alt: "is a free database of who&zwj;-&zwj;knows&zwj;-&zwj;who at the heights of business and government."
+      opposite_of_big_brother: "opposite of Big Brother"
       grassroots_watchdog: "We're a grassroots watchdog network connecting the dots between the world's most powerful people and organizations"
-      involuntary_facebook: "An involuntary facebook of the 1%"
-      littlesis_is: "LittleSis is a free database of who-knows-who at the heights of business and government"
-      made_for_watchdogs: "Made for watchdogs"
-      map_the_power_with_oligrapher: "Map the power with Oligrapher"
-      names_behind_the_news: "Names behind the news"
-      news_and_analysis: "News and analysis from LittleSis"
-      paid_for_politicians: "Paid for politicians"
       power_research: "Power research toolkit and training"
+      news_and_analysis: "News and analysis from LittleSis"
+      visual_mapping_tool: "Visual diagramming tool"
+      map_the_power_with_oligrapher: "Map the power with Oligrapher"
+      oligrapher_is: "is a tool for visualizing networks of influence using LittleSis Data."
+      oligrapher_get_started: "Get started on a new map"
+      signup_for: "for a LittleSis account"
+      dots_connected: "Dots connected"
+      paid_for_politicians: "Paid for politicians"
+      corporate_fat_cats: "Corporate fat cats"
       revolving_door_lobbyists: "Revolving door lobbyists"
       super_pacs: "Secretive Super PACs"
+      elite_think_tanks: "Elite think tanks"
+      involuntary_facebook: "An involuntary facebook of the 1%"
+      names_behind_the_news: "Names behind the news"
       think_and_do: "Think and do tank"
+      names_behind_the_news: "Names behind the news"
+      unique_resource: "A unique resource for investigating cronyism, conflicts of interest, and systemic corruption."
+      made_for_watchdogs: "Made for watchdogs"
 
   # kaminari pagination labels
   views:

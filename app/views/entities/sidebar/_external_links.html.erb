@@ -1,16 +1,17 @@
 <ul class="list-unstyled">
-  <% @entity.external_links.to_a.delete_if(&:internal?).group_by(&:link_type).each do |(link_type, links)| %>
+  <% @entity.external_links.to_a.reject(&:internal?).group_by(&:link_type).each do |(link_type, links)| %>
     <% if links.count == 1 %>
       <li>
         <%= link_to links.first.title, links.first.url, 'target' => '_blank' %>
       </li>
     <% else  %>
-      <li>
-        <a data-toggle="collapse"
-           href="#external-links-grouped-<%= link_type %>"
-           onclick="$(this).find('i.bi').toggleClass('bi-plus-circle').toggleClass('bi-dash-circle')">
-          <%= ExternalLink::LINK_TYPES.dig(link_type, :grouped_title)  %>
-          <i class="bi bi-plus-circle"></i>
+      <li data-controller="external-links-sidebar">
+        <a href="#external-links-grouped-<%= link_type %>"
+           data-bs-toggle="collapse"
+           style="cursor: pointer;"
+           data-action="external-links-sidebar#toggle">
+          <%= ExternalLink::LINK_TYPES.dig(link_type, :grouped_title) %>
+          <i class="bi bi-plus-circle" data-external-links-sidebar-target="icon"></i>
         </a>
         <div class="collapse" id="external-links-grouped-<%= link_type %>">
           <% links.each do |link| %>

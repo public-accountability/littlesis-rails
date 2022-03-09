@@ -7,7 +7,7 @@ class Entity
     SIMILAR_ENTITIES_PRESENTER = proc do |e|
       { name: e.name,
         blurb: e.blurb,
-        types: e.extension_ids[1..-1].map { |i| ExtensionDefinition.display_names.fetch(i) }.join(', '),
+        types: e.extension_ids[1..].map { |i| ExtensionDefinition::DISPLAY_NAMES.dig(I18n.locale, i) }.join(', '),
         slug: e.slug,
         id: e.id }
     end

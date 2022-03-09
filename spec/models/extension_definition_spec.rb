@@ -28,12 +28,4 @@ describe ExtensionDefinition, type: :model do
   it 'has Elite Consensus' do
     expect(ExtensionDefinition.find(40).name).to eql 'EliteConsensus'
   end
-
-  describe 'display_names' do
-    it 'returns a memozined hash map' do
-      expect(ExtensionDefinition.display_names).to be_a Hash
-      expect(ExtensionDefinition.display_names.keys.to_set).to eql ExtensionDefinition.all.map(&:id).to_set
-      expect(ExtensionDefinition.display_names.fetch(26)).to eq 'Political Party'
-    end
-  end
 end

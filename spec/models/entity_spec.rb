@@ -264,21 +264,6 @@ describe Entity, :tag_helper do
       array.reject { |c| c == 'id' || c == 'entity_id' }
     end
 
-    describe '#primary_extension_model' do
-      let(:org) { create(:entity_org) }
-      let(:person) { create(:entity_person) }
-
-      it 'returns Org if entity is an org' do
-        expect(org.primary_extension_model).to be_a Org
-        expect(person.primary_extension_model).not_to be_a Org
-      end
-
-      it 'returns Person if entity is a person' do
-        expect(org.primary_extension_model).not_to be_a Person
-        expect(person.primary_extension_model).to be_a Person
-      end
-    end
-
     describe '#extension_attributes' do
       it 'includes person attributes except for id or entity_id' do
         human_extension_attributes = create(:entity_person).extension_attributes

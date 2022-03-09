@@ -2,16 +2,15 @@
   <%= render partial: '/application/honeypot', locals: {f: f} %>
 
   <div class="input-group">
-
     <%= f.email_field :email,
       class: 'form-control',
-      placeholder: 'Your email',
+      placeholder: t('phrases.your_email'),
       required: true,
       id: 'newsletter-signup-form-email'
     %>
 
     <div class="input-group-append">
-      <button class="btn btn-clear" type="submit">Join!</button>
+      <button class="btn btn-clear" type="submit"><%= t('vocab.join').capitalize %></button>
     </div>
 
   </div>

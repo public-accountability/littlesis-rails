@@ -14,6 +14,10 @@ export default class extends Controller {
       return mustache.render(mergeButton, {path: `${path}&${$.param({dest: data })}`})
     }
 
+    const renderName = function(data, type, row) {
+      return $('<a>', { href: row.slug, text: row.name, target: '_blank' }).prop('outerHTML')
+    }
+
     $(this.tableTarget).DataTable( {
       searching: false,
       lengthChange: false,
@@ -28,8 +32,4 @@ export default class extends Controller {
       ]
     })
   }
-}
-
-const renderName = function(data, type, row) {
-  return $('<a>', { href: row.slug, text: row.name, target: '_blank' }).prop('outerHTML')
 }

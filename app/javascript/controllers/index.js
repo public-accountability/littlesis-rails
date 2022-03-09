@@ -28,6 +28,9 @@ application.register("entity-merge", EntityMergeController)
 import EntityReferencesTableController from "./entity_references_table_controller.js"
 application.register("entity-references-table", EntityReferencesTableController)
 
+import ExternalLinksSidebarController from "./external_links_sidebar_controller.js"
+application.register("external-links-sidebar", ExternalLinksSidebarController)
+
 import Fec__ContributionsTableController from "./fec/contributions_table_controller.js"
 application.register("fec--contributions-table", Fec__ContributionsTableController)
 

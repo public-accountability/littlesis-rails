@@ -8,13 +8,13 @@ class HomeController < ApplicationController
 
   skip_before_action :verify_authenticity_token, only: [:pai_signup]
 
-  # [list_id, 'title' ]
+  # [list_id, 'translation_key' ]
   DOTS_CONNECTED_LISTS = [
-    [41, 'Paid for politicians'],
-    [88, 'Corporate fat cats'],
-    [102, 'Revolving door lobbyists'],
-    [114, 'Secretive Super PACs'],
-    [34, 'Elite think tanks']
+    [41, 'paid_for_politicians'],
+    [88, 'corporate_fat_cats'],
+    [102, 'revolving_door_lobbyists'],
+    [114, 'super_pacs'],
+    [34, 'elite_think_tanks']
   ].freeze
 
   def dashboard

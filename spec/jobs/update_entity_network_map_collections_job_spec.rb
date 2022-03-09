@@ -5,7 +5,7 @@ describe UpdateEntityNetworkMapCollectionsJob, type: :job do
     EntityNetworkMapCollection.remove_all
   end
 
-  after  do
+  after do
     EntityNetworkMapCollection.remove_all
   end
 

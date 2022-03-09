@@ -25,7 +25,7 @@
 
       <% unless_em_prop_is_empty :extensions do %>
 	<li>
-	  Add or update the following extensions: <%= @entity_merger.extensions.map(&:ext_id).map { |i| ExtensionDefinition.display_names.fetch(i) }.join(', ') %>
+	  Add or update the following extensions: <%= @entity_merger.extensions.map(&:ext_id).map { |i| ExtensionDefinition::DISPLAY_NAMES.fetch(I18n.locale).fetch(i) }.join(', ') %>
 	</li>
       <% end  %>
 

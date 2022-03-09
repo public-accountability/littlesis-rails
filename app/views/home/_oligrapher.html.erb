@@ -1,10 +1,10 @@
 <div class="row mt-4">
   <div class="col-sm-12" style="text-align: center;">
-    <h1 class="big-text">Map the power with <strong>Oligrapher</strong></h1>
-    <h4><%= link_to "Oligrapher", '/oligrapher' %> is a new tool for visualizing networks of influence using LittleSis Data.</h4>
+    <h1 class="big-text"><%= t('pages.home.map_the_power_with_oligrapher') %></h1>
+    <h4><%= link_to "Oligrapher", '/oligrapher' %> <%= t('pages.home.oligrapher_is') %></h4>
     <br>
-    <%= link_to "Get started on a new map", "/maps/new", class: "btn btn-lg", role: "button", style: 'background-color: #A04040; color: #fff' %>
-    <p class="top-1em">or <%= link_to "sign up", "/join" %> for a LittleSis account</p>
+    <%= link_to t('pages.home.oligrapher_get_started'), "/maps/new", class: "btn btn-lg", role: "button", style: 'background-color: #A04040; color: #fff' %>
+    <p class="top-1em"><%= link_to t('vocab.signup'), "/join" %> <%= t('pages.home.signup_for') %></p>
   </div>
 </div>
 

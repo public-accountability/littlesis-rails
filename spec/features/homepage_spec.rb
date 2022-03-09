@@ -35,7 +35,7 @@ describe 'Homepage' do
       expect(page.status_code).to eq 200
 
       fill_in 'newsletter-signup-form-email', with: email
-      click_button 'Join!'
+      click_button 'Join'
 
       expect(page).to show_success "Thank you! You've been added to our newsletter."
 
@@ -45,7 +45,7 @@ describe 'Homepage' do
     scenario 'super advanced™ spam bot protection' do
       fill_in 'newsletter-signup-form-email', with: email
       fill_in 'newsletter_signup_form[very_important_wink_wink]', with: "i'm a bot and i don't know any better"
-      click_button 'Join!'
+      click_button 'Join'
 
       expect(signup_job).not_to have_received(:perform_later)
     end

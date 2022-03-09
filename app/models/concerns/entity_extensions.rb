@@ -126,11 +126,6 @@ module EntityExtensions
     person? ? 'Org' : 'Person'
   end
 
-  def primary_extension_model
-    return person if person?
-    return org if org?
-  end
-
   # Returns a hash of all attributes for all extensions (that have attrs) for the entity.
   # All entities will have attributes associated with 'Person' or 'Org'
   def extension_attributes
@@ -192,6 +187,11 @@ module EntityExtensions
     name.constantize.create(fields) if extension_with_fields?(name) && name.constantize.where(entity_id: id).count.zero?
     def_id = ExtensionDefinition.find_by_name(name).id
     ExtensionRecord.find_or_create_by!(entity_id: id, definition_id: def_id)
+
+    if %w[GovernmentBody Business].include?(name)
+      RecalculateEntityLinkSubcategoriesJob.perform_later(id)
+    end
+
     self
   end
 
@@ -203,6 +203,11 @@ module EntityExtensions
     def_id = self.class.all_extension_names.index(name)
     extension_records.find_by_definition_id(def_id).try(:destroy)
     send(name.underscore).try(:destroy) if extension_with_fields?(name)
+
+    if %w[GovernmentBody Business].include?(name)
+      RecalculateEntityLinkSubcategoriesJob.perform_later(id)
+    end
+
     self
   end
 
