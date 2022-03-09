@@ -343,10 +343,12 @@ describe 'Entity Requests', type: :request do
 
     context 'as a restricted user' do
       let(:user) { create_restricted_user }
-      context 'redirection' do
-        before { patch_request.call }
-        redirects_to_dashboard
+
+      specify do
+        patch_request.call
+        expect(response.status).to eq 403
       end
+
       does_not_change_start_date
     end
 

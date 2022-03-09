@@ -16,7 +16,7 @@ class EntitiesController < ApplicationController
   PUBLIC_ACTIONS = %i[show datatable political contributions references validate profile grouped_links source_links].freeze
 
   before_action :authenticate_user!, except: PUBLIC_ACTIONS
-  before_action :block_restricted_user_access, only: [:new, :create, :update, :create_bulk]
+  before_action :block_restricted_user_access, only: EDITABLE_ACTIONS + [:new]
   before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
   before_action :importers_only, only: IMPORTER_ACTIONS
   before_action :set_entity, except: [:new, :create, :show, :create_bulk, :validate]
@@ -24,20 +24,17 @@ class EntitiesController < ApplicationController
   before_action :set_tab_for_profile_page, only: [:show]
   before_action :check_delete_permission, only: [:destroy]
 
-  # Old profile page
+  rescue_from Exceptions::RestrictedUserError, with: -> { head :forbidden }
+
+  # profile page
   def show
-    if redirect_to_new_profile_page?
-      @active_tab = params[:tab]&.to_sym || :relationships
-      render :profile
-    end
+    @active_tab = params[:tab]&.to_sym || :relationships
+    render :profile
   end
 
   # Old "data" table
   def datatable
-    if redirect_to_new_profile_page?
-      @active_tab = :data
-      render :profile
-    end
+    redirect_to concretize_profile_entity_path(@entity, active_tab: :data)
   end
 
   # new profile page
@@ -198,9 +195,5 @@ class EntitiesController < ApplicationController
         primary_ext: @entity.primary_ext
       }
     }
-  end
-
-  def redirect_to_new_profile_page?
-    Rails.configuration.littlesis.redirect_to_new_profile_page
   end
 end
