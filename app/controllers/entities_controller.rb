@@ -26,20 +26,15 @@ class EntitiesController < ApplicationController
 
   rescue_from Exceptions::RestrictedUserError, with: -> { head :forbidden }
 
-  # Old profile page
+  # profile page
   def show
-    if redirect_to_new_profile_page?
-      @active_tab = params[:tab]&.to_sym || :relationships
-      render :profile
-    end
+    @active_tab = params[:tab]&.to_sym || :relationships
+    render :profile
   end
 
   # Old "data" table
   def datatable
-    if redirect_to_new_profile_page?
-      @active_tab = :data
-      render :profile
-    end
+    redirect_to concretize_profile_entity_path(@entity, active_tab: :data)
   end
 
   # new profile page
@@ -200,9 +195,5 @@ class EntitiesController < ApplicationController
         primary_ext: @entity.primary_ext
       }
     }
-  end
-
-  def redirect_to_new_profile_page?
-    Rails.configuration.littlesis.redirect_to_new_profile_page
   end
 end
