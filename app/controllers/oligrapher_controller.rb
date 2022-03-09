@@ -241,36 +241,36 @@ class OligrapherController < ApplicationController
     end
   end
 
-private
+  private
 
-def new_oligrapher_params
-  oligrapher_params.merge!(user_id: current_user.id)
-end
-
-def oligrapher_params
-  params
-    .require(:attributes)
-    .permit(:title, :description, :is_private, :is_cloneable, :list_sources, :annotations_data, :settings)
-    .merge(graph_data: params[:graph_data]&.permit!&.to_h)
-end
-
-def editor_data
-  is_owner ? Oligrapher.editor_data(@map) : Oligrapher.confirmed_editor_data(@map)
-end
-
-def enforce_slug
-  return if params[:secret]
-
-  if @map.title.present? && !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
-    redirect_to oligrapher_path(@map)
+  def new_oligrapher_params
+    oligrapher_params.merge!(user_id: current_user.id)
   end
-end
 
-def category_id_param
-  if params[:category_id] && (1..12).cover?(params[:category_id].to_i)
-    params[:category_id].to_i
+  def oligrapher_params
+    params
+      .require(:attributes)
+      .permit(:title, :description, :is_private, :is_cloneable, :list_sources, :annotations_data, :settings)
+      .merge(graph_data: params[:graph_data]&.permit!&.to_h)
   end
-end
+
+  def editor_data
+    is_owner ? Oligrapher.editor_data(@map) : Oligrapher.confirmed_editor_data(@map)
+  end
+
+  def enforce_slug
+    return if params[:secret]
+
+    if @map.title.present? && !request.env['PATH_INFO'].match(Regexp.new(@map.to_param, true))
+      redirect_to oligrapher_path(@map)
+    end
+  end
+
+  def category_id_param
+    if params[:category_id] && (1..12).cover?(params[:category_id].to_i)
+      params[:category_id].to_i
+    end
+  end
 end
 
 # Should we have some sort of GraphData validation?
