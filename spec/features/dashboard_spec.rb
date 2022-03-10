@@ -122,44 +122,6 @@ describe 'home/dashboard', type: :feature do
     end
   end
 
-  xdescribe 'viewing list of lists' do
-    before { login_as(current_user, :scope => :user) }
-
-    after { logout(:user) }
-
-    describe 'user has two lists' do
-      let(:lists) do
-        [create(:open_list, creator_user_id: current_user.id),
-         create(:private_list, creator_user_id: current_user.id)]
-      end
-
-      before { lists }
-
-      specify 'user can see the lists' do
-        visit home_dashboard_path
-        successfully_visits_page home_dashboard_path
-        page_has_selector '#dashboard-lists-links > a', count: 2
-      end
-    end
-
-    describe 'pagnation' do
-      before do
-        stub_const("#{UserDashboardPresenter}::DASHBOARD_LISTS_PER_PAGE", 2)
-        create_list(:list, 3, creator_user_id: current_user.id)
-      end
-
-      specify 'viewing page 1' do
-        visit '/home/dashboard'
-        page_has_selector '#dashboard-lists-links > a', count: 2
-      end
-
-      specify 'viewing page 2' do
-        visit '/home/dashboard?list_page=2'
-        page_has_selector '#dashboard-lists-links > a', count: 1
-      end
-    end
-  end
-
   describe 'viewing dashboard bulletins' do
     before do
       login_as(current_user, :scope => :user)
