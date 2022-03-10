@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '7.0.2.2'
+gem 'rails', '7.0.2.3'
 
 gem 'pg'
 gem 'mysql2', '~> 0.5.2'
@@ -73,6 +73,7 @@ end
 
 group :development do
   # gem "debug", ">= 1.0.0"
+  # gem 'ruby-prof'
   gem 'rack-mini-profiler', require: false
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
