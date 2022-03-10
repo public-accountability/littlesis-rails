@@ -6,11 +6,11 @@
     <%= entity_alias.name %>
 
     <% if entity_alias.is_primary? %>
-      <span class="badge bg-primary">Primary</span>
+      <span class="badge bg-primary"><%= t('vocab.primary') %></span>
     <% else %>
 
       <%= form_tag make_primary_alias_path(entity_alias), method: :patch, class: 'alias-form' do  %>
-	<button type="submit" class="btn btn-outline-primary btn-xs" title="Make this the primary alias">Make primary</button>
+	<button type="submit" class="btn btn-outline-primary btn-xs" title="Make this the primary alias"><%= t('phrases.make_primary') %></button>
       <% end %>
 
       <%= form_for entity_alias, { method: :delete, html: { class: 'alias-form' } } do |f| %>

@@ -1,29 +1,29 @@
 <div class="row">
   <div class="col">
-    <h2>External Links<small class="text-muted ps-2">connect this entity to other sites</small>
+    <h2><%= t('littlesis.external_links') %><small class="text-muted ps-2">connect this entity to other sites</small>
     </h2>
-    </div>
+  </div>
 </div>
 
 <div id="edit-external-links-container" class="w-100">
   <% ExternalLink.find_or_initialize_links_for(@entity).each do |el| %>
     <div class="row mb-2">
       <div class="col-8 col-sm-7 col-md-6">
-      <%= form_for el, html: { class: '', id: "#{el.link_type}_external_link_form" } do |f| %>
-	<% unless el.persisted?  %>
-	  <%= f.hidden_field :entity_id  %>
-	  <%= f.hidden_field :link_type  %>
-	<% end %>
-	<div class="input-group mb-2">
-	  <div class="input-group-prepend">
-	    <div class="input-group-text"><%= el.link_type.capitalize %>:</div>
+        <%= form_for el, html: { class: '', id: "#{el.link_type}_external_link_form" } do |f| %>
+	  <% unless el.persisted?  %>
+	    <%= f.hidden_field :entity_id %>
+	    <%= f.hidden_field :link_type %>
+	  <% end %>
+	  <div class="input-group mb-2">
+	    <div class="input-group-prepend">
+	      <div class="input-group-text"><%= el.link_type.capitalize %>:</div>
+	    </div>
+	    <%= f.text_field :link_id, class: 'form-control', id: "#{el.link_type}_external_link_link_id_input" %>
+	    <div class="input-group-append">
+	      <%= f.submit t('vocab.submit').capitalize, class: %w[btn btn-primary] %>
+	    </div>
 	  </div>
-	  <%= f.text_field :link_id, class: 'form-control', id: "#{el.link_type}_external_link_link_id_input" %>
-	  <div class="input-group-append">
-	    <%= f.submit "Submit", class: %w[btn btn-primary] %>
-	  </div>
-	</div>
-      <% end # end form_for%>
+        <% end # end form_for%>
       </div>
     </div>
   <% end %>

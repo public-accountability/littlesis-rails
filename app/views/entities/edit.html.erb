@@ -1,20 +1,6 @@
-<%
-# layout helpers
-label_class = 'col-form-label'
+<% label_class = 'col-form-label'.freeze %>
 
-date_text = {
-  'start' => { 'Org' => 'Start date:', 'Person' => 'Birth date' },
-  'end' => { 'Org' => 'End date:', 'Person' => 'Death date' }
-}
-
-is_current_text = {
-  'Org' => 'Is current?',
-  'Person' => 'Alive?'
-}
-
-%>
-
-<% content_for(:page_title, 'Edit: ' + @entity.name ) %>
+<% content_for(:page_title, "#{t('vocab.edit').capitalize}: #{@entity.name}") %>
 
 <%= render partial: 'header', locals: { entity: @entity } %>
 <%= render partial: 'actions', locals: { entity: @entity } %>
@@ -39,34 +25,34 @@ is_current_text = {
   <% end  %>
 
   <%= edit_entity_form_section(
-    f.label(:blurb, 'Short Description', class: label_class),
+    f.label(:blurb, 'Blurb', class: label_class),
     f.text_field(:blurb, class: 'form-control')
   ) %>
 
   <%= edit_entity_form_section(
-    f.label(:summary, 'Summary:', class: label_class),
+    f.label(:summary, t('vocab.summary').capitalize, class: label_class),
     f.text_area(:summary, class: 'form-control', size: '40x6')
   ) %>
 
   <%= edit_entity_form_section(
-    f.label(:start_date, date_text.dig('start', @entity.primary_ext), class: label_class),
+    f.label(:start_date, (@entity.person? ? t('vocab.birth_date') : t('vocab.start_date')).capitalize, class: label_class),
     f.text_field(:start_date) # + content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)')
   ) %>
 
   <%= edit_entity_form_section(
-    f.label(:end_date, date_text.dig('end', @entity.primary_ext), class: label_class),
+    f.label(:end_date, (@entity.person? ? t('vocab.death_date') : t('vocab.end_date')).capitalize, class: label_class),
     f.text_field(:end_date) # + content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)')
   ) %>
 
 
 
   <%= edit_entity_form_section(
-    f.label(:is_current, is_current_text[@entity.primary_ext], class: label_class),
+    f.label(:is_current, (@entity.person? ? t('vocab.is_alive') : t('vocab.is_current')), class: label_class),
     f.tri_boolean(:is_current)
   ) %>
 
   <%= edit_entity_form_section(
-    f.label(:website, "Website:", class: label_class),
+    f.label(:website, t('vocab.website').capitalize, class: label_class),
     f.url_field(:website)
   ) %>
 
@@ -74,12 +60,12 @@ is_current_text = {
     <%= f.fields_for :person do |person_form| %>
       <% %i[name_first name_middle name_last name_prefix name_suffix name_nick birthplace].each do |attribute| %>
         <%= edit_entity_form_section(
-          person_form.label(attribute, Person::DISPLAY_ATTRIBUTES[attribute], class: label_class),
+          person_form.label(attribute, Person::DISPLAY_ATTRIBUTES[I18n.locale][attribute], class: label_class),
           person_form.text_field(attribute)
         ) %>
       <% end %>
       <%= edit_entity_form_section(
-        person_form.label(:gender, "Gender:", class: label_class),
+        person_form.label(:gender, t('vocab.gender').capitalize, class: label_class),
         person_form.select(:gender_id, gender_select_options(person_form))
       ) %>
     <% end %>
@@ -126,7 +112,7 @@ is_current_text = {
 
   <%# Regions %>
   <%= edit_entity_form_section(
-    f.label(:regions, 'Location: ', class: label_class),
+    f.label(:regions, "#{t('vocab.location').capitalize}: ", class: label_class),
     f.select(:regions,
              options_for_select(Location.regions.to_a, selected: @entity.region_numbers),
              { include_blank: true},
@@ -135,8 +121,8 @@ is_current_text = {
 
   <div class="row mb-3">
     <div class="col-8">
-      <%= f.submit 'Update', class: 'btn btn-primary' %>
-      <%= link_to 'Cancel', @entity.url, class: 'btn btn-secondary ms-2' %>
+      <%= f.submit t('vocab.update').capitalize, class: 'btn btn-primary' %>
+      <%= link_to t('vocab.cancel').capitalize, @entity.url, class: 'btn btn-secondary ms-2' %>
     </div>
   </div>
 <% end  # end form-for %>

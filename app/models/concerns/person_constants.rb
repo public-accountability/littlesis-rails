@@ -1,16 +1,29 @@
+# frozen_string_literal: true
+
 module PersonConstants
   # Map between attribute as symbol to string text for presentation
   # Person::DISPLAY_ATTRIBUTES[:name_last] -> 'Last Name:*'
   DISPLAY_ATTRIBUTES = {
-    name_first: 'First Name:*',
-    name_last: 'Last Name:*',
-    name_middle: 'Middle Name:',
-    name_prefix: 'Prefix:',
-    name_suffix: 'Suffix:',
-    name_nick: 'Nickname:',
-    birthplace: 'Birthplace:'
+    en: {
+      name_first: 'First Name',
+      name_last: 'Last Name',
+      name_middle: 'Middle Name',
+      name_prefix: 'Prefix',
+      name_suffix: 'Suffix',
+      name_nick: 'Nickname',
+      birthplace: 'Birthplace'
+    },
+    es: {
+      name_first: 'Primer nombre',
+      name_last: 'Apellido',
+      name_middle: 'Segundo nombre',
+      name_prefix: 'Prefijo',
+      name_suffix: 'Sufijo',
+      name_nick: 'Apodo',
+      birthplace: 'Lugar de nacimiento'
+    }
   }.freeze
-  
+
   SHORT_FIRST_NAMES = {
     'ab' => 'abner',
     'abbie' => 'abigail',

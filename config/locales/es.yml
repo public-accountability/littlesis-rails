@@ -14,10 +14,10 @@ es:
     datasets: Bases de datos
     interlocks: Entramados
     links: Enlaces
-    external_links: Enlaces externos
+    external_links: Enlaces Externos
     reference: Referencia
     document: Documento
-  entity_extensions:
+    entity_extensions:
       Person: Persona
       Org: Organización
       PoliticalCandidate: "Candidato (político)"
@@ -58,46 +58,73 @@ es:
       ResearchInstitute: Instituto de investigación académica
       GovernmentAdvisoryBody: Organismo asesor del gobierno
       EliteConsensus: Grupo de consenso de élite
+    tabs:
+      relationships: Conexiones
+      interlocks: Entramados
+      giving: Donaciones
+      data: Datos
 
   vocab:
+    add: añadir
+    alias: alias
     citations: citas
     donate: donar
     join: unirse
     relationships: conexiones
     signup: crear
     dashboard: inicio
+    edit: editar
     edits: cambios
-
-
-
+    flag: destacar
+    remove: eliminar
+    merge: fusión
+    name: nombre
+    summary: resumen
+    start_date: "fecha de inicio"
+    end_date: "fecha final"
+    birth_date: "cumpleaños"
+    death_date: "fallecio"
+    is_current: "¿Current?"
+    is_alive: "¿Vivo?"
+    website: "página web"
+    gender: género
+    location: localización
+    update: actualizar
+    cancel: cancelar
+    primary: primario
+    submit: enviar
 
   phrases:
     a_project_of:
     add_a_new_entity:
-    add_a_relationship:
+    click_to_add: "Haga click aquí"
+    add_a_relationship: "para añadir una conexión"
+    add_bulk: bulk
     additional_names:
     articles_documenting:
     basic_info:
     become_an_analyst:
     cancel:
     cant_find_what:
-    click_here:
+    click_here: click aquí
     connect_this_entity:
-    create_a_new:
-    create_new_reference:
+    create_a_new: "Creación de un nuevo"
+    create_new_alias: "Crear un nuevo alias"
+    create_new_reference: "Crear una referencia nueva"
     creating_new_relationship_between:
     current_password:
     data_summary: "Resumen de los datos"
     disclaimer:
     edited_by:
-    existing_source":
+    existing_source: "fuente existente"
     export_csv:
     get_involved:
     get_started_map:
     instructional_videos:
-    just_cleaning_up:
+    just_cleaning_up: "En proceso de ediciones menores"
     lists_of:
-    make_primary:
+    make_primary: "Hacer primario"
+    change_default_name: 'Haga click en "hacer primario" para cambiar el nombre por defecto de la entidad'
     map the power:
     match_donations:
     need_your_password:
@@ -114,15 +141,17 @@ es:
     terms:
     visual_tool:
     welcome:
-    where_is_this:
+    where_is_this: "¿De dónde procede esta información?"
     your_email: Tu email
     your_lists: Tus listas
     your_maps: Tus mapas
     your_recent_edits: Tus cambios recientes
     your_settings: Tus ajustes
     edit_your_settings:
+    add_relationship: "añadir conexión"
 
   pages:
+    stub_profile: "Este es un perfil en blanco - no hay conexiones en nuestra base de datos para esta persona. ¡Sea el primero en añadir una!"
     home:
       littlesis_is: "es una base de datos gratuita del quien-conoce-a-quien en las esferas políticas y de negocios"
       opposite_of_big_brother: "Lo contrario al Gran Hermano"
