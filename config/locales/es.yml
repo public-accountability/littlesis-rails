@@ -65,6 +65,9 @@ es:
     join: unirse
     relationships: conexiones
     signup: crear
+    dashboard: inicio
+    edits: cambios
+
 
 
 
