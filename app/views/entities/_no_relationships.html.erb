@@ -1,6 +1,6 @@
 <div id="entity-without-relationships-message">
-  <p>This is a stub profile page – there are no relationships in the database for this <%= entity_primary_ext_display(@entity) %>.</p>
+  <p><%= t('pages.stub_profile') %></p>
   <% if user_signed_in? %>
-    <p><%= link_to 'Click here', concretize_add_relationship_entity_path(@entity) %> to add a relationship</p>
+    <p><%= link_to t('phrases.click_to_add'), concretize_add_relationship_entity_path(@entity) %> <%= t('phrases.add_a_relationship') %></p>
   <% end %>
 </div>

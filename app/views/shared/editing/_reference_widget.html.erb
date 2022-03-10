@@ -6,14 +6,14 @@ Also see controllers/reference_widget_controller.js
 <div data-controller="reference-widget" id="reference-widget">
   <div class="card">
     <div class="card-header">
-      <span class="card-title">Where is this information coming from?</span>
+      <span class="card-title"><%= t('phrases.where_is_this') %></span>
     </div>
 
     <div class="card-body" data-reference-widget-target="existingSource">
       <% if local_assigns.fetch(:show_just_cleaning_up, true) %>
         <div class="mb-2">
           <label>
-            Just Cleaning Up:
+            <%= t('phrases.just_cleaning_up') %>
             <input type="checkbox"
                    data-action="change->reference-widget#toggleJustCleaningUp"
                    data-reference-widget-target="justCleaningUp"
@@ -25,7 +25,7 @@ Also see controllers/reference_widget_controller.js
       <% end %>
 
       <div class="mb-2">
-        <label class="pe-2">Existing Source:</label>
+        <label class="pe-2"><%= t('phrases.existing_source') %>:</label>
         <select style="max-width: 200px;" data-reference-widget-target="select" name="reference[document_id]"  class="form-control w-50 d-inline">
           <option></option>
           <% selected_document_id = local_assigns.fetch(:selected, nil) %>
@@ -40,7 +40,7 @@ Also see controllers/reference_widget_controller.js
                 type="button"
                 id="reference-widget-create-new-reference"
                 data-action="reference-widget#toggleNewDocument"
-                data-reference-widget-target="newReferenceButton">Create new reference</button>
+                data-reference-widget-target="newReferenceButton"><%= t('phrases.create_new_reference') %></button>
       </div>
     </div>
 
@@ -56,7 +56,7 @@ Also see controllers/reference_widget_controller.js
 
       <div class="row mb-2">
         <div class="col-2">
-          <label class="col-form-label">Name</label>
+          <label class="col-form-label"><%= t('vocab.name').capitalize %></label>
         </div>
         <div class="col-auto mw-2">
           <input class="form-control" type="text" name="reference[name]" data-reference-widget-target="newDocumentInput" />

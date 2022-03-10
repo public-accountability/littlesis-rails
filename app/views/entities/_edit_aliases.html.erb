@@ -6,12 +6,12 @@
 
 <div class="row">
   <div class="col-8 col-sm-7 col-md-6">
-    <p> Create a new alias:</p>
+    <p> <%= t('phrases.create_new_alias') %>:</p>
     <%= form_for @entity.aliases.new do |f| %>
       <%= f.hidden_field :entity_id, value: @entity.id %>
       <div class="input-group">
 	<%= f.text_field :name, { required: true, class: 'form-control' }  %>
-        <%= f.submit 'Add', class: 'btn btn-primary' %>
+        <%= f.submit t('vocab.add').capitalize, class: 'btn btn-primary' %>
       </div>
     <% end %>
   </div>
@@ -20,11 +20,10 @@
 <div class="row mt-2">
   <div class="col-sm-8 col-md-6 top-1em">
     <% if @entity.aliases.size > 1 %>
-      <p class="mt-1">Click "make primary" to change the entity's default name</p>
+      <p class="mt-1"><%= t('phrases.change_default_name') %></p>
     <% end %>
 
     <ul class="list-group">
-      <!-- <ul class="list-unstyled"> -->
       <% @entity.aliases.each do |a| %>
 	<%= render partial: 'edit_alias', locals: { entity_alias: a }%>
       <% end %>

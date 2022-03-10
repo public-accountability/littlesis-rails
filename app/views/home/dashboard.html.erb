@@ -1,4 +1,4 @@
-<% content_for(:page_title, "Dashboard") %>
+<% content_for(:page_title, t('vocab.dashboard').capitalize) %>
 
 <% content_for :head  do %>
   <%= stylesheet_link_tag "dashboard", media: "all" %>
@@ -7,18 +7,18 @@
 <div class="row" id="dashboard">
   <div class="col-md-8 col-sm-12">
 
-    <h1 class="pb-1">Dashboard</h1>
+    <h1 class="pb-1"><%= t('vocab.dashboard').capitalize %></h1>
 
     <div class="mb-4" id="dashboard-explore">
-      <%= link_to("maps", "/oligrapher/search", class: "btn btn-clear") %>
-      <%= link_to("lists", lists_path, class: "btn btn-clear") %>
-      <%= link_to("tags", tags_path, class: "btn btn-clear") %>
-      <%= link_to("edits", edits_path, class: "btn btn-clear") %>
-    </div>
+      <%= link_to(t('littlesis.map').pluralize, "/oligrapher/search", class: "btn btn-clear") %>
+      <%= link_to(t('littlesis.list').pluralize, lists_path, class: "btn btn-clear") %>
+      <%= link_to(t('littlesis.tag').pluralize, tags_path, class: "btn btn-clear") %>
+      <%= link_to(t('vocab.edits'), edits_path, class: "btn btn-clear") %>
+   </div>
 
     <form action="/search" method="get" id="dashboard-search-form" class="input-group mb-4" style="max-width: 344px;">
       <div class="input-group">
-        <input type="text" name="q" class="form-control" placeholder="search for a name" aria-label="Entity Search">
+        <input type="text" name="q" class="form-control" placeholder="<%= t('phrases.search_for_a_name') %>" aria-label="Entity Search">
         <button class="btn btn-clear" type="submit"><i class="bi bi-search"></i></button>
       </div>
     </form>

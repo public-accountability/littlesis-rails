@@ -78,7 +78,7 @@ describe 'edit entity page', type: :feature, js: true do
         click_on "edit"
       end
 
-      expect(page).to have_field('Start date:', with: '1970-05-01')
+      expect(page).to have_field('Start date', with: '1970-05-01')
     end
   end
 

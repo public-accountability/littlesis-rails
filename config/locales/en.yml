@@ -58,8 +58,15 @@ en:
       ResearchInstitute: "Academic Research Institute"
       GovernmentAdvisoryBody: "Government Advisory Body"
       EliteConsensus: "Elite Consensus Group"
+    tabs:
+      relationships: relationships
+      interlocks: interlocks
+      giving: giving
+      data: data
 
   vocab:
+    alias: alias
+    edits: edits
     donate: donate
     signup: sign up
     actions: actions
@@ -123,11 +130,19 @@ en:
     update: update
     username: username
     website: website
+    birth_date: "birthday"
+    death_date: "death date"
+    is_current: "Current?"
+    is_alive: "Alive?"
+    primary: primary
+    submit: submit
 
   phrases:
     a_project_of: "a project of"
     add_a_new_entity: "Click here to create a new entity"
-    add_a_relationship: "Click here to add a relationship"
+    click_to_add: "Click here"
+    add_a_relationship: "to add a relationship"
+    add_bulk: "add bulk"
     additional_names: "additional names for the person"
     articles_documenting: "Articles documenting info on this page"
     basic_info: "basic info"
@@ -137,20 +152,22 @@ en:
     click_here: "click here"
     connect_this_entity: "Connect this entity to other sites"
     create_a_new: "create a new"
+    create_new_alias: "Create a new alias"
     create_new_reference: "Create new reference"
     creating_new_relationship_between: "Creating a new relationship between"
     current_password: "Current password"
     data_summary: "Data Summary"
     disclaimer: disclaimer
     edited_by: "edited by"
-    existing_source": "Existing Source"
+    existing_source: "Existing Source"
     export_csv: "Export CSV"
     get_involved: "Get involved"
     get_started_map: "Get started on a new map"
     instructional_videos: "instructional videos"
     just_cleaning_up: "Just Cleaning Up"
     lists_of: "Analyst-created lists of people and org"
-    make_primary: "Click make primary to change the entity's default name"
+    make_primary: "Make primary"
+    change_default_name: "Click make primary to change the entity's default name"
     map the power: "Map the power"
     match_donations: "match donations"
     need_your_password: "we need your current password to confirm your changes"
@@ -174,11 +191,12 @@ en:
     your_recent_edits: "your Recent Edits"
     your_settings: "your settings"
     edit_your_settings: "Edit your settings"
+    add_relationship: add relationship
 
   pages:
     tags: "Tags allow contributors to thematically group people, organizations, lists, and relationships on LittleSis. Below is a list of all the tags on the site. Don't see a tag you want to use? Use this form to request it!"
     oligrapher: "Oligrapher is a tool for visualizing networks of influence using LittleSis Data"
-    stub_profile: "This is a stub profile page – there are no relationships in the database for this person. Be the first to add one!"
+    stub_profile: "This is a stub profile page – there are no relationships in the database."
     join:
       get_involved: |
         LittleSis is bringing together a community of researchers who believe in transparency and accountability in our society and economy. Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power.

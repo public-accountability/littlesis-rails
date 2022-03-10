@@ -4,7 +4,7 @@
   <% unless edited_entities.empty? && page == 1 %>
 
     <h4 class="mt-3 mb-2">
-      Your Recent Edits
+      <%= t('phrases.your_recent_edits') %>
       <% unless edited_entities.size < 15 && page == 1 %>
         <small class="arrows">
           <% if page > 1 %>

@@ -2,7 +2,7 @@
   <% unless maps.empty? && page == 1 %>
 
     <h4 class="mt-3 mb-2">
-      Your Maps
+      <%= t('phrases.your_maps') %>
 
       <% unless maps.size < maps_per_page && page == 1 %>
         <small class="arrows" name="dashboard-map-arrows">

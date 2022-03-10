@@ -7,10 +7,10 @@
     <div class="row mt-1 mb-3">
       <div class="col">
         <div class="profile-page-tabs">
-          <a href="<%= concretize_entity_path(@entity) %>" class="<%= @active_tab == :relationships ? 'active' : 'inactive' %>">Relationships</a>
-          <a href="<%= concretize_profile_entity_path(@entity, active_tab: :interlocks) %>" class="<%= @active_tab == :interlocks ? 'active' : 'inactive' %>">Interlocks</a>
-          <a href="<%= concretize_profile_entity_path(@entity, active_tab: :giving) %>" class="<%= @active_tab == :giving ? 'active' : 'inactive' %>">Giving</a>
-          <a href="<%= concretize_profile_entity_path(@entity, active_tab: :data) %>" class="<%= @active_tab == :data ? 'active' : 'inactive' %>">Data</a>
+          <a href="<%= concretize_entity_path(@entity) %>" class="<%= @active_tab == :relationships ? 'active' : 'inactive' %>"><%= t('littlesis.tabs.relationships').capitalize %></a>
+          <a href="<%= concretize_profile_entity_path(@entity, active_tab: :interlocks) %>" class="<%= @active_tab == :interlocks ? 'active' : 'inactive' %>"><%= t('littlesis.tabs.interlocks').capitalize %></a>
+          <a href="<%= concretize_profile_entity_path(@entity, active_tab: :giving) %>" class="<%= @active_tab == :giving ? 'active' : 'inactive' %>"><%= t('littlesis.tabs.giving').capitalize %></a>
+          <a href="<%= concretize_profile_entity_path(@entity, active_tab: :data) %>" class="<%= @active_tab == :data ? 'active' : 'inactive' %>"><%= t('littlesis.tabs.data').capitalize %></a>
         </div>
       </div>
     </div>
