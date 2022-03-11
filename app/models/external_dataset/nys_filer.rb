@@ -8,6 +8,9 @@ module ExternalDataset
     # @source_url = 'https://cfapp.elections.ny.gov/NYSBOE/download/ZipDataFiles/commcand.zip'
     # Instead go to https://publicreporting.elections.ny.gov/DownloadCampaignFinanceData/DownloadCampaignFinanceData and manually download the and Filter Data
     # then place this file, commcand.zip, in data/external_data/original/nys/commcand.zip
+    # run littlesis data transform nys_filers
+    # in production, move this file to the postgres server at /srv/nys_filers.csv
+    # run littlesis data nys_filers
     @zip_file = ROOT_DIR.join('original/nys').join('commcand.zip')
 
     def self.download

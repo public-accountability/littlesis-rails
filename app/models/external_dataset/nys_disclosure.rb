@@ -2,7 +2,7 @@
 
 module ExternalDataset
   # steps to import NYS Campaign Finance Data
-  #   - go to publicreporting.elections.ny.gov and click 'bulk data'
+  #   - go to publicreporting.elections.ny.gov and click 'bulk download'
   #   - enter data type = "disclosure report" and "report year" == all
   #   - download all 4 ALL_REPORTS files: state candidate, state committee, county candidate, county committee
   #   - put those files in <Rails-root>/data/external_data/original/nys
