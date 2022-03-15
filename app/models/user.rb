@@ -5,7 +5,14 @@ class User < ApplicationRecord
 
   MINUTES_BEFORE_USER_CAN_EDIT = 60
 
-  enum role: { user: 0, admin: 1, system: 2 }
+  enum role: {
+         user: 0, # default
+         admin: 1,
+         system: 2,
+         restricted: 3,
+         editor: 4,
+         collaborator: 5
+       }
 
   serialize :abilities, UserAbilities
   serialize :settings, UserSettings
@@ -32,7 +39,6 @@ class User < ApplicationRecord
   # Core associations
   has_one :user_profile, inverse_of: :user, dependent: :destroy
   has_one :api_token, dependent: :destroy
-  has_many :user_permissions, dependent: :destroy
   has_many :permission_passes, foreign_key: 'creator_id', inverse_of: :creator, dependent: :destroy
 
   # entities last edited by the user
@@ -149,6 +155,10 @@ class User < ApplicationRecord
   def permissions
     @permissions ||= Permissions.new(self)
   end
+
+  # def role
+  #   Role[super(role)]
+  # end
 
   # String | nil --> Arel::Nodes::Grouping | nil
   # Creates sql like statement with arel, which searches

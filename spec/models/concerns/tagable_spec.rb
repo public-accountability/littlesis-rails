@@ -202,37 +202,28 @@ describe Tagable, type: :model do
   end
 
   describe 'formating tags for user editing' do
-    let(:owner) { create_basic_user }
-    let(:non_owner) { create_basic_user }
+    let(:user) { create_basic_user }
     let(:restricted_tag) { tags.last.tap { |t| t.update(restricted: true) } }
 
-    # we have to use string keys here (unlike everywhere else) b/c of our Tag wanna-be model
     let(:full_access) { { viewable: true, editable: true }.with_indifferent_access }
     let(:view_only_access) { { viewable: true, editable: false }.with_indifferent_access }
 
     before do
       test_tagable.add_tag(restricted_tag.id)
-      owner.permissions.add_permission(Tag, tag_ids: [restricted_tag.id])
-      allow(test_tagable).to receive(:tags).and_return([restricted_tag])
-    end
-
-    def verify_permissions(user, expected_permissions)
-      expect(
-        test_tagable.tags_for(user)[:byId].values.map { |t| t['permissions'] }
-      ).to eq expected_permissions
     end
 
     it "returns all tags in map by stringified ids" do
-      expect(test_tagable.tags_for(owner)[:byId].keys.to_set).to eq(tags.map(&:id).map(&:to_s).to_set)
+      expect(test_tagable.tags_for(user)[:byId].keys.to_set).to eq(tags.map(&:id).map(&:to_s).to_set)
     end
 
     it "returns current tags as a list of ids" do
-      expect(test_tagable.tags_for(owner)[:current]).to eq [restricted_tag.id.to_s]
+      expect(test_tagable.tags_for(user)[:current]).to eq [restricted_tag.id.to_s]
     end
 
     it "enriches full tag list with permission info" do
-      verify_permissions(non_owner, [full_access, full_access, view_only_access])
-      verify_permissions(owner, [full_access] * 3)
+      expect(
+        test_tagable.tags_for(user)[:byId].values.map { |t| t['permissions'] }
+      ).to eq ([full_access] * 2) + [view_only_access]
     end
   end
 end

@@ -87,6 +87,28 @@ $$;
 
 
 --
+-- Name: newer_than_three_years(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.newer_than_three_years(t timestamp without time zone) RETURNS boolean
+    LANGUAGE sql
+    AS $$
+   SELECT t > (CURRENT_DATE - interval '3 year');
+$$;
+
+
+--
+-- Name: newer_than_two_years(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.newer_than_two_years(t timestamp without time zone) RETURNS boolean
+    LANGUAGE sql
+    AS $$
+   SELECT t > (CURRENT_DATE - interval '2 year');
+$$;
+
+
+--
 -- Name: recent_entity_edits(integer, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -155,6 +177,28 @@ CREATE FUNCTION public.round_ten_minutes(timestamp without time zone) RETURNS ti
     AS $_$
   SELECT date_trunc('hour', $1) + interval '10 min' * round(date_part('minute', $1) / 10.0)
 $_$;
+
+
+--
+-- Name: timestamp_if_newer_than_x_years(timestamp without time zone, integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.timestamp_if_newer_than_x_years(t timestamp without time zone, x integer) RETURNS timestamp without time zone
+    LANGUAGE sql
+    AS $$
+   SELECT CASE WHEN t > (CURRENT_DATE  - make_interval(years := x)) THEN t ELSE NULL END;
+$$;
+
+
+--
+-- Name: true_or_null(boolean); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION public.true_or_null(b boolean) RETURNS boolean
+    LANGUAGE sql IMMUTABLE
+    AS $$
+   SELECT CASE WHEN b IS TRUE THEN TRUE ELSE NULL END;
+$$;
 
 
 SET default_tablespace = '';
@@ -3976,39 +4020,6 @@ ALTER SEQUENCE public.unmatched_ny_filers_id_seq OWNED BY public.unmatched_ny_fi
 
 
 --
--- Name: user_permissions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.user_permissions (
-    id bigint NOT NULL,
-    user_id bigint,
-    resource_type character varying(255) NOT NULL,
-    access_rules text,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: user_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.user_permissions_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: user_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.user_permissions_id_seq OWNED BY public.user_permissions.id;
-
-
---
 -- Name: user_profiles; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4924,13 +4935,6 @@ ALTER TABLE ONLY public.unmatched_ny_filers ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- Name: user_permissions id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_permissions ALTER COLUMN id SET DEFAULT nextval('public.user_permissions_id_seq'::regclass);
-
-
---
 -- Name: user_profiles id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5827,14 +5831,6 @@ ALTER TABLE ONLY public.transactions
 
 ALTER TABLE ONLY public.unmatched_ny_filers
     ADD CONSTRAINT unmatched_ny_filers_pkey PRIMARY KEY (id);
-
-
---
--- Name: user_permissions user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_permissions
-    ADD CONSTRAINT user_permissions_pkey PRIMARY KEY (id);
 
 
 --
@@ -7208,13 +7204,6 @@ CREATE UNIQUE INDEX idx_17317_index_users_on_username ON public.users USING btre
 
 
 --
--- Name: idx_17336_index_user_permissions_on_user_id_and_resource_type; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX idx_17336_index_user_permissions_on_user_id_and_resource_type ON public.user_permissions USING btree (user_id, resource_type);
-
-
---
 -- Name: idx_17345_index_user_profiles_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8392,6 +8381,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220121202744'),
 ('20220121202745'),
 ('20220126173448'),
-('20220126215216');
+('20220126215216'),
+('20220315195417');
 
 

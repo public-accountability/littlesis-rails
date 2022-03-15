@@ -6,7 +6,6 @@ describe User do
   it { is_expected.to have_one(:api_token) }
   it { is_expected.to have_one(:user_profile) }
   it { is_expected.to have_many(:lists) }
-  it { is_expected.to have_many(:user_permissions) }
   it { is_expected.to have_many(:user_requests) }
   it { is_expected.to have_many(:reviewed_requests) }
 
