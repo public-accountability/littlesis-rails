@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Layout/EmptyLineAfterGuardClause
-
 class Permissions
   ACCESS_OPEN = 0
   ACCESS_CLOSED = 1
@@ -17,14 +15,6 @@ class Permissions
 
   def initialize(user)
     @user = user
-  end
-
-  def add_permission(resource_type, access_rules)
-    update_permission(resource_type, access_rules, :union)
-  end
-
-  def remove_permission(resource_type, access_rules)
-    update_permission(resource_type, access_rules, :difference)
   end
 
   def entity_permissions(entity)
@@ -74,47 +64,27 @@ class Permissions
 
   private
 
-  # ACCESS RULE HELPER
-  def update_permission(resource_type, access_rules, operation)
-    permission = @user.user_permissions.find_or_create_by(resource_type: resource_type.to_s)
-    klass = "Permissions::#{resource_type}AccessRules".constantize
-    new_access_rules = klass.update(permission.access_rules, access_rules, operation)
-    permission.update(access_rules: new_access_rules)
-  end
-
   # LIST HELPERS
 
   def view_list?(list)
     return true if admin? || (list.creator_user_id == @user.id)
-    return false if list.restricted?
-    return true
+    !list.restricted?
   end
 
   # Does the user have permssion to add/remove entities from given list?
   def edit_list?(list)
     return true if admin? || (list.creator_user_id == @user.id)
-    return false if list.restricted?
-    return true if @user.lister? && (list.access == ACCESS_OPEN)
-    return false
+    !list.restricted? && @user.lister? && (list.access == ACCESS_OPEN)
   end
 
   def configure_list?(list)
-    return true if admin? || (list.creator_user_id == @user.id)
-    return false
+    admin? || list.creator_user_id == @user.id
   end
 
   # TAG HELPERS
 
   def edit_tag?(tag)
-    return true if @user.admin?
-    return true unless tag.restricted?
-    return true if owns_tag(tag.id)
-    return false
-  end
-
-  def owns_tag(tag_id)
-    @user.user_permissions.find_by(resource_type: 'Tag')
-      &.access_rules&.fetch(:tag_ids)&.include?(tag_id)
+    @user.admin? || !tag.restricted?
   end
 
   # ENTITY HELPERS
@@ -131,7 +101,6 @@ class Permissions
     item.versions.find_by(event: 'create')&.whodunnit == @user.id.to_s
   end
 
-
   # RELATIONSHIP HELPERS
 
   def delete_relationship?(rel)
@@ -140,21 +109,4 @@ class Permissions
       !(rel.filings.present? && rel.description1.include?('Campaign Contribution')) &&
       user_is_creator?(rel)
   end
-
-  class TagAccessRules
-    InvalidOperationError = Exception.new('operation must be one of: [:union, :difference]')
-
-    def self.update(old_rules, new_rules, operation)
-      check operation
-      old_ids = old_rules&.fetch(:tag_ids, [])&.to_set || Set.new
-      new_ids = new_rules.fetch(:tag_ids, []).to_set
-      { tag_ids: old_ids.send(operation, new_ids).to_a }
-    end
-
-    def self.check(operation)
-      raise InvalidOperationError unless %i[union difference].include?(operation)
-    end
-  end
 end
-
-# rubocop:enable Layout/EmptyLineAfterGuardClause
