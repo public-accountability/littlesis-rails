@@ -27,7 +27,7 @@ class UserNavmenuPresenter
 
       explore: [t('vocab.explore').capitalize,
                 [[t('littlesis.map').pluralize.capitalize, '/oligrapher'],
-                 [t('littlesis.list').pluralize.capitalize, 'lists?featured=true'],
+                 [t('littlesis.list').pluralize.capitalize, '/lists?featured=true'],
                  [t('littlesis.tag').pluralize.capitalize, '/tags']]],
 
       features: [t('vocab.features').capitalize,
