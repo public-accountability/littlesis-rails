@@ -65,23 +65,31 @@ es:
       data: Datos
 
   vocab:
+    about: acerca de nosotros
     add: añadir
+    help: ayuda
     alias: alias
     citations: citas
+    disclaimer: Descargo de Responsabilidad
     donate: donar
+    donation: donación
     join: unirse
     relationships: conexiones
     signup: crear
+    login: "iniciar sesión"
     dashboard: inicio
     edit: editar
     edits: cambios
     flag: destacar
+    features: caracteristicas
+    featured: destacado
     remove: eliminar
     merge: fusión
     name: nombre
     summary: resumen
     start_date: "fecha de inicio"
     end_date: "fecha final"
+    explore: explorar
     birth_date: "cumpleaños"
     death_date: "fallecio"
     is_current: "¿Current?"
@@ -93,6 +101,7 @@ es:
     cancel: cancelar
     primary: primario
     submit: enviar
+    toolkit: destacado
 
   phrases:
     a_project_of:
@@ -112,6 +121,7 @@ es:
     create_new_alias: "Crear un nuevo alias"
     create_new_reference: "Crear una referencia nueva"
     creating_new_relationship_between:
+    contact_us: Contacto
     current_password:
     data_summary: "Resumen de los datos"
     disclaimer:

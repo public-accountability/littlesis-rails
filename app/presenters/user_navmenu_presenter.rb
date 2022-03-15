@@ -4,69 +4,56 @@ class UserNavmenuPresenter
   attr_reader :items
 
   class << self
-    delegate :tags_path, :lists_path, :edits_path, :datasets_path, :featured_maps_path, to: 'Rails.application.routes.url_helpers'
+    delegate :t, to: 'I18n'
   end
 
   delegate :each, :size, to: :@items
 
-  # other pages:
-  # Source Code https://github.com/public-accountability/littlesis-rails
-  # Bulk Data /bulk_data'
-  # Toolkit /toolkit
-  # Report a bug /bug_report
-  # featured maps featured_maps_path
+  private_class_method def self.create_menus
+    {
+      about: [t('vocab.about').capitalize,
+              [['LittleSis', '/about'],
+               [t('vocab.signup').titleize, '/join'],
+               [t('vocab.help').capitalize, '/help'],
+               ['API', '/api'],
+               [t('vocab.disclaimer'), '/disclaimer'],
+               [t('phrases.contact_us').titleize, '/contact'],
+               [t('vocab.donate').capitalize, '/donate']]],
 
-  ABOUT_MENU = ['About', [['LittleSis', '/about'],
-                          ['Sign Up', '/join'],
-                          ['Help', '/help'],
-                          ['API', '/api'],
-                          ['Disclaimer', '/disclaimer'],
-                          ['Contact Us', '/contact'],
-                          ['Donate', '/donate']]].freeze
+      add: [t('vocab.add').capitalize,
+            [[t('littlesis.entity').capitalize, '/entities/new'],
+             [t('littlesis.list').capitalize, '/lists/new'],
+             [t('littlesis.map').capitalize, '/maps/new']]],
 
-  USER_ABOUT_MENU = ['About', [['LittleSis', '/about'],
-                               ['Blog', 'https://news.littlesis.org'],
-                               ['Help', '/help'],
-                               ['API', '/api'],
-                               ['Disclaimer', '/disclaimer'],
-                               ['Contact Us', '/contact'],
-                               ['Donate', '/donate']]].freeze
+      explore: [t('vocab.explore').capitalize,
+                [[t('littlesis.map').pluralize.capitalize, '/oligrapher'],
+                 [t('littlesis.list').pluralize.capitalize, 'lists?featured=true'],
+                 [t('littlesis.tag').pluralize.capitalize, '/tags']]],
 
-  ADD_MENU = ['Add', [['Entity', '/entities/new'],
-                      ['List', '/lists/new'],
-                      ['Map', '/maps/new']]].freeze
+      features: [t('vocab.features').capitalize,
+                 [['Blog', 'https://news.littlesis.org'],
+                  [t('vocab.toolkit').capitalize, '/toolkit'],
+                  ['Powerlines', 'https://powerlines101.org']]]
 
-  EXPLORE_MENU = ['Explore', [['Maps', '/oligrapher'],
-                              ['Lists', lists_path(featured: true)],
-                              ['Tags', tags_path]]].freeze
+    }.tap do |h|
+      h[:default] = [[t('vocab.login').titleize, '/login'], h[:explore], h[:about], h[:features]]
+      h[:user_explore] = h[:explore].clone
+      h[:user_explore][1] << [t('vocab.edits').capitalize, '/edits']
+      h[:admin_explore] = h[:user_explore].clone
+      h[:admin_explore][1] << [t('littlesis.datasets').titleize, '/datasets']
+    end
+  end
 
-  USER_EXPLORE_MENU = ['Explore', [['Maps', '/oligrapher'],
-                                   ['Lists', lists_path(featured: true)],
-                                   ['Tags', tags_path],
-                                   ['Edits', edits_path]]].freeze
-
-  ADMIN_EXPLORE_MENU = ['Explore', [['Maps', '/oligrapher'],
-                                    ['Lists', lists_path(featured: true)],
-                                    ['Tags', tags_path],
-                                    ['Edits', edits_path],
-                                    ['Datasets', datasets_path]]].freeze
-
-  FEATURES_MENU = ['Features', [['Blog', 'https://news.littlesis.org'],
-                                ['Toolkit', '/toolkit'],
-                                ['Powerlines', 'https://powerlines101.org']]].freeze
-
-  DEFAULT_MENU = [
-    ['Login', '/login'],
-    EXPLORE_MENU,
-    ABOUT_MENU,
-    FEATURES_MENU
-  ].freeze
+  MENUS = {
+    en: I18n.with_locale(:en) { create_menus }.freeze,
+    es: I18n.with_locale(:es) { create_menus }.freeze
+  }.freeze
 
   def initialize(user = nil)
     @items = if user
                user_items(user)
              else
-               DEFAULT_MENU
+               MENUS.dig(I18n.locale, :default)
              end
   end
 
@@ -75,10 +62,10 @@ class UserNavmenuPresenter
   def user_items(user)
     [
       user_links(user),
-      (user.admin? ? ADMIN_EXPLORE_MENU : USER_EXPLORE_MENU),
-      ADD_MENU,
-      USER_ABOUT_MENU,
-      FEATURES_MENU
+      (user.admin? ? MENUS.dig(I18n.locale, :admin_explore) : MENUS.dig(I18n.locale, :user_explore)),
+      MENUS.dig(I18n.locale, :add),
+      MENUS.dig(I18n.locale, :about),
+      MENUS.dig(I18n.locale, :features)
     ]
   end
 

@@ -14,7 +14,7 @@
     </button>
 
     <div class="collapse navbar-collapse" id="littlesisNavbarContent">
-      <%= cache_unless user_signed_in?, 'anonymous_user_navmenu' do %>
+      <%= cache_unless user_signed_in?, "anonymous_user_navmenu_#{I18n.locale}" do %>
         <%= render partial: 'shared/bootstrap_nav_menu' %>
       <% end %>
     </div>

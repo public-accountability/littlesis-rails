@@ -65,10 +65,12 @@ en:
       data: data
 
   vocab:
+    about: about
     alias: alias
     edits: edits
     donate: donate
     signup: sign up
+    login: login
     actions: actions
     add: add
     alive: alive
@@ -89,11 +91,15 @@ en:
     death_date: death date
     delete: delete
     details: details
+    disclaimer: Disclaimer
+    donate: donate
     donation: donation
     edit: edit
     email: email
     end_date: end_date
+    explore: explore
     family: family
+    features: features
     featured: featured
     flag: flag
     gender: gender
@@ -101,6 +107,7 @@ en:
     giving: giving
     grant: grant
     here: here
+    help: help
     join: join
     lobbying: lobbying
     location: location
@@ -141,6 +148,7 @@ en:
     a_project_of: "a project of"
     add_a_new_entity: "Click here to create a new entity"
     click_to_add: "Click here"
+    contact_us: "Contact Us"
     add_a_relationship: "to add a relationship"
     add_bulk: "add bulk"
     additional_names: "additional names for the person"
@@ -157,7 +165,7 @@ en:
     creating_new_relationship_between: "Creating a new relationship between"
     current_password: "Current password"
     data_summary: "Data Summary"
-    disclaimer: disclaimer
+
     edited_by: "edited by"
     existing_source: "Existing Source"
     export_csv: "Export CSV"
@@ -247,6 +255,7 @@ en:
       names_behind_the_news: "Names behind the news"
       unique_resource: "A unique resource for investigating cronyism, conflicts of interest, and systemic corruption."
       made_for_watchdogs: "Made for watchdogs"
+
 
   # kaminari pagination labels
   views:
