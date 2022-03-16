@@ -36,8 +36,13 @@ class OligrapherController < ApplicationController
   end
 
   def perform_search
-    @query = params[:query]
-    @current_user_id = current_user.id if user_signed_in? && params[:personal_search]
+    @query = params[:query]&.strip
+
+    if @query.present?
+      current_user_id = current_user.id if user_signed_in? && params[:personal_search]
+      @search_results = OligrapherSearchService.run(@query, user_id: current_user_id)
+    end
+
     render partial: 'search_results'
   end
 
