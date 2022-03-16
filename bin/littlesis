@@ -96,7 +96,7 @@ def app_exec(cmd, bin: false, run: false)
     if run
       docker_compose 'run', '--rm', "-e RAILS_ENV=#{$rails_env}", 'app', cmd
     else
-      docker_compose 'exec', "-e RAILS_ENV=#{$rails_env}", 'app', cmd
+      docker_compose 'exec', ($stdout.tty? ? '' : '-T'), "-e RAILS_ENV=#{$rails_env}", 'app', cmd
     end
   end
 end
