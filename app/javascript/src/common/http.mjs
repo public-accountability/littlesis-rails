@@ -1,5 +1,12 @@
 import { isString, isPlainObject, merge }  from 'lodash-es'
 
+class RequestFailureError extends Error {
+  constructor(status) {
+    super(`response failed with status code: ${status}`)
+    this.name = "RequestFailureError"
+  }
+}
+
 const jsonHeaders = {
   "Content-Type": "application/json",
   "Accept": "application/json"
@@ -9,7 +16,7 @@ const validateResponse = (res) => {
   if (res.status >= 200 && res.status < 300) {
     return res
   }
-  throw `response failed with status code: ${res.status}`
+  throw new RequestFailureError(res.status)
 }
 
 // String | Object | Any --> String

@@ -8,11 +8,11 @@ class OligrapherController < ApplicationController
 
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  AUTHENITICATED_ACTIONS = %i[new create update editors confirm_editor lock release_lock clone destroy].freeze
+  AUTHENITICATED_ACTIONS = %i[new create update editors confirm_editor lock release_lock clone destroy featured].freeze
 
   before_action :authenticate_user!, only: AUTHENITICATED_ACTIONS
   before_action :block_restricted_user_access, only: AUTHENITICATED_ACTIONS
-  before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot]
+  before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot featured]
   before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
   before_action :check_editor, only: %i[update]
@@ -107,6 +107,13 @@ class OligrapherController < ApplicationController
     end
   end
 
+  def featured
+    admins_only
+    result = @map.update_columns(is_featured: !@map.is_featured)
+    status = result ? :ok : :internal_server_error
+    render json: { status: status, is_featured: @map.is_featured }, status: status
+  end
+
   # Action Endpoints - API requests from Oligrapher
 
   # two actions { editor: { action: add | remove, username: <username> } }
@@ -163,35 +170,35 @@ class OligrapherController < ApplicationController
       is_private: true,
       user_id: current_user.id,
       title: "Clone: #{map.title}"
-    )
+     )
 
-    render json: { redirect_url: oligrapher_path(map) }
-  end
+     render json: { redirect_url: oligrapher_path(map) }
+   end
 
-  def destroy
-    @map.destroy
-    respond_to do |format|
-      format.json { render json: { redirect_url: new_oligrapher_path } }
-      format.any { redirect_back(fallback_location: '/maps') }
-    end
-  end
+   def destroy
+     @map.destroy
+     respond_to do |format|
+       format.json { render json: { redirect_url: new_oligrapher_path } }
+       format.any { redirect_back(fallback_location: '/maps') }
+     end
+   end
 
-  # Search API
+   # Search API
 
-  def find_nodes
-    return head :bad_request if params[:q].blank?
+   def find_nodes
+     return head :bad_request if params[:q].blank?
 
-    entities = EntitySearchService
-                 .new(query: params[:q],
-                      fields: %w[name aliases blurb],
-                      num: params.fetch(:num, 10).to_i)
-                 .search
-                 .map(&Oligrapher::Node.method(:from_entity))
+     entities = EntitySearchService
+                  .new(query: params[:q],
+                       fields: %w[name aliases blurb],
+                       num: params.fetch(:num, 10).to_i)
+                  .search
+                  .map { |e| Oligrapher::Node.from_entity(e) }
 
-    render json: entities
-  end
+     render json: entities
+   end
 
-  def find_connections
+   def find_connections
     return head :bad_request if params[:entity_id].blank?
 
     query = EntityConnectionsQuery.new(Entity.find(params[:entity_id]))
@@ -215,7 +222,7 @@ class OligrapherController < ApplicationController
                 .where(entity2_id: params[:entity2_ids].split(','))
                 .pluck(:relationship_id)
 
-    edges = Relationship.find(rel_ids).map(&Oligrapher.method(:rel_to_edge))
+    edges = Relationship.find(rel_ids).map { |r| Oligrapher.rel_to_edge(r) }
 
     render json: edges
   end
@@ -229,7 +236,7 @@ class OligrapherController < ApplicationController
     interlock_ids = Entity.interlock_ids(params[:entity1_id], params[:entity2_id])
     interlock_ids = (interlock_ids - params[:entity_ids].split(',').map(&:to_i)).take(num)
 
-    if interlock_ids.count > 0
+    if interlock_ids.count.positive?
       nodes = Entity
                 .where(id: interlock_ids)
                 .map { |e| Oligrapher::Node.from_entity(e) }

@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
+import { post } from '../src/common/http.mjs'
 
 export default class extends Controller {
-  static targets = [ 'table', 'preview' ]
+  static targets = [ 'table', 'preview']
 
   tableTargetConnected(target) {
     $('#oligrapher-search-results-table').DataTable({
@@ -22,5 +23,13 @@ export default class extends Controller {
         template: '<div class="popover" role="tooltip"><div class="popover-body"></div></div>',
         content: `<img src="${url}" class="img-responsive w-100">`
       })
+  }
+
+  toggleIsFeatured(event) {
+    post(event.target.dataset.url, {}).then(() => {
+      event.target.querySelector('span').classList.toggle('star')
+      event.target.querySelector('span').classList.toggle('not-star')
+    })
+      .catch(console.error)
   }
 }

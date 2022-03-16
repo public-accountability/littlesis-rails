@@ -10,7 +10,7 @@ AllCops:
     - 'db/seeds.rb'
     - 'db/migrate/*.rb'
   TargetRubyVersion: 3.0
-  TargetRailsVersion: 6.1
+  TargetRailsVersion: 7.0
 
 Rails:
   Enabled: true
@@ -88,6 +88,10 @@ Style/StringLiterals:
 Style/SymbolArray:
   Enabled: false
 
+Style/Semicolon:
+  Exclude:
+    - 'spec/**/*.rb'
+
 Style/ImplicitRuntimeError:
   Enabled: true
   Exclude:
@@ -131,7 +135,13 @@ RSpec/MultipleExpectations:
   Enabled: false
 
 RSpec/NestedGroups:
-  Max: 4
+  Max: 5
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 7
+
+RSpec/StubbedMock:
+  Enabled: False
 
 RSpec/Capybara:
   Capybara/FeatureMethods:

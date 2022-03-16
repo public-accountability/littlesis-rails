@@ -22,6 +22,14 @@
                      data-screenshoturl="<%= map.screenshot_url %>">
                   </i>
                 <% end %>
+
+                <% if current_user&.admin? %>
+                  <button class="star-button ms-1"
+                          data-action="click->oligrapher-search#toggleIsFeatured"
+                          data-url="<%= featured_oligrapher_path(map) %>">
+                    <span class="<%= map.is_featured ? 'star' : 'not-star' %> pe-none"></span>
+                  </button>
+                <% end %>
                 <span>
                 </span>
               </td>
