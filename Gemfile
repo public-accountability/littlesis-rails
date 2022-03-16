@@ -72,7 +72,6 @@ group :test do
 end
 
 group :development do
-  # gem 'ruby-prof'
   gem 'web-console'
   gem 'better_errors'
   gem 'rack-mini-profiler', require: false
@@ -82,10 +81,8 @@ group :development do
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
 
-  # used by robe
-  gem 'pry', require: false
-  gem 'pry-doc', require: false
-  gem 'webrick', require: false
+  # gem 'ruby-prof'
+  gem 'solargraph', require: false
 end
 
 group :test, :development do
