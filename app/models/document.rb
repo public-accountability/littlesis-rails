@@ -32,11 +32,20 @@ class Document < ApplicationRecord
 
   PER_PAGE = 20
 
-  ACCEPTED_MIME_TYPES = ['application/pdf', 'text/html', 'image/png', 'image/jpeg', 'text/csv']
+  ACCEPTED_MIME_TYPES = ['application/pdf', 'text/html', 'image/png', 'image/jpeg', 'text/csv'].freeze
 
   enum ref_type: { generic: 1,
                    fec: 2,
                    primary_source: 3 }
+
+  def url
+    if primary_source?
+      raise Exceptions::MissingAttachmentError unless primary_source_document.attached?
+      Rails.application.routes.url_helpers.rails_blob_path(primary_source_document)
+    else
+      super
+    end
+  end
 
   def self.find_or_create!(attrs)
     find_by_url(attrs.fetch(:url)) || Document.create!(attrs)
