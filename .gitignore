@@ -58,7 +58,6 @@ doc/
 
 # ignore json stored in the top level
 /*.json
-!/package.json
 
 # Everything in the data folder is ignored outright
 /data/*
@@ -74,9 +73,8 @@ doc/
 
 # javascript
 /node_modules
-/yarn-error.log
-yarn-debug.log*
-.yarn-integrity
+!/package.json
+!/package-lock.json
 
 /wordpress
 

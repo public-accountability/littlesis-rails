@@ -281,6 +281,8 @@ when 'gem'
   app_exec "#{gem_path} #{rest}", run: true
 when 'yarn'
   app_exec_bin "yarn #{rest}"
+when 'npm'
+  app_exec "npm #{rest}"
 when 'rake'
   app_exec_bin "rake #{rest}"
 when 'runner'

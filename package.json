@@ -1,6 +1,5 @@
 {
   "name": "app",
-  "private": "true",
   "dependencies": {
     "@hotwired/stimulus": "^3.0.1",
     "@hotwired/turbo-rails": "^7.1.1",
@@ -25,6 +24,7 @@
   },
   "scripts": {
     "build": "config/esbuild.js",
+    "build-watch": "config/esbuild.js --watch",
     "build-analyze": "esbuild app/javascript/*.* --outdir=/tmp --bundle --minify --analyze",
     "test": "mocha spec/javascripts"
   },

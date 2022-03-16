@@ -156,8 +156,6 @@ GEM
     jaro_winkler (1.5.4)
     joiner (0.6.0)
       activerecord (>= 6.1.0)
-    jsbundling-rails (1.0.2)
-      railties (>= 6.0.0)
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
       kaminari-actionview (= 1.2.2)
@@ -434,7 +432,6 @@ DEPENDENCIES
   good_job (>= 2.6.2)
   http-accept
   image_processing
-  jsbundling-rails
   kaminari
   kramdown
   memory_profiler

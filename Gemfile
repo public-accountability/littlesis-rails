@@ -36,7 +36,7 @@ gem 'sassc-rails'
 gem 'sprockets', '~> 4'
 gem 'turbo-rails', '> 0.8', '< 7.0.0'
 gem 'stimulus-rails'
-gem 'jsbundling-rails'
+# gem 'jsbundling-rails'
 
 # Search
 gem 'thinking-sphinx', '~> 5.1'
