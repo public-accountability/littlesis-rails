@@ -56,6 +56,8 @@ COPY ./Gemfile.lock ./Gemfile ./
 RUN bundle install --jobs=2
 
 COPY ./package.json ./package-lock.json ./
+# Fixes issue when installing sharp
+RUN npm config set unsafe-perm true
 RUN npm install
 
 EXPOSE 8080

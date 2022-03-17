@@ -44,8 +44,8 @@ Aliases
            psql
            pg_dump
            pg_restore
-           yarn
            node
+           npm
            git
            rg
            find
@@ -186,8 +186,8 @@ def deploy
     app_exec_bin 'bundle install'
   end
 
-  if changed_files.include?('yarn.lock')
-    app_exec_bin 'yarn'
+  if changed_files.include?('package-lock.json')
+    app_exec 'npm ci'
   end
 
   # TODO detech changes to Rails.application.config.littlesis.oligrapher_commit and run OligrapherAssetsService.run
@@ -279,8 +279,6 @@ when 'bundle'
 when 'gem'
   gem_path = production_environment? ? '/home/littlesis/.rbenv/shims/gem' : '/usr/local/bin/gem'
   app_exec "#{gem_path} #{rest}", run: true
-when 'yarn'
-  app_exec_bin "yarn #{rest}"
 when 'npm'
   app_exec "npm #{rest}"
 when 'rake'
