@@ -58,7 +58,7 @@ RUN bundle install --jobs=2
 COPY ./package.json ./package-lock.json ./
 # Fixes issue when installing sharp
 RUN npm config set unsafe-perm true
-RUN npm install
+RUN npm ci
 
 EXPOSE 8080
 
