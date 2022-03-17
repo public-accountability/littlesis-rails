@@ -224,6 +224,7 @@ LittleSis::Application.routes.draw do
     member do
       post '/editors', action: :editors
       post '/confirm_editor', action: :confirm_editor
+      post 'featured'
       get 'lock'
       get 'screenshot'
       post 'lock'

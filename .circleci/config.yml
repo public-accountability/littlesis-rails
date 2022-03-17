@@ -66,17 +66,16 @@ jobs:
     machine:
       image: ubuntu-2004:202111-02
     steps:
-      - run: curl -o- -L https://yarnpkg.com/install.sh | bash
       - checkout
       - restore_cache:
-          name: Restore Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
+          name: Restore NPM Package Cache
+          key: npm-packages-{{ checksum "package-lock.json" }}
 
-      - run: yarn install --immutable
+      - run: npm ci
 
       - save_cache:
-          key: yarn-packages-{{ checksum "yarn.lock" }}
+          key: npm-packages-{{ checksum "package-lock.json" }}
           paths:
-            - ~/.cache/yarn
+            - ./node_modules
 
-      - run: yarn test
+      - run: npm test

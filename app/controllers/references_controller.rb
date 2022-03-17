@@ -43,7 +43,9 @@ class ReferencesController < ApplicationController
   # /references/documents
   # returns all documents for referenceable
   def documents
-    render json: @referenceable.documents.map { |d| d.attributes.slice('id', 'url', 'name', 'updated_at', 'created_at') }
+    render json: @referenceable.documents.map do |d|
+      d.attributes.slice('id', 'name', 'updated_at', 'created_at').merge!(url: d.url)
+    end
   end
 
   # GET '/references/recent'

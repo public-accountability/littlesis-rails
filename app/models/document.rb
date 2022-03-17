@@ -32,11 +32,20 @@ class Document < ApplicationRecord
 
   PER_PAGE = 20
 
-  ACCEPTED_MIME_TYPES = ['application/pdf', 'text/html', 'image/png', 'image/jpeg', 'text/csv']
+  ACCEPTED_MIME_TYPES = ['application/pdf', 'text/html', 'image/png', 'image/jpeg', 'text/csv'].freeze
 
   enum ref_type: { generic: 1,
                    fec: 2,
                    primary_source: 3 }
+
+  def url
+    if primary_source?
+      raise Exceptions::MissingAttachmentError unless primary_source_document.attached?
+      Rails.application.routes.url_helpers.rails_blob_path(primary_source_document)
+    else
+      super
+    end
+  end
 
   def self.find_or_create!(attrs)
     find_by_url(attrs.fetch(:url)) || Document.create!(attrs)
@@ -64,16 +73,14 @@ class Document < ApplicationRecord
   private
 
   def trim_whitespace
-    url&.strip!
+    self[:url].strip! if self[:url].present? && !primary_source?
     name&.strip!
   end
 
   def set_hash
-    self.url_hash = url_to_hash if url.present?
-  end
-
-  def url_to_hash
-    Document.url_to_hash url
+    if self[:url].present? && !primary_source?
+      self.url_hash = Document.url_to_hash(url)
+    end
   end
 
   def convert_date

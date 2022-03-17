@@ -36,26 +36,29 @@ RUN echo '4ccad08485d404ce0ae2bf7e7257e77d2b28d7b7fb3578201c5d734d85ec8e64 /tmp/
 RUN apt-get install -y /tmp/manticore.deb
 
 # Node
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
-RUN npm --global install yarn
 
 # Firefox and Geckodriver
 RUN curl -L "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" | tar xjf - -C /opt
 RUN printf "#!/bin/sh\nexec /opt/firefox/firefox \$@\n" > /usr/local/bin/firefox && chmod +x /usr/local/bin/firefox && firefox -version
 RUN curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz" | tar xzf - -C /usr/local/bin
 
-RUN mkdir -p /littlesis
+# Setup gem & bundler
+RUN gem update --system
+# throw errors if Gemfile has been modified since Gemfile.lock
+# RUN bundle config --global frozen 1
+
+RUN mkdir -p /littlesis # && chown littlesis:littlesis /littlesis
 WORKDIR /littlesis
 
-RUN gem update --system
-
 COPY ./Gemfile.lock ./Gemfile ./
-RUN gem install bundler -v "$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)"
 RUN bundle install --jobs=2
 
-COPY ./package.json ./yarn.lock ./
-RUN yarn install
+COPY ./package.json ./package-lock.json ./
+# Fixes issue when installing sharp
+RUN npm config set unsafe-perm true
+RUN npm install
 
 EXPOSE 8080
 

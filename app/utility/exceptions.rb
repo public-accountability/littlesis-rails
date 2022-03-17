@@ -13,6 +13,7 @@ module Exceptions
   class MatchingError < LittleSisError; end
   class EditingDisabled < LittleSisError; end
   class HTTPRequestFailedError < LittleSisError; end
+  class MissingAttachmentError < LittleSisError; end
 
   class CannotRestoreError < LittleSisError
     def message
