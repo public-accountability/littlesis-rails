@@ -73,16 +73,14 @@ class Document < ApplicationRecord
   private
 
   def trim_whitespace
-    url&.strip!
+    self[:url].strip! if self[:url].present? && !primary_source?
     name&.strip!
   end
 
   def set_hash
-    self.url_hash = url_to_hash if url.present?
-  end
-
-  def url_to_hash
-    Document.url_to_hash url
+    if self[:url].present? && !primary_source?
+      self.url_hash = Document.url_to_hash(url)
+    end
   end
 
   def convert_date
