@@ -4,8 +4,7 @@ module Lists
   # Handles creation of entities in the context of lists
   class EntitiesController < ApplicationController
     before_action :authenticate_user!
-    before_action :block_restricted_user_access
-    before_action -> { current_user.raise_unless_can_edit! }
+    before_action :current_user_can_edit?
     before_action :set_list, :set_entity
 
     def create

@@ -46,9 +46,9 @@
                    } %>
       <% end %>
     <% when :data %>
-      <% cache [@entity, 'data'] do %>
+      <%# cache [@entity, 'data'] do %>
         <%= render partial: 'data' %>
-      <% end %>
+      <%# end %>
     <% end %>
 
   </div> <%# end content-col %>

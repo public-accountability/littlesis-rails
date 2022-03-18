@@ -5,11 +5,11 @@ module Lists
   class ListEntitiesController < ApplicationController
     include ListPermissions
 
+    before_action :authenticate_user!
     before_action :set_list
     before_action :set_permissions
     before_action -> { check_access(:editable) }
-    before_action :authenticate_user!
-    before_action :block_restricted_user_access
+
 
     def create
       raise Exceptions::PermissionError unless @list.user_can_edit?(current_user)

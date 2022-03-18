@@ -3,6 +3,7 @@
 module DeletionRequests
   class BaseController < ApplicationController
     before_action :authenticate_user!
+    before_action -> { current_user.role.include?(:suggest_changes) }, only: [:show, :new, :create]
     before_action :admins_only, only: [:review, :commit_review]
     before_action :set_deletion_request, only: [:show, :review, :commit_review]
     before_action :set_decision, only: :commit_review

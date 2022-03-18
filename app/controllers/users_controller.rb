@@ -4,9 +4,9 @@ class UsersController < ApplicationController
   before_action :set_user,
                 only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict, :edits]
   before_action :authenticate_user!, except: [:success, :check_username]
-  before_action :prevent_restricted, only: [:show, :edits]
-  before_action :admins_only, except: [:show, :restrict, :success, :edits, :check_username]
+  before_action :current_user_can_edit?, only: [:show]
   before_action :user_or_admins_only, only: [:edits]
+  before_action :admins_only, except: [:show, :edits, :success, :check_username]
 
   rescue_from(UserAbilities::InvalidUserAbilityError) { head :bad_request }
 
@@ -26,31 +26,31 @@ class UsersController < ApplicationController
                    valid: User.valid_username?(params.require(:username)) }
   end
 
-  def image
-    @user = User.find(params[:id])
-    @image = Image.new
-  end
+  # def image
+  #   @user = User.find(params[:id])
+  #   @image = Image.new
+  # end
 
-  def upload_image
-    if uploaded = image_params[:file]
-      filename = Image.random_filename(File.extname(uploaded.original_filename))
-      src_path = Rails.root.join('tmp', filename).to_s
-      open(src_path, 'wb') do |file|
-        file.write(uploaded.read)
-      end
-    else
-      src_path = image_params[:url]
-    end
+  # def upload_image
+  #   if uploaded = image_params[:file]
+  #     filename = Image.random_filename(File.extname(uploaded.original_filename))
+  #     src_path = Rails.root.join('tmp', filename).to_s
+  #     open(src_path, 'wb') do |file|
+  #       file.write(uploaded.read)
+  #     end
+  #   else
+  #     src_path = image_params[:url]
+  #   end
 
-    @image = Image.new_from_url(src_path)
-    @image.user = @user
+  #   @image = Image.new_from_url(src_path)
+  #   @image.user = @user
 
-    if @image.save
-      redirect_to image_user_path(@user), notice: 'Image was successfully created.'
-    else
-      render action: 'image'
-    end
-  end
+  #   if @image.save
+  #     redirect_to image_user_path(@user), notice: 'Image was successfully created.'
+  #   else
+  #     render action: 'image'
+  #   end
+  # end
 
   # GET /users/:id/edit_permissions
   def edit_permissions
@@ -117,13 +117,6 @@ class UsersController < ApplicationController
     end
   end
 
-  def prevent_restricted
-    unless current_user.admin?
-      raise Exceptions::NotFoundError if @user.is_restricted?
-    end
-  end
-
-  # Only allow a trusted parameter "white list" through.
   def user_params
     params[:user]
   end

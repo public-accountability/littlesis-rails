@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class DocumentsController < ApplicationController
-  before_action :authenticate_user!, only: [:edit, :update]
+  before_action :authenticate_user!
+  before_action :current_user_can_edit?
   before_action :set_document
 
   def edit

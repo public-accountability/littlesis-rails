@@ -9,40 +9,36 @@ class EntitiesController < ApplicationController
     create_bulk: {
       errors: [{ 'title' => 'Could not create new entities: request formatted improperly' }]
     }
-  )
+  ).freeze
 
-  EDITABLE_ACTIONS = %i[create update destroy create_bulk match_donation].freeze
-  IMPORTER_ACTIONS = %i[match_donation match_donations review_donations].freeze
   PUBLIC_ACTIONS = %i[show datatable political contributions references validate profile grouped_links source_links].freeze
+  EDITABLE_ACTIONS = %i[new create update destroy create_bulk].freeze
+  MATCH_DONTAIONS_ACTIONS = %i[match_donation match_donations review_donations].freeze
 
   before_action :authenticate_user!, except: PUBLIC_ACTIONS
-  before_action :block_restricted_user_access, only: EDITABLE_ACTIONS + [:new]
-  before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
-  before_action :importers_only, only: IMPORTER_ACTIONS
+  before_action :current_user_can_edit?, only: EDITABLE_ACTIONS
+  before_action -> { current_user.role.include?(:match_donation) }, only: MATCH_DONTAIONS_ACTIONS
+  # before_action :importers_only, only: IMPORTER_ACTIONS
   before_action :set_entity, except: [:new, :create, :show, :create_bulk, :validate]
   before_action :set_entity_for_profile_page, only: [:show]
-  before_action :set_tab_for_profile_page, only: [:show]
   before_action :check_delete_permission, only: [:destroy]
 
   rescue_from Exceptions::RestrictedUserError, with: -> { head :forbidden }
 
   # profile page
   def show
-    @active_tab = params[:tab]&.to_sym || :relationships
+    @active_tab = params[:active_tab]&.to_sym || :relationships
+
+    if %i[interlocks giving].include?(@active_tab)
+      @page = params[:page]&.to_i || 1
+    end
+
     render :profile
   end
 
   # Old "data" table
   def datatable
     redirect_to concretize_profile_entity_path(@entity, active_tab: :data)
-  end
-
-  # new profile page
-  def profile
-    @active_tab = params[:active_tab]&.to_sym || :relationships
-    if %i[interlocks giving].include?(@active_tab)
-      @page = params[:page]&.to_i || 1
-    end
   end
 
   def grouped_links # turbo frame
@@ -153,13 +149,8 @@ class EntitiesController < ApplicationController
   end
 
   def check_delete_permission
-    unless current_user.permissions.entity_permissions(@entity).fetch(:deleteable)
-      raise Exceptions::PermissionError
-    end
-  end
-
-  def set_tab_for_profile_page
-    @active_tab = params.fetch(:tab, :relationships)
+    # TODO: rewirte call for current_user.permissions.entity_permissions(@entity)
+    check_ability :edit_destructively
   end
 
   def handle_creation

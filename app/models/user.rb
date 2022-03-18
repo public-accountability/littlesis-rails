@@ -73,12 +73,13 @@ class User < ApplicationRecord
     is_restricted
   end
 
+  # Checks if user can make edits to database
   def can_edit?
-    !restricted? && confirmed? && (MINUTES_BEFORE_USER_CAN_EDIT.minutes.ago > confirmed_at)
+    role.include? :edit_database
   end
 
-  def raise_unless_can_edit!
-    raise Exceptions::UserCannotEditError unless can_edit?
+  def leagcy_can_edit?
+    !restricted? && confirmed? && (MINUTES_BEFORE_USER_CAN_EDIT.minutes.ago > confirmed_at)
   end
 
   def image_url(type = 'profile')
@@ -129,41 +130,41 @@ class User < ApplicationRecord
   # Permissions #
   ###############
 
-  def list_of_abilities
-    abilities.to_a.join(", ")
-  end
+  # def list_of_abilities
+  #   abilities.to_a.join(", ")
+  # end
 
-  def has_ability?(name) # rubocop:disable Naming/PredicateName, Metrics/MethodLength
-    case name
-    when :admin, 'admin'
-      abilities.admin? || role == 'admin'
-    when :edit, 'edit', 'editor', 'contributor'
-      abilities.editor?
-    when :delete, 'delete', 'deleter'
-      abilities.deleter?
-    when :merge, 'merge', 'merger'
-      abilities.merger?
-    when :list, 'list', 'lister'
-      abilities.lister?
-    when :bulk, 'bulk', 'bulker', 'importer'
-      abilities.bulker?
-    else
-      Rails.logger.debug "User#has_ability? called with unknown permission: #{name}"
-      false
-    end
-  end
+  # def has_ability?(name) # rubocop:disable Naming/PredicateName, Metrics/MethodLength
+  #   case name
+  #   when :admin, 'admin'
+  #     abilities.admin? || role == 'admin'
+  #   when :edit, 'edit', 'editor', 'contributor'
+  #     abilities.editor?
+  #   when :delete, 'delete', 'deleter'
+  #     abilities.deleter?
+  #   when :merge, 'merge', 'merger'
+  #     abilities.merger?
+  #   when :list, 'list', 'lister'
+  #     abilities.lister?
+  #   when :bulk, 'bulk', 'bulker', 'importer'
+  #     abilities.bulker?
+  #   else
+  #     Rails.logger.debug "User#has_ability? called with unknown permission: #{name}"
+  #     false
+  #   end
+  # end
 
   def create_default_permissions
     add_ability!(:edit) unless has_ability?(:edit)
   end
 
-  def permissions
-    @permissions ||= Permissions.new(self)
-  end
-
-  # def role
-  #   Role[super(role)]
+  # def permissions
+  #   @permissions ||= Permissions.new(self)
   # end
+
+  def role
+    Role[super]
+  end
 
   # String | nil --> Arel::Nodes::Grouping | nil
   # Creates sql like statement with arel, which searches

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DatasetsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, -> { current_user.role.includes?(:datasets) }
 
   def index
   end

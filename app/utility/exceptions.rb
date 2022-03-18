@@ -3,6 +3,7 @@
 module Exceptions
   class LittleSisError < StandardError; end
   class PermissionError < LittleSisError; end
+  class NotSignedInError < LittleSisError; end
   class NotFoundError < LittleSisError; end
   class MissingApiTokenError < LittleSisError; end
   class InvalidRelationshipCategoryError < LittleSisError; end

@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class EditsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :block_restricted_user_access
+  before_action :authenticate_user!, :current_user_can_edit?
   before_action :set_page, only: [:index, :entity]
   before_action :set_entity, only: [:entity]
 

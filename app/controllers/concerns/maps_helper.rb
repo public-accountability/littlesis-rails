@@ -16,10 +16,13 @@ module MapsHelper
   end
 
   def is_owner
-    return false unless current_user
-    return true if current_user.admin?
+    # return true if current_user.admin?
+    current_user.present? && @map.user_id == current_user.id
+  end
 
-    @map.user_id == current_user.id
+  def check_owner
+    current_user.role.include? :create_map
+    raise Exceptions::PermissionError unless is_owner
   end
 
   def can_view_if_private?
@@ -32,12 +35,6 @@ module MapsHelper
         raise Exceptions::PermissionError
       end
     end
-  end
-
-  def check_owner
-    check_permission 'editor'
-
-    raise Exceptions::PermissionError unless is_owner
   end
 
   def check_editor

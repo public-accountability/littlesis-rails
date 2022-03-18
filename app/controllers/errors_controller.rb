@@ -7,8 +7,8 @@ class ErrorsController < ApplicationController
     expected: "What you expected or wished would happen"
   }.freeze
 
-  THANK_YOU_NOTICE = 'Thank you for submitting a bug report and helping to improve LittleSis!'
-  YOU_ARE_SPAM = "Please don't submit spam to LittleSis. Contact us if you think this is an error."
+  THANK_YOU_NOTICE = 'Thank you for submitting a bug report and helping to improve LittleSis!'.freeze
+  YOU_ARE_SPAM = "Please don't submit spam to LittleSis. Contact us if you think this is an error.".freeze
 
   def bug_report
   end

@@ -3,7 +3,7 @@
 class AliasesController < ApplicationController
   include EntitiesHelper
 
-  before_action :authenticate_user!
+  before_action :authenticate_user!, :current_user_can_edit?
   before_action :set_alias, only: [:make_primary, :destroy]
 
   def create

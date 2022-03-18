@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class EditablePagesController < ApplicationController
-  before_action :authenticate_user!, except: [:display, :index]
-  before_action :admins_only, except: [:display, :index]
+  before_action :authenticate_user!, :admins_only, except: [:display, :index]
   before_action :set_page, only: [:display, :edit]
 
   helper_method :editable_page_path
