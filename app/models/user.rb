@@ -154,9 +154,9 @@ class User < ApplicationRecord
   #   end
   # end
 
-  def create_default_permissions
-    add_ability!(:edit) unless has_ability?(:edit)
-  end
+  # def create_default_permissions
+  #   add_ability!(:edit) unless has_ability?(:edit)
+  # end
 
   # def permissions
   #   @permissions ||= Permissions.new(self)

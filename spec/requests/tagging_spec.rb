@@ -3,9 +3,9 @@ describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
     TagSpecHelper::TAGS.each { |t| Tag.create!(t) }
   end
 
-  let(:entity) { create(:org) }
+  let(:entity) { create(:entity_org) }
   let(:list) { create(:list) }
-  let(:relationship) { create_generic_relationship }
+  let(:relationship) { Relationship.create!(category_id: 12, entity: create(:entity_person), related: create(:entity_org)) }
   let(:user) { create_really_basic_user }
   let(:lister) { create_basic_user }
   let(:admin) { create_admin_user }

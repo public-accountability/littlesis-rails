@@ -11,70 +11,18 @@ describe User do
 
   describe 'role' do
     context 'when a regular user' do
-      specify { expect(build(:user).role).to eq 'user' }
+      specify { expect(build(:user).read_attribute(:role)).to eq 'user' }
+      specify { expect(build(:user).role).to be User::Role::USER }
     end
 
     context 'when admin user' do
-      specify { expect(build(:user, role: :admin).role).to eq 'admin' }
-      specify { expect(build(:user, role: 1).role).to eq 'admin' }
+      specify { expect(build(:user, role: :admin).read_attribute(:role)).to eq 'admin' }
+      specify { expect(build(:user, role: 1).read_attribute(:role)).to eq 'admin' }
     end
 
     context 'when system user' do
-      specify { expect(build(:user, role: :system).role).to eq 'system' }
-      specify { expect(build(:user, role: 2).role).to eq 'system' }
-    end
-  end
-
-  describe 'abilities' do
-    let(:user) { create(:user) }
-
-    it 'serializes UserAbilities' do
-      expect(build(:user).abilities).to be_a UserAbilities
-    end
-
-    describe 'adding and removing abilities' do
-      it 'adds a new ability' do
-        expect { user.add_ability(:merge) }
-          .to change { user.reload.abilities.to_set }
-                .from(Set[:edit]).to(Set[:edit, :merge])
-      end
-
-      it 'adds an ability using save' do
-        user = build(:user)
-        expect(user).to receive(:save).once
-        user.add_ability(:edit)
-      end
-
-      it 'removes an ability using save' do
-        user = build(:user)
-        expect(user).to receive(:save).once
-        user.remove_ability(:edit)
-      end
-
-      it 'adds an ability using save!' do
-        user = build(:user)
-        expect(user).to receive(:save!).once
-        user.add_ability!(:edit)
-      end
-
-      it 'removes an ability using save!' do
-        user = build(:user)
-        expect(user).to receive(:save!).once
-        user.remove_ability!(:edit)
-      end
-
-      it 'removes an ability' do
-        user.add_ability(:edit, :bulk)
-        expect { user.remove_ability(:bulk) }
-          .to change { user.reload.abilities.to_set }
-                .from(Set[:edit, :bulk]).to(Set[:edit])
-      end
-
-      it 'adds two abilities at once' do
-        expect { user.add_ability(:bulk, :merge) }
-          .to change { user.reload.abilities.to_set }
-                .from(Set[:edit]).to(Set[:bulk, :merge, :edit])
-      end
+      specify { expect(build(:user, role: :system).read_attribute(:role)).to eq 'system' }
+      specify { expect(build(:user, role: 2).read_attribute(:role)).to eq 'system' }
     end
   end
 

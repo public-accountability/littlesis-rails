@@ -350,7 +350,7 @@ describe Permissions, :tag_helper do
     end
 
     it 'returns true for bulker' do
-      expect(create_bulk_user.permissions.show_add_bulk_button?).to be true
+      expect(create_collaborator.permissions.show_add_bulk_button?).to be true
     end
 
     it 'returns true for users with accounts older than 2 weeks and who have signed in more than 2 times' do
