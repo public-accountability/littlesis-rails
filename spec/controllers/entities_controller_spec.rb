@@ -1,6 +1,5 @@
 describe EntitiesController, type: :controller do
   it { is_expected.to use_before_action(:authenticate_user!) }
-  it { is_expected.to use_before_action(:importers_only) }
   it { is_expected.to use_before_action(:set_entity) }
 
   describe 'routes' do

@@ -23,20 +23,19 @@ describe Lists::EntitiesController, type: :controller do
 
     context 'with restricted user' do
       before do
-        sign_in(create(:user, is_restricted: true))
+        sign_in(create(:user, role: :restricted))
       end
 
       it 'does not add the entity to the list' do
         expect { post :create, params: params }
           .not_to change(list.list_entities, :count)
 
-        expect(list.list_entities.count).to be 0
+        expect(lixost.list_entities.count).to be 0
       end
 
-      it 'redirects to the dashboard' do
+      it 'denies request' do
         post :create, params: params
-        expect(response).to redirect_to home_dashboard_path
-        expect(flash[:notice]).to match 'Your account has been restricted'
+        expect(response).to have_http_status :forbidden
       end
     end
 
@@ -63,13 +62,13 @@ describe Lists::EntitiesController, type: :controller do
       context 'with valid params' do
         it 'adds the entity to the list' do # rubocop:disable RSpec/ExampleLength
           expect { post :create, params: params }
-            .to change(list.list_entities, :count).by(1)
+            .to change { list.reload.list_entities.count }.by(1)
 
           expect(list.list_entities.first.entity).to have_attributes(
-            name: 'Pierce Inverarity',
-            blurb: 'Real estate mogul',
-            primary_ext: 'Person'
-          )
+                                                       name: 'Pierce Inverarity',
+                                                       blurb: 'Real estate mogul',
+                                                       primary_ext: 'Person'
+                                                     )
         end
 
         it 'redirects to the list members page' do
