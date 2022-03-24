@@ -13,9 +13,17 @@ feature "Signing up for an account", type: :feature do
     expect(page.status_code).to eq 200
     expect(page).to have_current_path new_user_registration_path
 
-    page_has_selector 'h2', text: 'Get Involved!'
+    page_has_selector 'h2', text: 'Get Involved'
     page_has_selector 'h3', text: 'Become an analyst!'
-    expect(page).to have_text "What are your research interests? What are you hoping to use LittleSis for?"
+    expect(page).to have_text "What are you hoping to use LittleSis for?"
+  end
+
+  scenario 'visiting the page in spanish' do
+    visit "/join?locale=es"
+    expect(page.status_code).to eq 200
+    page_has_selector 'h2', text: "Colabora Con Nosotros"
+    expect(page).not_to have_text "What are you hoping to use LittleSis for?"
+    expect(page).to have_text "¿Para qué espera usar LittleSis?"
   end
 
   scenario 'Fills out form and signs up' do
@@ -89,7 +97,7 @@ feature "Signing up for an account", type: :feature do
       expect([User.count, UserProfile.count]).to eq counts
 
       expect(page.status_code).to eq 200
-      page_has_selector 'h2', text: 'Get Involved!'
+      page_has_selector 'h2', text: 'Get Involved'
 
       expect(page).to have_css('.alert-danger', text: 'Username has already been taken')
     end
