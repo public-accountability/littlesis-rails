@@ -92,7 +92,7 @@ group :test, :development do
 end
 
 # Used by lib/
-gem 'roo', "~> 2.8.1", require: false
+gem 'roo', require: false
 gem 'rubyzip', require: false
 gem 'sqlite3', require: false
 gem 'parallel', require: false
