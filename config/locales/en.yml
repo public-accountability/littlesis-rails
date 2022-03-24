@@ -168,6 +168,7 @@ en:
     create_new_reference: "Create new reference"
     creating_new_relationship_between: "Creating a new relationship between"
     current_password: "Current password"
+    confirm_password: "Password confirmation"
     data_summary: "Data Summary"
     data_partner: "Data Partner"
     edited_by: "edited by"
@@ -219,15 +220,13 @@ en:
         LittleSis presents an exciting opportunity: editors (called "analysts" on LittleSis) are developing an unprecedented, authoritative database of key relationships between powerful Americans.
         Sign up to edit the profile pages of your (least) favorite fatcats.
         To request an account, please provide the following information. We promise not to share it with anyone, ever!
-      user_agreement_html: |
-        I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith. LittleSis staff can revoke my editing privileges and remove any edits, maps, or lists that I create that are in violation of these terms of use including:
-          <ul>
-            <li>Contributions that promote violence or hate against a marginalized group or use hate speech</li>
-            <li>Contributions that fall outside the purview of our mission to track people and groups with inordinate wealth and influence</li>
-            <li>Contributions that spam the database</li>
-          </ul>
-        I understand that if I am in violation of any of these terms of use my account will be restricted from editing while LittleSis staff investigate and delete any data that is inappropriate for the site. If the violation occurred by accident I can appeal to have my editing restrictions lifted, however this is at the discretion of LittleSis staff. Repeated violations will result in a suspension of my LittleSis account.
-      i_accept_the_terms: "I accept the above terms of use"
+      user_agreement:
+        i_understand: "I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith. LittleSis staff can revoke my editing privileges and remove any edits, maps, or lists that I create that are in violation of these terms of use including:"
+        promote_violence: "Contributions that promote violence or hate against a marginalized group or use hate speech"
+        outside_purview: "Contributions that fall outside the purview of our mission to track people and groups with inordinate wealth and influence"
+        spam_database: "Contributions that spam the database"
+        if_in_violation: "I understand that if I am in violation of any of these terms of use my account will be restricted from editing while LittleSis staff investigate and delete any data that is inappropriate for the site. If the violation occurred by accident I can appeal to have my editing restrictions lifted, however this is at the discretion of LittleSis staff. Repeated violations will result in a suspension of my LittleSis account."
+        i_accept: "I accept the above terms of use"
       what_are_your_research interests: What are your research interests?
       what_using_for:  What are you hoping to use LittleSis for?
       solve_math_problem: Please solve the following math problem

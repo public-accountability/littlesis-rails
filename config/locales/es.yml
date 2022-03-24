@@ -107,6 +107,8 @@ es:
     toolkit: destacado
     tags: etiquetas
     lists: listas
+    password: "contraseña"
+
 
   phrases:
     a_project_of: "un proyecto de"
@@ -128,12 +130,13 @@ es:
     creating_new_relationship_between:
     contact_us: Contacto
     current_password:
+    confirm_password: "Confirmación de contraseña"
     data_summary: "Resumen de los datos"
     disclaimer:
     edited_by:
     existing_source: "fuente existente"
     export_csv:
-    get_involved:
+    get_involved: "Colabora con nosotros"
     get_started_map:
     instructional_videos:
     just_cleaning_up: "En proceso de ediciones menores"
@@ -153,7 +156,7 @@ es:
     sign_up_for: "crear una cuenta en LittleSis"
     source_links: "enlaces"
     tell_me_more_about:
-    terms:
+    terms: "términos de uso"
     visual_tool:
     welcome: "¡Bienvenido/a a LittleSis!"
     where_is_this: "¿De dónde procede esta información?"
@@ -162,7 +165,7 @@ es:
     your_maps: Tus mapas
     your_recent_edits: Tus cambios recientes
     your_settings: Tus ajustes
-    edit_your_settings:
+    edit_your_settings: "edita tu configuración"
     add_relationship: "añadir conexión"
     network_maps: Mapas
 
@@ -190,3 +193,21 @@ es:
       unique_resource: "Un recurso único para investigar el amiguismo, los conflictos de intereses y la corrupción sistémica"
       think_and_do: "Grupo de reflexión y acción"
       made_for_watchdogs: "Hecho para vigilantes"
+    join:
+      get_involved: "LittleSis está creando una comunidad de investigadores que creen en la transparencia y la responsabilidad en nuestra sociedad y nuestra economía. Nuestro objetivo es estudiar, documentar, y exponer las redes sociales que controlan nuestra democracia para que las luchas desde las bases puedan desafiar su poder de manera más efectiva."
+      become_an_analyst: "LittleSis presenta una gran oportunidad: nuestros editores (llamados ‘analistas’ en LittleSis) están desarrollando una base de datos sin precedentes sobre las relaciones entre los estadounidenses más poderosos."
+      user_agreement:
+        i_understand: "Entiendo que la misión de LittleSis es rastrear a personas y grupos con grandes cantidades de riqueza, influencia en política pública y acceso oficiales del gobierno. Como analista de LittleSis es mi responsabilidad asegurarme de que la información que aporto es relevante para con este objetivo, rigurosa y bien documentada, usando las fuentes disponibles de manera pública en internet. El personal de LittleSis puede quitarme mis privilegios de edición o desactivar mi cuenta si creen que no estoy siguiendo estos estándares de buena fé. El personal de LittleSis puede quitarme mis privilegios de edición y eliminar mis contribuciones, mapas, o listas si violan estos términos de uso, incluyendo:"
+        promote_violence: "Contribuciones que promuevan la violencia o el odio contra grupos marginalizados o el uso de lenguaje de odio"
+        outside_purview: "Contribuciones que queden fuera del objetivo de esta página de rastrear a aquellos con grandes cantidades de riqueza e influencia"
+        spam_database: "Contribuciones que hagan spam a la base de datos"
+        if_in_violation: "Entiendo que la violación de cualquiera de estos términos de uso resultara en que mi cuenta perderá sus privilegios de edición mientras el personal de LittleSis investiga y elimina cualquier dato que sea inapropiado para esta web. Si la violación ha sido un error, puedo pedir que se me devuelvan mis privilegios. Sin embargo, esto ocurrirá a discreción del personal de LittleSis. Si se cometen violaciones de manera continuada, esto podrá resultar en la suspensión de mi cuenta."
+        i_accept: "Acepto los términos de uso"
+      what_are_your_research interests: "¿Cuáles son los temas que le interesa investigar?"
+      what_using_for: "¿Para qué espera usar LittleSis?"
+      solve_math_problem: "Por favor, resuelva el siguiente problema matemático"
+      name_and_email: "Su nombre y su email no serán públicos"
+      email_confirmation: "Se ha enviado un email con un enlace de confirmación a su correo electrónico"
+      after_confirming: "Tras confirmar su dirección de email, podrá hacer log in usando su email y contraseña"
+      having_problems: "Si tiene algún problema a la hora de registrarse, por favor, contacta con nosotros en"
+      no_confirmation instructions: "¿No recibió las instrucciones de confirmación?"

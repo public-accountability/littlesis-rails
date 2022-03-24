@@ -1,11 +1,11 @@
-<% content_for(:page_title, 'Join') %>
+<% content_for(:page_title, t('vocab.join').capitalize) %>
 
 <% column_class = 'col-sm-8' %>
 
 <div class="row mb-2">
   <div class='<%= column_class %>'>
     <div class='thin-grey-bottom-border'>
-      <h2>Get Involved!</h2>
+      <h2><%= t('pharses.get_invovled') %></h2>
     </div>
   </div>
 </div>
@@ -49,7 +49,7 @@
     <%= registrations_form_group do %>
       <%= profile_fields.label :name_last, 'Last Name', class: label_class %>
       <%= profile_fields.text_field :name_last, class: input_class %>
-      <small><em>(your name and email will not be public)</em> </small>
+      <small><em>(<%= t('pages.join.name_and_email') %>)</em> </small>
     <% end %>
 
     <%= registrations_form_group do %>
@@ -79,27 +79,27 @@
     <% end %>
 
     <%= registrations_form_group do %>
-      <%= f.label :password, 'Password (Minimum 8 letters)', class: label_class %>
+      <%= f.label :password, "#{t('vocab.password').capitalize} (Minimum 8 letters)", class: label_class %>
       <%= f.password_field :password, autocomplete: 'off', required: true, data: {parsley_minlength: 8, parsley_minlength_message: 'Passwords must be at least 8 characters'}, class: input_class  %>
     <% end %>
 
     <%= registrations_form_group do %>
-      <%= f.label :password_confirmation, class: label_class  %>
+      <%= f.label :password_confirmation, t('phrases.confirm_password'), class: label_class  %>
       <%= f.password_field :password_confirmation, autocomplete: 'off', required: true, data: {parsley_equalto: '#user_password', parsley_equalto_message: 'Your password and password confirmation do not match :('}, class: input_class  %>
     <% end %>
 
     <%= registrations_form_group(group_class: 'row mt-2') do %>
-      <%= label_tag 'terms_of_use', 'Terms of use', class: label_class %>
+      <%= label_tag 'terms_of_use', t('phrases.terms').capitalize, class: label_class %>
       <div class="bg-info p-3">
-        <p>I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith. LittleSis staff can revoke my editing privileges and remove any edits, maps, or lists that I create that are in violation of these terms of use including:</p>
+        <p><%= t('pages.join.user_agreement.i_understand') %></p>
         <ul>
-          <li>Contributions that promote violence or hate against a marginalized group or use hate speech</li>
-          <li>Contributions that fall outside the purview of our mission to track people and groups with inordinate wealth and influence</li>
-          <li>Contributions that spam the database</li>
+          <li><%= t('pages.join.user_agreement.promote_violence') %></li>
+          <li><%= t('pages.join.user_agreement.outside_purview') %></li>
+          <li><%= t('pages.join.user_agreement.spam') %></li>
         </ul>
-        <p>I understand that if I am in violation of any of these terms of use my account will be restricted from editing while LittleSis staff investigate and delete any data that is inappropriate for the site. If the violation occurred by accident I can appeal to have my editing restrictions lifted, however this is at the discretion of LittleSis staff. Repeated violations will result in a suspension of my LittleSis account.</p>
+        <p><%= t('pages.join.user_agreement.if_in_violation') %></p>
         <div class="d-flex">
-          <%= check_box_tag :terms_of_use, 1, false, {required: true, data: {parsley_required_message: 'Unfortunately, you have to accept the terms first'}} %><small class='ms-2 font-weight-bold'> I accept the above terms of use </small>
+          <%= check_box_tag :terms_of_use, 1, false, {required: true, data: {parsley_required_message: 'Unfortunately, you have to accept the terms first'}} %><small class='ms-2 font-weight-bold'><%= t('pages.join.user_agreement.i_accept') %></small>
         </div>
       </div>
     <% end %>
@@ -111,13 +111,13 @@
     <% end %>
 
     <%= registrations_form_group do %>
-      <%= label_tag 'location', 'Location', class: label_class %>
+      <%= label_tag 'location', t('vocab.location').capitalize, class: label_class %>
       <%= profile_fields.text_field :location, class: input_class %>
     <% end %>
 
     <%= registrations_form_group do %>
       <%= profile_fields.label :reason, class: label_class do %>
-        What are your research interests? <br> What are you hoping to use LittleSis for?*
+        <%= t('pages.join.what_using_for') %>
       <% end %>
 
       <%= profile_fields.text_area :reason, required: true, data: {parsley_pattern: '\s*\S+(?:\s+\S+\s?){2,}', parsley_pattern_message: 'Please include more details'}, class: input_class, rows: 5, id: 'about-you-input' %>

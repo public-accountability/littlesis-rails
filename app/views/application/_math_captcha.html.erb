@@ -1,7 +1,7 @@
 <% math_captcha = MathCaptcha.new %>
 
 <%= f.label('spam_test', :class => label_class) do %>
-  Please solve the following math problem: <b><%= math_captcha.question %></b>
+  <%= t('pages.join.solve_math_problem') %>: <b><%= math_captcha.question %></b>
 <% end %>
 
 <%= f.hidden_field(:math_captcha_first, value: math_captcha.number_one) %>
