@@ -86,6 +86,7 @@ es:
     remove: eliminar
     merge: fusión
     name: nombre
+    search: buscar
     summary: resumen
     start_date: "fecha de inicio"
     end_date: "fecha final"
@@ -104,7 +105,7 @@ es:
     toolkit: destacado
 
   phrases:
-    a_project_of:
+    a_project_of: "un proyecto de"
     add_a_new_entity:
     click_to_add: "Haga click aquí"
     add_a_relationship: "para añadir una conexión"

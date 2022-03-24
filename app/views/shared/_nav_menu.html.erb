@@ -5,7 +5,8 @@
       <%= link_to(image_tag("lilsis-logo-trans-200.png"), user_signed_in? ? home_dashboard_path : root_path) %>
     </div>
 
-    <button class="navbar-toggler" type="button"
+    <button class="navbar-toggler"
+            type="button"
             data-bs-toggle="collapse"
             data-bs-target="#littlesisNavbarContent"
             data-bs-target="#top_donate_link"
@@ -20,10 +21,10 @@
     </div>
 
     <div id="top_donate_link" class="collapse navbar-collapse justify-content-end">
-      <div class="me-1"><strong><%= link_to('Donate', '/donate', id: 'donate-link-button')%></strong></div>
+      <div class="me-1"><strong><%= link_to(t('vocab.donate'), '/donate', id: 'donate-link-button')%></strong></div>
       <form action="/search" method="get" role="search" id="navbar-search">
         <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="Search LittleSis">
+          <input type="text" name="q" class="form-control" placeholder="<%= t('vocab.search').capitalize %> LittleSis">
           <button class="btn btn-clear" type="submit" ><i class="bi bi-search"></i></button>
         </div>
       </form>

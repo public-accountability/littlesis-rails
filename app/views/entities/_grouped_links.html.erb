@@ -11,7 +11,13 @@
   <div class="row profile-page-subcategory mt-2" data-turbo="true">
     <div class="col">
       <h2 class="profile-page-subcategory-heading">
-        <%= grouped_links.subcategory_name %>
+        <span class="subcategory-title"
+              data-controller="subcategory-translation"
+              data-subcategory-translation-locale-value="<%= I18n.locale %>"
+              data-subcategory-translation-subcategory-value="<%= subcategory %>"
+        >
+          <%= grouped_links.subcategory_name %>
+        </span>
         <i class="subcategory-collapse-toggle bi bi-arrows-collapse"
            data-bs-target=".<%= subcategory_collapse_target %>"
            data-bs-toggle="collapse"

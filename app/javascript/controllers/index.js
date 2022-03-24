@@ -112,6 +112,9 @@ application.register("reverse-link", ReverseLinkController)
 import SidebarSourceLinksController from "./sidebar_source_links_controller.js"
 application.register("sidebar-source-links", SidebarSourceLinksController)
 
+import SubcategoryTranslationController from "./subcategory_translation_controller.js"
+application.register("subcategory-translation", SubcategoryTranslationController)
+
 import TagFormController from "./tag_form_controller.js"
 application.register("tag-form", TagFormController)
 
