@@ -38,6 +38,7 @@ RUN apt-get install -y /tmp/manticore.deb
 # Node
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
+RUN npm install -g npm
 
 # Firefox and Geckodriver
 RUN curl -L "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" | tar xjf - -C /opt
