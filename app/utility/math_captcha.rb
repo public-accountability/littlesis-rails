@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class MathCaptcha
-  RANGE = (0..20).freeze
+  RANGE = (0..20)
 
   attr_reader :number_one, :number_two, :operation
 

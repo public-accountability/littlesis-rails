@@ -71,6 +71,7 @@ en:
     donate: donate
     signup: sign up
     login: login
+    logout: logout
     actions: actions
     add: add
     alive: alive
@@ -109,6 +110,7 @@ en:
     here: here
     help: help
     join: join
+    lists: lists
     lobbying: lobbying
     location: location
     merge: merge
@@ -131,6 +133,7 @@ en:
     start_date: start date
     suffix: suffix
     summary: summary
+    tags: tags
     toolkit: toolkit
     transaction: transaction
     types: types
@@ -145,6 +148,7 @@ en:
     submit: submit
 
   phrases:
+    advanced_tools: "Advanced Tools"
     a_project_of: "a project of"
     add_a_new_entity: "Click here to create a new entity"
     click_to_add: "Click here"
@@ -153,7 +157,7 @@ en:
     add_bulk: "add bulk"
     additional_names: "additional names for the person"
     articles_documenting: "Articles documenting info on this page"
-    basic_info: "basic info"
+    basic_info: "Basic Info"
     become_an_analyst: "Become an analyst"
     cancel: "Cancel my account"
     cant_find_what: "Can't find what you are looking for?"
@@ -164,8 +168,9 @@ en:
     create_new_reference: "Create new reference"
     creating_new_relationship_between: "Creating a new relationship between"
     current_password: "Current password"
+    confirm_password: "Password confirmation"
     data_summary: "Data Summary"
-
+    data_partner: "Data Partner"
     edited_by: "edited by"
     existing_source: "Existing Source"
     export_csv: "Export CSV"
@@ -200,6 +205,7 @@ en:
     your_settings: "your settings"
     edit_your_settings: "Edit your settings"
     add_relationship: add relationship
+    network_maps: "Network Maps"
 
   pages:
     tags: "Tags allow contributors to thematically group people, organizations, lists, and relationships on LittleSis. Below is a list of all the tags on the site. Don't see a tag you want to use? Use this form to request it!"
@@ -214,15 +220,13 @@ en:
         LittleSis presents an exciting opportunity: editors (called "analysts" on LittleSis) are developing an unprecedented, authoritative database of key relationships between powerful Americans.
         Sign up to edit the profile pages of your (least) favorite fatcats.
         To request an account, please provide the following information. We promise not to share it with anyone, ever!
-      user_agreement_html: |
-        I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith. LittleSis staff can revoke my editing privileges and remove any edits, maps, or lists that I create that are in violation of these terms of use including:
-          <ul>
-            <li>Contributions that promote violence or hate against a marginalized group or use hate speech</li>
-            <li>Contributions that fall outside the purview of our mission to track people and groups with inordinate wealth and influence</li>
-            <li>Contributions that spam the database</li>
-          </ul>
-        I understand that if I am in violation of any of these terms of use my account will be restricted from editing while LittleSis staff investigate and delete any data that is inappropriate for the site. If the violation occurred by accident I can appeal to have my editing restrictions lifted, however this is at the discretion of LittleSis staff. Repeated violations will result in a suspension of my LittleSis account.
-      i_accept_the_terms: "I accept the above terms of use"
+      user_agreement:
+        i_understand: "I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith. LittleSis staff can revoke my editing privileges and remove any edits, maps, or lists that I create that are in violation of these terms of use including:"
+        promote_violence: "Contributions that promote violence or hate against a marginalized group or use hate speech"
+        outside_purview: "Contributions that fall outside the purview of our mission to track people and groups with inordinate wealth and influence"
+        spam_database: "Contributions that spam the database"
+        if_in_violation: "I understand that if I am in violation of any of these terms of use my account will be restricted from editing while LittleSis staff investigate and delete any data that is inappropriate for the site. If the violation occurred by accident I can appeal to have my editing restrictions lifted, however this is at the discretion of LittleSis staff. Repeated violations will result in a suspension of my LittleSis account."
+        i_accept: "I accept the above terms of use"
       what_are_your_research interests: What are your research interests?
       what_using_for:  What are you hoping to use LittleSis for?
       solve_math_problem: Please solve the following math problem

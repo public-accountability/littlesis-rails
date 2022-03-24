@@ -7,6 +7,7 @@ class UserNavmenuPresenter
     delegate :t, to: 'I18n'
   end
 
+  delegate :t, to: 'I18n'
   delegate :each, :size, to: :@items
 
   private_class_method def self.create_menus
@@ -72,13 +73,13 @@ class UserNavmenuPresenter
   def user_links(user)
     [
       user.username, [
-        ['Maps', '/home/maps'],
-        ['Lists', '/home/lists'],
-        ['Edits', Rails.application.routes.url_helpers.user_edits_path(username: user.username)],
+        [t('littlesis.map').pluralize.capitalize, '/home/maps'],
+        [t('vocab.lists').capitalize, '/home/lists'],
+        [t('vocab.edits').capitalize, Rails.application.routes.url_helpers.user_edits_path(username: user.username)],
         :divider,
         (user.admin? ? ['Admin', '/admin'] : nil),
-        ['Settings', '/users/edit'],
-        ['Logout', '/logout']
+        [t('vocab.settings').capitalize, '/users/edit'],
+        [t('vocab.logout').titleize, '/logout']
       ].compact
     ]
   end
