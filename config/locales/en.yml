@@ -71,6 +71,7 @@ en:
     donate: donate
     signup: sign up
     login: login
+    logout: logout
     actions: actions
     add: add
     alive: alive
