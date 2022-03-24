@@ -9,7 +9,7 @@ es:
     entity: entidad
     list: lista
     map: mapa
-    tag: tetiqueta
+    tag: etiqueta
     oligrapher: olígrafo
     datasets: Bases de datos
     interlocks: Entramados
@@ -103,6 +103,8 @@ es:
     primary: primario
     submit: enviar
     toolkit: destacado
+    tags: etiquetas
+    lists: listas
 
   phrases:
     a_project_of: "un proyecto de"
@@ -112,7 +114,7 @@ es:
     add_bulk: bulk
     additional_names:
     articles_documenting:
-    basic_info:
+    basic_info: "Información Básica"
     become_an_analyst:
     cancel:
     cant_find_what:
@@ -142,16 +144,16 @@ es:
     forgot_your_password:
     recent_edits:
     related_entity:
-    relationship_category:
-    report_a_bug:
-    search_for_a_name: buscar un nombre
-    send_me_your_newsletter:
-    sign_up_for:
-    source_links:
+    relationship_category: "cambios recientes"
+    report_a_bug: "informa de un error"
+    search_for_a_name: "buscar un nombre"
+    send_me_your_newsletter: "envíame el newsletter"
+    sign_up_for: "crear una cuenta en LittleSis"
+    source_links: "enlaces"
     tell_me_more_about:
     terms:
     visual_tool:
-    welcome:
+    welcome: "¡Bienvenido/a a LittleSis!"
     where_is_this: "¿De dónde procede esta información?"
     your_email: Tu email
     your_lists: Tus listas
@@ -160,6 +162,7 @@ es:
     your_settings: Tus ajustes
     edit_your_settings:
     add_relationship: "añadir conexión"
+    network_maps: Mapas
 
   pages:
     stub_profile: "Este es un perfil en blanco - no hay conexiones en nuestra base de datos para esta persona. ¡Sea el primero en añadir una!"

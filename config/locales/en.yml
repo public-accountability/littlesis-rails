@@ -109,6 +109,7 @@ en:
     here: here
     help: help
     join: join
+    lists: lists
     lobbying: lobbying
     location: location
     merge: merge
@@ -131,6 +132,7 @@ en:
     start_date: start date
     suffix: suffix
     summary: summary
+    tags: tags
     toolkit: toolkit
     transaction: transaction
     types: types
@@ -145,6 +147,7 @@ en:
     submit: submit
 
   phrases:
+    advanced_tools: "Advanced Tools"
     a_project_of: "a project of"
     add_a_new_entity: "Click here to create a new entity"
     click_to_add: "Click here"
@@ -153,7 +156,7 @@ en:
     add_bulk: "add bulk"
     additional_names: "additional names for the person"
     articles_documenting: "Articles documenting info on this page"
-    basic_info: "basic info"
+    basic_info: "Basic Info"
     become_an_analyst: "Become an analyst"
     cancel: "Cancel my account"
     cant_find_what: "Can't find what you are looking for?"
@@ -165,7 +168,7 @@ en:
     creating_new_relationship_between: "Creating a new relationship between"
     current_password: "Current password"
     data_summary: "Data Summary"
-
+    data_partner: "Data Partner"
     edited_by: "edited by"
     existing_source: "Existing Source"
     export_csv: "Export CSV"
@@ -200,6 +203,7 @@ en:
     your_settings: "your settings"
     edit_your_settings: "Edit your settings"
     add_relationship: add relationship
+    network_maps: "Network Maps"
 
   pages:
     tags: "Tags allow contributors to thematically group people, organizations, lists, and relationships on LittleSis. Below is a list of all the tags on the site. Don't see a tag you want to use? Use this form to request it!"

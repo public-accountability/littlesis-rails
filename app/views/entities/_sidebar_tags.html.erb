@@ -27,7 +27,7 @@
 
   <div class="col-12">
     <h3 class="profile-page-sidebar-heading">
-      Tags
+      <%= t('vocab.tags').capitalize %>
       <% if current_user&.editor? %>
         <span id="tags-controls" class="ms-2">
           <span id="tags-edit-button" class="tags-edit-glyph" data-bs-toggle="modal" data-bs-target="#edit-tags-modal">

@@ -23,7 +23,7 @@
 
   <div class="row mt-3">
     <div class="col-12">
-      <h3 class="profile-page-sidebar-heading">Basic Info</h3>
+      <h3 class="profile-page-sidebar-heading"><%= t('phrases.basic_info') %></h3>
     </div>
     <div class="col-12">
       <%= cache [@entity, 'basic_info']  do %>
@@ -36,7 +36,7 @@
   <% unless @entity.external_links.count.zero? %>
     <div class="row mt-3">
       <div class="col-12">
-        <h3 class="profile-page-sidebar-heading">External Links</h3>
+        <h3 class="profile-page-sidebar-heading"><%= t('littlesis.external_links').titleize %></h3>
       </div>
       <div class="col-12">
         <%= render partial: 'entities/sidebar/external_links' %>
@@ -55,7 +55,7 @@
   <% if @entity.featured_resources.exists? %>
     <div class="row mt-3 sidebar-featured-resources">
       <div class="col-12">
-        <h3 class="profile-page-sidebar-heading">Eyes On The Ties</h3>
+        <h3 class="profile-page-sidebar-heading"><%= t('littlesis.eyes_on_the_ties').titleize %></h3>
       </div>
       <div class="col-12">
         <%= render partial: 'entities/sidebar/featured_resource', collection: @entity.featured_resources %>
@@ -67,7 +67,7 @@
   <% if show_cmp_data_partner?(@entity) %>
     <div class="row mt-3 sidebar-data-partner">
       <div class="col-12">
-        <h3 class="profile-page-sidebar-heading">Data Partner</h3>
+        <h3 class="profile-page-sidebar-heading"><%= t('phrases.data_partner') %></h3>
       </div>
       <div class="col-12">
         <%= link_to(image_tag('cmp_logo.png', class: 'mt-2'),  'https://www.corporatemapping.ca') %>
@@ -79,7 +79,7 @@
   <%# Source Links %>
   <div class="row mt-3 sidebar-source-links">
     <div class="col-12">
-      <h3 class="profile-page-sidebar-heading">Source Links</h3>
+      <h3 class="profile-page-sidebar-heading"><%= t('phrases.source_links').titleize %></h3>
     </div>
     <%= render partial: 'source_links' %>
   </div>
@@ -88,7 +88,7 @@
   <% if user_signed_in? || @entity.featured_lists.count.positive? %>
     <div class="row mt-3 sidebar-lists">
       <div class="col-12">
-        <h3 class="profile-page-sidebar-heading">Lists</h3>
+        <h3 class="profile-page-sidebar-heading"><%= t('vocab.lists').capitalize %></h3>
       </div>
 
       <% if @entity.featured_lists.count.positive?  %>
@@ -114,7 +114,7 @@
   <% unless @entity.network_map_collection.empty? %>
     <div class="row mt-3" id="profile-page-sidebar-maps">
       <div class="col-12">
-        <h3 class="profile-page-sidebar-heading">Network Maps</h3>
+        <h3 class="profile-page-sidebar-heading"><%= t('phrases.network_maps').capitalize %></h3>
       </div>
 
       <div class="col-12">
@@ -132,7 +132,7 @@
   <% if user_signed_in? && ( current_user.importer? || current_user.merger? || current_user.admin? ) %>
     <div class="row mt-3">
       <div class="col-12">
-        <h3 class="profile-page-sidebar-heading">Advanced Tools</h3>
+        <h3 class="profile-page-sidebar-heading"><%= t('phrases.advanced_tools') %></h3>
       </div>
       <div class="col-12">
         <ul class="list-unstyled">
