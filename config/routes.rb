@@ -407,7 +407,7 @@ LittleSis::Application.routes.draw do
 
   namespace :nys, constraints: { id: /[0-9]+/ } do
     get '/committee/:id', action: :committee
-    get '/committee/:id/contributions', action: :contributions
+    get '/committee/:id/contributions', action: :contributions, as: :committee_contributions
   end
 
   get 'relationship/view/id/:id', constraints: { id: /[0-9]+/ }, to: 'relationships/routes#redirect_to_canonical'

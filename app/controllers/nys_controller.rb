@@ -18,10 +18,17 @@ class NYSController < ApplicationController
 
   # /nys/committee/:id/contributions
   def contributions
+    transaction_filter = if params[:transaction_code]
+                           { :filing_sched_abbrev => NYSCampaignFinance::TRANSACTION_CODE_OPTIONS.fetch(params[:transaction_code].downcase.to_sym) }
+                         end
+
+    filename = +"nys_disclosures"
+    filename << "_#{params[:transaction_code]}" if transaction_filter
+    filename << ".csv"
+
     stream_active_record_csv(
-      ExternalDataset
-        .nys_disclosures
-        .where(filer_id: @nys_filer.filer_id)
+      ExternalDataset.nys_disclosures.where(filer_id: @nys_filer.filer_id).where(transaction_filter),
+      filename: filename
     )
   end
 

@@ -11,11 +11,13 @@
   </div>
 </div>
 
-
-
-
 <div class="row">
   <div class="col">
-
+    <div class="p-3 bg-light d-inline-block rounded">
+      <%= form_with url: nys_committee_contributions_path(id: @nys_filer.filer_id), method: :get do |form| %>
+        <%= form.select "transaction_code", NYSCampaignFinance::TRANSACTION_CODE_OPTIONS.keys, include_blank: true, selected: 'contributions'  %>
+        <%= form.button "download" %>
+      <% end %>
+    </div>
   </div>
 </div>
