@@ -36,7 +36,7 @@ module ExternalDataset
                   end
 
       run_query <<~SQL
-        COPY #{table_name} (filer_id,filer_name,compliance_type_desc,filter_type_desc,filter_status,committee_type_desc,office_desc,district,county_desc,municipality_subdivision_desc,treasurer_first_name,treasurer_middle_name,treasurer_last_name,address,city,state,zipcode)
+        COPY #{table_name} (filer_id,filer_name,compliance_type_desc,filer_type_desc,filer_status,committee_type_desc,office_desc,district,county_desc,municipality_subdivision_desc,treasurer_first_name,treasurer_middle_name,treasurer_last_name,address,city,state,zipcode)
         FROM  '#{directory}/nys_filers.csv' WITH CSV;
       SQL
     end

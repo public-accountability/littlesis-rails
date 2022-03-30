@@ -1700,8 +1700,8 @@ CREATE TABLE public.external_data_nys_filers (
     filer_id bigint NOT NULL,
     filer_name text,
     compliance_type_desc text,
-    filter_type_desc text,
-    filter_status text,
+    filer_type_desc text,
+    filer_status text,
     committee_type_desc text,
     office_desc text,
     district text,
@@ -8382,6 +8382,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220121202745'),
 ('20220126173448'),
 ('20220126215216'),
-('20220315195417');
+('20220315195417'),
+('20220330163258');
 
 

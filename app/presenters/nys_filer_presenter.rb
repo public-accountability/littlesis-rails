@@ -7,7 +7,7 @@ class NYSFilerPresenter < SimpleDelegator
       'ID' => filer_id,
       'Type' => committee_type_desc,
       'Address' => "#{address} #{city}, #{zipcode}",
-      'Status' => filter_status&.titleize
+      'Status' => filer_status&.titleize
     }
   end
 end
