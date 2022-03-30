@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class NYSController < ApplicationController
+  include ActionController::Live
   include StreamingController
   # before_action :authenticate_user!, :admins_only
   before_action :set_nys_filer
@@ -18,8 +19,8 @@ class NYSController < ApplicationController
   # /nys/committee/:id/contributions
   def contributions
     stream_active_record_csv(
-      ExternalDataset.nys_disclosures
-        .where()
+      ExternalDataset
+        .nys_disclosures
         .where(filer_id: @nys_filer.filer_id)
     )
   end
