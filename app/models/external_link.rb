@@ -61,7 +61,7 @@ class ExternalLink < ApplicationRecord
       grouped_title: 'NYS Board of Election Filings',
       url: 'https://cfapp.elections.ny.gov/ords/plsql_browser/getfiler2_loaddates?filerid_IN={}',
       editable: false,
-      internal: false,
+      internal: true,           # These were discontinued in 2021. see nys_committee
       multiple: true
     },
     sapi: {
@@ -88,6 +88,14 @@ class ExternalLink < ApplicationRecord
       editable: false,
       internal: false,
       multiple: false
+    },
+    nys_committee: {
+      enum_val: 9,
+      title: 'NYS Campaign Finance Committee: {}',
+      url: nil,
+      editable: false,
+      internal: false,
+      multiple: true
     }
   }.with_indifferent_access.freeze
 

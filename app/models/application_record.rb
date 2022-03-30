@@ -46,6 +46,11 @@ class ApplicationRecord < ActiveRecord::Base
     false
   end
 
+  # shortcut for `attributes.values.to_csv`
+  def to_csv
+    attributes.values.to_csv
+  end
+
   def self.random
     order('random()').take
   end
