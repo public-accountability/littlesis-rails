@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class NYSController < ApplicationController
-  include CSVStreamingController
+  include StreamingController
   # before_action :authenticate_user!, :admins_only
   before_action :set_nys_filer
 
@@ -15,10 +15,16 @@ class NYSController < ApplicationController
   def committee
   end
 
-  # /nys/committee/6884/contributions
+  # /nys/committee/:id/contributions
   def contributions
-    stream_active_record ExternalDataset.nys_disclosures.where(filer_id: params[:id]).where('org_amt >= 100')
+    stream_active_record_csv(
+      ExternalDataset.nys_disclosures
+        .where()
+        .where(filer_id: @nys_filer.filer_id)
+    )
   end
+
+  private
 
   def set_nys_filer
     @nys_filer = NYSFilerPresenter.new ExternalDataset.nys_filers.find_by(filer_id: params[:id])
