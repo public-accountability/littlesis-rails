@@ -40,8 +40,8 @@
           <span style="font-weight: normal;"><%= user.email %></span>
         </td>
         <td class="users_name_bio">
-          <% if user.full_name.present? %>
-            <strong><%= user.full_name %></strong><br />
+          <% if user.name.present? %>
+            <strong><%= user.name %></strong><br />
           <% end %>
         </td>
         <td><%= user.created_at.strftime("%F") %></td>

@@ -23,7 +23,7 @@
         <td><%= l permission_pass.valid_from %></td>
         <td><%= l permission_pass.valid_to %></td>
         <td><%= permission_pass.abilities.to_a.join(', ') %></td>
-        <td><%= permission_pass.creator.user_profile&.full_name %></td>
+        <td><%= permission_pass.creator.user_profile&.name %></td>
         <td data-controller='clipboard tooltip'>
           <input class='pass-url' type='text' data-clipboard-target='source' value='<%= permission_pass_apply_url(permission_pass) %>' readonly/>
           <%= button_tag data: {

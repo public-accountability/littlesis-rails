@@ -114,6 +114,7 @@ en:
     lobbying: lobbying
     location: location
     merge: merge
+    newsletter: newsletter
     name: name
     next: next
     nickname: nickname
@@ -146,6 +147,7 @@ en:
     is_alive: "Alive?"
     primary: primary
     submit: submit
+
 
   phrases:
     advanced_tools: "Advanced Tools"
@@ -207,6 +209,8 @@ en:
     add_relationship: add relationship
     network_maps: "Network Maps"
 
+
+
   pages:
     tags: "Tags allow contributors to thematically group people, organizations, lists, and relationships on LittleSis. Below is a list of all the tags on the site. Don't see a tag you want to use? Use this form to request it!"
     oligrapher: "Oligrapher is a tool for visualizing networks of influence using LittleSis Data"
@@ -235,6 +239,15 @@ en:
       after_confirming: After confirming your email address, you'll be able to login using your email and password here
       having_problems: If you are having any problems with the registration process please contact us at
       no_confirmation instructions: Didn't receive confirmation instructions?
+      do_not_share_email: "We do not share your email with anyone."
+      confirmation_is_required:  "Email verification is required to use LittleSis, and a confirmation will be sent out after you submit this form."
+      username_pattern_message: "Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed."
+      public_username: "This is your public username. Any edits you do will be recorded with this name and visible to other LittleSis users."
+      minimum_8_letters: "Minimum 8 letters"
+      password_length_message: 'Passwords must be at least 8 characters'
+      password_confirmation_no_match: "Your password and password confirmation do not match"
+      send_me_your_newsletter: "Send me your newsletter (we send one every 1-2 months)"
+      you_have_to_accept: "Unfortunately, you have to accept the terms first"
     home:
       littlesis_is: "is a free database of who-knows-who at the heights of business and government"
       littlesis_is_alt: "is a free database of who&zwj;-&zwj;knows&zwj;-&zwj;who at the heights of business and government."

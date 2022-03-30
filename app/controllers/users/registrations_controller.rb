@@ -83,7 +83,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     params
       .require(:user)
       .permit(:username, :email, :password, :password_confirmation, :newsletter, :map_the_power,
-              :user_profile_attributes => [:name_first, :name_last, :location, :reason])
+              :user_profile_attributes => [:name, :location, :reason])
   end
 
   # The path used after sign up.

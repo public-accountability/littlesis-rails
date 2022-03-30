@@ -4031,7 +4031,8 @@ CREATE TABLE public.user_profiles (
     location character varying(255),
     reason text,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    name text
 );
 
 
@@ -8383,6 +8384,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220126173448'),
 ('20220126215216'),
 ('20220315195417'),
-('20220330163258');
+('20220330163258'),
+('20220330204713');
 
 

@@ -11,25 +11,6 @@
 </div>
 
 <div class="row mb-2">
-  <div class="col-sm-12 col-md-7" id="join-page-get-involved">
-    <p><strong>LittleSis is bringing together a community of researchers who believe in transparency and accountability in our society and economy.</strong> Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power.</p>
-    <p><strong>We're looking for researchers, programmers, artists and organizers to be a part of our activist researcher community.</strong> If you want to get involved sign up to become a LittleSis analyst and start adding information to the site. You can check out our <%= link_to 'instructional videos', 'https://www.youtube.com/watch?v=aWLnTqQb-BI&list=PLLT8_8t1lsddq42_VmrwIXSkXn0-bLfit' %> for information on how to use all the tools on our site.</p>
-    <p>If you’re interested in <strong>connecting with other power researchers in your region</strong> and doing local or regional power mapping of your city or state, check out our <%= link_to 'Map The Power', 'https://littlesis.org/toolkit' %> toolkit and sign up <%= link_to 'here', 'https://docs.google.com/forms/d/e/1FAIpQLSfiJh9AjPmE8l6m-OKQH5-Tde6RjlVrZ-q_pjg8UV62h8dneA/viewform' %> to be part of our national network of researchers for the resistance!</p>
-  </div>
-  <div class="col-md-5 d-none d-md-block">
-    <%= image_tag 'map_the_power_RGB.jpg',  class: 'img-fluid' %>
-  </div>
-</div>
-
-<div class="row mb-2">
-  <div class="<%= column_class %>">
-    <div class="thin-grey-bottom-border">
-      <h3>Become an analyst!</h2>
-    </div>
-  </div>
-</div>
-
-<div class="row mb-2">
   <div class="col-sm-12 col-md-8">
     <p>LittleSis presents an exciting opportunity: editors (called "analysts" on LittleSis) are developing an unprecedented, authoritative database of key relationships between powerful Americans. Sign up to edit the profile pages of your (least) favorite fatcats.</p>
     <p>To request an account, please provide all of the following information. We promise not to share it with anyone, ever!</p>
@@ -42,50 +23,40 @@
 <%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {data: { parsley_validate: true, controller: 'username-validation'}}) do |f| %>
   <%= f.fields_for :user_profile do |profile_fields| %>
     <%= registrations_form_group do %>
-      <%= profile_fields.label :name_first, 'First Name', class: label_class   %>
-      <%= profile_fields.text_field :name_first, required: true, class: input_class %>
+      <%= profile_fields.label :name, t('vocab.name').capitalize, class: label_class %>
+      <%= profile_fields.text_field :name, class: input_class %>
+      <small><em><%= t('pages.join.name_and_email') %></em></small>
     <% end %>
 
     <%= registrations_form_group do %>
-      <%= profile_fields.label :name_last, 'Last Name', class: label_class %>
-      <%= profile_fields.text_field :name_last, class: input_class %>
-      <small><em>(<%= t('pages.join.name_and_email') %>)</em> </small>
-    <% end %>
-
-    <%= registrations_form_group do %>
-      <%= f.label :email,
-          'Email',
-          class: label_class,
-          title: 'We do not share your email with anyone. Email verification is required to use LittleSis, and a confirmation will be sent out after you submit this form',
-          data: {tooltip_target: 'trigger', placement: 'left' } %>
+      <%= f.label :email, 'Email', class: label_class %>
       <%= f.email_field :email, autofocus: true, required: true, class: input_class %>
+      <small><em><%= t('pages.join.do_not_share_email') %><br/><%= t('pages.join.confirmation_is_required') %></em></small>
     <% end %>
 
     <%= registrations_form_group do %>
-      <%= f.label :username, 'Username',
-          class: label_class,
-          title: 'This is your public username. Any edits you do will be recorded with this name and visible to other LittleSis users',
-          data: {tooltip_target: 'trigger', placement: 'left' } %>
+      <%= f.label :username, t('vocab.username').capitalize, class: label_class %>
       <%= f.text_field :username, autofocus: true,
-          required: true,
-          data: {
-            parsley_pattern: '^[A-Za-z][A-Za-z0-9_]{2,}',
-            parsley_pattern_message: 'Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed.',
+         required: true,
+         data: {
+           parsley_pattern: '^[A-Za-z][A-Za-z0-9_]{2,}',
+           parsley_pattern_message: t('pages.join.username_pattern_message'),
             parsley_username: true
           },
        class: input_class,
        id: 'user_username'
       %>
+      <small><em><%= t('pages.join.public_username') %></em></small>
     <% end %>
 
     <%= registrations_form_group do %>
-      <%= f.label :password, "#{t('vocab.password').capitalize} (Minimum 8 letters)", class: label_class %>
-      <%= f.password_field :password, autocomplete: 'off', required: true, data: {parsley_minlength: 8, parsley_minlength_message: 'Passwords must be at least 8 characters'}, class: input_class  %>
+      <%= f.label :password, "#{t('vocab.password').capitalize} (#{t('pages.join.minimum_8_letters')})", class: label_class %>
+      <%= f.password_field :password, autocomplete: 'off', required: true, data: {parsley_minlength: 8, parsley_minlength_message: t('pages.join.password_length_message') }, class: input_class  %>
     <% end %>
 
     <%= registrations_form_group do %>
       <%= f.label :password_confirmation, t('phrases.confirm_password'), class: label_class  %>
-      <%= f.password_field :password_confirmation, autocomplete: 'off', required: true, data: {parsley_equalto: '#user_password', parsley_equalto_message: 'Your password and password confirmation do not match :('}, class: input_class  %>
+      <%= f.password_field :password_confirmation, autocomplete: 'off', required: true, data: { parsley_equalto: '#user_password', parsley_equalto_message: t('pages.join.password_confirmation_no_match') }, class: input_class  %>
     <% end %>
 
     <%= registrations_form_group(group_class: 'row mt-2') do %>
@@ -99,15 +70,15 @@
         </ul>
         <p><%= t('pages.join.user_agreement.if_in_violation') %></p>
         <div class="d-flex">
-          <%= check_box_tag :terms_of_use, 1, false, {required: true, data: {parsley_required_message: 'Unfortunately, you have to accept the terms first'}} %><small class='ms-2 font-weight-bold'><%= t('pages.join.user_agreement.i_accept') %></small>
+          <%= check_box_tag :terms_of_use, 1, false, {required: true, data: {parsley_required_message: t('pages.join.you_have_to_accept')}} %><small class='ms-2 font-weight-bold'><%= t('pages.join.user_agreement.i_accept') %></small>
         </div>
       </div>
     <% end %>
 
     <%= registrations_form_group(group_class: 'row mt-2') do %>
-      <%= label_tag 'newsletter', 'Newsletter?', class: label_class %>
+      <%= label_tag 'newsletter', '', class: label_class %>
       <%= f.check_box :newsletter, checked: true, class: 'ml-1' %>
-      <small class='pe-2'>Send me your newsletter (we send one every 1-2 months)</small>
+      <small class='pe-2'><%= t('pages.join.send_me_your_newsletter') %></small>
     <% end %>
 
     <%= registrations_form_group do %>
