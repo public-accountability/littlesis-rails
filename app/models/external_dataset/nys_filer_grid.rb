@@ -13,10 +13,14 @@ module ExternalDataset
     filter(:zipcode, :string)
 
     column 'filer_id', order: false
-    column 'filer_name', order: false
+    column('filer_name', order: false) do |record|
+      format(record.filer_name) do
+        link_to record.filer_name, nys_committee_path(id: record.filer_id), target: '_blank'
+      end
+    end
     column "compliance_type_desc", order: false
-    column "filter_type_desc", order: false
-    column "filter_status", order: false
+    column "filer_type_desc", order: false
+    column "filer_status", order: false
     column "committee_type_desc", order: false
     column "office_desc", order: false
     column "district"

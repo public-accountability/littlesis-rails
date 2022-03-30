@@ -406,7 +406,7 @@ LittleSis::Application.routes.draw do
   end
 
   namespace :nys, constraints: { id: /[0-9]+/ } do
-    get '/committee/:id', action: :committee
+    get '/committee/:id', action: :committee, as: :committee
     get '/committee/:id/contributions', action: :contributions, as: :committee_contributions
   end
 
