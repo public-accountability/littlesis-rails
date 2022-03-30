@@ -379,11 +379,10 @@ LittleSis::Application.routes.draw do
     get '/corporate-mapping-project' => 'partners#cmp'
   end
 
-  ##############################
-  # external entities and data #
-  ##############################
+  #################
+  # External Data #
+  #################
 
-  get '/external_data/:dataset' => 'external_data#dataset', constraints: DatasetConstraint.new
   # Overview page
   get '/datasets' => 'datasets#index'
   # Table Of ExternalEntites/ExternalRelationships for the given dataset
@@ -404,6 +403,11 @@ LittleSis::Application.routes.draw do
       post '/fec_matches', action: :create_fec_match, as: :create_match
       delete '/fec_matches/:id', action: :delete_fec_match, as: :delete_match
     end
+  end
+
+  namespace :nys, constraints: { id: /[0-9]+/ } do
+    get '/committee/:id', action: :committee
+    get '/committee/:id/contributions', action: :contributions
   end
 
   get 'relationship/view/id/:id', constraints: { id: /[0-9]+/ }, to: 'relationships/routes#redirect_to_canonical'

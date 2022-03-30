@@ -94,6 +94,12 @@ describe ApplicationRecord do
     end
   end
 
+  describe 'to_csv' do
+    specify do
+      expect(SwampTip.new(content: 'foo').to_csv).to eq [nil, 'foo', nil, nil].to_csv
+    end
+  end
+
   describe 'lookup_table_for' do
     let(:entities) { Array.new(2) { create(:entity_org) } }
     let(:entity_ids) { entities.map(&:id) }
