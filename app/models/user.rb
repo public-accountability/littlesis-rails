@@ -92,6 +92,10 @@ class User < ApplicationRecord
     Rails.application.routes.url_helpers.user_page_path(self)
   end
 
+  def action_network_activist
+    @action_network_activist ||= ActionNetwork::Activist.new(self)
+  end
+
   ###############
   # User Edits  #
   ###############

@@ -22,59 +22,14 @@ module ActionNetwork
     }
   }.freeze
 
-  TAGS_BY_ID = TAGS.map { |k, v| [v[:id], k] }.to_h.freeze
+  TAGS_BY_ID = TAGS.to_h { |k, v| [v[:id], k] }.freeze
 
-  module HTTP
-    def self.get(url, query = nil)
-      uri = URI.parse(url)
-      uri.query = query if query
-      http(uri, request(uri, :Get))
+  HTTP = JSONRequest.new(
+    modify_request: proc do |request|
+      request['User-Agent'] = 'Mozilla/5.0'
+      request['OSDI-API-Token'] = API_KEY
     end
-
-    def self.post(url, data)
-      uri = URI.parse(url)
-      req = request(uri, :Post)
-      req.body = data.to_json
-      http(uri, req)
-    end
-
-    def self.put(url, data)
-      uri = URI.parse(url)
-      req = request(uri, :Put)
-      req.body = data.to_json
-      http(uri, req)
-    end
-
-    def self.delete(url, data = {})
-      uri = URI.parse(url)
-      req = request(uri, :Delete)
-      req.body = data.to_json
-      http(uri, req)
-    end
-
-    # URI,  Net::HTTP::Get --> Hash | raises HTTPRequestFailedError
-    private_class_method def self.http(uri, request)
-      Net::HTTP.start(uri.host, uri.port, :use_ssl => true) do |http|
-        response = http.request(request)
-        if response.is_a? Net::HTTPSuccess
-          return JSON.parse(response.body)
-        else
-          Rails.logger.warn "[ActionNetwork] #{response.body}" if response.body
-          raise Exceptions::HTTPRequestFailedError, "Response code: #{response.code}"
-        end
-      end
-    end
-
-    # Formats a URI into an http request with correct API Headers
-    # UIR, symbol --> Net::HTTPRequest
-    private_class_method def self.request(uri, method)
-      Net::HTTP.const_get(method).new(uri).tap do |request|
-        request['User-Agent'] = 'Mozilla/5.0'
-        request['Content-Type'] = 'application/json'
-        request['OSDI-API-Token'] = API_KEY
-      end
-    end
-  end
+  ).freeze
 
   class Activist
     attr_reader :email
@@ -87,10 +42,8 @@ module ActionNetwork
       return [] if taggings.nil?
 
       taggings
-        .map { |x| x.dig('_links', 'osdi:tag') }
-        .compact
-        .map { |t| TAGS_BY_ID.fetch(t['href'].split('/').last, nil) }
-        .compact
+        .filter_map { |x| x.dig('_links', 'osdi:tag') }
+        .filter_map { |t| TAGS_BY_ID.fetch(t['href'].split('/').last, nil) }
     end
 
     def in_action_network?
@@ -105,7 +58,7 @@ module ActionNetwork
       return if subscribed?
 
       if in_action_network?
-        HTTP.put(endpoint,  { "email_addresses" =>  [ { "status" =>  "subscribed" } ] })
+        HTTP.put(endpoint, { "email_addresses" => [{ "status" => "subscribed" }] })
       else
         @info = ActionNetwork.signup(@email)
       end
@@ -114,11 +67,11 @@ module ActionNetwork
     def unsubscribe
       return unless subscribed?
 
-      HTTP.put(endpoint,  { "email_addresses" =>  [ { "status" =>  "unsubscribed" } ] })
+      HTTP.put(endpoint, { "email_addresses" => [{ "status" => "unsubscribed" }] })
     end
 
     def add(list)
-      raise ArgumentError unless TAGS.keys.include?(list)
+      raise ArgumentError unless TAGS.key?(list)
 
       return true if tags.include?(list)
 
@@ -128,7 +81,7 @@ module ActionNetwork
     end
 
     def remove(list)
-      raise ArgumentError unless TAGS.keys.include?(list)
+      raise ArgumentError unless TAGS.key?(list)
 
       return unless tags.include?(list)
 
