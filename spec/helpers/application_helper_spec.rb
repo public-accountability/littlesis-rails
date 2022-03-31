@@ -92,9 +92,8 @@ describe ApplicationHelper, :type => :helper do
   end
 
   describe 'bs_row_column' do
-    it 'generate form group html' do
-      expect(helper.registrations_form_group { 'test' })
-        .to eq '<div class="row"><div class="col">test</div></div>'
+    it 'bs_row_column' do
+      expect(helper.bs_row_column { 'test' }).to eq '<div class="row"><div class="col">test</div></div>'
     end
   end
 end

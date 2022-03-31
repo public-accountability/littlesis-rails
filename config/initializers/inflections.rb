@@ -18,6 +18,7 @@
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular 'external_data', 'external_data'
   inflect.acronym 'CSV'
+  inflect.acronym 'JSON'
   inflect.acronym 'NYC'
   inflect.acronym 'NYCC'
   inflect.acronym 'NYS'

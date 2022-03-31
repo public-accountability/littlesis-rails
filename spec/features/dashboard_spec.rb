@@ -18,9 +18,9 @@ describe 'home/dashboard', type: :feature do
       expect(page).to have_css('h2', text: 'Log in')
 
       within '#new_user' do
-        fill_in 'email', with: current_user.email
-        fill_in 'password', with: 'password'
-        click_on 'Log in'
+        fill_in 'Email', with: current_user.email
+        fill_in 'Password', with: 'password'
+        click_on 'Login'
       end
 
       expect(page).to show_success('Signed in successfully.')
