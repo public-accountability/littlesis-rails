@@ -4,14 +4,13 @@ describe 'user registration', js: true do
   end
 
   scenario 'user submits form without filling it out and is taken to the first required field' do
-    expect(page).not_to have_css('#user_user_profile_attributes_name_first:focus')
+    expect(page).not_to have_css('#user_user_profile_attributes_name:focus')
     click_on 'Sign up'
-    expect(page).to have_css('#user_user_profile_attributes_name_first:focus')
+    expect(page).to have_css('#user_user_profile_attributes_name:focus')
   end
 
   scenario 'user is prompted to accept the terms of use' do
-    find('#user_user_profile_attributes_name_first').send_keys('Oedipa')
-    find('#user_user_profile_attributes_name_last').send_keys('Maas')
+    find('#user_user_profile_attributes_name').send_keys('Oedipa Maas')
     find('#user_email').send_keys('oedipa@maas.net')
     find('#user_username').send_keys('oedipa')
     find('#user_password').send_keys('trolleron')
@@ -24,8 +23,7 @@ describe 'user registration', js: true do
   end
 
   scenario 'user enters a too-short password' do
-    find('#user_user_profile_attributes_name_first').send_keys('Oedipa')
-    find('#user_user_profile_attributes_name_last').send_keys('Maas')
+    find('#user_user_profile_attributes_name').send_keys('Oedipa Maas')
     find('#user_email').send_keys('oedipa@maas.net')
     find('#user_username').send_keys('oedipa')
     find('#user_password').send_keys('short')
@@ -38,8 +36,7 @@ describe 'user registration', js: true do
   end
 
   scenario 'user enters a bad password confirmation' do
-    find('#user_user_profile_attributes_name_first').send_keys('Oedipa')
-    find('#user_user_profile_attributes_name_last').send_keys('Maas')
+    find('#user_user_profile_attributes_name').send_keys('Oedipa Maas')
     find('#user_email').send_keys('oedipa@maas.net')
     find('#user_username').send_keys('oedipa')
     find('#user_password').send_keys('4Wm45Csff4WbdiC')
@@ -48,12 +45,11 @@ describe 'user registration', js: true do
     fill_in_math_captcha('math_captcha')
     find('#terms_of_use').check
     click_on 'Sign up'
-    expect(page).to have_css('.parsley-equalto', text: 'Your password and password confirmation do not match :(')
+    expect(page).to have_css('.parsley-equalto', text: 'Your password and password confirmation do not match')
   end
 
   scenario 'user is prompted to fill out "about you"' do
-    find('#user_user_profile_attributes_name_first').send_keys('Oedipa')
-    find('#user_user_profile_attributes_name_last').send_keys('Maas')
+    find('#user_user_profile_attributes_name').send_keys('Oedipa Maas')
     find('#user_email').send_keys('oedipa@maas.net')
     find('#user_username').send_keys('oedipa')
     find('#user_password').send_keys('4Wm45Csff4WbdiC')

@@ -24,7 +24,7 @@
   <%= f.fields_for :user_profile do |profile_fields| %>
     <%= registrations_form_group do %>
       <%= profile_fields.label :name, t('vocab.name').capitalize, class: label_class %>
-      <%= profile_fields.text_field :name, class: input_class %>
+      <%= profile_fields.text_field :name, class: input_class, required: true %>
       <small><em><%= t('pages.join.name_and_email') %></em></small>
     <% end %>
 
@@ -96,7 +96,7 @@
 
     <%= registrations_form_group do %>
       <%= fields_for :math_captcha do |f2| %>
-        <%= render partial: 'math_captcha', locals: {f: f2, label_class: label_class, input_class: input_class} %>
+        <%= render partial: 'math_captcha', locals: { f: f2, label_class: label_class, input_class: input_class } %>
       <% end %>
     <% end %>
 
