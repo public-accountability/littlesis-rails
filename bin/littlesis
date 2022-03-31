@@ -172,18 +172,15 @@ def deploy
 
   changed_files = git("diff --name-only #{remote_commit} #{local_commit}").split("\n")
 
-  if changed_files.any? { |f| f.include?('db/migrate') }
-    puts <<-MSG
-      +-----------------------------------------------------------+
-      These changes likely require a database update,
-      which will NOT happen automatically by this script.
-      To perform a migration run: "littlesis -P rake db:migrate"
-      +-----------------------------------------------------------+
-    MSG
-  end
-
   if changed_files.include?('Gemfile') || changed_files.include?('Gemfile.lock')
     app_exec_bin 'bundle install'
+  end
+
+  if changed_files.any? { |f| f.include?('db/migrate') }
+    puts "These changes likely require a database update."
+    if yes_or_no?("Would you like to run rake db:migrate now?")
+      app_exec_bin 'rake db:migrate'
+    end
   end
 
   if changed_files.include?('package-lock.json')
@@ -192,7 +189,7 @@ def deploy
 
   # TODO detech changes to Rails.application.config.littlesis.oligrapher_commit and run OligrapherAssetsService.run
 
-  if changed_files.include?('yarn.lock') || changed_files.any? { |f| f.include?('assets') || f.include?('javascript') }
+  if changed_files.any? { |f| f.include?('package-lock.json') || f.include?('assets') || f.include?('javascript') }
     app_exec_bin 'rake assets:precompile'
   end
 
