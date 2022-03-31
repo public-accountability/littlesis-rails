@@ -1,9 +1,7 @@
 <% content_for(:page_title, t('vocab.join').capitalize) %>
 
-<% column_class = 'col-sm-8' %>
-
 <div class="row mb-2">
-  <div class='<%= column_class %>'>
+  <div class='col-sm-8'>
     <div class='thin-grey-bottom-border'>
       <h2><%= t('phrases.get_involved').titleize %></h2>
     </div>
@@ -12,8 +10,8 @@
 
 <div class="row mb-2">
   <div class="col-sm-12 col-md-8">
-    <p>LittleSis presents an exciting opportunity: editors (called "analysts" on LittleSis) are developing an unprecedented, authoritative database of key relationships between powerful Americans. Sign up to edit the profile pages of your (least) favorite fatcats.</p>
-    <p>To request an account, please provide all of the following information. We promise not to share it with anyone, ever!</p>
+    <p><%= t('pages.join.get_involved') %></p>
+    <p><%= t('pages.join.request_an_account') %></p>
   </div>
 </div>
 
@@ -103,7 +101,9 @@
 
     <%= bs_row_column(row_class: 'row mb-2 mt-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= f.submit 'Sign up', class: 'btn btn-primary' %>
-      <p class="mt-3"><small><%= render 'users/shared/links' %></small></p>
+      <div class="mt-3">
+        <small><%= render 'users/shared/links' %></small>
+      </div>
     <% end %>
   <% end %>
 <% end %>
