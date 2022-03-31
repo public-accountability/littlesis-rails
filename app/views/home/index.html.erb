@@ -2,7 +2,7 @@
 <% content_for(:head) do  %>
   <%= og_tags(title: 'LittleSis', url: 'https://littlesis.org', image: 'https://littlesis.org/images/system/lilsis-logo-trans-200.png') %>
   <meta property="og:description" content="LittleSis is a free database of who-knows-who at the heights of business and government">
-<% end  %>
+<% end %>
 
 <div class="row mt-4" id="homepage-who-we-are-row">
   <div class="col-sm-12 col-lg-9">
@@ -78,7 +78,9 @@
 
 <div class="row mt-4">
   <div class="col-sm-7 pb-3">
-    <%= homepage_headline_h3  t('pages.home.involuntary_facebook') %>
+    <div class="thin-grey-bottom-border mb-3">
+      <h3><%= t('pages.home.involuntary_facebook') %></h3>
+    </div>
 
     <p>We bring transparency to influential social networks by tracking the key relationships of politicians, business leaders, lobbyists, financiers, and their affiliated institutions. We help answer questions such as:</p>
     <ul>
@@ -89,23 +91,31 @@
 
     <p>All of this information is public, but scattered. We bring it together in one place. Our data derives from government filings, news articles, and other reputable sources. Some data sets are updated automatically; the rest is filled in by our user community. <%= link_to "More Features", "/features", class: 'link-blue'  %></p>
 
-    <%= homepage_headline_h3 t('littlesis.eyes_on_the_ties') %>
+    <div class="thin-grey-bottom-border mb-3">
+      <h3><%= t('littlesis.eyes_on_the_ties') %></h3>
+    </div>
 
-    <p>Who are the movers and shakers behind the bailouts, government contracts, and austerity policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <%= link_to "Eyes on the Ties", "http://blog.littlesis.org", class: 'link-blue' %></p>
+    <p>Who are the movers and shakers behind the bailouts, government contracts, and austerity policies? We’re working around the clock to stock LittleSis with information about bigwigs who make the news, and their connections to those who don’t. For updates and analysis visit our blog, <%= link_to "Eyes on the Ties", "https://news.littlesis.org", class: 'link-blue' %>.</p>
 
-    <%= homepage_headline_h3 t('pages.home.made_for_watchdogs') %>
+    <div class="thin-grey-bottom-border mb-3">
+      <h3><%= t('pages.home.made_for_watchdogs') %></h3>
+    </div>
 
-    <p>We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <% link_to "Get Involved", "/join", class: 'link-blue' %></p>
+    <p>We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <%= link_to "Get Involved", "/join", class: 'link-blue' %>.</p>
 
-    <%= homepage_headline_h3 t('pages.home.think_and_do') %>
+    <div class="thin-grey-bottom-border mb-3">
+      <h3><%= t('pages.home.think_and_do') %></h3>
+    </div>
 
-    <p>LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from <%= link_to 'foundations', 'http://public-accountability.org/about/funding/', class: 'link-blue' %> and benefit from free software written by the open source community.</p>
+    <p>LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from <%= link_to 'foundations', 'https://public-accountability.org/about/funding/', class: 'link-blue' %> and benefit from free software written by the open source community.</p>
     <p>The <%= link_to "code", "https://github.com/public-accountability/littlesis-rails", class: 'link-blue' %> powering LittleSis is free & open source.</p>
   </div>
   <div class="col-sm-1"></div>
 
   <div class="col-sm-4">
-    <%= homepage_headline_h3 t('phrases.data_summary') %>
+    <div class="thin-grey-bottom-border mb-3">
+      <h3><%= t('phrases.data_summary') %></h3>
+    </div>
     <%= render partial: 'data_summary', locals: { stats: @stats } %>
   </div>
 </div>

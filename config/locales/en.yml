@@ -114,6 +114,7 @@ en:
     lobbying: lobbying
     location: location
     merge: merge
+    newsletter: newsletter
     name: name
     next: next
     nickname: nickname
@@ -146,6 +147,7 @@ en:
     is_alive: "Alive?"
     primary: primary
     submit: submit
+
 
   phrases:
     advanced_tools: "Advanced Tools"
@@ -184,7 +186,8 @@ en:
     map the power: "Map the power"
     match_donations: "match donations"
     need_your_password: "we need your current password to confirm your changes"
-    forgot_your_password: Forgot your password?
+    forgot_your_password: "Forgot your password?"
+    missing_confirmation: "Didn't receive confirmation instructions?"
     recent_edits: "recent edits"
     related_entity: "related entity"
     relationship_category: "Relationship Category"
@@ -206,20 +209,16 @@ en:
     edit_your_settings: "Edit your settings"
     add_relationship: add relationship
     network_maps: "Network Maps"
+    remember_me: "Remember me"
 
   pages:
     tags: "Tags allow contributors to thematically group people, organizations, lists, and relationships on LittleSis. Below is a list of all the tags on the site. Don't see a tag you want to use? Use this form to request it!"
     oligrapher: "Oligrapher is a tool for visualizing networks of influence using LittleSis Data"
     stub_profile: "This is a stub profile page – there are no relationships in the database."
     join:
-      get_involved: |
-        LittleSis is bringing together a community of researchers who believe in transparency and accountability in our society and economy. Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power.
-        We're looking for researchers, programmers, artists and organizers to be a part of our activist researcher community. If you want to get involved sign up to become a LittleSis analyst and start adding information to the site. You can check out our %{videos_link} for information on how to use all the tools on our site.
-        If you’re interested in connecting with other power researchers in your region and doing local or regional power mapping of your city or state, check out our %{toolkit_link} toolkit and sign up %{join_link} to be part of our national network of researchers for the resistance!
-      become_an_analyst: |
-        LittleSis presents an exciting opportunity: editors (called "analysts" on LittleSis) are developing an unprecedented, authoritative database of key relationships between powerful Americans.
-        Sign up to edit the profile pages of your (least) favorite fatcats.
-        To request an account, please provide the following information. We promise not to share it with anyone, ever!
+      get_involved: "LittleSis is bringing together a community of researchers who believe in transparency and accountability in our society and economy. Our task is to study, document, and expose the social networks that have our democracy in a stranglehold, so that grassroots efforts can more effectively challenge their claim to power."
+      request_an_account: "We're looking for researchers, programmers, artists and organizers to be a part of our activist researcher community. If you want to get involved sign up to become a LittleSis analyst and start adding information to the site."
+      watch_our_videos: "You can check out our %{videos_link} for information on how to use all the tools on our site."
       user_agreement:
         i_understand: "I understand that LittleSis's mission is to track people and groups with inordinate wealth, influence on public policy, and access to government officials. As a LittleSis analyst it is my responsibility to ensure that information I contribute is relevant to the site's mission, accurate, and documented by publicly available original sources on the internet. The LittleSis staff can revoke my editing privileges or disable my account if they believe I am not following these guidelines in good faith. LittleSis staff can revoke my editing privileges and remove any edits, maps, or lists that I create that are in violation of these terms of use including:"
         promote_violence: "Contributions that promote violence or hate against a marginalized group or use hate speech"
@@ -235,6 +234,15 @@ en:
       after_confirming: After confirming your email address, you'll be able to login using your email and password here
       having_problems: If you are having any problems with the registration process please contact us at
       no_confirmation instructions: Didn't receive confirmation instructions?
+      do_not_share_email: "We do not share your email with anyone."
+      confirmation_is_required:  "Email verification is required to use LittleSis, and a confirmation will be sent out after you submit this form."
+      username_pattern_message: "Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed."
+      public_username: "This is your public username. Any edits you do will be recorded with this name and visible to other LittleSis users."
+      minimum_8_letters: "Minimum 8 letters"
+      password_length_message: 'Passwords must be at least 8 characters'
+      password_confirmation_no_match: "Your password and password confirmation do not match"
+      send_me_your_newsletter: "Send me your newsletter (we send one every 1-2 months)"
+      you_have_to_accept: "Unfortunately, you have to accept the terms first"
     home:
       littlesis_is: "is a free database of who-knows-who at the heights of business and government"
       littlesis_is_alt: "is a free database of who&zwj;-&zwj;knows&zwj;-&zwj;who at the heights of business and government."

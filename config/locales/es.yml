@@ -146,7 +146,8 @@ es:
     map the power:
     match_donations:
     need_your_password:
-    forgot_your_password:
+    forgot_your_password: "¿Olvidó su contraseña?"
+    missing_confirmation: "¿No recibió las instrucciones de confirmación?"
     recent_edits:
     related_entity:
     relationship_category: "cambios recientes"
@@ -195,7 +196,8 @@ es:
       made_for_watchdogs: "Hecho para vigilantes"
     join:
       get_involved: "LittleSis está creando una comunidad de investigadores que creen en la transparencia y la responsabilidad en nuestra sociedad y nuestra economía. Nuestro objetivo es estudiar, documentar, y exponer las redes sociales que controlan nuestra democracia para que las luchas desde las bases puedan desafiar su poder de manera más efectiva."
-      become_an_analyst: "LittleSis presenta una gran oportunidad: nuestros editores (llamados ‘analistas’ en LittleSis) están desarrollando una base de datos sin precedentes sobre las relaciones entre los estadounidenses más poderosos."
+      request_an_account: "Buscamos investigadores, programadores, artistas y organizadores que quieran ser parte de nuestra comunidad de investigadores activistas. Si quiere formar parte, hágase una cuenta para  ser analista de Little Sis y empezar a añadir información a nuestra web."
+      watch_our_videos: "Puede ver nuestros videos para aprender a usar las herramientas de nuestra web."
       user_agreement:
         i_understand: "Entiendo que la misión de LittleSis es rastrear a personas y grupos con grandes cantidades de riqueza, influencia en política pública y acceso oficiales del gobierno. Como analista de LittleSis es mi responsabilidad asegurarme de que la información que aporto es relevante para con este objetivo, rigurosa y bien documentada, usando las fuentes disponibles de manera pública en internet. El personal de LittleSis puede quitarme mis privilegios de edición o desactivar mi cuenta si creen que no estoy siguiendo estos estándares de buena fé. El personal de LittleSis puede quitarme mis privilegios de edición y eliminar mis contribuciones, mapas, o listas si violan estos términos de uso, incluyendo:"
         promote_violence: "Contribuciones que promuevan la violencia o el odio contra grupos marginalizados o el uso de lenguaje de odio"

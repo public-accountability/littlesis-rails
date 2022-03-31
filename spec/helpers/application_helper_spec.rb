@@ -11,7 +11,7 @@ describe ApplicationHelper, :type => :helper do
       expect(helper.page_title).to eq 'LittleSis'
     end
 
-    it 'skips the LittleSis suffix if it already contains LittleSis ' do
+    it 'skips the LittleSis suffix if it already contains LittleSis' do
       expect(helper).to receive(:content_for)
                           .with(:page_title).once.and_return('LittleSis - this is the page title')
       expect(helper.page_title).to eq 'LittleSis - this is the page title'
@@ -20,67 +20,50 @@ describe ApplicationHelper, :type => :helper do
 
   describe 'references_select' do
     let(:references) { Array.new(2) { build(:reference) } }
-    let(:selected_id) { nil }
-    subject { helper.references_select(references, selected_id) }
 
-    context 'with no selected_id' do
-      it { is_expected.to have_css 'option', count: 3 }
-      it { is_expected.to have_css 'select.selectpicker' }
-      it do
-        is_expected.to have_css "option[value='#{references.first.id}']",
-                                text: references.first.document.name
-      end
-      it do
-        is_expected.to have_css "option[value='#{references.second.id}']",
-                                text: references.second.document.name
-      end
-      it { is_expected.not_to include 'selected' }
+    it 'creates selectpicker' do
+      html = helper.references_select(references, nil)
+      expect(html).to have_css 'option', count: 3
+      expect(html).to have_css 'select.selectpicker'
+      expect(html).to have_css "option[value='#{references.first.id}']", text: references.first.document.name
+      expect(html).to have_css "option[value='#{references.second.id}']", text: references.second.document.name
+      expect(html).not_to include 'selected'
     end
 
-    context 'with a selected_id' do
-      let(:selected_id) { references.first.id }
-      it { is_expected.to have_css "option[value='#{references.first.id}'][selected='selected']" }
-      it { is_expected.to have_css "option[value='#{references.second.id}']" }
+    it 'selects reference when provded a selected_id' do
+      html = helper.references_select(references, references.first.id)
+      expect(html).to have_css "option[value='#{references.first.id}'][selected='selected']"
+      expect(html).to have_css "option[value='#{references.second.id}']"
     end
   end
 
   describe 'show_donation_banner?' do
-    subject { helper.show_donation_banner? }
-
-    let(:controller_name) { 'lists' }
-    let(:action_name) { 'index' }
-    let(:donation_banner_display) { nil }
-
-    before do
-      allow(helper).to receive(:controller_name).and_return(controller_name)
-      allow(controller).to receive(:action_name).and_return(action_name)
-      Rails.application.config.littlesis[:donation_banner_display] = donation_banner_display
+    it 'when set to "everywhere" it shows on the lists page' do
+      Rails.application.config.littlesis[:donation_banner_display] = 'everywhere'
+      allow(helper).to receive(:controller_name).and_return('lists')
+      allow(controller).to receive(:action_name).and_return('index')
+      expect(helper.show_donation_banner?).to be true
     end
 
-    context 'when set to everywhere' do
-      let(:donation_banner_display) { 'everywhere' }
-
-      it { is_expected.to be true }
+    it 'when set to "homepage" it shows it on the homepage' do
+      Rails.application.config.littlesis[:donation_banner_display] = 'homepage'
+      allow(helper).to receive(:controller_name).and_return('home')
+      allow(controller).to receive(:action_name).and_return('index')
+      expect(helper.show_donation_banner?).to be true
     end
 
-    context 'when set to homepage and viewing list page' do
-      let(:donation_banner_display) { 'homepage' }
-
-      it { is_expected.to be false }
+    it 'when set to "homepage" it hides it from lists page' do
+      Rails.application.config.littlesis[:donation_banner_display] = 'homepage'
+      allow(helper).to receive(:controller_name).and_return('lists')
+      allow(controller).to receive(:action_name).and_return('index')
+      expect(helper.show_donation_banner?).to be false
     end
 
-    context 'when set to homepage and viewing homepage' do
-      let(:controller_name) { 'home' }
-      let(:donation_banner_display) { 'homepage' }
-
-      it { is_expected.to be true }
-    end
-
-    context 'when set to false and viewing homepage' do
-      let(:controller_name) { 'home' }
-      let(:donation_banner_display) { false }
-
-      it { is_expected.to be false }
+    it 'when set to false it hides it from the homepage' do
+      Rails.application.config.littlesis[:donation_banner_display] = false
+      allow(helper).to receive(:controller_name).and_return('homepage')
+      allow(controller).to receive(:action_name).and_return('index')
+      expect(helper.show_donation_banner?).to be false
     end
   end
 
@@ -105,6 +88,12 @@ describe ApplicationHelper, :type => :helper do
 
       it { is_expected.to include 'important message' }
       it { is_expected.to include 'style="background-color: #fbb4ae"' }
+    end
+  end
+
+  describe 'bs_row_column' do
+    it 'bs_row_column' do
+      expect(helper.bs_row_column { 'test' }).to eq '<div class="row"><div class="col">test</div></div>'
     end
   end
 end

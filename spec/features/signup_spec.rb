@@ -1,8 +1,8 @@
 feature "Signing up for an account", type: :feature do
   let(:user_info) do
     Struct
-      .new(:first_name, :last_name, :email, :password, :username, :about_you)
-      .new(Faker::Name.first_name, Faker::Name.last_name, Faker::Internet.email, Faker::Internet.password(min_length: 8), random_username, Faker::Books::Lovecraft.sentence)
+      .new(:name, :email, :password, :username, :about_you)
+      .new(Faker::Name.name, Faker::Internet.email, Faker::Internet.password(min_length: 8), random_username, Faker::Books::Lovecraft.sentence)
   end
 
   before do
@@ -14,7 +14,6 @@ feature "Signing up for an account", type: :feature do
     expect(page).to have_current_path new_user_registration_path
 
     page_has_selector 'h2', text: 'Get Involved'
-    page_has_selector 'h3', text: 'Become an analyst!'
     expect(page).to have_text "What are you hoping to use LittleSis for?"
   end
 
@@ -29,8 +28,7 @@ feature "Signing up for an account", type: :feature do
   scenario 'Fills out form and signs up' do
     counts = [User.count, UserProfile.count]
 
-    fill_in 'user_user_profile_attributes_name_first', :with => user_info.first_name
-    fill_in 'user_user_profile_attributes_name_last', :with => user_info.last_name
+    fill_in 'user_user_profile_attributes_name', :with => user_info.name
     fill_in 'user_email', :with => user_info.email
     fill_in 'user_username', :with => user_info.username
     fill_in 'user_password', :with => user_info.password
@@ -53,8 +51,7 @@ feature "Signing up for an account", type: :feature do
   scenario 'Fills out form and signs up with location field' do
     location = 'the center of the earth'
 
-    fill_in 'user_user_profile_attributes_name_first', :with => user_info.first_name
-    fill_in 'user_user_profile_attributes_name_last', :with => user_info.last_name
+    fill_in 'user_user_profile_attributes_name', :with => user_info.name
     fill_in 'user_email', :with => user_info.email
     fill_in 'user_username', :with => user_info.username
     fill_in 'user_password', :with => user_info.password
@@ -69,7 +66,7 @@ feature "Signing up for an account", type: :feature do
     expect(UserProfile.last.location).to eql location
 
     last_user = User.last
-    expect(last_user.email).to eql user_info.email
+    expect(last_user.email).to eq user_info.email
   end
 
   describe 'Attempting to signup with a username that is already taken' do
@@ -82,10 +79,9 @@ feature "Signing up for an account", type: :feature do
     scenario 'Shows error message regarding the username' do
       counts = [User.count, UserProfile.count]
 
-      fill_in 'user_user_profile_attributes_name_first', :with => user_info.first_name
-      fill_in 'user_user_profile_attributes_name_last', :with => user_info.last_name
+      fill_in 'user_user_profile_attributes_name', :with => user_info.name
       fill_in 'user_email', :with => user_info.email
-      fill_in 'user_username', :with => username # dfiferent than the above example
+      fill_in 'user_username', :with => username # different than the above example
       fill_in 'user_password', :with => user_info.password
       fill_in 'user_password_confirmation', :with => user_info.password
       find(:css, "#terms_of_use").set(true)
@@ -106,8 +102,7 @@ feature "Signing up for an account", type: :feature do
   scenario 'answering the math problem incorrectly' do
     counts = [User.count, UserProfile.count]
 
-    fill_in 'user_user_profile_attributes_name_first', :with => user_info.first_name
-    fill_in 'user_user_profile_attributes_name_last', :with => user_info.last_name
+    fill_in 'user_user_profile_attributes_name', :with => user_info.name
     fill_in 'user_email', :with => user_info.email
     fill_in 'user_username', :with => user_info.username
     fill_in 'user_password', :with => user_info.password

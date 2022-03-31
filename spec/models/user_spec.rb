@@ -120,19 +120,16 @@ describe User do
     end
   end
 
-  describe 'delagates first and last names to user_profile' do
+  describe 'delagates name to user_profile' do
     let(:user) { create_really_basic_user }
-    let(:first_name) { Faker::Name.first_name }
-    let(:last_name) { Faker::Name.last_name }
-    let(:user_profile) do
-      create(:user_profile, name_first: first_name, name_last: last_name, user: user)
+    let(:name) { Faker::Name.name }
+    let!(:user_profile) do
+      create(:user_profile, name: name, user: user)
     end
 
-    before { user_profile }
-
-    specify { expect(user.name_first).to eql user_profile.name_first }
-    specify { expect(user.name_last).to eql user_profile.name_last }
-    specify { expect(user.full_name).to eq "#{first_name} #{last_name}" }
+    specify do
+      expect(user.name).to eq user_profile.name
+    end
   end
 
   describe 'set_default_network_id' do

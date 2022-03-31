@@ -1,39 +1,41 @@
 <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-    <div class="row">
-        <div class="col-sm-8">
-            <h2>Log in</h2>
-        </div>
+  <div class="row">
+    <div class="col-sm-8">
+      <h2>Log in</h2>
     </div>
-    <div class="row">
-        <div class="form-group col-sm-5" >
-            <%= f.label :email, 'email' %>
-            <%= f.email_field :email, autofocus: true, class: 'form-control' %>
-        </div>
+  </div>
+  <div class="row mt-2">
+    <div class="form-group col-sm-5">
+      <%= f.label :email, 'Email' %>
+      <%= f.email_field :email, autofocus: true, class: 'form-control', required: true %>
     </div>
-    <div class="row">
-        <div class="form-group col-sm-5" >
-            <%= f.label :password, 'password' %>
-            <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
-        </div>
+  </div>
+  <div class="row mt-2">
+    <div class="form-group col-sm-5">
+      <%= f.label :password, t('vocab.password').capitalize %>
+      <%= f.password_field :password, autocomplete: "off", class: 'form-control', required: true %>
     </div>
-    <div class="row">
-        <% if devise_mapping.rememberable? -%>
-            <div class="form-group col-sm-5">
-                <div class="field" id="remember-me-container">
-                    <%= f.label :remember_me %>
-                    <%= f.check_box :remember_me %>
-                </div>
-            </div>
-        <% end -%>
-    </div>    
-    <div class="row">
-        <div class="actions form-group col-sm-6">
-            <%= f.submit "Log in", class: "btn btn-primary" %>
+  </div>
+  <div class="row mt-2">
+    <% if devise_mapping.rememberable? %>
+      <div class="form-group col-sm-5">
+        <div class="field" id="remember-me-container">
+          <%= f.label :remember_me, t("phrases.remember_me") %>
+          <%= f.check_box :remember_me %>
         </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="row mt-2">
+    <div class="actions form-group col-sm-6">
+      <%= f.submit t('vocab.login').capitalize, class: "btn btn-primary" %>
     </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <%= render "users/shared/links" %>
-        </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-sm-6">
+      <small>
+        <%= render "users/shared/links" %>
+      </small>
     </div>
+  </div>
 <% end %>

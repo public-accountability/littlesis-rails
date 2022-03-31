@@ -60,7 +60,8 @@ class User < ApplicationRecord
 
   before_validation :set_default_network_id
 
-  delegate :name_first, :name_last, :full_name, to: :user_profile
+  # delegate :name_first, :name_last, :full_name, to: :user_profile
+  delegate :name, to: :user_profile
   delegate(*UserAbilities::ABILITY_MAPPING.values, to: 'abilities')
   alias importer? bulker?
 
