@@ -22,19 +22,20 @@
 
 <%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {data: { parsley_validate: true, controller: 'username-validation'}}) do |f| %>
   <%= f.fields_for :user_profile do |profile_fields| %>
-    <%= registrations_form_group do %>
+
+    <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= profile_fields.label :name, t('vocab.name').capitalize, class: label_class %>
       <%= profile_fields.text_field :name, class: input_class, required: true %>
       <small><em><%= t('pages.join.name_and_email') %></em></small>
     <% end %>
 
-    <%= registrations_form_group do %>
+    <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= f.label :email, 'Email', class: label_class %>
       <%= f.email_field :email, autofocus: true, required: true, class: input_class %>
       <small><em><%= t('pages.join.do_not_share_email') %><br/><%= t('pages.join.confirmation_is_required') %></em></small>
     <% end %>
 
-    <%= registrations_form_group do %>
+    <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= f.label :username, t('vocab.username').capitalize, class: label_class %>
       <%= f.text_field :username, autofocus: true,
          required: true,
@@ -49,17 +50,17 @@
       <small><em><%= t('pages.join.public_username') %></em></small>
     <% end %>
 
-    <%= registrations_form_group do %>
+    <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= f.label :password, "#{t('vocab.password').capitalize} (#{t('pages.join.minimum_8_letters')})", class: label_class %>
       <%= f.password_field :password, autocomplete: 'off', required: true, data: {parsley_minlength: 8, parsley_minlength_message: t('pages.join.password_length_message') }, class: input_class  %>
     <% end %>
 
-    <%= registrations_form_group do %>
+    <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= f.label :password_confirmation, t('phrases.confirm_password'), class: label_class  %>
       <%= f.password_field :password_confirmation, autocomplete: 'off', required: true, data: { parsley_equalto: '#user_password', parsley_equalto_message: t('pages.join.password_confirmation_no_match') }, class: input_class  %>
     <% end %>
 
-    <%= registrations_form_group(group_class: 'row mt-2') do %>
+    <%= bs_row_column(row_class: 'row mt-2 mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= label_tag 'terms_of_use', t('phrases.terms').capitalize, class: label_class %>
       <div class="bg-info p-3">
         <p><%= t('pages.join.user_agreement.i_understand') %></p>
@@ -75,18 +76,18 @@
       </div>
     <% end %>
 
-    <%= registrations_form_group(group_class: 'row mt-2') do %>
+    <%= bs_row_column(row_class: 'row mt-2 mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= label_tag 'newsletter', '', class: label_class %>
       <%= f.check_box :newsletter, checked: true, class: 'ml-1' %>
       <small class='pe-2'><%= t('pages.join.send_me_your_newsletter') %></small>
     <% end %>
 
-    <%= registrations_form_group do %>
+    <%= bs_row_column(row_class: 'row mt-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= label_tag 'location', t('vocab.location').capitalize, class: label_class %>
       <%= profile_fields.text_field :location, class: input_class %>
     <% end %>
 
-    <%= registrations_form_group do %>
+    <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= profile_fields.label :reason, class: label_class do %>
         <%= t('pages.join.what_using_for') %>
       <% end %>
@@ -94,13 +95,13 @@
       <%= profile_fields.text_area :reason, required: true, data: {parsley_pattern: '\s*\S+(?:\s+\S+\s?){2,}', parsley_pattern_message: 'Please include more details'}, class: input_class, rows: 5, id: 'about-you-input' %>
     <% end %>
 
-    <%= registrations_form_group do %>
+    <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= fields_for :math_captcha do |f2| %>
         <%= render partial: 'math_captcha', locals: { f: f2, label_class: label_class, input_class: input_class } %>
       <% end %>
     <% end %>
 
-    <%= registrations_form_group(group_class: 'row mt-2', column_class: 'col-4') do %>
+    <%= bs_row_column(row_class: 'row mb-2 mt-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= f.submit 'Sign up', class: 'btn btn-primary' %>
       <p class="mt-3"><small><%= render 'users/shared/links' %></small></p>
     <% end %>

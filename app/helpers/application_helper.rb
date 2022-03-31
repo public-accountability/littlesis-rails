@@ -19,19 +19,7 @@ module ApplicationHelper
     end
   end
 
-  def notice_if_notice
-    raw "<div class='alert alert-success'>#{notice}</div>" if notice
-  end
-
-  def notice_or_alert
-    return unless flash[:alert] || flash[:notice]
-
-    msg = flash[:alert] || flash[:notice]
-    style = flash[:alert].present? ? 'danger' : 'success'
-
-    tag.div(msg, class: "alert alert-#{style}")
-  end
-
+  # see shared/notice
   def alert_div(message:, type:)
     flash_class =  { 'notice' => 'alert-success',
                      'alert' => 'alert-warning',
@@ -47,10 +35,6 @@ module ApplicationHelper
       content_tag('div', heading, class: 'card-header', style: "background-color: #{color}") +
         content_tag('div', class: 'card-body') { capture(&block) }
     end
-  end
-
-  def contact_path
-    "/contact"
   end
 
   def current_username
@@ -77,10 +61,6 @@ module ApplicationHelper
     link_to name, concretize_entity_path(entity), class: html_class, id: html_id, target: target
   end
 
-  def homepage_headline_h3(text)
-    content_tag(:div, content_tag(:h3, text), class: 'thin-grey-bottom-border mb-3')
-  end
-
   # Input: [References], Integer | nil
   def references_select(references, selected_id = nil)
     return nil if references.nil?
@@ -97,20 +77,21 @@ module ApplicationHelper
   end
 
   def show_donation_banner?
-    if Rails.application.config.littlesis[:donation_banner_display] == 'everywhere'
-      return true
+    case Rails.application.config.littlesis[:donation_banner_display]
+    when 'everywhere'
+      true
+    when 'homepage'
+      controller_name == 'home' && controller.action_name == 'index'
+    else
+      false
     end
-
-    if Rails.application.config.littlesis[:donation_banner_display] == 'homepage' &&
-       controller_name == 'home' &&
-       controller.action_name == 'index'
-      return true
-    end
-
-    false
   end
 
   def show_stars?
     user_admin? && current_user.settings.show_stars
+  end
+
+  def bs_row_column(row_class: 'row', column_class: 'col', &block)
+    tag.div(tag.div(class: column_class, &block), class: row_class)
   end
 end
