@@ -29,7 +29,7 @@ class FECMatch < ApplicationRecord
                 :find_or_create_committee_relationship,
                 :find_or_create_candidate_relationship
 
-  after_create  :update_committee_relationship, :update_candidate_relationship
+  after_create  :update_committee_relationship, :update_candidate_relationship, :update_link_subcategories
   after_destroy :cleanup_relationships
 
   # All FEC contributions between Donor & Recipient
@@ -69,6 +69,11 @@ class FECMatch < ApplicationRecord
     contributions.map(&:reference_attributes).each do |attrs|
       candidate_relationship.add_reference(attrs).save
     end
+  end
+
+  def update_link_subcategories
+    committee_relationship&.links&.each(&:recalculate_subcategory)
+    candidate_relationship&.links&.each(&:recalculate_subcategory)
   end
 
   private
