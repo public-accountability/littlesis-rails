@@ -62,11 +62,15 @@ class User < ApplicationRecord
 
   # delegate :name_first, :name_last, :full_name, to: :user_profile
   delegate :name, to: :user_profile
-  delegate(*UserAbilities::ABILITY_MAPPING.values, to: 'abilities')
-  alias importer? bulker?
+  # delegate(*UserAbilities::ABILITY_MAPPING.values, to: 'abilities')
+  # alias importer? bulker?
 
   def to_param
     username
+  end
+
+  def admin?
+    read_attribute(:role) == 'admin'
   end
 
   def restricted?
