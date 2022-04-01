@@ -5,7 +5,7 @@
       <%= link_to t('vocab.edit'), concretize_edit_entity_path(@entity), class: "action-button" %>
       <%= link_to t('vocab.flag'), flag_path, class: "action-button" %>
 
-      <% if current_user.permissions.entity_permissions(@entity).fetch(:deleteable) %>
+      <% if @entity.permissions_for(current_user).deleteable %>
         <%= button_to(t('vocab.remove'), concretize_entity_path(@entity),
                       method: :delete,
                       id: "remove_entity_#{@entity.id}",
@@ -18,7 +18,7 @@
 
       <%= link_to t('vocab.merge'), merge_path(mode: :search, source: @entity.id) %>
 
-      <% if current_user.permissions.show_add_bulk_button? %>
+      <% if current_user.show_add_bulk_button? %>
         <%= link_to t("phrases.add_bulk"), relationships_bulk_add_path(entity_id: @entity.id), class: "action-button" %>
       <% end %>
     </div>

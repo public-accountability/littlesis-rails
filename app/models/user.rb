@@ -82,6 +82,8 @@ class User < ApplicationRecord
     role.include? :edit_database
   end
 
+  alias editor? can_edit?
+
   def leagcy_can_edit?
     !restricted? && confirmed? && (MINUTES_BEFORE_USER_CAN_EDIT.minutes.ago > confirmed_at)
   end
@@ -168,6 +170,10 @@ class User < ApplicationRecord
 
   def role
     Role[super]
+  end
+
+  def show_add_bulk_button?
+    role.include?(:bulk_upload) || (created_at < 2.weeks.ago && sign_in_count > 2)
   end
 
   # String | nil --> Arel::Nodes::Grouping | nil

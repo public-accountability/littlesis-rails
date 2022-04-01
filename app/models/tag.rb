@@ -65,6 +65,22 @@ class Tag < ApplicationRecord
     end
   end
 
+  # @param user [User, Nil]
+  # @return [Hash{String => Hash}]
+  def self.all_tags_with_user_permissions_byid(user)
+    all_tags_with_user_permissions(user).each_with_object({}) do |tag, obj|
+      obj.store(tag['id'].to_s, tag)
+    end
+  end
+
+  # @param user [User, Nil]
+  # @return [Array<Hash>]
+  def self.all_tags_with_user_permissions(user)
+    all.map do |tag|
+      tag.attributes.merge!('permissions' => tag.permissions_for(user))
+    end
+  end
+
   # INSTANCE METHODS
 
   def to_param
@@ -130,6 +146,14 @@ class Tag < ApplicationRecord
         'editor'          => editors_by_id[h['editor_id']]
       }
     end
+  end
+
+  # Permission hash for the user
+  # @param user [User, Nil]
+  # @return [Hash{String => Boolean}]
+  def permissions_for(user)
+    can_edit = user.present? && (user.editor? && (!restricted? || user.admin?))
+    { 'viewable' => true, 'editable' => can_edit }
   end
 
   private

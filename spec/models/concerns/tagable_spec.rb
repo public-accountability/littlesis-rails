@@ -202,11 +202,10 @@ describe Tagable, type: :model do
   end
 
   describe 'formating tags for user editing' do
-    let(:user) { create_basic_user }
+    let(:user) { create_editor }
     let(:restricted_tag) { tags.last.tap { |t| t.update(restricted: true) } }
-
-    let(:full_access) { { viewable: true, editable: true }.with_indifferent_access }
-    let(:view_only_access) { { viewable: true, editable: false }.with_indifferent_access }
+    let(:full_access) { { 'viewable' => true, 'editable' => true } }
+    let(:view_only_access) { { 'viewable' => true, 'editable' => false } }
 
     before do
       test_tagable.add_tag(restricted_tag.id)

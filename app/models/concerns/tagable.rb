@@ -82,16 +82,20 @@ module Tagable
     self
   end
 
+  # Gets data on tags and their permissions for the provided user
+  # See views/entities/_sidebar_tags
+  # @param user [User, Nil]
+  # @return Hash[:byId => Array[Hash], :current => Array[String]]
   def tags_for(user = nil)
     {
-      byId: hashify(add_permissions(Tag.all, user)),
-      current: tags.map(&:id).map(&:to_s)
+      byId: Tag.all_tags_with_user_permissions_byid(user),
+      current: tags.map { |t| t.id.to_s }
     }.tap do |h|
       h.define_singleton_method(:options) do
-        fetch(:byId)
-          .values
-          .keep_if { |t| t.dig('permissions', 'editable') }
-          .map { |t| [t[:name], t[:id].to_s] }
+      fetch(:byId).values.lazy
+        .select { |t| t.dig('permissions', 'editable') }
+        .map { |t| [t['name'], t['id'].to_s] }
+        .force
       end
     end
   end
@@ -104,25 +108,5 @@ module Tagable
 
     msg = name_or_id.is_a?(String) ? :find_by_name! : :find
     Tag.public_send(msg, name_or_id).id
-  end
-
-  # Array[Tag] -> Hash{[id:string]: Tag}
-  def hashify(tags)
-    tags.reduce({}) do |acc, t|
-      acc.merge(t['id'].to_s => t.with_indifferent_access)
-    end
-  end
-
-  # (Array[Tag], User) -> Array[AugmentedTag]
-  def add_permissions(tags, user)
-    tags.map do |t|
-      permissions = if user
-                      user.permissions.tag_permissions(t)
-                    else
-                      { :viewable => true, :editable => false }
-                    end
-
-      t.attributes.merge('permissions' => permissions)
-    end
   end
 end

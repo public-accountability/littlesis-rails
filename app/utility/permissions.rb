@@ -28,20 +28,6 @@ class Permissions
     { deleteable: delete_relationship?(rel) }
   end
 
-  def self.anon_tag_permissions
-    {
-      viewable: true,
-      editable: false
-    }
-  end
-
-  def tag_permissions(tag)
-    {
-      viewable: true,
-      editable: edit_tag?(tag)
-    }
-  end
-
   def self.anon_list_permissions(list)
     {
       viewable: !list.restricted?,
@@ -56,10 +42,6 @@ class Permissions
       editable: edit_list?(list),
       configurable: configure_list?(list)
     }
-  end
-
-  def show_add_bulk_button?
-    @user.admin? || @user.bulker? || (@user.created_at < 2.weeks.ago && @user.sign_in_count > 2)
   end
 
   private
@@ -79,26 +61,6 @@ class Permissions
 
   def configure_list?(list)
     admin? || list.creator_user_id == @user.id
-  end
-
-  # TAG HELPERS
-
-  def edit_tag?(tag)
-    @user.admin? || !tag.restricted?
-  end
-
-  # ENTITY HELPERS
-
-  def delete_entity?(entity)
-    return true if admin? || deleter?
-
-    entity.created_at >= 1.week.ago &&
-      entity.link_count < 3 &&
-      user_is_creator?(entity)
-  end
-
-  def user_is_creator?(item)
-    item.versions.find_by(event: 'create')&.whodunnit == @user.id.to_s
   end
 
   # RELATIONSHIP HELPERS

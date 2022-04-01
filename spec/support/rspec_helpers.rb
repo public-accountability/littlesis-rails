@@ -36,6 +36,10 @@ module RspecHelpers
       FactoryBot.create(:user, is_restricted: true, role: :restricted)
     end
 
+    def self.create_editor(**attributes)
+      FactoryBot.create(:user, **attributes, role: :editor)
+    end
+
     def self.create_collaborator
       FactoryBot.create(:user, role: :collaborator)
     end
@@ -80,6 +84,10 @@ module RspecHelpers
 
     def create_collaborator
       ExampleMacros.create_collaborator
+    end
+
+    def create_editor
+      ExampleMacros.create_editor
     end
 
     def create_really_basic_user

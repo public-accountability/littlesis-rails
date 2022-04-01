@@ -14,7 +14,7 @@
             <%= form_with url: tags_entity_path(@entity) do |f| %>
 
               <select name="tags[ids][]" multiple="multiple" data-edit-tags-target="select" autocomplete="off">
-                <%= options_for_select(tags.options, tags.fetch(:current).map(&:to_s)) %>
+                <%= options_for_select(tags.options, tags.fetch(:current)) %>
               </select>
 
               <%= f.submit "Update", class: 'btn btn-sm btn-primary mt-3' %>
