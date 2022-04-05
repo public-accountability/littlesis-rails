@@ -7,7 +7,7 @@ FactoryBot.define do
     username { Faker::Internet.unique.user_name(specifier: 5).tr('.', '') }
     email { Faker::Internet.unique.email }
     about_me { Faker::Movie.quote }
-    abilities { UserAbilities.new(:edit) }
+    # abilities { UserAbilities.new(:edit) }
     default_network_id { 79 }
     confirmed_at { 1.hour.ago }
   end

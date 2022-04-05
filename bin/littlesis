@@ -34,6 +34,8 @@ Commands
            fec              FEC data ETL tools
            deploy           deploys to latest commit on main
            edit             select file to open with $EDITDOR
+           runner           Rails runner shortcut
+           script           execute named script in lib/scripts/
 
 Aliases
            bundle
@@ -282,6 +284,8 @@ when 'rake'
   app_exec_bin "rake #{rest}"
 when 'runner'
   app_exec_bin "rails runner #{rest}"
+when 'script'
+  app_exec "bundle exec lib/scripts/#{rest}", bin: true, run: true
 when 'bash'
   app_exec "/bin/bash --login #{rest}"
 when 'console', 'c'
