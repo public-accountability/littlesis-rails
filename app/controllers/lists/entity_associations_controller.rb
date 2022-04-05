@@ -16,12 +16,11 @@ module Lists
     before_action :authenticate_user!, only: :new
     before_action -> { current_uesr.role.include?(:create_list) }
     before_action :set_list
-    # See ListPermissions
+
     before_action :set_permissions
     before_action -> { check_access(:editable) }
 
     before_action :set_payload, :set_document_attributes, only: :create
-
 
     def new
     end

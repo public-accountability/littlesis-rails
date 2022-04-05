@@ -31,11 +31,11 @@
 
     <br/>
 
-    <% if current_user.admin? and image.url %>
+    <% if current_user.admin? && image.url.present? %>
       <%= link_to("view original", image.url) %><br>
     <% end %>
 
-    <% if current_user.has_ability?('deleter') %>
+    <% if current_user.role.include?(:edit_destructively) %>
       <%= button_to("remove",
                     entity_image_path(@entity, id: image.id),
                     method: :delete,
@@ -71,7 +71,6 @@
     </div>
   </div>
 </div>
-
 
 <div class="modal fade" tabindex="-1" role="dialog" id="<%= image_caption_modal_id %>">
   <div class="modal-dialog" role="document">

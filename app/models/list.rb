@@ -23,9 +23,9 @@ class List < ApplicationRecord
   validates :name, presence: true
   validates :short_description, length: { maximum: 255 }
 
-  scope :public_scope, -> { where("access <> #{Permissions::ACCESS_PRIVATE}") }
-  scope :private_scope, -> { where(access: Permissions::ACCESS_PRIVATE) }
-  scope :open_scope, -> { where(access: Permissions::ACCESS_OPEN) }
+  scope :public_scope, -> { where("access <> #{::Permissions::ACCESS_PRIVATE}") }
+  scope :private_scope, -> { where(access: ::Permissions::ACCESS_PRIVATE) }
+  scope :open_scope, -> { where(access: ::Permissions::ACCESS_OPEN) }
 
   def self.viewable(user)
     if user
@@ -76,11 +76,11 @@ class List < ApplicationRecord
   end
 
   def restricted?
-    is_admin || access == Permissions::ACCESS_PRIVATE
+    is_admin || access == ::Permissions::ACCESS_PRIVATE
   end
 
   def user_can_access?(user_or_id = nil)
-    return true unless access == Permissions::ACCESS_PRIVATE
+    return true unless access == ::Permissions::ACCESS_PRIVATE
     user = nil if user_or_id.nil?
     user = User.find_by_id(user_or_id) if user_or_id.is_a? Integer
     user = user_or_id if user_or_id.is_a? User
@@ -170,6 +170,10 @@ class List < ApplicationRecord
 
   def url
     Rails.application.routes.url_helpers.members_list_url(self)
+  end
+
+  def permissions_for(user)
+    List::Permissions.new(user: user, list: self)
   end
 
   private

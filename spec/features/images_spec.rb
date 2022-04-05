@@ -9,7 +9,7 @@ describe 'Images', js: true do
 
   let(:path_1x1) { Rails.root.join('spec/testdata/1x1.png').to_s }
   let(:entity) { create(:entity_person) }
-  let(:user) { create_basic_user }
+  let(:user) { create_editor }
   let(:example_png) { Rails.root.join('spec/testdata/example.png') }
 
   def setup_image_path(image)
@@ -106,9 +106,9 @@ describe 'Images', js: true do
 
   describe 'removing an image', js: false do
     let(:image) { create(:image, entity: create(:entity_org)) }
+    let(:user) { create_admin_user }
 
     before do
-      user.add_ability!(:delete)
       setup_image_path image
       visit concretize_entity_images_path(image.entity)
     end

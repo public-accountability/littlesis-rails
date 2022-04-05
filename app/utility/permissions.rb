@@ -28,40 +28,7 @@ class Permissions
     { deleteable: delete_relationship?(rel) }
   end
 
-  def self.anon_list_permissions(list)
-    {
-      viewable: !list.restricted?,
-      editable: false,
-      configurable: false
-    }
-  end
-
-  def list_permissions(list)
-    {
-      viewable: view_list?(list),
-      editable: edit_list?(list),
-      configurable: configure_list?(list)
-    }
-  end
-
   private
-
-  # LIST HELPERS
-
-  def view_list?(list)
-    return true if admin? || (list.creator_user_id == @user.id)
-    !list.restricted?
-  end
-
-  # Does the user have permssion to add/remove entities from given list?
-  def edit_list?(list)
-    return true if admin? || (list.creator_user_id == @user.id)
-    !list.restricted? && @user.lister? && (list.access == ACCESS_OPEN)
-  end
-
-  def configure_list?(list)
-    admin? || list.creator_user_id == @user.id
-  end
 
   # RELATIONSHIP HELPERS
 
