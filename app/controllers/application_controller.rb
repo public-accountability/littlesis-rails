@@ -91,10 +91,11 @@ class ApplicationController < ActionController::Base
     raise Exceptions::PermissionError unless current_user&.can_edit?
   end
 
-  # Array, Integer -> Void
+  # users who aren't admins or 'bulkers' may not create more than `limit` resources at a time
+  # @param resources [Array]
+  # @param limit [Integer]
   def block_unless_bulker(resources = [], limit = 0)
-    # users who aren't admins or 'bulkers' may not create more than `limit` resources at a time
-    if (resources.present? && resources.length > limit) && !(current_user.bulker? || current_user.admin?)
+    if (resources.present? && resources.length > limit) && current_user.role.exclude?(:bulk_upload)
       raise Exceptions::UnauthorizedBulkRequest
     end
   end
