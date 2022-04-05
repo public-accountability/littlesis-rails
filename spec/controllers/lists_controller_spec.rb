@@ -123,40 +123,4 @@ describe ListsController, type: :controller do
       end
     end
   end
-
-  describe 'List access controls' do
-    let(:creator) { create_basic_user }
-    let(:non_creator) { create_really_basic_user }
-    let(:lister) { create_basic_user }
-    let(:admin) { create_admin_user }
-    let(:open_list) { create(:open_list, creator_user_id: creator.id) }
-    let(:closed_list) { create(:closed_list, creator_user_id: creator.id) }
-    let(:private_list) { create(:private_list, creator_user_id: creator.id) }
-
-    # before do
-    #   allow(controller).to receive(:interlocks_query)
-    #   allow(controller).to receive(:interlocks_results)
-    # end
-  end
-
-  describe "#set_permisions" do
-    before do
-      @controller = ListsController.new
-      @user = create_basic_user
-      @list = build(:list, access: Permissions::ACCESS_OPEN, creator_user_id: @user.id)
-      @controller.instance_variable_set(:@list, @list)
-    end
-
-    it "sets permissions for a logged-in user" do
-      allow(@controller).to receive(:current_user).and_return(@user)
-      expect(@user.permissions).to receive(:list_permissions).with(@list)
-      @controller.send(:set_permissions)
-    end
-
-    it "sets permissions for an anonymous user" do
-      allow(@controller).to receive(:current_user).and_return(nil)
-      expect(Permissions).to receive(:anon_list_permissions).with(@list)
-      @controller.send(:set_permissions)
-    end
-  end
 end

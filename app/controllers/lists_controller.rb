@@ -13,6 +13,7 @@ class ListsController < ApplicationController
   # in controller concerns? (ziggy 2017-08-31)
   before_action :authenticate_user!, only: SIGNED_IN_ACTIONS
   before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
+  before_action :current_user_can_edit?, only: EDITABLE_ACTIONS
   before_action :set_list, only: [:show, :edit, :update, :destroy, :members, :references,
                                   :modifications]
 
@@ -20,8 +21,6 @@ class ListsController < ApplicationController
   # before_action :set_entity, only: :index
   before_action -> { check_access(:viewable) }, only: [:members, :references]
   before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
-
-  before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
 
   before_action :set_page, only: [:modifications]
 

@@ -4,8 +4,8 @@ describe Lists::EntitiesController, type: :controller do
   end
 
   describe 'POST create' do
-    let(:user) { create_basic_user }
-    let(:list) { create(:list, name: 'Crying of Lot 49', last_user_id: user.id) }
+    let(:user) { create_editor }
+    let(:list) { create(:list, name: 'Crying of Lot 49', creator_user_id: user.id) }
     let(:params) do
       {
         list_id: list.id,
@@ -26,11 +26,15 @@ describe Lists::EntitiesController, type: :controller do
         sign_in(create(:user, role: :restricted))
       end
 
+      after do
+        sign_out(:user)
+      end
+
       it 'does not add the entity to the list' do
         expect { post :create, params: params }
           .not_to change(list.list_entities, :count)
 
-        expect(lixost.list_entities.count).to be 0
+        expect(list.list_entities.count).to be 0
       end
 
       it 'denies request' do
@@ -57,6 +61,10 @@ describe Lists::EntitiesController, type: :controller do
     context 'with permitted user' do
       before do
         sign_in(user)
+      end
+
+      after do
+        sign_out(:user)
       end
 
       context 'with valid params' do

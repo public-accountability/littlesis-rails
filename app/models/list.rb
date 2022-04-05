@@ -89,8 +89,7 @@ class List < ApplicationRecord
   end
 
   def user_can_edit?(user = nil)
-    return false if user.nil?
-    user.permissions.list_permissions(self)[:editable]
+    List::Permissions.new(user: user, list: self).editable
   end
 
   def interlocks_hash
