@@ -14,7 +14,7 @@ module Lists
     ).freeze
 
     before_action :authenticate_user!, only: :new
-    before_action -> { current_uesr.role.include?(:create_list) }
+    before_action -> { check_ability :create_list }
     before_action :set_list
 
     before_action :set_permissions
@@ -52,7 +52,7 @@ module Lists
 
     def basic_payload
       @basic_payload ||= params.require('data')
-        .map { |x| x.permit('type', 'id', { 'attributes' => %w[url name] }) }
+                           .map { |x| x.permit('type', 'id', { 'attributes' => %w[url name] }) }
     end
 
     def payload_reference_attrs
