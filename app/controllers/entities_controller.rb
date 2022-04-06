@@ -18,10 +18,8 @@ class EntitiesController < ApplicationController
   before_action :authenticate_user!, except: PUBLIC_ACTIONS
   before_action :current_user_can_edit?, only: EDITABLE_ACTIONS
   before_action -> { check_ability(:match_donation) }, only: MATCH_DONTAIONS_ACTIONS
-  # before_action :importers_only, only: IMPORTER_ACTIONS
   before_action :set_entity, except: [:new, :create, :show, :create_bulk, :validate]
   before_action :set_entity_for_profile_page, only: [:show]
-  before_action :check_delete_permission, only: [:destroy]
 
   rescue_from Exceptions::RestrictedUserError, with: -> { head :forbidden }
 
@@ -101,6 +99,10 @@ class EntitiesController < ApplicationController
   end
 
   def destroy
+    unless @entity.deleteable_by?(current_user)
+      raise Exceptions::PermissionError
+    end
+
     @entity.soft_delete
     redirect_to home_dashboard_path, notice: "#{@entity.name} has been successfully deleted"
   end
@@ -142,15 +144,6 @@ class EntitiesController < ApplicationController
 
   def wants_json_response?
     params[:add_relationship_page].present? || params[:external_entity_page].present?
-  end
-
-  def importers_only
-    check_permission 'importer'
-  end
-
-  def check_delete_permission
-    # TODO: rewirte call for current_user.permissions.entity_permissions(@entity)
-    check_ability :edit_destructively
   end
 
   def handle_creation
