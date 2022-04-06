@@ -36,8 +36,10 @@ class List < ApplicationRecord
   end
 
   def self.editable(user)
-    if user&.has_ability?(:list)
+    if user.role.include?(:edit_list)
       open_scope.or(user.lists).order_by_entity_count.order_by_user(user)
+    elsif user.role.include?(:create_list)
+      user.lists
     else
       none
     end
@@ -79,13 +81,13 @@ class List < ApplicationRecord
     is_admin || access == ::Permissions::ACCESS_PRIVATE
   end
 
-  def user_can_access?(user_or_id = nil)
-    return true unless access == ::Permissions::ACCESS_PRIVATE
-    user = nil if user_or_id.nil?
-    user = User.find_by_id(user_or_id) if user_or_id.is_a? Integer
-    user = user_or_id if user_or_id.is_a? User
-    return false if user.nil?
-    user.permissions.list_permissions(self)[:viewable]
+  # @param user [User, Integer, Nil]
+  # @return [Boolean]
+  def user_can_access?(user = nil)
+    List::Permissions.new(
+      user: user.is_a?(Integer) ? User.find(user) : user,
+      list: self
+    ).viewable
   end
 
   def user_can_edit?(user = nil)

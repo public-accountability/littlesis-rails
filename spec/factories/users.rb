@@ -7,7 +7,7 @@ FactoryBot.define do
     username { Faker::Internet.unique.user_name(specifier: 5).tr('.', '') }
     email { Faker::Internet.unique.email }
     about_me { Faker::Movie.quote }
-    # abilities { UserAbilities.new(:edit) }
+    role { 'user' }
     default_network_id { 79 }
     confirmed_at { 1.hour.ago }
   end
@@ -17,7 +17,7 @@ FactoryBot.define do
   end
 
   factory :admin_user, parent: :user do
-    abilities { UserAbilities.new(:admin, :edit, :delete, :merge, :bulk, :match, :list) }
+    role { 'admin' }
   end
 
   factory :user_with_id, class: 'User' do

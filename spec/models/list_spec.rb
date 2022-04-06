@@ -8,27 +8,6 @@ describe List do
   it { is_expected.to have_db_column(:access) }
   it { is_expected.not_to have_db_column(:is_network) }
 
-  context 'active relationship' do
-    it 'joins entities via ListEntity' do
-      list = create(:list)
-      inc = create(:mega_corp_inc)
-      llc = create(:mega_corp_llc)
-      expect(ListEntity.count).to eql 0
-      ListEntity.find_or_create_by(list_id: list.id, entity_id: inc.id)
-      ListEntity.find_or_create_by(list_id: list.id, entity_id: llc.id)
-      expect(ListEntity.count).to eql 2
-      expect(list.list_entities.count).to eql 2
-    end
-
-    it 'has images through entities' do
-      list = create(:list)
-      inc = create(:mega_corp_inc)
-      create(:image, entity_id: inc.id)
-      ListEntity.find_or_create_by(list_id: list.id, entity_id: inc.id)
-      expect(list.images.count).to eq 1
-    end
-  end
-
   context 'SoftDelete' do
     it 'removes item from the count but not he unscoped count' do
       l = create(:list)
@@ -72,25 +51,18 @@ describe List do
     end
 
     it 'returns true if user is provided and is a public list' do
-      l = build(:open_list)
-      expect(l.user_can_access?(build(:user))).to be true
-      expect(l.user_can_access?(123)).to be true
+      expect(build(:open_list).user_can_access?(build(:user_with_id))).to be true
     end
 
     it 'returns false for private lists' do
       l = build(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: 9999)
       expect(l.user_can_access?).to be false
-      expect(l.user_can_access?(create_basic_user)).to be false
+      expect(l.user_can_access?(build(:user))).to be false
     end
 
     it 'returns true for private lists if user is owner of the list' do
       user = create_basic_user
       user2 = create_basic_user
-      expect(user).to receive(:permissions)
-                       .and_return(double(:list_permissions => {:viewable => true}))
-
-      expect(user2).to receive(:permissions)
-                       .and_return(double(:list_permissions => {:viewable => false}))
       l = build(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: user.id)
 
       expect(l.user_can_access?(user)).to be true
@@ -102,21 +74,12 @@ describe List do
   end
 
   describe '#user_can_edit?' do
-    let(:list_owner) { create_basic_user }
-    let(:other_person) { create_basic_user }
-    let(:permitted_lister) { create_basic_user }
+    let(:list_owner) { create_editor }
+    let(:other_person) { create_editor }
+    let(:permitted_lister) { create_collaborator }
     let(:private_list) { create(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
     let(:public_list) { create(:list, access: Permissions::ACCESS_OPEN) }
     let(:closed_list) { create(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
-
-    before do
-      allow(list_owner.permissions).to receive(:list_permissions)
-        .and_return(editable: true)
-      allow(other_person.permissions).to receive(:list_permissions)
-        .and_return(editable: false)
-      allow(permitted_lister.permissions).to receive(:list_permissions)
-        .and_return(editable: true)
-    end
 
     it 'returns true for private lists only if user is owner of the list' do
       expect(private_list.user_can_edit?(list_owner)).to be true
@@ -138,8 +101,8 @@ describe List do
   end
 
   describe '.viewable' do
-    let(:list_owner) { create_basic_user }
-    let!(:other_person) { create_basic_user }
+    let(:list_owner) { create_editor }
+    let!(:other_person) { create_editor }
     let!(:private_list) { create(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
     let!(:public_list) { create(:list, access: Permissions::ACCESS_OPEN) }
     let!(:closed_list) { create(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
@@ -155,16 +118,16 @@ describe List do
   end
 
   describe '.editable' do
-    let(:list_owner) { create_basic_user }
+    let(:list_owner) { create_editor }
     let!(:other_person) { create_restricted_user }
-    let!(:permitted_lister) { create_basic_user }
+    let!(:permitted_lister) { create_collaborator }
     let!(:private_list) { create(:list, access: Permissions::ACCESS_PRIVATE, creator_user_id: list_owner.id) }
     let!(:public_list) { create(:list, access: Permissions::ACCESS_OPEN) }
     let!(:closed_list) { create(:list, access: Permissions::ACCESS_CLOSED, creator_user_id: list_owner.id) }
 
     it "returns correct editable lists" do
-      expect(List.editable(list_owner)).to include(private_list, public_list, closed_list)
-      expect(List.editable(permitted_lister)).to include(public_list)
+      expect(List.editable(list_owner).to_a).to include(private_list, closed_list)
+      expect(List.editable(permitted_lister).to_a).to include(public_list)
     end
 
     it "doesn't return non-editable lists" do

@@ -107,9 +107,7 @@ LittleSis::Application.routes.draw do
           # to view legacy profile page:
           # get ':tab', to: 'entities#show', constraints: {tab: /interlocks|giving/}, as: 'tab'
           # new profile page
-          get ':active_tab', action: :profile, constraints: { active_tab: /relationships|interlocks|giving|data/ }, as: 'profile'
-          get 'profile(/:active_tab)', action: :profile, constraints: { active_tab: /relationships|interlocks|giving|data/ }
-
+          get ':active_tab', action: :show, constraints: { active_tab: /relationships|interlocks|giving|data/ }, as: 'profile'
           get 'political'
           get 'datatable'
           get 'references'

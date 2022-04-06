@@ -586,7 +586,7 @@ class Entity < ApplicationRecord
   end
 
   def permissions_for(user)
-    @permissions_for ||= Entity::Permissions.new(user: user, entity: self)
+    Entity::Permissions.new(user: user, entity: self)
   end
 
   # When an entity is deleted we will store information

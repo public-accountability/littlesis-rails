@@ -581,6 +581,19 @@ class Relationship < ApplicationRecord
     Rails.application.routes.url_helpers.relationship_url(self)
   end
 
+  # @param user [User, Nil]
+  def permissions_for(user)
+    return { deleteable: false } if user.nil?
+    return { deleteable: true } if user.role.include?(:edit_destructively)
+
+    {
+      deleteable: user.can_edit? &&
+        created_at >= 1.week.ago &&
+        !(filings.present? && description1.include?('Campaign Contribution')) &&
+        versions.find_by(event: 'create')&.whodunnit == user.id.to_s
+    }
+  end
+
   concerning :DateSorting do
     def temporal_status
       case is_current

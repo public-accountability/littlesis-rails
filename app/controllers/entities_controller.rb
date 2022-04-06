@@ -17,7 +17,7 @@ class EntitiesController < ApplicationController
 
   before_action :authenticate_user!, except: PUBLIC_ACTIONS
   before_action :current_user_can_edit?, only: EDITABLE_ACTIONS
-  before_action -> { current_user.role.include?(:match_donation) }, only: MATCH_DONTAIONS_ACTIONS
+  before_action -> { check_ability(:match_donation) }, only: MATCH_DONTAIONS_ACTIONS
   # before_action :importers_only, only: IMPORTER_ACTIONS
   before_action :set_entity, except: [:new, :create, :show, :create_bulk, :validate]
   before_action :set_entity_for_profile_page, only: [:show]

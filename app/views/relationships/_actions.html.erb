@@ -2,7 +2,7 @@
   <%= link_to "edit", edit_relationship_path(@relationship), class: 'action-button', title: 'Edit this relationship'  %>
   <%= link_to "flag", flag_path, class: 'action-button', title: 'Report an issue'  %>
 
-  <% if current_user.permissions.relationship_permissions(@relationship).fetch(:deleteable) %>
+  <% if @relationship.permissions_for(current_user).fetch(:deleteable) %>
     <%= button_to "remove", relationship_path(@relationship),
      class: 'action-button',
      method: :delete,
@@ -12,7 +12,7 @@
     %>
   <% end %>
 
-  <% if current_user.admin? %>
+  <% if current_user.role.include?(:star_relationship) %>
     <%= button_to(
       ( @relationship.is_featured ? 'unfeature' : 'feature' ),
       relationship_path(@relationship),
