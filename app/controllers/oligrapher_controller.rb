@@ -162,7 +162,7 @@ class OligrapherController < ApplicationController
   def clone
     return head :unauthorized unless @map.cloneable? || is_owner
 
-    check_permission 'editor'
+    check_ability :create_map
 
     map = @map.dup
     map.update!(

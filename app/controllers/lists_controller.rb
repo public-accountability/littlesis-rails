@@ -135,8 +135,9 @@ class ListsController < ApplicationController
     edit_list_url(list)
   end
 
+  # @param list [List]
   def check_tagable_access(list)
-    unless current_user.permissions.list_permissions(list)[:configurable]
+    unless list.permissions_for(current_user).configurable
       raise Exceptions::PermissionError
     end
   end

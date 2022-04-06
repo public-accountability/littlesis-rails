@@ -2,7 +2,7 @@ describe 'aliases', :type => :request do
   include ::EntitiesHelper
 
   let(:entity) { create(:entity_org) }
-  let(:user) { create_basic_user }
+  let(:user) { create_editor }
 
   before { login_as(user, scope: :user) }
 

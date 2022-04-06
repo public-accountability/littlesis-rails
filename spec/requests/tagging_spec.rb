@@ -6,8 +6,8 @@ describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
   let(:entity) { create(:entity_org) }
   let(:list) { create(:list) }
   let(:relationship) { Relationship.create!(category_id: 12, entity: create(:entity_person), related: create(:entity_org)) }
-  let(:user) { create_really_basic_user }
-  let(:lister) { create_basic_user }
+  let(:user) { create_editor }
+  let(:lister) { create_collaborator }
   let(:admin) { create_admin_user }
   let(:tags_params) { { tags: { ids: ['1', '2'] } } }
   let(:creating_entity_tags) {  -> { post "/org/#{entity.to_param}/tags", xhr: true, params: tags_params } }

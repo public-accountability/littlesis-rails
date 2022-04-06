@@ -1,5 +1,6 @@
 feature "adding an new list", type: :feature do
-  let(:user) { create_basic_user }
+  # let(:user) { create_basic_user }
+  let(:user) { create_editor }
   let(:list_name) { "#{Faker::Company.name} staff" }
   let(:short_description) { Faker::Company.catch_phrase }
   let(:url) { Faker::Internet.unique.url }
@@ -25,7 +26,7 @@ feature "adding an new list", type: :feature do
     click_button 'Add'
 
     successfully_visits_page(list_path(List.last) + '/members')
-    
+
     expect(page).not_to have_selector "#error_explanation"
 
     expect(List.last.name).to eql list_name
@@ -55,18 +56,11 @@ feature "adding an new list", type: :feature do
     expect(Reference.count).to eql reference_count
   end
 
-  it 'does not create list unless user can edit' do
-    list_count = List.count
-    user.update_columns :confirmed_at => 2.minutes.ago
+  context 'when user is restricted' do
+    let(:user) { create_restricted_user }
 
-    fill_in 'list_name', :with => list_name
-    fill_in 'list_short_description', :with => short_description
-    fill_in 'ref_url', :with => url
-    fill_in 'ref_name', :with => url_name
-    click_button 'Add'
-
-    expect(List.count).to eql list_count
-
-    successfully_visits_page '/home/dashboard'
+    it 'does not create list unless user can edit' do
+      successfully_visits_page '/home/dashboard'
+    end
   end
 end
