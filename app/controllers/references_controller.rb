@@ -31,7 +31,7 @@ class ReferencesController < ApplicationController
   end
 
   def destroy
-    check_permission 'deleter'
+    check_ability :edit_destructively
     begin
       Reference.find(params[:id]).destroy!
     rescue ActiveRecord::RecordNotFound

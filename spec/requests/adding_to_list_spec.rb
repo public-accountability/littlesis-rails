@@ -1,11 +1,10 @@
-describe 'adding to lists', :sphinx do
-  let(:user) { create_basic_user }
+describe 'adding to lists' do
+  let(:user) { create_collaborator }
   let(:public_company) { create(:public_company_entity) }
-  let(:params) { { id: public_company.id, list_id: list.id } }
-  let(:path) { entity_list_entities_path(public_company, list) }
+  let(:params) { { entity_id: public_company.id } }
+  let(:path) { list_list_entities_path(list_id: list.id) }
 
   before do
-    user.add_ability(:list)
     login_as(user, :scope => :user)
   end
 
@@ -22,7 +21,7 @@ describe 'adding to lists', :sphinx do
   end
 
   context 'when the list is private to someone else' do
-    let(:list) { create(:list, user: create_basic_user, access: Permissions::ACCESS_PRIVATE) }
+    let(:list) { create(:list, user: create_editor, access: Permissions::ACCESS_PRIVATE) }
 
     it 'is forbidden' do
       post path, params: params
@@ -56,11 +55,7 @@ describe 'adding to lists', :sphinx do
   end
 
   context "when the user doesn't have list permissions" do
-
-    before do
-      user.remove_ability(:list)
-    end
-
+    let(:user) { create_editor }
     let(:list) { create(:list, access: Permissions::ACCESS_OPEN) }
 
     it 'is forbidden' do
@@ -78,13 +73,9 @@ describe 'adding to lists', :sphinx do
 
     let(:list) { create(:list, access: Permissions::ACCESS_OPEN) }
 
-    it 'is unauthorized' do
-      post path, params: params
-      expect(response).to be_unauthorized
-    end
-
     it "doesn't add the entity to the list" do
       expect { post path, params: params }.not_to change(list.entities, :count)
+      expect(response).not_to be_ok
     end
   end
 end

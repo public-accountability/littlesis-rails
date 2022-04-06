@@ -71,7 +71,7 @@ class UsersController < ApplicationController
 
   # DELETE /users/1/destroy
   def destroy
-    if @user.has_ability?('admin')
+    if @user.admin?
       return redirect_to admin_users_path, notice: 'You can\'t delete an admin user'
     else
       Entity.where(last_user_id: @user.id).update_all(last_user_id: 1)
