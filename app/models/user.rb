@@ -69,12 +69,17 @@ class User < ApplicationRecord
     username
   end
 
+  # @return [User::Role]
+  def role
+    Role[super]
+  end
+
   def admin?
-    read_attribute(:role) == 'admin'
+    role.name == 'admin'
   end
 
   def restricted?
-    is_restricted
+    is_restricted || role.name == 'restricted'
   end
 
   # Checks if user can make edits to database
@@ -83,6 +88,10 @@ class User < ApplicationRecord
   end
 
   alias editor? can_edit?
+
+  def raise_unless_can_edit!
+    raise Exceptions::UserCannotEditError unless can_edit?
+  end
 
   def leagcy_can_edit?
     !restricted? && confirmed? && (MINUTES_BEFORE_USER_CAN_EDIT.minutes.ago > confirmed_at)
@@ -113,63 +122,6 @@ class User < ApplicationRecord
 
   def edited_entities(page = 1, per_page: 10)
     UserEdits::Edits.new(self, page: page, per_page: per_page).edited_entities
-  end
-
-  ###############
-  # Abilities   #
-  ###############
-
-  # creates 4 methods: add_ability, add_ability!, remove_ability, remove_ability!
-  %i[add remove].each do |method|
-    define_method("#{method}_ability") do |*args|
-      self[:abilities] = abilities.public_send(method, *args)
-      save
-    end
-
-    define_method("#{method}_ability!") do |*args|
-      self[:abilities] = abilities.public_send(method, *args)
-      save!
-    end
-  end
-
-  ###############
-  # Permissions #
-  ###############
-
-  # def list_of_abilities
-  #   abilities.to_a.join(", ")
-  # end
-
-  # def has_ability?(name) # rubocop:disable Naming/PredicateName, Metrics/MethodLength
-  #   case name
-  #   when :admin, 'admin'
-  #     abilities.admin? || role == 'admin'
-  #   when :edit, 'edit', 'editor', 'contributor'
-  #     abilities.editor?
-  #   when :delete, 'delete', 'deleter'
-  #     abilities.deleter?
-  #   when :merge, 'merge', 'merger'
-  #     abilities.merger?
-  #   when :list, 'list', 'lister'
-  #     abilities.lister?
-  #   when :bulk, 'bulk', 'bulker', 'importer'
-  #     abilities.bulker?
-  #   else
-  #     Rails.logger.debug "User#has_ability? called with unknown permission: #{name}"
-  #     false
-  #   end
-  # end
-
-  # def create_default_permissions
-  #   add_ability!(:edit) unless has_ability?(:edit)
-  # end
-
-  # def permissions
-  #   @permissions ||= Permissions.new(self)
-  # end
-
-  def role
-    Role[super]
   end
 
   def show_add_bulk_button?

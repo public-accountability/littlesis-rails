@@ -15,7 +15,6 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
   def show
     super do |user|
       if user.errors.empty?
-        user.create_default_permissions
         # send welcome email to user - views/user_mailer/welcome_email
         UserMailer.welcome_email(user).deliver_later
         # add to action network mailing list
