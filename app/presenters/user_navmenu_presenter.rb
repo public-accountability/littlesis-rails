@@ -78,7 +78,7 @@ class UserNavmenuPresenter
         [t('vocab.edits').capitalize, Rails.application.routes.url_helpers.user_edits_path(username: user.username)],
         :divider,
         (user.admin? ? ['Admin', '/admin'] : nil),
-        [t('vocab.settings').capitalize, '/users/edit'],
+        [t('vocab.settings').capitalize, '/settings'],
         [t('vocab.logout').titleize, '/logout']
       ].compact
     ]

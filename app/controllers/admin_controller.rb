@@ -24,6 +24,16 @@ class AdminController < ApplicationController
   def test
   end
 
+  def users
+    @users = User
+               .includes(:user_profile)
+               .where.not(role: :system)
+               .where(User.matches_username_or_email(params[:q]))
+               .order('created_at DESC')
+               .page(params[:page] || 1)
+               .per(50)
+  end
+
   def entity_matcher
   end
 

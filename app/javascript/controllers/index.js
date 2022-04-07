@@ -121,5 +121,8 @@ application.register("tag-form", TagFormController)
 import TooltipController from "./tooltip_controller.js"
 application.register("tooltip", TooltipController)
 
+import UserRoleSelectController from "./user_role_select_controller.js"
+application.register("user-role-select", UserRoleSelectController)
+
 import UsernameValidationController from "./username_validation_controller.js"
 application.register("username-validation", UsernameValidationController)
