@@ -31,6 +31,16 @@ class PermissionPass < ApplicationRecord
     end
   end
 
+  # @param current_user [User]
+  # @return [Boolean]
+  def apply(current_user)
+    if current_user.role.name == 'user'
+      current_user.update(role: role)
+    else
+      %w[admin collaborator system].include?(current_user.role.name)
+    end
+  end
+
   private
 
   def reasonable_validity_period

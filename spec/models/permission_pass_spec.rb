@@ -62,4 +62,29 @@ RSpec.describe PermissionPass, type: :model do
       expect(pass.errors.full_messages).to include "Creator must be an admin"
     end
   end
+
+  describe 'Applying permisisons' do
+    let(:pass) do
+      create(:permission_pass, creator: user, role: User.roles[:editor])
+    end
+
+    it 'changes user role' do
+      regular_user = create(:user, role: :user)
+      expect(pass.apply(regular_user)).to be true
+      expect(regular_user.role.name).to eq 'editor'
+    end
+
+    it 'does not change role for admins and collaborators' do
+      expect(pass.apply(create(:admin_user))).to be true
+      collaborator = create(:user, role: :collaborator)
+      expect(pass.apply(collaborator)).to be true
+      expect(collaborator.role.name).to eq 'collaborator'
+    end
+
+    it 'does not change role restricted users' do
+      restricted = create(:user, role: :restricted)
+      expect(pass.apply(restricted)).to be false
+      expect(restricted.role.name).to eq 'restricted'
+    end
+  end
 end

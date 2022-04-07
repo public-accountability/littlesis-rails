@@ -53,11 +53,12 @@ class PermissionPassesController < ApplicationController
     @permission_pass = PermissionPass.find(params.fetch(:permission_pass_id))
     raise ActiveRecord::RecordNotFound unless @permission_pass&.current?
 
-    @permission_pass.abilities.to_a.each do |ability|
-      current_user.add_ability! ability
+    if @permission_pass.apply(current_user)
+      flash[:notice] = 'Permission pass abilities applied'
+    else
+      flash[:alert] = 'Something went wrong with the permission pass. Please contact a LittleSis administrator.'
     end
 
-    flash[:notice] = 'Permission pass abilities applied'
     redirect_to request.referer || '/home/dashboard'
   end
 
@@ -69,10 +70,8 @@ class PermissionPassesController < ApplicationController
   end
 
   def permission_pass_params
-    params.fetch(:permission_pass)
-      .permit(:event_name, :valid_from, :valid_to)
-      .merge(
-        abilities: UserAbilities.new(*params.fetch(:permission_pass)[:abilities].map(&:to_sym))
-      )
+    params
+      .fetch(:permission_pass)
+      .permit(:event_name, :valid_from, :valid_to, :role)
   end
 end
