@@ -4,15 +4,14 @@ class UsersController < ApplicationController
   before_action :set_user,
                 only: [:show, :edit_permissions, :add_permission, :delete_permission, :destroy, :restrict, :edits]
   before_action :authenticate_user!, except: [:success, :check_username]
-  before_action :current_user_can_edit?, only: [:show]
+  before_action :block_restricted_user_access
   before_action :user_or_admins_only, only: [:edits]
   before_action :admins_only, except: [:show, :edits, :success, :check_username]
 
-  rescue_from(UserAbilities::InvalidUserAbilityError) { head :bad_request }
+  # rescue_from(UserAbilities::InvalidUserAbilityError) { head :bad_request }
 
   # GET /users/:username
   def show
-    @user = UserPresenter.new(@user, current_user: current_user)
   end
 
   # GET /users/:username/edits
@@ -117,13 +116,6 @@ class UsersController < ApplicationController
     end
   end
 
-  def user_params
-    params[:user]
-  end
-
-  def permission_id
-    params[:permission]
-  end
 
   def edit_permission_param
     params.require(:permission).to_sym.tap do |new_ability|
