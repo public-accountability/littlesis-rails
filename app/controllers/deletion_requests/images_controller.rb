@@ -2,8 +2,6 @@
 
 module DeletionRequests
   class ImagesController < DeletionRequests::BaseController
-    before_action :authenticate_user!
-    before_action -> { check_permission('admin') }, only: :show
     before_action :set_image, only: :create
 
     def show

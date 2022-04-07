@@ -8,11 +8,11 @@ describe 'Images' do
   let(:justification) { Faker::Lorem.sentence }
 
   let(:image_deletion_request) do
-    create(:image_deletion_request, image: image, user: create_really_basic_user)
+    create(:image_deletion_request, image: image, user: create_basic_user)
   end
 
   context 'with a basic user' do
-    let(:user) { create_really_basic_user }
+    let(:user) { create_basic_user }
 
     describe 'requesting an image to be deleted' do
       let(:deletion_request) do
