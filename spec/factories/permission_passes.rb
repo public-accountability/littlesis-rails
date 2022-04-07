@@ -3,6 +3,6 @@ FactoryBot.define do
     event_name { Faker::Lorem.sentence }
     token { Faker::Crypto.md5 }
     valid_to { 2.hours.from_now }
-    abilities { UserAbilities.new(:list, :bulk, :match) }
+    role { User.roles[:editor] }
   end
 end

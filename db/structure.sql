@@ -3244,10 +3244,10 @@ CREATE TABLE public.permission_passes (
     token character varying(255) NOT NULL,
     valid_from timestamp without time zone NOT NULL,
     valid_to timestamp without time zone NOT NULL,
-    abilities text NOT NULL,
     creator_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    role smallint NOT NULL
 );
 
 
@@ -8385,6 +8385,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220126215216'),
 ('20220315195417'),
 ('20220330163258'),
-('20220330204713');
+('20220330204713'),
+('20220407140849');
 
 

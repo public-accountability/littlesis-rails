@@ -1,20 +1,8 @@
-require 'rails_helper'
-
 RSpec.describe PermissionPass, type: :model do
   let(:user) { create(:admin_user) }
-  let(:pass) { build(:permission_pass, creator: user, abilities: UserAbilities.new(:bulk, :match)) }
+  let(:pass) { build(:permission_pass, creator: user, role: User.roles[:editor]) }
 
   context 'when creating a permission pass' do
-    it 'returns abilities as a UserAbilities object' do
-      expect(pass.abilities).to be_a UserAbilities
-    end
-
-    it 'records the specified abilities' do
-      expect(pass.abilities.bulker?).to be true
-      expect(pass.abilities.matcher?).to be true
-      expect(pass.abilities.lister?).to be false
-    end
-
     it 'has a random token generated automatically' do
       expect(pass.token.present?).to be true
     end
@@ -38,13 +26,12 @@ RSpec.describe PermissionPass, type: :model do
     end
 
     it 'cannot be used to grant admin rights' do
-      pass.update(abilities: UserAbilities.new(:admin))
+      pass.update(role: User.roles[:admin])
       expect(pass.valid?).to be false
     end
 
-    it 'cannot be used to grant nonsense abilities' do
-      expect { pass.update(abilities: UserAbilities.new(:president)) }
-        .to raise_error(UserAbilities::InvalidUserAbilitiesSetError)
+    it 'cannot be used to grant invalid role' do
+      expect { pass.update!(role: 10_000) }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
@@ -68,6 +55,7 @@ RSpec.describe PermissionPass, type: :model do
 
   describe 'permissions' do
     let(:user) { create(:user) }
+    let(:pass) { build(:permission_pass, creator: user, role: User.roles[:editor]) }
 
     it 'requires the creator to be an admin' do
       expect(pass.valid?).to be false

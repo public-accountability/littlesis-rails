@@ -2,15 +2,11 @@
 
 class PermissionPass < ApplicationRecord
   belongs_to :creator, class_name: 'User', inverse_of: :permission_passes
-
-  PERMITTED_ABILITIES = (UserAbilities::ALL_ABILITIES.to_a - [:admin]).freeze
-
-  serialize :abilities, UserAbilities
-
-  validates :valid_to, :creator, :abilities, presence: true
+  validates :valid_to, :creator, presence: true
   validate :reasonable_validity_period
   validate :authorized_creator
-  validate :permitted_abilities
+  # Permission Passes can only be used for roles editor (4) and collaborator (5)
+  validates :role, presence: true, numericality: { in: 4..5 }
 
   before_validation do
     self.token = SecureRandom.hex(20).encode('UTF-8') if token.blank?
@@ -49,11 +45,5 @@ class PermissionPass < ApplicationRecord
 
   def authorized_creator
     errors.add(:creator, 'must be an admin') unless creator.admin?
-  end
-
-  def permitted_abilities
-    (abilities.to_a - PERMITTED_ABILITIES).each do |illegal_ability|
-      errors.add(:abilities, "cannot include #{illegal_ability}")
-    end
   end
 end
