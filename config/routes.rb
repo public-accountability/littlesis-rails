@@ -256,7 +256,6 @@ LittleSis::Application.routes.draw do
   get "/home/lists" => "home#lists"
 
   get "/home/dashboard" => "home#dashboard"
-  get "/home/dashboard/edits" => "home#dashboard_edits"
   get "/home/dashboard/maps" => "home#dashboard_maps"
 
   post "/home/dismiss",
@@ -294,6 +293,7 @@ LittleSis::Application.routes.draw do
   #########
 
   get "/edits" => "edits#index"
+  get '/edits/dashboard_edits' => "edits#dashboard_edits"
 
   #########
   # Merge #

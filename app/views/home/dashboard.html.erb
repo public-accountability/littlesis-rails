@@ -23,8 +23,8 @@
       </div>
     </form>
 
-    <div class="mt-3" data-turbo="true">
-      <%= render partial: 'dashboard_recent_edits' , locals: { page: 1, user_id: current_user.id } %>
+    <div class="mt-3">
+      <%= render partial: 'edits/dashboard_recent_edits', locals: { page: 1, user_id: current_user.id } %>
     </div>
 
     <div class="mt-3" data-turbo="true">

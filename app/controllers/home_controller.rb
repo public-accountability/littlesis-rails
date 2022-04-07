@@ -21,21 +21,6 @@ class HomeController < ApplicationController
     @maps = current_user.network_maps.order(created_at: :desc).page(1).per(4)
   end
 
-  # turbo streams ↴
-
-  def dashboard_edits
-    render partial: 'dashboard_recent_edits',
-           locals: { page: params[:page]&.to_i || 1, user_id: current_user.id }
-  end
-
-  def dashboard_maps
-    page = params[:page]&.to_i || 1
-    maps = current_user.network_maps.order(created_at: :desc).page(page).per(4)
-    render partial: 'dashboard_maps', locals: { maps: maps, page: page, maps_per_page: 4 }
-  end
-
-  # ⮥
-
   # Sends CSRF token to browser extension
   def token
     if user_signed_in?
@@ -43,6 +28,13 @@ class HomeController < ApplicationController
     else
       head :unauthorized
     end
+  end
+
+  # Turbo stream for partial dashboard_maps
+  def dashboard_maps
+    page = params[:page]&.to_i || 1
+    maps = current_user.network_maps.order(created_at: :desc).page(page).per(4)
+    render partial: 'dashboard_maps', locals: { maps: maps, page: page, maps_per_page: 4 }
   end
 
   def dismiss
