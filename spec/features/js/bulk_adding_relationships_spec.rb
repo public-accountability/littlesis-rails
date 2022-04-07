@@ -1,5 +1,5 @@
 feature 'Bulk-adding relationships', type: :feature, js: true do
-  let(:user) { create_basic_user }
+  let(:user) { create_collaborator }
   let(:oedipa) { create(:entity_person, name: 'Oedipa Maas') }
 
   before do

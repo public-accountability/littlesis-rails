@@ -53,7 +53,7 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
   end
 
   context 'with a logged in user' do
-    let(:user) { create_basic_user }
+    let(:user) { create_editor }
     let(:person) { create(:entity_person, name: 'Colander Raclette', blurb: 'A human cheese') }
 
     before { login_as user, scope: :user }

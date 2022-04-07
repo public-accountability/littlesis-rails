@@ -1,7 +1,6 @@
-# skipping due to a selenium error (Selenium::WebDriver::Error::ElementNotInteractableError), caused by bootstrap's modal
 describe 'Entity References', type: :feature, js: :true do
   let(:user) do
-    create_basic_user.tap { |user| user.add_ability!(:upload) }
+    create_collaborator
   end
 
   let(:entity) { create(:entity_person) }
