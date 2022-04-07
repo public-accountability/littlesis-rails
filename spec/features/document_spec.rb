@@ -1,7 +1,7 @@
 feature 'Editing documents' do
   let(:document) { create(:document) }
   let(:new_attrs) { attributes_for(:document) }
-  let(:user) { create_basic_user }
+  let(:user) { create_editor }
 
   context 'when not logged in' do
     before { visit edit_document_path(document) }

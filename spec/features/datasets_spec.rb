@@ -1,5 +1,5 @@
 describe 'Datasets' do
-  before { login_as(create_basic_user, scope: :user) }
+  before { login_as(create_editor, scope: :user) }
 
   after { logout(:user) }
 
@@ -12,13 +12,12 @@ describe 'Datasets' do
     end
   end
 
-  xfeature 'dataset table' do
+  feature 'dataset table' do
     before { visit dataset_path(dataset: "nycc") }
 
     it 'shows datatables' do
       expect(page.status_code).to eq 200
-      page_has_selector 'table#dataset-table'
-      expect(page.html).to match /LittleSis\.start_dataset_table/
+      page_has_selector 'table.datagrid'
     end
   end
 end

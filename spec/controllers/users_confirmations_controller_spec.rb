@@ -8,7 +8,7 @@ describe Users::ConfirmationsController, type: :controller do
 
   describe 'Confirming email address' do
     specify do
-      expect(user).to receive(:create_default_permissions).once
+      # expect(user).to receive(:create_default_permissions).once
       expect(user).not_to receive(:update)
       expect(UserMailer).to receive(:welcome_email).with(user).and_return(double(:deliver_later => nil))
       # expect(NotificationMailer).to receive(:signup_email).with(@user).and_return(double(:deliver_later => nil))

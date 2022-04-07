@@ -1,10 +1,11 @@
 describe 'Relationships Requests' do
-  let(:user) { create_really_basic_user }
-  before(:each) { login_as(user, :scope => :user) }
-  after(:each) { logout(:user) }
-
+  let(:user) { create_editor }
   let(:person) { create(:entity_person, :with_person_name) }
   let(:org) { create(:entity_org, :with_org_name) }
+
+  before { login_as(user, :scope => :user) }
+
+  after { logout(:user) }
 
   describe 'Creating Relationships' do
     let(:params) do
@@ -20,23 +21,28 @@ describe 'Relationships Requests' do
       }
     end
 
-    subject(:post_request) { -> { post relationships_path, params: params } }
+    let(:request) { -> { post relationships_path, params: params } }
 
     context 'valid position relationship' do
-      it { is_expected.to change { Relationship.count }.by(1) }
-      it { is_expected.to change { Reference.count }.by(3) }
-
-      it do
-        is_expected.to change { person.reload.last_user_id }.to(user.id)
+      specify do
+        expect(&request).to change(Relationship, :count).by(1)
       end
 
-      it do
-        is_expected.to change { org.reload.last_user_id }.to(user.id)
+      specify do
+        expect(&request).to change(Reference, :count).by(3)
+      end
+
+      specify do
+        expect(&request).to change { person.reload.last_user_id }.to(user.id)
+      end
+
+      specify do
+        expect(&request).to change { org.reload.last_user_id }.to(user.id)
       end
 
       it 'responds with json containing the relationship id' do
-        subject.call
-        expect(json).to eql('relationship_id' => Relationship.last.id)
+        request.call
+        expect(json).to eq('relationship_id' => Relationship.last.id)
       end
 
       context 'is board membership' do
@@ -44,11 +50,13 @@ describe 'Relationships Requests' do
           params[:relationship][:position_attributes] = { is_board: 'true' }
         end
 
-        it { is_expected.to change { Relationship.count }.by(1) }
+        specify do
+          expect(&request).to change(Relationship, :count).by(1)
+        end
 
         it 'corrects updates "is_board" on position' do
-          expect(&subject).to change { Position.count }.by(1)
-          expect(Position.last.is_board).to eql true
+          expect(&request).to change { Position.count }.by(1)
+          expect(Position.last.is_board).to be true
         end
       end
 
@@ -57,10 +65,12 @@ describe 'Relationships Requests' do
           params[:relationship][:position_attributes] = { is_board: 'no' }
         end
 
-        it { is_expected.to change { Relationship.count }.by(1) }
+        specify do
+          expect(&request).to change(Relationship, :count).by(1)
+        end
 
         it 'corrects updates "is_board" on position' do
-          expect(&subject).to change { Position.count }.by(1)
+          expect(&request).to change { Position.count }.by(1)
           expect(Position.last.is_board).to eql false
         end
       end
@@ -68,10 +78,13 @@ describe 'Relationships Requests' do
 
     context 'with invalid url' do
       before { params[:reference][:url] = 'I AM A BAD URL' }
-      it { is_expected.not_to change { Relationship.count } }
+
+      specify do
+        expect(&request).not_to change(Relationship, :count)
+      end
 
       it 'rends json of errors' do
-        subject.call
+        request.call
         expect(response).to have_http_status :bad_request
         expect(response.body).to include 'is not a valid url'
       end
@@ -81,7 +94,7 @@ describe 'Relationships Requests' do
       before { params[:relationship][:amount] = '$25,000' }
 
       it 'adds USD amount to relationship' do
-        expect { post_request.call }.to change(Relationship, :count).by(1)
+        expect(&request).to change(Relationship, :count).by(1)
         expect(Relationship.last.amount).to eq 25_000
         expect(Relationship.last.currency).to eq 'usd'
       end
@@ -91,7 +104,7 @@ describe 'Relationships Requests' do
       before { params[:relationship].merge!(amount: '13000', currency: 'eur') }
 
       it 'adds currency and amount to relationship' do
-        expect { post_request.call }.to change(Relationship, :count).by(1)
+        expect(&request).to change(Relationship, :count).by(1)
         expect(Relationship.last.amount).to eq 13_000
         expect(Relationship.last.currency).to eq 'eur'
       end
@@ -101,7 +114,7 @@ describe 'Relationships Requests' do
       before { params[:relationship].merge!(amount: nil, currency: 'aud') }
 
       it 'raises validation error' do
-        expect { post_request.call }.not_to change(Relationship, :count)
+        expect(&request).not_to change(Relationship, :count)
         expect(response).to have_http_status :bad_request
         expect(response.body).to include 'entered without an amount'
       end
@@ -141,7 +154,6 @@ describe 'Relationships Requests' do
       let(:patch_request) { proc { patch relationship_path(position_relationship), params: params } }
 
       context 'updating relationship fields' do
-
         it 'redirects to relationship page' do
           patch_request.call
           redirects_to_path relationship_path(position_relationship)
@@ -164,7 +176,9 @@ describe 'Relationships Requests' do
 
       context 'submitting an invalid date' do
         let(:params) { base_params.deep_merge(relationship: { start_date: 'BAD DATE' }) }
+
         before { patch_request.call }
+
         renders_the_edit_page
 
         it 'does not change the relationship' do
@@ -200,6 +214,7 @@ describe 'Relationships Requests' do
           }
         }
       end
+
       let(:params) { base_params }
       let(:patch_request) { proc { patch relationship_path(transaction_relationship), params: params } }
 
@@ -243,41 +258,28 @@ describe 'Relationships Requests' do
     end # end updating and reversing
   end # end updating relationships
 
-  describe 'deleting relationships' do
+  describe 'deleting relationship' do
     with_versioning do
-      before { PaperTrail.request.whodunnit = user.id.to_s }
-      after { PaperTrail.request.whodunnit = nil }
-
-      let(:entity) { create(:entity_org) }
-      let(:related) { create(:entity_person) }
       let!(:relationship) do
-        create(:generic_relationship, entity: entity, related: related, last_user_id: 1)
-      end
-
-      subject { -> { delete relationship_path(relationship) } }
-
-      context 'as a regular user' do
-        context 'relationship is new' do
-          it 'redirects to dashboard' do
-            subject.call
-            redirects_to_path home_dashboard_path
-          end
-        end
-
-        context 'relationship is old' do
-          before do
-            relationship.update_column(:created_at, 1.month.ago)
-            subject.call
-          end
-          denies_access
+        PaperTrail.request(whodunnit: user.id.to_s) do
+          create(:generic_relationship, entity: create(:entity_person), related: create(:entity_person))
         end
       end
 
-      context 'as an admin user' do
-        let(:user) { create_admin_user }
-        it { is_expected.to change { Relationship.count }.by(-1) }
-        it { is_expected.to change { entity.reload.last_user_id }.from(1).to(user.id) }
-        it { is_expected.to change { related.reload.last_user_id }.from(1).to(user.id) }
+      context 'when requesting as the editor who created' do
+        it 'deletes relationship and redirects to dashboard' do
+          delete relationship_path(relationship)
+          expect(relationship.reload.is_deleted).to be true
+          expect(response.status).to eq 302
+          expect(response.location).to include '/home/dashboard'
+        end
+
+        it 'cannot delete when it is more than an week ago'  do
+          relationship.update_columns(created_at: 1.month.ago)
+          delete relationship_path(relationship)
+          expect(relationship.reload.is_deleted).to be false
+          expect(response.status).to eq 403
+        end
       end
     end
   end

@@ -6,8 +6,6 @@ class RelationshipsController < ApplicationController
   before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction]
   before_action :authenticate_user!, except: [:show]
   before_action :current_user_can_edit?, only: [:create, :update, :destroy, :bulk_add, :reverse_direction]
-  # TODO
-  before_action :check_delete_permission, only: [:destroy]
   before_action :set_entity, only: [:bulk_add]
 
   # see utility.js
@@ -114,6 +112,10 @@ class RelationshipsController < ApplicationController
   end
 
   def destroy
+    unless @relationship.permissions_for(current_user).fetch(:deleteable)
+      raise Exceptions::PermissionError
+    end
+
     @relationship.current_user = current_user
     @relationship.soft_delete
 
@@ -335,11 +337,5 @@ class RelationshipsController < ApplicationController
 
   def reverse_direction?
     cast_to_boolean(params[:reverse_direction]) && @relationship.reversible?
-  end
-
-  def check_delete_permission
-    unless current_user.permissions.relationship_permissions(@relationship).fetch(:deleteable)
-      raise Exceptions::PermissionError
-    end
   end
 end
