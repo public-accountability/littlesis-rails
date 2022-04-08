@@ -1,4 +1,15 @@
 <div class="row">
+  <div class="col-3">
+    <%= form_tag "/admin/users", method: :get do %>
+      <div class="input-group mb-3">
+        <input name="q" type="text" class="form-control" placeholder="Search users">
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><bi class="bi bi-search"></bi></button>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
   <div class="col">
     <table class="table">
       <thead>
@@ -23,12 +34,10 @@
           </tr>
         <% end %>
       </tbody>
-
-
-      <tfoot>
-        <%= paginate @users %>
-      </tfoot>
-
     </table>
+
+    <div>
+      <%= paginate @users %>
+    </div>
   </div>
 </div>

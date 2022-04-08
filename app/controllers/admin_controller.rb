@@ -25,13 +25,15 @@ class AdminController < ApplicationController
   end
 
   def users
+    params[:page] ||= 1
+
     @users = User
                .includes(:user_profile)
                .where.not(role: :system)
                .where(User.matches_username_or_email(params[:q]))
                .order('created_at DESC')
-               .page(params[:page] || 1)
-               .per(50)
+               .page(params[:page])
+               .per(25)
   end
 
   # /admin/users/:userid/set_role { role: [role_name] }

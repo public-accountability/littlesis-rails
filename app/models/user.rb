@@ -133,7 +133,7 @@ class User < ApplicationRecord
   # the username and email columns to find matching users.
   # Used by UsersController#admin
   def self.matches_username_or_email(query)
-    return if query.nil?
+    return if query.blank?
 
     query_string = "%#{sanitize_sql_like(query)}%"
     arel_table[:username].matches(query_string).or(arel_table[:email].matches(query_string))
