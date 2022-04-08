@@ -34,6 +34,13 @@ class AdminController < ApplicationController
                .per(50)
   end
 
+  # /admin/users/:userid/set_role { role: [role_name] }
+  def set_role
+    user = User.find(params.require(:userid))
+    user.update!(role: params.require(:role))
+    render json: { status: 'ok', role: user.role.name }
+  end
+
   def entity_matcher
   end
 
