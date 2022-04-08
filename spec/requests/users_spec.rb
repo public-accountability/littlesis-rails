@@ -25,24 +25,6 @@ describe 'Users' do
     end
   end
 
-  describe 'attempting to add an ability that does not exist' do
-    let(:user) { create_basic_user }
-    let(:admin) { create_admin_user }
-
-    before do
-      user
-      login_as(admin, :scope => :user)
-      post "/users/#{user.id}/add_permission", params: { permission: 'dance' }
-    end
-
-    after { logout(:user) }
-
-    it 'returns a bad request' do
-      expect(response).to have_http_status :bad_request
-      expect(response.body).to be_blank
-    end
-  end
-
   describe 'updating settings' do
     let(:admin_user) { create_admin_user }
 
@@ -57,7 +39,7 @@ describe 'Users' do
       put "/users/settings", params: { settings: { show_stars: false } }, as: :json
       expect(admin_user.reload.settings.show_stars).to be false
       expect(response.status).to eq 302
-      expect(response.location).to include '/users/edit'
+      expect(response.location).to include '/settings'
     end
   end
 end
