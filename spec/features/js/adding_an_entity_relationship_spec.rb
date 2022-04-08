@@ -1,5 +1,5 @@
 feature 'Adding an entity relationship', :sphinx, type: :feature, js: true do
-  let!(:user) { create_basic_user }
+  let!(:user) { create_editor }
   let(:entity) { create(:entity_person, name: 'Brendan Pips') }
   let(:entity2) { create(:entity_person, name: 'Graeme Glamp') }
 
