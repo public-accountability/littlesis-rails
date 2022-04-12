@@ -1,28 +1,28 @@
 <%= content_tag :div,
   data: {
     controller: "list-settings",
-    list_settings_list_access_name_value: Permissions::ACCESS_MAPPING[@list.access].downcase,
-
+    list_settings_list_access_name_value: Permissions::ACCESS_MAPPING[@list.access].downcase
   } do %>
 
-  <div class="row justify-content-start">
-    <div class="col-sm col-md-4">
-      <%= label_tag 'Access level' %><br/>
+  <% if current_user.role.include?(:edit_list)  %>
+    <div class="row justify-content-start">
+      <div class="col-sm col-md-4">
+        <%= label_tag 'Access level' %><br/>
 
-      <div id="list-config-access-buttons" class="btn-group m-bottom-1em" role="group" aria-label="...">
-        <% Permissions::ACCESS_MAPPING.each do |code, name| %>
-          <%= label_tag "#{name.downcase}-radio", name,
-            class: "btn #{@list.access == code ? 'btn-primary' : ''}",
-            value: name.downcase,
-            data: {
-              action: 'click->list-settings#switchAccess'
-            } %>
-          <%= f.radio_button :access, code, id: "#{name.downcase}-radio" %>
-        <% end %>
+        <div id="list-config-access-buttons" class="btn-group m-bottom-1em" role="group" aria-label="...">
+          <% Permissions::ACCESS_MAPPING.each do |code, name| %>
+            <%= label_tag "#{name.downcase}-radio", name,
+             class: "btn #{@list.access == code ? 'btn-primary' : ''}",
+             value: name.downcase,
+             data: {
+               action: 'click->list-settings#switchAccess'
+             } %>
+            <%= f.radio_button :access, code, id: "#{name.downcase}-radio" %>
+          <% end %>
+        </div>
+
       </div>
-
-    </div>
-    <div class="col-sm my-auto">
+      <div class="col-sm my-auto">
         <div class="list-access-level-help" id="list-access-level-help-open">
           An <b>open list</b> is visible by everyone and can be edited by any LittleSis user.
         </div>
@@ -32,8 +32,11 @@
         <div class="list-access-level-help" id="list-access-level-help-private">
           A <b>private list</b> can only be seen and edited by you.
         </div>
+      </div>
     </div>
-  </div>
+  <% else %>
+    <%= f.hidden_field :access, value: Permissions::ACCESS_PRIVATE %>
+  <% end %>
 
   <div class="row form-group">
     <div class="col-sm-8 col-md-6">

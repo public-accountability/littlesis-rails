@@ -148,14 +148,6 @@ class List < ApplicationRecord
     query
   end
 
-  # The host argument is there for compatibility reasons:
-  # the symfony/legacy caching system required it.
-  # In Rails, all we need to do to clear the cache
-  # is change the updated_at timestamp
-  def clear_cache(host = nil)
-    touch
-  end
-
   # [Entity|Ids]
   def add_entities(entities_or_ids)
     entities_or_ids.each { |x| add_one_entity(x) }

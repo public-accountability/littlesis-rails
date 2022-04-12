@@ -69,7 +69,8 @@ describe ListsController, type: :controller do
     end
 
     describe 'modifications' do
-      let(:new_list) { create(:list) }
+      login_user
+      let(:new_list) { create(:list, creator_user_id: example_user.id) }
 
       before { get :modifications, params: { id: new_list.id } }
 
