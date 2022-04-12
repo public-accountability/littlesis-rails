@@ -73,12 +73,7 @@ class ApplicationController < ActionController::Base
 
   # Legacy permission check
   def check_permission(name = :edit)
-    if Rails.application.config.littlesis[:noediting]
-      raise Exceptions::EditingDisabled unless current_user&.essential?
-    end
-    raise Exceptions::PermissionError if current_user.nil?
-    raise Exceptions::RestrictedUserError if current_user.restricted?
-    raise Exceptions::PermissionError unless current_user.has_ability?(name)
+    raise Exceptions::DepreciatedError, "do not use check_permission"
   end
 
   def check_ability(name)
