@@ -15,14 +15,11 @@
   <% if current_user.role.include?(:star_relationship) %>
     <%= button_to(
       ( @relationship.is_featured ? 'unfeature' : 'feature' ),
-      relationship_path(@relationship),
+      feature_relationship_path(@relationship),
       method: :patch,
       class: 'action-button',
       params: {
-        relationship: {
-          is_featured: !@relationship.is_featured
-        },
-        reference: {just_cleaning_up: true}
+        is_featured: !@relationship.is_featured
       },
       form_class: 'd-inline',
       title: "#{@relationship.is_featured ? 'Unfeature' : 'Feature'} this relationship"

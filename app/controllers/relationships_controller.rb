@@ -46,8 +46,7 @@ class RelationshipsController < ApplicationController
     :notes,
     :start_date,
     :end_date,
-    :is_current,
-    :is_featured
+    :is_current
   ].freeze
 
   rescue_from Exceptions::MissingCategoryIdParamError do |exception|
