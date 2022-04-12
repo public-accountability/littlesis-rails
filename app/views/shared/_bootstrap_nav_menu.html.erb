@@ -1,32 +1,33 @@
 <ul class="nav mr-auto">
-  <% UserNavmenuPresenter.new(current_user).each do |(header_text, url_or_links)| %>
+  <% cache ["navmenu", (current_user&.cache_key_with_version || 'anon'), I18n.locale], expires_in: 2.days do %>
+    <% Navmenu.for(current_user).each do |(header_text, url_or_links)| %>
+      <% if url_or_links.is_a?(String) %>
+        <li class="nav-item">
+          <a href="<%= url_or_links %>" class="nav-link">
+            <%= header_text  %>
+          </a>
+        </li>
 
-    <% if url_or_links.is_a?(String) %>
-      <li class="nav-item">
-        <a href="<%= url_or_links %>" class="nav-link">
-          <%= header_text  %>
-        </a>
-      </li>
-
-    <%  else %>
-      <% navmenu_id = "navmenu-dropdown-#{header_text}" %>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="<%= navmenu_id %>">
-          <%= header_text %>
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="<%= navmenu_id %>">
-          <% url_or_links.each do |dropdown_link| %>
-            <li>
-              <% if dropdown_link == :divider  %>
-                <div class="dropdown-divider"></div>
-              <% else %>
-                <% link_text, href = dropdown_link %>
-                <a class="dropdown-item" href="<%= href %>"><%= link_text %></a>
-              <% end %>
-            </li>
-          <% end  %>
-        </ul>
-      </li>
+      <%  else %>
+        <% navmenu_id = "navmenu-dropdown-#{header_text}" %>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="<%= navmenu_id %>">
+            <%= header_text %>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="<%= navmenu_id %>">
+            <% url_or_links.each do |dropdown_link| %>
+              <li>
+                <% if dropdown_link == :divider  %>
+                  <div class="dropdown-divider"></div>
+                <% else %>
+                  <% link_text, href = dropdown_link %>
+                  <a class="dropdown-item" href="<%= href %>"><%= link_text %></a>
+                <% end %>
+              </li>
+            <% end  %>
+          </ul>
+        </li>
+      <% end %>
     <% end %>
   <% end %>
 </ul>

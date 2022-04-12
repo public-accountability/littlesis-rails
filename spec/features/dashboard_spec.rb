@@ -67,7 +67,7 @@ describe 'home/dashboard', type: :feature do
 
   describe 'explore' do
     before do
-      login_as(current_user, :scope => :user)
+      login_as(create_editor, :scope => :user)
       visit home_dashboard_path
     end
 
