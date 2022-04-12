@@ -18,13 +18,10 @@
   <% if show_stars? %>
     <span>
       <%= button_to(
-        relationship_path(grouped_link.first.relationship),
+        feature_relationship_path(grouped_link.first.relationship),
         method: :patch,
         params: {
-          relationship: {
-            is_featured: !grouped_link.first.relationship.is_featured
-          },
-          reference: {just_cleaning_up: true}
+          is_featured: !grouped_link.first.relationship.is_featured
         },
         class: 'star-button',
         form_class: 'd-inline-block ms-1',

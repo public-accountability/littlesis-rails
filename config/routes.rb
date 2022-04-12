@@ -225,6 +225,7 @@ LittleSis::Application.routes.draw do
     member do
       post 'reverse_direction'
       post 'tags'
+      patch 'feature'
     end
   end
 

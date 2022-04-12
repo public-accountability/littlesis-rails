@@ -12,13 +12,11 @@ class EntitiesController < ApplicationController
   ).freeze
 
   PUBLIC_ACTIONS = %i[show datatable political contributions references validate profile grouped_links source_links].freeze
-  EDITABLE_ACTIONS = %i[new create update destroy create_bulk].freeze
   MATCH_DONTAIONS_ACTIONS = %i[match_donation match_donations review_donations].freeze
 
-  before_action :authenticate_user!, except: PUBLIC_ACTIONS
-  before_action :current_user_can_edit?, only: EDITABLE_ACTIONS
+  before_action :authenticate_user!, :current_user_can_edit?, except: PUBLIC_ACTIONS
   before_action -> { check_ability(:match_donation) }, only: MATCH_DONTAIONS_ACTIONS
-  before_action :set_entity, except: [:new, :create, :show, :create_bulk, :validate]
+  before_action :set_entity, except: [:new, :create, :create_bulk, :validate, :show]
   before_action :set_entity_for_profile_page, only: [:show]
 
   rescue_from Exceptions::RestrictedUserError, with: -> { head :forbidden }
