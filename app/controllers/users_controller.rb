@@ -61,8 +61,4 @@ class UsersController < ApplicationController
   def user_or_admins_only
     raise Exceptions::PermissionError unless (current_user == @user) || current_user.admin?
   end
-
-  def role_upgrade_request_params
-    params.permit(:why).to_h
-  end
 end

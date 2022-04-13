@@ -8,9 +8,17 @@
 
 <div class="row admin-table-row">
   <div class="col">
-    <h2>Pending Requests</h2>
+    <h2>Modification Requests</h2>
     <%= datagrid_table(@requests, html: { class: 'table table-responsive-lg table-sm' }) %>
     <%= paginate(@requests.assets, param_name: :requests_page) %>
+  </div>
+</div>
+
+<div class="row admin-table-row">
+  <div class="col">
+    <h2>Editor Requests</h2>
+    <%= datagrid_table(@role_upgrade_requests, html: { class: 'table table-responsive-lg table-sm' }) %>
+    <%= paginate(@role_upgrade_requests.assets, param_name: :role_upgrade_page) %>
   </div>
 </div>
 

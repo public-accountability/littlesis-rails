@@ -52,6 +52,8 @@ LittleSis::Application.routes.draw do
     get '/entity_matcher', action: :entity_matcher
     get '/tracker', action: :tracker
     get '/object_space_dump', action: :object_space_dump
+    get '/role_upgrade_requests/:id', action: :role_upgrade_request, constraints: { id: /[0-9]+/ }, as: :role_upgrade_request
+    patch '/role_upgrade_requests/:id', action: :update_role_upgrade_request, constraints: { id: /[0-9]+/ }
   end
 
   resources :dashboard_bulletins, except: [:show]
@@ -259,6 +261,7 @@ LittleSis::Application.routes.draw do
 
   get '/tags/request' => 'tags#tag_request'
   post '/tags/request' => 'tags#tag_request'
+
   resources :tags, only: [:edit, :create, :update, :destroy, :show, :index] do
     member do
       get '/edits' => 'tags#edits'
