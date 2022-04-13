@@ -35,9 +35,9 @@ describe 'Users' do
     after { logout(:user) }
 
     it 'admins can update can show stars settings' do
-      expect(admin_user.settings.show_stars).to be true
-      put "/users/settings", params: { settings: { show_stars: false } }, as: :json
-      expect(admin_user.reload.settings.show_stars).to be false
+      expect(admin_user.settings.show_stars).to be false
+      put "/users/settings", params: { settings: { show_stars: true } }, as: :json
+      expect(admin_user.reload.settings.show_stars).to be true
       expect(response.status).to eq 302
       expect(response.location).to include '/settings'
     end

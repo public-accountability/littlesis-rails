@@ -64,6 +64,8 @@ describe 'Featured relationship admin', type: :feature do
 
   context 'when logged in as an admin' do
     before do
+      admin.settings.update(show_stars: true)
+      admin.save!
       login_as admin, scope: :user
     end
 
