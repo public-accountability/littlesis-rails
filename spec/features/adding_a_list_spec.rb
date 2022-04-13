@@ -1,5 +1,4 @@
 feature "adding an new list", type: :feature do
-  # let(:user) { create_basic_user }
   let(:user) { create_editor }
   let(:list_name) { "#{Faker::Company.name} staff" }
   let(:short_description) { Faker::Company.catch_phrase }
@@ -14,7 +13,8 @@ feature "adding an new list", type: :feature do
   scenario 'visiting the "add a list page"' do
     successfully_visits_page(new_list_path)
     page_has_selector 'h1', text: "Add a list"
-    page_has_selectors '#ref_url', '#ref_name', '#list-config-access-buttons'
+    page_has_selectors '#ref_url', '#ref_name'
+    expect(page).not_to have_selector '#list-config-access-buttons'
     expect(page).not_to have_selector "#list-admin-settings-container"
   end
 
@@ -29,14 +29,18 @@ feature "adding an new list", type: :feature do
 
     expect(page).not_to have_selector "#error_explanation"
 
-    expect(List.last.name).to eql list_name
-    expect(List.last.creator_user_id).to eql user.id
-    expect(List.last.last_user_id).to eql user.id
-    expect(List.last.short_description).to eql short_description
-    expect(Reference.last.referenceable_id).to eql List.last.id
-    expect(Reference.last.referenceable_type).to eql 'List'
-    expect(Reference.last.document.url).to eql url
-    expect(Reference.last.document.name).to eql url_name
+    list = List.last
+    reference = Reference.last
+
+    expect(list.access).to eq Permissions::ACCESS_PRIVATE
+    expect(list.name).to eql list_name
+    expect(list.creator_user_id).to eq user.id
+    expect(list.last_user_id).to eq user.id
+    expect(list.short_description).to eq short_description
+    expect(reference.referenceable_id).to eq list.id
+    expect(reference.referenceable_type).to eq 'List'
+    expect(reference.document.url).to eq url
+    expect(reference.document.name).to eq url_name
   end
 
   scenario 'attempting to create a new list with invalid reference values' do
@@ -52,8 +56,8 @@ feature "adding an new list", type: :feature do
     expect(page).to have_selector "#error_explanation"
     expect(page.find("#error_explanation")).to have_text '"not a url" is not a valid url'
 
-    expect(List.count).to eql list_count
-    expect(Reference.count).to eql reference_count
+    expect(List.count).to eq list_count
+    expect(Reference.count).to eq reference_count
   end
 
   context 'when user is restricted' do

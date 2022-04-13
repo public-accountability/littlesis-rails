@@ -3,7 +3,7 @@ describe 'lists/new' do
     context 'not admin' do
       before do
         assign(:list, List.new)
-        allow(view).to receive(:current_user).and_return(double(:admin? => false))
+        allow(view).to receive(:current_user).and_return(build(:user))
         render
       end
 
@@ -40,7 +40,7 @@ describe 'lists/new' do
     context 'when user is an admin' do
       before do
         assign(:list, List.new)
-        allow(view).to receive(:current_user).and_return(instance_double('User', :admin? => true))
+        allow(view).to receive(:current_user).and_return(build(:user, role: 'admin'))
         render
       end
 
@@ -54,7 +54,7 @@ describe 'lists/new' do
   describe 'layout with errors' do
     it 'has alert when there is an error' do
       assign(:list, List.new.tap(&:save))
-      allow(view).to receive(:current_user).and_return(instance_double('User', :admin? => false))
+      allow(view).to receive(:current_user).and_return(build(:user, role: 'admin'))
       render
       expect(rendered).to have_selector('#error_explanation')
     end

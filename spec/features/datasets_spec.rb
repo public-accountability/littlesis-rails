@@ -1,9 +1,9 @@
 describe 'Datasets' do
-  before { login_as(create_editor, scope: :user) }
+  before { login_as(create_collaborator, scope: :user) }
 
   after { logout(:user) }
 
-  feature 'overview page' do
+  describe 'overview page' do
     before { visit datasets_path }
 
     it 'has links to individual pages' do
@@ -12,7 +12,7 @@ describe 'Datasets' do
     end
   end
 
-  feature 'dataset table' do
+  describe 'dataset table' do
     before { visit dataset_path(dataset: "nycc") }
 
     it 'shows datatables' do

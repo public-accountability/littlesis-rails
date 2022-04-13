@@ -1,8 +1,7 @@
 describe 'lists/edit.html.erb', type: :view do
-  before(:each) do
+  before do
     allow(controller).to receive(:current_user)
-                          .and_return(double(:admin? => false,
-                                             :permissions => double(:tag_permissions => {})))
+                           .and_return(build(:user, role: 'admin'))
 
     assign(:list, build(:list))
     render template: "lists/edit"
