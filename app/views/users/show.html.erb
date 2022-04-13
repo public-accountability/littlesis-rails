@@ -2,10 +2,13 @@
   <div class="col">
     <h1>
       <%= @user.username %>
-      <small style="font-size: 12px">
+
+      <small style="font-size: 14px">
         <%= "member since #{@user.created_at.strftime('%B %Y')}" %>
+        <span class="badge bg-info text-dark"><%= @user.role.name %></span>
       </small>
     </h1>
+
     <% if @user.about_me.present? %>
       <p><%= @user.about_me %></p>
     <% end %>
