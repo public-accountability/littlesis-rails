@@ -88,7 +88,9 @@ module ApplicationHelper
   end
 
   def show_stars?
-    user_admin? && current_user.settings.show_stars
+    user_signed_in? &&
+      current_user.role.include?(:star_relationship) &&
+      current_user.settings.show_stars
   end
 
   def bs_row_column(row_class: 'row', column_class: 'col', &block)
