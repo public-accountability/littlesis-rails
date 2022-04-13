@@ -3708,6 +3708,40 @@ ALTER SEQUENCE public.representative_id_seq OWNED BY public.representative.id;
 
 
 --
+-- Name: role_upgrade_requests; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.role_upgrade_requests (
+    id bigint NOT NULL,
+    role smallint NOT NULL,
+    status smallint DEFAULT 0 NOT NULL,
+    user_id bigint NOT NULL,
+    why text,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: role_upgrade_requests_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.role_upgrade_requests_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: role_upgrade_requests_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.role_upgrade_requests_id_seq OWNED BY public.role_upgrade_requests.id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4873,6 +4907,13 @@ ALTER TABLE ONLY public.representative_district ALTER COLUMN id SET DEFAULT next
 
 
 --
+-- Name: role_upgrade_requests id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.role_upgrade_requests ALTER COLUMN id SET DEFAULT nextval('public.role_upgrade_requests_id_seq'::regclass);
+
+
+--
 -- Name: schools id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5752,6 +5793,14 @@ ALTER TABLE ONLY public.representative_district
 
 ALTER TABLE ONLY public.representative
     ADD CONSTRAINT representative_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: role_upgrade_requests role_upgrade_requests_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.role_upgrade_requests
+    ADD CONSTRAINT role_upgrade_requests_pkey PRIMARY KEY (id);
 
 
 --
@@ -7618,6 +7667,13 @@ CREATE INDEX index_relationships_on_is_featured ON public.relationships USING bt
 
 
 --
+-- Name: index_role_upgrade_requests_on_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_role_upgrade_requests_on_status ON public.role_upgrade_requests USING btree (status);
+
+
+--
 -- Name: address address_ibfk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7863,6 +7919,14 @@ ALTER TABLE ONLY public.featured_resources
 
 ALTER TABLE ONLY public.entities
     ADD CONSTRAINT fk_rails_d27e2518f5 FOREIGN KEY (last_user_id) REFERENCES public.users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: role_upgrade_requests fk_rails_dccb1a8b21; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.role_upgrade_requests
+    ADD CONSTRAINT fk_rails_dccb1a8b21 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -8386,6 +8450,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220315195417'),
 ('20220330163258'),
 ('20220330204713'),
-('20220407140849');
+('20220407140849'),
+('20220413172917');
 
 

@@ -3,6 +3,8 @@ describe UsersController, type: :controller do
     it { is_expected.not_to route(:get, '/users').to(action: :index) }
     it { is_expected.to route(:get, '/users/a_username').to(action: :show, username: 'a_username') }
     it { is_expected.to route(:get, '/users/a_username/edits').to(action: :edits, username: 'a_username') }
+    it { is_expected.to route(:get, '/users/a_username/role_request').to(action: :role_request, username: 'a_username') }
+    it { is_expected.to route(:post, '/users/a_username/role_request').to(action: :create_role_request, username: 'a_username') }
     it { is_expected.to route(:post, '/users/check_username').to(action: :check_username) }
   end
 

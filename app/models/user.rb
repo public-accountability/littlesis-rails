@@ -5,15 +5,16 @@ class User < ApplicationRecord
 
   MINUTES_BEFORE_USER_CAN_EDIT = 60
 
-  enum role: {
-         user: 0, # default
-         admin: 1,
-         system: 2,
-         restricted: 3,
-         editor: 4,
-         collaborator: 5
-       }
+  ROLES = {
+    user: 0, # default
+    admin: 1,
+    system: 2,
+    restricted: 3,
+    editor: 4,
+    collaborator: 5
+  }.freeze
 
+  enum :role, ROLES, default: :user
   serialize :abilities, UserAbilities
   serialize :settings, UserSettings
 

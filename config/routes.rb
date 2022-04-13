@@ -33,6 +33,8 @@ LittleSis::Application.routes.draw do
   get '/users/:username' => 'users#show', as: :user_page
   get '/users/:username/edits' => 'users#edits', as: :user_edits
   get '/users/:username/maps' => 'maps#user', as: :user_maps
+  get '/users/:username/role_request' => 'users#role_request', as: :user_role_request
+  post '/users/:username/role_request' => 'users#create_role_request'
 
   resources :contact, only: [:index, :create]
 

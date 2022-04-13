@@ -2,7 +2,8 @@
 
 class UsersController < ApplicationController
   before_action :authenticate_user!, :block_restricted_user_access, except: [:success, :check_username]
-  before_action :set_user, only: [:show, :edits]
+  before_action :set_user, only: [:show, :edits, :role_request, :create_role_request]
+  before_action :user_only, only: [:role_request, :create_role_request]
   before_action :user_or_admins_only, only: [:edits]
 
   # GET /users/:username
@@ -12,6 +13,14 @@ class UsersController < ApplicationController
   # GET /users/:username/edits
   def edits
     @edits = @user.recent_edits(params[:page]&.to_i || 1)
+  end
+
+  # GET /users/:username/role_request
+  def role_request
+  end
+
+  # POST /users/:username/role_request
+  def create_role_request
   end
 
   # GET /users/check_username
@@ -33,6 +42,10 @@ class UsersController < ApplicationController
     else
       raise Exceptions::NotFoundError
     end
+  end
+
+  def user_only
+    raise Exceptions::PermissionError unless current_user == @user
   end
 
   def user_or_admins_only
