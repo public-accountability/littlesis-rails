@@ -3,7 +3,7 @@
 class MergeController < ApplicationController
   SIMILAR_ENTITIES_PER_PAGE = 75
 
-  class Modes
+  module Modes
     SEARCH  = 'search'
     EXECUTE = 'execute'
     REQUEST = 'request'
@@ -41,7 +41,9 @@ class MergeController < ApplicationController
   end
 
   # GET /tools/redundant
-  def redundant_merge_review; end
+  def redundant_merge_review
+    check_ability :merge_entity
+  end
 
   private
 
@@ -52,11 +54,9 @@ class MergeController < ApplicationController
   def check_permissions
     case @merge_mode
     when Modes::EXECUTE
-      unless current_user.admin? || current_user.has_ability?(:merge)
-        raise Exceptions::PermissionError
-      end
+      raise Exceptions::PermissionError unless current_user.role.include?(:merge_entity)
     when Modes::REVIEW
-      raise Exceptions::PermissionError unless current_user.admin?
+      raise Exceptions::PermissionError unless current_user.role.include?(:approve_request)
     end
   end
 

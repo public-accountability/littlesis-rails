@@ -1,5 +1,3 @@
-<p id="notice"><%= notice %></p>
-
 <h1>Permission Passes</h1>
 
 <%= link_to 'New Permission Pass', new_permission_pass_path, class: 'btn btn-primary' %>
@@ -10,7 +8,7 @@
       <th>Event</th>
       <th>Valid from</th>
       <th>Valid to</th>
-      <th>Grants abilities</th>
+      <th>Role</th>
       <th>Created by</th>
       <th>Copy link</th>
     </tr>
@@ -22,7 +20,7 @@
         <td><%= permission_pass.event_name %></td>
         <td><%= l permission_pass.valid_from %></td>
         <td><%= l permission_pass.valid_to %></td>
-        <td><%= permission_pass.abilities.to_a.join(', ') %></td>
+        <td><%= User.roles.key(permission_pass.role) %></td>
         <td><%= permission_pass.creator.user_profile&.name %></td>
         <td data-controller='clipboard tooltip'>
           <input class='pass-url' type='text' data-clipboard-target='source' value='<%= permission_pass_apply_url(permission_pass) %>' readonly/>

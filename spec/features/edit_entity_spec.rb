@@ -1,7 +1,7 @@
 describe 'edit entity page', type: :feature, js: true do
   include EntitiesHelper
 
-  let(:user) { create_really_basic_user }
+  let(:user) { create_editor }
   let(:entity) { create(:public_company_entity, last_user_id: user.id) }
   let(:create_external_link) { false }
 
@@ -120,7 +120,7 @@ describe 'edit entity page', type: :feature, js: true do
   end
 
   feature 'external links', js: false do
-    let(:user) { create_basic_user }
+    let(:user) { create_editor }
     let(:wikipedia_name) { 'example_page' }
     let(:twitter_username) { Faker::Internet.unique.username }
 

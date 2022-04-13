@@ -5,15 +5,16 @@ class User < ApplicationRecord
 
   MINUTES_BEFORE_USER_CAN_EDIT = 60
 
-  enum role: {
-         user: 0, # default
-         admin: 1,
-         system: 2,
-         restricted: 3,
-         editor: 4,
-         collaborator: 5
-       }
+  ROLES = {
+    user: 0, # default
+    admin: 1,
+    system: 2,
+    restricted: 3,
+    editor: 4,
+    collaborator: 5
+  }.freeze
 
+  enum :role, ROLES, default: :user
   serialize :abilities, UserAbilities
   serialize :settings, UserSettings
 
@@ -62,23 +63,39 @@ class User < ApplicationRecord
 
   # delegate :name_first, :name_last, :full_name, to: :user_profile
   delegate :name, to: :user_profile
-  delegate(*UserAbilities::ABILITY_MAPPING.values, to: 'abilities')
-  alias importer? bulker?
+  # delegate(*UserAbilities::ABILITY_MAPPING.values, to: 'abilities')
+  # alias importer? bulker?
 
   def to_param
     username
   end
 
-  def restricted?
-    is_restricted
+  # @return [User::Role]
+  def role
+    Role[super]
   end
 
-  def can_edit?
-    !restricted? && confirmed? && (MINUTES_BEFORE_USER_CAN_EDIT.minutes.ago > confirmed_at)
+  def admin?
+    role.name == 'admin'
   end
+
+  def restricted?
+    is_restricted || role.name == 'restricted'
+  end
+
+  # Checks if user can make edits to database
+  def can_edit?
+    role.include? :edit_database
+  end
+
+  alias editor? can_edit?
 
   def raise_unless_can_edit!
     raise Exceptions::UserCannotEditError unless can_edit?
+  end
+
+  def leagcy_can_edit?
+    !restricted? && confirmed? && (MINUTES_BEFORE_USER_CAN_EDIT.minutes.ago > confirmed_at)
   end
 
   def image_url(type = 'profile')
@@ -108,69 +125,16 @@ class User < ApplicationRecord
     UserEdits::Edits.new(self, page: page, per_page: per_page).edited_entities
   end
 
-  ###############
-  # Abilities   #
-  ###############
-
-  # creates 4 methods: add_ability, add_ability!, remove_ability, remove_ability!
-  %i[add remove].each do |method|
-    define_method("#{method}_ability") do |*args|
-      self[:abilities] = abilities.public_send(method, *args)
-      save
-    end
-
-    define_method("#{method}_ability!") do |*args|
-      self[:abilities] = abilities.public_send(method, *args)
-      save!
-    end
+  def show_add_bulk_button?
+    role.include?(:bulk_upload) || (created_at < 2.weeks.ago && sign_in_count > 2)
   end
-
-  ###############
-  # Permissions #
-  ###############
-
-  def list_of_abilities
-    abilities.to_a.join(", ")
-  end
-
-  def has_ability?(name) # rubocop:disable Naming/PredicateName, Metrics/MethodLength
-    case name
-    when :admin, 'admin'
-      abilities.admin? || role == 'admin'
-    when :edit, 'edit', 'editor', 'contributor'
-      abilities.editor?
-    when :delete, 'delete', 'deleter'
-      abilities.deleter?
-    when :merge, 'merge', 'merger'
-      abilities.merger?
-    when :list, 'list', 'lister'
-      abilities.lister?
-    when :bulk, 'bulk', 'bulker', 'importer'
-      abilities.bulker?
-    else
-      Rails.logger.debug "User#has_ability? called with unknown permission: #{name}"
-      false
-    end
-  end
-
-  def create_default_permissions
-    add_ability!(:edit) unless has_ability?(:edit)
-  end
-
-  def permissions
-    @permissions ||= Permissions.new(self)
-  end
-
-  # def role
-  #   Role[super(role)]
-  # end
 
   # String | nil --> Arel::Nodes::Grouping | nil
   # Creates sql like statement with arel, which searches
   # the username and email columns to find matching users.
   # Used by UsersController#admin
   def self.matches_username_or_email(query)
-    return if query.nil?
+    return if query.blank?
 
     query_string = "%#{sanitize_sql_like(query)}%"
     arel_table[:username].matches(query_string).or(arel_table[:email].matches(query_string))

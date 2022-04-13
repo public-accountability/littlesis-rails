@@ -19,7 +19,7 @@ describe 'User Settings' do
   before do
     other_user
     login_as(current_user, scope: :user)
-    visit '/users/edit'
+    visit '/settings'
   end
 
   scenario 'user updates own username' do

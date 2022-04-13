@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/NestedGroups, Layout/AlignHash
-
 describe RelationshipsController, type: :controller do
   describe 'post bulk_add' do
-    describe 'logined user with importer permission' do
-      login_user
+
+    describe 'login user with importer permission' do
+      login_user :collaborator
 
       let(:url) { Faker::Internet.unique.url }
 
@@ -180,7 +179,7 @@ describe RelationshipsController, type: :controller do
       end
 
       describe 'one good relationsihp json and one bad realtionship json' do
-        subject { lambda { post :bulk_add!, params: params } }
+        # subject { lambda { post :bulk_add!, params: params } }
 
         let(:relationship1) do
           { 'name' => 'jane doe',
@@ -207,10 +206,12 @@ describe RelationshipsController, type: :controller do
             'relationships' => [relationship1, relationship2] }
         end
 
-        it { is_expected.to change(Relationship, :count).by(1) }
+        specify do
+          expect { post :bulk_add!, params: params }.to change(Relationship, :count).by(1)
+        end
 
         it 'responds with 200' do
-          subject.call
+          post :bulk_add!, params: params
           expect(response.status).to eq 200
         end
       end
@@ -222,19 +223,19 @@ describe RelationshipsController, type: :controller do
           { 'name' => person.id, 'primary_ext' => 'Person', 'start_date' => '2017-01-01' }
         end
 
-        before do
-          @params = { 'entity1_id' => corp.id,
-                      'category_id' => 1,
-                      'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
-                      'relationships' => [relationship_params] }
+        let(:params) do
+          { 'entity1_id' => corp.id,
+            'category_id' => 1,
+            'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+            'relationships' => [relationship_params] }
         end
 
-        subject { lambda { post :bulk_add!, params: @params } }
-
-        it { is_expected.to change(Relationship, :count).by(1) }
+        specify do
+          expect { post :bulk_add!, params: params }.to change(Relationship, :count).by(1)
+        end
 
         it 'reverses entity id correctly' do
-          subject.call
+          post :bulk_add!, params: params
           rel = Relationship.last
           expect(rel.category_id).to eq 1
           expect(rel.entity.primary_ext).to eql 'Person'
@@ -424,7 +425,7 @@ describe RelationshipsController, type: :controller do
         end
       end
 
-      xcontext 'when submitting an invalid members (31) relationship' do
+      context 'when submitting an invalid members (31) relationship' do
         let(:person) { create(:entity_person) }
         let(:relationship) { { 'name' => 'some membership org', 'primary_ext' => 'Org' } }
 
@@ -441,8 +442,6 @@ describe RelationshipsController, type: :controller do
       end
 
       describe 'it will rollback entity transaction if an ActiveRecord Error occur' do
-        subject { lambda { post :bulk_add!, params: params } }
-
         let(:generic_relationship) do
           { 'name' => 'new entity',
             'blurb' =>  nil,
@@ -466,8 +465,13 @@ describe RelationshipsController, type: :controller do
 
         before { corp }
 
-        it { is_expected.not_to change(Relationship, :count) }
-        it { is_expected.not_to change(Entity, :count) }
+        specify do
+          expect { post :bulk_add!, params: params }.not_to change(Relationship, :count)
+        end
+
+        specify do
+          expect { post :bulk_add!, params: params }.not_to change(Entity, :count)
+        end
       end
     end
   end
@@ -499,12 +503,12 @@ describe RelationshipsController, type: :controller do
     context 'user not logged in' do
       it 'returns 302' do
         post :bulk_add!, params: ten_relationships_params
-        expect(response).to have_http_status(302)
+        expect(response).to have_http_status :found
       end
     end
 
     context 'user with regular permissions' do
-      login_basic_user
+      login_user :editor
 
       it 'allows submission of one relationship' do
         post :bulk_add!, params: params
@@ -521,7 +525,8 @@ describe RelationshipsController, type: :controller do
     end
 
     context 'user with bulk permissions' do
-      login_user [:edit, :bulk]
+      login_user :collaborator
+
       it 'allows submission of 10 relationships' do
         expect(Entity).to receive(:find).and_return(build(:org))
         expect(controller).to receive(:make_or_get_entity).exactly(10).times
@@ -576,5 +581,3 @@ describe RelationshipsController, type: :controller do
     end
   end
 end
-
-# rubocop:enable RSpec/NestedGroups, Layout/AlignHash

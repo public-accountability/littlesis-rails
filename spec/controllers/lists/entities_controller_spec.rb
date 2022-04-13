@@ -4,8 +4,8 @@ describe Lists::EntitiesController, type: :controller do
   end
 
   describe 'POST create' do
-    let(:user) { create_basic_user }
-    let(:list) { create(:list, name: 'Crying of Lot 49', last_user_id: user.id) }
+    let(:user) { create_editor }
+    let(:list) { create(:list, name: 'Crying of Lot 49', creator_user_id: user.id) }
     let(:params) do
       {
         list_id: list.id,
@@ -23,7 +23,11 @@ describe Lists::EntitiesController, type: :controller do
 
     context 'with restricted user' do
       before do
-        sign_in(create(:user, is_restricted: true))
+        sign_in(create(:user, role: :restricted))
+      end
+
+      after do
+        sign_out(:user)
       end
 
       it 'does not add the entity to the list' do
@@ -33,10 +37,9 @@ describe Lists::EntitiesController, type: :controller do
         expect(list.list_entities.count).to be 0
       end
 
-      it 'redirects to the dashboard' do
+      it 'denies request' do
         post :create, params: params
-        expect(response).to redirect_to home_dashboard_path
-        expect(flash[:notice]).to match 'Your account has been restricted'
+        expect(response).to have_http_status :forbidden
       end
     end
 
@@ -60,16 +63,20 @@ describe Lists::EntitiesController, type: :controller do
         sign_in(user)
       end
 
+      after do
+        sign_out(:user)
+      end
+
       context 'with valid params' do
         it 'adds the entity to the list' do # rubocop:disable RSpec/ExampleLength
           expect { post :create, params: params }
-            .to change(list.list_entities, :count).by(1)
+            .to change { list.reload.list_entities.count }.by(1)
 
           expect(list.list_entities.first.entity).to have_attributes(
-            name: 'Pierce Inverarity',
-            blurb: 'Real estate mogul',
-            primary_ext: 'Person'
-          )
+                                                       name: 'Pierce Inverarity',
+                                                       blurb: 'Real estate mogul',
+                                                       primary_ext: 'Person'
+                                                     )
         end
 
         it 'redirects to the list members page' do

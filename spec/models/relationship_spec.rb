@@ -841,6 +841,46 @@ describe Relationship, type: :model do
     end
   end
 
+  describe 'permissions_for' do
+    # let(:abilities) { UserAbilities.new(:edit) }
+    # let(:user) { build(:user, abilities: abilities) }
+    # let(:relationship) { build(:generic_relationship, created_at: Time.current) }
+    # let(:permissions) { Permissions.new(user) }
+
+    # let(:legacy_permissions) { [] }
+
+    it 'deletable is false without a user' do
+      expect(build(:relationship).permissions_for(nil)).to eq({ deleteable: false })
+    end
+
+    context 'when the user created the relationship' do
+      let(:user) { build(:user_with_id, role: :editor) }
+
+      let(:relationship) do
+        build(:relationship, created_at: Time.current).tap do |r|
+          allow(r).to receive_message_chain("versions.find_by").and_return(build(:relationship_version, event: 'create', whodunnit: user.id.to_s))
+        end
+      end
+
+      specify 'when the relationship is new' do
+        expect(relationship.permissions_for(user)).to eq({ deleteable: true })
+        expect(relationship.permissions_for(build(:user_with_id, role: :editor))).to eq({ deleteable: false })
+      end
+
+      specify 'when the relationship is more than a week old' do
+        relationship.created_at = 2.weeks.ago
+        expect(relationship.permissions_for(user)).to eq({ deleteable: false })
+        expect(relationship.permissions_for(build(:user, role: :admin))).to eq({ deleteable: true })
+      end
+
+      specify 'when the relationship is a campaign contribution' do
+        relationship.description1 = 'NYS Campaign Contribution'
+        relationship.filings = 2
+        expect(relationship.permissions_for(user)).to eq({ deleteable: false })
+      end
+    end
+  end
+
   describe 'Using paper_trail for versioning' do
     let(:human) { create(:entity_person) }
     let(:corp) { create(:entity_org) }

@@ -98,18 +98,18 @@
     cursor: pointer;
 }
 
+.cursor-default {
+    cursor: default;
+}
 
 .bg-info {
     background-color: rgb(217, 237, 247) !important;
 }
 
-
 // Position
-
 // .hidden {
 //     @extend .d-none;
 // }
-
 
 .position-relative {
   position: relative;

@@ -37,7 +37,7 @@ describe Users::RegistrationsController, type: :controller do
   describe 'Routes' do
     it { is_expected.to route(:get, '/join').to(action: :new) }
     it { is_expected.to route(:post, '/join').to(action: :create) }
-    it { is_expected.to route(:get, '/users/edit').to(action: :edit) }
+    it { is_expected.to route(:get, '/settings').to(action: :edit) }
     it { is_expected.to route(:put, '/users').to(action: :update) }
     it { is_expected.to route(:delete, '/users').to(action: :destroy) }
     it { is_expected.to route(:post, '/users/api_token').to(action: :api_token) }

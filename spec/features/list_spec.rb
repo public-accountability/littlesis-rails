@@ -53,7 +53,9 @@ describe 'lists', type: :feature do
       with_versioning do
         before do
           login_as(user, scope: :user)
-          PaperTrail.request(whodunnit: user.id.to_s) { @list = create(:list) }
+          PaperTrail.request(whodunnit: user.id.to_s) do
+            @list = create(:list, creator_user_id: user.id)
+          end
         end
 
         scenario 'list has been created' do

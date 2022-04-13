@@ -1,7 +1,5 @@
-# rubocop:disable RSpec/ImplicitSubject, RSpec/ImplicitBlockExpectation
-
 describe 'List Requests' do
-  let(:user) { create_really_basic_user }
+  let(:user) { create_editor }
   let(:list) { create(:list, creator_user_id: user.id) }
   let(:entity) { EntitySpecHelpers.org_updated_one_year_ago }
 
@@ -73,27 +71,27 @@ describe 'List Requests' do
   end
 
   describe 'adding one entity to a list' do
-    subject do
+    let(:request) do
       -> { post list_list_entities_path(list), params: { :entity_id => entity.id } }
     end
 
-    it do
-      is_expected.to change(ListEntity, :count).by(1)
+    specify do
+      expect(&request).to change(ListEntity, :count).by(1)
     end
 
-    it do
-      is_expected.to change { entity.reload.last_user_id }.to(user.id)
+    specify do
+      expect(&request).to change { entity.reload.last_user_id }.to(user.id)
     end
 
-    it do
-      is_expected.to change { entity.reload.updated_at.strftime('%F') }
-                       .from(1.year.ago.strftime('%F'))
-                       .to(Time.current.strftime('%F'))
+    specify do
+      expect(&request).to change { entity.reload.updated_at.strftime('%F') }
+                            .from(1.year.ago.strftime('%F'))
+                            .to(Time.current.strftime('%F'))
     end
   end
 
   describe 'removing entity from a list' do
-    subject do
+    let(:request) do
       -> { delete list_list_entity_path(list, list_entity) }
     end
 
@@ -103,12 +101,12 @@ describe 'List Requests' do
 
     before { list_entity }
 
-    it do
-      is_expected.to change(ListEntity, :count).by(-1)
+    specify do
+      expect(&request).to change(ListEntity, :count).by(-1)
     end
 
-    it do
-      is_expected.to change { entity.reload.last_user_id }.to(user.id)
+    specify do
+      expect(&request).to change { entity.reload.last_user_id }.to(user.id)
     end
   end
 
@@ -236,5 +234,3 @@ describe 'List Requests' do
     end
   end
 end
-
-# rubocop:enable RSpec/ImplicitSubject, RSpec/ImplicitBlockExpectation

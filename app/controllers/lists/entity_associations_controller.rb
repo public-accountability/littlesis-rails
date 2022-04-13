@@ -11,14 +11,16 @@ module Lists
       entity_associations_invalid_reference: {
         errors: [{ title: 'Could not add entities to list: invalid reference.' }]
       }
-    )
+    ).freeze
 
     before_action :authenticate_user!, only: :new
-    before_action :block_restricted_user_access, only: :new
+    before_action -> { check_ability :create_list }
     before_action :set_list
+
     before_action :set_permissions
-    before_action :set_payload, :set_document_attributes, only: :create
     before_action -> { check_access(:editable) }
+
+    before_action :set_payload, :set_document_attributes, only: :create
 
     def new
     end
@@ -50,7 +52,7 @@ module Lists
 
     def basic_payload
       @basic_payload ||= params.require('data')
-        .map { |x| x.permit('type', 'id', { 'attributes' => %w[url name] }) }
+                           .map { |x| x.permit('type', 'id', { 'attributes' => %w[url name] }) }
     end
 
     def payload_reference_attrs
@@ -67,11 +69,12 @@ module Lists
     end
 
     def set_payload
-      @payload ||= { 'entity_ids' => payload_entity_ids,
-                     'reference_attrs' => payload_reference_attrs }
+      @payload ||= {
+        'entity_ids' => payload_entity_ids,
+        'reference_attrs' => payload_reference_attrs
+      }
     rescue ActionController::ParameterMissing, ActiveRecord::RecordInvalid
-      return render json: ERRORS[:entity_associations_bad_format],
-                    status: :bad_request
+      render json: ERRORS[:entity_associations_bad_format], status: :bad_request
     end
 
     def json

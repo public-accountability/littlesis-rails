@@ -2,6 +2,7 @@
 
 class ImagesController < ApplicationController
   before_action :authenticate_user!
+  before_action -> { check_ability :upload }
   before_action :set_image, only: %i[crop update]
 
   def crop

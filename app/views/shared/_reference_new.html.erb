@@ -49,7 +49,7 @@
             <%= label_tag(:data_url, "Source URL*", class: "form-label") %>
             <%= url_field(:data, :url, required: true, class: 'form-control') %>
 
-            <% if current_user.permissions.uploader? %>
+            <% if current_user.role.include?(:upload) %>
               <%= file_field :data, :primary_source_document, accept: Document::ACCEPTED_MIME_TYPES.join(','), class: 'form-control mt-2' %>
             <% end %>
           </div>

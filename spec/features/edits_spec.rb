@@ -1,5 +1,5 @@
 feature 'recent edits page' do
-  let(:user) { create_basic_user }
+  let(:user) { create_editor }
 
   before { login_as(user, scope: :user) }
 

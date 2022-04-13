@@ -563,10 +563,30 @@ class Entity < ApplicationRecord
   end
 
   ##
-  # Merging, and history History
+  # Merging, History, Permissions
   #
 
   class EntityDeleted < Exceptions::ModelIsDeletedError
+  end
+
+  # Can this entity be deleted?
+  # Entities can be deleted if the user's role allows it
+  # or if user was the one who created the entity recently.
+  # To avoid accidently mistakes, entities that have hundreds of links
+  # cannot be deleted through our site's interface
+  # @param user [User, Nil]
+  # @return [Boolean]
+  def deleteable_by?(user)
+    return false if link_count >= 100 || user.nil?
+    return true if user.role.include?(:edit_destructively)
+
+    created_at >= 1.week.ago &&
+      link_count < 3 &&
+      versions.find_by(event: 'create')&.whodunnit == user.id.to_s
+  end
+
+  def permissions_for(user)
+    Entity::Permissions.new(user: user, entity: self)
   end
 
   # When an entity is deleted we will store information

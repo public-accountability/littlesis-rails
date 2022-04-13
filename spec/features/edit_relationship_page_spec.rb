@@ -1,21 +1,23 @@
 describe 'Edit Relationship Page', type: :feature do
-  let(:user) { create_basic_user }
+  let(:user) { create_editor }
   let(:child_org) { create(:entity_org, name: 'child org') }
   let(:parent_org) { create(:entity_org, name: 'parent org') }
   let(:hierarchy_relationship) do
     create(:hierarchy_relationship, entity: child_org, related: parent_org, last_user_id: user.id)
   end
 
-  context 'user is not logged in' do
+  describe 'user is not logged in' do
     before { visit edit_relationship_path(hierarchy_relationship) }
+
     redirects_to_login_page
   end
 
-  context 'user is logged in' do
+  describe 'user is logged in' do
     before { login_as(user, scope: :user) }
+
     after { logout(user) }
 
-    context 'Editing a hiearchical relationship' do
+    describe 'Editing a hiearchical relationship' do
       before { visit edit_relationship_path(hierarchy_relationship) }
 
       it 'displays relationship title with link' do
@@ -31,7 +33,7 @@ describe 'Edit Relationship Page', type: :feature do
       end
     end # end 'hiearchical relationship
 
-    context 'editing a membership relationship' do
+    describe 'editing a membership relationship' do
       let(:membership_relationship) do
         create(:membership_relationship, entity: create(:entity_org), related: create(:entity_org), last_user_id: user.id)
       end
@@ -48,5 +50,5 @@ describe 'Edit Relationship Page', type: :feature do
         page_has_selector '#relationship-reverse-link', count: 1
       end
     end
-  end # end 'user is logged in'
+  end
 end

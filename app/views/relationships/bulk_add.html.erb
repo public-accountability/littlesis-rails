@@ -2,7 +2,7 @@
 
 <%= render partial: 'shared/entity_info', locals: { entity: @entity } %>
 
-<div data-controller="relationship-bulk-adder" data-relationship-bulk-adder-user-is-bulker-value="<%= raw current_user.bulker? %>">
+<div data-controller="relationship-bulk-adder" data-relationship-bulk-adder-user-is-bulker-value="<%= raw current_user.role.include?(:bulk_upload) %>">
   <div id="spin-me-round-like-a-record" style="display: none;" >
     <div class="row">
       <h4>Processing</h4>

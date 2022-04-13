@@ -7,11 +7,7 @@ module ListPermissions
     private
 
     def set_permissions
-      @permissions = if current_user
-                       current_user.permissions.list_permissions(@list)
-                     else
-                       Permissions.anon_list_permissions(@list)
-                     end
+      @permissions = @list.permissions_for(current_user)
     end
 
     def check_access(permission)

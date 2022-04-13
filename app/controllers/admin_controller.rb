@@ -24,6 +24,25 @@ class AdminController < ApplicationController
   def test
   end
 
+  def users
+    params[:page] ||= 1
+
+    @users = User
+               .includes(:user_profile)
+               .where.not(role: :system)
+               .where(User.matches_username_or_email(params[:q]))
+               .order('created_at DESC')
+               .page(params[:page])
+               .per(25)
+  end
+
+  # /admin/users/:userid/set_role { role: [role_name] }
+  def set_role
+    user = User.find(params.require(:userid))
+    user.update!(role: params.require(:role))
+    render json: { status: 'ok', role: user.role.name }
+  end
+
   def entity_matcher
   end
 

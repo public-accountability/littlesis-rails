@@ -148,7 +148,7 @@ es:
     need_your_password:
     forgot_your_password: "¿Olvidó su contraseña?"
     missing_confirmation: "¿No recibió las instrucciones de confirmación?"
-    recent_edits:
+    recent_edits: Cambios Recientes
     related_entity:
     relationship_category: "cambios recientes"
     report_a_bug: "informa de un error"

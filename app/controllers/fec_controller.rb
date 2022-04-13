@@ -15,7 +15,8 @@
 # POST    /fec/fec_contributions/clear_hidden { entity_id }
 # DELETE  /fec/fec_matches/:id
 class FECController < ApplicationController
-  before_action :user_is_matcher?, except: %i[contributions committee candidate]
+  before_action :authenticate_user!
+  before_action -> { current_user.role.includes?(:match_donation) }, except: %i[contributions committee candidate]
 
   def contributions
     render json: FECMatch.joins(:fec_contribution).where(donor_id: params[:id]).map(&:fec_contribution)
@@ -91,13 +92,5 @@ class FECController < ApplicationController
             end
 
     render json: model
-  end
-
-  private
-
-  def user_is_matcher?
-    unless user_signed_in? && current_user.matcher?
-      raise Exceptions::PermissionError
-    end
   end
 end

@@ -4,11 +4,11 @@ module Entities
   class ImagesController < ApplicationController
     include EntitiesHelper
 
+    before_action :authenticate_user!, :current_user_can_edit?
     before_action :set_entity
     before_action :set_image, only: %i[update destroy]
 
     def index
-      check_permission 'contributor'
     end
 
     def new
@@ -35,6 +35,7 @@ module Entities
     end
 
     def destroy
+      check_ability :edit_destructively
       @image.soft_delete
       raise ActiveRecord::ActiveRecordError, 'Failed to delete image' unless @image.is_deleted
 

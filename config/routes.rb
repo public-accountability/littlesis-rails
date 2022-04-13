@@ -2,25 +2,6 @@
 
 LittleSis::Application.routes.draw do
   # match "*path", to: "errors#maintenance", via: :all
-
-  devise_for :users, controllers: { confirmations: 'users/confirmations', passwords: 'users/passwords' }, :skip => [:sessions, :registrations]
-  as :user do
-    get '/login' => 'users/sessions#new', :as => :new_user_session
-    post '/login' => 'users/sessions#create', :as => :user_session
-    get '/logout' => 'users/sessions#destroy', :as => :destroy_user_session
-    get '/join' => 'users/registrations#new', :as => :new_user_registration
-    post '/join' => 'users/registrations#create', :as => :user_registration
-    get '/users/cancel' => 'users/registrations#cancel', :as => :cancel_user_registration
-    get '/users/edit' => 'users/registrations#edit', :as => :edit_user_registration
-    patch '/users' => 'users/registrations#update'
-    put '/users' => 'users/registrations#update'
-    delete '/users' => 'users/registrations#destroy'
-    post '/users/api_token' => 'users/registrations#api_token'
-    put '/users/settings' => 'users/registrations#update_settings'
-  end
-
-  get '/join/success' => 'users#success'
-
   root to: 'home#index'
   get '/home' => 'home#index'
   get '/flag' => 'home#flag'
@@ -30,6 +11,30 @@ LittleSis::Application.routes.draw do
   get '/test' => 'home#test'
   get '/bug_report' => 'errors#bug_report'
   post '/bug_report' => 'errors#file_bug_report'
+
+  devise_for :users, controllers: { confirmations: 'users/confirmations', passwords: 'users/passwords' }, :skip => [:sessions, :registrations]
+  as :user do
+    get '/login' => 'users/sessions#new', :as => :new_user_session
+    post '/login' => 'users/sessions#create', :as => :user_session
+    get '/logout' => 'users/sessions#destroy', :as => :destroy_user_session
+    get '/join' => 'users/registrations#new', :as => :new_user_registration
+    post '/join' => 'users/registrations#create', :as => :user_registration
+    get '/users/cancel' => 'users/registrations#cancel', :as => :cancel_user_registration
+    get '/settings' => 'users/registrations#edit', :as => :edit_user_registration
+    patch '/users' => 'users/registrations#update'
+    put '/users' => 'users/registrations#update'
+    delete '/users' => 'users/registrations#destroy'
+    post '/users/api_token' => 'users/registrations#api_token'
+    put '/users/settings' => 'users/registrations#update_settings'
+  end
+
+  get '/join/success' => 'users#success'
+  post '/users/check_username' => 'users#check_username'
+  get '/users/:username' => 'users#show', as: :user_page
+  get '/users/:username/edits' => 'users#edits', as: :user_edits
+  get '/users/:username/maps' => 'maps#user', as: :user_maps
+  get '/users/:username/role_request' => 'users#role_request', as: :user_role_request
+  post '/users/:username/role_request' => 'users#create_role_request'
 
   resources :contact, only: [:index, :create]
 
@@ -42,32 +47,14 @@ LittleSis::Application.routes.draw do
     get '/tags', action: :tags
     get '/stats', action: :stats
     get '/test', action: :test
+    get '/users', action: :users
+    post '/users/:userid/set_role', action: :set_role, constraints: { userid: /[0-9]+/ }
     get '/entity_matcher', action: :entity_matcher
     get '/tracker', action: :tracker
     get '/object_space_dump', action: :object_space_dump
   end
 
   resources :dashboard_bulletins, except: [:show]
-
-  resources :users, only: [:edit] do
-    member do
-      get 'edit_permissions'
-      post 'add_permission'
-      post 'restrict'
-      delete 'delete_permission'
-      delete 'destroy'
-      get 'image'
-      post 'upload_image'
-    end
-    collection do
-      get 'admin'
-      post 'check_username'
-    end
-  end
-
-  get '/users/:username' => 'users#show', as: :user_page
-  get '/users/:username/edits' => 'users#edits', as: :user_edits
-  get '/users/:username/maps' => 'maps#user', as: :user_maps
 
   resources :lists do
     member do
@@ -107,9 +94,7 @@ LittleSis::Application.routes.draw do
           # to view legacy profile page:
           # get ':tab', to: 'entities#show', constraints: {tab: /interlocks|giving/}, as: 'tab'
           # new profile page
-          get ':active_tab', action: :profile, constraints: { active_tab: /relationships|interlocks|giving|data/ }, as: 'profile'
-          get 'profile(/:active_tab)', action: :profile, constraints: { active_tab: /relationships|interlocks|giving|data/ }
-
+          get ':active_tab', action: :show, constraints: { active_tab: /relationships|interlocks|giving|data/ }, as: 'profile'
           get 'political'
           get 'datatable'
           get 'references'
@@ -242,6 +227,7 @@ LittleSis::Application.routes.draw do
     member do
       post 'reverse_direction'
       post 'tags'
+      patch 'feature'
     end
   end
 
@@ -258,7 +244,6 @@ LittleSis::Application.routes.draw do
   get "/home/lists" => "home#lists"
 
   get "/home/dashboard" => "home#dashboard"
-  get "/home/dashboard/edits" => "home#dashboard_edits"
   get "/home/dashboard/maps" => "home#dashboard_maps"
 
   post "/home/dismiss",
@@ -296,6 +281,7 @@ LittleSis::Application.routes.draw do
   #########
 
   get "/edits" => "edits#index"
+  get '/edits/dashboard_edits' => "edits#dashboard_edits"
 
   #########
   # Merge #

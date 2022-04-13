@@ -15,7 +15,7 @@ describe "entities/actions" do
 
   context 'when user is an advanced user' do
     let(:user) do
-      build(:user, abilities: UserAbilities.new(:edit, :bulk))
+      build(:user, role: :collaborator)
     end
 
     before do

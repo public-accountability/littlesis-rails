@@ -33,19 +33,17 @@ describe 'Permission Passes', type: :feature do
       select_datetime 'Valid from', Time.current
       select_datetime 'Valid to', 2.hours.from_now
 
-      %i[list bulk match].each do |ability|
-        check ability
-      end
+      select 'Collaborator', from: 'permission_pass_role'
 
       click_on 'Create Permission pass'
     end
 
     expect(page).to have_text('Permission pass was successfully created')
-    expect(PermissionPass.last.abilities.to_a).to contain_exactly(:list, :bulk, :match)
+    expect(PermissionPass.last.role).to eq User.roles[:collaborator]
   end
 
   context 'when a permission pass has been created' do
-    let!(:pass) { create(:permission_pass, creator: admin_user, abilities: UserAbilities.new(:edit, :list, :bulk, :merge)) }
+    let!(:pass) { create(:permission_pass, creator: admin_user, role: User.roles[:editor]) }
 
     scenario 'editing the pass abilities' do
       click_on 'Permission Passes'
@@ -55,14 +53,12 @@ describe 'Permission Passes', type: :feature do
       end
 
       within '#permission-pass-form' do
-        uncheck :bulk
-        uncheck :merge
-
+        select 'Collaborator', from: 'permission_pass_role'
         click_on 'Update Permission pass'
       end
 
       expect(page).to have_text('Permission pass was successfully updated')
-      expect(PermissionPass.last.abilities.to_a).to contain_exactly(:edit, :list)
+      expect(pass.reload.role).to eq User.roles[:collaborator]
     end
 
     scenario 'choosing invalid dates' do
@@ -93,18 +89,18 @@ describe 'Permission Passes', type: :feature do
   end
 
   context 'when user is given permission pass link' do
-    let(:user) { create(:user, abilities: UserAbilities.new(:edit)) }
-    let!(:pass) { create(:permission_pass, creator: admin_user, abilities: UserAbilities.new(:edit, :list, :bulk, :merge)) }
+    let(:user) { create(:user, role: :user) }
+    let!(:pass) { create(:permission_pass, creator: admin_user, role: User.roles[:editor]) }
 
     before do
       login_as(user, scope: :user)
     end
 
     scenario 'user visits link and is granted abilities' do
+      expect(user.role.name).to eq 'user'
       visit permission_pass_apply_path(pass)
-
       expect(page).to have_text('Permission pass abilities applied')
-      expect(user.abilities.to_a).to contain_exactly(:edit, :list, :bulk, :merge)
+      expect(user.reload.role.name).to eq 'editor'
     end
   end
 end

@@ -3,6 +3,7 @@
 module Exceptions
   class LittleSisError < StandardError; end
   class PermissionError < LittleSisError; end
+  class NotSignedInError < LittleSisError; end
   class NotFoundError < LittleSisError; end
   class MissingApiTokenError < LittleSisError; end
   class InvalidRelationshipCategoryError < LittleSisError; end
@@ -14,6 +15,7 @@ module Exceptions
   class EditingDisabled < LittleSisError; end
   class HTTPRequestFailedError < LittleSisError; end
   class MissingAttachmentError < LittleSisError; end
+  class DepreciatedError < LittleSisError; end
 
   class CannotRestoreError < LittleSisError
     def message
@@ -79,4 +81,6 @@ module Exceptions
       { 'category_id' => 'is absent' }
     end
   end
+
+
 end

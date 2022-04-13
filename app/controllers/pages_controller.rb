@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class PagesController < ApplicationController
-  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :edit_by_name, :index, :show]
-  before_action :admins_only, only: [:new, :create, :edit, :update, :edit_by_name, :index, :show]
+  before_action :authenticate_user!, :admins_only, only: [:new, :create, :edit, :update, :edit_by_name, :index, :show]
   before_action :set_page_by_name, only: [:display, :edit_by_name]
   before_action :set_page_by_id, only: [:show, :edit]
 

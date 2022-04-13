@@ -10,18 +10,20 @@ module ControllerMacros
     end
   end
 
-  def login_user(abilities = [:edit])
-    let(:example_user) { RspecHelpers::ExampleMacros.create_basic_user }
+  def login_user(role = 'editor')
+    let(:example_user) do
+      FactoryBot.create(:user, role: role)
+    end
 
     before do
       @request.env["devise.mapping"] = Devise.mappings[:user]
-      example_user.add_ability(*abilities)
+      # example_user.add_ability(*abilities)
       sign_in example_user, scope: :user
     end
   end
 
   def login_basic_user
-    login_user
+    raise Exceptions::LittleSisError, "login_basic_user is deprecated"
   end
 
   def login_restricted_user
@@ -33,10 +35,6 @@ module ControllerMacros
   end
 
   def login_user_without_permissions
-    let(:example_user) { RspecHelpers::ExampleMacros.create_basic_user }
-
-    before do
-      sign_in example_user, scope: :user
-    end
+    raise Exceptions::LittleSisError, "login_user_without_permissions is deprecated"
   end
 end

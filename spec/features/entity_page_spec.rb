@@ -1,7 +1,7 @@
 describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :feature do
   include EntitiesHelper
 
-  let(:user) { create_basic_user }
+  let(:user) { create_editor }
   let(:person) do
     with_versioning_for(user) do
       create(:entity_person, blurb: Faker::Lorem.sentence)
@@ -162,7 +162,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
 
     context 'when the user is signed in' do
-      let(:user) { create_basic_user }
+      let(:user) { create_editor }
 
       before { login_as(user, scope: :user) }
 
@@ -345,7 +345,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
 
     describe "when logged in" do
-      let(:user) { create_basic_user }
+      let(:user) { create_editor }
 
       before { login_as(user, scope: :user) }
 

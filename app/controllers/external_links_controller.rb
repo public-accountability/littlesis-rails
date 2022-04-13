@@ -3,7 +3,7 @@
 class ExternalLinksController < ApplicationController
   include EntitiesHelper
 
-  before_action :authenticate_user!
+  before_action :authenticate_user!, :current_user_can_edit?
 
   def create
     el = ExternalLink.create!(external_link_params)

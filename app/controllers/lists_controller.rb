@@ -4,25 +4,13 @@ class ListsController < ApplicationController
   include TagableController
   include ListPermissions
 
-  EDITABLE_ACTIONS = %i[create update destroy].freeze
-  SIGNED_IN_ACTIONS = (EDITABLE_ACTIONS + %i[new edit modifications tags]).freeze
+  PUBLIC_ACTIONS = %i[index show members references].freeze
 
-  # The call to :authenticate_user! on the line below overrides the :authenticate_user! call
-  # from TagableController and therefore including :tags in the list is required
-  # Because of the potential for confusion, perhaps we should no longer use :authenticate_user!
-  # in controller concerns? (ziggy 2017-08-31)
-  before_action :authenticate_user!, only: SIGNED_IN_ACTIONS
-  before_action :block_restricted_user_access, only: SIGNED_IN_ACTIONS
-  before_action :set_list, only: [:show, :edit, :update, :destroy, :members, :references,
-                                  :modifications]
-
-  before_action :set_permissions, only: [:members, :references, :edit, :update, :destroy]
-  # before_action :set_entity, only: :index
-  before_action -> { check_access(:viewable) }, only: [:members, :references]
-  before_action -> { check_access(:configurable) }, only: [:destroy, :edit, :update]
-
-  before_action -> { current_user.raise_unless_can_edit! }, only: EDITABLE_ACTIONS
-
+  before_action :authenticate_user!, except: PUBLIC_ACTIONS
+  before_action -> { check_ability :create_list }, except: PUBLIC_ACTIONS
+  before_action :set_list, :set_permissions, except: [:index, :new, :create, :tags]
+  before_action -> { check_access(:viewable) }, except: [:index, :new, :create, :tags]
+  before_action -> { check_access(:configurable) }, only: [:update, :edit, :modifications]
   before_action :set_page, only: [:modifications]
 
   def index
@@ -58,10 +46,12 @@ class ListsController < ApplicationController
     @list = List.new(list_params)
     @list.creator_user_id = current_user.id
     @list.last_user_id = current_user.id
+    @list.access = Permissions::ACCESS_PRIVATE unless current_user.role.include?(:edit_list)
 
     ref_params = params.permit(ref: [:url, :name])[:ref]&.to_h&.keep_if do |_, v|
       v.present?
     end.presence
+
     @list.validate_reference(ref_params) if ref_params
 
     if @list.valid?
@@ -75,8 +65,6 @@ class ListsController < ApplicationController
 
   def update
     render action: 'edit' unless @list.update(list_params)
-
-    @list.clear_cache(request.host)
 
     if params[:redirect_to]
       redirect_to params[:redirect_to], notice: 'List was successfully updated.'
@@ -116,7 +104,7 @@ class ListsController < ApplicationController
     @list = List.find(params[:id])
   end
 
-  def list_params # rubocop:disable Metrics/MethodLength
+  def list_params
     params.require(:list)
       .permit(
         :name,
@@ -136,37 +124,12 @@ class ListsController < ApplicationController
     edit_list_url(list)
   end
 
+  # @param list [List]
   def check_tagable_access(list)
-    unless current_user.permissions.list_permissions(list)[:configurable]
+    unless list.permissions_for(current_user).configurable
       raise Exceptions::PermissionError
     end
   end
-
-  # def basic_scope
-  #   scope = List.viewable(current_user)
-
-  #   ActiveModel::Type::Boolean.new.cast(params[:featured]) ? scope.featured : scope
-  # end
-
-  # def available_scope
-  #   return basic_scope unless @entity
-
-  #   basic_scope.where(id: @entity.lists.pluck(:id))
-  # end
-
-  # def search_lists(lists)
-  #   return lists if params[:q].blank?
-
-  #   ids = List.search_for_ids(
-  #     Riddle::Query.escape(params[:q]),
-  #     with: { is_deleted: 0, is_admin: search_admin_param }
-  #   )
-  #   lists.where(id: ids)
-  # end
-
-  # def search_admin_param
-  #   current_user&.admin? ? [0, 1] : 0
-  # end
 
   def format_lists(lists)
     { results: lists.map { |l| l.attributes.merge(text: l.name) } }

@@ -34,6 +34,8 @@ Commands
            fec              FEC data ETL tools
            deploy           deploys to latest commit on main
            edit             select file to open with $EDITDOR
+           runner           Rails runner shortcut
+           script           execute named script in lib/scripts/
 
 Aliases
            bundle
@@ -197,7 +199,7 @@ def deploy
   app_exec_bin 'pumactl -p tmp/puma.pid restart'
 end
 
-def watch
+def logs
   prefix = if production_environment?
              "/var/www/littlesis"
            else
@@ -209,6 +211,20 @@ def watch
   app_exec "/usr/bin/tail -f #{logfile}", run: true
 end
 
+
+def esbuild
+  if production_environment?
+    app_exec "npm run build"
+  else
+    container_name = "littlesis-esbuild"
+
+    if `docker ps -q --filter name=#{container_name}`.empty?
+      docker_compose 'run', '-d', '--rm', "--name #{container_name}", "-e RAILS_ENV=#{$rails_env}", 'app', 'npm run build-watch'
+    else
+      "#{container_name} is running. Execute \"docker rm -f littlesis-esbuild\" to remove it."
+    end
+  end
+end
 
 # Start processing options
 
@@ -282,6 +298,8 @@ when 'rake'
   app_exec_bin "rake #{rest}"
 when 'runner'
   app_exec_bin "rails runner #{rest}"
+when 'script'
+  app_exec "bundle exec lib/scripts/#{rest}", bin: true, run: true
 when 'bash'
   app_exec "/bin/bash --login #{rest}"
 when 'console', 'c'
@@ -316,8 +334,10 @@ when 'status'
   status
 when 'deploy'
   deploy
-when 'watch'
-  watch
+when 'logs'
+  logs
+when 'esbuild'
+  esbuild
 else
   puts "Invalid Command: #{ARGV.first}"
   exit 1

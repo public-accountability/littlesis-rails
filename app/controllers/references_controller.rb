@@ -3,6 +3,7 @@
 class ReferencesController < ApplicationController
   include ReferenceableController
   before_action :authenticate_user!, except: [:entity, :documents]
+  before_action :current_user_can_edit?, except: [:entity, :documents]
   before_action :set_referenceable, only: [:create, :documents]
 
   def create
@@ -30,7 +31,7 @@ class ReferencesController < ApplicationController
   end
 
   def destroy
-    check_permission 'deleter'
+    check_ability :edit_destructively
     begin
       Reference.find(params[:id]).destroy!
     rescue ActiveRecord::RecordNotFound

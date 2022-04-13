@@ -1,63 +1,22 @@
-<p id="notice"><%= notice %></p>
+<div class="row">
+  <div class="col">
+    <h1>
+      <%= @user.username %>
 
-<h1>
-  <%= @user.username %>
-  <small style="font-size: 12px"><%= @user.member_since %></small>
-</h1>
-
-<div class="entity-profile-image">
-  <%= user_profile_image %>
-</div>
-
-<h3>About</h3>
-
-<div><%= @user.about_me %></div>
-
-<h3>
-  Edits
-  <% if @user.show_private? %>
-    <small>
-      <%= link_to 'view all edits', user_edits_path(@user), class: 'm-left-1em' %>
-    </small>
-  <% end %>
-</h3>
-
-<div>
-  <table class="user-page-table" id="user-page-recent-updates-table">
-    <% @user.edited_entities.each do |entied_entity| %>
-      <tr>
-	<td><%= entity_link(entied_entity.entity) %></span> &nbsp;<em><%= (entied_entity.entity.blurb || "") %></em></td>
-      </tr>
-    <% end %>
-  </table>
-</div>
-
-<% if @user.show_private? %>
-  <h3>Maps</h3>
-  <% if @user.maps.empty? %>
-    <div><em>No maps</em></div>
-  <% else %>
-    <%= render partial: 'maps_table' %>
-  <% end %>
-<% end %>
-
-<% if @user.show_private? %>
-  <h3>
-    Permissions
-    <% if current_user&.admin? %>
-      <small>
-        <%= link_to "edit permissions",  edit_permissions_user_path(id: @user.id), class: "btn btn-primary btn-sm" %>
+      <small style="font-size: 14px">
+        <%= "member since #{@user.created_at.strftime('%B %Y')}" %>
+        <span class="badge bg-info text-dark"><%= @user.role.name %></span>
       </small>
+    </h1>
+
+    <% if @user.about_me.present? %>
+      <p><%= @user.about_me %></p>
     <% end %>
-  </h3>
-  <div>
-    <table>
-      <% UserAbilities::ALL_ABILITIES.each do |a| %>
-	<tr>
-	  <td class="permission-name"><%= a.capitalize %></td>
-	  <td class="permission-boolean"><%= @user.ability_display(a) %></td>
-	</tr>
-      <% end %>
-    </table>
   </div>
-<% end %>
+</div>
+
+<div class="row">
+  <div class="col">
+    <%= render partial: 'edits/dashboard_recent_edits', locals: { page: 1, user_id: @user.id } %>
+  </div>
+</div>

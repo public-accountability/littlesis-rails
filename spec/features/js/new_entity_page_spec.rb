@@ -1,6 +1,6 @@
 feature 'New entity page', type: :feature, js: true do
   context 'with a logged in user' do
-    let(:user) { create_basic_user }
+    let(:user) { create_editor }
 
     before { login_as user, scope: :user }
 

@@ -10,8 +10,6 @@ class MapsController < ApplicationController
   before_action :enforce_slug, only: [:show]
   before_action :admins_only, only: [:feature]
 
-  before_action -> { check_permission 'editor' }, only: %i[create]
-
   protect_from_forgery except: [:create, :clone]
 
   rescue_from ActiveRecord::RecordNotFound, with: :map_not_found

@@ -3,7 +3,7 @@
 # Tagable categories: entities, lists, relationships. See: `Tagable.categories`
 class TagsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show, :edits]
-  before_action -> { check_permission('admin') }, except: [:index, :show, :edits, :tag_request]
+  before_action -> { check_ability(:create_tag) }, except: [:index, :show, :edits, :tag_request]
   before_action :set_tag, only: [:edit, :update, :destroy, :show, :edits]
   before_action :set_tags, only: [:index]
   before_action :set_tagables, only: [:show]
@@ -39,6 +39,7 @@ class TagsController < ApplicationController
   end
 
   def destroy
+    check_ability :edit_destructively
     @tag.destroy
     redirect_to admin_tags_path, notice: 'The tag has been removed'
   end

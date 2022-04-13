@@ -60,7 +60,7 @@ class ApplicationController < ActionController::Base
   end
 
   def admins_only
-    check_permission 'admin'
+    raise Exceptions::PermissionError unless current_user&.admin?
   end
 
   def auth
@@ -71,19 +71,26 @@ class ApplicationController < ActionController::Base
     raise Exceptions::RestrictedUserError if current_user.restricted?
   end
 
+  # Legacy permission check
   def check_permission(name = :edit)
-    if Rails.application.config.littlesis[:noediting]
-      raise Exceptions::EditingDisabled unless current_user&.essential?
-    end
-    raise Exceptions::PermissionError if current_user.nil?
-    raise Exceptions::RestrictedUserError if current_user.restricted?
-    raise Exceptions::PermissionError unless current_user.has_ability?(name)
+    raise Exceptions::DepreciatedError, "do not use check_permission"
   end
 
-  # Array, Integer -> Void
+  def check_ability(name)
+    raise Exceptions::NotSignedInError if current_user.nil?
+    raise Exceptions::RestrictedUserError if current_user.restricted?
+    raise Exceptions::PermissionError unless current_user.role.include?(name.to_sym)
+  end
+
+  def current_user_can_edit?
+    raise Exceptions::PermissionError unless current_user&.can_edit?
+  end
+
+  # users who aren't admins or 'bulkers' may not create more than `limit` resources at a time
+  # @param resources [Array]
+  # @param limit [Integer]
   def block_unless_bulker(resources = [], limit = 0)
-    # users who aren't admins or 'bulkers' may not create more than `limit` resources at a time
-    if (resources.present? && resources.length > limit) && !(current_user.bulker? || current_user.admin?)
+    if (resources.present? && resources.length > limit) && current_user.role.exclude?(:bulk_upload)
       raise Exceptions::UnauthorizedBulkRequest
     end
   end

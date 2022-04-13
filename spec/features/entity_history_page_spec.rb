@@ -1,5 +1,5 @@
 feature 'EntityHistoryPage' do
-  let(:users) { Array.new(3) { create_really_basic_user } }
+  let(:users) { Array.new(3) { create_editor } }
   let(:entity) { create(:entity_person) }
   let(:tag) { create(:tag) }
 

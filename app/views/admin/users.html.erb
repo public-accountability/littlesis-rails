@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="col-3">
+    <%= form_tag "/admin/users", method: :get do %>
+      <div class="input-group mb-3">
+        <input name="q" type="text" class="form-control" placeholder="Search users">
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><bi class="bi bi-search"></bi></button>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Joined</th>
+          <th>Reason</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <th><%= user_link(user) %><i title="<%= user.email %>" class="ms-1 bi bi-envelope<%= user.confirmed? ? '-check' : '' %>"></i></th>
+            <th><%= user.created_at.strftime("%F") %></th>
+            <th class="cursor-default" title="<%= user.user_profile.reason %>"><%= truncate(user.user_profile.reason) %></th>
+            <th data-controller="user-role-select"
+                data-user-role-select-role-value="<%= user.role.name %>"
+                data-user-role-select-userid-value="<%= user.id %>"
+            ><%= select_tag('role', options_for_select(User.roles.keys, user.role.name) )%></th>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <div>
+      <%= paginate @users %>
+    </div>
+  </div>
+</div>

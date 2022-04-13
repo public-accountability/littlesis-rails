@@ -4,7 +4,6 @@
   </div>
 </div>
 
-
 <div class="row">
   <div class="col-sm-12 col-lg-8">
     <%= form_for(@list) do |f|  %>
@@ -20,7 +19,7 @@
       <% end %>
       <div class="field">
         <%= f.label(:class, "List Name*") %>
-        <%= f.text_field :name, class: "form-control"%>
+        <%= f.text_field :name, class: "form-control", required: true %>
       </div>
 
       <div class="field">
@@ -38,7 +37,7 @@
       </div>
 
       <%= fields_for :ref do |ref_fields|  %>
-        <p><em>Where is this information coming from?</em></p>
+        <p><em><%= t('phrases.where_is_this') %></em></p>
         <div class="field">
           <%=  ref_fields.label(:url, "Source URL") %>
           <%=  ref_fields.text_field :url, class: "form-control" %>

@@ -2,7 +2,7 @@ describe 'Entity Requests', type: :request do
   include EntitiesHelper
 
   let(:person) { create(:entity_person, start_date: '2000-01-01', blurb: nil) }
-  let(:user) { create_basic_user }
+  let(:user) { create_editor }
 
   before { login_as(user, :scope => :user) }
   after { logout(:user) }
@@ -395,7 +395,10 @@ describe 'Entity Requests', type: :request do
             end
             delete_request.call
           end
-          denies_access
+
+          specify do
+            expect(response).to have_http_status 403
+          end
         end
 
         context 'entity created one year ago' do

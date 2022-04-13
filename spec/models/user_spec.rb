@@ -11,70 +11,18 @@ describe User do
 
   describe 'role' do
     context 'when a regular user' do
-      specify { expect(build(:user).role).to eq 'user' }
+      specify { expect(build(:user).read_attribute(:role)).to eq 'user' }
+      specify { expect(build(:user).role).to be User::Role::USER }
     end
 
     context 'when admin user' do
-      specify { expect(build(:user, role: :admin).role).to eq 'admin' }
-      specify { expect(build(:user, role: 1).role).to eq 'admin' }
+      specify { expect(build(:user, role: :admin).read_attribute(:role)).to eq 'admin' }
+      specify { expect(build(:user, role: 1).read_attribute(:role)).to eq 'admin' }
     end
 
     context 'when system user' do
-      specify { expect(build(:user, role: :system).role).to eq 'system' }
-      specify { expect(build(:user, role: 2).role).to eq 'system' }
-    end
-  end
-
-  describe 'abilities' do
-    let(:user) { create(:user) }
-
-    it 'serializes UserAbilities' do
-      expect(build(:user).abilities).to be_a UserAbilities
-    end
-
-    describe 'adding and removing abilities' do
-      it 'adds a new ability' do
-        expect { user.add_ability(:merge) }
-          .to change { user.reload.abilities.to_set }
-                .from(Set[:edit]).to(Set[:edit, :merge])
-      end
-
-      it 'adds an ability using save' do
-        user = build(:user)
-        expect(user).to receive(:save).once
-        user.add_ability(:edit)
-      end
-
-      it 'removes an ability using save' do
-        user = build(:user)
-        expect(user).to receive(:save).once
-        user.remove_ability(:edit)
-      end
-
-      it 'adds an ability using save!' do
-        user = build(:user)
-        expect(user).to receive(:save!).once
-        user.add_ability!(:edit)
-      end
-
-      it 'removes an ability using save!' do
-        user = build(:user)
-        expect(user).to receive(:save!).once
-        user.remove_ability!(:edit)
-      end
-
-      it 'removes an ability' do
-        user.add_ability(:edit, :bulk)
-        expect { user.remove_ability(:bulk) }
-          .to change { user.reload.abilities.to_set }
-                .from(Set[:edit, :bulk]).to(Set[:edit])
-      end
-
-      it 'adds two abilities at once' do
-        expect { user.add_ability(:bulk, :merge) }
-          .to change { user.reload.abilities.to_set }
-                .from(Set[:edit]).to(Set[:bulk, :merge, :edit])
-      end
+      specify { expect(build(:user, role: :system).read_attribute(:role)).to eq 'system' }
+      specify { expect(build(:user, role: 2).read_attribute(:role)).to eq 'system' }
     end
   end
 
@@ -82,11 +30,6 @@ describe User do
     specify do
       expect(build(:user).settings).to be_a UserSettings
     end
-  end
-
-  it 'user has permissions class' do
-    user = create_basic_user
-    expect(user.permissions).to be_a Permissions
   end
 
   describe 'validations' do
@@ -144,82 +87,6 @@ describe User do
     end
   end
 
-  describe 'create_default_permissions' do
-    let(:user) { create(:user, abilities: UserAbilities.new) }
-
-    before { user }
-
-    it 'adds "edit" ability' do
-      expect { user.create_default_permissions }
-        .to change { user.abilities.abilities }
-              .from(Set.new).to(Set[:edit])
-    end
-  end
-
-  describe 'has_ability?' do
-    let(:permissions) { [] }
-    let(:user) { build(:user, abilities: UserAbilities.new(*permissions)) }
-
-    def self.assert_user_has_permission(permission)
-      specify { expect(user.has_ability?(permission)).to be true }
-    end
-
-    def self.assert_user_does_not_have_permission(permission)
-      specify { expect(user.has_ability?(permission)).to be false }
-    end
-
-    context 'when user only has edit ability' do
-      let(:permissions) { %i[edit] }
-
-      assert_user_has_permission :edit
-      assert_user_has_permission 'edit'
-      assert_user_has_permission 'editor'
-      assert_user_has_permission 'contributor'
-      assert_user_does_not_have_permission 'admin'
-      assert_user_does_not_have_permission 'bulker'
-      assert_user_does_not_have_permission 'deleter'
-    end
-
-    context 'when user has edit and bulk ability' do
-      let(:permissions) { %i[edit bulk] }
-
-      assert_user_has_permission 'editor'
-      assert_user_does_not_have_permission 'admin'
-      assert_user_has_permission :bulk
-      assert_user_has_permission 'bulk'
-      assert_user_has_permission 'bulker'
-      assert_user_has_permission 'importer'
-      assert_user_does_not_have_permission :delete
-      assert_user_does_not_have_permission 'delete'
-      assert_user_does_not_have_permission 'deleter'
-      assert_user_does_not_have_permission 'lister'
-    end
-
-    context 'when user has admin ability' do
-      let(:permissions) { %i[admin] }
-
-      assert_user_has_permission :admin
-
-      %w[admin bulker merger deleter].each do |p|
-        assert_user_has_permission(p)
-      end
-    end
-
-    context 'when user has delete ability' do
-      let(:permissions) { %i[edit delete] }
-
-      assert_user_has_permission 'deleter'
-      assert_user_does_not_have_permission 'admin'
-    end
-
-    context 'when user has merger ability' do
-      let(:permissions) { %i[edit merge delete] }
-
-      assert_user_has_permission 'merger'
-      assert_user_does_not_have_permission 'admin'
-    end
-  end
-
   describe '#recent_edits' do
     let(:user) { create_really_basic_user }
 
@@ -237,36 +104,6 @@ describe User do
     specify { expect(user.admin?).to be false }
   end
 
-  describe '#importer?' do
-    let(:importer) do
-      create(:user, abilities: UserAbilities.new(:edit, :bulk))
-    end
-    let(:user) { create_really_basic_user }
-
-    specify { expect(importer.importer?).to be true }
-    specify { expect(user.importer?).to be false }
-  end
-
-  describe '#bulker?' do
-    let(:bulker) do
-      create(:user, abilities: UserAbilities.new(:edit, :bulk))
-    end
-    let(:user) { create_really_basic_user }
-
-    specify { expect(bulker.bulker?).to be true }
-    specify { expect(user.bulker?).to be false }
-  end
-
-  describe '#merger?' do
-    let(:merger) do
-      create(:user, abilities: UserAbilities.new(:edit, :merge))
-    end
-    let(:user) { create_really_basic_user }
-
-    specify { expect(merger.merger?).to be true }
-    specify { expect(user.merger?).to be false }
-  end
-
   describe '#restricted?' do
     it 'returns true for restircted user' do
       expect(build(:user, is_restricted: true).restricted?).to be true
@@ -277,36 +114,43 @@ describe User do
     end
   end
 
-  describe '#can_edit?' do
-    subject { user.can_edit? }
-
-    context 'when user is restircted' do
-      let(:user) { build(:user, is_restricted: true) }
-
-      it { is_expected.to be false }
-    end
-
-    context 'when user is confirmed yesterday' do
-      let(:user) { build(:user, confirmed_at: 24.hours.ago) }
-
-      it { is_expected.to be true }
-    end
-
-    context 'when user is not confirmed' do
-      let(:user) { build(:user, confirmed_at: nil) }
-
-      it { is_expected.to be false }
-    end
-
-    context 'when user is confirmed 3 minutes ago' do
-      let(:user) { build(:user, confirmed_at: 3.minutes.ago) }
-
-      it { is_expected.to be false }
+  describe '#editor?' do
+    specify do
+      expect(build(:user, role: 'editor').editor?).to be true
+      expect(build(:user, role: 'collaborator').editor?).to be true
     end
   end
 
+  # describe '#can_edit?' do
+  #   subject { user.can_edit? }
+
+  #   context 'when user is restircted' do
+  #     let(:user) { build(:user, is_restricted: true) }
+
+  #     it { is_expected.to be false }
+  #   end
+
+  #   context 'when user is confirmed yesterday' do
+  #     let(:user) { build(:user, confirmed_at: 24.hours.ago) }
+
+  #     it { is_expected.to be true }
+  #   end
+
+  #   context 'when user is not confirmed' do
+  #     let(:user) { build(:user, confirmed_at: nil) }
+
+  #     it { is_expected.to be false }
+  #   end
+
+  #   context 'when user is confirmed 3 minutes ago' do
+  #     let(:user) { build(:user, confirmed_at: 3.minutes.ago) }
+
+  #     it { is_expected.to be false }
+  #   end
+  # end
+
   describe '#raise_unless_can_edit!' do
-    let(:user) { build(:user, is_restricted: true) }
+    let(:user) { build(:user, role: :restricted) }
 
     it 'raises UserCannotEditErorr' do
       expect { user.raise_unless_can_edit! }
@@ -402,5 +246,33 @@ describe User do
 
   describe '#image_url' do
     specify { expect(build(:user).image_url).to match /\/assets\/system\/anon/ }
+  end
+
+  describe '#show_add_bulk_button?' do
+    it 'returns true for admin user' do
+      expect(build(:user, role: 'admin').show_add_bulk_button?).to be true
+    end
+
+    it 'returns true for collaborators' do
+      expect(build(:user, role: 'collaborator').show_add_bulk_button?).to be true
+    end
+
+    it 'returns true for users with accounts older than 2 weeks and who have signed in more than 2 times' do
+      user = create_editor
+      user.update_columns(created_at: 1.month.ago, sign_in_count: 3)
+      expect(user.show_add_bulk_button?).to be true
+    end
+
+    it 'returns false for users with accounts newer than 2 weeks' do
+      user = create_editor
+      user.update_columns(created_at: 1.week.ago, sign_in_count: 5)
+      expect(user.show_add_bulk_button?).to be false
+    end
+
+    it 'returns false for users wwho have signed in less than 3 times' do
+      user = create_editor
+      user.update_columns(created_at: 3.week.ago, sign_in_count: 1)
+      expect(user.show_add_bulk_button?).to be false
+    end
   end
 end

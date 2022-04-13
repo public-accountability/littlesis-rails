@@ -23,9 +23,9 @@ class List < ApplicationRecord
   validates :name, presence: true
   validates :short_description, length: { maximum: 255 }
 
-  scope :public_scope, -> { where("access <> #{Permissions::ACCESS_PRIVATE}") }
-  scope :private_scope, -> { where(access: Permissions::ACCESS_PRIVATE) }
-  scope :open_scope, -> { where(access: Permissions::ACCESS_OPEN) }
+  scope :public_scope, -> { where("access <> #{::Permissions::ACCESS_PRIVATE}") }
+  scope :private_scope, -> { where(access: ::Permissions::ACCESS_PRIVATE) }
+  scope :open_scope, -> { where(access: ::Permissions::ACCESS_OPEN) }
 
   def self.viewable(user)
     if user
@@ -36,8 +36,10 @@ class List < ApplicationRecord
   end
 
   def self.editable(user)
-    if user&.has_ability?(:list)
+    if user.role.include?(:edit_list)
       open_scope.or(user.lists).order_by_entity_count.order_by_user(user)
+    elsif user.role.include?(:create_list)
+      user.lists
     else
       none
     end
@@ -76,21 +78,20 @@ class List < ApplicationRecord
   end
 
   def restricted?
-    is_admin || access == Permissions::ACCESS_PRIVATE
+    is_admin || access == ::Permissions::ACCESS_PRIVATE
   end
 
-  def user_can_access?(user_or_id = nil)
-    return true unless access == Permissions::ACCESS_PRIVATE
-    user = nil if user_or_id.nil?
-    user = User.find_by_id(user_or_id) if user_or_id.is_a? Integer
-    user = user_or_id if user_or_id.is_a? User
-    return false if user.nil?
-    user.permissions.list_permissions(self)[:viewable]
+  # @param user [User, Integer, Nil]
+  # @return [Boolean]
+  def user_can_access?(user = nil)
+    List::Permissions.new(
+      user: user.is_a?(Integer) ? User.find(user) : user,
+      list: self
+    ).viewable
   end
 
   def user_can_edit?(user = nil)
-    return false if user.nil?
-    user.permissions.list_permissions(self)[:editable]
+    List::Permissions.new(user: user, list: self).editable
   end
 
   def interlocks_hash
@@ -147,14 +148,6 @@ class List < ApplicationRecord
     query
   end
 
-  # The host argument is there for compatibility reasons:
-  # the symfony/legacy caching system required it.
-  # In Rails, all we need to do to clear the cache
-  # is change the updated_at timestamp
-  def clear_cache(host = nil)
-    touch
-  end
-
   # [Entity|Ids]
   def add_entities(entities_or_ids)
     entities_or_ids.each { |x| add_one_entity(x) }
@@ -170,6 +163,10 @@ class List < ApplicationRecord
 
   def url
     Rails.application.routes.url_helpers.members_list_url(self)
+  end
+
+  def permissions_for(user)
+    List::Permissions.new(user: user, list: self)
   end
 
   private

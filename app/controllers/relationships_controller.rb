@@ -3,11 +3,10 @@
 class RelationshipsController < ApplicationController
   include TagableController
   include ReferenceableController
-  before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction]
-  before_action :authenticate_user!, except: [:show]
-  before_action :block_restricted_user_access, only: [:create, :update, :destroy, :bulk_add]
-  before_action -> { check_permission('editor') }, only: [:create, :update, :destroy, :bulk_add, :reverse_direction]
-  before_action :check_delete_permission, only: [:destroy]
+
+  before_action :authenticate_user!, :current_user_can_edit?, except: [:show]
+  before_action -> { check_ability(:star_relationship) }, only: [:feature]
+  before_action :set_relationship, only: [:show, :edit, :update, :destroy, :reverse_direction, :feature]
   before_action :set_entity, only: [:bulk_add]
 
   # see utility.js
@@ -47,8 +46,7 @@ class RelationshipsController < ApplicationController
     :notes,
     :start_date,
     :end_date,
-    :is_current,
-    :is_featured
+    :is_current
   ].freeze
 
   rescue_from Exceptions::MissingCategoryIdParamError do |exception|
@@ -92,6 +90,13 @@ class RelationshipsController < ApplicationController
     end
   end
 
+  # PATCH /relationship/:id/feature { is_featured: Boolean }
+  #
+  def feature
+    @relationship.update!(is_featured: ParamsHelper.cast_to_boolean(params.require(:is_featured)))
+    return redirect_back fallback_location: relationship_path(@relationship)
+  end
+
   # Creates a new Relationship and a Reference
   # Returns status code 201 if successful or a json of errors with status code 400
   def create
@@ -114,6 +119,10 @@ class RelationshipsController < ApplicationController
   end
 
   def destroy
+    unless @relationship.permissions_for(current_user).fetch(:deleteable)
+      raise Exceptions::PermissionError
+    end
+
     @relationship.current_user = current_user
     @relationship.soft_delete
 
@@ -181,83 +190,83 @@ class RelationshipsController < ApplicationController
     if relationship.fetch('name').to_i.zero?
       attributes = relationship.slice('name', 'blurb', 'primary_ext').merge('last_user_id' => current_user.id)
       entity = Entity.create(attributes)
-    else
+      else
 
-      entity = Entity.find_by(id: relationship.fetch('name').to_i)
-    end
-
-    if entity.try(:persisted?)
-      yield entity
-    else
-      @errors << relationship.merge('errorMessage' => 'Failed to find or create entity')
-    end
-  end
-
-  def rollback_if(relationship)
-    yield
-  rescue ActiveRecord::StatementInvalid
-    # The rails documentation recommends not catching this exception: http://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html
-    # ...and we shall OBEY the rails docs...
-    raise
-  rescue ActiveRecord::ActiveRecordError => e
-    @errors << relationship.merge('errorMessage' => e.message)
-    Rails.logger.warn "BulkAdd Relationship Error: #{e.message}"
-    raise ActiveRecord::Rollback, "Error creating a Relationship"
-  end
-
-  def create_bulk_relationship(entity1, entity2, relationship)
-    r = Relationship.new(relationship_attributes(entity1, entity2, relationship))
-    r.validate_reference(reference_params)
-    if r.valid?
-      r.save!
-      r.add_reference(reference_params)
-      if extension?
-        # get only the category fields from the relationship hash
-        new_category_attr = relationship.delete_if { |key| (r.attributes.keys + ['name', 'primary_ext', 'blurb']).include? key }
-        # update relationship category - we don't have to update if nothing has changed
-        r.get_category.update!(new_category_attr) unless r.category_attributes == new_category_attr
+        entity = Entity.find_by(id: relationship.fetch('name').to_i)
       end
-    else
-      raise ActiveRecord::ActiveRecordError, r.errors.full_messages
-    end
-    @new_relationships << r.as_json(:url => true, :name => true)
-  end
 
-  # <Entity>, <Entity>, Hash -> Hash
-  def relationship_attributes(entity1, entity2, relationship)
-    r = {
-      entity1_id: entity1.id,
-      entity2_id: entity2.id,
-      category_id: params.require(:category_id),
-      description1: relationship.fetch('description1', nil),
-      description2: relationship.fetch('description2', nil),
-      start_date: relationship.fetch('start_date', nil),
-      end_date: relationship.fetch('end_date', nil),
-      goods: relationship.fetch('goods', nil),
-      notes: relationship.fetch('notes', nil),
-      amount: relationship.fetch('amount', nil),
-      currency: relationship.fetch('currency', nil),
-      is_current: relationship.fetch('is_current', nil),
-      last_user_id: current_user.id
-    }
-
-    if [1, 2].include?(r[:category_id].to_i) && entity1.org? && entity2.person?
-      r[:entity1_id] = entity2.id
-      r[:entity2_id] = entity1.id
+      if entity.try(:persisted?)
+        yield entity
+      else
+        @errors << relationship.merge('errorMessage' => 'Failed to find or create entity')
+      end
     end
 
-    # 30, 31, 50, and 51 represent special categories
-    # see helpers/tools_helper.rb
-    if [30, 31, 50, 51].include? r[:category_id].to_i
-      if r[:category_id].to_i == 50 || r[:category_id].to_i == 31
+    def rollback_if(relationship)
+      yield
+    rescue ActiveRecord::StatementInvalid
+      # The rails documentation recommends not catching this exception: http://api.rubyonrails.org/classes/ActiveRecord/Transactions/ClassMethods.html
+      # ...and we shall OBEY the rails docs...
+      raise
+    rescue ActiveRecord::ActiveRecordError => e
+      @errors << relationship.merge('errorMessage' => e.message)
+      Rails.logger.warn "BulkAdd Relationship Error: #{e.message}"
+      raise ActiveRecord::Rollback, "Error creating a Relationship"
+    end
+
+    def create_bulk_relationship(entity1, entity2, relationship)
+      r = Relationship.new(relationship_attributes(entity1, entity2, relationship))
+      r.validate_reference(reference_params)
+      if r.valid?
+        r.save!
+        r.add_reference(reference_params)
+        if extension?
+          # get only the category fields from the relationship hash
+          new_category_attr = relationship.delete_if { |key| (r.attributes.keys + ['name', 'primary_ext', 'blurb']).include? key }
+          # update relationship category - we don't have to update if nothing has changed
+          r.get_category.update!(new_category_attr) unless r.category_attributes == new_category_attr
+        end
+      else
+        raise ActiveRecord::ActiveRecordError, r.errors.full_messages
+      end
+      @new_relationships << r.as_json(:url => true, :name => true)
+    end
+
+    # <Entity>, <Entity>, Hash -> Hash
+    def relationship_attributes(entity1, entity2, relationship)
+      r = {
+        entity1_id: entity1.id,
+        entity2_id: entity2.id,
+        category_id: params.require(:category_id),
+        description1: relationship.fetch('description1', nil),
+        description2: relationship.fetch('description2', nil),
+        start_date: relationship.fetch('start_date', nil),
+        end_date: relationship.fetch('end_date', nil),
+        goods: relationship.fetch('goods', nil),
+        notes: relationship.fetch('notes', nil),
+        amount: relationship.fetch('amount', nil),
+        currency: relationship.fetch('currency', nil),
+        is_current: relationship.fetch('is_current', nil),
+        last_user_id: current_user.id
+      }
+
+      if [1, 2].include?(r[:category_id].to_i) && entity1.org? && entity2.person?
         r[:entity1_id] = entity2.id
         r[:entity2_id] = entity1.id
       end
-      r[:category_id] = r[:category_id].to_s[0]
-    end
 
-    prepare_params(r)
-  end
+      # 30, 31, 50, and 51 represent special categories
+      # see helpers/tools_helper.rb
+      if [30, 31, 50, 51].include? r[:category_id].to_i
+        if r[:category_id].to_i == 50 || r[:category_id].to_i == 31
+          r[:entity1_id] = entity2.id
+          r[:entity2_id] = entity1.id
+        end
+        r[:category_id] = r[:category_id].to_s[0]
+      end
+
+      prepare_params(r)
+    end
 
   def bulk_json_response
     { errors: @errors, relationships: @new_relationships }
@@ -335,11 +344,5 @@ class RelationshipsController < ApplicationController
 
   def reverse_direction?
     cast_to_boolean(params[:reverse_direction]) && @relationship.reversible?
-  end
-
-  def check_delete_permission
-    unless current_user.permissions.relationship_permissions(@relationship).fetch(:deleteable)
-      raise Exceptions::PermissionError
-    end
   end
 end

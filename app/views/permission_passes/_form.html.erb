@@ -27,17 +27,11 @@
   </div>
 
   <div class="abilities">
-    <h3>Abilities</h3>
-    <p>All users who use the permission pass link will gain these abilities.</p>
-
-    <% PermissionPass::PERMITTED_ABILITIES.each do |ability| %>
-      <div class='row'>
-        <%= f.label ability, for: ability do %>
-          <%= f.check_box :abilities, {multiple: true}, ability, nil %>
-          <%= ability %>
-        <% end %>
-      </div>
-    <% end %>
+    <h3>Role</h3>
+    <p>All users who use the permission pass become the designed role</p>
+    <%= f.select "role",
+            options_for_select([ ["Editor", User.roles['editor']], ["Collaborator", User.roles['collaborator']]])
+    %>
   </div>
 
   <div class="actions">

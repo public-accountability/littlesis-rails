@@ -129,26 +129,26 @@
   <% end %>
 
   <%# Advanced Tools %>
-  <% if user_signed_in? && ( current_user.importer? || current_user.merger? || current_user.admin? ) %>
+  <% if user_signed_in? && %i[match_donations feature_items merge_entity].to_set.intersection(current_user.role).present? %>
     <div class="row mt-3">
       <div class="col-12">
         <h3 class="profile-page-sidebar-heading"><%= t('phrases.advanced_tools') %></h3>
       </div>
       <div class="col-12">
         <ul class="list-unstyled">
-          <% if current_user.importer?  %>
+          <% if current_user.role.include?(:match_donations)  %>
             <li>
               <%= link_to 'Match FEC Donations', fec_match_contributions_path(@entity) %>
             </li>
           <% end %>
 
-          <% if current_user.admin?  %>
+          <% if current_user.role.include?(:feature_items) %>
             <li>
               <%= render partial: 'entities/sidebar/edit_featured_resources', object: @entity, as: :entity %>
             </li>
           <% end %>
 
-          <% if current_user.merger? %>
+          <% if current_user.role.include?(:merge_entity) %>
             <li>
               <%= link_to 'Begin merging process', merge_path(mode: 'search', source: @entity.id) %>
             </li>
@@ -157,5 +157,4 @@
       </div>
     </div>
   <% end %>
-
 </div>

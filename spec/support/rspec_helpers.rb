@@ -23,29 +23,25 @@ module RspecHelpers
 
   module ExampleMacros
     def self.create_admin_user
-      user = FactoryBot.create(:user, role: 'admin')
-      FactoryBot.create(:user_profile, user: user)
-      user.add_ability(:edit, :admin)
-      user
+      FactoryBot.create(:user, role: 'admin').tap do |user|
+        FactoryBot.create(:user_profile, user: user)
+      end
     end
 
     def self.create_basic_user(**attributes)
-      user = FactoryBot.create(:user, **attributes)
-      user.add_ability!(:edit, :list)
-      user
+      FactoryBot.create(:user, **attributes, role: :user)
     end
 
     def self.create_restricted_user
-      user = FactoryBot.create(:user, is_restricted: true)
-      user.add_ability!(:edit)
-      user
+      FactoryBot.create(:user, is_restricted: true, role: :restricted)
     end
 
-    def with_delayed_job
-      Delayed::Worker.delay_jobs = false
-      yield
-    ensure
-      Delayed::Worker.delay_jobs = true
+    def self.create_editor(**attributes)
+      FactoryBot.create(:user, **attributes, role: :editor)
+    end
+
+    def self.create_collaborator
+      FactoryBot.create(:user, role: :collaborator)
     end
 
     def with_versioning_for(user_or_id)
@@ -78,76 +74,41 @@ module RspecHelpers
       expect(rendered).not_to have_css(...)
     end
 
+    def create_basic_user(**attributes)
+      ExampleMacros.create_basic_user(**attributes)
+    end
+
     def create_admin_user
       ExampleMacros.create_admin_user
     end
 
-    def create_bulk_user
-      user = FactoryBot.create(:user)
-      user.add_ability!(:edit, :bulk)
-      user
+    def create_collaborator
+      ExampleMacros.create_collaborator
     end
 
-    def create_merger_user
-      user = FactoryBot.create(:user)
-      user.add_ability!(:edit, :merge)
-      user
-    end
-
-    def create_list_user
-      user = FactoryBot.create(:user)
-      user.add_ability!(:edit, :list)
-      user
-    end
-
-    def create_contributor
-      user = FactoryBot.create(:user)
-      user.add_ability!(:edit)
-      user
-    end
-
-    def create_importer
-      user = FactoryBot.create(:user)
-      user.add_ability!(:edit, :bulk)
-      user
+    def create_editor
+      ExampleMacros.create_editor
     end
 
     def create_really_basic_user
       FactoryBot.create(:user)
     end
 
-    def create_basic_user(**attributes)
-      ExampleMacros.create_basic_user(**attributes)
-    end
-
     def create_basic_user_with_profile(**attributes)
-      user = FactoryBot.create(:user, **attributes)
-      user.create_user_profile!(FactoryBot.attributes_for(:user_profile))
-      user.add_ability!(:edit, :list)
-      user
-    end
-
-    def create_bulker_user
-      user = FactoryBot.create(:user)
-      user.add_ability!(:edit, :bulk)
-      user
+      create_basic_user(**attributes).tap do |user|
+        user.create_user_profile!(FactoryBot.attributes_for(:user_profile))
+      end
     end
 
     def create_restricted_user
       ExampleMacros.create_restricted_user
     end
 
-    def create_user(attrs = {})
-      user = FactoryBot.create(:user, attrs)
-      create(:user_profile, user: user)
-      user
-    end
-
-    def create_generic_relationship
-      person = FactoryBot.create(:person)
-      org = FactoryBot.create(:org)
-      FactoryBot.create(:generic_relationship, entity: person, related: org, last_user_id: 1)
-    end
+    # def create_user(attrs = {})
+    #   user = FactoryBot.create(:user, attrs)
+    #   create(:user_profile, user: user)
+    #   user
+    # end
 
     def within_one_second?(a, b)
       [0, 1].include? (a.to_i - b.to_i).abs

@@ -37,6 +37,23 @@ describe Tag, :pagination_helper do
     end
   end
 
+  describe 'tag permisions' do
+    it 'open tags can be viewed and edited by any editor' do
+      tag = build(:tag)
+      editor = build(:user, role: 'editor')
+      expect(tag.permissions_for(editor)).to eq({ 'viewable' => true, 'editable' => true })
+    end
+
+    it 'closed tag can be viewed by any logged in user but only edited by its owner(s) or an admin' do
+      tag = build(:tag, restricted: true)
+      editor = build(:user, role: 'editor')
+      admin = build(:user, role: 'admin')
+      expect(tag.permissions_for(editor)).to eq({ 'viewable' => true, 'editable' => false })
+      expect(tag.permissions_for(admin)).to eq({ 'viewable' => true, 'editable' => true })
+    end
+  end
+
+
   # describe '#entities_by_relationship_count' do
   #   let(:tag) { create(:tag) }
 

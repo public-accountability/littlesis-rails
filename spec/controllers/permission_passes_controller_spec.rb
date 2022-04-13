@@ -1,7 +1,7 @@
 describe PermissionPassesController, type: :controller do
   let(:regular_user) { create(:user) }
   let(:admin_user) { create_admin_user }
-  let!(:pass) { create(:permission_pass, creator: admin_user, abilities: UserAbilities.new(:bulk, :merge)) }
+  let!(:pass) { create(:permission_pass, creator: admin_user, role: User.roles['editor']) }
 
   let(:params) do
     {
@@ -17,7 +17,7 @@ describe PermissionPassesController, type: :controller do
         "valid_to(3i)" => "9",
         "valid_to(4i)" => "14",
         "valid_to(5i)" => "29",
-        "abilities" => %w[bulk match list]
+        "role" => 4
       }
     }
   end
@@ -126,8 +126,9 @@ describe PermissionPassesController, type: :controller do
 
       it 'sets the abilities and redirects to referer' do
         sign_in(regular_user)
+        expect(regular_user.role.name).to eq 'user'
         get :apply, params: { permission_pass_id: pass.id }
-        expect(regular_user.reload.abilities.to_a).to contain_exactly(:bulk, :merge, :edit)
+        expect(regular_user.reload.role.name).to eq 'editor'
         expect(response).to redirect_to('http://lils.is/home/')
       end
     end
