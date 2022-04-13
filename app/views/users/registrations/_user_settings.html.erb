@@ -1,6 +1,6 @@
 <div>
   <%= form_with(url: '/users/settings', method: :put) do %>
-    <% if current_user.admin? %>
+    <% if current_user.role.include?(:star_relationship) %>
       <div class="row mt-2 mb-2">
         <div class="col">
           <label class="me-1"><b>Show Stars</b></label>
