@@ -1,0 +1,39 @@
+<% content_for :page_title, "Role Request" %>
+
+<% if @active_request %>
+  <div class="row mb-5">
+    <div class="col">
+      <p>
+        Thank you for submitting a request to become <%= Language.with_indefinite_article(@active_request.role) %>. <br /> The LitteSis team will get back to you shortly.
+      </p>
+    </div>
+  </div>
+<% elsif current_user.role.name == 'user' %>
+  <div class="row">
+    <div class="col-12 col-md-8 col-lg-6">
+      <p>Thank you for your interest in becoming a LittleSis editor. Becoming an editor will allow you to add modify profile pages, create new relationships, and tag people and organizations.</p>
+
+      <%= form_with url: user_role_request_path(username: current_user.username), html: { data: { parsley_validate: true } } do |f| %>
+        <%= f.label :why, "Why would you like to become a LittleSis editor?", class: 'form-label' %>
+
+        <%= f.text_area :why, rows: 5, required: true, class: 'form-control', data: {
+          parsley_whitespace: "trim",
+          parsley_minlength: 30,
+          parsley_pattern_message: 'Please include more details'
+        } %>
+
+        <div class="mt-2">
+          <%= render partial: 'shared/terms_of_use_form' %>
+        </div>
+
+        <%= f.submit 'Submit', class: 'btn btn-primary mt-2' %>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="row">
+    <div class="col">
+      <p>Congratulations! You are <b><%= Language.with_indefinite_article(current_user.role.name) %></b>.</p>
+    </div>
+  </div>
+<% end %>

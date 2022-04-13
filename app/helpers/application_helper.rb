@@ -41,10 +41,6 @@ module ApplicationHelper
     current_user&.username
   end
 
-  def has_ability?(permission)
-    current_user && current_user.has_ability?(permission)
-  end
-
   def og_tags(title:, image:, url:, type: 'website')
     tag.meta(proeprty: 'og:type', content: type) +
       tag.meta(property: 'og:title', content: title) +

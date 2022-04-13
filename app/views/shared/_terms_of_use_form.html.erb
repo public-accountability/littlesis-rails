@@ -1,0 +1,16 @@
+<div class="bg-info p-3">
+  <%= label_tag 'terms_of_use', t('phrases.terms').titleize, class: 'form-label fs-5 fw-bold' %>
+  <p><%= t('pages.join.user_agreement.i_understand') %></p>
+  <ul>
+    <li><%= t('pages.join.user_agreement.promote_violence') %></li>
+    <li><%= t('pages.join.user_agreement.outside_purview') %></li>
+    <li><%= t('pages.join.user_agreement.spam') %></li>
+  </ul>
+  <p><%= t('pages.join.user_agreement.if_in_violation') %></p>
+  <div class="d-flex">
+    <%= check_box_tag :terms_of_use, 1, false, { required: true, data: { parsley_required_message: t('pages.join.you_have_to_accept')} } %>
+    <small class='ms-2 font-weight-bold'>
+      <%= t('pages.join.user_agreement.i_accept') %>
+    </small>
+  </div>
+</div>
