@@ -2,6 +2,7 @@
 
 require 'getoptlong'
 require 'fileutils'
+# require 'net/http'
 
 REPO = File.expand_path('..', __dir__).freeze
 
@@ -17,7 +18,7 @@ $deploy_branch = 'main'
 
 def help
   puts <<TEXT
-Usage: littlesis [options] <command> [--] [arguments for command]
+Usage: littlesis [-tdP] <command> [--] [arguments for command]
 
 Commands
            docker           run any docker-compose comand
@@ -26,16 +27,17 @@ Commands
            delete           deletes database by removing docker volumes
            build            build littlesis docker image
            bash             interative bash shell
-           watch            follow rails logs
-           status           check status of application components
+           logs             follow rails logs
+           status           check status of applications
            console          launch rails console
            redis            launch redi cli
            data             external data ETL tools
            fec              FEC data ETL tools
            deploy           deploys to latest commit on main
            edit             select file to open with $EDITDOR
-           runner           Rails runner shortcut
+           runner           run bin/rails runner <file>
            script           execute named script in lib/scripts/
+           esbuild
 
 Aliases
            bundle
@@ -82,7 +84,7 @@ def docker_compose(*args)
   end
 end
 
-def app_exec(cmd, bin: false, run: false)
+def app_exec(cmd, bin: false, run: false, container: 'app')
   bin_path = $rails_env == 'production' ? '/var/www/littlesis/bin' : '/littlesis/bin'
   cmd = "#{bin_path}/#{cmd}" if bin
 
@@ -96,9 +98,9 @@ def app_exec(cmd, bin: false, run: false)
     end
   else
     if run
-      docker_compose 'run', '--rm', "-e RAILS_ENV=#{$rails_env}", 'app', cmd
+      docker_compose 'run', '--rm', "-e RAILS_ENV=#{$rails_env}", container, cmd
     else
-      docker_compose 'exec', ($stdout.tty? ? '' : '-T'), "-e RAILS_ENV=#{$rails_env}", 'app', cmd
+      docker_compose 'exec', ($stdout.tty? ? '' : '-T'), "-e RAILS_ENV=#{$rails_env}", container, cmd
     end
   end
 end
@@ -329,7 +331,7 @@ when 'edit'
 when 'node'
   app_exec "/usr/bin/node #{rest}", run: true
 when 'psql', 'pg_dump', 'pg_restore'
-  docker_compose 'run --rm postgres', ARGV.join(' '), database_connection
+  app_exec "#{ARGV.first} #{database_connection} #{rest}", run: true, container: 'postgres'
 when 'status'
   status
 when 'deploy'
