@@ -23,7 +23,7 @@
       <h5 class="entity-blurb-text d-inline-block" data-profile--editable-blurb-target="blurb">
         <%= @entity.blurb %>
       </h5>
-      <% if user_signed_in? %>
+      <% if user_signed_in? && current_user.editor? %>
         <div class="d-inline-block ms-2">
           <i class="bi bi-pencil-fill" aria-hidden="true"
              data-profile--editable-blurb-target="pencil"
@@ -34,7 +34,7 @@
     </div>
   </div>
 
-  <% if user_signed_in? %>
+  <% if user_signed_in? && current_user.editor? %>
     <%= render partial: 'actions' %>
   <% end %>
 
