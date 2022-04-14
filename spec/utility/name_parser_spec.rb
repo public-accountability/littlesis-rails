@@ -65,11 +65,11 @@ describe 'NameParser', :name_parser_helper do
 
   describe 'prettify' do
     specify do
-      expect(NameParser.new(nil).send(:prettify, 'EVE')).to eq 'Eve'
+      expect(NameParser.new.send(:prettify, 'EVE')).to eq 'Eve'
     end
 
     specify do
-      expect(NameParser.new(nil).send(:prettify, 'MCNABB')).to eq 'McNabb'
+      expect(NameParser.new.send(:prettify, 'MCNABB')).to eq 'McNabb'
     end
   end
 
@@ -81,16 +81,6 @@ describe 'NameParser', :name_parser_helper do
     specify do
       expect(NameParser.new('JANE "NICKNAME" R SMITH').to_s).to eq 'Jane "Nickname" R Smith'
     end
-  end
-
-  it 'return blank hash if called with a non-string' do
-    expect(NameParser.new(false).to_h)
-      .to eql(name_prefix: nil,
-              name_first: nil,
-              name_middle: nil,
-              name_last: nil,
-              name_suffix: nil,
-              name_nick: nil)
   end
 
   describe 'parse_to_hash' do
