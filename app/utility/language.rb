@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Language
+  AN_REQUIRING_PATTERNS = /^([aefhilmnorsx]$|hono|honest|hour|heir|[aeiou]|8|11)/i
+
   REGIONS = [
     'Asia',
     'Africa',
@@ -104,5 +106,11 @@ class Language
 
   def self.schools
     @schools ||= SCHOOLS.map(&:downcase).to_set.freeze
+  end
+
+  # Adds a or an to the provided word
+  # simplied from https://github.com/rossmeissl/indefinite_article/blob/master/lib/indefinite_article.rb
+  def self.with_indefinite_article(word)
+    AN_REQUIRING_PATTERNS.match?(word) ? "an #{word}" : "a #{word}"
   end
 end

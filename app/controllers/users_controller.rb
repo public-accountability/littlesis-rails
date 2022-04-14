@@ -17,10 +17,20 @@ class UsersController < ApplicationController
 
   # GET /users/:username/role_request
   def role_request
+    @active_request = RoleUpgradeRequest.pending.find_by(user: current_user)
   end
 
   # POST /users/:username/role_request
   def create_role_request
+    if %w[user editor].exclude?(current_user.role.name)
+      raise Exceptions::LittleSisError, "#{current_user.username} has role #{current_user.role.name}. Refusing to create new RoleUpgradeRequest."
+    end
+
+    RoleUpgradeRequest.create!(role: current_user.role.name == 'editor' ? :collaborator : :editor,
+                               user: current_user,
+                               why: params.require(:why))
+
+    redirect_to user_role_request_path(username: current_user.username)
   end
 
   # GET /users/check_username

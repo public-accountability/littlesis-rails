@@ -8,6 +8,10 @@ class AdminController < ApplicationController
       scope.page(params[:requests_page] || 1).per(10)
     end
 
+    @role_upgrade_requests = UserRoleUpgradeRequestsGrid.new(params[:user_role_request_grid]) do |scope|
+      scope.page(params[:role_upgrade_page] || 1).per(10)
+    end
+
     @users = UserSignupsGrid.new do |scope|
       scope.page(params[:user_signups_page] || 1).per(10)
     end
@@ -41,6 +45,21 @@ class AdminController < ApplicationController
     user = User.find(params.require(:userid))
     user.update!(role: params.require(:role))
     render json: { status: 'ok', role: user.role.name }
+  end
+
+  # PATCH /admin/role_upgrade_requests/:id
+  def update_role_upgrade_request
+    request = RoleUpgradeRequest.find(params[:id])
+    case params.require(:action)
+    when 'approve'
+      request.approve!
+    when 'deny'
+      request.deny!
+    else
+      return head(:internal_server_error)
+    end
+    flash[:notice] = "#{request.status} role upgrade request for #{request.user.username}."
+    redirect_to '/admin'
   end
 
   def entity_matcher

@@ -10,8 +10,7 @@ describe Users::RegistrationsController, type: :controller do
       'default_network_id' => '79',
       'newsletter' => '0',
       'user_profile_attributes' => {
-        'name_first' => 'firstname',
-        'name_last' => 'lastname',
+        'name' => 'firstname lastname',
         'reason' => 'doing research'
       }
     }
@@ -27,11 +26,7 @@ describe Users::RegistrationsController, type: :controller do
   end
 
   let(:invalid_user_data) do
-    user_data.deep_merge('user_profile_attributes' => {
-                           'name_first' => 'firstname',
-                           'name_last' => 'lastname',
-                           'reason' => 'onewordanswer'
-                         })
+    user_data.merge('username' => '1')
   end
 
   describe 'Routes' do

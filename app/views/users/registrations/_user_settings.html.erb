@@ -35,6 +35,13 @@
         </select>
       </div>
     </div>
-
   <% end %>
 </div>
+
+<% if current_user.role.name == 'user' %>
+  <div class="mt-2">
+    <p>
+      <%= link_to "Request to become a LittleSis editor", user_role_request_path(username: current_user.username) %>
+    </p>
+  </div>
+<% end %>

@@ -97,6 +97,9 @@ Style/ImplicitRuntimeError:
   Exclude:
     - 'lib/scripts/*'
 
+Layout/HashAlignment:
+  Enabled: false
+
 Layout/LineLength:
   Max: 100
   Exclude:

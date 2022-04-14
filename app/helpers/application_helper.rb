@@ -41,10 +41,6 @@ module ApplicationHelper
     current_user&.username
   end
 
-  def has_ability?(permission)
-    current_user && current_user.has_ability?(permission)
-  end
-
   def og_tags(title:, image:, url:, type: 'website')
     tag.meta(proeprty: 'og:type', content: type) +
       tag.meta(property: 'og:title', content: title) +
@@ -88,7 +84,9 @@ module ApplicationHelper
   end
 
   def show_stars?
-    user_admin? && current_user.settings.show_stars
+    user_signed_in? &&
+      current_user.role.include?(:star_relationship) &&
+      current_user.settings.show_stars
   end
 
   def bs_row_column(row_class: 'row', column_class: 'col', &block)
