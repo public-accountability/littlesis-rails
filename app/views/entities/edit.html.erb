@@ -2,8 +2,7 @@
 
 <% content_for(:page_title, "#{t('vocab.edit').capitalize}: #{@entity.name}") %>
 
-<%= render partial: 'header', locals: { entity: @entity } %>
-<%= render partial: 'actions', locals: { entity: @entity } %>
+<%= render partial: 'header2', locals: { entity: @entity } %>
 
 <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder, data: {controller: "entity-edit"} do |f| %>
 

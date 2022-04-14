@@ -1,5 +1,7 @@
 <% if @active_tab.present? && @active_tab != :relationships %>
   <% content_for(:page_title, "#{@entity.name} - #{@active_tab.to_s.capitalize}") %>
+<% elsif controller.action_name = 'add_relationship' %>
+  <% content_for(:page_title, "#{@entity.name} - Add Relationship") %>
 <% else %>
   <% content_for(:page_title, @entity.name) %>
 <% end %>
