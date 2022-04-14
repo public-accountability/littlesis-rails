@@ -2,8 +2,7 @@
 This form is used in two places: the /entities/new and / entities/:id/add_relationship
 required local variable = entity
 %>
-
-<turbo-frame>
+<turbo-frame id="new-entity-form">
   <div data-controller="new-entity-form">
     <%= form_for(entity, url: "/entities") do |f| %>
       <% if entity.errors.any? %>
@@ -18,19 +17,19 @@ required local variable = entity
       <% end %>
 
       <%# if add_relationship %>
-        <%#= hidden_field_tag :add_relationship_page, 'TRUE' %>
+      <%#= hidden_field_tag :add_relationship_page, 'TRUE' %>
       <%# end %>
 
       <div>
         <%= f.label "Name", for: :entity_name, class: 'form-label' %>
         <%= f.text_field :name,
-                   class: "form-control",
-                   placeholder: "example: Jesse L Jackson, Jr",
-                   required: true,
-                   data: {
-                     'action' => 'input->new-entity-form#typingEntityName',
-                     'new-entity-form-target' => 'nameInput'
-                   }
+           class: "form-control",
+           placeholder: "example: Jesse L Jackson, Jr",
+           required: true,
+           data: {
+             'action' => 'input->new-entity-form#typingEntityName',
+             'new-entity-form-target' => 'nameInput'
+           }
         %>
       </div>
 

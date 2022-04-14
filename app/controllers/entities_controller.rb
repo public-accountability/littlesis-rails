@@ -61,7 +61,10 @@ class EntitiesController < ApplicationController
   end
 
   def new
-    @entity = Entity.new(name: params[:name]) if params[:name].present?
+    @entity = Entity.new(name: params[:name].presence)
+    if turbo_frame_request?
+      render partial: 'new_entity_form', locals: { entity: @entity }
+    end
   end
 
   def create

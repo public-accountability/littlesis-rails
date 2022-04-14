@@ -99,8 +99,14 @@ function alertDiv(title, message) {
     .append($('<span>', { text: message }))
 }
 
+function fillInNameAfterTurbo(event) {
+  if (event.target.id === "new-entity-form") {
+    event.target.querySelector('input[name="entity[name]"]').value = this.searchTarget.value
+  }
+}
+
 export default class extends Controller {
-  static targets = [ "search", "searchContainer", "results", "nothingFound", "creatingInfo", "form", "similarRelationships"]
+  static targets = [ "search", "searchContainer", "results", "nothingFound", "newEntityForm", "creatingInfo", "form", "similarRelationships"]
 
   static values = {
     entity1Id: Number,
@@ -118,9 +124,10 @@ export default class extends Controller {
     this.newReferenceForm = null
     this.existingReferences = null
     this.category_id = null
+    document.documentElement.addEventListener('turbo:frame-load', fillInNameAfterTurbo.bind(this))
   }
 
-  search(event) {
+  search() {
     const query = this.searchTarget.value
 
     Http.get("/search/entity", { q: query, include_parent: true } )
@@ -136,6 +143,7 @@ export default class extends Controller {
 
   showSearchResults(data) {
     this.nothingFoundTarget.style.display = 'none'
+    this.newEntityFormTarget.style.display = 'none'
     $(this.resultsTarget).html('<table class="table compact hover" id="add-relationship-search-results-table"></table>')
     $(this.resultsTarget).find('table').DataTable({
       data: data,
@@ -188,6 +196,13 @@ export default class extends Controller {
     $(event.target).parent().find('.btn').toggleClass('active').toggleClass('btn-secondary').toggleClass('btn-outline-secondary')
     $('#existing-reference-container').toggle()
     $('#new-reference-container').toggle()
+  }
+
+  newEntity() {
+    // shows element which triggers turbo-frame to load
+    if (!this.newEntityFormTarget.offsetParent) {
+      this.newEntityFormTarget.style.display = ''
+    }
   }
 
   submit() {

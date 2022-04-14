@@ -112,7 +112,7 @@ es:
 
   phrases:
     a_project_of: "un proyecto de"
-    add_a_new_entity:
+    add_a_new_entity: "Haga click aquí para crear una nueva entidad"
     click_to_add: "Haga click aquí"
     add_a_relationship: "para añadir una conexión"
     add_bulk: bulk
@@ -121,7 +121,7 @@ es:
     basic_info: "Información Básica"
     become_an_analyst:
     cancel:
-    cant_find_what:
+    cant_find_what: ¿No encuentra lo que busca?
     click_here: click aquí
     connect_this_entity:
     create_a_new: "Creación de un nuevo"
