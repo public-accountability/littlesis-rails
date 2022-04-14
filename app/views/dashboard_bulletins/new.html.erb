@@ -1,5 +1,9 @@
 <% content_for(:page_title, 'New Dashboard Bulletin') %>
 
+<% content_for(:head) do %>
+  <%= javascript_include_tag "actiontext", defer: true %>
+<% end %>
+
 <%= render partial: 'form', locals: {
   bulletin: DashboardBulletin.new,
   title: 'Create a new dashboard bulletin',
