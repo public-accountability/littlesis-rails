@@ -2,7 +2,6 @@
 
 require 'getoptlong'
 require 'fileutils'
-# require 'net/http'
 
 REPO = File.expand_path('..', __dir__).freeze
 
@@ -37,7 +36,7 @@ Commands
            edit             select file to open with $EDITDOR
            runner           run bin/rails runner <file>
            script           execute named script in lib/scripts/
-           esbuild
+           esbuild          bundle javascript
 
 Aliases
            bundle
@@ -191,8 +190,11 @@ def deploy
     app_exec 'npm ci'
   end
 
-  # TODO detech changes to Rails.application.config.littlesis.oligrapher_commit and run OligrapherAssetsService.run
+  if changed_files.include?('package-lock.json') || changed_files.any? { |f| f.include?('javascript') }
+    esbuild
+  end
 
+  # TODO detech changes to Rails.application.config.littlesis.oligrapher_commit and run OligrapherAssetsService.run
   if changed_files.any? { |f| f.include?('package-lock.json') || f.include?('assets') || f.include?('javascript') }
     app_exec_bin 'rake assets:precompile'
   end
@@ -212,7 +214,6 @@ def logs
 
   app_exec "/usr/bin/tail -f #{logfile}", run: true
 end
-
 
 def esbuild
   if production_environment?
