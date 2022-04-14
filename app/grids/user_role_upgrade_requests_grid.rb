@@ -15,8 +15,13 @@ class UserRoleUpgradeRequestsGrid < BaseGrid
 
   column(:status, order: false, html: true) do |request|
     if request.pending?
-      button_to("Approve", admin_role_upgrade_request_path(request), form_class: 'd-inline-block', class: 'btn btn-sm btn-success', method: :patch) +
-        button_to("Deny", admin_role_upgrade_request_path(request), form_class: 'd-inline-block ms-1', class: 'btn btn-sm btn-danger', method: :patch)
+      path = admin_role_upgrade_request_path(request)
+
+      tag.div(class: 'ps-2 pe-2') do
+        button_to("Approve", path, params: { action: 'approve' }, form_class: 'd-inline-block', class: 'btn btn-sm btn-success', method: :patch) +
+          button_to("Deny", path, params: { action: 'deny' }, form_class: 'd-inline-block ms-1', class: 'btn btn-sm btn-danger', method: :patch)
+      end
+
     else
       request.status
     end

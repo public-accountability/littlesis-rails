@@ -47,10 +47,10 @@ class AdminController < ApplicationController
     render json: { status: 'ok', role: user.role.name }
   end
 
-  # POST /admin/role_upgrade_requests/:id
+  # PATCH /admin/role_upgrade_requests/:id
   def update_role_upgrade_request
     request = RoleUpgradeRequest.find(params[:id])
-    case params.require(:status)
+    case params.require(:action)
     when 'approve'
       request.approve!
     when 'deny'

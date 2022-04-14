@@ -48,7 +48,7 @@ describe 'user registration', js: true do
     expect(page).to have_css('.parsley-equalto', text: 'Your password and password confirmation do not match')
   end
 
-  scenario 'user is prompted to fill out "about you"' do
+  xscenario 'user is prompted to fill out "about you"' do
     find('#user_user_profile_attributes_name').send_keys('Oedipa Maas')
     find('#user_email').send_keys('oedipa@maas.net')
     find('#user_username').send_keys('oedipa')

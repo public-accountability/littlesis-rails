@@ -13,26 +13,5 @@ describe UserProfile, type: :model do
 
       specify { expect(profile.valid?).to be true }
     end
-
-    context 'when when reason is 1 word' do
-      before { profile.reason = 'toolazytowritewords' }
-
-      specify { expect(profile.valid?).to be false }
-    end
-
-    context 'when reason is nil' do
-      before { profile.reason = nil }
-
-      specify { expect(profile.valid?).to be false }
-    end
-
-    context 'when reason is nil and persisted' do
-      it 'is valid' do
-        profile = create(:user_profile, user: create_really_basic_user)
-        profile.update_column(:reason, nil)
-        expect(profile.reason).to be nil
-        expect(profile.valid?).to be true
-      end
-    end
   end
 end
