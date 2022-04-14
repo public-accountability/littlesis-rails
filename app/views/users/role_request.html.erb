@@ -1,4 +1,4 @@
-<% content_for :page_title, "Role Request" %>
+<% content_for :page_title, "Editor Request" %>
 
 <% if @active_request %>
   <div class="row mb-5">
@@ -11,7 +11,7 @@
 <% elsif current_user.role.name == 'user' %>
   <div class="row">
     <div class="col-12 col-md-8 col-lg-6">
-      <p>Thank you for your interest in becoming a LittleSis editor. Becoming an editor will allow you to add modify profile pages, create new relationships, and tag people and organizations.</p>
+      <p>Thank you for your interest in becoming a LittleSis editor. Becoming an editor will allow you to modify profile pages, create new relationships, and tag people and organizations.</p>
 
       <%= form_with url: user_role_request_path(username: current_user.username), html: { data: { parsley_validate: true } } do |f| %>
         <%= f.label :why, "Why would you like to become a LittleSis editor?", class: 'form-label' %>
