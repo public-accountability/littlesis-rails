@@ -28,19 +28,23 @@ const SPANISH_TRANSLATION = {
   transactions: "Servicios y transacciones"
 }
 
+
+// English is rendered by default. Unlike most other phrases on our site
+// translation done in javascript because profile pages are cached.
 export default class extends Controller {
   static values = {
-    locale: { type: String, default: 'en' },
     subcategory: String
   }
 
   connect() {
-    // English is rendered by default. Unlike most other phrases on our site
-    // translation done in javascript because profile pages are cached.
-    if (this.localeValue === 'es') {
+    if (this.spanishRequested()) {
       if (SPANISH_TRANSLATION[this.subcategoryValue]) {
         this.element.innerText = SPANISH_TRANSLATION[this.subcategoryValue]
       }
     }
+  }
+
+  spanishRequested() {
+    return document.head.querySelector('meta[name="locale"]')?.content === 'es'
   }
 }
