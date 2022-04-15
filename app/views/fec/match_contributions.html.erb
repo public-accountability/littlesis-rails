@@ -1,6 +1,6 @@
 <% content_for(:page_title, "Match FEC Contributions: #{@entity.name}") %>
 
-<%= render partial: 'entities/header', locals: { entity: @entity } %>
+<%= render partial: 'entities/header2', locals: { hide_summary: true } %>
 
 <% if @entity.person? %>
   <div data-turbo="true" data-controller="fec--match-contributions" data-fec--match-contributions-entity-name-value="<%= @entity.person.last_first %>">
