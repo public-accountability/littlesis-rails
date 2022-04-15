@@ -57,6 +57,7 @@ jobs:
       - run: docker-compose exec postgres pg_isready --timeout=10
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake db:reset
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake tmp:clear
+      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake javascript:build
       - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake assets:precompile
       - run: docker-compose exec -e RAILS_ENV=test -e CI=true app bundle exec rspec --tag js --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
 
