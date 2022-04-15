@@ -2,7 +2,7 @@ feature 'Entity deletion request & review' do
   include EntitiesHelper
 
   let(:user) {}
-  let(:requester) { create_really_basic_user }
+  let(:requester) { create_editor }
   let(:entity) { create :entity_person }
 
   before { login_as user, scope: :user }
