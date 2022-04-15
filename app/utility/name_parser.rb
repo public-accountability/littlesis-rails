@@ -162,14 +162,16 @@ class NameParser
 
   def initialize(str = '')
     @errors = []
-    if str.is_a?(String)
-      @raw = str.strip
-      @_parts = split_name(str)
-      parse
-      prettify!
-    else
-      raise Exceptions::LittleSisError, "NameParser called with a #{str.class}. It only accepts strings"
+    str = '' if str.nil?
+
+    unless str.is_a?(String)
+      raise Exceptions::LittleSisError, "NameParser must be initalized with a string"
     end
+
+    @raw = str.strip
+    @_parts = split_name(str)
+    parse
+    prettify!
   end
 
   def to_s
