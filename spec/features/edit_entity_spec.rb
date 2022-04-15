@@ -24,7 +24,7 @@ describe 'edit entity page', type: :feature, js: true do
                          '#action-buttons',
                          '#reference-widget'
 
-      page_has_selector '#entity-name', text: entity.name
+      page_has_selector '.entity-name2', text: entity.name
 
       find('input[name="reference[just_cleaning_up]"]').click
 

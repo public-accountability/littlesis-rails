@@ -1,8 +1,4 @@
-<%= render partial: 'header', locals: { entity: @entity } %>
-
-<% if user_signed_in? %>
-  <%= render partial: 'actions', locals: { entity: @entity, current_user: current_user } %>
-<% end %>
+<%= render partial: 'header2', locals: { hide_summary: true }  %>
 
 <div class="row mt-1">
   <div class="col">
@@ -22,6 +18,6 @@
   </div>
 </div>
 
-<% if user_signed_in? %>
+<% if user_signed_in? && current_user.editor? %>
   <%= render partial: 'shared/reference_new', locals: { model: @entity, reference: nil } %>
 <% end %>
