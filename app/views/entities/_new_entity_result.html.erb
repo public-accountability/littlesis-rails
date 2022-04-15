@@ -1,0 +1,5 @@
+<turbo-frame id="new-entity-form">
+  <script type="text/json" id="new-entity-result-data">
+     <%= @entity.to_hash(url: true).to_json.html_safe %>
+  </script>
+</turbo-frame>

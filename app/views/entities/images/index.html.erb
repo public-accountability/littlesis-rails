@@ -1,6 +1,6 @@
-<% content_for(:page_title, raw(@entity.name + ' - Images')) %>
+<% content_for(:page_title, "#{@entity.name} - Images") %>
 
-<%= render partial: 'entities/header', locals: { entity: @entity } %>
+<%= render partial: 'entities/header2', locals: { hide_summary: true } %>
 
 <div class="row mt-3">
   <div class="col">

@@ -160,16 +160,18 @@ class NameParser
     'mackle', 'macklin', 'mackmin', 'macquarie'
   ].to_set.freeze
 
-  def initialize(str)
+  def initialize(str = '')
     @errors = []
-    if str.is_a?(String)
-      @raw = str.strip
-      @_parts = split_name(str)
-      parse
-      prettify!
-    else
-      Rails.logger.warn "NameParser called with a #{str.class}. It only accepts strings"
+    str = '' if str.nil?
+
+    unless str.is_a?(String)
+      raise Exceptions::LittleSisError, "NameParser must be initalized with a string"
     end
+
+    @raw = str.strip
+    @_parts = split_name(str)
+    parse
+    prettify!
   end
 
   def to_s
@@ -191,7 +193,7 @@ class NameParser
   end
 
   def valid?
-    @first.present? && @last.present?
+    @errors.empty?
   end
 
   def validate!
@@ -236,9 +238,9 @@ class NameParser
 
     case parts.length
     when 0
-      @errors << "Name is an empty string"
+      @errors << "is an empty string."
     when 1
-      @errors << "The name is only one word. Valid names are at least two words"
+      @errors << "is only one word. Valid names are at least two words."
       @last = parts.first
     when 2
       parse_double_word

@@ -8,7 +8,7 @@ describe 'EntityNameValidator' do
 
   subject { NameTester.new }
 
-  context 'Valid names' do
+  describe 'Valid names' do
     before do
       subject.primary_ext = 'Person'
     end
@@ -24,7 +24,7 @@ describe 'EntityNameValidator' do
     end
   end
 
-  context 'InValid names' do
+  describe 'InValid names' do
     before { subject.primary_ext = 'Person' }
 
     it 'sally is invalid' do
@@ -43,7 +43,7 @@ describe 'EntityNameValidator' do
     end
   end
 
-  context 'Orgs always have valid names' do
+  describe 'Org' do
     before { subject.primary_ext = 'Org' }
 
     it 'name is valid' do
@@ -55,6 +55,10 @@ describe 'EntityNameValidator' do
       subject.name = 'corp llc'
       expect(subject.valid?).to be true
     end
+
+    it 'ab is invalid' do
+      subject.name = 'ab'
+      expect(subject.valid?).to be false
+    end
   end
 end
-

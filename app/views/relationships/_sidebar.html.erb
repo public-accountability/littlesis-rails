@@ -11,7 +11,7 @@
 <div class="row mt-2">
   <h4>
     Source Links
-    <% if user_signed_in? %>
+    <% if user_signed_in? && current_user.editor? %>
       <a href="#add-reference-modal" data-bs-toggle="modal" >
         <i class="bi bi-plus" title="Add a source" aira-hidden="true"></i>
       </a>
@@ -23,8 +23,7 @@
   <%= render partial: 'sources', locals: {relationship: @relationship } %>
 </div>
 
-<% if @relationship.tags.present? || user_signed_in? %>
-
+<% if @relationship.tags.present? || current_user&.editor? %>
   <div data-controller="edit-tags" class="row mt-1" id="relationship-sidebar-tags" data-turbo="false">
     <h4>
       Tags

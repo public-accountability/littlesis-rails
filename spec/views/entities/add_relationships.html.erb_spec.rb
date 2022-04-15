@@ -9,7 +9,7 @@ describe 'entities/add_relationship' do
     end
 
     it 'has entity header' do
-      css '#entity-name'
+      css 'a.entity-name2'
     end
 
     it 'has add relationship title section' do
@@ -21,7 +21,7 @@ describe 'entities/add_relationship' do
     specify { css '#similar-relationships' }
     specify { css '#create-relationship-btn' }
 
-    it { is_expected.to render_template(partial: '_header') }
+    it { is_expected.to render_template(partial: '_header2') }
     it { is_expected.to render_template(partial: '_explain_categories_modal') }
   end
 end

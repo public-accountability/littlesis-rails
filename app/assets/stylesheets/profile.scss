@@ -7,8 +7,8 @@ $profile_page_fs_small: 0.8rem;
 $profile_page_fs_blurb: $profile_page_fs_small;
 $profile_page_fs_relationship: $profile_page_fs_small;
 
-#entity-profile-page {
 
+#entity-profile-page-header {
     h1, h2 {
         cursor: default;
     }
@@ -75,7 +75,9 @@ $profile_page_fs_relationship: $profile_page_fs_small;
             height: 3rem;
         }
     }
+}
 
+#entity-profile-page {
     .profile-page-content-col {}
 
     .profile-page-sidebar-col {}
@@ -106,7 +108,6 @@ $profile_page_fs_relationship: $profile_page_fs_small;
             }
         }
     }
-
 
     .profile-page-controls {
 

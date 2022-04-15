@@ -22,7 +22,7 @@ feature 'Merging entities' do
     before { visit entity_path source }
 
     context "as a non-admin user" do
-      let(:user) { create_basic_user }
+      let(:user) { create_editor }
 
       it "navigates to search page from `merge` action button" do
         click_link "merge"

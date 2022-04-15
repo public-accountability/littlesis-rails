@@ -16,7 +16,7 @@
 # DELETE  /fec/fec_matches/:id
 class FECController < ApplicationController
   before_action :authenticate_user!
-  before_action -> { current_user.role.includes?(:match_donation) }, except: %i[contributions committee candidate]
+  before_action -> { check_ability :match_donations }, except: %i[contributions committee candidate]
 
   def contributions
     render json: FECMatch.joins(:fec_contribution).where(donor_id: params[:id]).map(&:fec_contribution)

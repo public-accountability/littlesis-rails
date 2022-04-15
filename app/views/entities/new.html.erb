@@ -2,6 +2,6 @@
   <div class="col-sm-12 col-md-8">
     <h1>Add Entity</h1>
     <br>
-    <%= render partial: 'new_entity_form', locals: { form_url: url_for(action: :create) } %>
+    <%= render partial: 'new_entity_form', locals: { entity: @entity } %>
   </div>
 </div>

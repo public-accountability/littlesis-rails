@@ -1,103 +1,94 @@
-<!--
-     This form is used in two places: the /entities/new and / entities/:id/add_relationship
- -->
+<%#
+This form is used in two places: the /entities/new and / entities/:id/add_relationship
+required local variable = entity
+%>
+<turbo-frame id="new-entity-form">
+  <div data-controller="new-entity-form">
+    <%= form_for(entity, url: "/entities") do |f| %>
+      <% if entity.errors.any? %>
+        <div id="error_explanation" class="alert alert-warning">
+	  <%= pluralize(entity.errors.count, "error") %> prohibited this entity from being saved:
+	  <ul>
+	    <% entity.errors.full_messages.each do |msg| %>
+	      <li><%= msg %></li>
+	    <% end %>
+	  </ul>
+        </div>
+      <% end %>
 
-<!-- This initial logic ensures that the variable entity is set correctly depending on which page the from is being used for -->
+      <%# if add_relationship %>
+      <%#= hidden_field_tag :add_relationship_page, 'TRUE' %>
+      <%# end %>
 
-<% add_relationship = false if local_assigns[:add_relationship].nil? %>
-<% if @entity.nil? || add_relationship %>
-    <% entity = Entity.new %>
-<% else%>
-    <% entity = @entity %>
-<% end %>
+      <div>
+        <%= f.label "Name", for: :entity_name, class: 'form-label' %>
+        <%= f.text_field :name,
+           class: "form-control",
+           placeholder: "example: Jesse L Jackson, Jr",
+           required: true,
+           data: {
+             'action' => 'input->new-entity-form#typingEntityName',
+             'new-entity-form-target' => 'nameInput'
+           }
+        %>
+      </div>
 
-<div data-controller="new-entity-form">
-  <%= form_for(entity, url: form_url) do |f| %>
-    <% if entity.errors.any? %>
-      <div id="error_explanation" class="alert alert-warning">
-	<%= pluralize(entity.errors.count, "error") %> prohibited this entity from being saved:
+      <div class="mt-2">
+        <%= f.label "Short description", for: :entity_blurb, class: 'form-label' %>
+        <%= f.text_field :blurb, class: "form-control", placeholder: "a short sentence or phrase", pattern: '.{0,200}', title: "Enter a blurb less than 200 characters" %>
+      </div>
 
-	<ul class="list-unstyled">
-	  <% entity.errors.each do |attr, msg| %>
-	    <li><%= (attr == :primary_ext ? :type : attr).to_s.capitalize %> <%= msg %></li>
-	  <% end %>
-	</ul>
+      <br>
+      <%= f.label "Type", class: 'form-label' %>
+      <br>
+
+      <label class="radio-inline">
+        <%= f.radio_button :primary_ext, "Person", data: { 'action' => 'change->new-entity-form#selectPrimaryExt' }, autocomplete: 'off' %> Person
+      </label>
+
+      <label class="radio-inline">
+        <%= f.radio_button :primary_ext, "Org", data: { 'action' => 'change->new-entity-form#selectPrimaryExt' }, autocomplete: 'off' %> Org
+      </label>
+      <br>
+      <br>
+
+      <div data-new-entity-form-target="otherTypes" style="display: none;">
+        <%= f.label "Other types", class: 'form-label' %>
+        <br>
+      </div>
+
+      <div data-new-entity-form-target="personTypes" style="display: none;">
+        <% ExtensionDefinition.person_types.each do |type| %>
+	  <div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
+        <% end %>
+        <br>
+        <br>
+      </div>
+
+      <div data-new-entity-form-target="orgTypes" style="display: none;">
+        <% ExtensionDefinition.org_types.each do |type| %>
+	  <div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
+        <% end %>
+        <br>
+        <br>
+      </div>
+
+      <div data-new-entity-form-target="warning" class="alert alert-warning" style="display: none;">
+        <span>Valid names are at least two words</span>
+      </div>
+
+      <div class="actions">
+        <%= f.submit "Add", class: "btn btn-primary" %>
       </div>
     <% end %>
 
-    <% if add_relationship %>
-      <%= hidden_field_tag :add_relationship_page, 'TRUE' %>
-    <% end %>
 
-    <div>
-      <%= f.label "Name*", for: :entity_name %>
-      <%= f.text_field :name,
-            class: "form-control",
-             placeholder: "example: Jesse L Jackson, Jr",
-             data: {
-               'action' => 'input->new-entity-form#typingEntityName',
-               'new-entity-form-target' => 'nameInput'
-           }
-      %>
-    </div>
-
-    <div class="mt-2">
-      <%= f.label "Short description", for: :entity_blurb %>
-      <%= f.text_field :blurb, class: "form-control", placeholder: "a short sentence or phrase", pattern: '.{0,200}', title: "Enter a blurb less than 200 characters" %>
-    </div>
-
-    <br>
-    <%= f.label "Type*" %>
-    <br>
-
-    <label class="radio-inline">
-      <%= f.radio_button :primary_ext, "Person", data: { 'action' => 'change->new-entity-form#selectPrimaryExt' } %> Person
-    </label>
-
-    <label class="radio-inline">
-      <%= f.radio_button :primary_ext, "Org", data: { 'action' => 'change->new-entity-form#selectPrimaryExt' } %> Org
-    </label>
-    <br>
-    <br>
-
-    <div data-new-entity-form-target="otherTypes" style="display: none;">
-      <%= f.label "Other types" %>
+    <div data-new-entity-form-target="wait" style="display: none;" class="mt-2">
+      <h3>Wait! Does this entity already exist?</h3>
+      <div data-new-entity-form-target="existing">
+      </div>
       <br>
     </div>
 
-    <div data-new-entity-form-target="personTypes" style="display: none;">
-      <% ExtensionDefinition.person_types.each do |type| %>
-	<div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
-      <% end %>
-      <br>
-      <br>
-    </div>
-
-    <div data-new-entity-form-target="orgTypes" style="display: none;">
-      <% ExtensionDefinition.org_types.each do |type| %>
-	<div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
-      <% end %>
-      <br>
-      <br>
-    </div>
-
-    <div data-new-entity-form-target="warning" class="alert alert-warning" style="display: none;">
-      <span>Valid names are at least two words</span>
-    </div>
-
-    <div class="actions">
-      <%= f.submit "Add", class: "btn btn-primary" %>
-    </div>
-
-
-  <% end %>
-
-
-  <div data-new-entity-form-target="wait" style="display: none;" class="mt-2">
-    <h3>Wait! Does this entity already exist?</h3>
-    <div data-new-entity-form-target="existing">
-    </div>
-    <br>
   </div>
-
-</div>
+</turbo-frame>

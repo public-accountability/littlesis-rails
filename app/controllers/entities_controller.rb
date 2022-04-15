@@ -61,16 +61,37 @@ class EntitiesController < ApplicationController
   end
 
   def new
-    @entity = Entity.new(name: params[:name]) if params[:name].present?
+    @entity = Entity.new(name: params[:name].presence)
+    if turbo_frame_request?
+      render partial: 'new_entity_form', locals: { entity: @entity }
+    end
   end
 
   def create
     @entity = Entity.new(new_entity_params)
 
-    if wants_json_response?
-      handle_json_creation
+    if @entity.save
+      add_extensions
+    end
+
+    json_requested = params[:add_relationship_page].present? || request.format.json?
+
+    if @entity.persisted?
+      if json_requested
+        render json: json_success_response
+      elsif turbo_frame_request?
+        render partial: 'new_entity_result'
+      else
+        redirect_to concretize_edit_entity_path(@entity)
+      end
     else
-      handle_creation
+      if json_requested
+        render json: { status: 'ERROR', errors: @entity.errors.messages }
+      elsif turbo_frame_request?
+        render partial: 'new_entity_form', locals: { entity: @entity }
+      else
+        render 'new'
+      end
     end
   end
 
@@ -138,28 +159,6 @@ class EntitiesController < ApplicationController
     params
       .require('data')
       .map { |r| r.permit('attributes' => %w[name blurb primary_ext])['attributes'] }
-  end
-
-  def wants_json_response?
-    params[:add_relationship_page].present? || params[:external_entity_page].present?
-  end
-
-  def handle_creation
-    if @entity.save
-      add_extensions
-      redirect_to concretize_edit_entity_path(@entity)
-    else
-      render action: 'new'
-    end
-  end
-
-  def handle_json_creation
-    if @entity.save
-      add_extensions
-      render json: json_success_response
-    else
-      render json: { status: 'ERROR', errors: @entity.errors.messages }
-    end
   end
 
   def add_extensions

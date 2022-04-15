@@ -1,5 +1,14 @@
+<%#
+Header with actions and summary
+required instance variable @entity
+optional locals: hide_actions & hide_summary
+
+%>
+
 <% if @active_tab.present? && @active_tab != :relationships %>
   <% content_for(:page_title, "#{@entity.name} - #{@active_tab.to_s.capitalize}") %>
+<% elsif controller.action_name = 'add_relationship' %>
+  <% content_for(:page_title, "#{@entity.name} - Add Relationship") %>
 <% else %>
   <% content_for(:page_title, @entity.name) %>
 <% end %>
@@ -7,9 +16,9 @@
 <% content_for :head do %>
   <%= og_tags(title: "LittleSis: #{@entity.name}", url: entity_url(@entity), image: @entity.featured_image_url) %>
   <%= stylesheet_link_tag "profile", media: "all" %>
-<% end  %>
+<% end %>
 
-<div id="entity-profile-page">
+<div id="entity-profile-page-header">
   <div class="row mt-2">
     <div class="col">
       <h1>
@@ -23,7 +32,7 @@
       <h5 class="entity-blurb-text d-inline-block" data-profile--editable-blurb-target="blurb">
         <%= @entity.blurb %>
       </h5>
-      <% if user_signed_in? %>
+      <% if user_signed_in? && current_user.editor? %>
         <div class="d-inline-block ms-2">
           <i class="bi bi-pencil-fill" aria-hidden="true"
              data-profile--editable-blurb-target="pencil"
@@ -34,19 +43,24 @@
     </div>
   </div>
 
-  <% if user_signed_in? %>
-    <%= render partial: 'actions' %>
+  <% unless local_assigns[:hide_actions] %>
+    <% if user_signed_in? && current_user.editor? %>
+      <%= render partial: 'entities/actions' %>
+    <% end %>
   <% end %>
 
-  <% if @entity.summary.present? %>
-    <div class="row mt-2">
-      <div class="col-12 col-md-8">
-        <div id="profile-page-entity-summary-container" class="position-relative" data-controller="profile--entity-summary">
-          <p class="collapse" id="profile-page-entity-summary" aria-expanded="false">
-            <%= @entity.summary %>
-            <a role="button" class="collapsed" data-bs-toggle="collapse" href="#profile-page-entity-summary" aria-expanded="false" aria-controls="profile-page-entity-summary"></a>
-          </p>
+  <% unless local_assigns[:hide_summary] %>
+    <% if @entity.summary.present? %>
+      <div class="row mt-2">
+        <div class="col-12 col-md-8">
+          <div id="profile-page-entity-summary-container" class="position-relative" data-controller="profile--entity-summary">
+            <p class="collapse" id="profile-page-entity-summary" aria-expanded="false">
+              <%= @entity.summary %>
+              <a role="button" class="collapsed" data-bs-toggle="collapse" href="#profile-page-entity-summary" aria-expanded="false" aria-controls="profile-page-entity-summary"></a>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    <% end %>
   <% end %>
+</div>

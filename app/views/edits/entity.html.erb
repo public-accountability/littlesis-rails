@@ -1,13 +1,12 @@
 <% content_for(:page_title, "Edits: #{@entity.name}") %>
-<%= render partial: 'entities/header', locals: { entity: @entity } %>
-<%= render partial: 'entities/actions', locals: { entity: @entity } %>
+<%= render partial: 'entities/header2', locals: { entity: @entity } %>
 
 <%= cache ['entity_history', @entity.cache_key_with_version, @page ] do %>
 
   <% versions = EntityHistory.new(@entity).versions(page: @page).as_presenters %>
 
   <div class="row">
-    <div class="col-sm-12 nopadding">
+    <div class="col-12">
       <div id="record-history-container">
 	<div>
 	  <h4>
