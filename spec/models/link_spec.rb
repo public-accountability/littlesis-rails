@@ -24,12 +24,12 @@ describe Link, type: :model do
     let(:root) { create(:entity_person) }
     let(:entities) do
       {
-        'a' => create(:entity_org, name: 'a'),
-        'b' => create(:entity_org, name: 'b'),
-        'c' => create(:entity_org, name: 'c'),
-        'd' => create(:entity_org, name: 'd'),
-        'x' => create(:entity_org, name: 'x'),
-        'y' => create(:entity_org, name: 'y')
+        'a' => create(:entity_org, name: 'aaa'),
+        'b' => create(:entity_org, name: 'bbb'),
+        'c' => create(:entity_org, name: 'ccc'),
+        'd' => create(:entity_org, name: 'ddd'),
+        'x' => create(:entity_org, name: 'xxx'),
+        'y' => create(:entity_org, name: 'yyy')
       }
     end
 
