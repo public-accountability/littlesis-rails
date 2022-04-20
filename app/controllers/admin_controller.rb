@@ -50,7 +50,7 @@ class AdminController < ApplicationController
   # PATCH /admin/role_upgrade_requests/:id
   def update_role_upgrade_request
     request = RoleUpgradeRequest.find(params[:id])
-    case params.require(:action)
+    case params.require(:status)
     when 'approve'
       request.approve!
     when 'deny'
