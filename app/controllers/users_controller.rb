@@ -33,6 +33,27 @@ class UsersController < ApplicationController
     redirect_to user_role_request_path(username: current_user.username)
   end
 
+  # Turbo Frame GET /users/action_network
+  def action_network
+    @activist = ActionNetwork::Activist.new(current_user.email)
+    render partial: 'action_network'
+  end
+
+  # POST /users/action_network/:subscription (subscribe|unsubscribe)
+  def action_network_subscription
+    @activist = ActionNetwork::Activist.new(current_user.email)
+    @activist.public_send params[:subscription]
+    render json: { status: 'ok', subscribed: @activist.subscribed? }
+  end
+
+  # POST /users/action_network/tag
+  #  { status: Boolean, tag: String }
+  def action_network_tag
+    @activist = ActionNetwork::Activist.new(current_user.email)
+    @activist.public_send(params.require(:status) ? 'add' : 'remove', params.require(:tag).to_sym)
+    render json: { status: 'ok', tags: @activist.tags }
+  end
+
   # GET /users/check_username
   def check_username
     render json: { username: params.require(:username),

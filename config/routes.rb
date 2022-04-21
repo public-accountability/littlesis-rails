@@ -28,6 +28,11 @@ LittleSis::Application.routes.draw do
     put '/users/settings' => 'users/registrations#update_settings'
   end
 
+  get '/users/action_network' => 'users#action_network'
+  post '/users/action_network/:subscription' => 'users#action_network_subscription',
+       constraints: { subscription: /(subscribe|unsubscribe)/ }
+  post '/users/action_network/tag' => 'users#action_network_tag'
+
   get '/join/success' => 'users#success'
   post '/users/check_username' => 'users#check_username'
   get '/users/:username' => 'users#show', as: :user_page
@@ -35,6 +40,7 @@ LittleSis::Application.routes.draw do
   get '/users/:username/maps' => 'maps#user', as: :user_maps
   get '/users/:username/role_request' => 'users#role_request', as: :user_role_request
   post '/users/:username/role_request' => 'users#create_role_request'
+
 
   resources :contact, only: [:index, :create]
 
