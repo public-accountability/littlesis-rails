@@ -91,6 +91,7 @@ en:
     data: data
     death_date: death date
     delete: delete
+    description: description
     details: details
     disclaimer: Disclaimer
     donate: donate
@@ -153,6 +154,8 @@ en:
     advanced_tools: "Advanced Tools"
     a_project_of: "a project of"
     add_a_new_entity: "Click here to create a new entity"
+    create_new_entity: "Add Entity"
+    create_new_relationship: "Create a new relationship"
     click_to_add: "Click here"
     contact_us: "Contact Us"
     add_a_relationship: "to add a relationship"
@@ -210,6 +213,8 @@ en:
     add_relationship: add relationship
     network_maps: "Network Maps"
     remember_me: "Remember me"
+    short_sentence: "a short sentence or phrase"
+    enter_a_blurb: "Enter a blurb less than 200 characters"
 
   pages:
     tags: "Tags allow contributors to thematically group people, organizations, lists, and relationships on LittleSis. Below is a list of all the tags on the site. Don't see a tag you want to use? Use this form to request it!"

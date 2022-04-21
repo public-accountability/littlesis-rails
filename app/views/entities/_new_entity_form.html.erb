@@ -21,7 +21,7 @@ required local variable = entity
       <%# end %>
 
       <div>
-        <%= f.label "Name", for: :entity_name, class: 'form-label' %>
+        <%= f.label t('vocab.name').capitalize, for: :entity_name, class: 'form-label' %>
         <%= f.text_field :name,
            class: "form-control",
            placeholder: "example: Jesse L Jackson, Jr",
@@ -34,8 +34,8 @@ required local variable = entity
       </div>
 
       <div class="mt-2">
-        <%= f.label "Short description", for: :entity_blurb, class: 'form-label' %>
-        <%= f.text_field :blurb, class: "form-control", placeholder: "a short sentence or phrase", pattern: '.{0,200}', title: "Enter a blurb less than 200 characters" %>
+        <%= f.label t('vocab.description').capitalize, for: :entity_blurb, class: 'form-label' %>
+        <%= f.text_field :blurb, class: "form-control", placeholder: t('phrases.short_sentence'), pattern: '.{0,200}', title: t('phrases.enter_a_blurb') %>
       </div>
 
       <br>
@@ -78,7 +78,7 @@ required local variable = entity
       </div>
 
       <div class="actions">
-        <%= f.submit "Add", class: "btn btn-primary" %>
+        <%= f.submit t('vocab.add').capitalize, class: "btn btn-primary" %>
       </div>
     <% end %>
 

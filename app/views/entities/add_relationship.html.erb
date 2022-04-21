@@ -12,12 +12,12 @@
   <div class="row" data-relationship-creator-target="searchContainer">
     <div class="d-flex flex-column">
       <h2  title="Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.">
-        Create a new relationship
+        <%= t('phrases.create_new_relationship') %>
       </h2>
 
       <div class="input-group" style="max-width: 400px;">
-        <input type="text" class="form-control" data-relationship-creator-target="search" placeholder="Name" aria-label="Name to search" id="add-relationship-search-input">
-        <button class="btn btn-primary" type="button" data-action="click->relationship-creator#search" id="add-relationship-search-btn">Search</button>
+        <input type="text" class="form-control" data-relationship-creator-target="search" placeholder="<%= t('vocab.name').capitalize %>" aria-label="Name to search" id="add-relationship-search-input">
+        <button class="btn btn-primary" type="button" data-action="click->relationship-creator#search" id="add-relationship-search-btn"><%= t('vocab.search').capitalize %></button>
       </div>
     </div>
   </div>
