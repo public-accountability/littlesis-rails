@@ -47,7 +47,7 @@ class JSONRequest
   # @return [Hash]
   def delete(url, data = {})
     uri = URI.parse(url)
-    req = create_request(request(uri, :Delete))
+    req = create_request(uri, :Delete)
     req.body = data.to_json
     http(uri, req)
   end

@@ -58,7 +58,7 @@ module ActionNetwork
       return if subscribed?
 
       if in_action_network?
-        HTTP.put(endpoint, { "email_addresses" => [{ "status" => "subscribed" }] })
+        @info = HTTP.put(endpoint, { "email_addresses" => [{ "status" => "subscribed" }] })
       else
         @info = ActionNetwork.signup(@email)
       end
@@ -67,7 +67,7 @@ module ActionNetwork
     def unsubscribe
       return unless subscribed?
 
-      HTTP.put(endpoint, { "email_addresses" => [{ "status" => "unsubscribed" }] })
+      @info = HTTP.put(endpoint, { "email_addresses" => [{ "status" => "unsubscribed" }] })
     end
 
     def add(list)
@@ -78,6 +78,7 @@ module ActionNetwork
       url = "#{TAGS_URL}/#{TAGS.dig(list, :id)}/taggings"
       data = { '_links' => { 'osdi:person' => endpoint } }
       HTTP.post(url, data)
+      @taggings = nil
     end
 
     def remove(list)
@@ -90,6 +91,7 @@ module ActionNetwork
               .dig('_links', 'self', 'href')
 
       HTTP.delete(url)
+      @taggings = nil
     end
 
     private

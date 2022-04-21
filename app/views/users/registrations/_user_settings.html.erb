@@ -38,6 +38,12 @@
   <% end %>
 </div>
 
+<div data-turbo="true">
+  <%= turbo_frame_tag "action_network" do %>
+    <a href="/users/action_network">Check your newsletter subscriptions</a>
+  <% end %>
+</div>
+
 <% if current_user.role.name == 'user' %>
   <div class="mt-2">
     <p>

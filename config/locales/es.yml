@@ -70,6 +70,7 @@ es:
     help: ayuda
     alias: alias
     citations: citas
+    description: descripción
     disclaimer: Descargo de Responsabilidad
     donate: donar
     donation: donación
@@ -113,6 +114,8 @@ es:
   phrases:
     a_project_of: "un proyecto de"
     add_a_new_entity: "Haga click aquí para crear una nueva entidad"
+    create_new_entity: "Crear Entidad"
+    create_new_relationship: "Añadir una nueva conexión"
     click_to_add: "Haga click aquí"
     add_a_relationship: "para añadir una conexión"
     add_bulk: bulk
