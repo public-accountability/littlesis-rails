@@ -42,4 +42,23 @@ describe 'Users' do
       expect(response.location).to include '/settings'
     end
   end
+
+  describe 'rate limit for action network' do
+    let(:user) { create_basic_user }
+
+    before do
+      login_as(user, :scope => :user)
+      allow(ActionNetwork::Activist).to receive(:new).and_return(double(:subscribe => true, :subscribed? => true))
+    end
+
+    after { logout(:user) }
+
+    specify do
+      10.times { post "/users/action_network/subscribe" }
+      expect(response.status).to eq 200
+      expect(Rails.cache.fetch("action_network_rate_limit/#{user.id}")).to eq 10
+      post "/users/action_network/subscribe"
+      expect(response.status).to eq 429
+    end
+  end
 end

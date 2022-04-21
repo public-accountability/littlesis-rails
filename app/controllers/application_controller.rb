@@ -59,6 +59,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  rescue_from Exceptions::RateLimitExceededError do |e|
+    render json: { status: 'error', message: 'Too Many Requests' }, status: :too_many_requests
+  end
+
   def admins_only
     raise Exceptions::PermissionError unless current_user&.admin?
   end

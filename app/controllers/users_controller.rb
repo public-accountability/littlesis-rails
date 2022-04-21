@@ -2,6 +2,7 @@
 
 class UsersController < ApplicationController
   before_action :authenticate_user!, :block_restricted_user_access, except: [:success, :check_username]
+  before_action :rate_limit, only: [:action_network, :action_network_subscription, :action_network_tag]
   before_action :set_user, only: [:show, :edits, :role_request, :create_role_request]
   before_action :user_only, only: [:role_request, :create_role_request]
   before_action :user_or_admins_only, only: [:edits]
@@ -81,5 +82,9 @@ class UsersController < ApplicationController
 
   def user_or_admins_only
     raise Exceptions::PermissionError unless (current_user == @user) || current_user.admin?
+  end
+
+  def rate_limit
+    RateLimiter.rate_limit "action_network_rate_limit/#{current_user.id}", limit: 10
   end
 end

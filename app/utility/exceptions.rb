@@ -16,6 +16,7 @@ module Exceptions
   class HTTPRequestFailedError < LittleSisError; end
   class MissingAttachmentError < LittleSisError; end
   class DepreciatedError < LittleSisError; end
+  class RateLimitExceededError < LittleSisError; end
 
   class CannotRestoreError < LittleSisError
     def message
