@@ -39,7 +39,8 @@ gem 'stimulus-rails'
 # gem 'jsbundling-rails'
 
 # Search
-gem 'thinking-sphinx', '~> 5.1'
+# gem 'thinking-sphinx', '~> 5.1'
+gem 'thinking-sphinx', git: 'https://github.com/pat/thinking-sphinx', ref: '150f2ed6cb1a3dfdb1544818d833abb419be3a96'
 
 # handle currencies etc
 gem 'money'
