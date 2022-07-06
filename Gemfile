@@ -27,7 +27,7 @@ gem 'paper_trail'
 
 # Pagination
 gem 'kaminari'
-gem 'good_job', '>= 2.6.2'
+gem 'good_job', '~> 2.99'
 
 # Assets and images
 gem 'image_processing'
