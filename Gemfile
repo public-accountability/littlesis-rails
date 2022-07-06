@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '7.0.2.3'
+gem 'rails', '7.0.3'
 
 gem 'pg'
 gem 'mysql2', '~> 0.5.2'
@@ -27,7 +27,7 @@ gem 'paper_trail'
 
 # Pagination
 gem 'kaminari'
-gem 'good_job', '~> 2.99'
+gem 'good_job'
 
 # Assets and images
 gem 'image_processing'
