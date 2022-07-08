@@ -62,3 +62,10 @@ services:
       - ./log:/var/log/nginx
     links:
       - app
+
+  title_extractor:
+    image: title-extractor:latest
+    build: ./lib/title-extractor
+    profiles: ["title_extractor"]
+    ports:
+       - "127.0.0.1:8888:8888"

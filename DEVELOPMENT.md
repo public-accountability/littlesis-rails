@@ -49,6 +49,8 @@ Open rails console: `littlesis console`
     - index: `littlesis rake ts:index`
     - reconfigure: `littlesis rake ts:rebuild`
 
+Start title extractor service: `docker-compose --profile title_extractor up -d`
+
 Clear logs:  `littlesis rake log:clear`
 
 Clear cache: `littlesis runner Rails.cache.clear`
