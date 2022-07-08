@@ -4,6 +4,9 @@
   "description": "HTTP server to extract titles from remote web documents",
   "main": "index.js",
   "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "node-fetch": "^3.2.6"
