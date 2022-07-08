@@ -72,7 +72,7 @@ doc/
 !/data/fec_transaction_types.csv
 
 # javascript
-/node_modules
+node_modules
 !/package.json
 !/package-lock.json
 
