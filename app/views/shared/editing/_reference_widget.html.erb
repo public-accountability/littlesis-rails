@@ -50,7 +50,7 @@ Also see controllers/reference_widget_controller.js
           <label class="col-form-label">Url</label>
         </div>
         <div class="col-auto mw-2">
-          <input class="form-control" type="url" name="reference[url]" data-reference-widget-target="newDocumentInput" />
+          <input class="form-control" type="url" name="reference[url]" data-reference-widget-target="newDocumentInput newDocumentUrl" />
         </div>
       </div>
 
@@ -59,7 +59,12 @@ Also see controllers/reference_widget_controller.js
           <label class="col-form-label"><%= t('vocab.name').capitalize %></label>
         </div>
         <div class="col-auto mw-2">
-          <input class="form-control" type="text" name="reference[name]" data-reference-widget-target="newDocumentInput" />
+          <input class="form-control" type="text" name="reference[name]" data-reference-widget-target="newDocumentInput newDocumentName" />
+        </div>
+        <div class="col-1 ps-0">
+          <button class="btn bg-transparent" data-action="reference-widget#titleExtractor" data-reference-widget-target="titleExtractorButton" role="button">
+            <i class="bi bi-cloud-download pe-none" ></i>
+          </button>
         </div>
       </div>
 
