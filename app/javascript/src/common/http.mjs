@@ -4,6 +4,7 @@ class RequestFailureError extends Error {
   constructor(status) {
     super(`response failed with status code: ${status}`)
     this.name = "RequestFailureError"
+    this.status = status
   }
 }
 

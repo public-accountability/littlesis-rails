@@ -1,4 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
+import { get } from '../src/common/http.mjs'
+
 
 const select2Configuration = {
   "minimumResultsForSearch": 10,
@@ -11,8 +13,11 @@ export default class extends Controller {
                     "existingSource",
                     "newDocument",
                     "newDocumentInput",
+                    "newDocumentUrl",
+                    "newDocumentName",
                     "newReferenceButton",
-                    "justCleaningUp"]
+                    "justCleaningUp",
+                    "titleExtractorButton"]
 
   connect() {
     $(this.selectTarget).select2(select2Configuration)
@@ -53,4 +58,38 @@ export default class extends Controller {
     }
     this.newDocumentInputTargets.map(elem => elem.required = false)
   }
+
+  titleExtractor(event) {
+    event.preventDefault()
+    event.target.blur()
+
+    const icon = event.target.querySelector('i')
+
+    if (icon && icon.classList.contains('bi-cloud-download')) {
+      if (this.newDocumentUrlTarget.value.slice(0,4).toLowerCase() !== 'http') {
+        this.newDocumentInputTarget.focus()
+        return
+      }
+
+      icon.remove()
+      this.titleExtractorButtonTarget.innerHTML = '<div class="spinner-border spinner-border-sm" role="status">'
+      this.fetchTitle()
+    }
+  }
+
+  fetchTitle() {
+    const url = this.newDocumentUrlTarget.value
+
+    get(`/title_extractor/${url}`)
+      .then(json => {
+        this.newDocumentNameTarget.value = json.title
+        this.titleExtractorButtonTarget.innerHTML = '<i class="bi bi-check-lg" ></i>'
+      })
+      .catch( err => {
+        console.error(err)
+        this.titleExtractorButtonTarget.innerHTML = '<i class="bi bi-x-lg" ></i>'
+      })
+      .finally(() => $(this.titleExtractorButtonTarget).fadeOut(2000, () => this.titleExtractorButtonTarget.remove()))
+  }
+
 }
