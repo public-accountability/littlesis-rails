@@ -125,7 +125,7 @@ class List < ApplicationRecord
               .where("le.list_id = #{id}")
               .where("links.category_id IN (#{options[:category_ids].join(', ')})")
               .group("entities.id")
-              .order((options[:sort] == :num ? "num_entities" : "total_amount") + " DESC")
+              .order((options[:sort] == :num ? "num_entities" : "total_amount") + " DESC NULLS LAST")
 
     unless options[:order].nil?
       query = query.where("links.is_reverse IS #{options[:order] == 2 ? 'TRUE' : 'FALSE'}")
