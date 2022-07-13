@@ -41,6 +41,8 @@ LittleSis::Application.routes.draw do
   get '/users/:username/role_request' => 'users#role_request', as: :user_role_request
   post '/users/:username/role_request' => 'users#create_role_request'
 
+  get 'newsletters/status'
+  post 'newsletters/email_status'
 
   resources :contact, only: [:index, :create]
 

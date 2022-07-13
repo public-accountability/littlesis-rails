@@ -1,0 +1,13 @@
+<% if params[:submitted] %>
+  <p>An email will arrive within a few minutes with your subscription status</p>
+<% else %>
+  <div class="col-6">
+    <%= form_with url: newsletters_email_status_path, scope: :newsletter do |form| %>
+      <div class="mb-3">
+        <%= form.label :email, "Check your LittleSis newsletter subscriptions", class: "form-label" %>
+        <%= form.email_field :email, placeholder: "Enter email", class: "form-control", required: true %>
+      </div>
+      <%= form.submit "Submit", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+<% end %>
