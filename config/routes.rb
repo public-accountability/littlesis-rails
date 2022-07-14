@@ -43,6 +43,8 @@ LittleSis::Application.routes.draw do
 
   get 'newsletters/signup'
   post 'newsletters/signup' => 'newsletters#signup_action'
+  get 'newsletters/confirmation/:secret' => 'newsletters#confirmation',
+      constraints: { secret: /[[:xdigit:]]{32}/ }
 
   resources :contact, only: [:index, :create]
 
