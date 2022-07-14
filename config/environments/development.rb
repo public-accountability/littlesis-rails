@@ -38,6 +38,8 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = false
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.preview_path = Rails.root.join("spec/mailers/previews")
+
   config.active_storage.service = :local
 
   # Uncomment if you wish to allow Action Cable access from any origin.

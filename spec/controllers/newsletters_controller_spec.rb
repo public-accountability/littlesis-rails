@@ -1,4 +1,4 @@
 describe NewslettersController, type: :controller do
-  it { is_expected.to route(:get, '/newsletters/status').to(action: :status) }
-  it { is_expected.to route(:post, '/newsletters/email_status').to(action: :email_status) }
+  it { is_expected.to route(:get, '/newsletters/signup').to(action: :signup) }
+  it { is_expected.to route(:post, '/newsletters/signup').to(action: :signup_action) }
 end

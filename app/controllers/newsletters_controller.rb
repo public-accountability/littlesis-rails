@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 class NewslettersController < ApplicationController
-  def status
+  def signup
   end
 
-  def email_status
-    RateLimiter.rate_limit "newsletter_email_count/#{request.remote_ip}"
-
-    # send email...
-
-    redirect_to newsletters_status_path(submitted: true)
+  def signup_action
+    RateLimiter.rate_limit "newsletter_sigup_count/#{request.remote_ip}"
+    permitted = params.require(:newsletters).permit(:email, tags: [])
+    NewsletterSignupConfirmationService.run(permitted.fetch(:email), permitted.fetch(:tags))
+    redirect_to :signup, params: { c: true }
   end
 end

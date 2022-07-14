@@ -1,0 +1,33 @@
+<% if params[:c] %>
+  <div class="row">
+    <p>Thank you! Please check your email shortly and <b>click on the confirmation link</b> to confirm your subscription.</p>
+  </div>
+<% else %>
+  <div class="row">
+    <div class="col-12 col-sm-8">
+      <p><b>Subscribe to our newsletters!</b> We send out a general newsletter with updates on our work and research every few months. We also send out a technology-focused newsletter about our tools and training quaretly.</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 col-sm-6">
+      <%= form_with url: newsletters_signup_path, scope: :newsletters do |form| %>
+
+        <div class="mb-3">
+          <%= form.label :email, "Your Email Address", class: "form-label" %>
+          <%= form.email_field :email, placeholder: "Enter email", class: "form-control", required: true %>
+        </div>
+
+        <div class="mb-3">
+          <%= check_box_tag :'newsletters[tags][]', 'newsletter', id: 'newsletters_tags_newsletter', checked: true %>
+          <%= label_tag "newsletters_tags_newsletter", "General",class: "form-label" %>
+          <br/>
+          <%= check_box_tag :'newsletters[tags][]', 'tech', id: 'newsletters_tags_newsletter', checked: true %>
+          <%= label_tag "newsletters_tags_tag", "Technology", class: "form-label" %>
+        </div>
+
+        <%= form.submit "Submit", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
