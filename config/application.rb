@@ -59,6 +59,10 @@ module LittleSis
     config.assets.css_compressor = :sass
     config.assets.js_compressor = false
 
+    config.generators do |g|
+      g.test_framework :rspec, view_specs: false, controller_specs: true
+    end
+
     config.good_job.cron = {
       update_link_counts: {
         cron: "30 4 * * *", # at 4:30am every day

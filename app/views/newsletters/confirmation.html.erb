@@ -1,0 +1,11 @@
+<div class="row pt-4" style="min-height: 200px">
+  <div class="col-12 col-6" >
+    <% if @confirmed %>
+      <p>
+        You are now subscribed!  Visit our <%= link_to "homepage", '/' %> or read our research on <%= link_to "Eyes on the Ties", "https://news.littlesis.org" %>
+      </p>
+    <% else %>
+      <p><b><span><i class="bi bi-exclamation-circle"></i></span> The link appears to be expired or invalid</b>. You might try <%= link_to "signing up", newsletters_signup_path %> again or <%= link_to "contacting us", "/contact" %>.
+    <% end %>
+  </div>
+</div>

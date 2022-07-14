@@ -41,6 +41,10 @@ LittleSis::Application.routes.draw do
   get '/users/:username/role_request' => 'users#role_request', as: :user_role_request
   post '/users/:username/role_request' => 'users#create_role_request'
 
+  get 'newsletters/signup'
+  post 'newsletters/signup' => 'newsletters#signup_action'
+  get 'newsletters/confirmation/:secret' => 'newsletters#confirmation',
+      constraints: { secret: /[[:xdigit:]]{32}/ }
 
   resources :contact, only: [:index, :create]
 
