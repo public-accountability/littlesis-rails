@@ -7,9 +7,14 @@ class NewslettersController < ApplicationController
   def signup_action
     RateLimiter.rate_limit "newsletter_sigup_count/#{request.remote_ip}"
     permitted = params.require(:newsletters).permit(:email, tags: [])
-    confirmation_link = NewslettersConfirmationLink.create(permitted.fetch(:email), permitted.fetch(:tags))
-    NewsletterMailer.confirmation_email(confirmation_link).deliver_later
-    redirect_to :signup, params: { c: true }
+    confirmation_link = NewslettersConfirmationLink
+                          .create(permitted.fetch(:email), permitted.fetch(:tags))
+    NewsletterMailer
+      .with(email: confirmation_link.email, url: confirmation_link.url)
+      .confirmation_email
+      .deliver_later
+
+    redirect_to newsletters_signup_url(params: { c: true })
   end
 
   def confirmation

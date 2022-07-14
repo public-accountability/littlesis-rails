@@ -11,7 +11,7 @@
 
   <div class="row">
     <div class="col-12 col-sm-6">
-      <%= form_with url: newsletters_signup_path, scope: :newsletters do |form| %>
+      <%= form_with url: newsletters_signup_path, scope: :newsletters, id: 'newsletters_signup' do |form| %>
 
         <div class="mb-3">
           <%= form.label :email, "Your Email Address", class: "form-label" %>
@@ -19,11 +19,11 @@
         </div>
 
         <div class="mb-3">
-          <%= check_box_tag :'newsletters[tags][]', 'newsletter', id: 'newsletters_tags_newsletter', checked: true %>
-          <%= label_tag "newsletters_tags_newsletter", "General",class: "form-label" %>
+          <%= check_box_tag :'newsletters[tags][]', 'newsletter', true, id: 'newsletters_tags_newsletter' %>
+          <%= label_tag "newsletters_tags_newsletter", "General", class: "form-label" %>
           <br/>
-          <%= check_box_tag :'newsletters[tags][]', 'tech', id: 'newsletters_tags_newsletter', checked: true %>
-          <%= label_tag "newsletters_tags_tag", "Technology", class: "form-label" %>
+          <%= check_box_tag :'newsletters[tags][]', 'tech', true, id: 'newsletters_tags_tech' %>
+          <%= label_tag "newsletters_tags_tech", "Technology", class: "form-label" %>
         </div>
 
         <%= form.submit "Submit", class: "btn btn-primary" %>
