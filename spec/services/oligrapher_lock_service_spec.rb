@@ -9,7 +9,7 @@ describe 'OligrapherLockSerivce' do
           user_id: user_one.id,
           id: Faker::Number.unique.number(digits: 5),
           editors: [
-            OpenStruct.new({ id: user_two.id, pending: false })
+            { id: user_two.id, pending: false }
           ])
   end
 

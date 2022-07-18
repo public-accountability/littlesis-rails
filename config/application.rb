@@ -36,6 +36,9 @@ module LittleSis
     # Since Rails 6 `belongs_to` associations are by default
     config.active_record.belongs_to_required_by_default = false
 
+    # see https://discuss.rubyonrails.org/t/cve-2022-32224-possible-rce-escalation-bug-with-serialized-columns-in-active-record/81017
+    config.active_record.yaml_column_permitted_classes = [Symbol]
+
     config.i18n.fallbacks = [:en]
 
     config.cache_store = :redis_cache_store, { url: config.littlesis[:redis_url] }
