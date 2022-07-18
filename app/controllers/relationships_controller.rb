@@ -49,6 +49,16 @@ class RelationshipsController < ApplicationController
     :is_current
   ].freeze
 
+  PERMITTED_RELATIONSHIP_PARAMS = (1..12).each_with_object({}) do |i, h|
+    if Relationship.category_has_fields?(i)
+      parameter_name = "#{Relationship::ALL_CATEGORIES[i].downcase}_attributes".to_sym
+      category_fields = Relationship.attribute_fields_for(i)
+      h.store i, PERMITTED_FIELDS.dup + [ { parameter_name => category_fields } ].freeze
+    else
+      h.store i, PERMITTED_FIELDS
+    end
+  end.freeze
+
   rescue_from Exceptions::MissingCategoryIdParamError do |exception|
     render json: exception.error_hash, status: :bad_request
   end
@@ -299,11 +309,8 @@ class RelationshipsController < ApplicationController
     @relationship.related.update(last_user_id: current_user.id)
   end
 
-  # whitelists relationship params and associated nested attributes
-  # if the relationship category requires them
+  # whitelists relationship params and associated nested attributes if the relationship category requires them
   def relationship_params
-    relationship_fields = PERMITTED_FIELDS.dup
-
     unless (category_id = @relationship&.category_id)
       begin
         category_id = params.require(:relationship).require(:category_id).to_i
@@ -312,13 +319,7 @@ class RelationshipsController < ApplicationController
       end
     end
 
-    if Relationship.category_has_fields?(category_id)
-      category_fields = Relationship.attribute_fields_for(category_id)
-      category_name = Relationship::ALL_CATEGORIES.fetch(category_id).downcase
-      relationship_fields.push("#{category_name}_attributes".to_sym => category_fields)
-    end
-
-    prepare_params params.require(:relationship).permit(*relationship_fields)
+    prepare_params params.require(:relationship).permit(*PERMITTED_RELATIONSHIP_PARAMS[category_id])
   end
 
   def parameter_processor(p)
