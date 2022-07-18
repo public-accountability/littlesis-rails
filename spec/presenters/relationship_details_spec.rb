@@ -20,7 +20,7 @@ describe RelationshipDetails do
     build(:relationship, category_id: 3, start_date: '1991', end_date: '2007',
                          entity: build(:person, name: 'Bernie Sanders'),
                          related: build(:us_house),
-                         membership: build(:bernie_house_membership) )
+                         membership: build(:bernie_house_membership))
   end
 
   describe 'title' do
@@ -124,7 +124,7 @@ describe RelationshipDetails do
     rel = build(:relationship, category_id: 10, description1: 'owner')
     rel.ownership = build(:ownership, percent_stake: 20, shares: 1500)
     expect(RelationshipDetails.new(rel).details)
-      .to eql [['Title', 'owner'], ['Percent Stake', '20%'], ['Shares', '1.5 Thousand']]
+      .to eql [['Title', 'owner'], ['Percent Stake', '20%'], ['Shares', '1.5K']]
   end
 
   it 'returns details for hierarchy relationship' do
@@ -155,7 +155,7 @@ describe RelationshipDetails do
     end
 
     it 'returns nil if given a entity that not in the relationship' do
-      expect(RelationshipDetails.new(relationship).family_details_for(build(:person))).to be nil
+      expect(RelationshipDetails.new(relationship).family_details_for(build(:person))).to be_nil
     end
 
     it 'returns details for other person if given entity' do
