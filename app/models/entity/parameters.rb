@@ -2,7 +2,8 @@
 
 class Entity
   class Parameters
-    def initialize(controller_params) # ActionController::Parameters
+    # @param controller_params [ActionController::Parameters]
+    def initialize(controller_params)
       @controller_params = controller_params
     end
 

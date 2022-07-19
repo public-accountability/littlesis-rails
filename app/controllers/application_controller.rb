@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::Base
   AVAILABLE_LOCALES = HTTP::Accept::Languages::Locales.new(["en", "es"]).freeze
+  BULK_MAXIMUM = 100
 
   include ParametersHelper
   # Prevent CSRF attacks by raising an exception.
@@ -75,11 +76,6 @@ class ApplicationController < ActionController::Base
     raise Exceptions::RestrictedUserError if current_user.restricted?
   end
 
-  # Legacy permission check
-  def check_permission(name = :edit)
-    raise Exceptions::DepreciatedError, "do not use check_permission"
-  end
-
   def check_ability(name)
     raise Exceptions::NotSignedInError if current_user.nil?
     raise Exceptions::RestrictedUserError if current_user.restricted?
@@ -94,7 +90,9 @@ class ApplicationController < ActionController::Base
   # @param resources [Array]
   # @param limit [Integer]
   def block_unless_bulker(resources = [], limit = 0)
-    if (resources.present? && resources.length > limit) && current_user.role.exclude?(:bulk_upload)
+    return if resources.blank?
+
+    if resources.length > BULK_MAXIMUM || (resources.length > limit && current_user.role.exclude?(:bulk_upload))
       raise Exceptions::UnauthorizedBulkRequest
     end
   end
