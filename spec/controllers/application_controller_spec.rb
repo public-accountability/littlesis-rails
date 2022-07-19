@@ -20,6 +20,16 @@ describe ApplicationController, type: :controller do
       end
     end
 
+    specify 'money_to_int' do
+      expect(ParametersHelper.money_to_int(1234)).to eq 1234
+      expect(ParametersHelper.money_to_int('   $2   ')).to eq 2
+      expect(ParametersHelper.money_to_int('$12')).to eq 12
+      expect(ParametersHelper.money_to_int('$1,000')).to eq 1000
+      expect(ParametersHelper.money_to_int('$4.2')).to eq 4
+      expect(ParametersHelper.money_to_int('$-2')).to eq(-2)
+      expect(ParametersHelper.money_to_int('foobar')).to eq 0
+    end
+
     describe 'prepare_params' do
       let(:params) do
         ActionController::Parameters.new('start_date' => '1999').permit(:start_date)

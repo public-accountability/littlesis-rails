@@ -241,8 +241,9 @@ export default class extends Controller {
   submissionData() {
     let entity1_id = this.entity1_id
     let entity2_id = this.entity2_id
-    // categories() defines the acceptable valid relationship options for a given two entities. As a convenience we allow some relationships
-    // to be selected in reverse, where the correct direction of the relationship can be determined. This function reverses the entity ids in those situations.
+    // categories() defines the acceptable valid relationship options for combination of entity types.
+    // As a convenience we allow some relationships to be selected in reverse, where the intended direction of the relationship is unambiguous.
+    // This reverses the entity ids in those situations
     // Org-->People relationships are reversed for these categories: Position (1), Education (2), Membership (3), Ownership(10)
     if ([1,2,3,10].includes(this.category_id) && this.entity1_type  === 'Org' && this.entity2_type === 'Person') {
       let tmp = entity1_id

@@ -3,7 +3,7 @@
 class ApplicationController < ActionController::Base
   AVAILABLE_LOCALES = HTTP::Accept::Languages::Locales.new(["en", "es"]).freeze
 
-  include ParamsHelper
+  include ParametersHelper
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception, unless: -> { request.format.json? }

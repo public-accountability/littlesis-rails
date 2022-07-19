@@ -53,7 +53,7 @@ class RelationshipsController < ApplicationController
     if Relationship.category_has_fields?(i)
       parameter_name = "#{Relationship::ALL_CATEGORIES[i].downcase}_attributes".to_sym
       category_fields = Relationship.attribute_fields_for(i)
-      h.store i, PERMITTED_FIELDS.dup + [ { parameter_name => category_fields } ].freeze
+      h.store i, PERMITTED_FIELDS.dup + [{ parameter_name => category_fields }].freeze
     else
       h.store i, PERMITTED_FIELDS
     end
@@ -103,7 +103,7 @@ class RelationshipsController < ApplicationController
   # PATCH /relationship/:id/feature { is_featured: Boolean }
   #
   def feature
-    @relationship.update!(is_featured: ParamsHelper.cast_to_boolean(params.require(:is_featured)))
+    @relationship.update!(is_featured: ParametersHelper.cast_to_boolean(params.require(:is_featured)))
     return redirect_back fallback_location: relationship_path(@relationship)
   end
 

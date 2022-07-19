@@ -7,7 +7,7 @@ class Entity
     end
 
     def update_entity
-      ParamsHelper.prepare_params(
+      ParametersHelper.prepare_params(
         @controller_params.require(:entity).permit(
           :name, :blurb, :summary, :website, :start_date, :end_date, :is_current,
           person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender_id, :id],

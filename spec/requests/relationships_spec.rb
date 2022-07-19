@@ -23,7 +23,7 @@ describe 'Relationships Requests' do
 
     let(:request) { -> { post relationships_path, params: params } }
 
-    context 'valid position relationship' do
+    context 'when position relationship recived' do
       specify do
         expect(&request).to change(Relationship, :count).by(1)
       end
@@ -45,7 +45,7 @@ describe 'Relationships Requests' do
         expect(json).to eq('relationship_id' => Relationship.last.id)
       end
 
-      context 'is board membership' do
+      context 'with board membership relationships' do
         before do
           params[:relationship][:position_attributes] = { is_board: 'true' }
         end
@@ -55,12 +55,12 @@ describe 'Relationships Requests' do
         end
 
         it 'corrects updates "is_board" on position' do
-          expect(&request).to change { Position.count }.by(1)
+          expect(&request).to change(Position, :count).by(1)
           expect(Position.last.is_board).to be true
         end
       end
 
-      context 'is not a board member' do
+      context 'when is_board is marked as "no"' do
         before do
           params[:relationship][:position_attributes] = { is_board: 'no' }
         end
@@ -70,8 +70,8 @@ describe 'Relationships Requests' do
         end
 
         it 'corrects updates "is_board" on position' do
-          expect(&request).to change { Position.count }.by(1)
-          expect(Position.last.is_board).to eql false
+          expect(&request).to change(Position, :count).by(1)
+          expect(Position.last.is_board).to be false
         end
       end
     end
@@ -153,7 +153,7 @@ describe 'Relationships Requests' do
       let(:params) { base_params }
       let(:patch_request) { proc { patch relationship_path(position_relationship), params: params } }
 
-      context 'updating relationship fields' do
+      describe 'updating relationship fields' do
         it 'redirects to relationship page' do
           patch_request.call
           redirects_to_path relationship_path(position_relationship)
@@ -174,16 +174,16 @@ describe 'Relationships Requests' do
         end
       end
 
-      context 'submitting an invalid date' do
+      context 'when an invalid date is submitted' do
         let(:params) { base_params.deep_merge(relationship: { start_date: 'BAD DATE' }) }
 
         before { patch_request.call }
 
         renders_the_edit_page
 
-        it 'does not change the relationship' do
-          expect(position_relationship.reload.start_date).to be nil
-          expect(position_relationship.reload.notes).to be nil
+        it 'rejects changes to the relationship' do
+          expect(position_relationship.reload.start_date).to be_nil
+          expect(position_relationship.reload.notes).to be_nil
         end
       end
     end # Position Relationship
@@ -270,15 +270,15 @@ describe 'Relationships Requests' do
         it 'deletes relationship and redirects to dashboard' do
           delete relationship_path(relationship)
           expect(relationship.reload.is_deleted).to be true
-          expect(response.status).to eq 302
+          expect(response).to have_http_status(:found)
           expect(response.location).to include '/home/dashboard'
         end
 
-        it 'cannot delete when it is more than an week ago'  do
+        it 'cannot be deleted when older than one week' do
           relationship.update_columns(created_at: 1.month.ago)
           delete relationship_path(relationship)
           expect(relationship.reload.is_deleted).to be false
-          expect(response.status).to eq 403
+          expect(response).to have_http_status(:forbidden)
         end
       end
     end
