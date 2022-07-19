@@ -30,11 +30,11 @@ module ParametersHelper
     ActiveRecord::Type::Boolean.new.deserialize(value)
   end
 
-  # @param money [Integer, String]
-  # @return [Integer]
+  # @param money [Integer, String, Nil]
+  # @return [Integer, Nil]
   def self.money_to_int(money)
     case money
-    when Integer
+    when Integer, NilClass
       money
     when String
       money.strip.tr('$', '').tr(',', '').to_i
