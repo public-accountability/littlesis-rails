@@ -30,7 +30,7 @@
           </select>
 
           <div class="form-check form-switch ms-2">
-            <input name="featured" class="form-check-input" type="checkbox" role="switch" id="lists-only-featured" <%= ParamsHelper.cast_to_boolean(params[:featured]) ? 'checked' : '' %>>
+            <input name="featured" class="form-check-input" type="checkbox" role="switch" id="lists-only-featured" <%= ActiveRecord::Type::Boolean.new.deserialize(params[:featured]) ? 'checked' : '' %>>
             <label class="form-check-label" for="lists-only-featured">featured</label>
           </div>
 

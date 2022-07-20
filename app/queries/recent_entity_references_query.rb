@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Takes a list of Entity ids and gathers the most recent   references for those entities
+# Takes a list of Entity ids and gathers the most recent references for those entities
 module RecentEntityReferencesQuery
   def self.run(input, page: 1, per_page: 10)
     entity_ids = Array.wrap(input).map { |x| Entity.entity_id_for(x) }

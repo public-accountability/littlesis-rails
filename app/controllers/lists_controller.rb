@@ -17,7 +17,7 @@ class ListsController < ApplicationController
     params.with_defaults!(order_column: :created_at, order_direction: :desc)
     lists_query = ListsIndexQuery.new
     lists_query.page(params[:page] || 1)
-    lists_query.only_featured if ParamsHelper.cast_to_boolean(params[:featured])
+    lists_query.only_featured if ParametersHelper.cast_to_boolean(params[:featured])
     lists_query.for_entity(params[:entity_id]) if params[:entity_id]
     unless params[:order_direction].empty?
       lists_query.order_by(params[:order_column].to_sym, params[:order_direction].to_sym)

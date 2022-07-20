@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-module ParamsHelper
+# LittleSis helpers for ActionController::Paramters
+module ParametersHelper
   YES_VALUES = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'True', 'yes', 'Yes', 'YES', 'Y', 'y', 'on', 'ON'].to_set.freeze
   NO_VALUES = [false, 0, '0', '00', 'f', 'F', 'false', 'False', 'FALSE', 'NO', 'N', 'no', 'No', 'n', 'off', 'OFF'].to_set.freeze
   NIL_VALUES = [nil, '', 'NULL', 'null', 'NIL', 'nil'].to_set.freeze
@@ -8,6 +9,8 @@ module ParamsHelper
   private_constant :YES_VALUES
   private_constant :NO_VALUES
 
+  # @param params [ActionController::Parameters, Hash]
+  # @return [ActiveSupport::HashWithIndifferentAccess]
   def self.prepare_params(params)
     h = blank_to_nil(params.to_h).with_indifferent_access
     h[:start_date] = LsDate.convert(h[:start_date]) if h.key?(:start_date)
@@ -17,20 +20,29 @@ module ParamsHelper
     h
   end
 
+  # Assumes the boolean can be marked as nil: "null" => nil)
+  # @return [False, True, Nil]
   def self.cast_to_boolean(value)
     return true if YES_VALUES.include?(value)
     return false if NO_VALUES.include?(value)
     return nil if NIL_VALUES.include?(value)
+
     ActiveRecord::Type::Boolean.new.deserialize(value)
   end
 
+  # @param money [Integer, String, Nil]
+  # @return [Integer, Nil]
   def self.money_to_int(money)
-    return money if money.is_a?(Integer) || money.nil?
-
-    i = money.tr('$', '').tr(',', '').to_i
-    return i if i.positive?
-
-    return nil
+    case money
+    when Integer, NilClass
+      money
+    when String
+      money.strip.tr('$', '').tr(',', '').to_i
+    # previously this only allowed positive numbers
+    # return nil if i.positive?
+    else
+      raise TypeError
+    end
   end
 
   # converts blanks values (.blank?) of a hash to nil
@@ -55,29 +67,27 @@ module ParamsHelper
   #  - processes start and end dates
   #  - converts money strings into intergers
   def prepare_params(parameters)
-    p = ParamsHelper.prepare_params(parameters)
+    p = ParametersHelper.prepare_params(parameters)
     p[:last_user_id] = current_user.id
     parameter_processor(p)
   end
 
-  # override this method to modify the param object before sent to .update
-  def parameter_processor(params)
-    params
-  end
-
-  protected
-
-  def cast_to_boolean(value)
-    ParamsHelper.cast_to_boolean(value)
+  # override this method in controllers to futher modify the request paramters
+  def parameter_processor(hash)
+    hash
   end
 
   private
 
+  def cast_to_boolean(value)
+    ParametersHelper.cast_to_boolean(value)
+  end
+
   def money_to_int(value)
-    ParamsHelper.money_to_int(value)
+    ParametersHelper.money_to_int(value)
   end
 
   def blank_to_nil(hash)
-    ParamsHelper.blank_to_nil(hash)
+    ParametersHelper.blank_to_nil(hash)
   end
 end
