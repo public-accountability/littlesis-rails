@@ -37,6 +37,7 @@ class NetworkMap < ApplicationRecord
     self.width = 960 if width.blank?
     self.height = 550 if height.blank?
     self.zoom = '1' if zoom.blank?
+    self.oligrapher_commit = Rails.application.config.littlesis.oligrapher_commit if oligrapher_commit.blank?
   end
 
   def generate_secret

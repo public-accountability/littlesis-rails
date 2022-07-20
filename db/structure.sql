@@ -17,10 +17,24 @@ CREATE EXTENSION IF NOT EXISTS intarray WITH SCHEMA public;
 
 
 --
+-- Name: EXTENSION intarray; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION intarray IS 'functions, operators, and index support for 1-D arrays of integers';
+
+
+--
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pgcrypto; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
 
 
 --
@@ -2637,7 +2651,8 @@ CREATE TABLE public.network_maps (
     is_cloneable boolean DEFAULT true NOT NULL,
     editors text,
     settings text,
-    search_tsvector tsvector
+    search_tsvector tsvector,
+    oligrapher_commit character varying NOT NULL
 );
 
 
@@ -8451,6 +8466,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220330163258'),
 ('20220330204713'),
 ('20220407140849'),
-('20220413172917');
+('20220413172917'),
+('20220720163026');
 
 
