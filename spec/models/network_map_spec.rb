@@ -1,4 +1,4 @@
-# rubocop:disable Style/WordArray
+# frozen_string_literals: true
 
 describe NetworkMap, type: :model do
   let(:graph_data) do
@@ -27,6 +27,14 @@ describe NetworkMap, type: :model do
   it { is_expected.to have_db_column(:editors) }
   it { is_expected.to belong_to(:user).optional }
   it { is_expected.to validate_presence_of(:title) }
+
+  describe 'sets defaults' do
+    let(:network_map) { create(:network_map, user_id: 1) }
+
+    specify do
+      expect(network_map.oligrapher_commit).to eq Rails.application.config.littlesis.oligrapher_commit
+    end
+  end
 
   describe '#documents' do
     let(:relationships) do
@@ -439,5 +447,3 @@ describe NetworkMap, type: :model do
     end
   end
 end
-
-# rubocop:enable Style/WordArray

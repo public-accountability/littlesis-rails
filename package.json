@@ -4,7 +4,7 @@
     "@hotwired/stimulus": "^3.0.1",
     "@hotwired/turbo-rails": "^7.1.1",
     "@popperjs/core": "^2.11.4",
-    "@rails/actiontext": "^7.0.2",
+    "@rails/actiontext": "^7.0.3-1",
     "bootstrap": "^5",
     "d3": "^7.2.1",
     "datatables.net": "^1.11.5",
