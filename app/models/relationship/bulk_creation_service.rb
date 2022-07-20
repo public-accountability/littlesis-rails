@@ -50,9 +50,7 @@ class Relationship
     end
 
     def create!
-      if frozen?
-        raise Exceptions::LittleSisError, "create! can only be called once"
-      end
+      frozen? and raise Exceptions::LittleSisError, "create! can only be called once"
 
       @relationships.each do |relationship|
         ApplicationRecord.transaction do
@@ -103,14 +101,15 @@ class Relationship
       r.add_reference(@reference_params)
       @successful_relationships << r.as_json(:url => true, :name => true)
     rescue ActiveRecord::ActiveRecordError, ActiveRecord::RecordInvalid => err
-      @errored_relationships << r.merge('errorMessage' => err.message)
-      raise err
+      @errored_relationships << r.as_json.merge('errorMessage' => err.message)
+      # Rollback transaction but continue on to next relationship
+      raise ActiveRecord::Rollback
     end
 
-    # @param entity1 [Entity]
-    # @param entity2 [Entity]
-    # @param relationship [ActiveSupport::HashWithIndifferentAccess]
-    # @return ActiveSupport::HashWithIndifferentAccess
+      # @param entity1 [Entity]
+      # @param entity2 [Entity]
+      # @param relationship [ActiveSupport::HashWithIndifferentAccess]
+      # @return ActiveSupport::HashWithIndifferentAccess
     def create_relationship_attributes(entity1, entity2, relationship)
       h = relationship
             .merge(entity1_id: entity1.id,entity2_id: entity2.id, category_id: @category_id)

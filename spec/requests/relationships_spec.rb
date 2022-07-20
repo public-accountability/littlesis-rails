@@ -283,4 +283,318 @@ describe 'Relationships Requests' do
       end
     end
   end
+
+  describe 'bulk adding relationships' do
+    it 'sends error message if given bad reference' do
+      params = { 'relationships' => [{ 'name' => 123 }], 'category_id' => 1, 'reference' => { 'url' => '', 'name' => 'important source' } }
+      post "/relationships/bulk_add", params: params
+      expect(response.status).to eq 400
+    end
+
+    describe 'submitting two good relationships' do
+      let(:e1) { create(:entity_org) }
+      let(:e2) { create(:entity_org) }
+      let(:url) { Faker::Internet.unique.url }
+
+      let(:relationship1) do
+        { 'name' => 'jane doe',
+          'blurb' =>  nil,
+          'primary_ext' => 'Person',
+          'amount' => 500,
+          'currency' => 'usd',
+          'description1' => 'contribution',
+          'start_date' => '2017-01-01',
+          'end_date' => nil,
+          'is_current' => nil }
+      end
+
+      let(:relationship2) do
+        { 'name' => e2.id,
+          'blurb' =>  nil,
+          'primary_ext' => 'Org',
+          'amount' =>  1000,
+          'currency' => 'usd',
+          'description1' => 'contribution',
+          'start_date' => nil,
+          'end_date' => nil,
+          'is_current' => nil }
+      end
+
+      let(:params) do
+        { 'entity1_id' => e1.id,
+          'category_id' => 5,
+          'reference' => { 'url' => url, 'name' => 'example.com' },
+          'relationships' => [relationship1, relationship2] }
+      end
+
+      it 'creates relationships and responds with ok' do
+        relationship_count = Relationship.count
+        post '/relationships/bulk_add', params: params
+        expect(response).to have_http_status(:ok)
+        expect(Relationship.count).to eq(relationship_count + 2)
+      end
+
+      it 'creates 5 References - 2 for relationships, 3 for associated entities' do
+        document_count = Document.count
+        expect { post '/relationships/bulk_add', params: params }.to change(Reference, :count).by(5)
+        expect(Reference.last(2).map(&:document).map(&:url)).to eq [url] * 2
+        expect(Document.count).to eq (document_count + 1)
+      end
+    end
+
+    describe 'submitting Relationship with category field' do
+      let(:entity) { create(:entity_org) }
+
+      let(:relationship1) do
+        { 'name' => 'Jane Doe',
+          'blurb' => nil,
+          'primary_ext' => 'Person',
+          'description1' => 'board member',
+          'start_date' => '2017-01-01',
+          'is_board' => true,
+          'end_date' => nil,
+          'is_current' => '?' }
+      end
+
+      let(:params) do
+        { 'entity1_id' => entity.id,
+          'category_id' => 1,
+          'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+          'relationships' => [relationship1] }
+      end
+
+      it 'creates one relationship' do
+        expect { post '/relationships/bulk_add', params: params }.to change(Relationship, :count).by(1)
+      end
+
+      it 'creates one Position' do
+        expect { post '/relationships/bulk_add', params: params }.to change(Position, :count).by(1)
+        expect(Position.last.relationship.entity2_id).to eql entity.id
+        expect(Position.last.is_board).to be true
+      end
+    end
+
+    describe 'submitting an education relationship (reversed)' do
+      let(:school) { create(:entity_org) }
+      let(:student) { create(:entity_person) }
+
+      let(:params) do
+        { 'entity1_id' => school.id,
+          'category_id' => Relationship::EDUCATION_CATEGORY,
+          'reference' => { 'url' => "https://example.com", 'name' => 'example.com' },
+          'relationships' => [ {
+                                 'name' => student.id,
+                                 'blurb' => nil,
+                                 'primary_ext' => 'Person',
+                                 'description1' => nil,
+                                 'start_date' => nil,
+                                 'end_date' => nil,
+                                 'degree' => nil,
+                                 'field' => 'math',
+                                 'is_dropout' => nil
+                               } ] }
+      end
+
+      it 'reverses entity1 and entity2' do
+        post '/relationships/bulk_add', params: params
+        expect(Relationship.last.attributes.slice('entity1_id', 'entity2_id'))
+          .to eq('entity1_id' => student.id, 'entity2_id' => school.id)
+      end
+    end
+
+    describe 'submitting a membership (30) relationship' do
+      let(:person) { create(:entity_person) }
+      let(:relationship) do
+        { 'name' => 'some membership org', 'primary_ext' => 'Org' }
+      end
+
+      let(:params) do
+        { 'entity1_id' => person.id,
+          'category_id' => 30,
+          'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+          'relationships' => [relationship] }
+      end
+
+      it 'sets correct entity id order' do
+        expect { post '/relationships/bulk_add', params: params }.to change(Relationship, :count).by(1)
+        expect(Relationship.last.entity1_id).to eq person.id
+      end
+    end
+
+    describe 'it rollbacks transaction with created entity when ActiveRecord Error occurs' do
+      let(:generic_relationship) do
+        { 'name' => 'new entity',
+          'blurb' =>  nil,
+          'primary_ext' => 'Org',
+          'amount' =>  nil,
+          'description1' => 'd1',
+          'description2' => 'd2',
+          'start_date' => nil,
+          'end_date' => 'THE END!', # <---- bad date
+          'is_current' => nil }
+      end
+
+      let(:corp) { create(:entity_org) }
+
+      let(:params) do
+        { 'entity1_id' => corp.id,
+          'category_id' => 12,
+          'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+          'relationships' => [generic_relationship] }
+      end
+
+      before { corp }
+
+      specify do
+        expect { post '/relationships/bulk_add', params: params }.not_to change(Relationship, :count)
+      end
+
+      specify do
+        expect { post '/relationships/bulk_add', params: params }.not_to change(Entity, :count)
+      end
+    end
+
+    describe 'submitting one valid and one invalid realtionship' do
+      let(:relationship1) do
+        { 'name' => 'jane doe',
+          'blurb' =>  nil,
+          'primary_ext' => 'Person',
+          'start_date' => '2017-01-01',
+          'end_date' => nil,
+          'is_current' => nil }
+      end
+
+      let(:relationship2) do
+        { 'name' => 'evil corp',
+          'blurb' => nil,
+          'primary_ext' => 'Org',
+          'start_date' => 'this is not a real date',
+          'end_date' => nil,
+          'is_current' => nil }
+      end
+
+      let(:params) do
+        { 'entity1_id' => create(:entity_org).id,
+          'category_id' => 12,
+          'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+          'relationships' => [relationship1, relationship2] }
+      end
+
+      specify do
+        expect { post '/relationships/bulk_add', params: params }.to change(Relationship, :count).by(1)
+        expect(response).to have_http_status(:ok)
+        expect(json['errors'].length).to eq 1
+        expect(json['errors'][0]['errorMessage']).to match(/invalid date/)
+        expect(json['relationships'].length).to eq 1
+      end
+    end
+
+
+    describe 'When submitting a donation relationship' do
+      let(:relationships) do
+        [
+          { 'name' => 'small donor', 'primary_ext' => 'Person', 'amount' => '$1,000' },
+          { 'name' => 'medium donor', 'primary_ext' => 'Person', 'amount' => '$100000.50' },
+          { 'name' => 'big donor', 'primary_ext' => 'Person', 'amount' => '1,000,000' },
+          { 'name' => 'reallybig donor', 'primary_ext' => 'Person', 'amount' => '100000000' }
+        ]
+      end
+
+      let(:corp) { create(:entity_org) }
+
+      let!(:params) do
+        { 'entity1_id' => corp.id,
+          'category_id' => 5,
+          'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+          'relationships' => relationships }
+      end
+
+      it 'creates 4 relationships with correct amount fields' do
+        expect { post '/relationships/bulk_add', params: params }.to change(Relationship, :count).by(4)
+        corp.reload
+        expect(corp.relationships.count).to eq 4
+        amounts = corp.relationships.map(&:amount).to_set
+        expect(amounts).to eq [1000, 100_000, 1_000_000, 100_000_000].to_set
+      end
+    end
+
+    describe 'handling donation currencies' do
+      let(:corp) { create(:entity_org) }
+      let(:reference) { { url: 'http://example.com', name: 'example.com' } }
+      let(:relationships) do
+        [
+          { name: '$ donor', primary_ext: 'Person', amount: '$1,000', currency: :usd },
+          { name: '€ donor', primary_ext: 'Person', amount: '10000', currency: :eur },
+          { name: 'blank currency donor', primary_ext: 'Person', amount: '€1,000', currency: '' },
+          { name: 'nonsense currency donor', primary_ext: 'Person', amount: '€1,000', currency: 'cigarettes' }
+        ]
+      end
+
+      let!(:params) { { entity1_id: corp.id, category_id: 5, reference: reference, relationships: relationships } }
+
+      before do
+        post '/relationships/bulk_add', params: params
+      end
+
+      it 'returns currency errors' do
+        json = JSON.parse(response.body)
+        expect(json['errors'].count).to be 1
+        expect(json['errors'].first['errorMessage']).to include('cigarettes is not a valid currency')
+        currencies = corp.reload.relationships.map(&:currency)
+        expect(currencies.count).to be 3
+        expect(currencies).to include('usd', 'eur')
+        expect(currencies).not_to include('', 'cigarettes')
+      end
+    end
+
+    describe 'Permissions' do
+      let(:relationship) do
+        { 'name' => 'jane doe',
+          'blurb' =>  nil,
+          'primary_ext' => 'Person',
+          'start_date' => '2017-01-01',
+          'end_date' => nil,
+          'is_current' => nil }
+      end
+
+      let(:params) do
+        { 'entity1_id' => create(:entity_org).id,
+          'category_id' => 12,
+          'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+          'relationships' => [relationship] }
+      end
+
+      let(:ten_relationships_params) do
+        { 'entity1_id' => 1,
+          'category_id' => 5,
+          'reference' => { 'url' => 'http://example.com', 'name' => 'example.com' },
+          'relationships' => [{ 'relationship' => 'details' }] * 10 }
+      end
+
+      context 'when user not logged in' do
+        before { logout(:user) }
+
+        it 'returns 302' do
+          post '/relationships/bulk_add', params: ten_relationships_params
+          expect(response.location).to include '/login'
+          expect(response).to have_http_status :found
+        end
+      end
+
+      describe 'user with regular permissions' do
+        it 'allows submission of one relationship' do
+          post '/relationships/bulk_add', params: params
+          json = JSON.parse(response.body)
+          expect(response).to have_http_status 200
+          expect(json['errors'].length).to eq 0
+          expect(json['relationships'].length).to eq 1
+        end
+
+        it 'does not allow submission of ten relationships' do
+          post '/relationships/bulk_add', params: ten_relationships_params
+          expect(response).to have_http_status :unauthorized
+        end
+      end
+    end
+  end # end bulk adding relationships
 end

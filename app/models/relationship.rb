@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Naming/PredicateName, Style/StringLiterals
-
 class Relationship < ApplicationRecord
   include SoftDelete
   include Referenceable
@@ -663,5 +661,3 @@ class Relationship < ApplicationRecord
     end
   end
 end
-
-# rubocop:enable Naming/PredicateName, Style/StringLiterals
