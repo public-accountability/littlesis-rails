@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 namespace :oligrapher do
-  desc 'Build oligrapher based on commit or default commit'
-  task :build, [:commit, :development] => :environment do |_, args|
-    commit = args[:commit].presence || OligrapherAssetsService.latest_commit
-    OligrapherAssetsService
-      .new(commit, development: args[:development])
-      .run
+  desc 'Build oligrapher based on commit or configured in'
+  task :build, [:commit] => :environment do |_, args|
+    # OligrapherAssetsService.latest_commit
+    commit = args[:commit].presence || Rails.application.config.littlesis.oligrapher_commit
+    OligrapherAssetsService.run(commit)
   end
 end
