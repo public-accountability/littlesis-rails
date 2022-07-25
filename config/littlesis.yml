@@ -27,7 +27,7 @@ defaults: &defaults
   beta: false
   noediting: false
   firefox_binary: /opt/firefox
-  oligrapher_commit: "8befacd0722cbf208b7b5e795e9bfd590d367042"
+  oligrapher_commit: "1ae3ccc83701c684a8398d08f85758c449056bb8"
   oligrapher_use_bundle: true
   opensecrets_api_key:
   redirect_to_new_profile_page: true

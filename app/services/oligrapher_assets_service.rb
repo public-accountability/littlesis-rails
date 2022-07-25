@@ -10,8 +10,8 @@ class OligrapherAssetsService
   attr_accessor :commit
 
   REPO = 'https://github.com/public-accountability/oligrapher'
-  REPO_DIR = Rails.root.join('tmp', Rails.env.production? ? 'oligrapher' : 'oligrapher-test').to_s
-  ASSET_DIR = Rails.root.join('public/oligrapher').to_s
+  REPO_DIR = Rails.root.join('tmp', Rails.env.production? ? 'oligrapher' : 'oligrapher-test').to_s.freeze
+  ASSET_DIR = Rails.public_path.join('oligrapher').to_s.freeze
   BRANCH = '3.0'
 
   def self.setup_repo
@@ -54,9 +54,9 @@ class OligrapherAssetsService
     # Build oligrapher
     Dir.chdir REPO_DIR do
       git "checkout --force -q #{@commit}"
-      system('yarn install --silent') || error("Yarn install failed for commit #{@commit}")
+      system('npm ci --include=dev --silent') || error("npm install failed for commit #{@commit}")
       script = @development ? 'build-dev' : 'build-prod'
-      build_cmd = "yarn run #{script} --env output_path=#{ASSET_DIR} && yarn run #{script}-one --env output_path=#{ASSET_DIR} "
+      build_cmd = "npm run #{script} -- --env output_path=#{ASSET_DIR} && npm run #{script}-one -- --env output_path=#{ASSET_DIR}"
       system(build_cmd) || error("Failed to build for commit #{@commit}")
     end
 

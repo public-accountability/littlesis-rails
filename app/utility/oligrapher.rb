@@ -75,12 +75,14 @@ module Oligrapher
   end
 
   def self.javascript_asset_path
+    return @javascript_asset_path if defined?(@javascript_asset_path)
+
     path = +"/oligrapher/assets/oligrapher-"
     path << 'dev-' if Rails.env.development?
     path << Rails.application.config.littlesis.oligrapher_commit
     path << ".bundle" if Rails.application.config.littlesis.oligrapher_use_bundle
     path << ".js"
-    path.freeze
+    @javascript_asset_path = path.freeze
   end
 
   module Node

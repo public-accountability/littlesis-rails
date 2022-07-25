@@ -14,16 +14,16 @@ describe OligrapherAssetsService do
   it '#run - checkouts, installs js packages, and builds' do
     service = OligrapherAssetsService.new(commit, skip_fetch: true)
     expect(service).to receive(:system).with(/checkout --force -q/).and_call_original
-    expect(service).to receive(:system).with('yarn install --silent').and_return(true)
-    expect(service).to receive(:system).with(/yarn run/).and_return(true)
+    expect(service).to receive(:system).with(/npm ci/).and_return(true)
+    expect(service).to receive(:system).with(/npm run/).and_return(true)
     service.run
   end
 
-  it 'raises error if yarn fails to build' do
+  it 'raises error if npm fails to build' do
     service = OligrapherAssetsService.new(commit, skip_fetch: true)
     expect(service).to receive(:system).with(/checkout --force -q/).and_call_original
-    expect(service).to receive(:system).with('yarn install --silent').and_return(true)
-    expect(service).to receive(:system).with(/yarn run/).and_return(false)
+    expect(service).to receive(:system).with(/npm ci/).and_return(true)
+    expect(service).to receive(:system).with(/npm run/).and_return(false)
     expect { service.run }.to raise_error(Exceptions::OligrapherAssetsError)
   end
 end
