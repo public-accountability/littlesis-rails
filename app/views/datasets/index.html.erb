@@ -1,9 +1,9 @@
 <% content_for :page_title, "External Datasets" %>
 
 <% cache 'external_datasets_overview', expires_in: 12.hours do %>
-
   <div id="datasets-overview">
-    <% ExternalDataset::DATASETS.each do |dataset_name| %>
+    <%# skipping NYC datasets for now %>
+    <% ExternalDataset.datasets.filter { _1.to_s.slice(0,3) != 'nyc' }.each do |dataset_name| %>
       <div class="mt-2">
         <h3>
           <small><%= link_to ExternalDataset.descriptions[dataset_name], "/datasets/#{dataset_name}", class: 'text-muted' %></small>
@@ -13,5 +13,4 @@
       </div>
     <% end %>
   </div>
-
 <% end %>
