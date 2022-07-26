@@ -21,6 +21,8 @@ module ExternalDataset
     }.with_indifferent_access.freeze
   end
 
+  # @param dbname [String]
+  # @return [Class]
   def self.fetch_dataset_class(dname)
     raise ArgumentError, "invalid dataset: #{dname}" unless DATASETS.include?(dname.to_sym)
 

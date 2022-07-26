@@ -15,7 +15,15 @@ module ExternalDataset
     end
 
     filter(:filing_sched_abbrev, :enum, select: %w[A B C D E F G H I J K L M N O P Q R], header: 'Schedule')
-    filter(:org_amt, :float)
+
+    filter(:election_year, :enum, select: 2000..2022) do |value|
+      where(election_year: value)
+    end
+
+    filter(:org_amt, :float, header: 'Amount') do |value|
+      where(arel_table[:org_amt].gteq(value))
+    end
+
     filter(:filer_id, :integer, header: "Filer ID")
 
     column "filer_id", order: false, header: "Filer ID"
@@ -58,8 +66,8 @@ module ExternalDataset
     column "r_itemized", order: false
     column "r_liability", order: false
     # column "election_year_str"
-    # column "office_desc"
-    # column "district"
-    # column "dist_off_cand_bal_prop", order: false
+    column "office_desc"
+    column "district"
+    column "dist_off_cand_bal_prop", order: false
   end
 end
