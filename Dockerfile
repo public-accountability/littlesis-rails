@@ -36,14 +36,15 @@ RUN echo '4ccad08485d404ce0ae2bf7e7257e77d2b28d7b7fb3578201c5d734d85ec8e64 /tmp/
 RUN apt-get install -y /tmp/manticore.deb
 
 # Node
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install -g npm
 
 # Firefox and Geckodriver
 RUN curl -L "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" | tar xjf - -C /opt
 RUN printf "#!/bin/sh\nexec /opt/firefox/firefox \$@\n" > /usr/local/bin/firefox && chmod +x /usr/local/bin/firefox && firefox -version
-RUN curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz" | tar xzf - -C /usr/local/bin
+# f5fcaf6aa1a45b06cb1cae99ff51d487173de8f776f647e18b750f7eccecbbd9
+RUN curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.31.0/geckodriver-v0.31.0-linux64.tar.gz" | tar xzf - -C /usr/local/bin
 
 # Setup gem & bundler
 RUN gem update --system
