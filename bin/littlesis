@@ -37,6 +37,7 @@ Commands
            runner           run bin/rails runner <file>
            script           execute named script in lib/scripts/
            esbuild          bundle javascript
+           pgenv            use: fish> eval (pgenv)
 
 Aliases
            bundle
@@ -229,6 +230,15 @@ def esbuild
   end
 end
 
+def pgenv
+  puts <<~TEXT
+    set -x PGHOST  #{$database[:host]};
+    set -x PGUSER #{$database[:user]};
+    set -x PGPASSWORD #{$database[:password]};
+    set -x PGDATABASE #{$database[:name]};
+  TEXT
+end
+
 # Start processing options
 
 opts = GetoptLong.new(
@@ -341,6 +351,8 @@ when 'logs'
   logs
 when 'esbuild'
   esbuild
+when 'pgenv'
+  pgenv
 else
   puts "Invalid Command: #{ARGV.first}"
   exit 1
