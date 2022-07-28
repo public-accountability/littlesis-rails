@@ -42,7 +42,7 @@ The configurations for nginx and postgres are in the folder config/docker
 
 ### Development Scripts
 
-Create example users: `littlesis script littlesis script create_development_users.rb`
+Create example users: `littlesis script create_development_users.rb`
 
 Start/stop app: `littlesis up/down`
 
