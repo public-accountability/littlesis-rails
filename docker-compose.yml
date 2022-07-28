@@ -37,19 +37,18 @@ services:
     image: redis:6
 
   postgres:
-    image: postgres:13
+    image: postgres:14
     command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
     shm_size: '2gb'
     volumes:
       - ./config/docker/postgresql.conf:/etc/postgresql.conf
+      - ./config/docker/pg-setup-database.sh:/docker-entrypoint-initdb.d/pg-setup-database.sh
       - ./data:/data
       - postgres-data:/var/lib/postgresql/data
     ports:
       - '127.0.0.1:5432:5432'
     environment:
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-themanbehindthemanbehindthethrone}"
-      POSTGRES_USER: "${POSTGRES_USER:-littlesis}"
-      POSTGRES_DB: "${POSTGRES_DB:-littlesis}"
+      POSTGRES_PASSWORD: "postgres"
 
   nginx:
     image: nginx:latest

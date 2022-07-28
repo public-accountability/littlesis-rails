@@ -28,7 +28,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install \
 # Postgres
 RUN curl "https://www.postgresql.org/media/keys/ACCC4CF8.asc" > /usr/share/keyrings/ACCC4CF8.asc
 RUN echo "deb [signed-by=/usr/share/keyrings/ACCC4CF8.asc] http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-RUN apt-get update && apt-get install -y postgresql-client-13 libpq-dev
+RUN apt-get update && apt-get install -y postgresql-client-14 libpq-dev
 
 # Manticore
 RUN curl -sSL https://repo.manticoresearch.com/repository/manticoresearch_bullseye/dists/bullseye/main/binary-amd64/manticore_4.2.0-211223-15e927b28_amd64.deb > /tmp/manticore.deb
