@@ -20,11 +20,9 @@ You can install the program with a symlink: `sudo ln -s (readlink -f bin/littles
 
 4) Create folders:  `littlesis setup-folders`
 
-5) Load a copy of the database
+5) If desired, load a copy of the database.
 
-sql.gz format: `zcat littlesis.sql.gz | littlesis psql`
-postgres's custom format: `docker-compose run --rm postgres pg_restore --jobs=2 --host=postgres --username=littlesis --dbname=littlesis /data/littlesis`
-Afterwards, if needed, run `littlesis psql < lib/sql/clean_users.sql`
+   You can utilize the littlesis psql shortcuts, for example: `zcat littlesis.sql.gz | littlesis psql`
 
 6) Compile dev and test assets: `littlesis rake assets:precompile` && `littlesis --test rake assets:precompile`
 
@@ -42,6 +40,8 @@ The configurations for nginx and postgres are in the folder config/docker
 
 ### Development Scripts
 
+start development services: `docker-compose --profile development up -d`
+
 Create example users: `littlesis script create_development_users.rb`
 
 Start/stop app: `littlesis up/down`
@@ -49,12 +49,14 @@ Start/stop app: `littlesis up/down`
 Open rails console: `littlesis console`
 
 *Manticore*
-    - status: `littlesis rake ts:status`
-    - start: `littlesis rake ts:start`
-    - index: `littlesis rake ts:index`
-    - reconfigure: `littlesis rake ts:rebuild`
 
-Start title extractor service: `docker-compose --profile title_extractor up -d`
+status `littlesis rake ts:status`
+start `littlesis rake ts:start`
+stop `littlesis rake ts:stop`
+index `littlesis rake ts:index`
+reconfigure `littlesis rake ts:rebuild`
+
+
 
 Clear logs:  `littlesis rake log:clear`
 

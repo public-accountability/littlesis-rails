@@ -81,7 +81,8 @@ module ExternalDataset
       @csv_path_root ||= if Rails.env.production?
                            Pathname.new('/var/lib/littlesis/fec')
                          elsif Rails.env.development?
-                           Pathname.new('/data/fec/csv') # Rails.root.join('data/fec/csv')
+                           Rails.root.join('data/fec/csv')
+                         # Pathname.new('/data/fec/csv')
                          else
                            Rails.root.join('data/fec/csv')
                          end
