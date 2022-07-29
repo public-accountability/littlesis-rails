@@ -22,7 +22,7 @@ jobs:
       - run: bin/littlesis docker -- exec postgres pg_isready --timeout=10
       - run: bin/littlesis --test rake db:reset
       - run: bin/littlesis --test rake javascript:build
-      - run: bin/littlesis --test assets:precompile
+      - run: bin/littlesis --test rake assets:precompile
       - run: bin/littlesis --test test -- --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
       - store_test_results:
           path: tmp/rspec
