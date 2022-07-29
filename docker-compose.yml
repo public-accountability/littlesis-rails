@@ -37,19 +37,18 @@ services:
     image: redis:6
 
   postgres:
-    image: postgres:13
+    image: postgres:14
     command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
     shm_size: '2gb'
     volumes:
       - ./config/docker/postgresql.conf:/etc/postgresql.conf
+      - ./config/docker/pg-setup-database.sh:/docker-entrypoint-initdb.d/pg-setup-database.sh
       - ./data:/data
       - postgres-data:/var/lib/postgresql/data
     ports:
       - '127.0.0.1:5432:5432'
     environment:
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-themanbehindthemanbehindthethrone}"
-      POSTGRES_USER: "${POSTGRES_USER:-littlesis}"
-      POSTGRES_DB: "${POSTGRES_DB:-littlesis}"
+      POSTGRES_PASSWORD: "postgres"
 
   nginx:
     image: nginx:latest
@@ -66,6 +65,16 @@ services:
   title_extractor:
     image: title-extractor:latest
     build: ./lib/title-extractor
-    profiles: ["title_extractor"]
+    profiles: ["title_extractor", "development"]
     ports:
        - "127.0.0.1:8888:8888"
+
+  esbuild:
+    image: littlesis:latest
+    command:  ['npm', 'run', 'build-watch']
+    profiles: ["esbuild", "development"]
+    volumes:
+      - ./:/littlesis
+      - /littlesis/node_modules
+    environment:
+      - RAILS_ENV=development

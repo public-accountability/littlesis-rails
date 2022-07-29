@@ -3,7 +3,9 @@
 require 'getoptlong'
 require 'fileutils'
 
+# Travel to Rails root relative to this file
 REPO = File.expand_path('..', __dir__).freeze
+Dir.chdir(REPO)
 
 $database = {
   name: ENV.fetch('LITTLESIS_DATABASE_NAME', 'littlesis'),
@@ -78,35 +80,33 @@ def setup_folders
   end
 end
 
-def docker_compose(*args)
-  Dir.chdir(REPO) do
-    exec "docker-compose #{args.join(' ')}"
-  end
-end
-
-def app_exec(cmd, bin: false, run: false, container: 'app')
+def app_exec(cmd, bin: false, use_exec: false, container: 'app', compose_command: 'run --rm')
   bin_path = $rails_env == 'production' ? '/var/www/littlesis/bin' : '/littlesis/bin'
   cmd = "#{bin_path}/#{cmd}" if bin
 
   if $rails_env == 'production'
-    Dir.chdir(REPO) do
-      if run
-        exec cmd
-      else
-        puts `#{cmd}`
-      end
+    if use_exec
+      exec cmd
+    else
+      `#{cmd}`
     end
   else
-    if run
-      docker_compose 'run', '--rm', "-e RAILS_ENV=#{$rails_env}", container, cmd
+    docker_compose = "docker-compose #{compose_command} -e RAILS_ENV=#{$rails_env} #{container} #{cmd}"
+
+    if use_exec
+      exec docker_compose
     else
-      docker_compose 'exec', ($stdout.tty? ? '' : '-T'), "-e RAILS_ENV=#{$rails_env}", container, cmd
+      `#{docker_compose}`
     end
   end
 end
 
-def app_exec_bin(cmd)
-  app_exec(cmd, bin: true)
+def app_exec_bin(cmd, **kwargs)
+  app_exec(cmd, bin: true, **kwargs)
+end
+
+def app_exec_bin!(cmd, **kwargs)
+  app_exec(cmd, bin: true, use_exec: true, **kwargs)
 end
 
 def git(cmd)
@@ -132,12 +132,12 @@ def status
     systemd_service_check 'nginx'
     app_exec_bin 'rake ts:status'
   else
-    running_services = Dir.chdir(REPO) { `docker-compose ps --services --filter status=running` }.split("\n")
+    running_services = `docker-compose ps --services --filter status=running`.split("\n")
 
-    %w[redis postgres app nginx].each do |service|
+    %w[app postgres redis nginx esbuild title_extractor].each do |service|
       puts "[#{running_services.include?(service) ? '✓' : 'X'}] #{service} "
     end
-    app_exec_bin 'rake ts:status'
+    puts app_exec("rake ts:status", bin: true,  compose_command: "exec")
   end
 end
 
@@ -183,25 +183,25 @@ def deploy
   if changed_files.any? { |f| f.include?('db/migrate') }
     puts "These changes likely require a database update."
     if yes_or_no?("Would you like to run rake db:migrate now?")
-      app_exec_bin 'rake db:migrate'
+      puts app_exec_bin('rake db:migrate')
     end
   end
 
   if changed_files.include?('package-lock.json')
-    app_exec 'npm ci'
+    puts app_exec('npm ci')
   end
 
   if changed_files.include?('package-lock.json') || changed_files.any? { |f| f.include?('javascript') }
-    esbuild
+    puts app_exec('npm run build')
   end
 
   # TODO detech changes to Rails.application.config.littlesis.oligrapher_commit and run OligrapherAssetsService.run
   if changed_files.any? { |f| f.include?('package-lock.json') || f.include?('assets') || f.include?('javascript') }
-    app_exec_bin 'rake assets:precompile'
+    puts app_exec_bin('rake assets:precompile')
   end
 
   puts "Restarting LittleSis"
-  app_exec_bin 'pumactl -p tmp/puma.pid restart'
+  puts app_exec_bin('pumactl -p tmp/puma.pid restart')
 end
 
 def logs
@@ -213,21 +213,7 @@ def logs
 
   logfile = "#{prefix}/log/#{$rails_env}.log"
 
-  app_exec "/usr/bin/tail -f #{logfile}", run: true
-end
-
-def esbuild
-  if production_environment?
-    app_exec "npm run build"
-  else
-    container_name = "littlesis-esbuild"
-
-    if `docker ps -q --filter name=#{container_name}`.empty?
-      docker_compose 'run', '-d', '--rm', "--name #{container_name}", "-e RAILS_ENV=#{$rails_env}", 'app', 'npm run build-watch'
-    else
-      "#{container_name} is running. Execute \"docker rm -f littlesis-esbuild\" to remove it."
-    end
-  end
+  app_exec "/usr/bin/tail -f #{logfile}", use_exec: true
 end
 
 def pgenv
@@ -280,69 +266,67 @@ when 'help'
 when 'setup-folders'
   setup_folders
 when 'docker', 'docker_compose', 'docker-compose'
-  docker_compose rest
+  exec "docker-compose #{rest}"
 when 'up'
-  docker_compose 'up -d'
+  exec "docker-compose --profile development up -d"
 when 'down'
-  docker_compose 'down'
+  exec "docker-compose down"
 when 'delete'
   exit 1 if production_environment?
 
   if yes_or_no?("This is will delete the postgres database.")
-    docker_compose 'down -v'
+    exec "docker-compose down -v"
   end
 when 'build'
-  Dir.chdir(REPO) { exec "docker build -t littlesis:latest ." }
+  exec "docker build -t littlesis:latest ."
 when 'pumactl'
-  app_exec_bin "pumactl -p tmp/puma.pid #{rest}"
+  app_exec_bin "pumactl -p tmp/puma.pid #{rest}", use_exec: true, compose_command: "exec"
 when 'test', 'rspec'
   set_env_to_test
-  app_exec_bin "rspec #{rest}"
+  app_exec_bin "rspec #{rest}", use_exec: true
 when 'rails'
-  app_exec_bin "rails #{rest}"
+  app_exec_bin "rails #{rest}", use_exec: true
 when 'bundle'
-  app_exec_bin "bundle #{rest}"
+  app_exec_bin "bundle #{rest}", use_exec: true
 when 'gem'
   gem_path = production_environment? ? '/home/littlesis/.rbenv/shims/gem' : '/usr/local/bin/gem'
-  app_exec "#{gem_path} #{rest}", run: true
+  app_exec "#{gem_path} #{rest}", use_exec: true
 when 'npm'
-  app_exec "npm #{rest}"
+  app_exec "npm #{rest}", use_exec: true
 when 'rake'
-  app_exec_bin "rake #{rest}"
+  app_exec_bin! "rake #{rest}"
 when 'runner'
-  app_exec_bin "rails runner #{rest}"
+  app_exec_bin! "rails runner #{rest}"
 when 'script'
-  app_exec "bundle exec lib/scripts/#{rest}", bin: true, run: true
+  app_exec_bin! "bundle exec lib/scripts/#{rest}"
 when 'bash'
-  app_exec "/bin/bash --login #{rest}"
+  app_exec "/bin/bash --login #{rest}", use_exec: true, compose_command: "exec -i -t"
 when 'console', 'c'
-  app_exec "rails c #{rest}", bin: true, run: true
+  app_exec_bin! "rails c #{rest}"
 when 'redis'
   redis_host = production_environment? ? '127.0.0.1' : 'redis'
-  app_exec "/usr/bin/redis-cli -h #{redis_host} #{rest}", run: true
+  app_exec "/usr/bin/redis-cli -h #{redis_host} #{rest}", use_exec: true
 when 'data'
-  app_exec_bin "rails runner lib/scripts/data.rb #{rest}"
+  app_exec_bin! "rails runner lib/scripts/data.rb #{rest}"
 when 'fec'
-  app_exec_bin "rails runner lib/scripts/fec.rb #{rest}"
+  app_exec_bin! "rails runner lib/scripts/fec #{rest}"
 when 'git'
   puts git(rest)
 when 'rg', 'search'
-  Dir.chdir(REPO) { exec "rg #{rest}" }
+  exec "rg #{rest}"
 when 'find'
-  Dir.chdir(REPO) { exec "find #{rest}" }
+  exec "find #{rest}"
 when 'edit'
-  Dir.chdir(REPO) do
-    selected = if rest == ''
-                 `fd | fzf`.chomp
-               else
-                 rest
-               end
-    exec "$EDITOR #{selected}"
-  end
+  selected = if rest == ''
+               `fd | fzf`.chomp
+             else
+               rest
+             end
+  exec "$EDITOR #{selected}"
 when 'node'
   app_exec "/usr/bin/node #{rest}", run: true
 when 'psql', 'pg_dump', 'pg_restore'
-  app_exec "#{ARGV.first} #{database_connection} #{rest}", run: true, container: 'postgres'
+  app_exec "#{ARGV.first} #{database_connection} #{rest}", run: true, container: 'postgres', use_exec: true
 when 'status'
   status
 when 'deploy'
@@ -350,7 +334,7 @@ when 'deploy'
 when 'logs'
   logs
 when 'esbuild'
-  esbuild
+  app_exec "npm run build", use_exec: true
 when 'pgenv'
   pgenv
 else

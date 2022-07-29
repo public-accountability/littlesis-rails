@@ -1,7 +1,0 @@
-test:
-  adapter: postgresql
-  database: littlesis_test
-  username: littlesis
-  password: littlesis
-  host: postgres
-  encoding: utf8

@@ -5,8 +5,6 @@ workflows:
     jobs:
       - mocha
       - rspec
-      - rspec_js
-
 jobs:
   rspec:
     machine:
@@ -15,52 +13,17 @@ jobs:
 
     environment:
       RAILS_ENV: test
-      COVERAGE: yes
-      POSTGRES_PASSWORD: littlesis
-      POSTGRES_USER: littlesis
-      POSTGRES_DB: littlesis_test
 
     steps:
       - checkout
-      - run: cp config/database.ci.yml config/database.yml
-      - run: mkdir -p tmp tmp/rspec tmp/small/ tmp/profile tmp/large/ tmp/original/
-      - run: docker build -t littlesis:latest .
-      - run: docker-compose up -d
-      - run: docker-compose exec postgres pg_isready --timeout=10
-      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake db:reset
-      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake tmp:clear
-      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake javascript:build
-      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake assets:precompile
-      - run: docker-compose exec -e RAILS_ENV=test -e CI=true app bundle exec rspec --tag ~js --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
-
-      - store_test_results:
-          path: tmp/rspec
-
-  rspec_js:
-    machine:
-      image: ubuntu-2004:202111-02
-      docker_layer_caching: true
-
-    environment:
-      RAILS_ENV: test
-      COVERAGE: yes
-      POSTGRES_PASSWORD: littlesis
-      POSTGRES_USER: littlesis
-      POSTGRES_DB: littlesis_test
-
-    steps:
-      - checkout
-      - run: cp config/database.ci.yml config/database.yml
-      - run: mkdir -p tmp tmp/rspec tmp/small/ tmp/profile tmp/large/ tmp/original/
-      - run: docker build -t littlesis:latest .
-      - run: docker-compose up -d
-      - run: docker-compose exec postgres pg_isready --timeout=10
-      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake db:reset
-      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake tmp:clear
-      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake javascript:build
-      - run: docker-compose exec -e RAILS_ENV=test app bundle exec rake assets:precompile
-      - run: docker-compose exec -e RAILS_ENV=test -e CI=true app bundle exec rspec --tag js --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
-
+      - run: bin/littlesis setup-folders
+      - run: bin/littlesis build
+      - run: bin/littlesis up
+      - run: bin/littlesis docker -- exec postgres pg_isready --timeout=10
+      - run: bin/littlesis --test rake db:reset
+      - run: bin/littlesis --test rake javascript:build
+      - run: bin/littlesis --test rake assets:precompile
+      - run: bin/littlesis --test test -- --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xml
       - store_test_results:
           path: tmp/rspec
 
