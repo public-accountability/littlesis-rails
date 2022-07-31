@@ -324,9 +324,9 @@ when 'edit'
              end
   exec "$EDITOR #{selected}"
 when 'node'
-  app_exec "/usr/bin/node #{rest}", run: true
+  app_exec "/usr/bin/node #{rest}", use_exec: true
 when 'psql', 'pg_dump', 'pg_restore'
-  app_exec "#{ARGV.first} #{database_connection} #{rest}", run: true, container: 'postgres', use_exec: true
+  app_exec "#{ARGV.first} #{database_connection} #{rest}", use_exec: true, container: 'postgres'
 when 'status'
   status
 when 'deploy'
