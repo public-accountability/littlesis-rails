@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 LittleSis::Application.routes.draw do
+
+  # Fixes sources links in development
+  # see https://github.com/rails/jsbundling-rails/issues/40#issuecomment-1176856408
+  if Rails.env.development?
+    redirector = ->(params, _) { ApplicationController.helpers.asset_path("#{params[:name].split('-').first}.map") }
+    constraint = ->(request) { request.path.ends_with?(".map") }
+    get "assets/*name", to: redirect(redirector), constraints: constraint
+  end
+
   # match "*path", to: "errors#maintenance", via: :all
   root to: 'home#index'
   get '/home' => 'home#index'
@@ -47,6 +56,14 @@ LittleSis::Application.routes.draw do
       constraints: { secret: /[[:xdigit:]]{32}/ }
 
   resources :contact, only: [:index, :create]
+
+
+  # charts
+
+
+
+  get 'charts/sankey'
+
 
   #########
   # ADMIN #
