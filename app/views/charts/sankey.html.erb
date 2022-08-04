@@ -1,0 +1,35 @@
+<% content_for(:head) do %>
+  <%= javascript_include_tag "sankey_chart" %>
+
+
+  <style>
+   .sankey-link {
+     fill: none;
+     stroke: #000;
+     stroke-opacity: .2;
+   }
+
+   .sankey-link:hover {
+     stroke-opacity: .5;
+   }
+
+   #sankey-tooltip {
+     position: absolute;
+     text-align: center;
+     min-width: 50px;
+     max-width: 100px;
+     max-height: 100px;
+     padding: 5px;
+     background: lightsteelblue;
+     border: 0px;
+     border-radius: 8px;
+     pointer-events: none;
+   }
+
+  </style>
+
+<% end  %>
+
+
+
+<div id="sankey-chart"></div>

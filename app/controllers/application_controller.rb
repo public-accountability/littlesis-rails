@@ -76,6 +76,9 @@ class ApplicationController < ActionController::Base
     raise Exceptions::RestrictedUserError if current_user.restricted?
   end
 
+  # raises exception if current_user does not correct abiliity
+  # see User::Role for list of abilities
+  # @param name [String, Symbol] name of ability
   def check_ability(name)
     raise Exceptions::NotSignedInError if current_user.nil?
     raise Exceptions::RestrictedUserError if current_user.restricted?

@@ -17,7 +17,8 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Debug mode disables concatenation and preprocessing of assets.
-  config.assets.debug = true
+  config.assets.debug = false
+  config.assets.digest = false
   config.assets.quiet = true
 
   # Raises error for missing translations
