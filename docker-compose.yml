@@ -62,12 +62,21 @@ services:
     links:
       - app
 
+  manticore:
+    image: littlesis:latest
+    command: ["searchd", "--config", "/littlesis/config/development.sphinx.conf", "--nodetach", "--listen", "9312:mysql"]
+    volumes:
+      - ./:/littlesis
+
   title_extractor:
     image: title-extractor:latest
     build: ./lib/title-extractor
     profiles: ["title_extractor", "development"]
     ports:
        - "127.0.0.1:8888:8888"
+    links:
+      - postgres
+      - app
 
   esbuild:
     image: littlesis:latest

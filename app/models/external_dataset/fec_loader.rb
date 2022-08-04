@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
+# Uses postgres COPY FROM to load FEC data from CSV files
+# located at rails-root/data/fec/csv
+#
+# Starting from an empty table: FECLoader.run
+# to update an existing table
+#   FECLoader.create_update_files
+#   FECLoader.load_update_files
+#
 module ExternalDataset
   class FECLoader
     YEARS = (10..22).to_a.delete_if(&:odd?).map(&:to_s).freeze
@@ -33,7 +41,7 @@ module ExternalDataset
       end
     end
 
-    # This can takes more than 8 hours
+    # Expect this to take more than 8 hours
     def self.create_update_files
       [FECCandidate, FECCommittee, FECContribution].each do |model|
         create_update_file(model, '22')
@@ -51,9 +59,10 @@ module ExternalDataset
       end
     end
 
-    # .run uses COPY to directly load the entire file, but we sometimes want to re-download
-    # the latest files and then only copy into postgres the new rows
-    # year is a 2-digit string, i.e. 22
+    # This uses a row-level check to see if the line needs to be updated. If
+    # it does then it copy by row into a new file affixed with _udpate
+    # @param model [ApplicationRecord] Model for the ExternalDataset
+    # @param year [String] two-digit string
     def self.create_update_file(model, year)
       outfile = csv_path_root.join(FILENAME_LOOKUP.fetch(model.dataset_name) + year + "_update.csv")
       csvfile = csv_path_root.join(FILENAME_LOOKUP.fetch(model.dataset_name) + year + ".csv")
@@ -81,8 +90,8 @@ module ExternalDataset
       @csv_path_root ||= if Rails.env.production?
                            Pathname.new('/var/lib/littlesis/fec')
                          elsif Rails.env.development?
-                           Rails.root.join('data/fec/csv')
-                         # Pathname.new('/data/fec/csv')
+                           # Rails.root.join('data/fec/csv')
+                           Pathname.new('/data/fec/csv')
                          else
                            Rails.root.join('data/fec/csv')
                          end
