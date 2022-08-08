@@ -52,11 +52,16 @@ LittleSis::Application.routes.draw do
   # ADMIN #
   #########
 
+  authenticate :user, ->(user) { user.admin? } do
+    mount GoodJob::Engine => '/admin/good_job'
+  end
+
   scope :admin, controller: 'admin', as: 'admin' do
     get '/', action: :home
     get '/tags', action: :tags
     get '/stats', action: :stats
     get '/test', action: :test
+    post '/test_email', action: :test_email
     get '/users', action: :users
     post '/users/:userid/set_role', action: :set_role, constraints: { userid: /[0-9]+/ }
     get '/entity_matcher', action: :entity_matcher
