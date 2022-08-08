@@ -1,17 +1,10 @@
 defaults: &defaults
-  default_from_email: dev@littlesis.org
-  default_to_email: dev@littlesis.org
   system_user_id: 1
-  smtp_address: "mail.littlesis.org"
-  smtp_port: 465
-  smtp_domain: "littlesis.org"
-  smtp_user_name: "staff@littlesis.org"
-  smtp_password: ""
-  smtp_authentication: 'plain'
-  notification_email: "email.robot@littlesis.org"
-  notification_user_name: "email.robot@littlesis.org"
-  notification_password: ""
-  notification_to: "test@littlesis.org"
+  smtp_address:
+  smtp_user_name:
+  smtp_password:
+  notification_to: "admin@littlesis.org"
+  default_from_email: "email.robot@littlesis.org"
   carousel_list_id: 404
   action_network_api_key: 'your-action-network-api-key-here'
   redis_url: "redis://redis:6379/0/cache"
@@ -29,12 +22,9 @@ defaults: &defaults
   firefox_binary: /opt/firefox
   oligrapher_commit: "1ae3ccc83701c684a8398d08f85758c449056bb8"
   oligrapher_use_bundle: true
-  opensecrets_api_key:
-  redirect_to_new_profile_page: true
 
 test:
   <<: *defaults
-  notification_email: notification@littlesis.dev
   notification_to: rspec@testing.com
   asset_host: assets.example.net
   donation_banner_display: false
@@ -59,16 +49,12 @@ production:
   host: littlesis.org
   asset_host: littlesis.org
   protocol: https
-  beta: False
+  beta: false
   carousel_list_id: 1257
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
+  opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>
   smtp_address: <%= Rails.application.credentials.smtp_address %>
   smtp_domain: <%= Rails.application.credentials.smtp_domain %>
   smtp_user_name: <%= Rails.application.credentials.smtp_user_name %>
   smtp_password: <%= Rails.application.credentials.smtp_password %>
-  notification_email: <%= Rails.application.credentials.notification_user_name %>
-  notification_user_name: <%= Rails.application.credentials.notification_user_name %>
-  notification_password: <%= Rails.application.credentials.notification_password %>
-  notification_to: <%= Rails.application.credentials.notification_to %>
   restricted_ips: <%= Rails.application.credentials.restricted_ips %>
-  opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>

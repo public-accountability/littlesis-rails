@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SystemMailer < ApplicationMailer
-  default to: Rails.application.config.littlesis[:notification_to]
+  default to: Rails.application.config.littlesis.notification_to
 
   def metrics_email(time = 1.day)
     @request_metrics = WebRequestMetrics.new(time: time)

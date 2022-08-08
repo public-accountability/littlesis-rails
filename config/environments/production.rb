@@ -54,26 +54,32 @@ Rails.application.configure do
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 
-  # possibly needed to ensure that FOG_DIRECTORY is initialized
-  # TODO: is this needed?
-  config.assets.initialize_on_precompile = true
-
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   config.action_controller.asset_host = "https://#{config.littlesis[:asset_host]}"
   config.assets.prefix = '/assets'
 
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = !config.littlesis.beta
+
   config.action_mailer.smtp_settings = {
-    address:              config.littlesis[:smtp_address],
-    port:                 config.littlesis[:smtp_port],
-    domain:               config.littlesis[:smtp_domain],
-    user_name:            config.littlesis[:smtp_user_name],
-    password:             config.littlesis[:smtp_password],
-    authentication:       config.littlesis[:smtp_authentication],
-    ssl: true
+    address: config.littlesis.smtp_address,
+    port: 587,
+    enable_starttls_auto: true,
+    user_name: config.littlesis.smtp_user_name,
+    password: config.littlesis.smtp_password,
+    authentication: :plain
   }
+
+  # config.action_mailer.smtp_settings = {
+  #   address:              config.littlesis.smtp_address,
+  #   port:                 config.littlesis.smtp_port,
+  #   domain:               config.littlesis.smtp_domain,
+  #   user_name:            config.littlesis.smtp_user_name,
+  #   password:             config.littlesis.smtp_password,
+  #   authentication:       :plain,
+  #   tls: true
+  # }
 
   # config.i18n.fallbacks = [I18n.default_locale]
   # Send deprecation notices to registered listeners.
