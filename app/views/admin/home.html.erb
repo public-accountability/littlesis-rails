@@ -44,3 +44,23 @@
     </div>
   </div>
 </div>
+
+<div class="row mt-4">
+  <div class="col-12 col-sm-6">
+    <h4>Send a test email</h4>
+
+    <%=  form_with url: '/admin/test_email' do |form| %>
+      <div class="mb-3">
+        <label for="test_email_address" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="test_email_address" name="to" value="admin@littlesis.org" />
+      </div>
+
+      <div class="mb-3">
+        <label for="test_email_content" class="form-label">Content</label>
+        <input type="text" class="form-control" id="test_email_content" name="content" />
+      </div>
+
+      <%= form.submit class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>

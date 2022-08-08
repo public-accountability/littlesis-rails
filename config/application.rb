@@ -2,6 +2,7 @@
 
 require_relative 'boot'
 require 'rails/all'
+require 'good_job/engine'
 
 # Assets should be precompiled for production (so we don't need the gems loaded then)
 Bundler.require(*Rails.groups)
@@ -70,6 +71,8 @@ module LittleSis
       from: 'email.robot@littlesis.org',
       reply_to: 'admin@littlesis.org'
     }
+
+    config.good_job.enable_cron = true
 
     config.good_job.cron = {
       update_link_counts: {

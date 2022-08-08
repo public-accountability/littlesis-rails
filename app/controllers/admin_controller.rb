@@ -28,6 +28,11 @@ class AdminController < ApplicationController
   def test
   end
 
+  def test_email
+    NotificationMailer.test_email(content: params[:content], to: params[:to]).deliver_later
+    redirect_to '/admin', notice: 'Test email sent'
+  end
+
   def users
     params[:page] ||= 1
 

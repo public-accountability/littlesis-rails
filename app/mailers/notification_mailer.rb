@@ -3,11 +3,9 @@
 class NotificationMailer < ApplicationMailer
   DEFAULT_TO = Rails.application.config.littlesis.notification_to
 
-  def test_email(content: '')
-    @content = content
-    mail(to: DEFAULT_TO,
-         subject: "This is a test",
-         from: 'LittleSis.org <email.robot@littlesis.org>')
+  def test_email(content: nil, to: DEFAULT_TO)
+    @content = content || 'this is a test'
+    mail(to: to, subject: "Test Email #{Time.current.to_i}")
   end
 
   def contact_email(params)
