@@ -1,7 +1,14 @@
 # frozen_string_literal: true
 
 class NotificationMailer < ApplicationMailer
-  DEFAULT_TO = Rails.application.config.littlesis[:notification_to]
+  DEFAULT_TO = Rails.application.config.littlesis.notification_to
+
+  def test_email(content: '')
+    @content = content
+    mail(to: DEFAULT_TO,
+         subject: "This is a test",
+         from: 'LittleSis.org <email.robot@littlesis.org>')
+  end
 
   def contact_email(params)
     @name = params[:name]

@@ -66,6 +66,11 @@ module LittleSis
       g.test_framework :rspec, view_specs: false, controller_specs: true
     end
 
+    config.action_mailer.default_options = {
+      from: 'email.robot@littlesis.org',
+      reply_to: 'admin@littlesis.org'
+    }
+
     config.good_job.cron = {
       update_link_counts: {
         cron: "30 4 * * *", # at 4:30am every day
