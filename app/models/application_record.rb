@@ -5,9 +5,12 @@ class ApplicationRecord < ActiveRecord::Base
   attr_accessor :current_user
 
   # This works just like `attribute=` except that
-  # it skips assigning the attribute if it's not blank.
-  # It's useful if you want to only a model, without
-  # overriding existing data.
+  # it will not assign the value if the attribute
+  # already has a non-balnk value.  This is useful
+  # to update models without overwriting existing data.
+  #
+  # @param attribute [String, Symbol] attribute name
+  # @param value [Any] what value to assign
   def assign_attribute_unless_present(attribute, value)
     if respond_to?("#{attribute}=")
       public_send("#{attribute}=", value) if public_send(attribute).blank?
@@ -16,9 +19,6 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
-  # If the current model has a current user set
-  # it will use that current_user to derive the last_user_id.
-  # Otherwise, it will default to the system user
   def touch_by_current_user
     if current_user.present?
       touch_by current_user
@@ -35,7 +35,7 @@ class ApplicationRecord < ActiveRecord::Base
     if has_attribute?(:last_user_id) && (last_user_id != new_last_user_id)
       update(last_user_id: new_last_user_id)
     else
-      touch # rubocop:disable Rails/SkipsModelValidations
+      touch
     end
   end
 
@@ -59,6 +59,8 @@ class ApplicationRecord < ActiveRecord::Base
   # ActiveReocrd id is the key and the value is the ActiveRecord object.
   # If ignore is set to true,  `where` is used instead of `find`, suppressing
   # the RecordNotFound error.
+  # @param ids [Array<Integer>] models database ids
+  # @param ignore [Boolean] ignore missing ids
   def self.lookup_table_for(ids, ignore: false)
     query = ignore ? where(id: ids) : find(ids)
     query.reduce({}) { |acc, x| acc.merge(x.id => x) }
@@ -72,20 +74,19 @@ class ApplicationRecord < ActiveRecord::Base
     connection.exec_query(sql).rows.first.first
   end
 
-  # convenience function for running `.connection.exec_query`
-  def self.execute_sql(*args)
-    connection.exec_query(*args)
+  # shortcut for running `.connection.exec_query`
+  def self.execute_sql(...)
+    connection.exec_query(...)
   end
 
   def self.sqlize_array(arr)
     "('#{arr.join("','")}')"
   end
 
+  # Connection URL for postgres as understood by rails
   def self.psql_connection_string
-    return @psql_connection_string if defined?(@psql_connection_string)
-
     dbconfig = Rails.configuration.database_configuration.fetch(Rails.env)
-    @psql_connection_string = "postgresql://#{dbconfig['username']}:#{dbconfig['password']}@#{dbconfig['host']}/#{dbconfig['database']}"
+    "postgresql://#{dbconfig['username']}:#{dbconfig['password']}@#{dbconfig['host']}/#{dbconfig['database']}"
   end
 
   protected
