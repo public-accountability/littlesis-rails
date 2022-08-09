@@ -1,27 +1,34 @@
 import * as d3 from "d3"
-import { Tooltip } from 'bootstrap'
+
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
 
-const data = {
-    "nodes": [
-      { "id": 0, "name": "nodeA" },
-      { "id": 1, "name": "nodeB" },
-      { "id": 2, "name": "nodeC" },
-      { "id": 3, "name": "nodeD" },
-      { "id": 4, "name": "nodeE" }
-    ],
-    "links": [
-      { "source": 0, "target": 2, "value": 2, "sName": "A", "tName": "C" },
-      { "source": 1, "target": 2, "value": 2, "sName": "B", "tName": "C" },
-      { "source": 1, "target": 3, "value": 2, "sName": "B", "tName": "D" },
-      { "source": 0, "target": 4, "value": 2, "sName": "A", "tName": "E" },
-      { "source": 2, "target": 3, "value": 2, "sName": "C", "tName": "D" },
-      { "source": 2, "target": 4, "value": 2, "sName": "C", "tName": "E" },
-      { "source": 3, "target": 4, "value": 4, "sName": "D", "tName": "E" }
-    ]
-  }
+import { get } from './src/common/http.mjs'
 
-function main() {
+const ENTITY_IDS =  [1033, 1034, 1035, 1045, 1046, 257396]
+
+async function main() {
+}
+
+function chart() {
+  // const data = {
+//     "nodes": [
+//       { "id": 0, "name": "nodeA" },
+//       { "id": 1, "name": "nodeB" },
+//       { "id": 2, "name": "nodeC" },
+//       { "id": 3, "name": "nodeD" },
+//       { "id": 4, "name": "nodeE" }
+//     ],
+//     "links": [
+//       { "source": 0, "target": 2, "value": 2, "sName": "A", "tName": "C" },
+//       { "source": 1, "target": 2, "value": 2, "sName": "B", "tName": "C" },
+//       { "source": 1, "target": 3, "value": 2, "sName": "B", "tName": "D" },
+//       { "source": 0, "target": 4, "value": 2, "sName": "A", "tName": "E" },
+//       { "source": 2, "target": 3, "value": 2, "sName": "C", "tName": "D" },
+//       { "source": 2, "target": 4, "value": 2, "sName": "fC", "tName": "E" },
+//       { "source": 3, "target": 4, "value": 4, "sName": "D", "tName": "E" }
+//     ]
+//   }
+
   const margin = { top: 10, right: 10, bottom: 10, left: 10 }
   const width = 450 - margin.left - margin.right
   const height = 480 - margin.top - margin.bottom
@@ -97,5 +104,6 @@ function main() {
 
 
 document.addEventListener("DOMContentLoaded", () => {
+  //chart()
   main()
 })

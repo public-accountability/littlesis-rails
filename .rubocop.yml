@@ -75,6 +75,7 @@ Style/FrozenStringLiteralComment:
   Exclude:
     - 'spec/**/*.rb'
     - 'lib/tasks/*.rake'
+    - 'lib/scripts/*'
     - 'app/indices/*.rb'
 
 Style/HashSyntax:
@@ -118,6 +119,10 @@ Layout/EmptyLinesAroundBlockBody:
 
 Rails/FilePath:
   Enabled: false
+
+Rails/Output:
+  Exclude:
+    - 'lib/scripts/*'
 
 Rails/SkipsModelValidations:
   Exclude:
