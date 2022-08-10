@@ -56,8 +56,6 @@ stop `littlesis rake ts:stop`
 index `littlesis rake ts:index`
 reconfigure `littlesis rake ts:rebuild`
 
-
-
 Clear logs:  `littlesis rake log:clear`
 
 Clear cache: `littlesis runner Rails.cache.clear`
@@ -66,4 +64,6 @@ Create new user: `littlesis runner lib/scripts/create_example_user.rb`
 
 Reset user password:  `User.find_by(email: <EMAIL>).send_reset_password_instructions`
 
-Update Network Map Collections: `littlesis rake maps:update_all_entity_map_collections`
+Update Network Map Collections: `littlesis rake maps:update_all_entity_map_collections
+`
+Postgres admin shell: `docker-compose exec --user postgres postgres psql`

@@ -31,35 +31,36 @@ class Link < ApplicationRecord
     end
   end
 
+  # Modfies link attributes for the network hash
+  # Corrects the entity 1 & 2 positions for reverse links and
+  # set ids eq relationship_id
+  TRANSFORM_LINK_INTO_NETWORK_HASH = proc do |h|
+    if h.delete('is_reverse') == true
+      h['entity1_id'], h['entity2_id'] = h['entity2_id'], h['entity1_id']
+    end
+    h['id'] = h.delete('relationship_id')
+    h
+  end
+
   # Retrives first and second degree relationships
   #
-  # Relationships are represented as a simple hash, rather than with the full ActiveRecord objects
-  # to save on memory, as we may have a lot of records here.
+  # Relationships are returned as a simple hash instead of your regular
+  # ActiveRecord object to save on memory as we may have a lot of records here.
   #
-  # Note: hardcoded limit of 20,000
+  # Note: hardcoded limit of 50,000
   #
-  # Entity | Array[Entity] | Interger --> [{}]
+  # @param entities [Entity, Integer, Array<Entity|Integer>]
+  # @return [Array<Hash>]
   def self.relationship_network_for(entities)
     entity_ids = Array.wrap(entities).uniq.map! { |e| Entity.entity_id_for(e) }
-
-    sql = <<~SQL
+    ApplicationRecord.connection.exec_query(<<~SQL.squish).map(&TRANSFORM_LINK_INTO_NETWORK_HASH)
       SELECT *
       FROM links as degree_one_links
       LEFT JOIN links as degree_two_links
             ON degree_one_links.entity2_id = degree_two_links.entity1_id
         #{sanitize_sql_for_conditions(['WHERE degree_one_links.entity1_id IN (?)', entity_ids])}
-      LIMIT 20000
+      LIMIT 50000
     SQL
-
-    ApplicationRecord.connection.exec_query(sql).map do |h|
-      # Un-reverse the entity1/2 positions if this is a reverse link, so that they correspond to the fields of the actual
-      # relationship object
-      if h.delete('is_reverse') == true
-        h['entity1_id'], h['entity2_id'] = h['entity2_id'], h['entity1_id']
-      end
-      h['id'] = h.delete('relationship_id')
-      h
-    end
   end
 
   def position_type

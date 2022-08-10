@@ -58,6 +58,11 @@ describe Link, type: :model do
         expect(network.find { |h| h['category_id'] == 12 })
           .to include({ id: b_to_root.id, category_id: 12, entity1_id: entities['b'].id, entity2_id: root.id }.stringify_keys)
       end
+
+      it 'accepts arrays of entities or nodes' do
+        expect(Link.relationship_network_for([root]).count).to eq 5
+        expect(Link.relationship_network_for([root.id]).count).to eq 5
+      end
     end
 
     context 'with a network for 2 entities' do
