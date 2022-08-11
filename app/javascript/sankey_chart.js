@@ -1,12 +1,32 @@
 import * as d3 from "d3"
-
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
-
+import { map, remove, flatten, groupBy, sortBy, last, values } from 'lodash-es'
+import pLimit from 'p-limit'
 import { get } from './src/common/http.mjs'
 
 const ENTITY_IDS =  [1033, 1034, 1035, 1045, 1046, 257396]
 
+function entityRelationships(id) {
+  return get(`/api/entities/${id}/relationships`, { category_id: 5 })
+    .then(json => json.data)
+}
+
+function getAllRelationships(ids) {
+  const limit = pLimit(2)
+  const requests = map(ids, id => limit(() => entityRelationships(id)))
+  return flatten(await Promise.all(requests))
+}
+
+async function relationshipNetwork(entityIds) {
+  const relationships = getAllRelationships(entityIds)
+  remove(relationships, r => !Boolean(r.attributes.amount))
+  // keep only one relationship of the highest amount if multiple exist between two entities
+  const grouped = values(groupBy(relationships, r => [r.attributes.entity1_id, r.attributes.entity2_id]))
+  return flatten(map(grouped,rs => last(sortBy(rs, x => x.attributes.amount))))
+}
+
 async function main() {
+  window.relationships = await relationshipNetwork(ENTITY_IDS)
 }
 
 function chart() {
