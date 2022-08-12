@@ -332,6 +332,8 @@ LittleSis::Application.routes.draw do
 
   namespace :api do
     get '/' => 'api#index'
+
+    get '/entities' => 'entities#batch'
     get '/entities/search' => 'entities#search'
 
     resources :entities, only: [:show] do

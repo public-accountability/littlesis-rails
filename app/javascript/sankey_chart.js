@@ -1,32 +1,43 @@
 import * as d3 from "d3"
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
-import { map, remove, flatten, groupBy, sortBy, last, values } from 'lodash-es'
+import { map, remove, flatten, groupBy, sortBy, last, values, uniq } from 'lodash-es'
 import pLimit from 'p-limit'
 import { get } from './src/common/http.mjs'
 
 const ENTITY_IDS =  [1033, 1034, 1035, 1045, 1046, 257396]
 
+if (!window.littlesis) { window.littlesis = {} }
+
 function entityRelationships(id) {
   return get(`/api/entities/${id}/relationships`, { category_id: 5 })
-    .then(json => json.data)
 }
 
 function getAllRelationships(ids) {
   const limit = pLimit(2)
   const requests = map(ids, id => limit(() => entityRelationships(id)))
-  return flatten(await Promise.all(requests))
+  return flatten(await Promise.all(requests)).map(r => {
+    delete r.meta
+    return r
+  })
 }
 
 async function relationshipNetwork(entityIds) {
   const relationships = getAllRelationships(entityIds)
-  remove(relationships, r => !Boolean(r.attributes.amount))
+  remove(relationships, r => !Boolean(r.data.attributes.amount))
   // keep only one relationship of the highest amount if multiple exist between two entities
-  const grouped = values(groupBy(relationships, r => [r.attributes.entity1_id, r.attributes.entity2_id]))
-  return flatten(map(grouped,rs => last(sortBy(rs, x => x.attributes.amount))))
+  const grouped = values(groupBy(relationships, r => [r.data.attributes.entity1_id, r.data.attributes.entity2_id]))
+  return flatten(map(grouped,rs => last(sortBy(rs, x => x.data.attributes.amount))))
 }
 
 async function main() {
-  window.relationships = await relationshipNetwork(ENTITY_IDS)
+  const relationships = await relationshipNetwork(ENTITY_IDS)
+  // const donors = uniqueBy(relationships, r => r.data.attributes.entity1_id)
+  // const recipients = uniqueBy(relationships, r => r.data.attributes.entity2_id)
+  const donorIds = relationships.map(r, r => r.data.attributes.entity1_id)
+  const recipientIds = relationships.map(r, r => r.data.attributes.entity2_id)
+
+
+  // window.littlesis.recipients = uniqueBy(relations)
 }
 
 function chart() {

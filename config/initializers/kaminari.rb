@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Kaminari
   class PaginatableArray
     def map(&block)
@@ -13,7 +15,7 @@ end
 
 Kaminari.configure do |config|
   config.default_per_page = 10
-  config.max_per_page = 50
+  config.max_per_page = 300
   config.window = 3
   # config.outer_window = 0
   # config.left = 0
