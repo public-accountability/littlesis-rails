@@ -5,6 +5,7 @@ gem 'rails', '7.0.3.1'
 gem 'pg'
 gem 'mysql2', '~> 0.5.2'
 gem 'puma', '>= 5'
+gem "sd_notify"
 gem 'redis'
 gem 'scenic'
 
@@ -36,7 +37,6 @@ gem 'sassc-rails'
 gem 'sprockets', '~> 4'
 gem 'turbo-rails', '> 0.8', '< 7.0.0'
 gem 'stimulus-rails'
-# gem 'jsbundling-rails'
 
 # Search
 # gem 'thinking-sphinx', '~> 5.1'
@@ -76,12 +76,10 @@ group :development do
   gem 'web-console'
   gem 'better_errors'
   gem 'rack-mini-profiler', require: false
-
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
-
   # gem 'ruby-prof'
   gem 'solargraph', require: false
 end

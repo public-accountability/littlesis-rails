@@ -15,7 +15,7 @@ threads_count = 5
 threads threads_count, threads_count
 
 if rails_env == 'production'
-  bind ENV.fetch('LITTLESIS_SOCKET') { "unix:///run/littlesis.sock" }
+  bind ENV.fetch('LITTLESIS_SOCKET') { "unix:///run/littlesis.sock?backlog=2048" }
   pidfile ENV.fetch('LITTLESIS_PIDFILE') { '/var/www/littlesis/tmp/puma.pid' }
   state_path ENV.fetch('LITTLESIS_PUMA_STATE') { '/var/www/littlesis/tmp/puma.state' }
 else
