@@ -6,7 +6,7 @@ class Api::EntitiesController < Api::ApiController
   BATCH_LIMIT = 300
 
   before_action :set_entity, except: [:search, :batch]
-  before_action :set_options, only: [:search]
+  before_action :set_options, only: [:show, :search]
 
   # /api/entities/:id
   def show
