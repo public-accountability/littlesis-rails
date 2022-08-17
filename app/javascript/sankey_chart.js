@@ -12,7 +12,7 @@ function entityRelationships(id) {
   return get(`/api/entities/${id}/relationships`, { category_id: 5 })
 }
 
-function getAllRelationships(ids) {
+async function getAllRelationships(ids) {
   const limit = pLimit(2)
   const requests = map(ids, id => limit(() => entityRelationships(id)))
   return flatten(await Promise.all(requests)).map(r => {
