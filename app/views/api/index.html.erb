@@ -14,7 +14,7 @@
 <div class="row">
   <%= api_column do %>
     <p>The API follows many of the conventions of <%= link_to 'JSON API', 'http://jsonapi.org/' %>, but does not implement the entire specification. All responses are in JSON.</p>
-    <p>The API does not require any API keys or authentication, although requests may be rate-limited. If you would like a copy of our entire dataset please visit the <a href="/bulk_data">bulk data</a> page</p>
+    <p>The API does not require any API keys or authentication, although requests may be rate-limited. If you would like a copy of our entire dataset please visit the <a href="/bulk_data">bulk data</a> page.</p>
   <% end %>
   <div class="col-md-8">
     <h3>Successful Responses</h3>
@@ -68,7 +68,7 @@
 	        <td>410</td>
 	        <td class="content">Resource has been deleted (but once existed)</td>
 	      </tr>
-        <tr>
+              <tr>
 	        <td>503</td>
 	        <td class="content">Rate Limit Exceeded</td>
 	      </tr>
@@ -100,6 +100,15 @@
       <%= attribute_line('types', 'An array of types (also known as extensions) associated with the entity. i.e. Business, Lawyer') %>
       <%= attribute_line('aliases', 'An array of other names the entity is known as') %>
     </ul>
+  <% end %>
+
+
+  <%= api_column do %>
+    <h3><code>/api/entities?ids="1,2,3"</code></h3>
+    <p>
+      Request data on many entities at once.
+      <code>ids</code> is a required comma separated list of integers. Up to <%= Api::EntitiesController::BATCH_LIMIT %> entities per request are permitted.
+    </p>
   <% end %>
 
   <%= api_column do %>
@@ -152,7 +161,8 @@
   <%= api_column do %>
     <%= api_title_route('Entity Relationships', '/api/entities/:id/relationships') %>
     <p>Relationships this entity has with other entities. The key "data" contains an array of Relationship elements. These requests can also be paginated.</p>
-    <p>You can find limit the relationships to specific category by including the param "category_id".</p>
+    <p>You can limit the relationships to a specific category by including the param "category_id".</p>
+    <p>You can set the parmater <code>sort</code> to "amount", "oldest", or "recent" (the default)</p>
   <% end %>
 
   <%= api_column do %>
@@ -221,7 +231,6 @@
   <div class="col-md-10 col-sm-12"
     <p>This searches our database for entities. The number of the relationships the entity has is used in the ranking algorithm. For instance, searching for 'Bush' will put <%= link_to 'George Bush', concretize_entity_path(Entity.find(28776)) %> before <%= link_to 'Jeb Bush', concretize_entity_path(Entity.find(34003)) %> because the former has more relationships in our database than the latter.</p>
 
-
     <p>Example response:</p>
     <pre><code>
 {
@@ -251,7 +260,6 @@
         <li><strong>tags</strong> (<code>regions=oil</code>) fitlers search results by tags</li>
       </ul>
     <% end %>
-
 
   </div>
 </div>
