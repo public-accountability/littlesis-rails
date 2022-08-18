@@ -35,7 +35,6 @@ require 'paper_trail/frameworks/rspec'
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 # Checks for pending migration and applies them before tests are run.
-# If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
 
 # Selenium::WebDriver.logger.level = :debug
@@ -62,8 +61,8 @@ end
 Capybara.raise_server_errors = false
 Capybara.ignore_hidden_elements = false
 Capybara.disable_animation = true
-Capybara.server = :puma, { Silent: true } # Remove crummy test output
-Capybara.default_max_wait_time = ENV["CI"] ? 15 : 5
+Capybara.server = :puma, { Silent: true }
+Capybara.default_max_wait_time = 15
 Capybara.default_host = "#{LittleSis::Application.default_url_options[:protocol]}://#{LittleSis::Application.default_url_options[:host]}"
 
 Capybara.javascript_driver = :headless_firefox
