@@ -10,6 +10,7 @@ module PublicData
     FileUtils.mkdir_p DIR
     save_json(Entity)
     save_json(Relationship)
+    gzip
   end
 
   def self.save_json(klass)

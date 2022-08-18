@@ -126,11 +126,11 @@ def status
   puts "Rails Environment \033[1m#{$rails_env}\033[0m"
 
   if production_environment?
+    systemd_service_check 'nginx'
+    systemd_service_check 'redis-server'
     systemd_service_check 'littlesis'
     systemd_service_check 'littlesis-goodjob'
-    systemd_service_check 'redis'
-    systemd_service_check 'nginx'
-    app_exec_bin 'rake ts:status'
+    systemd_service_check 'littlesis-manticore'
   else
     running_services = `docker-compose ps --services --filter status=running`.split("\n")
 
