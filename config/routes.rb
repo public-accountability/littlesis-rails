@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 LittleSis::Application.routes.draw do
-
   # Fixes sources links in development
   # see https://github.com/rails/jsbundling-rails/issues/40#issuecomment-1176856408
   if Rails.env.development?
@@ -60,14 +59,9 @@ LittleSis::Application.routes.draw do
 
   # charts
 
-
-
   get 'charts/sankey'
 
-
-  #########
-  # ADMIN #
-  #########
+  # Admin
 
   authenticate :user, ->(user) { user.admin? } do
     mount GoodJob::Engine => '/admin/good_job'
@@ -157,15 +151,10 @@ LittleSis::Application.routes.draw do
     get 'apply' => 'permission_passes#apply'
   end
 
-  #############
-  # Datatable #
-  #############
-
+  # Datatable
   get '/datatable/entity/:id', to: 'datatable#entity', constraints: { id: /\d+/ }
 
-  #####################
-  # deletion requests #
-  #####################
+  # Deletion requests
 
   namespace :deletion_requests do
     resources :entities, only: [:new, :create] do
@@ -287,9 +276,7 @@ LittleSis::Application.routes.draw do
 
   resources :documents, only: [:edit, :update]
 
-  ########
-  # Tags #
-  ########
+  # Tags
 
   get '/tags/request' => 'tags#tag_request'
   post '/tags/request' => 'tags#tag_request'
@@ -304,31 +291,24 @@ LittleSis::Application.routes.draw do
     end
   end
 
-  #########################################
-  # External Links & Featured Resources   #
-  #########################################
+
+  # External Links & Featured Resources
 
   resources :external_links, only: %i[create update]
   resources :featured_resources, only: %i[create destroy]
 
-  #########
-  # edits #
-  #########
+  # Edits
 
   get "/edits" => "edits#index"
   get '/edits/dashboard_edits' => "edits#dashboard_edits"
 
-  #########
-  # Merge #
-  #########
+  # Merge
 
   get '/merge' => "merge#merge"
   post '/merge' => "merge#merge!"
   get '/merge/redundant' => "merge#redundant_merge_review"
 
-  #########
   #  API  #
-  #########
 
   namespace :api do
     get '/' => 'api#index'
@@ -348,9 +328,7 @@ LittleSis::Application.routes.draw do
     resources :relationships, only: [:show]
   end
 
-  #############
-  #  Toolkit  #
-  #############
+  # Toolkit
 
   get '/toolkit' => 'toolkit#index'
   get '/toolkit/new' => 'toolkit#new'
@@ -361,9 +339,7 @@ LittleSis::Application.routes.draw do
   patch '/toolkit/:id' => 'toolkit#update', :as => 'toolkit_update'
   get '/toolkit/:page_name' => 'toolkit#display', :as => 'toolkit_display'
 
-  ################
   #  HELP PAGES  #
-  ################
 
   get '/help' => 'help_pages#index'
   get '/help/new' => 'help_pages#new'
@@ -374,10 +350,6 @@ LittleSis::Application.routes.draw do
   patch '/help/:id' => 'help_pages#update', :as => 'help_update'
   get '/help/:page_name' => 'help_pages#display', :as => 'help_display'
 
-  #########
-  # Pages #
-  #########
-
   # Editable Pages
   get "/pages/:page/edit" => "pages#edit_by_name", constraints: { page: %r{[A-z]+[^/]+} }
   resources :pages, only: [:new, :create, :edit, :update, :index, :show]
@@ -387,6 +359,7 @@ LittleSis::Application.routes.draw do
   get "/about" => "pages#about"
 
   # Other Pages
+
   get "/donate" => "pages#donate"
   get "/swamped" => "pages#swamped"
   post "/swamped" => "pages#swamped"
@@ -394,22 +367,17 @@ LittleSis::Application.routes.draw do
   get '/public_data/:file' => 'pages#public_data',
       constraints: { file: /(entities|relationships)\.json(\.gz)?/ }
 
-  ############
-  # Partners #
-  ############
+  # Partners
 
   scope :partners do
     get '/corporate-mapping-project' => 'partners#cmp'
   end
 
-  #################
-  # External Data #
-  #################
+  # External Data
 
-  # Overview page
+  # overview
   get '/datasets' => 'datasets#index'
   # Table Of ExternalEntites/ExternalRelationships for the given dataset
-  # get '/datasets/:dataset' => 'datasets#dataset', constraints: DatasetConstraint.new, as: 'dataset'
   get '/datasets/:dataset' => 'datasets#show', constraints: DatasetConstraint.new, as: 'dataset'
 
   namespace :fec do
@@ -433,7 +401,13 @@ LittleSis::Application.routes.draw do
     get '/committee/:id/contributions', action: :contributions, as: :committee_contributions
   end
 
-  get 'relationship/view/id/:id', constraints: { id: /[0-9]+/ }, to: 'relationships/routes#redirect_to_canonical'
+  # Rewrite legacy relationships
+
+  get 'relationship/view/id/:id',
+      constraints: { id: /[0-9]+/ },
+      to: 'relationships/routes#redirect_to_canonical'
+
+  # monopoly
 
   match "*path",
         to: "errors#not_found",
