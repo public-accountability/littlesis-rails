@@ -1,19 +1,16 @@
 <div class="row">
-  <div class="col-sm-12 nopadding">
+  <div class="col-12">
     <h2>You are about to <span class="bg-warning">merge</span> all of <%= link_to "#{@source.name} (#{@source.id})'s", concretize_entity_path(@source) %>
       relationships and information with <%= link_to "#{@dest.name} (#{@dest.id})", concretize_entity_path(@dest) %></h2>
     <h2>It will delete <%= link_to "#{@source.name} (#{@source.id})", concretize_entity_path(@source) %> from the database</h2>
   </div>
 </div>
 
-
 <div class="row">
-  <div class="col-sm-12 nopadding">
-    <div class="panel"></div>
-    <h4><em>This will make the following changes:</em></h4>
-  </div>
-  <div class="col-sm-12 nopadding">
+  <div class="col-12">
+    <h3><em>This will make the following changes:</em></h3>
     <ul id="merge-report">
+      <%# see ToolsHelper %>
       <% unless_em_prop_is_empty :relationships  do %>
 	<% relationship_class =  em_prop(:relationships).count > 5 ? 'bg-danger' : '' %>
 	<li>
@@ -95,22 +92,24 @@
 	</li>
       <% end %>
     </ul>
-    <div class="panel"></div>
   </div>
-
-  <% unless_em_prop_is_empty :potential_duplicate_relationships do %>
-    <div class="col-sm-12 nopadding">
-      <div class="panel panel-default">
-	<div class="panel-body">
-	  <p>
-	    <strong><%= em_prop(:potential_duplicate_relationships).count %></strong> relationships
-	    were marked as <span class="bg-danger">possible duplicates</span>
-	  </p>
-	  <p>No action is required, but you might consider looking over the profile page afterwards to see if they should be removed.</p>
-	</div>
-      </div>
-    </div>
-  <% end %>
 </div>
+
+<% if @entity_merger.potential_duplicate_relationships.present? %>
+  <div class="col-12 col-sm-6">
+    <div class="alert alert-warning" role="alert">
+      <strong><%= em_prop(:potential_duplicate_relationships).count %></strong> relationships were marked as <span class="bg-danger">possible duplicates</span>.
+      No action is required, but you might consider looking over the profile page afterwards to see if they should be removed.<
+    </div>
+  </div>
+<% end %>
+
+<% if @entity_merger.source_is_too_popular? %>
+  <div class="col-12 col-sm-6">
+    <div class="alert alert-warning" role="alert">
+      Due to the number of relationships on the source entity, these entities cannot be automatically merged.
+    </div>
+  </div>
+<% end %>
 
 <%= render partial: "merge_#{@merge_mode}_form" %>

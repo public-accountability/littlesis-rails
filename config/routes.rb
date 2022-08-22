@@ -142,6 +142,10 @@ LittleSis::Application.routes.draw do
 
         collection do
           post 'bulk' => 'entities#create_bulk'
+
+          get 'merge' => "merge#merge"
+          post 'merge' => "merge#merge!"
+          get 'merge/redundant' => "merge#redundant_merge_review"
         end
       end
     end
@@ -302,11 +306,6 @@ LittleSis::Application.routes.draw do
   get "/edits" => "edits#index"
   get '/edits/dashboard_edits' => "edits#dashboard_edits"
 
-  # Merge
-
-  get '/merge' => "merge#merge"
-  post '/merge' => "merge#merge!"
-  get '/merge/redundant' => "merge#redundant_merge_review"
 
   #  API  #
 

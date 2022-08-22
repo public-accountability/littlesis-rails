@@ -1,7 +1,7 @@
 <div class="row">
-  <div class="col-sm-12 nopadding" id="merge-report-action-buttons">
+  <div class="col-12" id="merge-report-action-buttons">
 
-    <%= form_tag('/merge', method: :post, class: 'merge-entities-form') do %>
+    <%= form_tag(merge_entities_path, method: :post, class: 'merge-entities-form') do %>
       <%= hidden_field_tag 'mode', 'execute' %>
       <%= hidden_field_tag 'source', @source.id %>
       <%= hidden_field_tag 'dest', @dest.id %>

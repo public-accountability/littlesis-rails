@@ -1,14 +1,13 @@
 <div class="row">
-  <div class="col-sm-12 nopadding" id="merge-report-action-buttons">
-
-    <%= form_tag('/merge', method: :post, class: 'merge-entities-form') do %>
+  <div class="col-12" id="merge-report-action-buttons">
+    <%= form_tag(merge_entities_path, method: :post, class: 'merge-entities-form') do %>
       <%= hidden_field_tag 'mode', 'review' %>
       <%= hidden_field_tag 'request', @merge_request.id %>
       <%= hidden_field_tag 'decision', 'approved' %>
       <%= submit_tag 'Approve', class: 'btn btn-lrg btn-primary' %>
     <% end %>
 
-    <%= form_tag('/merge', method: :post, class: 'merge-entities-form') do %>
+    <%= form_tag(merge_entities_path, method: :post, class: 'merge-entities-form') do %>
       <%= hidden_field_tag 'mode', 'review' %>
       <%= hidden_field_tag 'request', @merge_request.id %>
       <%= hidden_field_tag 'decision', 'denied' %>

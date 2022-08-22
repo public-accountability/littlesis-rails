@@ -150,7 +150,7 @@
 
           <% if current_user.role.include?(:merge_entity) %>
             <li>
-              <%= link_to 'Begin merging process', merge_path(mode: 'search', source: @entity.id) %>
+              <%= link_to 'Begin merging process', merge_entities_path(mode: 'search', source: @entity.id) %>
             </li>
           <% end %>
         </ul>

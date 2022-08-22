@@ -1,9 +1,14 @@
-feature 'Merging entities' do
+describe 'Merging entities' do
   let(:mode) {}
   let(:user) {}
   let(:merge_request) {}
   let(:source) { create(:merge_source_person) }
-  let(:dest) { create(:entity_person, :with_person_name) }
+  let(:dest) do
+    create(:entity_person, :with_person_name).tap do |e|
+      e.update_columns(link_count: 10)
+    end
+  end
+
   let(:query) { "foobar" }
 
   def mock_similar_entities_service
@@ -26,7 +31,7 @@ feature 'Merging entities' do
 
       it "navigates to search page from `merge` action button" do
         click_link "merge"
-        successfully_visits_page merge_path(mode: :search, source: source.id)
+        successfully_visits_page merge_entities_path(mode: :search, source: source.id)
       end
     end
 
@@ -35,7 +40,7 @@ feature 'Merging entities' do
 
       it "navigates to search page from `merge` action button" do
         click_link "merge"
-        successfully_visits_page merge_path(mode: :search, source: source.id)
+        successfully_visits_page merge_entities_path(mode: :search, source: source.id)
       end
 
       # it "navigates to merge search page from `similar entities` section" do
@@ -46,11 +51,10 @@ feature 'Merging entities' do
   end
 
   describe "using merge pages" do
-
     def should_show_merge_report
-      page_has_selector 'h2', count: 2
+      # page_has_selector 'h2', count: 2
       page_has_selector 'h2', text: "It will delete "
-      page_has_selector 'h4', text: "This will make the following changes:"
+      page_has_selector 'h3', text: "This will make the following changes:"
       page_has_selector '#merge-report li', count: 4
       page_has_selector 'li', text: "Transfer 1 relationships"
     end
@@ -78,7 +82,7 @@ feature 'Merging entities' do
         page_has_selector "input[name='mode'][value='request']", count: 1
         page_has_selector "input[name='source'][value='#{source.id}']", count: 1
         page_has_selector "input[name='dest'][value='#{dest.id}']", count: 1
-        page_has_selector "textarea[name='justification']", count: 1
+        # page_has_selector "textarea[name='justification']", count: 1
         page_has_selector "input.btn[value='Request Merge']", count: 1
         page_has_selector 'a.btn', text: 'Go back'
       end
@@ -86,128 +90,119 @@ feature 'Merging entities' do
 
     def should_commit_merge
       successfully_visits_page entity_path(dest)
-
-      expect(dest.reload.relationships.count).to eql 1
-      expect(dest.lists.count).to eql 1
+      expect(dest.reload.relationships.count).to eq 1
+      expect(dest.lists.count).to eq 1
       expect(source.reload.is_deleted).to be true
-      expect(source.merged_id).to eql dest.id
+      expect(source.merged_id).to eq dest.id
     end
 
     def should_not_commit_merge
-      expect(dest.reload.relationships.count).to eql 0
-      expect(dest.lists.count).to eql 0
+      expect(dest.reload.relationships.count).to eq 0
+      expect(dest.lists.count).to eq 0
       expect(source.reload.is_deleted).to be false
       expect(source.merged_id).to be_nil
     end
 
     before do
       mock_similar_entities_service
-
-      visit merge_path(mode:    mode,
-                       source:  source&.id,
-                       dest:    dest&.id,
-                       query:   query,
-                       request: merge_request&.id)
     end
 
-    context 'as a non-admin user' do
-      let(:user) { create_basic_user }
+    context 'when logged in as an editor' do
+      let(:user) { create_editor }
 
-      context 'searching for merge targets' do
+      describe 'searching for merge targets' do
         let(:mode) { MergeController::Modes::SEARCH }
-        let(:dest_param) {}
 
         it "allows access" do
+          visit merge_entities_path(mode: "search", source: source.id)
           expect(page).to have_http_status :ok
         end
-
-        it "is impossible to test displaying search results because it is in javascript"
-        it "is impossible to test if clicking `merge` goes to correct page  b/c javascript"
       end
 
-      context 'requesting a merge' do
-        let(:mode) { MergeController::Modes::REQUEST }
-        let(:query_param) {}
+      describe 'requesting a merge' do
         let(:justification) { Faker::Movie.quote }
 
         it "shows a merge report" do
+          visit merge_entities_path(mode: "request", source: source.id, dest: dest.id)
           should_show_merge_report
         end
 
         it "shows a merge request form" do
+          visit merge_entities_path(mode: "request", source: source.id, dest: dest.id)
           should_show_merge_form :request
         end
 
         describe "clicking `Request Merge`" do
-          let(:last) { MergeRequest.last }
-          let(:message_delivery) { instance_double(ActionMailer::MessageDelivery) }
-
-          before do
-            expect(dest.relationships.count).to eql 0
-            expect(dest.lists.count).to eql 0
-            expect(MergeRequest.count).to eql 0
-
-            allow(NotificationMailer).to receive(:merge_request_email).and_return(message_delivery)
-            allow(message_delivery).to receive(:deliver_later)
-
+          it "does not commit the merge" do
+            visit merge_entities_path(mode: "request", source: source.id, dest: dest.id)
             fill_in 'justification', with: justification
             click_button "Request Merge"
-          end
-
-          it "does not commit the merge" do
             successfully_visits_page entity_path(source)
             should_not_commit_merge
           end
 
           it "creates a pending merge request" do
-            expect(MergeRequest.count).to eq 1
-            expect(last.source).to eql source
-            expect(last.dest).to eql dest
-            expect(last.user).to eql user
-            expect(last.status).to eql "pending"
-            expect(last.justification).to eql justification
-          end
+            visit merge_entities_path(mode: "request", source: source.id, dest: dest.id)
+            fill_in 'justification', with: justification
+            click_button "Request Merge"
 
-          it "does not end merge request emailsl" do
-            expect(NotificationMailer).not_to have_received(:merge_request_email)
-            expect(message_delivery).not_to have_received(:deliver_later)
+            expect(MergeRequest.count).to eq 1
+            last = MergeRequest.last
+            expect(last.source).to eq source
+            expect(last.dest).to eq dest
+            expect(last.user).to eq user
+            expect(last.status).to eq "pending"
+            expect(last.justification).to eq justification
           end
         end
       end
 
-      context 'executing a merge' do
-        let(:mode) { MergeController::Modes::EXECUTE }
+      describe 'executing a merge' do
         let(:query_param) {}
+
+        before do
+          visit merge_entities_path(mode: "execute", source: source.id, dest: dest.id)
+        end
 
         denies_access
       end
 
-      context 'reviewing a merge' do
-        let(:mode) { MergeController::Modes::REVIEW }
+      describe 'reviewing a merge' do
         let(:query_param) {}
+
+        before do
+          visit merge_entities_path(mode: "execute", source: source.id, dest: dest.id)
+        end
 
         denies_access
       end
     end
 
     context 'as an user with merger permissions' do
-      let(:user) do
-        create_collaborator
+      let(:user) { create_collaborator }
+
+      let(:merge_request) do
+        create(:merge_request, user: create_editor, source: source, dest: dest)
       end
 
-      context 'executing a merge' do
+      describe 'executing a merge' do
         let(:mode) { MergeController::Modes::EXECUTE }
         let(:query_param) {}
 
         it 'commits the merge when user clicks `Merge`' do
+          visit merge_entities_path(mode: "execute", source: source.id, dest: dest.id)
           click_button "Merge"
           should_commit_merge
         end
       end
 
-      context 'reviewing a merge' do
+      describe 'reviewing a merge' do
         let(:mode) { MergeController::Modes::REVIEW }
         let(:query_param) {}
+
+        before do
+          visit merge_entities_path(mode: "review", request: merge_request.id)
+        end
 
         denies_access
       end
@@ -220,24 +215,19 @@ feature 'Merging entities' do
         let(:mode) { MergeController::Modes::SEARCH }
         let(:query) { source.name }
 
+        before do
+          visit merge_entities_path(mode: "search", query: query, source: source.id)
+        end
+
         it "has a search bar to search for more matches" do
-          page_has_selector 'form[action="/merge"]'
-          page_has_selector 'input[@value="search"]'
+          page_has_selector 'form[action="/entities/merge"]'
+          page_has_selector 'input[@value="Search"]'
           page_has_selector "input[@value='#{source.id}']"
         end
 
         it 'shows a table of last search matches' do
           page_has_selector 'h1', text: "Merge #{source.name} with another person"
         end
-
-        it "is impossible to test the contents of the table b/c it is in javascript"
-        # ^-- i wanted this as a sanity check to make sure the row i was trying to click
-        # `merge` in (see below) was actually there (@aguestuser)
-
-        it "is impossible to test clicking `merge` b/c the button is in javascript"
-        # ^-- i broke this by changing the URL at which the merge report page lives
-        # and thus, to which this button should submit, and and wanted to add a test
-        # to catch that breakage, but could not (@aguestuser)
       end
 
       context 'executing a merge' do
@@ -245,6 +235,7 @@ feature 'Merging entities' do
         let(:query_param) {}
 
         before do
+          visit merge_entities_path(mode: "execute", source: source.id, dest: dest.id)
           expect(dest.relationships.count).to eql 0
           expect(dest.lists.count).to eql 0
         end
@@ -271,18 +262,23 @@ feature 'Merging entities' do
           create(:merge_request, user: requesting_user, source: source, dest: dest)
         end
 
-        context "that is pending" do
-
+        describe "that is pending" do
           it "allows access" do
+            merge_request
+            visit merge_entities_path(mode: "review", request: merge_request.id)
             expect(page).to have_http_status 200
           end
 
           it "shows a merge report" do
+            merge_request
+            visit merge_entities_path(mode: "review", request: merge_request.id)
+
             should_show_merge_report
             should_show_merge_form :review
           end
 
           it "shows a description of the merge request" do
+            visit merge_entities_path(mode: "review", request: merge_request.id)
             desc = page.find("#user-request-description")
             expect(desc).to have_link username, href: "/users/#{username}"
             expect(desc).to have_text "requested"
@@ -290,10 +286,12 @@ feature 'Merging entities' do
           end
 
           it "shows the user's submitted justification" do
+            visit merge_entities_path(mode: "review", request: merge_request.id)
             expect(page).to have_text merge_request.justification
           end
 
           it "approves merge request when admin clicks `Approve`" do
+            visit merge_entities_path(mode: "review", request: merge_request.id)
             click_button "Approve"
 
             successfully_visits_page entity_path(dest)
@@ -303,6 +301,7 @@ feature 'Merging entities' do
           end
 
           it "denies merge request when admin clicks `Deny`" do
+            visit merge_entities_path(mode: "review", request: merge_request.id)
             click_button "Deny"
 
             successfully_visits_page entity_path(dest)
@@ -312,26 +311,26 @@ feature 'Merging entities' do
           end
         end
 
-        context "that has already been approved" do
+        describe "that has already been approved" do
           before do
             merge_request.approved_by!(user)
-            visit merge_path(mode: mode, request: merge_request)
+            visit merge_entities_path(mode: mode, request: merge_request)
           end
 
           it "redirects to error page" do
-            successfully_visits_page merge_redundant_path(request: merge_request.id)
+            successfully_visits_page merge_redundant_entities_path(request: merge_request.id)
             expect(page).to have_text "already approved by #{user.username}"
           end
         end
 
-        context "that has already been denied" do
+        describe "that has already been denied" do
           before do
             merge_request.denied_by!(user)
-            visit merge_path(mode: mode, request: merge_request)
+            visit merge_entities_path(mode: mode, request: merge_request)
           end
 
           it "redirects to error page" do
-            successfully_visits_page merge_redundant_path(request: merge_request.id)
+            successfully_visits_page merge_redundant_entities_path(request: merge_request.id)
             expect(page).to have_text "already denied by #{user.username}"
           end
         end

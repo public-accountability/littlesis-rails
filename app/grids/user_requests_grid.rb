@@ -22,7 +22,7 @@ class UserRequestsGrid < BaseGrid
   column(:request, html: true) do |request|
     case request.type
     when 'MergeRequest'
-      link_to request.source.name, merge_path(mode: 'review', request: request.id)
+      link_to request.source.name, merge_entities_path(mode: 'review', request: request.id)
     when 'DeletionRequest'
       link_to(request.entity&.name || 'Entity', review_deletion_requests_entity_path(request))
     when 'ListDeletionRequest'
@@ -31,7 +31,7 @@ class UserRequestsGrid < BaseGrid
       link_to "Image #{request.image&.id}", review_deletion_requests_image_path(request)
     when 'UserFlag'
       link_to 'Flag', request.page
-    end
+                                                   end
   end
 
   column(:requester, html: true) do |request|

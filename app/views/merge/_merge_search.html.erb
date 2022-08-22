@@ -1,4 +1,4 @@
-<%= form_tag(merge_path, method: :get) do %>
+<%= form_tag(merge_entities_path, method: :get, remote: false) do %>
   <%= hidden_field_tag 'mode', 'search' %>
   <%= hidden_field_tag 'source', @source.id %>
   <div class="input-group">
