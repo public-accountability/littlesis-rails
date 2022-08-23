@@ -17,6 +17,9 @@ $database = {
 $rails_env = ENV.fetch('RAILS_ENV', 'development')
 $deploy_branch = 'main'
 
+$littlesis_systemd_services = %w[nginx.service redis-server.service redis-server.service littlesis.socket littlesis.service littlesis-goodjob.serivce littlesis-manticore.serivce littlesis-backup.service].freeze
+$littlesis_docker_services = %w[app postgres redis nginx esbuild manticore title_extractor].freeze
+
 def help
   puts <<TEXT
 Usage: littlesis [-tdP] <command> [--] [arguments for command]
@@ -119,89 +122,25 @@ def systemd_service_check(service)
 end
 
 def status
-  current_commit = git("rev-parse --short HEAD").chomp
-  current_branch = git("rev-parse --abbrev-ref HEAD").chomp
-
-  puts "commit #{current_commit} on branch #{current_branch}"
-  puts "Rails Environment \033[1m#{$rails_env}\033[0m"
+  puts "Host\t#{File.read('/etc/hostname').chomp}"
+  puts "Path\t#{REPO}"
+  puts "Env\t#{$rails_env}"
+  printf git('log --format="%h %cs %s" -n 1')
 
   if production_environment?
-    systemd_service_check 'nginx'
-    systemd_service_check 'redis-server'
-    systemd_service_check 'littlesis'
-    systemd_service_check 'littlesis-goodjob'
-    systemd_service_check 'littlesis-manticore'
+    $littlesis_systemd_services.each { |s| systemd_service_check(s) }
   else
     running_services = `docker-compose ps --services --filter status=running`.split("\n")
 
-    %w[app postgres redis nginx esbuild title_extractor].each do |service|
+    $littlesis_docker_services.each do |service|
       puts "[#{running_services.include?(service) ? '✓' : 'X'}] #{service} "
     end
-    puts app_exec("rake ts:status", bin: true,  compose_command: "exec")
   end
 end
 
 def yes_or_no?(msg)
   printf "#{msg}\n\e[31mpress 'y' to continue: \e[0m"
   $stdin.gets.strip.casecmp('y').zero?
-end
-
-def deploy
-  raise "Cannot deploy unless mode = production" unless production_environment?
-
-  Dir.chdir(REPO)
-
-  modified_files = git("ls-files -m").split("\n")
-
-  if modified_files.count.positive?
-    puts "The following files have been modified:\n#{modified_files.join("\n")}\n"
-    exit 1 unless yes_or_no?("Are you sure you want to deploy?")
-  end
-
-  puts "deploying branch #{$deploy_branch}"
-  git("fetch origin #{$deploy_branch}")
-
-  remote_commit = git("rev-parse \"origin/#{$deploy_branch}\"").chomp
-  local_commit = git("rev-parse @").chomp
-
-  if remote_commit == local_commit
-    puts "No upstream changes"
-    exit
-  end
-
-  git_subject = git("log --format=%s -n 1 \"#{remote_commit}\"")
-  puts "Deploying #{remote_commit}: #{git_subject}"
-  git("checkout $deploy_branch")
-  git("pull")
-
-  changed_files = git("diff --name-only #{remote_commit} #{local_commit}").split("\n")
-
-  if changed_files.include?('Gemfile') || changed_files.include?('Gemfile.lock')
-    app_exec_bin 'bundle install'
-  end
-
-  if changed_files.any? { |f| f.include?('db/migrate') }
-    puts "These changes likely require a database update."
-    if yes_or_no?("Would you like to run rake db:migrate now?")
-      puts app_exec_bin('rake db:migrate')
-    end
-  end
-
-  if changed_files.include?('package-lock.json')
-    puts app_exec('npm ci')
-  end
-
-  if changed_files.include?('package-lock.json') || changed_files.any? { |f| f.include?('javascript') }
-    puts app_exec('npm run build')
-  end
-
-  # TODO detech changes to Rails.application.config.littlesis.oligrapher_commit and run OligrapherAssetsService.run
-  if changed_files.any? { |f| f.include?('package-lock.json') || f.include?('assets') || f.include?('javascript') }
-    puts app_exec_bin('rake assets:precompile')
-  end
-
-  puts "Restarting LittleSis"
-  puts app_exec_bin('pumactl -p tmp/puma.pid restart')
 end
 
 def logs
@@ -331,8 +270,6 @@ when 'pg_dump', 'pg_restore', 'pg_dumpall', 'pg_basebackup'
   app_exec "#{ARGV.first}  #{rest}", use_exec: true, container: 'postgres', compose_command: 'exec --user postgres'
 when 'status'
   status
-when 'deploy'
-  deploy
 when 'logs'
   logs
 when 'esbuild'
