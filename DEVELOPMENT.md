@@ -38,32 +38,65 @@ This may take a while.
 
 The configurations for nginx and postgres are in the folder config/docker
 
-### Development Scripts
+### LittleSis commands
 
-start development services: `docker-compose --profile development up -d`
+``` sh
+# Run docker commands
+littlesis docker pause
+littlesis docker unpause
 
-Create example users: `littlesis script create_development_users.rb`
+# clear logs
+littlesis rake log:clear
 
-Start/stop app: `littlesis up/down`
+# build javascript
+littlesis rake javascript:build
 
-Open rails console: `littlesis console`
+# build oligrapher
+littlesis rake oligrapher:build
+littlesis rake oligrapher:build[1ae3ccc83701c684a8398d08f85758c449056bb8]
 
-*Manticore*
+# compile assets
+littlesis rake assets:precompile
 
-status `littlesis rake ts:status`
-start `littlesis rake ts:start`
-stop `littlesis rake ts:stop`
-index `littlesis rake ts:index`
-reconfigure `littlesis rake ts:rebuild`
+# Edit secret variables
+littlsis rails credentials:edit
 
-Clear logs:  `littlesis rake log:clear`
+# thinking sphinx
+littlesis rake ts:configure
+littlesis rake ts:index
 
-Clear cache: `littlesis runner Rails.cache.clear`
+# Stats on new models
+littlesis rake stats:year[2021]
 
-Create new user: `littlesis runner lib/scripts/create_example_user.rb`
+# unitedstates.io data
+littlesis rake legislators:import
+littlesis rake legislators:import_party_memberships
+littlesis rake legislators:import_relationships
+littlesis rake legislators:summary
 
-Reset user password:  `User.find_by(email: <EMAIL>).send_reset_password_instructions`
+# External Data tools
+littlesis data list
+littlesis data download nycc
+littlesis data transform nycc
+littlesis data load nycc
+littlesis data report nycc
+littlesis fec -- --help
+littlesis sec -- --help
 
-Update Network Map Collections: `littlesis rake maps:update_all_entity_map_collections
-`
-Postgres admin shell: `docker-compose exec --user postgres postgres psql`
+#  Update public data
+littlesis runner "PublicData.run"
+
+# Update Network Map Collections
+littlesis rake maps:update_all_entity_map_collections
+
+# Create users for testing
+littlesis script create_development_users.rb
+littlesis script create_example_user.rb
+
+# Rails console
+littlesis console
+
+# Send reset password instructions
+littlesis runner "User.find_by(email: <EMAIL>).send_reset_password_instructions"
+
+```
