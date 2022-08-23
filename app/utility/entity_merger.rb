@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-# rubocop:disable Rails/Output, Metrics/MethodLength
-
 class EntityMerger
+  LINK_COUNT_THRESHOLD = 50
+  LINK_COUNT_MAX_DIFFERENCE = 5
+
   attr_reader :source, :dest, :extensions,
               :contact_info, :lists, :images,
               :aliases, :document_ids, :tag_ids,
@@ -19,8 +20,10 @@ class EntityMerger
   end
 
   # the actual merging
-  def merge!
+  def merge!(force: false)
     merge
+
+    data_protection_check! unless force
 
     ApplicationRecord.transaction do
       @extensions.each { |e| e.merge!(@dest) }
@@ -42,6 +45,20 @@ class EntityMerger
       merge_os_donations!
       replace_os_match_cmte_id!
       set_merged_id_and_delete
+    end
+  end
+
+  def source_is_too_popular?
+    @source.link_count >= LINK_COUNT_THRESHOLD || (@source.link_count - @dest.link_count) > LINK_COUNT_MAX_DIFFERENCE
+  end
+
+  def data_protection_check!
+    if (@source.link_count - @dest.link_count) > LINK_COUNT_MAX_DIFFERENCE
+      raise DataProtectionError, "Source has more links than destination"
+    end
+
+    if @source.link_count >= LINK_COUNT_THRESHOLD
+      raise DataProtectionError, "Source has more than #{LINK_COUNT_PROTECTION_THRESHOLD} links"
     end
   end
 
@@ -316,17 +333,18 @@ class EntityMerger
 
   ## ERRORS ##
 
-  class ExtensionMismatchError < ArgumentError
+  class EntityMergerError < StandardError
+  end
+
+  class ExtensionMismatchError < EntityMergerError
     def message
       'Only entities with the same primary ext can be merged'
     end
   end
 
-  class EntityMergerError < StandardError; end
-
   class MergingTwoCmpEntitiesError < EntityMergerError
     def message
-      'Both source and dest are a CMP entity. Merging these two is likely a mistake'
+      'Source and destination have different CMP IDs. Merging these two is likely a mistake.'
     end
   end
 
@@ -338,6 +356,9 @@ class EntityMerger
     def message
       "Both entities have external links of type \"#{@link_type}\" with different values"
     end
+  end
+
+  class DataProtectionError < EntityMergerError
   end
 
   ## Private Methods ##
@@ -379,5 +400,3 @@ class EntityMerger
     @dest_relationship_lookup ||= Set.new(dest.relationships.map(&:triplet))
   end
 end
-
-# rubocop:enable Rails/Output, Metrics/MethodLength

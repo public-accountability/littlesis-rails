@@ -16,7 +16,8 @@
         <%= link_to t('vocab.remove'), new_deletion_requests_entity_path(entity_id: @entity.id) %>
       <% end  %>
 
-      <%= link_to t('vocab.merge'), merge_path(mode: :search, source: @entity.id) %>
+
+      <%= link_to t('vocab.merge'), merge_entities_path(mode: :search, source: @entity.id) %>
 
       <% if current_user.show_add_bulk_button? %>
         <%= link_to t("phrases.add_bulk"), relationships_bulk_add_path(entity_id: @entity.id), class: "action-button" %>
@@ -27,6 +28,5 @@
     <%#= EntityLastEditorPresenter.html(@entity) %>
   </div>
 </div>
-
 
 <!-- <div class="thin-grey-line"></div> -->

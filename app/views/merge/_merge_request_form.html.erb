@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-sm-12 nopadding" id="merge-report-action-buttons">
-    <%= form_tag('/merge', method: :post, class: 'merge-entities-form user-request-form') do %>
+    <%= form_tag(merge_entities_path, method: :post, class: 'merge-entities-form user-request-form') do %>
       <%= hidden_field_tag 'mode', 'request' %>
       <%= hidden_field_tag 'source', @source.id %>
       <%= hidden_field_tag 'dest', @dest.id %>
@@ -10,7 +10,7 @@
       <div class="user-request-action-buttons">
 	<%= text_area_tag 'justification', nil, size: "25x4", required: true %>
 	<%= submit_tag 'Request Merge', class: 'btn btn-lrg btn-primary' %>
-	<%= link_to "Go back", merge_path(mode: 'search', source: @source.id), class: 'btn btn-secondary' %>
+	<%= link_to "Go back", merge_entities_path(mode: 'search', source: @source.id), class: 'btn btn-secondary' %>
       </div>
     <% end %>
   </div>
