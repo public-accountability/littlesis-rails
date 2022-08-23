@@ -66,6 +66,7 @@ doc/
 !/data/swamped.json
 !/data/fec_transaction_types.csv
 !/data/relationship_categories.csv
+!/data/cmp_top_50.csv
 
 # javascript
 node_modules
