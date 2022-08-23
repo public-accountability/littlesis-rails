@@ -15,7 +15,6 @@ $database = {
 }
 
 $rails_env = ENV.fetch('RAILS_ENV', 'development')
-$deploy_branch = 'main'
 
 $littlesis_systemd_services = %w[nginx.service redis-server.service redis-server.service littlesis.socket littlesis.service littlesis-goodjob.service littlesis-manticore.service littlesis-backup.service].freeze
 $littlesis_docker_services = %w[app postgres redis nginx esbuild manticore title_extractor].freeze
@@ -37,7 +36,7 @@ Commands
            redis            launch redi cli
            data             external data ETL tools
            fec              FEC data ETL tools
-           deploy           deploys to latest commit on main
+           sec              SEC data ETL tools
            edit             select file to open with $EDITDOR
            runner           run bin/rails runner <file>
            script           execute named script in lib/scripts/
@@ -185,8 +184,6 @@ opts.each do |name, val|
     $rails_env = 'development'
   when '--production'
     $rails_env = 'production'
-  when '--branch'
-    $deploy_branch = val
   end
 end
 
@@ -249,6 +246,8 @@ when 'data'
   app_exec_bin! "rails runner lib/scripts/data.rb #{rest}"
 when 'fec'
   app_exec_bin! "rails runner lib/scripts/fec #{rest}"
+when 'sec'
+  app_exec_bin! "rails runner lib/scripts/sec #{rest}"
 when 'git'
   puts git(rest)
 when 'rg', 'search'
