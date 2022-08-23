@@ -10,9 +10,10 @@ class LegacyAddress < ApplicationRecord
 
   validates_presence_of :city, :country_name
 
-  STREET_TYPES = YAML.safe_load(
-    File.read(Rails.root.join('data', 'street_types.yml'))
-  ).to_set.freeze
+  STREET_TYPES = %w[anex anx annex annx].freeze
+  # STREET_TYPES = YAML.safe_load(
+  #   File.read(Rails.root.join('data', 'street_types.yml'))
+  # ).to_set.freeze
 
   def to_s
     "#{street1}, #{street2}, #{street3}, #{city}, #{state_name} #{postal}, #{country_name}".strip.gsub(/\s+,/, " ").gsub(/\s+/, " ")

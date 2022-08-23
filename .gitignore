@@ -63,13 +63,10 @@ doc/
 /data/*
 
 # add data files here if they need to be included:
-!/data/members114.csv
-!/data/members114_ids.csv
-!/data/cmp_matches.yml
-!/data/cmp_top_50.csv
-!/data/street_types.yml
 !/data/swamped.json
 !/data/fec_transaction_types.csv
+!/data/relationship_categories.csv
+!/data/cmp_top_50.csv
 
 # javascript
 node_modules
@@ -83,3 +80,6 @@ node_modules
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+
+/public/sitemap
