@@ -255,8 +255,8 @@ describe NotificationMailer, type: :mailer do
       end
 
       it "links to merge review page" do
-        expect(body).to have_text merge_url(mode: 'review',
-                                            request: merge_request.id)
+        expect(body).to have_text merge_entities_url(mode: 'review',
+                                                     request: merge_request.id)
       end
     end
   end

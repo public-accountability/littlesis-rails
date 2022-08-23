@@ -7,6 +7,6 @@ Email: <%= @merge_request.user.email %>
 Merge Source: <%= @merge_request.source.name %>
 Merge Destination: <%= @merge_request.dest.name %>
 
-Review Page: <%= merge_url mode: 'review', request: @merge_request.id %>
+Review Page: <%= merge_entities_url mode: 'review', request: @merge_request.id %>
 
 Justification for merging:  <%= @merge_request.justification %>

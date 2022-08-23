@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class EntityMerger
-  LINK_COUNT_PROTECTION_THRESHOLD = 50
+  LINK_COUNT_THRESHOLD = 50
+  LINK_COUNT_MAX_DIFFERENCE = 5
 
   attr_reader :source, :dest, :extensions,
               :contact_info, :lists, :images,
@@ -48,15 +49,15 @@ class EntityMerger
   end
 
   def source_is_too_popular?
-    (@source.link_count > @dest.link_count) || @source.link_count >= LINK_COUNT_PROTECTION_THRESHOLD
+    @source.link_count >= LINK_COUNT_THRESHOLD || (@source.link_count - @dest.link_count) > LINK_COUNT_MAX_DIFFERENCE
   end
 
   def data_protection_check!
-    if @source.link_count > @dest.link_count
+    if (@source.link_count - @dest.link_count) > LINK_COUNT_MAX_DIFFERENCE
       raise DataProtectionError, "Source has more links than destination"
     end
 
-    if @source.link_count >= LINK_COUNT_PROTECTION_THRESHOLD
+    if @source.link_count >= LINK_COUNT_THRESHOLD
       raise DataProtectionError, "Source has more than #{LINK_COUNT_PROTECTION_THRESHOLD} links"
     end
   end

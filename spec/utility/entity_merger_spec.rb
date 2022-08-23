@@ -1,5 +1,3 @@
-# rubocop:disable RSpec/MultipleMemoizedHelpers
-
 describe EntityMerger, :merging_helper do
   subject(:merger) { EntityMerger.new(source: source_org, dest: dest_org) }
 
@@ -36,6 +34,23 @@ describe EntityMerger, :merging_helper do
 
   it 'marks the merged entity as deleted' do
     expect { merger.merge! }.to change { Entity.unscoped.find(source_org.id).is_deleted }.from(false).to(true)
+  end
+
+  describe 'data protection checks'do
+    it 'raises error when source has too many source links' do
+      source_org.update_columns :link_count => 1_000
+
+      expect { EntityMerger.new(source: source_org, dest: dest_org).merge.data_protection_check! }
+        .to raise_error(EntityMerger::DataProtectionError)
+    end
+
+    it 'raises error when source has more links than dest' do
+      source_org.update_columns :link_count => 10
+      dest_org.update_columns :link_count => 3
+
+      expect { EntityMerger.new(source: source_org, dest: dest_org).merge.data_protection_check! }
+        .to raise_error(EntityMerger::DataProtectionError)
+    end
   end
 
   describe 'extensions' do
@@ -211,244 +226,244 @@ describe EntityMerger, :merging_helper do
       it 'removes email, phone, and addresses from source' do
         merger.merge!
         expect(Phone.where(entity_id: source_org.id).exists?).to be false
-        expect(LegacyAddress.where(entity_id: source_org.id).exists?).to be false
-        expect(Email.where(entity_id: source_org.id).exists?).to be false
+          expect(LegacyAddress.where(entity_id: source_org.id).exists?).to be false
+          expect(Email.where(entity_id: source_org.id).exists?).to be false
+        end
       end
     end
-  end
 
-  describe 'lists' do
-    subject(:merger) { EntityMerger.new(source: source_org, dest: dest_org) }
+    describe 'lists' do
+      subject(:merger) { EntityMerger.new(source: source_org, dest: dest_org) }
 
-    let(:list1) { create(:list) }
-    let(:list2) { create(:open_list) }
-    let(:list3) { create(:closed_list) }
+      let(:list1) { create(:list) }
+      let(:list2) { create(:open_list) }
+      let(:list3) { create(:closed_list) }
 
-    it '@lists is empty by default' do
-      expect(merger.lists).to eql []
-      merger.merge_lists
-      expect(merger.lists).to eql Set.new
-    end
-
-    context 'when source is on two lists that the destination is not on' do
-      before do
-        ListEntity.create!(list_id: list1.id, entity_id: source_org.id)
-        ListEntity.create!(list_id: list2.id, entity_id: source_org.id)
-        ListEntity.create!(list_id: list3.id, entity_id: dest_org.id)
+      it '@lists is empty by default' do
+        expect(merger.lists).to eql []
         merger.merge_lists
+        expect(merger.lists).to eql Set.new
       end
 
-      it '@lists contains a set of new list_ids' do
-        expect(merger.lists).to eql([list1.id, list2.id].to_set)
+      context 'when source is on two lists that the destination is not on' do
+        before do
+          ListEntity.create!(list_id: list1.id, entity_id: source_org.id)
+          ListEntity.create!(list_id: list2.id, entity_id: source_org.id)
+          ListEntity.create!(list_id: list3.id, entity_id: dest_org.id)
+          merger.merge_lists
+        end
+
+        it '@lists contains a set of new list_ids' do
+          expect(merger.lists).to eql([list1.id, list2.id].to_set)
+        end
+
+        describe 'merge!' do
+          reset_merger
+          it 'adds destintion entity to new lists' do
+            expect { merger.merge! }
+              .to change { dest_org.reload.lists.count }.from(1).to(3)
+          end
+        end
       end
 
-      describe 'merge!' do
-        reset_merger
-        it 'adds destintion entity to new lists' do
-          expect { merger.merge! }
-            .to change { dest_org.reload.lists.count }.from(1).to(3)
+      context 'when source and dest are on the same list' do
+        before do
+          ListEntity.create!(list_id: list1.id, entity_id: source_org.id)
+          ListEntity.create!(list_id: list1.id, entity_id: dest_org.id)
+          merger.merge_lists
+        end
+
+        specify { expect(merger.lists).to be_empty }
+
+        describe 'merge!' do
+          reset_merger
+
+          specify do
+            expect { merger.merge! }.not_to change { dest_org.reload.lists.count }
+          end
+
+          specify do
+            expect { merger.merge! }.to change(ListEntity, :count).by(-1)
+          end
+
+        end
+      end
+
+      context 'when source is on a deleted list' do
+        before do
+          ListEntity.create!(list_id: list1.id, entity_id: source_org.id)
+          list1.soft_delete
+        end
+
+        describe 'merge!' do
+          reset_merger
+
+          it 'adds destination entity to new list' do
+            expect(list1.is_deleted).to be true
+            merger.merge!
+            expect(list1.reload.entities.first.id).to eq dest_org.id
+          end
         end
       end
     end
 
-    context 'when source and dest are on the same list' do
+    describe 'images' do
+      subject(:merger) { EntityMerger.new(source: source_org, dest: dest_org) }
+
+      let(:image) { create(:image, entity_id: source_org.id) }
+
       before do
-        ListEntity.create!(list_id: list1.id, entity_id: source_org.id)
-        ListEntity.create!(list_id: list1.id, entity_id: dest_org.id)
-        merger.merge_lists
+        image
+        merger.merge_images
       end
 
-      specify { expect(merger.lists).to be_empty }
-
-      describe 'merge!' do
-        reset_merger
-
-        specify do
-          expect { merger.merge! }.not_to change { dest_org.reload.lists.count }
-        end
-
-        specify do
-          expect { merger.merge! }.to change(ListEntity, :count).by(-1)
-        end
-
-      end
-    end
-
-    context 'when source is on a deleted list' do
-      before do
-        ListEntity.create!(list_id: list1.id, entity_id: source_org.id)
-        list1.soft_delete
+      it 'changes images entity id' do
+        expect(merger.images.length).to eq 1
+        expect(merger.images.first).to be_a Image
+        expect(merger.images.first.entity_id).to eql dest_org.id
       end
 
       describe 'merge!' do
         reset_merger
 
-        it 'adds destination entity to new list' do
-          expect(list1.is_deleted).to be true
+        it 'transfers images to new entity' do
+          expect(Image.find(image.id).entity_id).to eql source_org.id
           merger.merge!
-          expect(list1.reload.entities.first.id).to eq dest_org.id
-        end
-      end
-    end
-  end
-
-  describe 'images' do
-    subject(:merger) { EntityMerger.new(source: source_org, dest: dest_org) }
-
-    let(:image) { create(:image, entity_id: source_org.id) }
-
-    before do
-      image
-      merger.merge_images
-    end
-
-    it 'changes images entity id' do
-      expect(merger.images.length).to eq 1
-      expect(merger.images.first).to be_a Image
-      expect(merger.images.first.entity_id).to eql dest_org.id
-    end
-
-    describe 'merge!' do
-      reset_merger
-
-      it 'transfers images to new entity' do
-        expect(Image.find(image.id).entity_id).to eql source_org.id
-        merger.merge!
-        expect(Image.find(image.id).entity_id).to eql dest_org.id
-      end
-    end
-  end
-
-  describe 'aliases' do
-    context 'when there are no new aliases' do
-      before do
-        dest_org.aliases.create!(name: source_org.name)
-        merger.merge_aliases
-      end
-
-      specify { expect(merger.aliases).to eq [] }
-    end
-
-    context 'when source has 1 new aliases' do
-      let(:corp_name) { Faker::Company.unique.name }
-
-      before do
-        dest_org.aliases.create!(name: source_org.name)
-        source_org.aliases.create!(name: corp_name)
-        merger.merge_aliases
-      end
-
-      it 'adds new aliases to @aliases' do
-        expect(merger.aliases.length).to eq 1
-        expect(merger.aliases.first).to be_a Alias
-        expect(merger.aliases.first.name).to eq corp_name
-        expect(merger.aliases.first.entity_id).to eq dest_org.id
-        expect(merger.aliases.first.persisted?).to be false
-      end
-
-      describe 'merge!' do
-        reset_merger
-        it 'creates new aliases on destination entity' do
-          expect { merger.merge! }.to change { Entity.find(dest_org.id).aliases.count }.by(1)
-          expect(Alias.last.attributes.slice('name', 'entity_id'))
-            .to eql('name' => corp_name, 'entity_id' => dest_org.id)
-        end
-      end
-    end
-  end
-
-  describe 'locations' do
-    let(:entity_merger) { EntityMerger.new(source: source_person, dest: dest_person) }
-
-    before do
-      source_person.locations.create!(region: 'Latin America and Caribbean')
-    end
-
-    it 'transfers locations' do
-      expect { entity_merger.merge! }.to change { dest_person.locations.count }.from(0).to(1)
-    end
-  end
-
-  describe 'references/documents' do
-    subject(:merger) { EntityMerger.new(source: source_person, dest: dest_person) }
-
-    let(:document) { create(:document) }
-
-    context 'when there are no new documents' do
-      before do
-        source_person.add_reference(url: document.url)
-        dest_person.add_reference(url: document.url)
-        dest_person.add_reference(url: Faker::Internet.url)
-        merger.merge_references
-      end
-
-      it 'does not add new documents ids' do
-        expect(merger.document_ids).to be_empty
-      end
-
-      describe 'merge!' do
-        reset_merger
-        specify do
-          expect { merger.merge! }.not_to change { dest_person.references.count }
+          expect(Image.find(image.id).entity_id).to eql dest_org.id
         end
       end
     end
 
-    context 'with a new document' do
-      before do
-        source_person.add_reference(url: document.url)
-        merger.merge_references
+    describe 'aliases' do
+      context 'when there are no new aliases' do
+        before do
+          dest_org.aliases.create!(name: source_org.name)
+          merger.merge_aliases
+        end
+
+        specify { expect(merger.aliases).to eq [] }
       end
 
-      it 'adds one new documents ids' do
-        expect(merger.document_ids.length).to eq 1
-        expect(merger.document_ids.first).to eq document.id
-      end
+      context 'when source has 1 new aliases' do
+        let(:corp_name) { Faker::Company.unique.name }
 
-      describe 'merge!' do
-        reset_merger
+        before do
+          dest_org.aliases.create!(name: source_org.name)
+          source_org.aliases.create!(name: corp_name)
+          merger.merge_aliases
+        end
 
-        it 'creates a new reference for the destination entity' do
-          expect { merger.merge! }.to change { Entity.find(dest_person.id).references.count }.by(1)
-          expect(dest_person.references.last.document_id).to eql document.id
+        it 'adds new aliases to @aliases' do
+          expect(merger.aliases.length).to eq 1
+          expect(merger.aliases.first).to be_a Alias
+          expect(merger.aliases.first.name).to eq corp_name
+          expect(merger.aliases.first.entity_id).to eq dest_org.id
+          expect(merger.aliases.first.persisted?).to be false
+        end
+
+        describe 'merge!' do
+          reset_merger
+          it 'creates new aliases on destination entity' do
+            expect { merger.merge! }.to change { Entity.find(dest_org.id).aliases.count }.by(1)
+            expect(Alias.last.attributes.slice('name', 'entity_id'))
+              .to eql('name' => corp_name, 'entity_id' => dest_org.id)
+          end
         end
       end
     end
-  end
 
-  describe 'tags' do
-    let(:tags) { Array.new(2) { create(:tag) } }
+    describe 'locations' do
+      let(:entity_merger) { EntityMerger.new(source: source_person, dest: dest_person) }
 
-    context 'when source and dest have the same tag' do
       before do
-        source_org.add_tag(tags.first.id)
-        dest_org.add_tag(tags.first.id)
-        merger.merge_tags
+        source_person.locations.create!(region: 'Latin America and Caribbean')
       end
 
-      specify { expect(merger.tag_ids).to eq Set.new }
+      it 'transfers locations' do
+        expect { entity_merger.merge! }.to change { dest_person.locations.count }.from(0).to(1)
+      end
     end
 
-    context 'when source and dest have different tags' do
-      before do
-        source_org.add_tag(tags.second.id)
-        dest_org.add_tag(tags.first.id)
-        merger.merge_tags
+    describe 'references/documents' do
+      subject(:merger) { EntityMerger.new(source: source_person, dest: dest_person) }
+
+      let(:document) { create(:document) }
+
+      context 'when there are no new documents' do
+        before do
+          source_person.add_reference(url: document.url)
+          dest_person.add_reference(url: document.url)
+          dest_person.add_reference(url: Faker::Internet.url)
+          merger.merge_references
+        end
+
+        it 'does not add new documents ids' do
+          expect(merger.document_ids).to be_empty
+        end
+
+        describe 'merge!' do
+          reset_merger
+          specify do
+            expect { merger.merge! }.not_to change { dest_person.references.count }
+          end
+        end
       end
 
-      it 'adds tag to list of tag ids' do
-        expect(merger.tag_ids).to eql Set.new([tags.second.id])
-      end
+      context 'with a new document' do
+        before do
+          source_person.add_reference(url: document.url)
+          merger.merge_references
+        end
 
-      describe 'merge!' do
-        reset_merger
-        it 'adds the new tag to the destination entity' do
-          expect { merger.merge! }
-            .to change { dest_org.tags.include?(tags.second) }.from(false).to(true)
+        it 'adds one new documents ids' do
+          expect(merger.document_ids.length).to eq 1
+          expect(merger.document_ids.first).to eq document.id
+        end
+
+        describe 'merge!' do
+          reset_merger
+
+          it 'creates a new reference for the destination entity' do
+            expect { merger.merge! }.to change { Entity.find(dest_person.id).references.count }.by(1)
+            expect(dest_person.references.last.document_id).to eql document.id
+          end
         end
       end
     end
-  end
+
+    describe 'tags' do
+      let(:tags) { Array.new(2) { create(:tag) } }
+
+      context 'when source and dest have the same tag' do
+        before do
+          source_org.add_tag(tags.first.id)
+          dest_org.add_tag(tags.first.id)
+          merger.merge_tags
+        end
+
+        specify { expect(merger.tag_ids).to eq Set.new }
+      end
+
+      context 'when source and dest have different tags' do
+        before do
+          source_org.add_tag(tags.second.id)
+          dest_org.add_tag(tags.first.id)
+          merger.merge_tags
+        end
+
+        it 'adds tag to list of tag ids' do
+          expect(merger.tag_ids).to eql Set.new([tags.second.id])
+        end
+
+        describe 'merge!' do
+          reset_merger
+          it 'adds the new tag to the destination entity' do
+            expect { merger.merge! }
+              .to change { dest_org.tags.include?(tags.second) }.from(false).to(true)
+          end
+        end
+      end
+    end
 
   describe 'articles' do
     subject(:merger) { EntityMerger.new(source: source_org, dest: dest_org) }
@@ -841,5 +856,3 @@ describe EntityMerger, :merging_helper do
     end
   end
 end
-
-# rubocop:enable RSpec/MultipleMemoizedHelpers
