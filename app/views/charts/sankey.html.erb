@@ -1,35 +1,62 @@
 <% content_for(:head) do %>
   <%= javascript_include_tag "sankey_chart" %>
 
-
   <style>
+   #sankey-chart {}
+   #sankey-chart-controls {}
+   #sankey-chart-svg {}
+   g.sankey-links {}
+   g.sankehy-nodes {}
+
    .sankey-link {
      fill: none;
-     stroke: #000;
+     stroke: gray;
      stroke-opacity: .2;
+     cursor: default;
+     /* stroke-width: 2; */
    }
 
-   .sankey-link:hover {
+   .sankey-link-hover, .sankey-link:hover {
      stroke-opacity: .5;
+     cursor: default;
    }
+
+   .sankey-node {
+     cursor: pointer;
+   }
+
+   .sankey-node:hover {
+     cursor: pointer;
+     text-decoration: underline;
+   }
+
 
    #sankey-tooltip {
      position: absolute;
-     text-align: center;
-     min-width: 50px;
-     max-width: 100px;
-     max-height: 100px;
-     padding: 5px;
-     background: lightsteelblue;
-     border: 0px;
+     padding: 8px;
      border-radius: 8px;
+     background: lightsteelblue;
      pointer-events: none;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+   }
+
+   #sankey-tooltip p {
+     font-size: 12px;
+     margin: auto;
    }
 
   </style>
-
 <% end  %>
 
 
+<div id="sankey-chart" class="row">
+  <div id="sankey-chart-controls" class="col-12">
 
-<div id="sankey-chart"></div>
+
+
+  </div>
+  <div id="sankey-chart-svg" class="col-12">
+  </div>
+</div>
