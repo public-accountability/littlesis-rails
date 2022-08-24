@@ -1,15 +1,19 @@
-/** Sankey Donation Graph
-https://github.com/d3/d3-sankey
- */
+/**
+   Sankey Donation Graph
+
+   see https://github.com/d3/d3-sankey
+*/
+
 import * as d3 from "d3"
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey'
-import { find, each, merge, chunk, map, remove, flatten, groupBy, sortBy, last, values, uniq } from 'lodash-es'
+import { find, each, chunk, map, remove, flatten, groupBy, sortBy, last, values, uniq } from 'lodash-es'
 import pLimit from 'p-limit'
 import { get } from './src/common/http.mjs'
 
-const ENTITY_IDS =  [1033, 1034, 1035, 1045, 1046, 257396]
+const ENTITY_IDS = [13485, 34472, 117188, 13450, 13204 ]
+// const ENTITY_IDS = [32580, 28778, 246695, 416193]
 
-const fetchRelationships = id => get(`/api/entities/${id}/relationships`, { category_id: 5 })
+const fetchRelationships = id => get(`/api/entities/${id}/relationships`, { category_id: 5, per_page: 50, sort: 'amount' })
 
 async function getEntities(ids) {
   if (ids.length <= 300) {
@@ -40,6 +44,10 @@ async function getRelationships(ids) {
   const relationships = flatten(map(results, x => x.data))
   // Remove relationships with no amount
   remove(relationships, r => !Boolean(r.attributes.amount))
+  // remove circular relationships
+  remove(relationships, r => r.attributes.entity1_id === r.attributes.entity2_id)
+  // limit to relationships where entity is the on the receiving end
+  remove(relationships, r => !ids.includes(r.attributes.entity2_id))
   // keep only one relationship of the highest amount if multiple exist between two entities
   const grouped = values(groupBy(relationships, r => [r.attributes.entity1_id, r.attributes.entity2_id]))
   return flatten(map(grouped,rs => last(sortBy(rs, x => x.attributes.amount))))
@@ -61,21 +69,31 @@ async function relationshipNetwork(ids) {
 }
 
 function createChart(data) {
-  // const margin = { top: 10, right: 10, bottom: 10, left: 10 }
   const margin = 10
-  const width = 1000  // - (margin * 2)
-  const height = 3000 //  - (margin * 2)
-  const color = d3.scaleOrdinal(d3.schemeAccent)
-  const extent = [[0, 0], [width - (margin*3), height - (margin*3)]]
   const offset = 10
+  const leftOffset = 80
+  const width = 1000  // - (margin * 2)
+  const height = 3600 //  - (margin * 2)
+  const extent = [[leftOffset, margin], [width - 200, height - (margin*2)]]
+
+  const amounts = map(data.relationships, r => r.attributes.amount)
+
+  const strokeWidthScale = d3.scaleLinear()
+                  .domain([Math.min(...amounts), Math.max(...amounts)])
+                  .range([2,6])
+
+  // const strokeWidthScale = d3.scaleQuantize()
+  //                 .domain([Math.min(...amounts), Math.max(...amounts)])
+  //                 .range([1,2,3,4,5,6])
+
+  const color = d3.scaleOrdinal(d3.schemeAccent)
 
   const tooltip = d3.select('body')
         .append('div')
         .attr('id', 'sankey-tooltip')
         // .style('opacity', 0)
 
-
-  const svg = d3.select("#sankey-chart")
+  const svg = d3.select("#sankey-chart-svg")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -89,12 +107,15 @@ function createChart(data) {
         .nodes(g => g.entities)
         .links(g => g.relationships)
         .nodeId(d => d.id)
-        .nodeWidth(30)
-        .nodePadding(300)
-        .iterations(7)  // default = 6
         .extent(extent) // default =  [[0, 0], [1, 1]]
+        .nodePadding(60)
+        .iterations(7)  // default = 6
+        .nodeWidth(30)
+        // .nodePadding(300)       //
 
   const chart = generator(data) // { entities, relationships}
+
+  window.sankeyChart = chart
 
   const link = svg
     .append("g")
@@ -102,10 +123,12 @@ function createChart(data) {
     .data(chart.links)
     .enter()
     .append("path")
-    .attr("class", "sankey-link")
+    .attr("class", function(d) {
+      return `sankey-link entity-${d.attributes.entity1_id} entity-${d.attributes.entity2_id}`
+    })
     .attr("d", sankeyLinkHorizontal())
     .attr('pointer-events', 'visibleStroke')
-    .attr("stroke-width", d => Math.max(1, d.dy))
+    .attr("stroke-width", d =>  strokeWidthScale(d.value))
     .on("mouseover", function (e, d) {
       // tooltip.transition().duration(200).style("opacity", .9)
       tooltip
@@ -129,40 +152,48 @@ function createChart(data) {
     .selectAll(".sankey-nodes")
     .data(chart.nodes)
     .enter()
-    .append("circle")
-    .attr("cx", d => d.x0)
-    .attr("cy", d => d.y0)
-    .attr("r", "10px")
-    .attr("fill", "lightblue")
+    .append("text")
+    .attr("class", "sankey-node")
+    .text(d => d.attributes.name)
+    .attr("x", d => {
+      if (d.depth === 1) { // recipient
+        return d.x0 + 10
+      } else { // donor
+        return d.x0 - leftOffset
+      }
+    })
+    .attr("y", d => {
+      if (d.depth === 1) { // recipient
+        return d.y0
+      } else { // donor
+        return d.y0
+      }
+    })
+    .on("click", (e, d) => window.open(d.links.self, '_blank'))
     .on("mouseover", function (e, d) {
-      // tooltip.transition().duration(200).style("opacity", .9)
-      tooltip
-        .style("opacity", .9)
-        .html(`<p>${d.attributes.name}</p>`)
-        .style("left", (e.pageX + offset) + "px")
-        .style("top", (e.pageY + offset) + "px")
+      if (d.depth === 0) {
+        document
+        .querySelector('svg')
+        .querySelectorAll(`path.entity-${d.id}`)
+        .forEach(path => path.classList.add('sankey-link-hover'))
+      }
     })
-    .on("mouseout", function (e) {
-      // tooltip.transition().duration(300).style("opacity", 0)
-      tooltip.style("opacity", 0)
+    .on("mouseout", function (e, d) {
+      if (d.depth === 0) {
+        document
+        .querySelector('svg')
+        .querySelectorAll(`path.entity-${d.id}`)
+        .forEach(path => path.classList.remove('sankey-link-hover'))
+      }
     })
-    .on("mousemove", function (e) {
-      d3.select('#sankey-tooltip')
-        .style('left', (e.pageX + offset) + 'px')
-        .style('top', (e.pageY + offset) + 'px')
-    })
-
-
 }
 
 async function main() {
   const network = await relationshipNetwork(ENTITY_IDS)
   console.log(network)
   createChart(network)
-  // window.littlesis.recipients = uniqueBy(relations)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  //chart()
   main()
 })
