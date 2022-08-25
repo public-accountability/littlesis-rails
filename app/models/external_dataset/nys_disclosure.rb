@@ -26,15 +26,16 @@ module ExternalDataset
     end
 
     def self.load
-      directory = if Rails.env.production?
-                    '/srv'
-                  else
-                    '/data/external_data/csv/nys'
-                  end
+      file = if Rails.env.production?
+               '/srv/nys_disclosures.csv'
+             else
+               '/data/external_data/csv/nys/nys_disclosures.csv'
+             end
 
-      run_query <<~SQL
+      run_query <<~SQL.squish
         COPY #{table_name} (filer_id, filer_previous_id, cand_comm_name, election_year, election_type, county_desc, filing_abbrev, filing_desc, r_amend, filing_cat_desc, filing_sched_abbrev, filing_sched_desc, loan_lib_number, trans_number, trans_mapping, sched_date, org_date, cntrbr_type_desc, cntrbn_type_desc, transfer_type_desc, receipt_type_desc, receipt_code_desc, purpose_code_desc, r_subcontractor, flng_ent_name, flng_ent_first_name, flng_ent_middle_name, flng_ent_last_name, flng_ent_add1, flng_ent_city, flng_ent_state, flng_ent_zip, flng_ent_country, payment_type_desc, pay_number, owned_amt, org_amt, loan_other_desc, trans_explntn, r_itemized, r_liability, election_year_str, office_desc, district, dist_off_cand_bal_prop)
-        FROM '#{directory}/nys_disclosures.csv' WITH CSV;
+        FROM '#{file}'
+        WITH (FORMAT CSV, FORCE_NULL (filer_previous_id, cand_comm_name, election_year, election_type, county_desc, filing_abbrev, filing_desc, r_amend, filing_cat_desc, filing_sched_abbrev, filing_sched_desc, loan_lib_number, trans_mapping, sched_date, org_date, cntrbr_type_desc, cntrbn_type_desc, transfer_type_desc, receipt_type_desc, receipt_code_desc, purpose_code_desc, r_subcontractor, flng_ent_name, flng_ent_first_name, flng_ent_middle_name, flng_ent_last_name, flng_ent_add1, flng_ent_city, flng_ent_state, flng_ent_zip, flng_ent_country, payment_type_desc, pay_number, owned_amt, org_amt, loan_other_desc, trans_explntn, r_itemized, r_liability, election_year_str, office_desc, district, dist_off_cand_bal_prop));
       SQL
     end
   end
