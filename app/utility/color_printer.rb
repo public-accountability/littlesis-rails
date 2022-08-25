@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Rails/Output
-
 class ColorPrinter
   NOCOLOR = "\e[0m"
 
@@ -9,7 +7,7 @@ class ColorPrinter
 
   COLORS.each do |color|
     define_singleton_method("print_#{color}") do |text|
-      puts colorize(text, color)
+      print text, color
     end
 
     define_singleton_method(color) do |text|
@@ -30,7 +28,7 @@ class ColorPrinter
   end
 
   def self.with_logger(level = :info)
-    raise ArgumentError unless Rails.logger.respond_to?(level)
+    raise ArgumentError, "Invalid logger level" unless Rails.logger.respond_to?(level)
 
     Class.new.tap do |klass|
       klass.define_singleton_method :method_missing do |m, *args|
@@ -70,18 +68,7 @@ class ColorPrinter
   end
 
   def self.paper_jam!
-    rand(1_000).times do
-      print ["\u{1F5A8}", "\u{1F4C4}", "\u{2734}"].sample
-    end
-    print "\n"
+    codes = ["\u{1F5A8}", "\u{1F4C4}", "\u{2734}"]
+    print Array.new(rand(1_000)).map { codes.sample }.join + "\n"
   end
 end
-
-# ADD THESE TOO?
-# def bold;           "\e[1m#{self}\e[22m" end
-# def italic;         "\e[3m#{self}\e[23m" end
-# def underline;      "\e[4m#{self}\e[24m" end
-# def blink;          "\e[5m#{self}\e[25m" end
-# def reverse_color;  "\e[7m#{self}\e[27m" end
-
-# rubocop:enable Rails/Output
