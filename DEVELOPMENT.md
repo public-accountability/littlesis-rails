@@ -45,27 +45,31 @@ The configurations for nginx and postgres are in the folder config/docker
 littlesis docker pause
 littlesis docker unpause
 
-# clear logs
+# View rails logs
+littlesis logs
+# Clear rails logs
 littlesis rake log:clear
+# Follow docker logs
+littlesis docker -- logs -f esbuild
 
-# build javascript
+# Build javascript
 littlesis rake javascript:build
 
-# build oligrapher
+# Build oligrapher
 littlesis rake oligrapher:build
 littlesis rake oligrapher:build[1ae3ccc83701c684a8398d08f85758c449056bb8]
 
-# compile assets
+# Compile assets
 littlesis rake assets:precompile
 
 # Edit secret variables
 littlsis rails credentials:edit
 
-# thinking sphinx
+# Thinking sphinx
 littlesis rake ts:configure
 littlesis rake ts:index
 
-# Stats on new models
+# Stats on new entities & relationships
 littlesis rake stats:year[2021]
 
 # unitedstates.io data

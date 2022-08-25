@@ -48,51 +48,101 @@
 
 module ExternalDataset
   class NYSDisclosureTransformer
-    FILES = [
-      %w[ALL_REPORTS_CountyCandidate COUNTY_CANDIDATE],
-      %w[ALL_REPORTS_CountyCommittee COUNTY_COMMITTEE],
-      %w[ALL_REPORTS_StateCandidate STATE_CANDIDATE],
-      %w[ALL_REPORTS_StateCommittee STATE_COMMITTEE]
-    ].freeze
+    class RowLengthError < Exceptions::LittleSisError
+      def message
+        "row is empty or does not have the correct number of columns"
+      end
+    end
 
-    TO_CSV_PATH = ->(x) { ROOT_DIR.join('csv/nys', "#{x}_out.csv") }
+    def self.fix_quotes(line)
+      chars = line.chars
+      out = +''
 
-    def self.run
-      FileUtils.mkdir_p ROOT_DIR.join('csv/nys')
+      (0...chars.length).each do |i|
+        out << chars[i]
 
-      FILES.each do |(outer, inner)|
-        outer_zip = ROOT_DIR.join('original/nys', "#{outer}.zip")
-        inner_zip = ROOT_DIR.join('original/nys', "#{inner}.zip")
-        original_csv = ROOT_DIR.join('original/nys', "#{inner}.csv")
-        output_csv = ROOT_DIR.join('csv/nys', "#{inner}.csv")
-        system "unzip -o #{outer_zip} #{inner}.zip -d #{ROOT_DIR.join('original/nys')}", exception: true
-        system "unzip -o #{inner_zip} #{inner}.csv -d #{ROOT_DIR.join('original/nys')}", exception: true
-        system "tr -d '\\000' < #{original_csv} | iconv -f iso-8859-1 -t utf8  > #{output_csv}", exception: true
-        system "csvclean #{output_csv}", exception: true, chdir: ROOT_DIR.join('csv/nys').to_s
+        next if i.zero? || i == (chars.length - 1)
+
+        if chars[i] == '"' && !(chars[i - 1] == ',' || chars[i + 1] == ',')
+          out << '"'
+        end
+      end
+      out.freeze
+    end
+
+    def self.parse_line(line)
+      begin
+        row = CSV.parse_line(line)
+      rescue CSV::MalformedCSVError => e
+        row = CSV.parse_line(fix_quotes(line))
       end
 
+      raise RowLengthError if row.nil? || row.length != 45
+      row
+    end
+
+    def self.extract_csvs(dir, out)
+      # Unzip the files
+      Dir[dir.join('*.zip')].each do |f|
+        system "unzip #{f} -x \"*.pdf\" -d #{dir}", exception: true
+        FileUtils.rm(f)
+      end
+
+      # # Unzip the inner zip files
+      Dir[dir.join('*.zip')].each do |f|
+        system "unzip #{f} -d #{dir}", exception: true
+        FileUtils.rm(f)
+      end
+
+      # Combine all csvs into a single file and convert to UTF-8
+      Dir[dir.join('*.csv')].each do |f|
+        system "iconv -c -f Windows-1252 -t utf8 #{f} >> #{out}", exception: true
+        FileUtils.rm(f)
+      end
+    end
+
+    def self.run
+      verbose = false
+      FileUtils.mkdir_p Rails.root.join('data/external_data/csv/nys')
+
+      # File Paths
+      original_directory = Rails.root.join('data/external_data/original/nys')
+      combined = original_directory.join('nys_disclosures.csv').to_s
+      output_dir = Rails.root.join('data/external_data/csv/nys')
+
+      extract_csvs(original_directory, combined)
+
+      # Skip duplicates and lines that fail to parse
       seen_trans_numbers = Set.new
-      skipped_rows = 0
+      printer.print_blue "Copying #{combined} to #{output_dir}"
 
-      CSV.open(ROOT_DIR.join('csv/nys/nys_disclosures.csv'), 'w') do |destination|
-        FILES.map(&:second).map(&TO_CSV_PATH).each do |csv_filepath|
-          CSV.foreach(csv_filepath) do |row|
-            trans_number = row[13]
+      CSV.open(output_dir.join('nys_disclosures.csv'), 'w') do |destination_csv|
+        File.open(output_dir.join('nys_disclosures_duplicates.csv'), 'w') do |duplicates_f|
+          File.open(output_dir.join('nys_disclosures_errors.csv'), 'w') do |errors_f|
+            File.foreach(combined) do |line|
+              row = parse_line(line.delete("\r").chomp)
 
-            row[39] = row[39].delete(',')[0] if row[39].is_a?(String) && row[39].length > 1
-            row[40] = row[40].delete(',')[0] if row[40].is_a?(String) && row[40].length > 1
+              if seen_trans_numbers.include?(row[13])
+                printer.print_red("skipping duplicate nys_disclosure row with trans number #{row[13]}") if verbose
+                duplicates_f.write line
+              else
+                seen_trans_numbers << row[13]
+                destination_csv.add_row(row)
+              end
 
-            if seen_trans_numbers.include?(trans_number)
-              Rails.logger.warn "skipping duplicate nys_disclosure row with trans number #{trans_number}"
-              skipped_rows += 0
-            else
-              seen_trans_numbers << trans_number
-              destination.add_row(row)
+            rescue CSV::MalformedCSVError, RowLengthError => e
+              printer.print_red e.message if verbose
+              errors_f.write line
             end
           end
         end
       end
-      Rails.logger.warn "Skipped #{skipped_rows} nys disclosure rows"
+
+      printer.print_blue `wc -l #{output_dir.join('*.csv')}`
+    end
+
+    private_class_method def self.printer
+      @printer ||= ColorPrinter.with_logger(:warn)
     end
   end
 end
