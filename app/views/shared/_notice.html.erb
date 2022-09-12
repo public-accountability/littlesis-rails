@@ -1,9 +1,11 @@
-<div class="row">
-  <div class="col-sm-12 col-md-6 col-lg-4">
-    <% flash.each do |type, content| %>
-      <% Array.wrap(content).each do |message| %>
-        <%= alert_div(message: message, type: type) %>
+<div class="<%= container_div_class %>">
+  <div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4">
+      <% flash.each do |type, content| %>
+        <% Array.wrap(content).each do |message| %>
+          <%= alert_div(message: message, type: type) %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </div>
 </div>

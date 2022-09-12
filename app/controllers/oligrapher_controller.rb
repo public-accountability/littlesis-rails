@@ -9,7 +9,9 @@ class OligrapherController < ApplicationController
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
   AUTHENITICATED_ACTIONS = %i[new create update editors confirm_editor lock release_lock clone destroy featured].freeze
+  SEARCH_API_ACTIONS = %i[find_nodes find_connections get_edges get_interlocks]
 
+  before_action :set_cors_header, only: SEARCH_API_ACTIONS
   before_action :authenticate_user!, only: AUTHENITICATED_ACTIONS
   before_action :block_restricted_user_access, only: AUTHENITICATED_ACTIONS
   before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot featured]
@@ -55,7 +57,7 @@ class OligrapherController < ApplicationController
     check_private_access
     @is_pending_editor = (current_user && @map.has_pending_editor?(current_user))
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
-    render 'oligrapher/oligrapher', layout: 'oligrapher3'
+    render 'oligrapher/oligrapher', layout: 'oligrapher'
   end
 
   def embedded
@@ -68,7 +70,7 @@ class OligrapherController < ApplicationController
   def new
     @map = NetworkMap.new(title: 'Untitled Map', user: current_user)
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
-    render 'oligrapher/new', layout: 'oligrapher3'
+    render 'oligrapher/new', layout: 'oligrapher'
   end
 
   def screenshot
@@ -170,35 +172,35 @@ class OligrapherController < ApplicationController
       is_private: true,
       user_id: current_user.id,
       title: "Clone: #{map.title}"
-     )
+    )
 
-     render json: { redirect_url: oligrapher_path(map) }
-   end
+    render json: { redirect_url: oligrapher_path(map) }
+  end
 
-   def destroy
-     @map.destroy
-     respond_to do |format|
-       format.json { render json: { redirect_url: new_oligrapher_path } }
-       format.any { redirect_back(fallback_location: '/maps') }
-     end
-   end
+  def destroy
+    @map.destroy
+    respond_to do |format|
+      format.json { render json: { redirect_url: new_oligrapher_path } }
+      format.any { redirect_back(fallback_location: '/maps') }
+    end
+  end
 
-   # Search API
+  # Search API
 
-   def find_nodes
-     return head :bad_request if params[:q].blank?
+  def find_nodes
+    return head :bad_request if params[:q].blank?
 
-     entities = EntitySearchService
-                  .new(query: params[:q],
-                       fields: %w[name aliases blurb],
-                       num: params.fetch(:num, 10).to_i)
-                  .search
-                  .map { |e| Oligrapher::Node.from_entity(e) }
+    entities = EntitySearchService
+                 .new(query: params[:q],
+                      fields: %w[name aliases blurb],
+                      num: params.fetch(:num, 10).to_i)
+                 .search
+                 .map { |e| Oligrapher::Node.from_entity(e) }
 
-     render json: entities
-   end
+    render json: entities
+  end
 
-   def find_connections
+  def find_connections
     return head :bad_request if params[:entity_id].blank?
 
     query = EntityConnectionsQuery.new(Entity.find(params[:entity_id]))
@@ -282,6 +284,10 @@ class OligrapherController < ApplicationController
     if params[:category_id] && (1..12).cover?(params[:category_id].to_i)
       params[:category_id].to_i
     end
+  end
+
+  def set_cors_header
+    headers['Access-Control-Allow-Origin'] = '*'
   end
 end
 

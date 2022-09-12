@@ -1,21 +1,2 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title><%= page_title %></title>
-    <%= stylesheet_link_tag "application" %>
-    <%= javascript_include_tag "application", defer: true %>
-    <%= yield :head if content_for?(:head) %>
-  </head>
-
-  <body>
-    <% @fullscreen = true %>
-    <% unless content_for? :hide_top %>
-      <%= render partial: 'shared/nav_menu' %>
-    <% end %>
-
-    <%= yield %>
-
-  </body>
-</html>
+<% @fullscreen = true %>
+<%= render template: "layouts/application" %>

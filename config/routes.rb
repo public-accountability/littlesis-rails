@@ -223,10 +223,12 @@ LittleSis::Application.routes.draw do
 
   resources :oligrapher, except: [:edit], controller: 'oligrapher' do
     collection do
-      get '/get_edges', action: :get_edges
-      get '/find_connections', action: :find_connections
+      # Oligrapher Search API
       get '/find_nodes', action: :find_nodes
+      get '/find_connections', action: :find_connections
+      get '/get_edges', action: :get_edges
       get '/get_interlocks', action: :get_interlocks
+      #  About & Grid
       get '/about' => "pages#oligrapher"
       get '/search', action: :search
       get '/perform_search', action: :perform_search

@@ -1,6 +1,6 @@
 <%# Top Navigation Menu %>
 <nav class="navbar navbar-light sticky-top navbar-expand-lg">
-  <div class="container">
+  <div class="<%= container_div_class %>">
     <div class="me-auto navbar-brand">
       <%= link_to(image_tag("lilsis-logo-trans-200.png"), user_signed_in? ? home_dashboard_path : root_path) %>
     </div>

@@ -11,6 +11,14 @@ module ApplicationHelper
     end
   end
 
+  def container_div_class
+    if @fullscreen
+      'container-fluid'
+    else
+      'container'
+    end
+  end
+
   def excerpt(text, length=30)
     if text
       break_point = text.index(/[\s.,:;!?-]/, length - 5) || length + 1

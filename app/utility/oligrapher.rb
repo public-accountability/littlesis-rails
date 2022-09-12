@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
+  ASSET_URL = "/oligrapher/assets"
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
                                       Relationship::MEMBERSHIP_CATEGORY,
@@ -74,15 +75,16 @@ module Oligrapher
       .as_json
   end
 
-  def self.javascript_asset_path
-    return @javascript_asset_path if defined?(@javascript_asset_path)
+  def self.css_path
+    @css_path ||= "#{ASSET_URL}/#{basename}.css".freeze
+  end
 
-    path = +"/oligrapher/assets/oligrapher-"
-    path << 'dev-' if Rails.env.development?
-    path << Rails.application.config.littlesis.oligrapher_commit
-    path << ".bundle" if Rails.application.config.littlesis.oligrapher_use_bundle
-    path << ".js"
-    @javascript_asset_path = path.freeze
+  def self.javascript_path
+    @javascript_path ||= "#{ASSET_URL}/#{basename}.js".freeze
+  end
+
+  private_class_method def self.basename
+    "oligrapher-#{Rails.application.config.littlesis.oligrapher_commit}"
   end
 
   module Node

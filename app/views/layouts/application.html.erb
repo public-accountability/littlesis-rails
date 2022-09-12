@@ -4,34 +4,30 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="locale" content="<%= I18n.locale %>">
-    <title><%= raw(page_title) %></title>
+    <title><%= page_title %></title>
     <%= stylesheet_link_tag "application", media: "all" %>
-    <%= stylesheet_link_tag "bootstrap-icons", media: "all"  %>
+    <%= stylesheet_link_tag "bootstrap-icons", media: "all" %>
     <%= csrf_meta_tags %>
     <%= javascript_include_tag "application", defer: true %>
     <%= yield :head if content_for?(:head) %>
   </head>
   <body>
     <% unless content_for? :hide_top %>
-      <%= render partial: 'shared/nav_menu' %>
+      <%= render 'shared/nav_menu' %>
     <% end %>
 
     <% unless flash.empty? %>
-      <div class="container mt-4">
-        <%= render partial: 'shared/notice' %>
+      <div class="mt-2">
+        <%= render 'shared/notice' %>
       </div>
     <% end %>
 
-    <div class="container mt-2">
+    <div class="<%= container_div_class %> mt-2">
       <%= yield %>
     </div>
 
     <% unless content_for? :hide_footer %>
-      <div class="container mt-3 mb-3">
-        <div class="row">
-          <div id="footer">A project of the <%= link_to('Public Accountability Initiative', 'https://public-accountability.org') %>. More <%= link_to('about LittleSis', '/about') %>. Read the <%= link_to('disclaimer', '/disclaimer') %>.</div>
-        </div>
-      </div>
+      <%= render 'shared/footer' %>
     <% end %>
   </body>
 </html>
