@@ -5,8 +5,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     brotli \
     build-essential \
     coreutils \
-    cron \
-    csvkit \
     curl \
     git \
     gnupg \
