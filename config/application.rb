@@ -38,7 +38,16 @@ module LittleSis
     config.active_record.belongs_to_required_by_default = false
 
     # see https://discuss.rubyonrails.org/t/cve-2022-32224-possible-rce-escalation-bug-with-serialized-columns-in-active-record/81017
-    config.active_record.yaml_column_permitted_classes = [Symbol]
+    #     https://github.com/paper-trail-gem/paper_trail/pull/1397
+    config.active_record.yaml_column_permitted_classes = [
+      Symbol,
+      BigDecimal,
+      Date,
+      Time,
+      ActiveRecord::Type::Time::Value,
+      ActiveSupport::TimeWithZone,
+      ActiveSupport::TimeZone
+    ]
 
     config.i18n.fallbacks = [:en]
 
