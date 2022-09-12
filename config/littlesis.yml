@@ -7,7 +7,7 @@ defaults: &defaults
   default_from_email: "email.robot@littlesis.org"
   carousel_list_id: 404
   action_network_api_key: 'your-action-network-api-key-here'
-  redis_url: "redis://redis:6379/0/cache"
+  redis_url: "redis://redis:6379/0"
   default_image_file_type: jpg
   donation_banner_display: false # use 'everywhere' to display on all pages and 'homepage' for just the homepage
   donation_banner_html: |
@@ -43,7 +43,7 @@ development:
 
 production:
   <<: *defaults
-  redis_url: redis://127.0.0.1:6379/0/cache
+  redis_url: "redis://127.0.0.1:6379/0"
   image_host: https://littlesis.org
   image_root: public/images
   host: littlesis.org
