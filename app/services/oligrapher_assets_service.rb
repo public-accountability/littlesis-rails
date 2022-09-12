@@ -1,18 +1,14 @@
 # frozen_string_literal: true
 
-# Create compiled oligrapher assets in public/oligrapher
-# for example:
-#     public/oligrapher/oligrapher-24dadc5401c717cbf63fab3489ad7a9a748d0b38.js
-#
-# example: OligrapherAssetsService.run(<commit-hash>)
-#
+# Helper module to compile oligrapher
+# by default it comiples the commit set in Rails.application.config.littlesis.oligrapher_commit
+# but it can also compile any oligrapher commit OligrapherAssetsService.run("ac2ff73d4bad03cf08138baa608df0a346190768")
+# Oligrapher assets are stored with the commit hash in the filesname, for instance
 class OligrapherAssetsService
-  attr_accessor :commit
-
   REPO = 'https://github.com/public-accountability/oligrapher'
   REPO_DIR = Rails.root.join('tmp', Rails.env.production? ? 'oligrapher' : 'oligrapher-test').to_s.freeze
   ASSET_DIR = Rails.public_path.join('oligrapher').to_s.freeze
-  BRANCH = '3.0'
+  BRANCH = 'main'
 
   def self.setup_repo
     FileUtils.mkdir_p REPO_DIR
@@ -20,81 +16,33 @@ class OligrapherAssetsService
     system("git clone #{REPO} #{REPO_DIR}") unless File.exist?("#{REPO_DIR}/.git")
   end
 
-  def self.fetch_all
-    `git -C #{REPO_DIR} fetch --all --quiet`
-  end
-
   def self.current_commit
     `git -C #{REPO_DIR} rev-parse HEAD`.strip
   end
 
   def self.latest_commit
-    fetch_all
+    git "fetch --all --quiet"
     `git -C #{REPO_DIR} rev-parse origin/#{BRANCH}`.strip
   end
 
   def self.run(commit = nil)
-    fetch_all
-    new(commit || Rails.application.config.littlesis.oligrapher_commit).run
-  end
+    commit = Rails.application.config.littlesis.oligrapher_commit if commit.nil?
+    setup_repo
+    git "fetch --all --quiet"
+    git "rev-parse --quiet --verify #{commit}"
+    git "checkout --force -q #{commit}"
 
-  def initialize(commit, skip_fetch: false, development: false, force: false)
-    self.class.setup_repo
-    @commit = commit
-    @development = development || Rails.env.development?
-    @force = force
-    # validate commit
-    error '@commit is blank' if @commit.blank?
-    git "rev-parse --quiet --verify #{@commit} > /dev/null"
-  end
-
-  def run
-    # return self if !@force && build_file_exists?
-
-    # Build oligrapher
     Dir.chdir REPO_DIR do
-      git "checkout --force -q #{@commit}"
-      system('npm ci --include=dev --silent') || error("npm install failed for commit #{@commit}")
-      script = @development ? 'build-dev' : 'build-prod'
-      build_cmd = "npm run #{script} -- --env output_path=#{ASSET_DIR} && npm run #{script}-one -- --env output_path=#{ASSET_DIR}"
-      system(build_cmd) || error("Failed to build for commit #{@commit}")
+      system 'npm ci --include=dev --silent', exception: true
+      system 'npm run build', exception: true
+      system "rsync -v -a #{REPO_DIR}/dist/ #{ASSET_DIR}/", exception: true
     end
-
-    # Compress
-    Dir.glob(Pathname.new(OligrapherAssetsService::ASSET_DIR).join("oligrapher-#{@commit}*.{js,css,map}")).each do |f|
-      system("gzip --keep #{f}") unless File.exist?(f + ".gz")
-      system("brotli --keep #{f}") unless File.exist?(f + ".br")
-    end
-
-    self
   end
 
   private
 
-  def oligrapher_filename
-    "oligrapher-#{@commit}.js"
-  end
-
-  def build_file
-    File.join(ASSET_DIR, oligrapher_filename)
-  end
-
-  def build_file_exists?
-    if File.exist?(build_file) && File.stat(build_file).size.positive?
-      Rails.logger.info "#{build_file} already exists"
-      return true
-    else
-      return false
-    end
-  end
-
-  def git(cmd = 'status')
+  def self.git(cmd = 'status')
     git_command = "git -C #{REPO_DIR} #{cmd}"
-    system(git_command) || error("git command failed: #{git_command}")
-  end
-
-  def error(msg)
-    Rails.logger.fatal "[OligrapherAssetsService]  #{msg}"
-    raise Exceptions::OligrapherAssetsError, msg
+    system git_command, exception: true
   end
 end

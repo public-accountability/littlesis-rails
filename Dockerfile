@@ -4,6 +4,7 @@ LABEL maintainer="dev@littlesis.org"
 RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     brotli \
     build-essential \
+    bzip2 \
     coreutils \
     curl \
     git \
@@ -19,6 +20,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     libx11-xcb1 \
     lsof \
     redis-tools \
+    rsync \
     sqlite3 \
     unzip \
     zip
