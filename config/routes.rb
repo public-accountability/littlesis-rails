@@ -194,27 +194,10 @@ LittleSis::Application.routes.draw do
   resources :maps, only: [:show, :new] do
     member do
       get 'raw'
-      post 'feature'
       get 'embedded'
-      get 'map_json'
-      get 'embedded/v2' => 'maps#embedded_v2'
-    end
-
-    collection do
-      get 'search'
-      get 'featured'
-      get 'all'
-      get 'find_nodes'
-      get 'node_with_edges'
-      get 'edges_with_nodes'
-      get 'interlocks'
+      get 'embedded/v2' => 'maps#embedded'
     end
   end
-
-  get "/maps/:id/share/:secret",
-      controller: 'maps',
-      action: 'show',
-      as: 'share_map'
 
   get "/oligrapher/:id/share/:secret",
       controller: 'oligrapher',
@@ -232,7 +215,6 @@ LittleSis::Application.routes.draw do
       get '/about' => "pages#oligrapher"
       get '/search', action: :search
       get '/perform_search', action: :perform_search
-      get '/grid', action: :grid
     end
 
     member do

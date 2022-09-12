@@ -1,23 +1,17 @@
 # frozen_string_literal: true
 
-# Oligrapher 3 API endpoints
-#
-# See MapsController for Oligrapher 2 endpoints
 class OligrapherController < ApplicationController
-  include MapsHelper
-
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
   AUTHENITICATED_ACTIONS = %i[new create update editors confirm_editor lock release_lock clone destroy featured].freeze
-  SEARCH_API_ACTIONS = %i[find_nodes find_connections get_edges get_interlocks]
+  SEARCH_API_ACTIONS = %i[find_nodes find_connections get_edges get_interlocks].freeze
 
   before_action :set_cors_header, only: SEARCH_API_ACTIONS
   before_action :authenticate_user!, only: AUTHENITICATED_ACTIONS
   before_action :block_restricted_user_access, only: AUTHENITICATED_ACTIONS
   before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot featured]
-  before_action :enforce_slug, only: %i[show]
   before_action :check_owner, only: %i[editors destroy]
-  before_action :check_editor, only: %i[update]
+  before_action :enforce_slug, only: %i[show]
 
   rescue_from ActiveRecord::RecordNotFound, with: :map_not_found
   rescue_from Exceptions::PermissionError, with: :map_not_found
@@ -26,7 +20,9 @@ class OligrapherController < ApplicationController
   # Explore Maps Page
   def index
     respond_to do |format|
-      format.html
+      format.html do
+        render "index", layout: "application"
+      end
       format.json do
         expires_in 6.hours, :public => true
         render :json => NetworkMap.index_maps
@@ -34,9 +30,12 @@ class OligrapherController < ApplicationController
     end
   end
 
+  # Search
   def search
+    render "search", layout: "application"
   end
 
+  # stimulus partial for search
   def perform_search
     @query = params[:query]&.strip
 
@@ -48,11 +47,7 @@ class OligrapherController < ApplicationController
     render partial: 'search_results'
   end
 
-  def grid
-    @grid = Oligrapher::Grid.new(params.fetch('oligrapher_grid', {}))
-    @grid.scope { |scope| scope.page(params[:page] || 1).per(25) }
-  end
-
+  # Main Oligrapher page
   def show
     check_private_access
     @is_pending_editor = (current_user && @map.has_pending_editor?(current_user))
@@ -60,13 +55,15 @@ class OligrapherController < ApplicationController
     render 'oligrapher/oligrapher', layout: 'oligrapher'
   end
 
+  # Embedded View (used often in iframe)
   def embedded
     check_private_access
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user, embed: true)
     response.headers.delete('X-Frame-Options')
-    render layout: 'embedded_oligrapher'
+    render "embedded", layout: 'embedded_oligrapher'
   end
 
+  # Create new map
   def new
     @map = NetworkMap.new(title: 'Untitled Map', user: current_user)
     @configuration = Oligrapher.configuration(map: @map, current_user: current_user)
@@ -98,6 +95,7 @@ class OligrapherController < ApplicationController
   end
 
   def update
+    raise Exceptions::PermissionError unless @map.can_edit?(current_user)
     @map.assign_attributes(oligrapher_params)
 
     if @map.validate
@@ -289,7 +287,33 @@ class OligrapherController < ApplicationController
   def set_cors_header
     headers['Access-Control-Allow-Origin'] = '*'
   end
-end
 
-# Should we have some sort of GraphData validation?
-#    OligrapherGraphData.new(params[:graph_data]).verify!
+  def set_map
+    @map = NetworkMap.find(params[:id])
+  end
+
+  def is_owner
+    current_user.present? && @map.user_id == current_user.id
+  end
+
+  def check_owner
+    current_user.role.include? :create_map
+    raise Exceptions::PermissionError unless is_owner
+  end
+
+  def check_private_access
+    if @map.is_private && !can_view_if_private?
+      unless params[:secret] && params[:secret] == @map.secret
+        raise Exceptions::PermissionError
+      end
+    end
+  end
+
+  def can_view_if_private?
+    @map.can_edit?(current_user) || @map.has_pending_editor?(current_user)
+  end
+
+  def map_not_found
+    render 'errors/not_found', status: :not_found, layout: 'application'
+  end
+end
