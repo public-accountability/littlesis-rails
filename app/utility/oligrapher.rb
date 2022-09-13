@@ -23,7 +23,7 @@ module Oligrapher
         debug: Rails.env.development?,
         embed: embed,
         logoUrl: ActionController::Base.helpers.asset_path('lilsis-logo-trans-200.png'),
-        url: Rails.application.routes.url_helpers.map_url(map)
+        url: Rails.application.routes.url_helpers.oligrapher_url(map)
       },
       attributes: {
         id: map.id,
@@ -108,31 +108,6 @@ module Oligrapher
       arrow: edge_arrow(rel),
       dash: rel.is_current == false,
       url: relationship_url(rel)
-    }
-  end
-
-  # Legacy (oligrapher 2.0) functions #
-
-  def self.legacy_entity_to_node(entity)
-    {
-      id: entity.id,
-      display: {
-        name: entity.name,
-        image: entity&.featured_image&.image_url("profile"),
-        url: ApplicationController.helpers.concretize_entity_url(entity)
-      }
-    }
-  end
-
-  def self.legacy_rel_to_edge(rel)
-    {
-      id: rel.id, node1_id: rel.entity1_id, node2_id: rel.entity2_id,
-      display: {
-        label: RelationshipLabel.new(rel).label,
-        arrow: edge_arrow(rel),
-        dash: rel.is_current != true,
-        url: relationship_url(rel)
-      }
     }
   end
 

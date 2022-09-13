@@ -161,13 +161,13 @@ describe NetworkMap, type: :model do
     end
 
     let(:nodes) do
-      { '123' => Oligrapher.legacy_entity_to_node(org),
-        '456' => Oligrapher.legacy_entity_to_node(org),
-        'abc' => Oligrapher.legacy_entity_to_node(org) }
+      { '123' => Oligrapher::Node.from_entity(org),
+        '456' => Oligrapher::Node.from_entity(org),
+        'abc' => Oligrapher::Node.from_entity(org) }
     end
     let(:custom_nodes) do
-      { '789' => Oligrapher.legacy_entity_to_node(org),
-        'abc' => Oligrapher.legacy_entity_to_node(org) }
+      { '789' => Oligrapher::Node.from_entity(org),
+        'abc' => Oligrapher::Node.from_entity(org) }
     end
 
     let(:graph_data) do
@@ -251,8 +251,8 @@ describe NetworkMap, type: :model do
     let(:e2) { create(:entity_org) }
 
     let(:nodes) do
-      { e1.id => Oligrapher.legacy_entity_to_node(e1),
-        e2.id => Oligrapher.legacy_entity_to_node(e2) }
+      { e1.id => Oligrapher::Node.from_entity(e1),
+        e2.id => Oligrapher::Node.from_entity(e2) }
     end
 
     let(:graph_data) do
@@ -261,7 +261,7 @@ describe NetworkMap, type: :model do
 
     let(:graph_data_missing_node_two) do
       OligrapherGraphData.new(id: 'abcdefg',
-                              nodes: { e1.id => Oligrapher.legacy_entity_to_node(e1) },
+                              nodes: { e1.id => Oligrapher::Node.from_entity(e1) },
                               edges: {}, captions: {})
     end
 

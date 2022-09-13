@@ -13,8 +13,8 @@ describe UpdateEntityNetworkMapCollectionsJob, type: :job do
   let(:e2) { create(:entity_org) }
 
   let(:nodes) do
-    { e1.id => Oligrapher.legacy_entity_to_node(e1),
-      e2.id => Oligrapher.legacy_entity_to_node(e2) }
+    { e1.id => Oligrapher::Node.from_entity(e1),
+      e2.id => Oligrapher::Node.from_entity(e2) }
   end
 
   let(:graph_data) do
@@ -23,7 +23,7 @@ describe UpdateEntityNetworkMapCollectionsJob, type: :job do
 
   let(:graph_data_missing_node_two) do
     JSON.dump(id: 'abcdefg',
-              nodes: { e1.id => Oligrapher.legacy_entity_to_node(e1) },
+              nodes: { e1.id => Oligrapher::Node.from_entity(e1) },
               edges: {}, captions: {})
   end
 
