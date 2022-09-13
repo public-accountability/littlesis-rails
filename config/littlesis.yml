@@ -58,3 +58,4 @@ production:
   smtp_user_name: <%= Rails.application.credentials.smtp_user_name %>
   smtp_password: <%= Rails.application.credentials.smtp_password %>
   restricted_ips: <%= Rails.application.credentials.restricted_ips %>
+  oligrapher_commit: "42022f34c3dfdefdff91beabdb9445be0066ada7"
