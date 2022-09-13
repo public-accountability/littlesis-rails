@@ -84,7 +84,7 @@ module Oligrapher
   end
 
   private_class_method def self.basename
-    "oligrapher-#{Rails.application.config.littlesis.oligrapher_commit}"
+    "oligrapher-" + (Rails.env.development? ? 'dev-' : '') + Rails.application.config.littlesis.oligrapher_commit
   end
 
   module Node
