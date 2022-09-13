@@ -288,12 +288,12 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
         it 'only shows featured maps' do
           page_has_selector '#profile-page-sidebar-maps li a', count: 1
           expect(find('#profile-page-sidebar-maps ul > li:nth-child(1) > a')['href'])
-            .to eq map_path(featured_map)
+            .to eq oligrapher_path(featured_map)
         end
 
         it "doesn't show private maps" do
           expect(all('#sidebar-maps-container ul a').map { |e| e['href'] })
-            .not_to include map_path(private_map)
+            .not_to include oligrapher_path(private_map)
         end
       end
 

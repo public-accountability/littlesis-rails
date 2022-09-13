@@ -121,7 +121,7 @@
         <ul class="list-unstyled">
           <% @entity.network_map_collection.records.each do |map| %>
             <% if map.is_featured %>
-              <li><%= link_to map.title, map_path(map) %></li>
+              <li><%= link_to map.title, oligrapher_path(map) %></li>
             <% end %>
           <% end %>
         </ul>
