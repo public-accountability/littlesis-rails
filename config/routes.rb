@@ -190,14 +190,10 @@ LittleSis::Application.routes.draw do
   end
 
   get '/maps', to: redirect('/oligrapher')
-
-  resources :maps, only: [:show, :new] do
-    member do
-      get 'raw'
-      get 'embedded'
-      get 'embedded/v2' => 'maps#embedded'
-    end
-  end
+  get '/maps/new', to: redirect('/oligrapher/new')
+  get '/maps/:id', to: redirect('/oligrapher/%{id}')
+  get '/maps/:id/embedded', to: redirect('/oligrapher/%{id}/embedded')
+  get '/maps/:id/embedded/v2', to: redirect('/oligrapher/%{id}/embedded')
 
   get "/oligrapher/:id/share/:secret",
       controller: 'oligrapher',
