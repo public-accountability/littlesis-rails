@@ -8,8 +8,9 @@ workflows:
 jobs:
   rspec:
     machine:
-      image: ubuntu-2004:202111-02
+      image: ubuntu-2204:current
       docker_layer_caching: true
+      resource_class: large
 
     environment:
       RAILS_ENV: test
@@ -29,7 +30,7 @@ jobs:
 
   mocha:
     machine:
-      image: ubuntu-2004:202111-02
+      image: ubuntu-2204:current
     steps:
       - checkout
       - restore_cache:
