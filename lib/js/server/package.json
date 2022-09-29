@@ -1,0 +1,17 @@
+{
+  "name": "@public-accountability/server",
+  "version": "0.0.1",
+  "description": "LittleSis helper services",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "LittleSis",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "base64-arraybuffer": "^1.0.2",
+    "cheerio": "^1.0.0-rc.12",
+    "node-fetch": "^3.2.10"
+  }
+}
