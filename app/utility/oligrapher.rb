@@ -20,7 +20,6 @@ module Oligrapher
         sources: map.sources_annotation
       },
       settings: {
-        debug: Rails.env.development?,
         embed: embed,
         logoUrl: ActionController::Base.helpers.asset_path('lilsis-logo-trans-200.png'),
         url: Rails.application.routes.url_helpers.oligrapher_url(map)
@@ -84,7 +83,8 @@ module Oligrapher
   end
 
   private_class_method def self.basename
-    "oligrapher-" + (Rails.env.development? ? 'dev-' : '') + Rails.application.config.littlesis.oligrapher_commit
+    # (Rails.env.development? ? 'dev-' : '')
+    "oligrapher-" + Rails.application.config.littlesis.oligrapher_commit
   end
 
   module Node
