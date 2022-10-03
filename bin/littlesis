@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 require 'getoptlong'
 require 'fileutils'
 
@@ -234,7 +233,11 @@ when 'rake'
 when 'runner'
   app_exec_bin! "rails runner #{rest}"
 when 'script'
-  app_exec_bin! "bundle exec lib/scripts/#{rest}"
+  if rest == 'list'
+    puts Dir[File.join(REPO, "lib/scripts/*")].map { File.basename(_1) }.join("\n")
+  else
+    app_exec_bin! "bundle exec lib/scripts/#{rest}"
+  end
 when 'bash'
   app_exec "/bin/bash --login #{rest}", use_exec: true, compose_command: "exec -i -t"
 when 'console', 'c'
