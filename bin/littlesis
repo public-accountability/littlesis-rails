@@ -16,7 +16,7 @@ $database = {
 $rails_env = ENV.fetch('RAILS_ENV', 'development')
 
 $littlesis_systemd_services = %w[nginx.service redis-server.service redis-server.service littlesis.socket littlesis.service littlesis-goodjob.service littlesis-manticore.service littlesis-backup.service].freeze
-$littlesis_docker_services = %w[app postgres redis nginx esbuild manticore title_extractor].freeze
+$littlesis_docker_services = %w[app postgres redis nginx esbuild manticore jsserver].freeze
 
 def help
   puts <<TEXT
