@@ -18,6 +18,9 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     libmagickwand-dev \
     libsqlite3-dev \
     libx11-xcb1 \
+    libnss3 \
+    libdrm2 \
+    libgbm1 \
     lsof \
     redis-tools \
     rsync \
