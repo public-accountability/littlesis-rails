@@ -74,17 +74,17 @@ module Oligrapher
       .as_json
   end
 
-  def self.css_path
-    @css_path ||= "#{ASSET_URL}/#{basename}.css".freeze
+  def self.css_path(beta = false)
+    "#{ASSET_URL}/#{basename(beta)}.css"
   end
 
-  def self.javascript_path
-    @javascript_path ||= "#{ASSET_URL}/#{basename}.js".freeze
+  def self.javascript_path(beta = false)
+    "#{ASSET_URL}/#{basename(beta)}.js"
   end
 
-  private_class_method def self.basename
-    # (Rails.env.development? ? 'dev-' : '')
-    "oligrapher-" + Rails.application.config.littlesis.oligrapher_commit
+  private_class_method def self.basename(beta = false)
+    commit = beta ? Rails.application.config.littlesis.oligrapher_beta :  Rails.application.config.littlesis.oligrapher_commit
+    "oligrapher-" + commit
   end
 
   module Node

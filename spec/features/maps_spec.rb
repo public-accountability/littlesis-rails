@@ -13,9 +13,24 @@ describe 'Oligrapher' do
     before { login_as(user, scope: :user) }
     after { logout(user) }
 
+    def has_script_src(page, query_string)
+      page.all("script").filter { _1['src'].include?(query_string) }.length.positive?
+    end
+
     it 'uses new oligrapher path' do
       visit new_oligrapher_path
       successfully_visits_page new_oligrapher_path
+      expect(has_script_src(page, Rails.application.config.littlesis.oligrapher_commit)).to be true
+      expect(has_script_src(page, Rails.application.config.littlesis.oligrapher_beta)).to be false
+    end
+
+    it 'uses oligrapher beta commit if requested' do
+      user.settings.update({ oligrapher_beta: true })
+      user.save!
+      visit new_oligrapher_path
+      successfully_visits_page new_oligrapher_path
+      expect(has_script_src(page, Rails.application.config.littlesis.oligrapher_commit)).to be false
+      expect(has_script_src(page, Rails.application.config.littlesis.oligrapher_beta)).to be true
     end
   end
 
