@@ -460,7 +460,7 @@ describe 'Entity Requests', type: :request do
       end
 
       it 'is_expected.to render json with entity id' do
-        post '/entities', params: params_add_relationship_page
+        post '/entities', params: params_add_relationship_page, headers: {'Accept' => 'application/json'}
         json = JSON.parse(response.body)
         expect(json.fetch('status')).to eql 'OK'
         expect(json['entity']['id']).to eql Entity.last.id
@@ -473,12 +473,12 @@ describe 'Entity Requests', type: :request do
 
     context 'with errors' do
       it 'is_expected.to NOT create a new entity' do
-        expect { post '/entities', params: params_missing_ext_add_relationship_page }
+        expect { post '/entities', params: params_missing_ext_add_relationship_page, headers: {'Accept' => 'application/json'} }
           .not_to change(Entity, :count)
       end
 
       it 'is_expected.to render json with errors' do
-        post '/entities', params: params_missing_ext_add_relationship_page
+        post '/entities', params: params_missing_ext_add_relationship_page, headers: {'Accept' => 'application/json'}
         expect(JSON.parse(response.body)).to have_key 'errors'
         expect(JSON.parse(response.body).fetch('status')).to eql 'ERROR'
       end
