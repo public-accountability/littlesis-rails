@@ -21,7 +21,7 @@ defaults: &defaults
   noediting: false
   firefox_binary: /opt/firefox
   oligrapher_commit: "42022f34c3dfdefdff91beabdb9445be0066ada7"
-  oligrapher_beta: "6040f8ea47602f5a19c565033311ed3458acefd9"
+  oligrapher_beta: "91444501428f6fa1ba672e9c3508a8ed1eecb693"
 
 test:
   <<: *defaults
