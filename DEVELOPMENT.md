@@ -104,3 +104,17 @@ littlesis console
 littlesis runner "User.find_by(email: <EMAIL>).send_reset_password_instructions"
 
 ```
+
+### bin/littlesis in production
+
+``` sh
+littlesis git fetch origin
+littlesis git -- switch --detach COMMIT
+littlesis bundle install
+littlesis npm ci
+littlesis rake javascript:build
+littlesis rake assets:precompile
+littlesis script download_oligrapher_assets.rb TAG
+systemctl restart littlesis.service littlesis-goodjob.service
+littlesis status
+```
