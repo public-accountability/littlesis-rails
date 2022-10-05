@@ -16,10 +16,6 @@ required local variable = entity
         </div>
       <% end %>
 
-      <%# if add_relationship %>
-      <%#= hidden_field_tag :add_relationship_page, 'TRUE' %>
-      <%# end %>
-
       <div>
         <%= f.label t('vocab.name').capitalize, for: :entity_name, class: 'form-label' %>
         <%= f.text_field :name,
@@ -77,7 +73,9 @@ required local variable = entity
         <span>Valid names are at least two words</span>
       </div>
 
-      <div class="actions">
+      <%# If the partial has the local add_relationship_page have clicking "add" perform a turbo frame request.
+          Otherwise we can assume that we are on the regular add entity page and and use normal http request. %>
+      <div class="actions" data-turbo="<%= local_assigns[:add_relationship_page] ? 'true' : 'false' %>">
         <%= f.submit t('vocab.add').capitalize, class: "btn btn-primary" %>
       </div>
     <% end %>

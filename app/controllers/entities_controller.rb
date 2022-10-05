@@ -63,7 +63,8 @@ class EntitiesController < ApplicationController
   def new
     @entity = Entity.new(name: params[:name].presence)
     if turbo_frame_request?
-      render partial: 'new_entity_form', locals: { entity: @entity }
+      render partial: 'new_entity_form', locals: { entity: @entity,
+                                                   add_relationship_page: request.referer.include?("add_relationship") }
     end
   end
 
@@ -74,10 +75,8 @@ class EntitiesController < ApplicationController
       add_extensions
     end
 
-    json_requested = params[:add_relationship_page].present? || request.format.json?
-
     if @entity.persisted?
-      if json_requested
+      if request.format.json?
         render json: json_success_response
       elsif turbo_frame_request?
         render partial: 'new_entity_result'
@@ -85,7 +84,7 @@ class EntitiesController < ApplicationController
         redirect_to concretize_edit_entity_path(@entity)
       end
     else
-      if json_requested
+      if request.format.json?
         render json: { status: 'ERROR', errors: @entity.errors.messages }
       elsif turbo_frame_request?
         render partial: 'new_entity_form', locals: { entity: @entity }
