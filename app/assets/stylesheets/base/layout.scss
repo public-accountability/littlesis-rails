@@ -153,15 +153,8 @@ div.form-group .btn {
     vertical-align: initial;
 }
 
-#oligrapher-update-notice {
-    @extend .me-3;
-    span {
-        font-weight: 800;
-        font-size: 11px;
-    }
 
-    span:hover {
-        text-decoration: underline;
-        cursor: pointer;
-    }
+
+#littlesis-body {
+    min-height: 150px;
 }

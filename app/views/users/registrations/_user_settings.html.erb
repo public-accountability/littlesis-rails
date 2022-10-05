@@ -1,21 +1,26 @@
 <div>
   <%= form_with(url: '/users/settings', method: :put) do %>
+
     <% if current_user.role.include?(:star_relationship) %>
       <div class="row mt-2 mb-2">
         <div class="col">
-          <label class="me-1"><b>Show Stars</b></label>
-          <label class="user-settings-toggle">
-            <input name="settings[show_stars]" type="hidden" value="0" />
+          <div class="form-check form-switch">
+            <input name="settings[show_stars]" type="hidden" value="0">
+            <input name="settings[show_stars]" class="form-check-input" type="checkbox" role="switch" id="settings_show_stars" onchange="this.closest('form').submit()" <%= @user.settings.show_stars ? 'checked' : nil %>>
+            <label class="form-check-label" for="settings_show_stars">Show Stars</label>
+          </div>
+        </div>
+      </div>
+    <% end %>
 
-            <input type="checkbox"
-                   id="settings_show_stars"
-                   name="settings[show_stars]"
-                   value="1"
-                   onchange="this.closest('form').submit()"
-                   <%= @user.settings.show_stars ? 'checked="checked"' : nil %> />
-
-            <span></span>
-          </label>
+    <% if current_user.role.include?(:beta_testing) %>
+      <div class="row mt-2 mb-2">
+        <div class="col">
+          <div class="form-check form-switch">
+            <input name="settings[oligrapher_beta]" type="hidden" value="0">
+            <input name="settings[oligrapher_beta]" class="form-check-input" type="checkbox" role="switch" id="settings_oligrapher_beta" onchange="this.closest('form').submit()" <%= @user.settings.oligrapher_beta ? 'checked' : nil %>>
+            <label class="form-check-label" for="settings_oligrapher_beta">Oligrapher beta</label>
+          </div>
         </div>
       </div>
     <% end %>
@@ -27,10 +32,10 @@
 
       <div class="col-auto">
         <select id="user-settings-language"
-                class="form-select"
-                name="settings[language]"
-                aria-label="Select Langauge"
-                onchange="this.closest('form').submit()">
+          class="form-select"
+          name="settings[language]"
+          aria-label="Select Langauge"
+          onchange="this.closest('form').submit()">
           <%= options_for_select([ ["English", 'en'], ['Spanish', 'es'] ], current_user.settings.language) %>
         </select>
       </div>

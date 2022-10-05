@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 require 'getoptlong'
 require 'fileutils'
 
@@ -17,7 +16,7 @@ $database = {
 $rails_env = ENV.fetch('RAILS_ENV', 'development')
 
 $littlesis_systemd_services = %w[nginx.service redis-server.service redis-server.service littlesis.socket littlesis.service littlesis-goodjob.service littlesis-manticore.service littlesis-backup.service].freeze
-$littlesis_docker_services = %w[app postgres redis nginx esbuild manticore title_extractor].freeze
+$littlesis_docker_services = %w[app postgres redis nginx esbuild manticore jsserver].freeze
 
 def help
   puts <<TEXT
@@ -234,9 +233,13 @@ when 'rake'
 when 'runner'
   app_exec_bin! "rails runner #{rest}"
 when 'script'
-  app_exec_bin! "bundle exec lib/scripts/#{rest}"
+  if rest == 'list'
+    puts Dir[File.join(REPO, "lib/scripts/*")].map { File.basename(_1) }.join("\n")
+  else
+    app_exec_bin! "bundle exec lib/scripts/#{rest}"
+  end
 when 'bash'
-  app_exec "/bin/bash --login #{rest}", use_exec: true, compose_command: "exec -i -t"
+  app_exec "/bin/bash --login #{rest}", use_exec: true, compose_command: "exec"
 when 'console', 'c'
   app_exec_bin! "rails c #{rest}"
 when 'redis'

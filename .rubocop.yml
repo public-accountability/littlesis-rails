@@ -151,6 +151,5 @@ RSpec/MultipleMemoizedHelpers:
 RSpec/StubbedMock:
   Enabled: False
 
-RSpec/Capybara:
-  FeatureMethods:
-    Enabled: False
+RSpec/Capybara/FeatureMethods:
+  Enabled: False

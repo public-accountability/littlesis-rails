@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "HTTP server to extract titles from remote web documents",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "node index.js"
   },

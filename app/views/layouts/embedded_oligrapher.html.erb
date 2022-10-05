@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html class="fullscreen">
-  <head>
-    <title><%= page_title %></title>
-    <%= javascript_include_tag "application", defer: true %>
-    <script src="<%= Oligrapher.javascript_asset_path %>"></script>
-
-    <% if content_for?(:head) %>
-      <%= yield :head %>
-    <% end %>
-
-  </head>
-  <body>
-    <%= yield %>
-    <%= yield :body %>
-  </body>
-</html>
+<% @fullscreen = true %>
+<% content_for(:hide_top, false) %>
+<% content_for(:hide_footer, true) %>
+<% content_for :head do %>
+  <script src="<%= Oligrapher.javascript_path %>"></script>
+  <link href="<%= Oligrapher.css_path %>" rel="stylesheet">
+<% end %>
+<%= render template: "layouts/application" %>

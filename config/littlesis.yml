@@ -21,7 +21,7 @@ defaults: &defaults
   noediting: false
   firefox_binary: /opt/firefox
   oligrapher_commit: "42022f34c3dfdefdff91beabdb9445be0066ada7"
-  oligrapher_use_bundle: true
+  oligrapher_beta: "6040f8ea47602f5a19c565033311ed3458acefd9"
 
 test:
   <<: *defaults
@@ -58,3 +58,4 @@ production:
   smtp_user_name: <%= Rails.application.credentials.smtp_user_name %>
   smtp_password: <%= Rails.application.credentials.smtp_password %>
   restricted_ips: <%= Rails.application.credentials.restricted_ips %>
+  oligrapher_commit: "42022f34c3dfdefdff91beabdb9445be0066ada7"

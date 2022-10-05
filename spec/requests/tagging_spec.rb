@@ -21,25 +21,22 @@ describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
 
   describe 'anon user' do
     it 'cannot create a tag for an entity' do
-      expect do
-        post "/org/#{entity.to_param}/tags", params: tags_params
-      end.not_to change { Entity.find(entity.id).tags.length }
+      expect { post "/org/#{entity.to_param}/tags", params: tags_params }
+        .not_to change { Entity.find(entity.id).tags.length }
 
       redirects_to_login(response)
     end
 
     it 'cannot create a tag for an list' do
-      expect do
-        post "/lists/#{list.id}/tags", params: tags_params
-      end.not_to change { List.find(list.id).tags.length }
+      expect { post "/lists/#{list.id}/tags", params: tags_params }
+        .not_to change { List.find(list.id).tags.length }
 
       redirects_to_login(response)
     end
 
     it 'cannot create a tag for a relationship' do
-      expect do
-        post "/relationships/#{relationship.id}/tags", params: tags_params
-      end.not_to change { Relationship.find(relationship.id).tags.length }
+      expect { post "/relationships/#{relationship.id}/tags", params: tags_params }
+        .not_to change { Relationship.find(relationship.id).tags.length }
 
       redirects_to_login(response)
     end
@@ -49,7 +46,7 @@ describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
     before(:each) { login_as(user, :scope => :user) }
 
     it 'creates new tags' do
-      expect(creating_entity_tags)
+      expect(&creating_entity_tags)
         .to change { Entity.find(entity.id).tags.length }.by(2)
     end
 
@@ -64,7 +61,7 @@ describe 'Tagging', :tag_helper, :tagging_helper, :type => :request do
     before(:each) { login_as(user, :scope => :user) }
 
     it 'creates new tags' do
-      expect(creating_relationship_tags)
+      expect(&creating_relationship_tags)
         .to change { Relationship.find(relationship.id).tags.length }.by(2)
     end
 

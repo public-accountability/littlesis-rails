@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 volumes:
   postgres-data:
@@ -14,7 +14,7 @@ services:
     stdin_open: true
     tty: true
     init: true
-    shm_size: '2gb'
+    shm_size: "2gb"
     ports:
       - "127.0.0.1:8080:8080"
       - "127.0.0.1:3035:3035"
@@ -39,22 +39,22 @@ services:
   postgres:
     image: postgres:14
     command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
-    shm_size: '2gb'
+    shm_size: "2gb"
     volumes:
       - ./config/docker/postgresql.conf:/etc/postgresql.conf
       - ./config/docker/pg-setup-database.sh:/docker-entrypoint-initdb.d/pg-setup-database.sh
       - ./data:/data
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - '127.0.0.1:5432:5432'
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_PASSWORD: "postgres"
 
   nginx:
     image: nginx:latest
     ports:
-       - "127.0.0.1:8081:80"
-       - "127.0.0.1:9000:9000"
+      - "127.0.0.1:8081:80"
+      - "127.0.0.1:9000:9000"
     volumes:
       - ./:/littlesis
       - ./config/docker/nginx.conf:/etc/nginx/nginx.conf
@@ -64,23 +64,31 @@ services:
 
   manticore:
     image: littlesis:latest
-    command: ["searchd", "--config", "/littlesis/config/development.sphinx.conf", "--nodetach", "--listen", "9312:mysql"]
+    command:
+      [
+        "searchd",
+        "--config",
+        "/littlesis/config/development.sphinx.conf",
+        "--nodetach",
+        "--listen",
+        "9312:mysql",
+      ]
     volumes:
       - ./:/littlesis
 
-  title_extractor:
-    image: title-extractor:latest
-    build: ./lib/title-extractor
-    profiles: ["title_extractor", "development"]
+  jsserver:
+    image: jsserver:latest
+    build: ./lib/js/server
+    profiles: ["jsserver", "development"]
     ports:
-       - "127.0.0.1:8888:8888"
+      - "127.0.0.1:8888:8888"
     links:
       - postgres
       - app
 
   esbuild:
     image: littlesis:latest
-    command:  ['npm', 'run', 'build-watch']
+    command: ["npm", "run", "build-watch"]
     profiles: ["esbuild", "development"]
     volumes:
       - ./:/littlesis

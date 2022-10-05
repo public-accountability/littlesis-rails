@@ -40,7 +40,7 @@ gem 'stimulus-rails'
 
 # Search
 # gem 'thinking-sphinx', '~> 5.1'
-gem 'thinking-sphinx', git: 'https://github.com/pat/thinking-sphinx', ref: '150f2ed6cb1a3dfdb1544818d833abb419be3a96'
+gem 'thinking-sphinx', git: 'https://github.com/pat/thinking-sphinx', ref: 'c7e0a7c75336c3ee34da26b9af4748f9ea566f2f'
 
 # handle currencies etc
 gem 'money'

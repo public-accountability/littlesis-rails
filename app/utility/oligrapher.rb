@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
+  ASSET_URL = "/oligrapher/assets"
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
                                       Relationship::MEMBERSHIP_CATEGORY,
@@ -19,10 +20,9 @@ module Oligrapher
         sources: map.sources_annotation
       },
       settings: {
-        debug: Rails.env.development?,
         embed: embed,
         logoUrl: ActionController::Base.helpers.asset_path('lilsis-logo-trans-200.png'),
-        url: Rails.application.routes.url_helpers.map_url(map)
+        url: Rails.application.routes.url_helpers.oligrapher_url(map)
       },
       attributes: {
         id: map.id,
@@ -74,15 +74,17 @@ module Oligrapher
       .as_json
   end
 
-  def self.javascript_asset_path
-    return @javascript_asset_path if defined?(@javascript_asset_path)
+  def self.css_path(beta = false)
+    "#{ASSET_URL}/#{basename(beta)}.css"
+  end
 
-    path = +"/oligrapher/assets/oligrapher-"
-    path << 'dev-' if Rails.env.development?
-    path << Rails.application.config.littlesis.oligrapher_commit
-    path << ".bundle" if Rails.application.config.littlesis.oligrapher_use_bundle
-    path << ".js"
-    @javascript_asset_path = path.freeze
+  def self.javascript_path(beta = false)
+    "#{ASSET_URL}/#{basename(beta)}.js"
+  end
+
+  private_class_method def self.basename(beta = false)
+    commit = beta ? Rails.application.config.littlesis.oligrapher_beta :  Rails.application.config.littlesis.oligrapher_commit
+    "oligrapher-" + commit
   end
 
   module Node
@@ -106,31 +108,6 @@ module Oligrapher
       arrow: edge_arrow(rel),
       dash: rel.is_current == false,
       url: relationship_url(rel)
-    }
-  end
-
-  # Legacy (oligrapher 2.0) functions #
-
-  def self.legacy_entity_to_node(entity)
-    {
-      id: entity.id,
-      display: {
-        name: entity.name,
-        image: entity&.featured_image&.image_url("profile"),
-        url: ApplicationController.helpers.concretize_entity_url(entity)
-      }
-    }
-  end
-
-  def self.legacy_rel_to_edge(rel)
-    {
-      id: rel.id, node1_id: rel.entity1_id, node2_id: rel.entity2_id,
-      display: {
-        label: RelationshipLabel.new(rel).label,
-        arrow: edge_arrow(rel),
-        dash: rel.is_current != true,
-        url: relationship_url(rel)
-      }
     }
   end
 
