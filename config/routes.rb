@@ -56,7 +56,6 @@ LittleSis::Application.routes.draw do
 
   resources :contact, only: [:index, :create]
 
-
   # charts
 
   get 'charts/sankey'
@@ -71,6 +70,7 @@ LittleSis::Application.routes.draw do
     get '/', action: :home
     get '/tags', action: :tags
     get '/stats', action: :stats
+    get '/maps', action: :maps
     get '/test', action: :test
     post '/test_email', action: :test_email
     get '/users', action: :users
@@ -211,6 +211,8 @@ LittleSis::Application.routes.draw do
       get '/about' => "pages#oligrapher"
       get '/search', action: :search
       get '/perform_search', action: :perform_search
+      # admin
+      get '/all', action: :all
     end
 
     member do

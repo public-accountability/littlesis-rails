@@ -4,128 +4,131 @@
 
 import { application } from "./application"
 
-import CarouselController from "./carousel_controller.js"
+import AdminMapsController from "./admin_maps_controller"
+application.register("admin-maps", AdminMapsController)
+
+import CarouselController from "./carousel_controller"
 application.register("carousel", CarouselController)
 
-import ClipboardController from "./clipboard_controller.js"
+import ClipboardController from "./clipboard_controller"
 application.register("clipboard", ClipboardController)
 
-import EditTagsController from "./edit_tags_controller.js"
+import EditTagsController from "./edit_tags_controller"
 application.register("edit-tags", EditTagsController)
 
-import EntityAutocompleteController from "./entity_autocomplete_controller.js"
+import EntityAutocompleteController from "./entity_autocomplete_controller"
 application.register("entity-autocomplete", EntityAutocompleteController)
 
-import EntityEditController from "./entity_edit_controller.js"
+import EntityEditController from "./entity_edit_controller"
 application.register("entity-edit", EntityEditController)
 
-import EntityMatcherController from "./entity_matcher_controller.js"
+import EntityMatcherController from "./entity_matcher_controller"
 application.register("entity-matcher", EntityMatcherController)
 
-import EntityMergeController from "./entity_merge_controller.js"
+import EntityMergeController from "./entity_merge_controller"
 application.register("entity-merge", EntityMergeController)
 
-import EntityReferencesTableController from "./entity_references_table_controller.js"
+import EntityReferencesTableController from "./entity_references_table_controller"
 application.register("entity-references-table", EntityReferencesTableController)
 
-import ExternalLinksSidebarController from "./external_links_sidebar_controller.js"
+import ExternalLinksSidebarController from "./external_links_sidebar_controller"
 application.register("external-links-sidebar", ExternalLinksSidebarController)
 
-import Fec__ContributionsTableController from "./fec/contributions_table_controller.js"
+import Fec__ContributionsTableController from "./fec/contributions_table_controller"
 application.register("fec--contributions-table", Fec__ContributionsTableController)
 
-import Fec__MatchContributionsController from "./fec/match_contributions_controller.js"
+import Fec__MatchContributionsController from "./fec/match_contributions_controller"
 application.register("fec--match-contributions", Fec__MatchContributionsController)
 
-import HomeDatatablesController from "./home_datatables_controller.js"
+import HomeDatatablesController from "./home_datatables_controller"
 application.register("home-datatables", HomeDatatablesController)
 
-import ImageCropperController from "./image_cropper_controller.js"
+import ImageCropperController from "./image_cropper_controller"
 application.register("image-cropper", ImageCropperController)
 
-import ImageEditorController from "./image_editor_controller.js"
+import ImageEditorController from "./image_editor_controller"
 application.register("image-editor", ImageEditorController)
 
-import ListDatatableController from "./list_datatable_controller.js"
+import ListDatatableController from "./list_datatable_controller"
 application.register("list-datatable", ListDatatableController)
 
-import ListSettingsController from "./list_settings_controller.js"
+import ListSettingsController from "./list_settings_controller"
 application.register("list-settings", ListSettingsController)
 
-import ListsSearchController from "./lists_search_controller.js"
+import ListsSearchController from "./lists_search_controller"
 application.register("lists-search", ListsSearchController)
 
-import MatchContributionsController from "./match_contributions_controller.js"
+import MatchContributionsController from "./match_contributions_controller"
 application.register("match-contributions", MatchContributionsController)
 
-import NavigationFormController from "./navigation_form_controller.js"
+import NavigationFormController from "./navigation_form_controller"
 application.register("navigation-form", NavigationFormController)
 
-import NavmenuController from "./navmenu_controller.js"
+import NavmenuController from "./navmenu_controller"
 application.register("navmenu", NavmenuController)
 
-import NewEntityFormController from "./new_entity_form_controller.js"
+import NewEntityFormController from "./new_entity_form_controller"
 application.register("new-entity-form", NewEntityFormController)
 
-import OligrapherController from "./oligrapher_controller.js"
+import OligrapherController from "./oligrapher_controller"
 application.register("oligrapher", OligrapherController)
 
-import OligrapherSearchController from "./oligrapher_search_controller.js"
+import OligrapherSearchController from "./oligrapher_search_controller"
 application.register("oligrapher-search", OligrapherSearchController)
 
-import Profile__ConnectionsTableController from "./profile/connections_table_controller.js"
+import Profile__ConnectionsTableController from "./profile/connections_table_controller"
 application.register("profile--connections-table", Profile__ConnectionsTableController)
 
-import Profile__ControlsController from "./profile/controls_controller.js"
+import Profile__ControlsController from "./profile/controls_controller"
 application.register("profile--controls", Profile__ControlsController)
 
-import Profile__EditableBlurbController from "./profile/editable_blurb_controller.js"
+import Profile__EditableBlurbController from "./profile/editable_blurb_controller"
 application.register("profile--editable-blurb", Profile__EditableBlurbController)
 
-import Profile__EntitySummaryController from "./profile/entity_summary_controller.js"
+import Profile__EntitySummaryController from "./profile/entity_summary_controller"
 application.register("profile--entity-summary", Profile__EntitySummaryController)
 
-import Profile__ListsDropdownController from "./profile/lists_dropdown_controller.js"
+import Profile__ListsDropdownController from "./profile/lists_dropdown_controller"
 application.register("profile--lists-dropdown", Profile__ListsDropdownController)
 
-import Profile__SubcategoryPaginationController from "./profile/subcategory_pagination_controller.js"
+import Profile__SubcategoryPaginationController from "./profile/subcategory_pagination_controller"
 application.register("profile--subcategory-pagination", Profile__SubcategoryPaginationController)
 
-import Profile__SubcategoryToggleController from "./profile/subcategory_toggle_controller.js"
+import Profile__SubcategoryToggleController from "./profile/subcategory_toggle_controller"
 application.register("profile--subcategory-toggle", Profile__SubcategoryToggleController)
 
-import ReferenceWidgetController from "./reference_widget_controller.js"
+import ReferenceWidgetController from "./reference_widget_controller"
 application.register("reference-widget", ReferenceWidgetController)
 
-import RelationshipBulkAdderController from "./relationship_bulk_adder_controller.js"
+import RelationshipBulkAdderController from "./relationship_bulk_adder_controller"
 application.register("relationship-bulk-adder", RelationshipBulkAdderController)
 
-import RelationshipCreatorController from "./relationship_creator_controller.js"
+import RelationshipCreatorController from "./relationship_creator_controller"
 application.register("relationship-creator", RelationshipCreatorController)
 
-import RelationshipsDatatableLegacyController from "./relationships_datatable_legacy_controller.js"
+import RelationshipsDatatableLegacyController from "./relationships_datatable_legacy_controller"
 application.register("relationships-datatable-legacy", RelationshipsDatatableLegacyController)
 
-import ReverseLinkController from "./reverse_link_controller.js"
+import ReverseLinkController from "./reverse_link_controller"
 application.register("reverse-link", ReverseLinkController)
 
-import SidebarSourceLinksController from "./sidebar_source_links_controller.js"
+import SidebarSourceLinksController from "./sidebar_source_links_controller"
 application.register("sidebar-source-links", SidebarSourceLinksController)
 
-import SubcategoryTranslationController from "./subcategory_translation_controller.js"
+import SubcategoryTranslationController from "./subcategory_translation_controller"
 application.register("subcategory-translation", SubcategoryTranslationController)
 
-import TagFormController from "./tag_form_controller.js"
+import TagFormController from "./tag_form_controller"
 application.register("tag-form", TagFormController)
 
-import TooltipController from "./tooltip_controller.js"
+import TooltipController from "./tooltip_controller"
 application.register("tooltip", TooltipController)
 
-import UserActionNetworkController from "./user_action_network_controller.js"
+import UserActionNetworkController from "./user_action_network_controller"
 application.register("user-action-network", UserActionNetworkController)
 
-import UserRoleSelectController from "./user_role_select_controller.js"
+import UserRoleSelectController from "./user_role_select_controller"
 application.register("user-role-select", UserRoleSelectController)
 
-import UsernameValidationController from "./username_validation_controller.js"
+import UsernameValidationController from "./username_validation_controller"
 application.register("username-validation", UsernameValidationController)

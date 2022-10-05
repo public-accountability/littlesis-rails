@@ -3,15 +3,16 @@
 class OligrapherController < ApplicationController
   skip_before_action :verify_authenticity_token if Rails.env.development?
 
-  AUTHENITICATED_ACTIONS = %i[new create update editors confirm_editor lock release_lock clone destroy featured].freeze
+  AUTHENITICATED_ACTIONS = %i[new create update editors confirm_editor lock release_lock clone destroy featured all].freeze
   SEARCH_API_ACTIONS = %i[find_nodes find_connections get_edges get_interlocks].freeze
 
   before_action :set_cors_header, only: SEARCH_API_ACTIONS
   before_action :authenticate_user!, only: AUTHENITICATED_ACTIONS
   before_action :block_restricted_user_access, only: AUTHENITICATED_ACTIONS
-  before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot featured]
-  before_action :check_owner, only: %i[editors destroy]
-  before_action :enforce_slug, only: %i[show]
+  before_action :admins_only, only: %i[featured all].freeze
+  before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot featured].freeze
+  before_action :check_owner, only: %i[editors destroy].freeze
+  before_action :enforce_slug, only: %i[show].freeze
 
   rescue_from ActiveRecord::RecordNotFound, with: :map_not_found
   rescue_from Exceptions::PermissionError, with: :map_not_found
@@ -108,7 +109,6 @@ class OligrapherController < ApplicationController
   end
 
   def featured
-    admins_only
     result = @map.update_columns(is_featured: !@map.is_featured)
     status = result ? :ok : :internal_server_error
     render json: { status: status, is_featured: @map.is_featured }, status: status
@@ -251,6 +251,19 @@ class OligrapherController < ApplicationController
     else
       render json: { nodes: [], edges: [] }
     end
+  end
+
+  # Admin
+
+  def all
+    # expires_in 2.minutes, public: false
+    render json: { "data" =>  NetworkMap
+                                .public_scope
+                                .joins(:user)
+                                .select(:id, :title, :description, :is_featured, :created_at, :updated_at, "users.username")
+                                .order(id: :desc)
+                                .all
+                                .map { |m| m.attributes.merge!("url" => m.url) } }
   end
 
   private
