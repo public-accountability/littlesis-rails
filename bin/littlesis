@@ -239,7 +239,7 @@ when 'script'
     app_exec_bin! "bundle exec lib/scripts/#{rest}"
   end
 when 'bash'
-  app_exec "/bin/bash --login #{rest}", use_exec: true, compose_command: "exec -i -t"
+  app_exec "/bin/bash --login #{rest}", use_exec: true, compose_command: "exec"
 when 'console', 'c'
   app_exec_bin! "rails c #{rest}"
 when 'redis'
