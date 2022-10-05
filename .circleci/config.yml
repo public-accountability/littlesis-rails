@@ -20,7 +20,6 @@ jobs:
       - run: bin/littlesis setup-folders
       - run: bin/littlesis build
       - run: bin/littlesis up
-      - run: bin/littlesis docker -- exec postgres pg_isready --timeout=10
       - run: bin/littlesis --test rake db:reset
       - run: bin/littlesis --test rake javascript:build
       - run: bin/littlesis --test rake assets:precompile
