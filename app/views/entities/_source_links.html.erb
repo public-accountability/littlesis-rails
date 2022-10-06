@@ -5,14 +5,14 @@
 
   <div class="col-12">
     <span class="sidebar-source-links-document-count"><em><%= number_with_delimiter document_count %></em> documents :: </span>
-    <span><%= link_to "see all", concretize_references_entity_path(@entity) %></span>
+    <span data-turbo="false"><%= link_to "see all", concretize_references_entity_path(@entity) %></span>
     <% if documents.length == 10 || current_page != 1 %>
       <div class="ms-2 d-inline-block" data-turbo="true">
         <%= link_to(source_links_entity_path(@entity, page: current_page - 1), class: (current_page == 1 ? 'disabled' : '')) do  %>
           <i class="bi bi-arrow-left" title="back"></i>
         <% end %>
 
-        <%= link_to(source_links_entity_path(@entity, page: current_page + 1), class: (documents.length < 10 ? 'disabled' : '')) do  %>
+        <%= link_to(source_links_entity_path(@entity, page: current_page + 1), class: (documents.length < 10 ? 'disabled' : ''), data: { turbo: false }) do  %>
           <i class="bi bi-arrow-right" title="forward"></i>
         <% end %>
       </div>
