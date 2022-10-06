@@ -1,5 +1,5 @@
 if ENV['CIRCLECI'] == 'true'
-   warn "Skpping #{__FILE__} because it is flaky on Circleci."
+   warn "Skipping #{__FILE__} because it is flaky on Circleci."
 else
   feature 'Featured list admin', :sphinx, type: :feature, js: true do
     let(:admin) { create_admin_user }

@@ -53,7 +53,7 @@
       <% grouped_links.page(current_page).each do |grouped_link| %>
 
         <div class="row profile-page-grouped-link">
-          <div class="profile-page-other-entity">
+          <div class="profile-page-other-entity" data-turbo="false">
             <% other_entity = grouped_link.other_entity(@entity)%>
             <span class="other-entity-name"  title="<%= other_entity.blurb %>">
               <%= link_to other_entity.name, concretize_entity_path(other_entity) %>
@@ -63,7 +63,7 @@
             </span>
           </div>
 
-          <div class="profile-page-relationships">
+          <div class="profile-page-relationships" data-turbo="false">
             <%= render partial: 'grouped_link', object: grouped_link %>
           </div>
         </div>

@@ -13,8 +13,7 @@ describe 'Entity References', type: :feature, js: :true do
   end
 
   scenario 'Adding a url' do
-    expect(page.find('table[data-entity-references-table-target="table"] tbody tr').text).to eq 'No data available in table'
-
+    expect(page.find('table[data-entity-references-table-target="table"] tbody tr')).to have_content('No data available in table')
     find('#add-new-refernce-link').click
 
     within '#add-reference-modal' do

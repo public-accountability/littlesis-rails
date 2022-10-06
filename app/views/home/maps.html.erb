@@ -9,7 +9,19 @@
     }
   } do %>
 
-  <%= render partial: 'maps/header' %>
+  <div class="row mt-2">
+    <div class="col">
+      <h1>Your maps</h1>
+      <%= link_to 'Explore', "/oligrapher", class: 'btn btn-clear btn-sm mr-1' %>
+      <%= link_to 'Create', new_oligrapher_path, class: 'btn btn-clear btn-sm mr-1' %>
+    </div>
+  </div>
 
-  <table data-home-datatables-target="table" id="user-maps-table" class="display" style="width:100%"></table>
+  <div class="row mt-2">
+    <div class="col">
+      <table data-home-datatables-target="table" id="user-maps-table" class="display" style="width:100%"></table>
+    </div>
+  </div>
+
+
 <% end %>

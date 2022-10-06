@@ -18,6 +18,8 @@ $rails_env = ENV.fetch('RAILS_ENV', 'development')
 $littlesis_systemd_services = %w[nginx.service redis-server.service redis-server.service littlesis.socket littlesis.service littlesis-goodjob.service littlesis-manticore.service littlesis-backup.service].freeze
 $littlesis_docker_services = %w[app postgres redis nginx esbuild manticore jsserver].freeze
 
+$env_vars = {}
+
 def help
   puts <<TEXT
 Usage: littlesis [-tdP] <command> [--] [arguments for command]
@@ -81,24 +83,37 @@ def setup_folders
   end
 end
 
+def app_exec_docker(cmd, use_exec:, container:, compose_command:)
+  enviroment = +"-e RAILS_ENV=#{$rails_env}"
+  $env_vars.each_pair { |k, v| enviroment << " -e #{k}=#{v}"  }
+  docker_compose = "docker-compose #{compose_command} #{enviroment} #{container} #{cmd}"
+
+  if use_exec
+    exec docker_compose
+  else
+    `#{docker_compose}`
+  end
+end
+
+def app_exec_production(cmd, use_exec:)
+  ENV['RAILS_ENV'] = $rails_env
+  $env_vars.each_pair { |k, v| ENV[k] = v }
+
+  if use_exec
+    exec cmd
+  else
+    `#{cmd}`
+  end
+end
+
 def app_exec(cmd, bin: false, use_exec: false, container: 'app', compose_command: 'run --rm')
   bin_path = $rails_env == 'production' ? '/var/www/littlesis/bin' : '/littlesis/bin'
   cmd = "#{bin_path}/#{cmd}" if bin
 
   if $rails_env == 'production'
-    if use_exec
-      exec cmd
-    else
-      `#{cmd}`
-    end
+    app_exec_production(cmd, use_exec: use_exec)
   else
-    docker_compose = "docker-compose #{compose_command} -e RAILS_ENV=#{$rails_env} #{container} #{cmd}"
-
-    if use_exec
-      exec docker_compose
-    else
-      `#{docker_compose}`
-    end
+    app_exec_docker(cmd, use_exec: use_exec, container: container, compose_command: compose_command)
   end
 end
 
@@ -169,7 +184,8 @@ opts = GetoptLong.new(
   ['--test', '-t', GetoptLong::NO_ARGUMENT],
   ['--development', '-d', GetoptLong::NO_ARGUMENT],
   ['--production', '-P', GetoptLong::NO_ARGUMENT],
-  ['--branch', GetoptLong::REQUIRED_ARGUMENT]
+  ['--branch', GetoptLong::REQUIRED_ARGUMENT],
+  ['--environment', '-e', GetoptLong::REQUIRED_ARGUMENT]
 )
 
 opts.each do |name, val|
@@ -183,6 +199,10 @@ opts.each do |name, val|
     $rails_env = 'development'
   when '--production'
     $rails_env = 'production'
+  when '--environment'
+    raise ArgumentError, "invalid env var" unless val.include?('=')
+    k,v  = val.split('=')
+    $env_vars[k] =v
   end
 end
 

@@ -23,8 +23,10 @@ services:
       # see https://stackoverflow.com/questions/30043872/docker-compose-node-modules-not-present-in-a-volume-after-npm-install-succeeds
       - /littlesis/node_modules
     depends_on:
-      - redis
-      - postgres
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
     environment:
       - RAILS_ENV=development
       - LITTLESIS_BIND=tcp://0.0.0.0:8080
@@ -49,6 +51,11 @@ services:
       - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: "pg_isready"
+      timeout: 5s
+      interval: 10s
+      retries: 10
 
   nginx:
     image: nginx:latest
