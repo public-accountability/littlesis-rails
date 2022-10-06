@@ -100,6 +100,10 @@ module Tagable
     end
   end
 
+  def tag_names
+    tags.pluck(:name)
+  end
+
   private
 
   # NOTE: does NOT allow string-intergers as ids .ie. '1'

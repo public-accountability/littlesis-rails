@@ -15,6 +15,7 @@ entity:
     aliases: 'aliases.map(&:name)'
     types: 'types'
     extensions: 'extensions_with_attributes'
+    tags: 'tag_names'
 relationship:
   ignore:
     - amount2

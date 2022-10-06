@@ -99,9 +99,9 @@
       <%= attribute_line('updated_at', 'The last time the Entity data was updated') %>
       <%= attribute_line('types', 'An array of types (also known as extensions) associated with the entity. i.e. Business, Lawyer') %>
       <%= attribute_line('aliases', 'An array of other names the entity is known as') %>
+      <%= attribute_line('tags', 'An array of tags attached to this entity by LittleSis users') %>
     </ul>
   <% end %>
-
 
   <%= api_column do %>
     <h3><code>/api/entities?ids="1,2,3"</code></h3>
