@@ -7,6 +7,7 @@ defaults: &defaults
   default_from_email: "email.robot@littlesis.org"
   carousel_list_id: 404
   action_network_api_key: 'your-action-network-api-key-here'
+  powerbase_api_key: 'your-powerbase-api-key-here'
   redis_url: "redis://redis:6379/0"
   default_image_file_type: jpg
   donation_banner_display: false # use 'everywhere' to display on all pages and 'homepage' for just the homepage
@@ -40,6 +41,7 @@ development:
   protocol: http
   opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
+  powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
 
 production:
   <<: *defaults
@@ -52,6 +54,7 @@ production:
   beta: false
   carousel_list_id: 1257
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
+  powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
   opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>
   smtp_address: <%= Rails.application.credentials.smtp_address %>
   smtp_domain: <%= Rails.application.credentials.smtp_domain %>
