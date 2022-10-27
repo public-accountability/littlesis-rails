@@ -1,6 +1,22 @@
 <div>
   <%= form_with(url: '/users/settings', method: :put) do %>
 
+    <div class="row mt-2 mb-2">
+      <div class="col-auto">
+        <label class="form-label" style="padding-top: 0.375rem;"><%= t('vocab.language').capitalize %>:</label>
+      </div>
+      <div class="col-auto">
+        <select id="user-settings-language"
+          class="form-select"
+          name="settings[language]"
+          aria-label="Select Langauge"
+          onchange="this.closest('form').submit()">
+          <%= options_for_select([ ["English", 'en'], ['Spanish', 'es'] ], current_user.settings.language) %>
+        </select>
+      </div>
+    </div>
+
+
     <% if current_user.role.include?(:star_relationship) %>
       <div class="row mt-2 mb-2">
         <div class="col">
@@ -25,21 +41,7 @@
       </div>
     <% end %>
 
-    <div class="row mt-2 mb-2">
-      <div class="col-auto">
-        <label class="form-label"><b>Language:</b></label>
-      </div>
 
-      <div class="col-auto">
-        <select id="user-settings-language"
-          class="form-select"
-          name="settings[language]"
-          aria-label="Select Langauge"
-          onchange="this.closest('form').submit()">
-          <%= options_for_select([ ["English", 'en'], ['Spanish', 'es'] ], current_user.settings.language) %>
-        </select>
-      </div>
-    </div>
   <% end %>
 </div>
 

@@ -22,7 +22,7 @@ describe 'User Settings' do
     visit '/settings'
   end
 
-  scenario 'user updates own username' do
+  xscenario 'user updates own username' do
     expect(page).to have_css('h2', text: 'Edit your settings')
 
     within '#edit_user' do
@@ -35,7 +35,7 @@ describe 'User Settings' do
     expect(current_user.reload.username).to eq 'waftcap'
   end
 
-  scenario 'user tries to set their username to one that is taken' do
+  xscenario 'user tries to set their username to one that is taken' do
     expect(page).to have_css('h2', text: 'Edit your settings')
 
     within '#edit_user' do
