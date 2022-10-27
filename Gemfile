@@ -74,15 +74,16 @@ group :test do
 end
 
 group :development do
-  gem 'web-console'
+  # gem 'ruby-prof'
+  gem "debug", ">= 1.0.0"
   gem 'better_errors'
   gem 'rack-mini-profiler', require: false
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
-  # gem 'ruby-prof'
   gem 'solargraph', require: false
+  gem 'web-console'
 end
 
 group :test, :development do
