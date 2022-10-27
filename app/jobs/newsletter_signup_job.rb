@@ -3,7 +3,9 @@
 class NewsletterSignupJob < ApplicationJob
   queue_as :default
 
-  def perform(user_or_email, lists = [:newsletter])
-    ActionNetwork.signup(user_or_email, lists)
+  def perform(email)
+    user = Powerbase::User.new(email)
+    user.create unless user.present?
+    user.add_to(:signup)
   end
 end

@@ -6,6 +6,11 @@ module Powerbase
   HOST = "littlesis.ourpowerbase.net"
   BASE = "/civicrm/ajax/api4"
 
+  GROUPS = {
+    signup: 9,
+    tech: 17
+  }
+
   module Client
     def self.create_contact(email, name: '')
       post "/Contact/create",
@@ -27,11 +32,27 @@ module Powerbase
     def self.get_contact(email_address)
       post "/Contact/get",
            {
-             'select' => ['email', 'id', 'contact_type'],
+             'select' => ['email', 'id', 'contact_type', 'display_name', 'do_not_mail'],
              'join' => [['Email AS email', 'INNER']],
              'where' => [['email.email', '=', email_address]],
+             'chain' => {
+               'groups' => [
+                 'GroupContact',
+                 'get',
+                 { 'where' => [['contact_id', '=', '$id']], 'select' => ['id', 'group_id'] }
+               ]
+             },
              'limit' => 1
            }
+    end
+
+    def self.create_group_contact(group_id:, contact_id:)
+      post "/GroupContact/create",
+           { 'values' =>  { 'group_id' => group_id, 'contact_id' => contact_id } }
+    end
+
+    def self.delete_group_contact(id)
+      post "/GroupContact/delete",  { 'where' => [['id', '=', id]] }
     end
 
     def self.post(path, params)
@@ -52,36 +73,64 @@ module Powerbase
   # Powerbase User - connected via email address
   class User
     attr_reader :email
+    attr_reader :record
+    extend Forwardable
+    def_delegators :@record, :[], :fetch, :dig, :as_json, :to_h, :present?
 
     #  user = Powerbase::User.new("example@littlesis.org")
     def initialize(email)
       @email = email
+      sync
+    end
+
+    # Sets @record from powerbase
+    def sync
+      @record = Client.get_contact(@email)['values'].first
     end
 
     # Creates powerbase contact for the email address
     def create
       if contact.nil?
         Client.create_contact(@email)
+        sync
       end
     end
 
-    # Retrieves existing contact information
-    def contact
-      @contact ||= Client.get_contact(@email)['values'].first
+    def id
+      fetch('id')
     end
 
-    def do_not_email
+    def groups
+      fetch('groups').map { |g| g['group_id']}
     end
 
-    def permit_emailing
+    def do_not_mail?
+      fetch("do_not_mail")
     end
 
-    # adds user to the group
+    def set_do_not_mail
+      raise NotImplementedError
+    end
+
+    def cancel_do_not_email
+      raise NotImplementedError
+    end
+
+    def in?(group)
+      groups.include? GROUPS.fetch(group)
+    end
+
     def add_to(group)
+      unless in?(group)
+        Client.create_group_contact(group_id: GROUPS.fetch(group), contact_id: id)
+      end
     end
 
-    # removes user from the gruop
     def remove_from(group)
+      if in?(group)
+        group_contact_id = fetch('groups').find { |g| g['group_id'] == GROUPS.fetch(group) }.fetch('id')
+        Client.delete_group_contact(group_contact_id)
+      end
     end
   end
 end
