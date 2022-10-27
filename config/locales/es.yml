@@ -132,7 +132,7 @@ es:
     create_new_reference: "Crear una referencia nueva"
     creating_new_relationship_between:
     contact_us: Contacto
-    current_password:
+    current_password: "contraseña"
     confirm_password: "Confirmación de contraseña"
     data_summary: "Resumen de los datos"
     disclaimer:
