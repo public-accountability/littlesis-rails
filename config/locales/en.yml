@@ -112,6 +112,7 @@ en:
     help: help
     join: join
     lists: lists
+    language: language
     lobbying: lobbying
     location: location
     merge: merge
