@@ -17,11 +17,14 @@
   </div>
 <% end %>
 
-<%= content_tag(
-  :div,
-  id: "oligrapher",
-  data: {
-    controller: "oligrapher",
-    oligrapher_config_value: @configuration.to_json
-  }
-){} %>
+<div style="display: flex; flex-direction: column; height: 95%;">
+  <%= content_tag(
+    :div,
+    id: "oligrapher",
+    style: "flex: 1;",
+    data: {
+      controller: "oligrapher",
+      oligrapher_config_value: @configuration.to_json
+    }
+  ){} %>
+</div>

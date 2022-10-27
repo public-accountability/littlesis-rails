@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="<%= @fullscreen ? 'fullscreen' : '' %>">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -11,7 +11,7 @@
     <%= javascript_include_tag "application", defer: true %>
     <%= yield :head if content_for?(:head) %>
   </head>
-  <body>
+  <body class="<%= @fullscreen ? 'fullscreen' : '' %>">
     <% unless content_for? :hide_top %>
       <%= render 'shared/nav_menu' %>
     <% end %>
@@ -20,7 +20,7 @@
       <%= render 'shared/notice' %>
     <% end %>
 
-    <div class="<%= container_div_class %> mt-2" id="littlesis-body">
+    <div class="<%= container_div_class %> mt-2 <%= @fullscreen ? 'fullscreen' : '' %>" id="littlesis-body">
       <%= yield %>
     </div>
 

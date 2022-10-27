@@ -1,3 +1,22 @@
+html.fullscreen {
+  height: 100%;
+}
+
+body.fullscreen {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#littlesis-body.fullscreen {
+  height: 100%;
+}
+
+#littlesis-body {
+    min-height: 150px;
+}
+
 a {
     text-decoration: none;
     color: $link_blue;
@@ -9,6 +28,7 @@ a {
 }
 
 nav.navbar  {
+  // height: 50px;
     margin: 0 auto;
     font-size: 14px;
 
@@ -151,10 +171,4 @@ h3.section {
 
 div.form-group .btn {
     vertical-align: initial;
-}
-
-
-
-#littlesis-body {
-    min-height: 150px;
 }
