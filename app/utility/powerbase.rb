@@ -13,20 +13,15 @@ module Powerbase
 
   module Client
     def self.create_contact(email, name: '')
-      post "/Contact/create",
-           {
-             'values' => {
-               'contact_type' => 'Individual',
-               'name' => name
-             },
-             'chain' => {
-               'create_email' => [
-                 'Email',
-                 'create',
-                 { 'values' => { 'contact_id' => '$id', 'email': email } }
-               ]
-             }
-           }
+      params = { 'values' => {
+                   'contact_type' => 'Individual',
+                   'name' => name
+                 },
+                 'chain' => {
+                   'create_email' => ['Email', 'create', { 'values' => { 'contact_id' => '$id', 'email': email } }]
+                 } }
+      Rails.logger.info "requesting new powerbase contact: #{JSON.dump(params)}"
+      post "/Contact/create", params
     end
 
     def self.get_contact(email_address)
@@ -90,7 +85,7 @@ module Powerbase
 
     # Creates powerbase contact for the email address
     def create
-      if contact.nil?
+      unless present?
         Client.create_contact(@email)
         sync
       end

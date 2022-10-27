@@ -5,7 +5,7 @@ class NewsletterSignupJob < ApplicationJob
 
   def perform(email)
     user = Powerbase::User.new(email)
-    user.create unless user.present?
+    user.create
     user.add_to(:signup)
   end
 end
