@@ -15,7 +15,7 @@ module ApplicationHelper
     if @fullscreen
       'container-fluid'
     else
-      'container'
+      'container-lg'
     end
   end
 
