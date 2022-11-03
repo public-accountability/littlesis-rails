@@ -341,6 +341,26 @@ class Entity < ApplicationRecord
     Link.where(entity1_id: entity2_id, entity2_id: related_ids).pluck(:entity2_id).uniq - [entity1_id, entity2_id].map(&:to_i)
   end
 
+  def self.common_connections(entity_ids, amount: 10, exclude: [])
+    hash = {}
+
+    entity_ids.each do |id|
+      Link
+        .where(entity1_id: id)
+        .and(Link.where.not(entity2_id: entity_ids + exclude))
+        .select(:entity2_id)
+        .distinct
+        .pluck(:entity2_id)
+        .tally(hash)
+    end
+
+    hash
+      .keep_if { |id, count| count > 1 }
+      .sort { |a, b| b.last <=> a.last }
+      .map(&:first)
+      .take(amount)
+  end
+
   # Utilities - Class Methods #
 
   # A type checker for definition id and names

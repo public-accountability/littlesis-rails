@@ -253,6 +253,31 @@ class OligrapherController < ApplicationController
     end
   end
 
+  # New version of interlocks that can handle any number of entities
+  def get_interlocks2
+    return head :bad_request if params[:entity_ids].blank?
+    num = params.fetch(:num, 10).to_i
+    entity_ids = params[:entity_ids].split(',').map(&:to_i)
+    interlock_ids = Entity.common_connections(entity_ids, amount: num)
+
+    if interlock_ids.count.positive?
+      nodes = Entity
+                .where(id: interlock_ids)
+                .map { |e| Oligrapher::Node.from_entity(e) }
+      edges = Link
+                .includes(:relationship)
+                .where(entity1_id: entity_ids)
+                .where(entity2_id: interlock_ids)
+                .map(&:relationship)
+                .uniq
+                .map { |r| Oligrapher.rel_to_edge(r) }
+      render json: { nodes: nodes, edges: edges }
+    else
+      render json: { nodes: [], edges: [] }
+    end
+
+  end
+
   # Admin
 
   def all

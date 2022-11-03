@@ -207,6 +207,7 @@ LittleSis::Application.routes.draw do
       get '/find_connections', action: :find_connections
       get '/get_edges', action: :get_edges
       get '/get_interlocks', action: :get_interlocks
+      get '/get_interlocks2', action: :get_interlocks2
       #  About & Grid
       get '/about' => "pages#oligrapher"
       get '/search', action: :search
