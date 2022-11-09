@@ -11,12 +11,7 @@ class OligrapherLockService
   def initialize(map:, current_user:)
     @map = map
     @current_user = current_user
-    @permission_denied = true
-
-    if @map.can_edit?(@current_user)
-      @permission_denied = false
-    end
-
+    @permission_denied = !@map.can_edit?(@current_user)
     fetch_lock
   end
 
@@ -26,7 +21,7 @@ class OligrapherLockService
   end
 
   def as_json
-    return self.class.permission_error_json unless user_has_permission?
+    return { permission_denied: true } unless user_has_permission?
 
     if locked?
       @lock.to_h.merge(
@@ -76,10 +71,6 @@ class OligrapherLockService
 
   def user_has_permission?
     !@permission_denied
-  end
-
-  def self.permission_error_json
-    { permission_denied: true }
   end
 
   private
