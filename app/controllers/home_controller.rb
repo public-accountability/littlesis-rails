@@ -79,7 +79,6 @@ class HomeController < ApplicationController
   end
 
   # Alternative method for signing up to our mailing list
-  # redirects to 'referrer' if present or 'https://news.littlesis.org'
   # POST /home/pai_signup
   def pai_signup
     return head :forbidden if likely_a_spam_bot
@@ -90,11 +89,7 @@ class HomeController < ApplicationController
       NewsletterSignupJob.perform_later(params.fetch('email'))
     end
 
-    if request.headers['referer'].blank?
-      redirect_to 'https://news.littlesis.org'
-    else
-      redirect_to request.headers['referer']
-    end
+    redirect_to 'https://news.littlesis.org', allow_other_host: true
   end
 
   def test

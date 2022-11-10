@@ -21,14 +21,6 @@ describe 'Home requests' do
 
         specify { redirects_to_path('https://news.littlesis.org') }
       end
-
-      context 'with referer header' do
-        before do
-          post '/home/pai_signup', params: { 'email' => email }, headers: { 'referer' => 'http://example.com' }
-        end
-
-        specify { redirects_to_path('http://example.com') }
-      end
     end
   end
 end
