@@ -19,8 +19,7 @@ describe 'Images' do
         proc do
           post(
             '/deletion_requests/images',
-            params: { image_id: image.id, justification: justification, entity_id: entity.id.to_s },
-            headers: { 'Referer' => 'https://littlesis.org/images' }
+            params: { image_id: image.id, justification: justification, entity_id: entity.id.to_s }
           )
         end
       end
@@ -32,12 +31,7 @@ describe 'Images' do
         expect(image_deletion_request.source_id).to eq image.id
         expect(image_deletion_request.user).to eq user
         expect(image_deletion_request.entity_id).to eq entity.id
-      end
-
-      it 'redirects backs to refer' do
-        deletion_request.call
         expect(response.status).to eq 302
-        expect(response.location).to eql 'https://littlesis.org/images'
       end
     end
 
