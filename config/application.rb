@@ -11,23 +11,21 @@ module LittleSis
   class Application < Rails::Application
     config.littlesis = config_for(:littlesis)
 
-    config.load_defaults 6.1
-    config.autoloader = :zeitwerk
+    config.load_defaults 7.0
 
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       r301     %r{^/(beginnerhelp|advancedhelp)$},        '/help'
       r301     %r{/user/(.*)},                            '/users/$1'
     end
 
-    default_url_options = {
+    Rails.application.default_url_options = {
       host: config.littlesis.fetch(:host, 'littlesis.org'),
       protocol: config.littlesis.fetch(:protocol, 'https')
     }
 
-    LittleSis::Application.default_url_options = default_url_options
-    routes.default_url_options = default_url_options
-    config.action_controller.default_url_options = default_url_options
-    config.action_mailer.default_url_options = default_url_options
+    routes.default_url_options = Rails.application.default_url_options
+    config.action_controller.default_url_options = Rails.application.default_url_options
+    config.action_mailer.default_url_options = Rails.application.default_url_options
 
     config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 

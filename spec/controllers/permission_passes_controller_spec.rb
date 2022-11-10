@@ -121,7 +121,7 @@ describe PermissionPassesController, type: :controller do
   describe 'GET #apply' do
     context 'with a regular user' do
       before do
-        request.env['HTTP_REFERER'] = 'http://lils.is/home/'
+        request.env['HTTP_REFERER'] = 'http://test.host/example'
       end
 
       it 'sets the abilities and redirects to referer' do
@@ -129,7 +129,7 @@ describe PermissionPassesController, type: :controller do
         expect(regular_user.role.name).to eq 'user'
         get :apply, params: { permission_pass_id: pass.id }
         expect(regular_user.reload.role.name).to eq 'editor'
-        expect(response).to redirect_to('http://lils.is/home/')
+        expect(response).to redirect_to('http://test.host/example')
       end
     end
   end

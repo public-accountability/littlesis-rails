@@ -59,7 +59,7 @@ class PermissionPassesController < ApplicationController
       flash[:alert] = 'Something went wrong with the permission pass. Please contact a LittleSis administrator.'
     end
 
-    redirect_to request.referer || '/home/dashboard'
+    redirect_back fallback_location: '/home/dashboard'
   end
 
   private

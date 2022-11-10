@@ -59,7 +59,7 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
     before { login_as user, scope: :user }
     after { logout(:user) }
 
-    describe 'Adding and removing tags' do
+    describe_unless_on_ci 'Adding and removing tags' do
       before do
         Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
         create(:finance_tag)

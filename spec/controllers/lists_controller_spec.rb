@@ -42,7 +42,7 @@ describe ListsController, type: :controller do
     context 'with name and source' do
       it 'redirects to the newly created list' do
         post :create,  params: { list: { name: 'list name' }, ref: { url: 'http://mysource' } }
-        expect(response).to redirect_to(assigns(:list))
+        expect(response).to redirect_to(members_list_path(List.last))
       end
 
       it 'saves the list' do

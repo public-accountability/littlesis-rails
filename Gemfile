@@ -59,7 +59,7 @@ gem 'rollbar'
 
 group :test do
   # puma 6 support. wait for release after 3.37.1.
-  gem 'capybara', git: 'https://github.com/teamcapybara/capybara', ref: '2d05c203d79bca7b3b093c37f866ee41f294925b'
+  gem 'capybara', git: 'https://github.com/teamcapybara/capybara', ref: '5c8674713fa964211de43138180edfab1cc041ce'
   gem 'database_cleaner'
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.0'

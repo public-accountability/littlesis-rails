@@ -54,7 +54,7 @@ describe 'OligrapherLockSerivce' do
 
   it 'returns json error if user is not an editor' do
     json = OligrapherLockService.new(map: map, current_user: build(:user_with_id)).as_json
-    expect(json).to eq OligrapherLockService.permission_error_json
+    expect(json).to eq(permission_denied: true)
   end
 
   it 'lets user release the lock' do

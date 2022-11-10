@@ -57,7 +57,7 @@ class ListsController < ApplicationController
     if @list.valid?
       @list.save!
       @list.add_reference(ref_params) if ref_params
-      redirect_to @list, notice: 'List was successfully created.'
+      redirect_to members_list_path(@list), notice: 'List was successfully created.'
     else
       render action: 'new'
     end

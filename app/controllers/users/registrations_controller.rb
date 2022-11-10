@@ -50,7 +50,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     resource.settings.update(user_settings_params)
     resource.save!
 
-    redirect_to action: :edit
+    redirect_to edit_user_registration_path
   end
 
   # GET /users/edit
