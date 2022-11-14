@@ -11,7 +11,6 @@ module Oligrapher
   def self.configuration(map:, current_user: nil, embed: false)
     is_owner = current_user.present? && map.user_id == current_user.id
     owner = map.user || current_user || nil
-
     {
       graph: map.graph_data.to_h,
       annotations: {
@@ -39,15 +38,18 @@ module Oligrapher
     }
   end
 
+  # @param map [NetworkMap]
   def self.confirmed_editor_data(map)
     User
       .where(id: map.confirmed_editor_ids)
       .map { |u| {
         name: u.username,
-        url: u.url
+        url: u.url,
+        id: u.id
       } }
   end
 
+  # @param map [NetworkMap]
   def self.editor_data(map)
     pending_ids = map.pending_editor_ids
 
@@ -56,6 +58,7 @@ module Oligrapher
       .map { |u| {
         name: u.username,
         url: u.url,
+        id: u.id,
         pending: pending_ids.include?(u.id)
       } }
   end
