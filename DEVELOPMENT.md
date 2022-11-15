@@ -76,7 +76,6 @@ littlesis rake stats:year[2021]
 littlesis rake legislators:import
 littlesis rake legislators:import_party_memberships
 littlesis rake legislators:import_relationships
-littlesis rake legislators:summary
 
 # External Data tools
 littlesis data list
