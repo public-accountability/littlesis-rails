@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class OligrapherLockService
-  LOCK_DURATION = 5.minutes.freeze
+  LOCK_DURATION = 15.minutes.freeze
+  UNLOCKED = { locked: false, user_id: nil }.freeze
 
   Lock = Struct.new(:user_id, :time)
 
@@ -21,17 +22,12 @@ class OligrapherLockService
   end
 
   def as_json
-    return { permission_denied: true } unless user_has_permission?
+    raise Exceptions::PermissionError unless user_has_permission?
 
-    if locked?
-      @lock.to_h.merge(
-        locked: true,
-        name: User.find(@lock.user_id).username,
-        user_has_lock: user_has_lock?
-      )
-    else
-      { locked: false }
-    end
+    {
+      locked: locked?,
+      user_id: @lock&.user_id
+    }
   end
 
   def lock

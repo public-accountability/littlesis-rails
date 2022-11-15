@@ -10,7 +10,10 @@ module Oligrapher
 
   def self.configuration(map:, current_user: nil, embed: false)
     is_owner = current_user.present? && map.user_id == current_user.id
-    owner = map.user || current_user || nil
+    is_editor = map.can_edit?(current_user)
+    owner = map.user.present? ? { id: map.user.id, name: map.user.username, url: map.user.url } : nil
+    user = current_user.present? ? { id: current_user.id, name: current_user.username } : nil
+    lock = is_editor ? OligrapherLockService.new(map: map, current_user: current_user).as_json : OligrapherLockService::UNLOCKED
     {
       graph: map.graph_data.to_h,
       annotations: {
@@ -21,32 +24,29 @@ module Oligrapher
       settings: {
         embed: embed,
         logoUrl: ActionController::Base.helpers.asset_path('lilsis-logo-trans-200.png'),
-        url: Rails.application.routes.url_helpers.oligrapher_url(map)
+        url: Rails.application.routes.url_helpers.oligrapher_url(map),
+        logActions: Rails.env.development?
       },
       attributes: {
         id: map.id,
         title: map.title,
         subtitle: map.description,
         date: (map.created_at || Time.current).strftime('%B %d, %Y'),
-        owner: owner.present? ? { id: owner.id, name: owner.username, url: owner.url } : nil,
-        user: current_user.present? ? { id: current_user.id, name: current_user.username } : nil,
+        owner: owner,
+        user: user,
         settings: settings_data(map),
         editors: is_owner ? editor_data(map) : confirmed_editor_data(map),
-        shareUrl: is_owner ? map.share_path : nil,
-        lock: OligrapherLockService.new(map: map, current_user: current_user).as_json
+        shareUrl: is_editor ? map.share_path : nil,
+      },
+      display: {
+        lock: lock
       }
     }
   end
 
   # @param map [NetworkMap]
   def self.confirmed_editor_data(map)
-    User
-      .where(id: map.confirmed_editor_ids)
-      .map { |u| {
-        name: u.username,
-        url: u.url,
-        id: u.id
-      } }
+    editor_data(map).delete_if { |d| d[:pending] }
   end
 
   # @param map [NetworkMap]
@@ -55,12 +55,14 @@ module Oligrapher
 
     User
       .where(id: map.all_editor_ids)
-      .map { |u| {
-        name: u.username,
-        url: u.url,
-        id: u.id,
-        pending: pending_ids.include?(u.id)
-      } }
+      .map do |u|
+        {
+          name: u.username,
+          url: u.url,
+          id: u.id,
+          pending: pending_ids.include?(u.id)
+        }
+    end
   end
 
   def self.settings_data(map)

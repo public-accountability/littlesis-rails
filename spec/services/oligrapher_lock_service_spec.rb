@@ -25,6 +25,7 @@ describe 'OligrapherLockSerivce' do
   it 'lets user create a lock' do
     expect { lock.lock }.to change(lock, :locked?).from(false).to(true)
     expect(lock.user_has_lock?).to eq true
+    expect(lock.as_json).to eq(locked: true, user_id: user_one.id)
   end
 
   it 'does not lock if other user has the lock' do
@@ -39,7 +40,7 @@ describe 'OligrapherLockSerivce' do
     OligrapherLockService.new(map: map, current_user: user_two).lock!
     expect(lock.locked?).to be true
     expect(lock.user_can_lock?).to eq false
-    lock.instance_variable_set(:@lock, OligrapherLockService::Lock.new(user_two.id, Time.current - 6.minutes))
+    lock.instance_variable_set(:@lock, OligrapherLockService::Lock.new(user_two.id, Time.current - 16.minutes))
     expect(lock.locked?).to be false
     expect(lock.user_can_lock?).to eq true
   end
@@ -52,9 +53,10 @@ describe 'OligrapherLockSerivce' do
     expect(other_user_lock.user_has_permission?).to be false
   end
 
-  it 'returns json error if user is not an editor' do
-    json = OligrapherLockService.new(map: map, current_user: build(:user_with_id)).as_json
-    expect(json).to eq(permission_denied: true)
+  it 'throws if user is not an editor' do
+    lock = OligrapherLockService.new(map: map, current_user: build(:user_with_id))
+    expect(lock.user_has_permission?).to be false
+    expect { lock.as_json }.to raise_error(Exceptions::PermissionError)
   end
 
   it 'lets user release the lock' do

@@ -9,6 +9,6 @@ export default class extends Controller {
       Modal.getOrCreateInstance(document.getElementById("oligrapher-pending-editor-modal")).show()
     }
 
-    window.Oligrapher.instance = new Oligrapher(this.configValue)
+    new Oligrapher(this.configValue)
   }
 }
