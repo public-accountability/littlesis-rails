@@ -1,9 +1,14 @@
+import { Modal } from "bootstrap"
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static values = { config: Object }
+  static values = { config: Object, pending: Boolean }
 
   connect() {
-    window.Oligrapher.instance = new Oligrapher(this.configValue)
+    if (this.pendingValue) {
+      Modal.getOrCreateInstance(document.getElementById("oligrapher-pending-editor-modal")).show()
+    }
+
+    new Oligrapher(this.configValue)
   }
 }

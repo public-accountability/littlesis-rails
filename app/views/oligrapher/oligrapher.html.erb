@@ -6,25 +6,38 @@
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@twittlesis" />
-
 <% end %>
 
 <% if @is_pending_editor %>
-  <div class="oligrapher-pending-editor-notice">
-    The owner of this map has invited you to become an editor. If you accept you will be able to edit the map and your username will appear in the byline.
-    &nbsp;
-    <%= button_to "Accept", confirm_editor_oligrapher_path(@map) %>
+  <div class="modal" tabindex="-1" role="dialog" id="oligrapher-pending-editor-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Collaboration request</h5>
+        </div>
+
+        <div class="modal-body">
+          <p>The owner of this map has invited you to become an editor.</p>
+          <p>If you accept you will be able to edit the map and your username will appear in the byline.</p>
+        </div>
+        <div class="modal-footer">
+          <%= button_to "Accept", confirm_editor_oligrapher_path(@map), class: "btn btn-primary" %>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
   </div>
 <% end %>
 
-<div style="display: flex; flex-direction: column; height: 95%;">
+<div style="display: flex; flex-direction: column; height: 99%;">
   <%= content_tag(
     :div,
     id: "oligrapher",
     style: "flex: 1;",
     data: {
       controller: "oligrapher",
-      oligrapher_config_value: @configuration.to_json
+      oligrapher_config_value: @configuration.to_json,
+      oligrapher_pending_value: @is_pending_editor
     }
   ){} %>
 </div>

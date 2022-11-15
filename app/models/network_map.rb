@@ -115,14 +115,14 @@ class NetworkMap < ApplicationRecord
     end
   end
 
-  # -> Relationship::ActiveRecord_Relation | Array
+  # @return [Relationship::ActiveRecord_Relation, Array]
   def rels
     return [] if numeric_edge_ids.empty?
 
     Relationship.where(id: numeric_edge_ids)
   end
 
-  # -> Relationship::ActiveRecord_Relation | Array
+  # @return [Entity::ActiveRecord_Relation, Array]
   def entities
     return [] if numeric_node_ids.empty?
 
@@ -183,15 +183,15 @@ class NetworkMap < ApplicationRecord
   # Editor methods
   # These are only for oligrapher version 3
   def confirmed_editor_ids
-    editors.reject { |e| e[:pending] }.map { |e| e[:id] }
+    editors.reject { |e| e[:pending] }.pluck(:id)
   end
 
   def pending_editor_ids
-    editors.filter { |e| e[:pending] }.map { |e| e[:id] }
+    editors.filter { |e| e[:pending] }.pluck(:id)
   end
 
   def all_editor_ids
-    editors.map { |e| e[:id] }
+    editors.pluck(:id)
   end
 
   def add_editor(editor)
@@ -247,16 +247,15 @@ class NetworkMap < ApplicationRecord
   end
 
   def has_pending_editor?(user)
-    return false if user.blank?
-
-    pending_editor_ids.include?(user.id)
+    user.present? && pending_editor_ids.include?(user.id)
   end
 
   def url
     LittleSis::Application.routes.url_helpers.oligrapher_url(self)
   end
 
-  # input: <User> --> NetworkMap::ActiveRecord_Relation
+  # @param user [User]
+  # @return NetworkMap::ActiveRecord_Relation
   def self.scope_for_user(user)
     where arel_table[:is_private].eq(false)
             .or(arel_table[:user_id].eq(user.id))

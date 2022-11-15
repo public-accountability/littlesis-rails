@@ -1,8 +1,16 @@
-<%= content_tag(
-  :div,
-  id: "oligrapher",
-  data: {
-    controller: "oligrapher",
-    oligrapher_config_value: @configuration.to_json
-  }
-){} %>
+
+<% content_for(:head) do %>
+  <%= javascript_include_tag "oligrapher_lock" %>
+<% end  %>
+
+<div style="display: flex; flex-direction: column; height: 99%;">
+  <%= content_tag(
+    :div,
+    id: "oligrapher",
+    style: "flex: 1;",
+    data: {
+      controller: "oligrapher",
+      oligrapher_config_value: @configuration.to_json
+    }
+  ){} %>
+</div>

@@ -22,7 +22,7 @@ defaults: &defaults
   noediting: false
   firefox_binary: /opt/firefox
   oligrapher_commit: "42022f34c3dfdefdff91beabdb9445be0066ada7"
-  oligrapher_beta: "ce27ef19c377bf3de4eeb7c9b51af7b78bb7f19a"
+  oligrapher_beta: "65d7f722170a23e24e596525df90cf3601f010c4"
 
 test:
   <<: *defaults
@@ -42,6 +42,7 @@ development:
   opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
   powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
+  oligrapher_beta: "dev"
 
 production:
   <<: *defaults

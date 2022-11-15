@@ -14,6 +14,7 @@ const entryPoints = [
   "sankey_chart.js",
   "swamped.js",
   "actiontext.js",
+  "oligrapher_lock.js",
 ]
 
 const baseConfig = {
