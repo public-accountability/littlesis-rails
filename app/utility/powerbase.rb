@@ -8,7 +8,9 @@ module Powerbase
 
   GROUPS = {
     signup: 9,
-    tech: 17
+    tech: 17,
+    newsletter: 18,
+    account: 19
   }
 
   module Client

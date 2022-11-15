@@ -18,7 +18,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
         # send welcome email to user - views/user_mailer/welcome_email
         UserMailer.welcome_email(user).deliver_later
         # add to action network mailing list
-        NewsletterSignupJob.perform_later(user.email) if user.newsletter
+        NewsletterSignupJob.perform_later(user.email, [:account]) if user.newsletter
 
         # User Sign Up to admin@littlesis.org
         # NotificationMailer.signup_email(user).deliver_later
