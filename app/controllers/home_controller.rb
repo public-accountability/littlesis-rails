@@ -72,7 +72,7 @@ class HomeController < ApplicationController
   def newsletter_signup
     form = NewsletterSignupForm.new(newsletter_signup_params)
 
-    NewsletterSignupJob.perform_later(form.email) if form.valid?
+    NewsletterSignupJob.perform_later(form.email, [:signup]) if form.valid?
 
     flash.notice = "Thank you! You've been added to our newsletter."
     redirect_to root_path
@@ -86,7 +86,7 @@ class HomeController < ApplicationController
     RateLimiter.rate_limit "pai_signup_request_count_for_#{request.remote_ip}"
 
     unless Rails.env.development?
-      NewsletterSignupJob.perform_later(params.fetch('email'))
+      NewsletterSignupJob.perform_later(params.fetch('email'), [:signup])
     end
 
     redirect_to 'https://news.littlesis.org', allow_other_host: true

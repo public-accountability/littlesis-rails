@@ -39,7 +39,7 @@ describe 'Homepage' do
 
       expect(page).to show_success "Thank you! You've been added to our newsletter."
 
-      expect(signup_job).to have_received(:perform_later).with(email).once
+      expect(signup_job).to have_received(:perform_later).with(email, [:signup]).once
     end
 
     scenario 'super advanced™ spam bot protection' do

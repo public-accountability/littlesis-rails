@@ -3,9 +3,12 @@
 class NewsletterSignupJob < ApplicationJob
   queue_as :default
 
-  def perform(email)
+  # Groups: signup, newsletter, tech
+  def perform(email, groups = [])
     user = Powerbase::User.new(email)
     user.create
-    user.add_to(:signup)
+    groups.each do |group|
+      user.add_to(group)
+    end
   end
 end
