@@ -12,7 +12,7 @@ describe Users::ConfirmationsController, type: :controller do
       expect(user).not_to receive(:update)
       expect(UserMailer).to receive(:welcome_email).with(user).and_return(double(:deliver_later => nil))
       # expect(NotificationMailer).to receive(:signup_email).with(@user).and_return(double(:deliver_later => nil))
-      expect(NewsletterSignupJob).to receive(:perform_later).with(user.email)
+      expect(NewsletterSignupJob).to receive(:perform_later).with(user.email, [:account])
       get :show
       expect(response).to have_http_status :found
     end

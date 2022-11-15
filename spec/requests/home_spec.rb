@@ -13,7 +13,7 @@ describe 'Home requests' do
 
     describe 'newsletter signup' do
       before do
-        expect(NewsletterSignupJob).to receive(:perform_later).with(email).once
+        expect(NewsletterSignupJob).to receive(:perform_later).with(email, [:signup]).once
       end
 
       context 'without referer header' do
