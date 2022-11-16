@@ -123,12 +123,13 @@ module Oligrapher
     "#{ASSET_URL}/#{basename(**kwargs)}.js"
   end
 
-  private_class_method def self.basename(v3: false, beta: false)
+  private_class_method def self.basename(v4: false, beta: false)
     commit = if beta
                Rails.application.config.littlesis.oligrapher_beta
-             elsif v3
-               V3_COMMIT
+             elsif v4
+               Rails.application.config.littlesis.oligrapher_beta
              else
+               # V3_COMMIT
                Rails.application.config.littlesis.oligrapher_commit
              end
     "oligrapher-" + commit

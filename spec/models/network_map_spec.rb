@@ -33,12 +33,11 @@ describe NetworkMap, type: :model do
 
     specify do
       expect(network_map.oligrapher_commit).to eq Rails.application.config.littlesis.oligrapher_commit
-      expect(network_map.v4?).to be true
+      expect(network_map.v4?).to be false
     end
 
     specify do
       expect(build(:network_map, oligrapher_commit: "42022f34c3dfdefdff91beabdb9445be0066ada7").v4?).to be false
-
     end
   end
 

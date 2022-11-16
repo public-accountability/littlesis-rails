@@ -1,6 +1,6 @@
 describe 'Oligrapher' do
-  let(:other_user) { create_really_basic_user }
-  let(:user) { create_really_basic_user }
+  let(:other_user) { create_basic_user }
+  let(:user) { create_basic_user }
   let(:admin) { create_admin_user }
   let(:regular_map) { create(:network_map, user_id: user.id) }
   let(:private_map) { create(:network_map, is_private: true, user_id: user.id) }
@@ -40,16 +40,27 @@ describe 'Oligrapher' do
     specify { successfully_visits_page oligrapher_path(regular_map) }
   end
 
-  describe 'v3 maps use v3 assets' do
+  describe 'v3 maps use oligrapher_commit' do
     specify do
       map = create(:network_map, user_id: user.id, oligrapher_commit: "42022f34c3dfdefdff91beabdb9445be0066ada7")
       visit oligrapher_path(map)
       successfully_visits_page oligrapher_path(map)
       expect(
-        page.all("script").filter { _1['src'].include?("oligrapher-42022f34c3dfdefdff91beabdb9445be0066ada7.js") }.length.positive?
+        page.all("script").filter { _1['src'].include?("oligrapher-v3.js") }.length.positive?
       ).to be true
     end
   end
+
+  # describe 'v3 maps use v3 assets' do
+  #   specify do
+  #     map = create(:network_map, user_id: user.id, oligrapher_commit: "42022f34c3dfdefdff91beabdb9445be0066ada7")
+  #     visit oligrapher_path(map)
+  #     successfully_visits_page oligrapher_path(map)
+  #     expect(
+  #       page.all("script").filter { _1['src'].include?("oligrapher-42022f34c3dfdefdff91beabdb9445be0066ada7.js") }.length.positive?
+  #     ).to be true
+  #   end
+  # end
 
   describe 'Users can view their own private maps' do
     before do
