@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Oligrapher
+  V3_COMMIT = "42022f34c3dfdefdff91beabdb9445be0066ada7"
   ASSET_URL = "/oligrapher/assets"
   DISPLAY_ARROW_CATEGORIES = Set.new([Relationship::POSITION_CATEGORY,
                                       Relationship::EDUCATION_CATEGORY,
@@ -8,7 +9,48 @@ module Oligrapher
                                       Relationship::DONATION_CATEGORY,
                                       Relationship::OWNERSHIP_CATEGORY]).freeze
 
-  def self.configuration(map:, current_user: nil, embed: false)
+  def self.configuration(map, **kwargs)
+    if map.v4?
+      configuration_v4(map, **kwargs)
+    else
+      configuration_v3(map, **kwargs)
+    end
+  end
+
+
+  def self.configuration_v3(map, current_user: nil, embed: false)
+    is_owner = current_user.present? && map.user_id == current_user.id
+    is_editor = map.can_edit?(current_user)
+    owner = map.user.present? ? { id: map.user.id, name: map.user.username, url: map.user.url } : nil
+    user = current_user.present? ? { id: current_user.id, name: current_user.username } : nil
+    {
+      graph: map.graph_data.to_h,
+      annotations: {
+        currentIndex: 0,
+        list: JSON.parse(map.annotations_data || "[]"),
+        sources: map.sources_annotation
+      },
+      settings: {
+        embed: embed,
+        logoUrl: ActionController::Base.helpers.asset_path('lilsis-logo-trans-200.png'),
+        url: Rails.application.routes.url_helpers.oligrapher_url(map),
+        logActions: Rails.env.development?
+      },
+      attributes: {
+        id: map.id,
+        title: map.title,
+        subtitle: map.description,
+        date: (map.created_at || Time.current).strftime('%B %d, %Y'),
+        owner: owner,
+        user: user,
+        settings: settings_data(map),
+        editors: is_owner ? editor_data(map) : confirmed_editor_data(map),
+        shareUrl: is_editor ? map.share_path : nil,
+      },
+    }
+  end
+
+  def self.configuration_v4(map, current_user: nil, embed: false)
     is_owner = current_user.present? && map.user_id == current_user.id
     is_editor = map.can_edit?(current_user)
     owner = map.user.present? ? { id: map.user.id, name: map.user.username, url: map.user.url } : nil
@@ -73,16 +115,22 @@ module Oligrapher
     })
   end
 
-  def self.css_path(beta = false)
-    "#{ASSET_URL}/#{basename(beta)}.css"
+  def self.css_path(**kwargs)
+    "#{ASSET_URL}/#{basename(**kwargs)}.css"
   end
 
-  def self.javascript_path(beta = false)
-    "#{ASSET_URL}/#{basename(beta)}.js"
+  def self.javascript_path(**kwargs)
+    "#{ASSET_URL}/#{basename(**kwargs)}.js"
   end
 
-  private_class_method def self.basename(beta = false)
-    commit = beta ? Rails.application.config.littlesis.oligrapher_beta :  Rails.application.config.littlesis.oligrapher_commit
+  private_class_method def self.basename(v3: false, beta: false)
+    commit = if beta
+               Rails.application.config.littlesis.oligrapher_beta
+             elsif v3
+               V3_COMMIT
+             else
+               Rails.application.config.littlesis.oligrapher_commit
+             end
     "oligrapher-" + commit
   end
 

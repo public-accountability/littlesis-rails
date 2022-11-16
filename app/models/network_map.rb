@@ -40,6 +40,14 @@ class NetworkMap < ApplicationRecord
     self.oligrapher_commit = Rails.application.config.littlesis.oligrapher_commit if oligrapher_commit.blank?
   end
 
+  def v4?
+    !v3?
+  end
+
+  def v3?
+    oligrapher_commit == "42022f34c3dfdefdff91beabdb9445be0066ada7"
+  end
+
   def generate_secret
     self.secret = SecureRandom.hex(10)
   end

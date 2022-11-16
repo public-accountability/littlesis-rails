@@ -22,7 +22,7 @@ defaults: &defaults
   noediting: false
   firefox_binary: /opt/firefox
   oligrapher_commit: "42022f34c3dfdefdff91beabdb9445be0066ada7"
-  oligrapher_beta: "65d7f722170a23e24e596525df90cf3601f010c4"
+  oligrapher_beta: "1df1a41b511d5abacae1d19e46b3e57c9c3a90dc"
 
 test:
   <<: *defaults
@@ -33,6 +33,8 @@ test:
   image_root: tmp
   host: 'localhost:8080'
   protocol: http
+  oligrapher_commit: "test-commit"
+  oligrapher_beta: "test-beta"
 
 development:
   <<: *defaults
