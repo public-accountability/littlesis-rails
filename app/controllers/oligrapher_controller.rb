@@ -51,29 +51,31 @@ class OligrapherController < ApplicationController
     check_private_access
     @is_pending_editor = (current_user && @map.has_pending_editor?(current_user))
     use_beta = current_user && current_user.settings.oligrapher_beta
-    @oligrapher_javascript_path = Oligrapher.javascript_path(v3: @map.v3?, beta: use_beta)
-    @oligrapher_css_path = Oligrapher.css_path(v3: @map.v3?, beta: use_beta)
+    @oligrapher_javascript_path = Oligrapher.javascript_path(v4: @map.v4?, beta: use_beta)
+    @oligrapher_css_path = Oligrapher.css_path(v4: @map.v4?, beta: use_beta)
     @configuration = Oligrapher.configuration(@map, current_user: current_user)
-    render 'oligrapher/oligrapher' # , layout: 'oligrapher'
+    render 'oligrapher/oligrapher', layout: 'oligrapher'
   end
 
   # Embedded View (used often in iframe)
   def embedded
     check_private_access
     @configuration = Oligrapher.configuration(@map, current_user: current_user, embed: true)
-    @oligrapher_javascript_path = Oligrapher.javascript_path(v3: @map.v3?)
-    @oligrapher_css_path = Oligrapher.css_path(v3: @map.v3?)
+    @oligrapher_javascript_path = Oligrapher.javascript_path(v4: @map.v4?)
+    @oligrapher_css_path = Oligrapher.css_path(v4: @map.v4?)
     response.headers.delete('X-Frame-Options')
     render "embedded", layout: 'embedded_oligrapher'
   end
 
   # Create new map
   def new
-    @map = NetworkMap.new(title: 'Untitled Map', user: current_user)
-    @configuration = Oligrapher.configuration(@map, current_user: current_user)
     use_beta = current_user.settings.oligrapher_beta
-    @oligrapher_javascript_path = Oligrapher.javascript_path(v3: @map.v3?, beta: use_beta)
-    @oligrapher_css_path = Oligrapher.css_path(v3: @map.v3?, beta: use_beta)
+    @map = NetworkMap.new(title: 'Untitled Map',
+                          user: current_user,
+                          oligrapher_commit: use_beta ? Rails.application.config.littlesis.oligrapher_beta : Rails.application.config.littlesis.oligrapher_commit)
+    @configuration = Oligrapher.configuration(@map, current_user: current_user)
+    @oligrapher_javascript_path = Oligrapher.javascript_path(v4: @map.v4?)
+    @oligrapher_css_path = Oligrapher.css_path(v4: @map.v4?)
     render 'oligrapher/new', layout: 'oligrapher'
   end
 
