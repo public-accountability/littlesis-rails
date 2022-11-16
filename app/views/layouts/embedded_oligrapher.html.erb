@@ -1,8 +1,9 @@
 <% @fullscreen = true %>
 <% content_for(:hide_top, true) %>
 <% content_for(:hide_footer, true) %>
+
 <% content_for :head do %>
-  <script src="<%= Oligrapher.javascript_path %>"></script>
-  <link href="<%= Oligrapher.css_path %>" rel="stylesheet">
+  <script src="<%= @oligrapher_javascript_path || Oligrapher.javascript_path %>"></script>
+  <link href="<%= @oligrapher_css_path || Oligrapher.css_path %>" rel="stylesheet">
 <% end %>
 <%= render template: "layouts/application" %>

@@ -41,7 +41,11 @@ class NetworkMap < ApplicationRecord
   end
 
   def v4?
-    oligrapher_commit != "42022f34c3dfdefdff91beabdb9445be0066ada7"
+    !v3?
+  end
+
+  def v3?
+    oligrapher_commit == "42022f34c3dfdefdff91beabdb9445be0066ada7"
   end
 
   def generate_secret
