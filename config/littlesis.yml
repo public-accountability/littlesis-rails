@@ -33,6 +33,7 @@ test:
   image_root: tmp
   host: 'localhost:8080'
   protocol: http
+  oligrapher_commit: "65d7f722170a23e24e596525df90cf3601f010c4"
 
 development:
   <<: *defaults
