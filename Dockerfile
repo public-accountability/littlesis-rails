@@ -17,6 +17,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y install \
     libgtk-3-0 \
     libmagickwand-dev \
     libsqlite3-dev \
+    libvips42 \
     libx11-xcb1 \
     libnss3 \
     libdrm2 \
