@@ -53,7 +53,8 @@ class Navmenu
        ['API', '/api'],
        [t('vocab.disclaimer'), '/disclaimer'],
        [t('phrases.contact_us').titleize, '/contact'],
-       [t('vocab.donate').capitalize, '/donate']
+       [t('vocab.donate').capitalize, '/donate'],
+       ["Newsletter", '/newsletter']
      ].compact
     ]
   end
