@@ -96,8 +96,11 @@ class NetworkMap < ApplicationRecord
     if is_private?
       Rails.logger.debug { "Cannot take a screenshot of a private map (#{id})" }
       return nil
+    elsif v3?
+      system "#{Rails.root.join('lib/scripts/oligrapher_screenshot.js')} #{url}"
+    else
+      system "#{Rails.root.join('lib/scripts/oligrapher_screenshot.mjs')} #{url}"
     end
-    system "#{Rails.root.join('lib/scripts/oligrapher_screenshot.js')} #{url}"
   end
 
   # Creates these functions:
