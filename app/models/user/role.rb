@@ -14,6 +14,7 @@ class User
       @name
     end
 
+    DELETED = new('deleted')
     RESTRICTED = new('restricted', %i[login]) # Restricted users can do nothing but look
     USER = new('user', %i[login create_map create_list suggest_changes beta_testing])
     EDITOR = new('editor', USER.dup.merge(%i[edit_database upload star_relationship]))

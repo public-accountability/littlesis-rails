@@ -11,7 +11,8 @@ class User < ApplicationRecord
     system: 2,
     restricted: 3,
     editor: 4,
-    collaborator: 5
+    collaborator: 5,
+    deleted: 6
   }.freeze
 
   enum :role, ROLES, default: :user
@@ -24,16 +25,14 @@ class User < ApplicationRecord
             uniqueness: { case_sensitive: false },
             user_name: true,
             on: [:create, :update]
-  validates :default_network_id, presence: true
 
   # Include default devise modules. Others available are:
-  # :token_authenticatable, :encryptable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable,
          :registerable,
          :confirmable,
          :recoverable,
-         :rememberable,
-         :trackable
+         :rememberable
+         # :lockable
 
   has_paper_trail only: %i[username about_me], on: %i[update], versions: { class_name: 'ApplicationVersion' }
 
@@ -58,13 +57,7 @@ class User < ApplicationRecord
            class_name: 'UserRequest', foreign_key: 'reviewer_id', inverse_of: :reviewer
 
   accepts_nested_attributes_for :user_profile
-
-  before_validation :set_default_network_id
-
-  # delegate :name_first, :name_last, :full_name, to: :user_profile
   delegate :name, to: :user_profile
-  # delegate(*UserAbilities::ABILITY_MAPPING.values, to: 'abilities')
-  # alias importer? bulker?
 
   def to_param
     username
@@ -107,10 +100,6 @@ class User < ApplicationRecord
 
   def url
     Rails.application.routes.url_helpers.user_page_path(self)
-  end
-
-  def action_network_activist
-    @action_network_activist ||= ActionNetwork::Activist.new(self)
   end
 
   ###############
@@ -181,13 +170,5 @@ class User < ApplicationRecord
   # String ---> Boolean
   def self.valid_username?(name)
     UserNameValidator.valid?(name) && !where('LOWER(username) = ?', name.downcase).exists?
-  end
-
-  private
-
-  def set_default_network_id
-    if default_network_id.nil?
-      self.default_network_id = Rails.application.config.littlesis.fetch(:default_network_id, 79)
-    end
   end
 end

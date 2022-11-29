@@ -8,7 +8,6 @@ FactoryBot.define do
     email { Faker::Internet.unique.email }
     about_me { Faker::Movie.quote }
     role { 'user' }
-    default_network_id { 79 }
     confirmed_at { 1.hour.ago }
   end
 
@@ -23,7 +22,6 @@ FactoryBot.define do
   factory :user_with_id, class: 'User' do
     username { Faker::Internet.unique.user_name(specifier: 5).tr('.', '') }
     email { generate(:user_email) }
-    default_network_id { 79 }
     confirmed_at { Time.current }
     id { Faker::Number.unique.between(from: 1, to: 10_000) }
   end
