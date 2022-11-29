@@ -6,6 +6,7 @@ class UserProfile < ApplicationRecord
   # validates :reason, signup_reason: true
 
   def full_name
-    "#{name_first} #{name_last}".strip
+    # "#{name_first} #{name_last}".strip
+    name
   end
 end

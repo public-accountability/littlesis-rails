@@ -37,7 +37,7 @@ class User < ApplicationRecord
   has_paper_trail only: %i[username about_me], on: %i[update], versions: { class_name: 'ApplicationVersion' }
 
   # Core associations
-  has_one :user_profile, inverse_of: :user, dependent: :destroy
+  has_one :user_profile, inverse_of: :user, required: false
   has_one :api_token, dependent: :destroy
   has_many :permission_passes, foreign_key: 'creator_id', inverse_of: :creator, dependent: :destroy
 
@@ -74,6 +74,18 @@ class User < ApplicationRecord
 
   def restricted?
     is_restricted || role.name == 'restricted'
+  end
+
+  def deleted?
+    role.name == 'deleted'
+  end
+
+  def system_account?
+    role.name == 'system'
+  end
+
+  def active_for_authentication?
+    super && role.include?(:login)
   end
 
   # Checks if user can make edits to database
