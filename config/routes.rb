@@ -142,10 +142,12 @@ LittleSis::Application.routes.draw do
 
         collection do
           post 'bulk' => 'entities#create_bulk'
-
           get 'merge' => "merge#merge"
           post 'merge' => "merge#merge!"
           get 'merge/redundant' => "merge#redundant_merge_review"
+          # add relationship turbo frames
+          get 'add_relationship/search' => 'entities/add_relationship#search'
+          get 'add_relationship/new'  => 'entities/add_relationship#new'
         end
       end
     end

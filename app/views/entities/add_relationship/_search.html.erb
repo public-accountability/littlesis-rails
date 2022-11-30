@@ -1,0 +1,19 @@
+<turbo-frame id="add-relationship-search">
+  <div class=row data-add-relationship-target="search" data-turbo="true">
+    <div class="col-6">
+      <h2  title="Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.">
+        <%= t('phrases.create_new_relationship') %>
+      </h2>
+
+      <form action="/entities/add_relationship/search" data-turbo-frame="add-relationship-results">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="<%= t('vocab.name').capitalize %>" aria-label="Name to search">
+          <input name="q" type="text" class="form-control" placeholder="<%= t('vocab.name').capitalize %>" aria-label="Name to search">
+          <button class="btn btn-primary"><%= t('vocab.search').capitalize %></button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <turbo-frame id="add-relationship-results">
+  </turbo-frame>
+</turbo-frame>
