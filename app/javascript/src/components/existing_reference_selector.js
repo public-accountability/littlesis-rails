@@ -9,11 +9,11 @@ function formatDocument(document) {
 }
 
 export default class ExistingReferenceWidget {
-  constructor(entityIds) {
+  constructor(entityIds, onChange) {
     this.entityIds = [].concat(entityIds).map(Number)
     this.documents = null
-    this.render = this.render.bind(this)
-    this.getDocs().then(this.render)
+    this.onChange = onChange
+    this.getDocs().then(this.render.bind(this))
   }
 
   async getDocs() {
@@ -27,7 +27,7 @@ export default class ExistingReferenceWidget {
   }
 
   render() {
-    $(CONTAINER_DIV).html("<select> <option></option></select>")
+    $(CONTAINER_DIV).html("<select><option></option></select>")
 
     $(`${CONTAINER_DIV} > select`).select2({
       data: this.documents.map(d => Object.assign(d, { text: d.name })),
@@ -35,13 +35,25 @@ export default class ExistingReferenceWidget {
       allowClear: true,
       templateResult: formatDocument,
     })
+
+    if (this.onChange) {
+      $(`${CONTAINER_DIV} > select`).on("change", this.onChange)
+    }
   }
 
   get selection() {
-    let value = $(`${CONTAINER_DIV} > select`).val()
+    const value = $(`${CONTAINER_DIV} > select`).val()
 
     if (value) {
       return Number(value)
+    } else {
+      return null
+    }
+  }
+
+  get selectedDocument() {
+    if (this.selection) {
+      return this.documents.find(d => d.id == this.selection)
     } else {
       return null
     }
