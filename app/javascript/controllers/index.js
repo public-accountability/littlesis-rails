@@ -4,6 +4,9 @@
 
 import { application } from "./application"
 
+import AddRelationshipController from "./add_relationship_controller"
+application.register("add-relationship", AddRelationshipController)
+
 import AdminMapsController from "./admin_maps_controller"
 application.register("admin-maps", AdminMapsController)
 

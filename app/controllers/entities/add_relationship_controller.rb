@@ -2,6 +2,7 @@
 
 module Entities
   class AddRelationshipController < ApplicationController
+    # Turbo Frame: /entities/add_relationship/search
     def search
       @results = EntitySearchService.new(query: params[:q], populate: true).results
 
@@ -12,6 +13,7 @@ module Entities
       end
     end
 
+    # Turbo Frame: /entities/add_relationship/new
     def new
       @entity1 = Entity.find(params[:entity1_id])
       @entity2 = Entity.find(params[:entity2_id])

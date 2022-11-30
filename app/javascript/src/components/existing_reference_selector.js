@@ -1,13 +1,11 @@
-import { get } from '../common/http.mjs'
+import { get } from "../common/http.mjs"
 
 const REFERENCES_PER_PAGE = 75
 const REQUEST_URL = "/references/recent"
 const CONTAINER_DIV = "#reference-widget-container"
 
 function formatDocument(document) {
-  return $(
-    `<span title="${document.url}">${document.name}</span>`
-  )
+  return $(`<span title="${document.url}">${document.name}</span>`)
 }
 
 export default class ExistingReferenceWidget {
@@ -18,11 +16,13 @@ export default class ExistingReferenceWidget {
     this.getDocs().then(this.render)
   }
 
-  getDocs() {
-    return get(REQUEST_URL, { "entity_ids": this.entityIds,
-                              "per_page": REFERENCES_PER_PAGE,
-                              "exclude_type": 'fec' })
-      .then(data => this.documents = data)
+  async getDocs() {
+    return get(REQUEST_URL, {
+      entity_ids: this.entityIds,
+      per_page: REFERENCES_PER_PAGE,
+      exclude_type: "fec",
+    })
+      .then(data => (this.documents = data))
       .catch(() => console.error("failed to get references from /references/recent"))
   }
 
@@ -30,12 +30,11 @@ export default class ExistingReferenceWidget {
     $(CONTAINER_DIV).html("<select> <option></option></select>")
 
     $(`${CONTAINER_DIV} > select`).select2({
-      "data": this.documents.map(d => Object.assign(d, { "text": d.name })),
-      "placeholder": "Select a reference",
-      "allowClear": true,
-      "templateResult": formatDocument
+      data: this.documents.map(d => Object.assign(d, { text: d.name })),
+      placeholder: "Select a reference",
+      allowClear: true,
+      templateResult: formatDocument,
     })
-
   }
 
   get selection() {
@@ -47,5 +46,4 @@ export default class ExistingReferenceWidget {
       return null
     }
   }
-
 }
