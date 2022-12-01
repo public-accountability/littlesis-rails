@@ -31,6 +31,8 @@ export default class extends Controller {
       get(`/title_extractor/${this.urlTarget.value}`)
         .then(json => (this.nameTarget.value = json.title))
         .catch(console.error)
+    } else if (this.fileTarget.files.length) {
+      this.nameTarget.value = this.fileTarget.files.item(0).name
     } else {
       this.urlTarget.focus()
     }
