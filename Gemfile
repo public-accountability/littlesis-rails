@@ -54,9 +54,6 @@ gem 'http-accept'
 # Used by StringSimilarity
 gem 'text', '>= 1.3.1'
 
-# Track exceptions
-gem 'rollbar'
-
 group :test do
   # puma 6 support. wait for release after 3.37.1.
   gem 'capybara', git: 'https://github.com/teamcapybara/capybara', ref: '5c8674713fa964211de43138180edfab1cc041ce'
