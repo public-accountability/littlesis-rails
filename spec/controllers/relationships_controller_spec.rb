@@ -42,10 +42,7 @@ describe RelationshipsController, type: :controller do
         },
         reference: {
           name: 'Interesting website',
-          excerpt: '',
           url: 'http://example.com',
-          publication_date: '2016-01-01',
-          ref_type: '1'
         }
       }
     end
@@ -57,9 +54,9 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'sends back json with relationship_id' do
-        post :create, params: example_params(e1.id, e2.id)
-        expect(JSON.parse(response.body))
-          .to eql('relationship_id' => Relationship.last.id)
+        response = (post :create, params: example_params(e1.id, e2.id))
+        json = JSON.parse(response.body)
+        expect(json['relationship_id']).to eq(Relationship.last.id)
       end
 
       it 'creates a new relationship' do
@@ -76,11 +73,9 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'creates or finds a document with the correct fields' do
-        post :create, params: example_params(e1.id, e2.id)
-        doc = Reference.last.document
-        expect(doc.name).to eql 'Interesting website'
-        expect(doc.publication_date).to eql '2016-01-01'
-        expect(doc.ref_type).to eq 'generic'
+        response = post(:create, params: example_params(e1.id, e2.id))
+        json = JSON.parse(response.body)
+        expect(Reference.last.document.name).to eq 'Interesting website'
       end
 
       it 'changes updated_at of entities' do
@@ -105,9 +100,11 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'sends error json with bad relationship params' do
-        post :create, params: example_params.tap { |x| x[:relationship].delete(:category_id) }
-        expect(JSON.parse(response.body)).to have_key 'category_id'
-        expect(JSON.parse(response.body)).not_to have_key 'base'
+        response = JSON.parse(
+          post(:create, params: example_params.tap { |x| x[:relationship].delete(:category_id) }).body
+        )
+        expect(response).to have_key 'error'
+        expect(response['error']).to include 'category_id'
       end
 
       it 'responds with 400 if missing reference url' do
@@ -117,10 +114,9 @@ describe RelationshipsController, type: :controller do
       end
 
       it 'sends error json with reference params' do
-        post :create, params: example_params(entity1_id: e1.id, entity2_id: e2.id)
-                        .tap { |x| x[:reference].delete(:url) }
-        expect(JSON.parse(response.body)).to have_key 'base'
-        expect(JSON.parse(response.body)).not_to have_key 'category_id'
+        response = post(:create, params: example_params(entity1_id: e1.id, entity2_id: e2.id)
+                        .tap { |x| x[:reference].delete(:url) })
+        expect(JSON.parse(response.body)).to have_key 'error'
       end
     end
 

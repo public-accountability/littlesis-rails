@@ -1,115 +1,26 @@
 <%= render partial: 'header2', locals: { entity: @entity } %>
 <%= render partial: 'explain_categories_modal' %>
 
-<div class="mt-3"
-     data-controller="relationship-creator"
-     data-relationship-creator-entity1-id-value="<%= @entity.id %>"
-     data-relationship-creator-entity1-name-value="<%= @entity.name %>"
-     data-relationship-creator-entity1-url-value="<%= @entity.url %>"
-     data-relationship-creator-entity1-type-value="<%= @entity.primary_ext %>"
-     data-relationship-creator-entity1-school-value="<%= @entity.school?.to_s %>">
+<div class="mt-1" data-turbo="true">
+  <turbo-frame id="add-relationship-page">
+    <turbo-frame id="add-relationship-search">
+      <div class=row data-add-relationship-target="search" data-turbo="true">
+        <div class="col-6">
+          <h2 title="Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.">
+            <%= t('phrases.create_new_relationship') %>
+          </h2>
 
-  <div class="row" data-relationship-creator-target="searchContainer">
-    <div class="d-flex flex-column">
-      <h2  title="Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.">
-        <%= t('phrases.create_new_relationship') %>
-      </h2>
-
-      <div class="input-group" style="max-width: 400px;">
-        <input type="text" class="form-control" data-relationship-creator-target="search" placeholder="<%= t('vocab.name').capitalize %>" aria-label="Name to search" id="add-relationship-search-input">
-        <button class="btn btn-primary" type="button" data-action="click->relationship-creator#search" id="add-relationship-search-btn"><%= t('vocab.search').capitalize %></button>
+          <form action="<%= add_relationship_search_entities_path %>" data-turbo-frame="add-relationship-results">
+            <div class="input-group">
+              <input name="entity1_id" type="hidden" class="form-control" value="<%= @entity.id %>">
+              <input name="q" type="text" class="form-control" placeholder="<%= t('vocab.name').capitalize %>" aria-label="Name to search" id="add-relationship-search-input">
+              <button class="btn btn-primary" id="add-relationship-search-button"><%= t('vocab.search').capitalize %></button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
-  </div>
-
-  <div class="row" data-relationship-creator-target="creatingInfo">
-  </div>
-
-  <div data-relationship-creator-target="nothingFound" class="row mt-3" style="display: none">
-    <div>
-      <p>
-        <span><%= t('phrases.cant_find_what') %></span>
-        <a class="link-blue cursor-pointer" data-action="relationship-creator#newEntity"><%= t('phrases.add_a_new_entity') %></a>
-      </p>
-    </div>
-  </div>
-
-  <div data-relationship-creator-target="newEntityForm" style="display: none" class="border p-3" data-turbo="true">
-    <turbo-frame id="new-entity-form" src="/entities/new" loading="lazy">
+      <turbo-frame id="add-relationship-results">
+      </turbo-frame>
     </turbo-frame>
-  </div>
-
-  <div data-relationship-creator-target="results">
-    <!-- DataTable -->
-  </div>
-
-  <div class="row" data-relationship-creator-target="form" style="display: none;">
-    <div class="col-sm-3">
-      <p><strong>Relationship Category:</strong></p>
-      <div id="category-selection"></div>
-
-      <div>
-        <a href="#explain-categories-modal" data-bs-toggle="modal" data-bs-target="#explain-categories-modal">Explain Categories</a>
-      </div>
-    </div>
-
-    <div class="col-sm-6 col-sm-offset-1" id="reference">
-      <div class="row">
-        <div class="col-sm-12">
-	  <p><strong>Where is this info coming from?</strong></p>
-        </div>
-        <div class="col-sm-12">
-	  <div data-action="click->relationship-creator#toggleReference" id="toggle-reference-form" class="btn-group btn-group-toggle">
-	    <button name="find-reference" class="btn btn-sm btn-secondary active">Find Reference</button>
-	    <button name="create-reference" class="btn btn-sm btn-outline-secondary">Create Reference</button>
-	  </div>
-        </div>
-      </div>
-
-      <div class="thin-grey-bottom-border top-1em m-bottom-1em"></div>
-
-      <div class="row" id="existing-reference-container">
-        <div class="col-sm-10">
-	  <div id="reference-widget-container"></div>
-        </div>
-      </div>
-
-      <div class="row" style="display: none;" id="new-reference-container">
-        <div class="col-sm-10">
-	  <div id="new-reference-form"></div>
-        </div>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="row" >
-        <div class="col-sm-4 top-1em">
-	  <button data-action="click->relationship-creator#submit" type="button" class="btn btn-primary" id="create-relationship-btn">Create Relationship</button>
-        </div>
-      </div>
-
-      <!-- SIMILAR RELATIONSHIPS -->
-      <div class="row" data-relationship-creator-target="similarRelationships" style="display: none">
-        <div class="col-sm-10 top-1em"  style="height: 20px;">
-	  <div id="similar-relationships"
-               role="button"
-               data-bs-toggle="collapse"
-               data-bs-target="#similarRelationshipsDetails">
-            <i class="bi bi-exclamation-triangle"></i><span class="text-danger pl-2">Similar relationships exist!</span>
-	  </div>
-
-          <div class="collapse" id="similarRelationshipsDetails">
-          </div>
-
-        </div>
-      </div>
-
-    </div> <!-- end of col-sm-6  -->
-
-    <!-- errors -->
-    <div class="col-sm-4 col-sm-offset-1">
-      <div id="errors-container" class="top-3em"></div>
-    </div>
-
-  </div> <!-- end of add-relationship-row  -->
-
+  </turbo-frame>
 </div>

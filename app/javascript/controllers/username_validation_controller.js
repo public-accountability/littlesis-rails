@@ -1,19 +1,20 @@
 import { Controller } from "@hotwired/stimulus"
-import { post } from '../src/common/http.mjs'
 
-const errorMsg = 'Username is taken or invalid. Please pick a new username.'
+const usernameRegex = /^[A-Za-z]{1}\w{2,}$/
 
 export default class extends Controller {
   initialize() {
-    Parsley.addValidator('username', {
-      validateString: function(value) {
-        return post('/users/check_username', { "username": value })
-          .then(res => {
-            if (!res.valid) {
-              throw errorMsg
-            }
-          })
-      }
+    Parsley.addValidator("username", {
+      validateString: function (value) {
+        return (
+          value.length > 2 &&
+          value.length < 20 &&
+          !value.toLowerCase().includes("admin") &&
+          !value.toLowerCase().includes("system") &&
+          !value.toLowerCase().includes("locksmith") &&
+          usernameRegex.test(value)
+        )
+      },
     })
   }
 }

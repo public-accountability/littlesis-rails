@@ -9,14 +9,14 @@ class Users::SessionsController < Devise::SessionsController
   # end
 
   # post /resource/sign_in
-  def create
-    super
-  end
+  # def create
+  #   super
+  # end
 
   # GET /resource/sign_out
-  def destroy
-    super
-  end
+  # def destroy
+  #   super
+  # end
 
   # protected
 

@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
-  # before_action :configure_sign_up_params, only: [:create]
-  before_action :configure_account_update_params, only: [:update]
-
   # GET /join
   def new
     super do |user|
@@ -11,6 +8,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  # POST /join
   def create
     if NewUserForm.new(math_captcha_params).valid?
       super do |user|
@@ -21,26 +19,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
       self.resource = resource_class.new sign_up_params
       respond_with_navigational(resource) { render :new }
     end
-  end
-
-  # post /users/api_token
-  def api_token
-    # see https://github.com/plataformatec/devise/blob/master/app/controllers/devise/registrations_controller.rb
-    authenticate_scope!
-
-    if params[:api] == 'generate'
-      current_user.create_api_token! if current_user.api_token.blank?
-    end
-
-    if params[:api] == 'reset'
-      if current_user.api_token.updated_at < 1.day.ago
-        current_user.api_token.reset!
-      else
-        return head :not_acceptable
-      end
-    end
-
-    render action: :edit
   end
 
   # PUT /users/settings
@@ -82,7 +60,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def sign_up_params
     params
       .require(:user)
-      .permit(:username, :email, :password, :password_confirmation, :newsletter, :map_the_power,
+      .permit(:username, :email, :password, :password_confirmation, :newsletter,
               :user_profile_attributes => [:name, :location, :reason])
   end
 
@@ -98,12 +76,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # The path used after sign up for inactive accounts.
   def after_inactive_sign_up_path_for(resource)
     join_success_path
-  end
-
-  # If you have extra params to permit, append them to the sanitizer.
-  def configure_account_update_params
-    devise_parameter_sanitizer.permit(:account_update,
-                                      keys: [:username, { settings: UserSettings::DEFAULTS.keys }])
   end
 
   def user_settings_params
@@ -123,8 +95,4 @@ class Users::RegistrationsController < Devise::RegistrationsController
         :math_captcha_answer
     )
   end
-
-  # If you have extra params to permit, append them to the sanitizer.
-  # def configure_sign_up_params
-  # end
 end

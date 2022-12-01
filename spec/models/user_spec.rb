@@ -75,18 +75,6 @@ describe User do
     end
   end
 
-  describe 'set_default_network_id' do
-    let(:user) do
-      User.new(email: Faker::Internet.unique.email,
-               username: random_username)
-    end
-
-    it 'sets default network id to be the magic number 79' do
-      user.valid?
-      expect(user.default_network_id).to eq 79
-    end
-  end
-
   describe '#recent_edits' do
     let(:user) { create_really_basic_user }
 

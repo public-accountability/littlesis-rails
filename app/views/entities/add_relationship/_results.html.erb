@@ -1,0 +1,30 @@
+<turbo-frame id="add-relationship-results">
+  <div class="row">
+    <div class="col" style="max-height: 400px; overflow: scroll;">
+      <table class="table table-hover table-sm" id="add-relationship-results-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Summmary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @results.each do |entity| %>
+            <tr>
+              <td>
+                <%= link_to "select", add_relationship_new_entities_path(entity1_id: params[:entity1_id], entity2_id: entity.id), class: "btn btn-info btn-sm", data: { "turbo-frame" => "add-relationship-page" } %>
+              </td>
+              <td>
+                <%= entity_link(entity) %>
+              </td>
+              <td>
+                <%= entity.blurb  %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</turbo-frame>

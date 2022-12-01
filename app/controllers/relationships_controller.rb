@@ -60,7 +60,7 @@ class RelationshipsController < ApplicationController
   end.freeze
 
   rescue_from Exceptions::MissingCategoryIdParamError do |exception|
-    render json: exception.error_hash, status: :bad_request
+    render json: {error: exception.message }, status: :bad_request
   end
 
   def show; end
@@ -114,7 +114,7 @@ class RelationshipsController < ApplicationController
     @relationship.validate_reference(reference_params) unless existing_document_id
 
     if @relationship.valid?
-      @relationship.save!
+       @relationship.save!
       if existing_document_id
         @relationship.references.find_or_create_by(document_id: existing_document_id)
       else
@@ -122,9 +122,12 @@ class RelationshipsController < ApplicationController
       end
 
       update_entity_last_user
-      render json: { 'relationship_id' => @relationship.id }, status: :created
+      render json: { 'relationship_id' => @relationship.id,
+                     'url' => @relationship.url,
+                     'path' => relationship_path(@relationship) }, status: :created
     else
-      render json: @relationship.errors.to_hash, status: :bad_request
+      Rails.logger.warn @relationship.errors.full_messages
+      render json: { error: @relationship.errors.full_messages }, status: :bad_request
     end
   end
 
