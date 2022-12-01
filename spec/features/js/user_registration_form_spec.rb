@@ -1,25 +1,27 @@
 describe 'user registration', js: true do
-  scenario 'user submits form without filling it out and is taken to the first required field' do
-    visit "/join"
-    expect(page).not_to have_css('#user_user_profile_attributes_name:focus')
-    click_on 'Sign up'
-    expect(page).to have_css('#user_user_profile_attributes_name:focus')
-  end
+  describe_unless_on_ci 'user registration', js: true do
+    scenario 'user submits form without filling it out and is taken to the first required field' do
+      visit "/join"
+      expect(page).not_to have_css('#user_user_profile_attributes_name:focus')
+      click_on 'Sign up'
+      expect(page).to have_css('#user_user_profile_attributes_name:focus')
+    end
 
-  scenario 'user creates an account' do
-    visit "/join"
-    fill_in 'user_user_profile_attributes_name', with: 'Oedipa Maas'
-    fill_in 'user_email', with: 'oedipa@maas.net'
-    fill_in 'user_username', with: 'oedipa'
-    fill_in 'user_password', with: 'trolleron'
-    fill_in 'user_password_confirmation', with: 'trolleron'
-    fill_in 'about-you-input', with: 'investigating Trystero and related matters'
-    fill_in_math_captcha('math_captcha')
-    find("#terms_of_use").set(false)
-    find('#user-registration-submit-button').click
-    expect(page).to have_text "An email with a confirmation link is on the way."
-    expect(User.last.username).to eq 'oedipa'
-    expect(User.last.email).to eq 'oedipa@maas.net'
+    scenario 'user creates an account' do
+      visit "/join"
+      fill_in 'user_user_profile_attributes_name', with: 'Oedipa Maas'
+      fill_in 'user_email', with: 'oedipa@maas.net'
+      fill_in 'user_username', with: 'oedipa'
+      fill_in 'user_password', with: 'trolleron'
+      fill_in 'user_password_confirmation', with: 'trolleron'
+      fill_in 'about-you-input', with: 'investigating Trystero and related matters'
+      fill_in_math_captcha('math_captcha')
+      find("#terms_of_use").set(false)
+      find('#user-registration-submit-button').click
+      expect(page).to have_text("An email with a confirmation link is on the way.", wait: 10)
+      expect(User.last.username).to eq 'oedipa'
+      expect(User.last.email).to eq 'oedipa@maas.net'
+    end
   end
 
   # scenario 'user is prompted to accept the terms of use' do
