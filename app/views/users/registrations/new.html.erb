@@ -18,7 +18,7 @@
 <% label_class = 'form-label' %>
 <% input_class = 'form-control' %>
 
-<%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: {data: { parsley_validate: true, controller: 'username-validation'}}) do |f| %>
+<%= form_for(resource, as: resource_name,  url: registration_path(resource_name), html: { data: { parsley_validate: true, controller: 'username-validation' }}) do |f| %>
   <%= f.fields_for :user_profile do |profile_fields| %>
 
     <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
@@ -88,7 +88,7 @@
     <% end %>
 
     <%= bs_row_column(row_class: 'row mb-2 mt-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
-      <%= f.submit 'Sign up', class: 'btn btn-primary' %>
+      <%= f.submit 'Sign up', class: 'btn btn-primary', id: 'user-registration-submit-button' %>
       <div class="mt-3">
         <small><%= render 'users/shared/links' %></small>
       </div>
