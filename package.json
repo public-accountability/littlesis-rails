@@ -1,10 +1,11 @@
 {
   "name": "app",
   "dependencies": {
-    "@hotwired/stimulus": "^3.2.0",
+    "@hotwired/stimulus": "^3.2.1",
     "@hotwired/turbo-rails": "^7.2.4",
     "@popperjs/core": "^2.11.6",
     "@rails/actiontext": "^7.0.4",
+    "base64-arraybuffer": "^1.0.2",
     "bootstrap": "^5",
     "d3": "^7.6.1",
     "d3-sankey": "^0.12.3",

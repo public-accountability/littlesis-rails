@@ -4,7 +4,7 @@ import { validURL } from "../src/common/utility.mjs"
 import { get, postFetch } from "../src/common/http.mjs"
 
 export default class extends Controller {
-  static targets = ["categories", "widget", "url", "name"]
+  static targets = ["categories", "widget", "url", "file", "name"]
 
   static values = {
     entity1: Number,
@@ -50,12 +50,22 @@ export default class extends Controller {
       this.nameTarget.disabled = true
       this.urlTarget.value = this.widget.selectedDocument.url
       this.urlTarget.disabled = true
+      this.fileTarget.disabled = true
     } else {
       this.nameTarget.value = ""
       this.nameTarget.disabled = false
       this.urlTarget.value = ""
       this.urlTarget.disabled = false
+      this.fileTarget.disabled = false
     }
+  }
+
+  toggleFileUpload(event) {
+    this.urlTarget.classList.toggle("d-none")
+    this.fileTarget.classList.toggle("d-none")
+    const icon = event.currentTarget.querySelector("i")
+    icon.classList.toggle("bi-arrow-up")
+    icon.classList.toggle("bi-link")
   }
 
   get params() {
@@ -75,12 +85,19 @@ export default class extends Controller {
 
   validate() {
     const params = this.params
+    const hasDocumentOrFile = params.reference.document_id || this.fileTarget.files.length > 0
 
     if (!params.relationship.category_id) {
       this.error = "Please select a category"
-    } else if (!params.reference.document_id && !params.reference.url) {
+    } else if (
+      !params.reference.document_id &&
+      this.fileTarget.files.length > 0 &&
+      this.fileTarget.files.item(0).size > 5000000
+    ) {
+      this.error = "File is too large"
+    } else if (!hasDocumentOrFile && !params.reference.url) {
       this.error = "Missing URL"
-    } else if (!params.reference.document_id && !validURL(params.reference.url)) {
+    } else if (!hasDocumentOrFile && !validURL(params.reference.url)) {
       this.error = "Invalid URL"
     } else if (!params.reference.document_id && !params.reference.name) {
       this.error = "Missing name"
@@ -99,11 +116,17 @@ export default class extends Controller {
     }
   }
 
-  create() {
+  async create() {
     this.validate()
 
     if (!this.error) {
-      postFetch("/relationships", this.params)
+      const params = this.params
+
+      if (!params.reference.document_id || this.fileTarget.files.length > 0) {
+        params.refernce.data = await this.fileTarget.files.item(0).arrayBuffer().then(encode)
+      }
+
+      return postFetch("/relationships", params)
         .then(response => response.json())
         .then(json => {
           if (json.error) {
