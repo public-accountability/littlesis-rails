@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import ExistingReferenceWidget from "../src/components/existing_reference_selector"
 import { validURL } from "../src/common/utility.mjs"
-import { get, postFetch } from "../src/common/http.mjs"
+import { get } from "../src/common/http.mjs"
 
 export default class extends Controller {
   static targets = ["categories", "widget", "url", "file", "name"]
@@ -68,38 +68,21 @@ export default class extends Controller {
     icon.classList.toggle("bi-link")
   }
 
-  get params() {
-    return {
-      relationship: {
-        category_id: this.category,
-        entity1_id: this.entity1Value,
-        entity2_id: this.entity2Value,
-      },
-      reference: {
-        document_id: this.widget.selection,
-        name: this.nameTarget.value,
-        url: this.urlTarget.value,
-      },
-    }
-  }
-
   validate() {
-    const params = this.params
-    const hasDocumentOrFile = params.reference.document_id || this.fileTarget.files.length > 0
+    const hasDocumentOrFile = this.widget.selection || this.fileTarget.files.length > 0
 
-    if (!params.relationship.category_id) {
+    if (!this.category) {
       this.error = "Please select a category"
     } else if (
-      !params.reference.document_id &&
-      this.fileTarget.files.length > 0 &&
-      this.fileTarget.files.item(0).size > 5000000
+      (!this.widget.selection,
+      this.fileTarget.files.length > 0 && this.fileTarget.files.item(0).size > 5000000)
     ) {
       this.error = "File is too large"
-    } else if (!hasDocumentOrFile && !params.reference.url) {
+    } else if (!hasDocumentOrFile && !this.urlTarget.value) {
       this.error = "Missing URL"
-    } else if (!hasDocumentOrFile && !validURL(params.reference.url)) {
+    } else if (!hasDocumentOrFile && !validURL(this.urlTarget.value)) {
       this.error = "Invalid URL"
-    } else if (!params.reference.document_id && !params.reference.name) {
+    } else if (!this.widget.selection && !this.nameTarget.value) {
       this.error = "Missing name"
     } else {
       this.error = null
@@ -116,28 +99,62 @@ export default class extends Controller {
     }
   }
 
-  async create() {
+  formData() {
+    const formData = new FormData()
+    formData.set("relationship[category_id]", this.category)
+    formData.set("relationship[entity1_id]", this.entity1Value)
+    formData.set("relationship[entity2_id]", this.entity2Value)
+
+    if (this.widget.selection) {
+      formData.set("reference[document_id]", this.widget.selection)
+    } else if (this.fileTarget.files.length > 0) {
+      formData.set("reference[primary_source_document]", this.fileTarget.files[0])
+      formData.set("reference[name]", this.nameTarget.value)
+    } else {
+      formData.set("reference[name]", this.nameTarget.value)
+      formData.set("reference[url]", this.urlTarget.value)
+    }
+
+    return formData
+  }
+
+  create() {
     this.validate()
 
-    if (!this.error) {
-      const params = this.params
-
-      if (!params.reference.document_id || this.fileTarget.files.length > 0) {
-        params.refernce.data = await this.fileTarget.files.item(0).arrayBuffer().then(encode)
-      }
-
-      return postFetch("/relationships", params)
-        .then(response => response.json())
-        .then(json => {
-          if (json.error) {
-            this.error = `server error: ${json.error}`
-            const alert = this.element.querySelector("#add-relationship-validation-error")
-            alert.classList.remove("d-none")
-            alert.querySelector("span.alertText").textContent = this.error
-          } else if (json.url) {
-            window.location = json.url
-          }
-        })
+    if (this.error) {
+      console.error(this.error)
+      return
     }
+
+    const options = {
+      headers: {
+        "X-CSRF-Token": document.head.querySelector('meta[name="csrf-token"]').content,
+        Accept: "application/json",
+      },
+      method: "POST",
+      body: this.formData(),
+    }
+
+    return fetch("/relationships", options)
+      .then(response => {
+        if (response.status === 500) {
+          throw new Error("HTTP STATUS 500")
+        } else {
+          return response.json()
+        }
+      })
+      .then(json => {
+        if (json.error) {
+          this.error = `server error: ${json.error}`
+          const alert = this.element.querySelector("#add-relationship-validation-error")
+          alert.classList.remove("d-none")
+          alert.querySelector("span.alertText").textContent = this.error
+        } else if (json.url) {
+          window.location = json.url
+        } else {
+          throw new Error(`cannot handle response: ${JSON.stringify(json)}`)
+        }
+      })
+      .catch(console.error)
   }
 }
