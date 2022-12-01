@@ -130,7 +130,7 @@ export default class extends Controller {
 
     const options = {
       headers: {
-        "X-CSRF-Token": document.head.querySelector('meta[name="csrf-token"]').content,
+        "X-CSRF-Token": document.head.querySelector('meta[name="csrf-token"]')?.content,
         Accept: "application/json",
       },
       method: "POST",
@@ -151,6 +151,8 @@ export default class extends Controller {
           const alert = this.element.querySelector("#add-relationship-validation-error")
           alert.classList.remove("d-none")
           alert.querySelector("span.alertText").textContent = this.error
+        } else if (json.path) {
+          window.location = json.path
         } else if (json.url) {
           window.location = json.url
         } else {

@@ -12,9 +12,9 @@
 
           <form action="<%= add_relationship_search_entities_path %>" data-turbo-frame="add-relationship-results">
             <div class="input-group">
-              <input name="entity1_id" type="hidden" class="form-control" value="<%= @entity.id %>" >
-              <input name="q" type="text" class="form-control" placeholder="<%= t('vocab.name').capitalize %>" aria-label="Name to search">
-              <button class="btn btn-primary"><%= t('vocab.search').capitalize %></button>
+              <input name="entity1_id" type="hidden" class="form-control" value="<%= @entity.id %>">
+              <input name="q" type="text" class="form-control" placeholder="<%= t('vocab.name').capitalize %>" aria-label="Name to search" id="add-relationship-search-input">
+              <button class="btn btn-primary" id="add-relationship-search-button"><%= t('vocab.search').capitalize %></button>
             </div>
           </form>
         </div>
