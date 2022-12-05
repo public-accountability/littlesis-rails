@@ -45,10 +45,8 @@
   <% end %>
 </div>
 
-<div data-turbo="true">
-  <%= turbo_frame_tag "action_network" do %>
-    <a href="/users/action_network">Check your newsletter subscriptions</a>
-  <% end %>
+<div>
+  <a href="/newsletters/signup">Subscribe to our newsletters</a>
 </div>
 
 <% if current_user.role.name == 'user' %>
