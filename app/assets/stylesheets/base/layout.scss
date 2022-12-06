@@ -58,18 +58,17 @@ nav.navbar  {
   }
 
 
-  #navbar-search {
+  form#navbar-search {
     input {
       max-width: 200px;
     }
   }
 
   #top_donate_link {
-    margin-right: 0.6em;
-
     a {
-      @extend .btn;
-      @extend .red-button;
+      background-color: $red;
+      color: #fff;
+
       &:hover {
 	background-color: $red_light;
 	color: black;
