@@ -69,10 +69,12 @@ class OligrapherController < ApplicationController
 
   # Create new map
   def new
-    use_beta = current_user.settings.oligrapher_beta
+    # use_beta = current_user.settings.oligrapher_beta
     @map = NetworkMap.new(title: 'Untitled Map',
                           user: current_user,
-                          oligrapher_commit: use_beta ? Rails.application.config.littlesis.oligrapher_beta : Rails.application.config.littlesis.oligrapher_commit)
+                          oligrapher_commit: Rails.application.config.littlesis.oligrapher_commit
+                          # oligrapher_commit: use_beta ? Rails.application.config.littlesis.oligrapher_beta : Rails.application.config.littlesis.oligrapher_commit
+                         )
     @configuration = Oligrapher.configuration(@map, current_user: current_user)
     @oligrapher_javascript_path = Oligrapher.javascript_path(v4: @map.v4?)
     @oligrapher_css_path = Oligrapher.css_path(v4: @map.v4?)
