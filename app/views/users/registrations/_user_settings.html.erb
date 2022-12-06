@@ -29,7 +29,7 @@
       </div>
     <% end %>
 
-    <% if current_user.role.include?(:beta_testing) %>
+    <% if false && current_user.role.include?(:beta_testing) %>
       <div class="row mt-2 mb-2">
         <div class="col">
           <div class="form-check form-switch">
@@ -40,8 +40,6 @@
         </div>
       </div>
     <% end %>
-
-
   <% end %>
 </div>
 
