@@ -52,7 +52,7 @@ class EntitiesController < ApplicationController
 
   def create_bulk
     # only responds to JSON, not possible to create extensions in POSTS to this endpoint
-    entity_attrs = create_bulk_payload.map { |x| merge_last_user(x) }
+    entity_attrs = create_bulk_payload.map { |x| x.merge(last_user_id: current_user.id) }
     block_unless_bulker(entity_attrs, Entity::BULK_LIMIT) # see application_controller
     entities = Entity.create!(entity_attrs)
     render json: Api.as_api_json(entities), status: :created
