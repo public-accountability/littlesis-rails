@@ -38,22 +38,22 @@ describe ApplicationHelper, :type => :helper do
   end
 
   describe 'show_donation_banner?' do
-    it 'when set to "everywhere" it shows on the lists page' do
-      Rails.application.config.littlesis[:donation_banner_display] = 'everywhere'
+    it 'when set to "all" it shows on the lists page' do
+      Rails.application.config.littlesis[:donation_banner_display] = 'all'
       allow(helper).to receive(:controller_name).and_return('lists')
       allow(controller).to receive(:action_name).and_return('index')
       expect(helper.show_donation_banner?).to be true
     end
 
-    it 'when set to "homepage" it shows it on the homepage' do
-      Rails.application.config.littlesis[:donation_banner_display] = 'homepage'
+    it 'when set to "some" it shows it on the homepage' do
+      Rails.application.config.littlesis[:donation_banner_display] = 'some'
       allow(helper).to receive(:controller_name).and_return('home')
       allow(controller).to receive(:action_name).and_return('index')
       expect(helper.show_donation_banner?).to be true
     end
 
-    it 'when set to "homepage" it hides it from lists page' do
-      Rails.application.config.littlesis[:donation_banner_display] = 'homepage'
+    it 'when set to "some" it hides it from lists page' do
+      Rails.application.config.littlesis[:donation_banner_display] = 'some'
       allow(helper).to receive(:controller_name).and_return('lists')
       allow(controller).to receive(:action_name).and_return('index')
       expect(helper.show_donation_banner?).to be false

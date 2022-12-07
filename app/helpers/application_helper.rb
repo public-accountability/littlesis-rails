@@ -81,11 +81,11 @@ module ApplicationHelper
   end
 
   def show_donation_banner?
-    case Rails.application.config.littlesis[:donation_banner_display]
-    when 'everywhere'
+    case Rails.application.config.littlesis.donation_banner_display
+    when 'all'
       true
-    when 'homepage'
-      controller_name == 'home' && controller.action_name == 'index'
+    when 'some'
+      controller_name == 'home' && (controller.action_name == 'index' || controller.action_name == 'dashboard')
     else
       false
     end

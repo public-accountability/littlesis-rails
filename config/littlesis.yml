@@ -10,9 +10,7 @@ defaults: &defaults
   powerbase_api_key: 'your-powerbase-api-key-here'
   redis_url: "redis://redis:6379/0"
   default_image_file_type: jpg
-  donation_banner_display: false # use 'everywhere' to display on all pages and 'homepage' for just the homepage
-  donation_banner_html: |
-    Will you <a href="https://littlesis.org/donate/">pitch in</a> to support LittleSis's power mapping tools?
+  donation_banner_display: false # all | some
   host: littlesis.org
   asset_host: "127.0.0.1:8080"
   image_host: "https://littlesis.org"
@@ -44,7 +42,8 @@ development:
   opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
   powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
-  oligrapher_beta: "dev"
+  oligrapher_beta: dev
+  donation_banner_display: all
 
 production:
   <<: *defaults
