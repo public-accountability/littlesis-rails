@@ -37,13 +37,14 @@ test:
 development:
   <<: *defaults
   image_host: "http://127.0.0.1:8081"
-  host: 'localhost:8081'
+  redis_url: "redis://redis:6379/0"
+  host: '127.0.0.1:8081'
   protocol: http
   opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
   powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
   oligrapher_beta: dev
-  donation_banner_display: all
+  donation_banner_display: some
 
 production:
   <<: *defaults
@@ -54,6 +55,7 @@ production:
   asset_host: littlesis.org
   protocol: https
   beta: false
+  donation_banner_display: some
   carousel_list_id: 1257
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
   powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>

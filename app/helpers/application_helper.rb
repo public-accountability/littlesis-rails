@@ -85,7 +85,8 @@ module ApplicationHelper
     when 'all'
       true
     when 'some'
-      controller_name == 'home' && (controller.action_name == 'index' || controller.action_name == 'dashboard')
+      # show on homepage, dashboard, and oligrapher explore
+      (controller_name == 'home' && (controller.action_name == 'index' || controller.action_name == 'dashboard')) || (controller_name == 'oligrapher' && controller.action_name == 'index' )
     else
       false
     end
