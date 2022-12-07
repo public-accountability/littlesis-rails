@@ -1,18 +1,18 @@
 .dashboard-title-link {
-    a {
-	color: rgb(33, 37, 41);
-	&:hover {
-	    color: $link_blue;
-	}
+  a {
+    color: rgb(33, 37, 41);
+    &:hover {
+      color: $link_blue;
     }
+  }
 }
 
 #dashboard-your-lists {
-    #dashboard-lists-links {
-	a {
-	    font-weight: bold;
-	}
+  #dashboard-lists-links {
+    a {
+      font-weight: bold;
     }
+  }
 }
 
 #homepage-lists {
@@ -20,44 +20,44 @@
   font-size: 1rem;
 
   @include media-breakpoint-up(lg) {
-      text-align: left;
+    text-align: left;
   }
 
   a {
+    font-size: 1.3rem;
+
+    @include media-breakpoint-up(md) {
+      font-size: 1rem;
+    }
+
+    @include media-breakpoint-up(xl) {
       font-size: 1.3rem;
-
-      @include media-breakpoint-up(md) {
-          font-size: 1rem;
-      }
-
-      @include media-breakpoint-up(xl) {
-          font-size: 1.3rem;
-      }
+    }
 
 
-      line-height: 38px;
-      text-decoration: underline dotted;
+    line-height: 38px;
+    text-decoration: underline dotted;
 
-      &:hover {
-          text-decoration: underline solid;
-      }
-      /* color: $link_blue; */
+    &:hover {
+      text-decoration: underline solid;
+    }
+    /* color: $link_blue; */
   }
 
   span.homepage-counter > span {
-      display: inline;
-      background: linear-gradient(to bottom, #fff, #bbb);
-      color: #000;
-      border-radius: 4px;
-      padding-left: 3px;
-      padding-right: 3px;
-      font-weight: bold;
+    display: inline;
+    background: linear-gradient(to bottom, #fff, #bbb);
+    color: #000;
+    border-radius: 4px;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-weight: bold;
 
-      font-size: 20px;
+    font-size: 20px;
 
-      @include media-breakpoint-up(lg) {
-          font-size: 24px;
-      }
+    @include media-breakpoint-up(lg) {
+      font-size: 24px;
+    }
 
   }
 }
@@ -81,141 +81,141 @@
 }
 
 div.social-media-buttons {
-    text-align: center;
+  text-align: center;
 
-    @include media-breakpoint-up(sm) {
-        text-align: left;
-    }
+  @include media-breakpoint-up(sm) {
+    text-align: left;
+  }
 
-    @include media-breakpoint-up(md) {
-        margin-top: 5px;
-    }
+  @include media-breakpoint-up(md) {
+    margin-top: 5px;
+  }
 
-    > div {
-        display: inline-block;
-        height: 25px;
-    }
+  > div {
+    display: inline-block;
+    height: 25px;
+  }
 }
 
 div#donate-button-container  {
-    display: inline-block;
-    a {
-	color: white;
-	background-color: #cc5454;
-	text-decoration: none;
-	height: 22px;
+  display: inline-block;
+  a {
+    color: white;
+    background-color: #cc5454;
+    text-decoration: none;
+    height: 22px;
 
-    }
-    .btn-sm {
-	font-size: 11px;
-    	line-height: 10px;
-    }
+  }
+  .btn-sm {
+    font-size: 11px;
+    line-height: 10px;
+  }
 }
 
 #join-page-get-involved p {
-    text-align: justify;
+  text-align: justify;
 }
 
 #donation-header {
 
-    h1 {
-	display: inline-block;
-    }
+  h1 {
+    display: inline-block;
+  }
 
-    p {
-	font-size: 1.1em;
-	line-height: 1.1;
-    }
+  p {
+    font-size: 1.1em;
+    line-height: 1.1;
+  }
 
-    #donation-header-text {
-	padding: 0.3em;
-	border-radius: 0.15em;
-	box-shadow: -4px 4px 10px #888888;
-	background-color: $gray-dark;
-	color: $gray-lighter;
-    }
+  #donation-header-text {
+    padding: 0.3em;
+    border-radius: 0.15em;
+    box-shadow: -4px 4px 10px #888888;
+    background-color: $gray-dark;
+    color: $gray-lighter;
+  }
 
-    #donation-header-text-small {
-	padding-left: 0.8em;
-    }
+  #donation-header-text-small {
+    padding-left: 0.8em;
+  }
 }
 
 .homepage-subheading {
-    font-size: 1rem;
-    line-height: 20px;
+  font-size: 1rem;
+  line-height: 20px;
 
-    @include media-breakpoint-up(sm) {
-        font-size: 1.3rem;
-        line-height: 30px;
-    }
+  @include media-breakpoint-up(sm) {
+    font-size: 1.3rem;
+    line-height: 30px;
+  }
 
-    @include media-breakpoint-up(md) {
-        font-size: 1.5rem;
-    }
+  @include media-breakpoint-up(md) {
+    font-size: 1.5rem;
+  }
 }
 
 #homepage-who-we-are-row {
-    div:first-of-type > div {
-        max-width: 690px;
+  div:first-of-type > div {
+    max-width: 690px;
+  }
+
+  h1 {
+    font-size: 2rem;
+
+    @include media-breakpoint-up(sm) {
+      font-size: 2.3rem;
     }
 
-    h1 {
-        font-size: 2rem;
-
-        @include media-breakpoint-up(sm) {
-            font-size: 2.3rem;
-        }
-
-        @include media-breakpoint-up(md) {
-            font-size: 3rem;
-        }
+    @include media-breakpoint-up(md) {
+      font-size: 3rem;
     }
+  }
 }
 
 #homepage-explore-row {
-    div.col > div {
-        height: 180px;
+  div.col > div {
+    height: 180px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #eyes-on-ties-img {
+    padding: 50px;
+
+    @include media-breakpoint-up(md) {
+      padding: 10px;
     }
 
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
+    @include media-breakpoint-up(lg) {
+      padding: 30px;
     }
 
-    #eyes-on-ties-img {
-        padding: 50px;
-
-        @include media-breakpoint-up(md) {
-            padding: 10px;
-        }
-
-        @include media-breakpoint-up(lg) {
-            padding: 30px;
-        }
-
-    }
+  }
 }
 
 #homepage-carousel-row {
-    .littlesis_carousel_wrapper {
-        display: none;
+  .littlesis_carousel_wrapper {
+    display: none;
 
-        @include media-breakpoint-up(lg) {
-            display: block;
-        }
+    @include media-breakpoint-up(lg) {
+      display: block;
     }
+  }
 }
 
 #homepage-oligrapher-images {
-    a {
-        display: inline-block;
-    }
+  a {
+    display: inline-block;
+  }
 }
 
 .littlesis-trix-row {
-    .trix-content {
-        padding-top: 0;
-        padding-left: 0;
-    }
+  .trix-content {
+    padding-top: 0;
+    padding-left: 0;
+  }
 }

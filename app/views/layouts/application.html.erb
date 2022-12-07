@@ -16,16 +16,18 @@
       <%= render 'shared/nav_menu' %>
     <% end %>
 
-    <div class="<%= container_div_class %> pt-2 pb-2" id="littlesis-body">
-      <% unless flash.empty? %>
-        <%= render 'shared/notice' %>
-      <% end %>
+    <div id="littlesis-scroll-wrapper">
+      <div class="<%= container_div_class %> pt-2 pb-2" id="littlesis-body">
+        <% unless flash.empty? %>
+          <%= render 'shared/notice' %>
+        <% end %>
 
-      <%= yield %>
+        <%= yield %>
 
-      <% unless content_for? :hide_footer %>
-        <%= render 'shared/footer' %>
-      <% end %>
+        <% unless content_for? :hide_footer %>
+          <%= render 'shared/footer' %>
+        <% end %>
+      </div>
     </div>
   </body>
 </html>

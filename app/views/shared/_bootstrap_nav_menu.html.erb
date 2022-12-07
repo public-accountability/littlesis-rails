@@ -1,4 +1,4 @@
-<ul class="nav mr-auto">
+<ul class="nav me-auto flex-nowrap">
   <% cache ["navmenu", (current_user&.cache_key_with_version || 'anon'), I18n.locale], expires_in: 2.days do %>
     <% Navmenu.for(current_user).each do |(header_text, url_or_links)| %>
       <% if url_or_links.is_a?(String) %>

@@ -1,33 +1,50 @@
 <%# Top Navigation Menu %>
-<nav class="navbar navbar-light navbar-expand-lg sticky-top">
-  <div class="<%= container_div_class %> justify-content-start">
-    <div class="navbar-brand collapse navbar-collapse flex-grow-0">
-      <%= link_to(image_tag("lilsis-logo-trans-200.png"), user_signed_in? ? home_dashboard_path : root_path) %>
-    </div>
+<nav class="navbar navbar-expand-lg bg-light sticky-top">
+  <div class="<%= container_div_class %>">
 
-    <button class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#littlesisNavbarContent"
-            data-bs-target="#top_donate_link"
-            aria-controls="littlesisNavbarContent"  aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <div class="d-flex justify-content-flex-start">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#littlesisNavbarMenu" aria-controls="littlesisNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse" id="littlesisNavbarMenu">
+        <%= cache_unless user_signed_in?, "anonymous_user_navmenu_#{I18n.locale}" do %>
+          <%= render partial: 'shared/bootstrap_nav_menu' %>
+        <% end %>
+      </div>
+    </div>
 
     <div class="collapse navbar-collapse" id="littlesisNavbarContent">
-      <%= cache_unless user_signed_in?, "anonymous_user_navmenu_#{I18n.locale}" do %>
-        <%= render partial: 'shared/bootstrap_nav_menu' %>
-      <% end %>
-    </div>
+      <div class="w-100 d-flex flex-column">
+        <div class="w-100 d-flex justify-content-flex-start">
 
-    <div id="top_donate_link" class="collapse navbar-collapse justify-content-end">
-      <div class="me-1"><strong><%= link_to(t('vocab.donate'), '/donate', id: 'donate-link-button')%></strong></div>
-      <form action="/search" method="get" role="search" id="navbar-search">
-        <div class="input-group">
-          <input type="text" name="q" class="form-control" placeholder="<%= t('vocab.search').capitalize %> LittleSis">
-          <button class="btn btn-clear" type="submit" ><i class="bi bi-search"></i></button>
+          <div>
+            <%= link_to(image_tag("lilsis-logo-trans-200.png"), user_signed_in? ? home_dashboard_path : root_path) %>
+          </div>
+
+          <div class="me-auto">
+            <%= cache_unless user_signed_in?, "anonymous_user_navmenu_#{I18n.locale}" do %>
+              <%= render partial: 'shared/bootstrap_nav_menu' %>
+            <% end %>
+          </div>
+
+          <div class="d-flex" id="top_donate_link">
+            <div class="me-1"><strong><%= link_to(t('vocab.donate'), '/donate', id: 'donate-link-button', class: 'btn')%></strong></div>
+            <form action="/search" method="get" role="search" id="navbar-search">
+              <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="<%= t('vocab.search').capitalize %> LittleSis">
+                <button class="btn btn-clear" type="submit" ><i class="bi bi-search"></i></button>
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
+
+        <% if show_donation_banner? %>
+          <div class="w-100 d-flex pt-2 pb-1">
+            <h6>Did you attend one of our free trainings, use Oligrapher to build a power map, or use the LittleSis database this year? <br/> If so, consider donating to LittleSis so we can continue to provide these critical resources free to all! <a href="https://littlesis.ourpowerbase.net/civicrm/contribute/transact?reset=1&id=2">Donate today.</a></h6>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 </nav>

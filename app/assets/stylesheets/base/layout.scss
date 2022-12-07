@@ -1,17 +1,24 @@
 html, body {
-  height: 100%;
+  height: auto;
   width: 100%;
   margin: 0;
   padding: 0;
 }
 
 body {
-  overflow: auto;
   display: flex;
   flex-direction: column;
 }
 
+#littlesis-scroll-wrapper {
+  /* catches scroll so sticky navbar stays propertly */
+  scroll: auto;
+  height: 100%;
+  width: 100%;
+}
+
 #littlesis-body {
+  overflow: auto;
   flex-grow: 1;
 }
 
@@ -58,18 +65,17 @@ nav.navbar  {
   }
 
 
-  #navbar-search {
+  form#navbar-search {
     input {
       max-width: 200px;
     }
   }
 
   #top_donate_link {
-    margin-right: 0.6em;
-
     a {
-      @extend .btn;
-      @extend .red-button;
+      background-color: $red;
+      color: #fff;
+
       &:hover {
 	background-color: $red_light;
 	color: black;

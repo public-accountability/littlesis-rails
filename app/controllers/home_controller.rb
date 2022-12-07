@@ -38,7 +38,8 @@ class HomeController < ApplicationController
   end
 
   def dismiss
-    dismiss_alert(params[:id])
+    session[:dismissed_alerts] ||= []
+    session[:dismissed_alerts] << params[:id]
   end
 
   def maps

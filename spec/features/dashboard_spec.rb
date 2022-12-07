@@ -11,7 +11,7 @@ describe 'home/dashboard', type: :feature do
     it 'user clicks login and is taken to the dashboard' do
       visit org_path(entity)
 
-      within 'nav' do
+      within '#littlesisNavbarMenu' do
         click_on 'Login'
       end
 

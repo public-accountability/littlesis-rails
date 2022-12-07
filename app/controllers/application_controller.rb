@@ -104,23 +104,6 @@ class ApplicationController < ActionController::Base
     raise Exceptions::NotFoundError
   end
 
-  def dismiss_alert(id)
-    session[:dismissed_alerts] ||= []
-    session[:dismissed_alerts] << id
-  end
-
-  def clear_dismissed_alerts
-    session[:dismissed_alerts] = []
-  end
-
-  ##
-  # merge
-  #
-
-  def merge_last_user(attrs)
-    attrs.merge(last_user_id: current_user.id)
-  end
-
   protected
 
   def set_page
