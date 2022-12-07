@@ -28,6 +28,7 @@ LittleSis::Application.routes.draw do
     get '/join' => 'users/registrations#new', :as => :new_user_registration
     post '/join' => 'users/registrations#create', :as => :user_registration
     get '/users/cancel' => 'users/registrations#cancel', :as => :cancel_user_registration
+    get '/users/delete' => 'users/registrations#delete', :as => :delete_user_registration
     get '/settings' => 'users/registrations#edit', :as => :edit_user_registration
     patch '/users' => 'users/registrations#update'
     put '/users' => 'users/registrations#update'

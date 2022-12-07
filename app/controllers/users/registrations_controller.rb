@@ -41,10 +41,20 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   super
   # end
 
+  # GET /users/delete
+  def delete
+    authenticate_scope!
+  end
+
   # DELETE /resource
-  # def destroy
-  #   super
-  # end
+  def destroy
+    authenticate_scope!
+    raise Exceptions::PermissionError unless resource.valid_password?(params[:current_password])
+    Rails.logger.warn "User #{resource.username} has scheduled their account to be deleted"
+    DeleteUserJob.set(wait: 12.hours).perform_later(resource.id)
+    sign_out(resource_name)
+    redirect_to "/"
+  end
 
   # GET /resource/cancel
   # Forces the session data which is usually expired after sign

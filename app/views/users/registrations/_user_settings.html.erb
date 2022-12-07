@@ -44,7 +44,9 @@
 </div>
 
 <div>
-  <a href="/newsletters/signup">Subscribe to our newsletters</a>
+  <p>
+    <a href="/newsletters/signup">Subscribe to our newsletters</a>
+  </p>
 </div>
 
 <% if current_user.role.name == 'user' %>
@@ -54,3 +56,9 @@
     </p>
   </div>
 <% end %>
+
+<div class="mt-2">
+  <p>
+    <a href="/users/delete">Delete your account</a>
+  </p>
+</div>
