@@ -1,0 +1,22 @@
+<% content_for(:page_title, "Delete Your Account") %>
+
+<div class="row">
+  <div class="col col-md-6">
+    <div class="p-4 rounded bg-warning">
+      <% if DeleteUserJob.has_job_scheduled?(current_user.id) %>
+        <h6>You account is scheduled to be deleted. Please contact <%=  mail_to("admin@littlesis.org") %> if you have any questions.</h6>
+      <% else  %>
+        <%= form_with(url: "/users", method: :delete, html: { onsubmit: "return confirm('Are you sure?')" }) do |f| %>
+          <p>After clicking this button your data will be deleted within 24 hours</p>
+
+          <div class="mt-2 mb-2">
+            <label for="userCurrentPassword" class="form-label"><%= t('phrases.current_password') %></label>
+            <input type="password" name="current_password" class="form-control" id="userCurrentPassword" autocomplete="off" required>
+          </div>
+
+          <%= f.submit "Delete my account", class: 'btn btn-danger btn-lg' %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
