@@ -50,9 +50,9 @@ class OligrapherController < ApplicationController
   def show
     check_private_access
     @is_pending_editor = (current_user && @map.has_pending_editor?(current_user))
-    use_beta = current_user && current_user.settings.oligrapher_beta
-    @oligrapher_javascript_path = Oligrapher.javascript_path(v4: @map.v4?, beta: use_beta)
-    @oligrapher_css_path = Oligrapher.css_path(v4: @map.v4?, beta: use_beta)
+    # use_beta = current_user && current_user.settings.oligrapher_beta
+    @oligrapher_javascript_path = Oligrapher.javascript_path(v4: @map.v4?)
+    @oligrapher_css_path = Oligrapher.css_path(v4: @map.v4?)
     @configuration = Oligrapher.configuration(@map, current_user: current_user)
     render 'oligrapher/oligrapher', layout: 'oligrapher'
   end

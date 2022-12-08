@@ -3,6 +3,7 @@
 require 'csv'
 require 'tempfile'
 require 'open3'
+require 'net/http'
 
 module Utility
   def self.current_git_commit
