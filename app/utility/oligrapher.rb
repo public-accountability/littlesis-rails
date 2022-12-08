@@ -127,10 +127,9 @@ module Oligrapher
     commit = if beta
                Rails.application.config.littlesis.oligrapher_beta
              elsif v4
-               Rails.application.config.littlesis.oligrapher_beta
-             else
-               # V3_COMMIT
                Rails.application.config.littlesis.oligrapher_commit
+             else
+               V3_COMMIT
              end
     "oligrapher-" + commit
   end
