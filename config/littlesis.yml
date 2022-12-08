@@ -31,7 +31,7 @@ test:
   image_root: tmp
   host: 'localhost:8080'
   protocol: http
-  oligrapher_commit: "v3"
+  oligrapher_commit: "v4"
   oligrapher_beta: "test-beta"
 
 development:

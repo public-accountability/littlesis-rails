@@ -21,7 +21,7 @@ describe 'Oligrapher' do
       visit new_oligrapher_path
       successfully_visits_page new_oligrapher_path
       expect(has_script_src(page, Rails.application.config.littlesis.oligrapher_commit)).to be true
-      expect(has_script_src(page, Rails.application.config.littlesis.oligrapher_beta)).to be false
+      # expect(has_script_src(page, Rails.application.config.littlesis.oligrapher_beta)).to be false
     end
 
     # it 'uses oligrapher beta commit if requested' do
@@ -40,13 +40,13 @@ describe 'Oligrapher' do
     specify { successfully_visits_page oligrapher_path(regular_map) }
   end
 
-  describe 'v3 maps use oligrapher_commit' do
+  describe 'v3 maps use v3_commit' do
     specify do
       map = create(:network_map, user_id: user.id, oligrapher_commit: "42022f34c3dfdefdff91beabdb9445be0066ada7")
       visit oligrapher_path(map)
       successfully_visits_page oligrapher_path(map)
       expect(
-        page.all("script").filter { _1['src'].include?("oligrapher-v3.js") }.length.positive?
+        page.all("script").filter { _1['src'].include?("oligrapher-42022f34c3dfdefdff91beabdb9445be0066ada7.js") }.length.positive?
       ).to be true
     end
   end
