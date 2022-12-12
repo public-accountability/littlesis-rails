@@ -16,11 +16,6 @@ Rails.application.configure do
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
 
-  # Enable Rack::Cache to put a simple HTTP cache in front of your application
-  # Add `rack-cache` to your Gemfile before enabling this.
-  # For large-scale production use, consider using a caching reverse proxy like nginx, varnish or squid.
-  # config.action_dispatch.rack_cache = true
-
   # Disable Rails's static asset server (Apache or nginx will already do this).
   config.public_file_server.enabled = false
 
@@ -70,16 +65,6 @@ Rails.application.configure do
     password: config.littlesis.smtp_password,
     authentication: :plain
   }
-
-  # config.action_mailer.smtp_settings = {
-  #   address:              config.littlesis.smtp_address,
-  #   port:                 config.littlesis.smtp_port,
-  #   domain:               config.littlesis.smtp_domain,
-  #   user_name:            config.littlesis.smtp_user_name,
-  #   password:             config.littlesis.smtp_password,
-  #   authentication:       :plain,
-  #   tls: true
-  # }
 
   # config.i18n.fallbacks = [I18n.default_locale]
   # Send deprecation notices to registered listeners.
