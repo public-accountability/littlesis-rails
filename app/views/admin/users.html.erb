@@ -18,19 +18,35 @@
           <th>Joined</th>
           <th>Reason</th>
           <th>Role</th>
+          <th>Actions</th>
         </tr>
       </thead>
 
       <tbody>
         <% @users.each do |user| %>
           <tr>
-            <th><%= user_link(user) %><i title="<%= user.email %>" class="ms-1 bi bi-envelope<%= user.confirmed? ? '-check' : '' %>"></i></th>
-            <th><%= user.created_at.strftime("%F") %></th>
-            <th class="cursor-default" title="<%= user.user_profile.reason %>"><%= truncate(user.user_profile.reason) %></th>
-            <th data-controller="user-role-select"
+            <td><%= user_link(user) %><i title="<%= user.email %>" class="ms-1 bi bi-envelope<%= user.confirmed? ? '-check' : '' %>"></i></td>
+            <td><%= user.created_at.strftime("%F") %></td>
+            <td class="cursor-default" title="<%= user.user_profile.reason %>"><%= truncate(user.user_profile.reason) %></td>
+            <td data-controller="user-role-select"
                 data-user-role-select-role-value="<%= user.role.name %>"
                 data-user-role-select-userid-value="<%= user.id %>"
-            ><%= select_tag('role', options_for_select(User.roles.keys, user.role.name) )%></th>
+            ><%= select_tag('role', options_for_select(User.roles.keys, user.role.name) )%></td>
+            <td>
+              <div class="btn-group" role="group" aria-label="Basic outlined example" data-controller="admin-user-actions" data-admin-user-actions-userid-value="<%= user.id %>">
+                <%= tag.button title: "resend confirmation email", class: "btn btm-sm btn-outline-primary", data: { "action" => "admin-user-actions#resendConfirmationEmail:once"}, disabled: user.confirmed? do %>
+                  <i class="admin-user-button-icon bi bi-envelope-plus pe-none"></i>
+                <% end %>
+
+                <%= tag.button title: "reset password", class: "btn btm-sm btn-outline-primary", data: { "action" => "admin-user-actions#resetPassword:once"} do %>
+                  <i class="admin-user-button-icon bi bi-file-earmark-lock2 pe-none"></i>
+                <% end %>
+
+                <%= tag.button title: "delete user", class: "btn btm-sm btn-outline-primary", data: { "action" => "admin-user-actions#deleteUser:once"} do %>
+                  <i class="admin-user-button-icon bi bi-trash3 pe-none"></i>
+                <% end %>
+              </div>
+            </td>
           </tr>
         <% end %>
       </tbody>

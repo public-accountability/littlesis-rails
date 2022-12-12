@@ -55,6 +55,38 @@ class AdminController < ApplicationController
     render json: { status: 'ok', role: user.role.name }
   end
 
+  # POST /admin/users/:userid/resend_confirmation_email
+  def resend_confirmation_email
+    User.find(params.require(:userid)).resend_confirmation_instructions
+    render json: { status: 'ok' }
+  end
+
+  # POST /admin/users/:userid/reset_password
+  def reset_password
+    user = User.find(params.require(:userid))
+
+    # resets the user password
+    # password = SecureRandom.hex(22)
+    # user.reset_password(password, password)
+
+    # emails instructions to user's email
+    user.send_reset_password_instructions
+    render json: { status: 'ok' }
+  end
+
+  # POST /admin/users/:userid/delete_user
+  def delete_user
+    user = User.find(params.require(:userid))
+    job = DeleteUserJob.scheduled_job(user.id).first
+    if job.present?
+      render json: { status: 'ok', message: "scheduled at #{job['scheduled_at']}" }
+    else
+      wait_time = 12.hours
+      job = DeleteUserJob.set(wait: wait_time).perform_later(user.id)
+      render json: { status: 'ok', message: "scheduled at #{wait_time.from_now}" }
+    end
+  end
+
   # PATCH /admin/role_upgrade_requests/:id
   def update_role_upgrade_request
     request = RoleUpgradeRequest.find(params[:id])
@@ -71,11 +103,6 @@ class AdminController < ApplicationController
   end
 
   def entity_matcher
-  end
-
-  def tracker
-    expires_in 20.minutes, public: false
-    render file: Rails.root.join('data/tracker/index.html'), layout: false
   end
 
   def object_space_dump

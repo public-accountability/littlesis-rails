@@ -6,12 +6,15 @@ class DeleteUserJob < ApplicationJob
   end
 
   def self.has_job_scheduled?(user_id)
-    TypeCheck.check user_id, Integer
+    scheduled_job(user_id).length > 0
+  end
 
+  def self.scheduled_job(user_id)
+    TypeCheck.check user_id, Integer
     ApplicationRecord.connection.exec_query(
-      "SELECT serialized_params->'arguments'->0 from good_jobs WHERE serialized_params->>'job_class' = 'DeleteUserJob' and (serialized_params->'arguments'->0)::integer = $1",
-      "CheckScheduledDeleteUserJob",
+      "SELECT * from good_jobs WHERE serialized_params->>'job_class' = 'DeleteUserJob' and (serialized_params->'arguments'->0)::integer = $1 ORDER BY created_at DESC LIMIT 1",
+      "FindScheduledDeleteUserJobs",
       [user_id]
-    ).first.present?
+    )
   end
 end

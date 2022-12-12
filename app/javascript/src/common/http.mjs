@@ -1,4 +1,4 @@
-import { isString, isPlainObject, merge, identity } from "lodash-es"
+import { isString, isPlainObject, merge } from "lodash-es"
 
 class RequestFailureError extends Error {
   constructor(status) {
@@ -48,8 +48,8 @@ export function get(url, params) {
     .then(response => response.json())
 }
 
-export function postFetch(url, data, options = {}) {
-  if (!isPlainObject(data)) {
+export function postFetch(url, data, options) {
+  if (data && !isPlainObject(data)) {
     throw "Post called with invalid data"
   }
 
@@ -58,7 +58,7 @@ export function postFetch(url, data, options = {}) {
   const headers = merge({}, jsonHeaders, { "X-CSRF-Token": token })
 
   return fetch(url, {
-    method: options.patch ? "PATCH" : "POST",
+    method: options?.patch ? "PATCH" : "POST",
     credentials: "same-origin",
     headers: headers,
     body: body,
@@ -66,8 +66,8 @@ export function postFetch(url, data, options = {}) {
 }
 
 // String, Object, Options --> Promise<Json>
-export function post(url, data, options = {}) {
-  postFetch(url, data, options)
+export function post(url, data, options) {
+  return postFetch(url, data, options)
     .then(validateResponse)
     .then(response => response.json())
 }
