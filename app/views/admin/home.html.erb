@@ -6,22 +6,23 @@
   </div>
 </div>
 
-<div class="row mb-">
+<div class="row">
   <div class="col">
-    <div id="admin-links">
-      <%= link_to 'Dashboard Bulletins', dashboard_bulletins_path %><br />
-      <%= link_to 'Set User Permissions', admin_users_path %><br />
-      <%= link_to 'View Maps', admin_maps_path %><br />
-      <%= link_to 'Configure Tags', admin_tags_path %><br />
-      <%= link_to 'Active User Statistics', admin_stats_path %><br />
-      <%= link_to 'Permission Passes', permission_passes_path %><br />
-      <%= link_to 'Edit Site Pages', pages_path %><br />
-      <%= link_to 'Edit Help Pages', help_pages_path %><br />
+    <div id="admin-links" class="d-flex flex-column">
+      <%= link_to 'Dashboard Bulletins', dashboard_bulletins_path %>
+      <%= link_to 'Users', admin_users_path %>
+      <%= link_to 'Maps', admin_maps_path %>
+      <%= link_to 'Tags', admin_tags_path %>
+      <%= link_to 'Active Users', admin_stats_path %>
+      <%= link_to 'Permission Passes', permission_passes_path %>
+      <%= link_to 'Site Pages', pages_path %>
+      <%= link_to 'Help Pages', help_pages_path %>
+      <%= link_to 'Background Jobs', "/admin/good_job" %>
     </div>
   </div>
 </div>
 
-<div class="row admin-table-row">
+<div class="row mt-2 admin-table-row">
   <div class="col">
     <h2>Modification Requests</h2>
     <%= datagrid_table(@requests, html: { class: 'table table-responsive-lg table-sm' }) %>
@@ -47,8 +48,8 @@
 
 
 <div class="row mt-4">
-  <div class="col-12 col-sm-6">
-    <h4>Send a test email</h4>
+  <div class="col-12 col-sm-6 p-2 rounded bg-light">
+    <h2>Send a test email</h2>
 
     <%=  form_with url: '/admin/test_email' do |form| %>
       <div class="mb-3">
