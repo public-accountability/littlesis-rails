@@ -76,8 +76,10 @@ LittleSis::Application.routes.draw do
     post '/test_email', action: :test_email
     get '/users', action: :users
     post '/users/:userid/set_role', action: :set_role, constraints: { userid: /[0-9]+/ }
+    post '/users/:userid/resend_confirmation_email', action: :resend_confirmation_email, constraints: { userid: /[0-9]+/ }
+    post '/users/:userid/reset_password', action: :reset_password, constraints: { userid: /[0-9]+/ }
+    post '/users/:userid/delete_user', action: :delete_user, constraints: { userid: /[0-9]+/ }
     get '/entity_matcher', action: :entity_matcher
-    get '/tracker', action: :tracker
     get '/object_space_dump', action: :object_space_dump
     get '/role_upgrade_requests/:id', action: :role_upgrade_request, constraints: { id: /[0-9]+/ }, as: :role_upgrade_request
     patch '/role_upgrade_requests/:id', action: :update_role_upgrade_request, constraints: { id: /[0-9]+/ }

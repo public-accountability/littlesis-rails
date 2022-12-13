@@ -44,7 +44,6 @@ Rails.application.configure do
 
   # save mail in tmp/mail
   config.action_mailer.file_settings = { location: Rails.root.join('tmp/mail') }
-
   config.active_storage.service = :local
 
   # Uncomment if you wish to allow Action Cable access from any origin.
@@ -55,7 +54,7 @@ Rails.application.configure do
   config.web_console.allowed_ips = ['172.0.0.0/8']
   config.web_console.whiny_requests = false
 
-   config.good_job.execution_mode = :external
-   # config.good_job.enable_cron = true
-   # config.good_job.max_threads = 1
+  config.good_job.execution_mode = :external
+  # config.good_job.enable_cron = true
+  # config.good_job.max_threads = 1
 end

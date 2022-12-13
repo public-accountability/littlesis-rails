@@ -10,6 +10,9 @@ application.register("add-relationship", AddRelationshipController)
 import AdminMapsController from "./admin_maps_controller"
 application.register("admin-maps", AdminMapsController)
 
+import AdminUserActionsController from "./admin_user_actions_controller"
+application.register("admin-user-actions", AdminUserActionsController)
+
 import CarouselController from "./carousel_controller"
 application.register("carousel", CarouselController)
 
