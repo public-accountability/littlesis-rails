@@ -1,28 +1,37 @@
 <!DOCTYPE html>
+<!-- This file lives in public/500.html -->
 <html>
   <head>
     <title>We're sorry, but something went wrong (500)</title>
-    <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-      crossorigin="anonymous">
-    
   </head>
 
-  <body>
-    <!-- This file lives in public/500.html -->
-    <div class="container">
-      <div class="row text-center">
-	<h1 class="text-danger">Sorry! Something went wrong.</h1>
-	<img src="https://s3.amazonaws.com/pai-littlesis/images/system/not_found.jpg" />
-      </div>
+  <style>
 
-      <div class="row text-center" style="margin-bottom: 2em;">
-	<div class="col-sm-8 col-sm-offset-2">
-	  <p>Bugs and errors happen from time to time. If you have a moment <a href="/bug_report">click here to fill out a bug report</a>, which will help our tech team improve the site.</p>
-	</div>
+   body {
+     margin: 0 auto;
+   }
+
+   h1 {
+     color: #CC5454;
+   }
+
+   .container {
+     margin: auto;
+     width: 800px;
+     text-align: center;
+     font-family: Arial, "Liberation Sans", sans-serif;
+   }
+
+  </style>
+
+  <body>
+
+    <div class="container">
+      <h1>Sorry! Something went wrong.</h1>
+      <div>
+        <img src="https://littlesis.org/static/images/system/not_found.jpg" />
       </div>
+      <p>Bugs and errors happen from time to time. If you have a moment <a href="/bug_report">click here to fill out a bug report</a>, which will help our tech team improve the site.</p>
     </div>
   </body>
 </html>

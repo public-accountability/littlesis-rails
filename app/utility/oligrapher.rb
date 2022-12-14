@@ -67,7 +67,9 @@ module Oligrapher
         embed: embed,
         logoUrl: ActionController::Base.helpers.asset_path('lilsis-logo-trans-200.png'),
         url: Rails.application.routes.url_helpers.oligrapher_url(map),
-        logActions: Rails.env.development?
+        logActions: Rails.env.development?,
+        noEditing: !is_editor,
+        startInEditMode: is_editor && !map.persisted?
       },
       attributes: {
         id: map.id,
