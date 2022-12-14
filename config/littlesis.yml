@@ -43,7 +43,7 @@ development:
   opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
   powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
-  oligrapher_beta: dev
+  oligrapher_commit: dev
   donation_banner_display: some
 
 production:
