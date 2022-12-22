@@ -21,6 +21,12 @@
                            class: "category-select-button btn btn-light border") %>
           <% end  %>
         </div>
+
+        <div class="d-flex justify-content-center mt-1">
+          <%= link_to add_relationship_new_entities_path(entity1_id: @entity2.id, entity2_id: @entity1.id), data: { "turbo-frame" => "add-relationship-page" } do %>
+            <i title="Reverse relationship order" class="bi bi-shuffle cursor-pointer"></i>
+          <% end  %>
+        </div>
       </div>
 
       <div class="col-auto col-md-6 ms-4">
