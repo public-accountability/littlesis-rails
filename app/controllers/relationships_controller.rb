@@ -198,6 +198,7 @@ class RelationshipsController < ApplicationController
   end
 
   # whitelists relationship params and associated nested attributes if the relationship category requires them
+  # @return [Hash]
   def relationship_params
     unless (category_id = @relationship&.category_id)
       begin
@@ -207,18 +208,23 @@ class RelationshipsController < ApplicationController
       end
     end
 
-    prepare_params params.require(:relationship).permit(*PERMITTED_RELATIONSHIP_PARAMS[category_id])
-  end
+    r_params = ParametersHelper.prepare_params(
+      params.require(:relationship).permit(*PERMITTED_RELATIONSHIP_PARAMS[category_id])
+    )
 
-  def parameter_processor(p)
-    if p.dig('position_attributes', 'is_board')
-      p['position_attributes']['is_board'] = cast_to_boolean(p.dig('position_attributes', 'is_board'))
+    if r_params.key?('position_attributes')
+      if r_params['position_attributes'].key?('is_board')
+        r_params['position_attributes']['is_board'] = ParametersHelper.cast_to_boolean(r_params.dig('position_attributes', 'is_board'))
+      end
+
+      if r_params['position_attributes'].key?('compensation')
+        r_params['position_attributes']['compensation'] = ParametersHelper.money_to_int(r_params.dig('position_attributes', 'compensation'))
+      end
     end
 
-    if p.dig('position_attributes', 'compensation')
-      p['position_attributes']['compensation'] = money_to_int(p.dig('position_attributes', 'compensation'))
-    end
-    p
+    r_params['last_user_id'] = current_user.id
+
+    r_params
   end
 
   def similar_relationships_params

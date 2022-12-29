@@ -141,6 +141,8 @@ module Utility
     h.transform_values do |val|
       if val.blank? && val != false
         nil
+      elsif val.is_a?(Hash)
+        nilify_blank_vals(val)
       else
         val
       end
