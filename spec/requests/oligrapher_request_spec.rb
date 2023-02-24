@@ -540,4 +540,23 @@ describe "Oligrapher", type: :request do
       expect(json['edges'].map { |e| e['id'] }.sort).to eq [rel1.id, rel2.id].map(&:to_s).sort
     end
   end
+
+  describe 'admin_destroy' do
+    let(:user) { create_basic_user }
+    let(:admin) { create_admin_user }
+    let(:network_map) { create(:network_map_version3, user_id: user.id) }
+
+    specify do
+      login_as(admin, scope: :user)
+      expect { delete admin_destroy_oligrapher_path(network_map) }
+        .to change { network_map.reload.is_deleted }
+              .from(false).to(true)
+    end
+
+    specify do
+      login_as(user, scope: :user)
+      expect { delete admin_destroy_oligrapher_path(network_map) }
+        .not_to change { network_map.reload.is_deleted }
+    end
+  end
 end

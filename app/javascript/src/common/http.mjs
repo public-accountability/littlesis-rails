@@ -57,8 +57,16 @@ export function postFetch(url, data, options) {
   const token = document.head.querySelector('meta[name="csrf-token"]')?.content
   const headers = merge({}, jsonHeaders, { "X-CSRF-Token": token })
 
+  let method = "POST"
+
+  if (options?.patch) {
+    method = "PATCH"
+  } else if (options?.delete) {
+    method = "DELETE"
+  }
+
   return fetch(url, {
-    method: options?.patch ? "PATCH" : "POST",
+    method: method,
     credentials: "same-origin",
     headers: headers,
     body: body,

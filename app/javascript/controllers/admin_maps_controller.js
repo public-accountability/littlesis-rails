@@ -41,6 +41,19 @@ const columns = [
       }
     },
   },
+  {
+    data: "id",
+    searchable: false,
+    sortable: false,
+    render: function (data, type, row, meta) {
+      if (type === "display") {
+        let iconClass = "pe-none bi bi-trash"
+        return `<button type="button" class="btn btn-light btn-sm" data-oligrapherid="${row.id}" data-action="click->admin-maps#soft_delete"><span class="${iconClass}"></span></button>`
+      } else {
+        return data
+      }
+    },
+  },
 ]
 
 export default class extends Controller {
@@ -63,6 +76,22 @@ export default class extends Controller {
       })
     } catch (err) {
       console.error(err)
+    }
+  }
+
+  soft_delete(event) {
+    if (window.confirm("Are you sure?")) {
+      try {
+        const id = event.target.dataset.oligrapherid
+        const url = `/oligrapher/${id}/admin_destroy`
+
+        post(url, {}, { delete: true }).then(() => {
+          $(this.element).DataTable().row($(event.target).parents("tr")).remove().draw()
+        })
+      } catch (err) {
+        alert("Error: failed to delete this map")
+        console.error(err)
+      }
     }
   }
 }
