@@ -26,13 +26,16 @@ You can install the program with a symlink: `sudo ln -s (readlink -f bin/littles
 
 8) Run the tests: `littlesis test`
 
-9) Create manticore indexes: `littlesis rake ts:rebuild`
+9) Create manticore indexes: `littlesis rake ts:index`
 
 This may take a while.
 
 10) Visit port `8080` for Puma and `8081` for nginx
 
 The configurations for nginx and postgres are located the folder config/docker
+
+11) Setup development users: `littlesis script create_development_users.rb`
+
 
 ### LittleSis commands
 

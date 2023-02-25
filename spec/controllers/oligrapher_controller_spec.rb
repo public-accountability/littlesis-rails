@@ -48,6 +48,11 @@ describe OligrapherController, type: :controller do
   end
 
   it do
+    is_expected.to route(:delete, '/oligrapher/789/admin_destroy').to(action: :admin_destroy, id: '789')
+  end
+
+
+  it do
     is_expected.to route(:post, '/oligrapher/789-abc/confirm_editor').to(action: :confirm_editor, id: '789-abc')
   end
 

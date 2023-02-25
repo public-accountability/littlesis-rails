@@ -7,8 +7,8 @@ class OligrapherController < ApplicationController
   before_action :set_cors_header, only: SEARCH_API_ACTIONS
   before_action :authenticate_user!, only: AUTHENITICATED_ACTIONS
   before_action :block_restricted_user_access, only: AUTHENITICATED_ACTIONS
-  before_action :admins_only, only: %i[featured all].freeze
-  before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot featured].freeze
+  before_action :admins_only, only: %i[featured all admin_destroy].freeze
+  before_action :set_map, only: %i[update editors confirm_editor show lock release_lock clone destroy embedded screenshot featured admin_destroy].freeze
   before_action :check_owner, only: %i[editors destroy].freeze
   before_action :enforce_slug, only: %i[show].freeze
 
@@ -299,6 +299,12 @@ class OligrapherController < ApplicationController
                                 .order(id: :desc)
                                 .all
                                 .map { |m| m.attributes.merge!("url" => m.url) } }
+  end
+
+  def admin_destroy
+    @map.soft_delete
+    status = @map.is_deleted ? :ok : :bad_request
+    render json: { id: @map.id, status: status.to_s.upcase }, status: status
   end
 
   private

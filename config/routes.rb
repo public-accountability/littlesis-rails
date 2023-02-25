@@ -231,6 +231,7 @@ LittleSis::Application.routes.draw do
       post 'release_lock'
       post 'clone'
       get 'embedded'
+      delete 'admin_destroy', action: :admin_destroy
     end
   end
 
