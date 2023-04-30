@@ -76,7 +76,7 @@ class EntitiesController < ApplicationController
     end
 
     if @entity.persisted?
-      if request.format.json?
+      if request.format.json? || chrome_extension_request?
         render json: json_success_response
       elsif turbo_frame_request?
         render partial: 'new_entity_result'
@@ -84,7 +84,7 @@ class EntitiesController < ApplicationController
         redirect_to concretize_edit_entity_path(@entity)
       end
     else
-      if request.format.json?
+      if request.format.json? || chrome_extension_request?
         render json: { status: 'ERROR', errors: @entity.errors.messages }
       elsif turbo_frame_request?
         render partial: 'new_entity_form', locals: { entity: @entity }
