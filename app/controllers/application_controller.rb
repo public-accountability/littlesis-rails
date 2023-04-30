@@ -134,6 +134,10 @@ class ApplicationController < ActionController::Base
     request.headers['Littlesis-Request-Type']
   end
 
+  def chrome_extension_request?
+    request.headers['origin'] == "chrome://" + Rails.application.config.littlesis[:chrome_extension_id]
+  end
+
   def redirect_to_dashboard
     redirect_to home_dashboard_path
   end

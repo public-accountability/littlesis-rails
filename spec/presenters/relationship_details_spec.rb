@@ -124,7 +124,7 @@ describe RelationshipDetails do
     rel = build(:relationship, category_id: 10, description1: 'owner')
     rel.ownership = build(:ownership, percent_stake: 20, shares: 1500)
     expect(RelationshipDetails.new(rel).details)
-      .to eql [['Title', 'owner'], ['Percent Stake', '20%'], ['Shares', '1.5K']]
+      .to eql [['Title', 'owner'], ['Percent Stake', '20%'], ['Shares', '1.5 Thousand']]
   end
 
   it 'returns details for hierarchy relationship' do
