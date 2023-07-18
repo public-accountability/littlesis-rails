@@ -4,21 +4,21 @@ Our development setup is docker-based. You'll need ruby, docker, & docker-compos
 
 To see the script's features run: `bin/littlesis help`
 
-You can install the program with a symlink: `sudo ln -s (readlink -f bin/littlesis) /usr/local/bin/littlesis`
+You can install the program with a symlink: `ln -s (readlink -f bin/littlesis) ~/.local/bin/littlesis`
 
 ### Installation Steps
 
 1) Clone this repo: `git clone https://github.com/public-accountability/littlesis-rails`
 
-2) Build the docker image: `littlesis build`
+2) Create folders: `littlesis setup-folders`
 
-3) Start the docker containers: `littlesis up`
+3) Build the docker image: `littlesis build`
 
-4) Create folders: `littlesis setup-folders`
+4) Start the docker containers: `littlesis up`
 
-5) If desired, load a copy of the database.
+5) Setup database: `littlesis rake db:schema:load` && `littlesis rake db:seed`
 
-   You can utilize the littlesis psql shortcuts, for example: `zcat littlesis.sql.gz | littlesis psql`
+   Alternatively, load a copy of the database: `zcat littlesis.sql.gz | littlesis psql`
 
 6) Compile dev and test assets: `littlesis rake assets:precompile` && `littlesis --test rake assets:precompile`
 
