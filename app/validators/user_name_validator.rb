@@ -3,7 +3,7 @@
 # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity
 
 # Restrictions for usernames
-#   - minimun of 3 characters
+#   - minimum of 3 characters
 #   - cannot start with a number
 #   - contains only letters, numbers, underscores
 class UserNameValidator < ActiveModel::EachValidator

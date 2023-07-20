@@ -72,7 +72,7 @@ module ParametersHelper
     parameter_processor(p)
   end
 
-  # override this method in controllers to futher modify the request paramters
+  # override this method in controllers to further modify the request parameters
   def parameter_processor(hash)
     hash
   end

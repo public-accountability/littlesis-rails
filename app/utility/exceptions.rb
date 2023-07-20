@@ -32,7 +32,7 @@ module Exceptions
 
   class UnauthorizedBulkRequest < LittleSisError
     def message
-      "User lacks priveleges to submit bulk request of this size"
+      "User lacks privileges to submit bulk request of this size"
     end
   end
 
@@ -75,7 +75,7 @@ module Exceptions
 
   class MissingCategoryIdParamError < LittleSisError
     def message
-      'missing required paramater: "category_id"'
+      'missing required parameter: "category_id"'
     end
 
     def error_hash

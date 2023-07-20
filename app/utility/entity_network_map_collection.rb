@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
-# This stores sets of NetworkMap ids
-# in the Rails Cache (redis), so they can
-# be easily retrieved to display on an entity's
-# profile page.
-#
+# This stores sets of NetworkMap ids in the Rails Cache (redis), so
+# they can be easily retrieved to display on an entity's profile page.
 #
 class EntityNetworkMapCollection
   attr_accessor :maps
@@ -19,7 +16,7 @@ class EntityNetworkMapCollection
     @maps = cache_exists? ? cache_read : Set.new
   end
 
-  # retrives NetworkMaps from database
+  # retrieves NetworkMaps from database
   def records(limit: 15)
     NetworkMap
       .where(id: @maps, is_private: false)

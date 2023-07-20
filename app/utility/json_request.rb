@@ -72,7 +72,7 @@ class JSONRequest
     end
   end
 
-  # Creates a new http reuqest
+  # Creates a new http request
   # @param uri [URI]
   # @param method [Symbol]
   # @return Net::HTTPRequest

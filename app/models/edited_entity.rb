@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# This class represented an edit to an entity. You can think of it as
-# a view of the `Versions` table. When a version is created it automatically
-# creates a new edited entity class
+# This class represents an edit to an entity. You can think of it as a
+# view of the `Versions` table. When a version is created it
+# automatically creates a new edited entity class
 #
 # In some ways this class is similar to Link. It's not intended to be updated directly,
 # and there's no harm in deleting the entire table and running `EditedEntity.populate_table`
@@ -40,7 +40,7 @@ class EditedEntity < ApplicationRecord
   end
 
   # Creates new EditedEntities from a PaperTrail::Version
-  # If the verison is for a relationship, two EditedEntities might be created.
+  # If the version is for a relationship, two EditedEntities might be created.
   def self.create_from_version(version)
     return unless version.entity_edit?
 

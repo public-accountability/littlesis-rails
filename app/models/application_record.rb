@@ -6,7 +6,7 @@ class ApplicationRecord < ActiveRecord::Base
 
   # This works just like `attribute=` except that
   # it will not assign the value if the attribute
-  # already has a non-balnk value.  This is useful
+  # already has a non-blank value.  This is useful
   # to update models without overwriting existing data.
   #
   # @param attribute [String, Symbol] attribute name
@@ -27,9 +27,9 @@ class ApplicationRecord < ActiveRecord::Base
     end
   end
 
-  # This method updates the timestampes AND the last_user_id field
+  # This method updates the timestamps AND the last_user_id field
   # If the model does not have the field 'last_user_id'
-  # it will delgate to `touch` without raising an error.
+  # it will delegate to `touch` without raising an error.
   def touch_by(user_or_id)
     new_last_user_id = User.derive_last_user_id_from(user_or_id, allow_invalid: true)
     if has_attribute?(:last_user_id) && (last_user_id != new_last_user_id)
@@ -56,7 +56,7 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   # Takes an array of ids and generates a lookup hash where the
-  # ActiveReocrd id is the key and the value is the ActiveRecord object.
+  # ActiveRecord id is the key and the value is the ActiveRecord object.
   # If ignore is set to true,  `where` is used instead of `find`, suppressing
   # the RecordNotFound error.
   # @param ids [Array<Integer>] models database ids

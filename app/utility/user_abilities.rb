@@ -6,10 +6,10 @@
 #
 # There are currently 7 abilities (plus admin)
 #
-#    edit -> basic editing opertions. All users have this by default
+#    edit -> basic editing operations. All users have this by default
 #    delete -> ability to delete entities, relationships, and lists
 #    merge -> ability to merge entities together
-#    bulk -> ability to bulk add unlmited entities, relationships, and lists
+#    bulk -> ability to bulk add unlimited entities, relationships, and lists
 #    match -> ability to use the match donors tools
 #    list  -> ability to add/remove entities from open lists
 #    upload -> ability to upload documents
