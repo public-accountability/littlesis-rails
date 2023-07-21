@@ -11,12 +11,11 @@ This repository [littlesis-rails](https://github.com/public-accountability/littl
 
 ## Project history & software
 
-Matthew Skomarovsky co-founded LittleSis and was the initial developer behind the project. LittleSis started in 2009 as a [PHP application](https://github.com/littlesis-org/littlesis). The port to Ruby on Rails began in 2013 and finished in 2017.
+Matthew Skomarovsky co-founded LittleSis and was the lead developer behind the project, with help from co-founder Kevin Connor. LittleSis started in 2009 as a [PHP application](https://github.com/littlesis-org/littlesis). The port to Ruby on Rails began in 2013 and finished in 2017.
 
 Ziggy ([@aepyornis](https://github.com/aepyornis)) joined in 2016 and currently maintains the project.
 
-Along the way, Austin ([@aguestuser](https://github.com/aguestuser)) worked on on oligrapher and the rails codebase. Liz ([@lizstarin](https://github.com/lizstarin)) helped port PHP code to rails and
-developed the chrome extension. Pea ([@misfist](https://github.com/misfist)) coded our wordpress sites. Since 2020, Rob [@robjlucas](https://github.com/robjlucas) has contributed to the rails application.
+Along the way, Eddie ([@eddietejeda](https://github.com/eddietejeda)) helped with some of the first data import scripts. Austin ([@aguestuser](https://github.com/aguestuser)) worked on on oligrapher and the rails codebase. Liz ([@lizstarin](https://github.com/lizstarin)) helped port PHP code to rails and developed the chrome extension. Pea ([@misfist](https://github.com/misfist)) coded our wordpress sites. Since 2020, Rob [@robjlucas](https://github.com/robjlucas) has contributed to the rails application.
 
 
 
