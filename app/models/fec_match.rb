@@ -4,7 +4,7 @@
 # a donor (Person), committee (Org), and candidate (Person).
 #
 # This can be created with only two associations: an FECContribution and Entity (donor),
-# in which it will use the FEC data to find existing LittleSis enities for the comittee and candidate,
+# in which it will use the FEC data to find existing LittleSis entities for the committee and candidate,
 # and will create those if none are found.
 class FECMatch < ApplicationRecord
   # FEC transaction record

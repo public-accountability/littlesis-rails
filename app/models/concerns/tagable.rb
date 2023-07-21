@@ -106,7 +106,7 @@ module Tagable
 
   private
 
-  # NOTE: does NOT allow string-intergers as ids .ie. '1'
+  # NOTE: does NOT allow string-integers as ids .ie. '1'
   def parse_tag_id!(name_or_id)
     return if name_or_id == 0
 

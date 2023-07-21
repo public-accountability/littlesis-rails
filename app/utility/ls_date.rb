@@ -91,7 +91,7 @@ class LsDate # rubocop:disable Metrics/ClassLength
 
   # returns <Date> instance
   # Raises error unless date has a valid month and day
-  # return nil if specifiy is unknown
+  # return nil if specificity is unknown
   def to_date
     return nil if sp_unknown?
 
@@ -125,7 +125,7 @@ class LsDate # rubocop:disable Metrics/ClassLength
     new transform_date(str)
   end
 
-  # like transform_date, but it surpresses invalid date strings and returns the input unchanged.
+  # like transform_date, but it suppresses invalid date strings and returns the input unchanged.
   def self.convert(date)
     transform_date(date)
   rescue InvalidLsDateError
@@ -141,8 +141,8 @@ class LsDate # rubocop:disable Metrics/ClassLength
   #
   #   + Any format accepted by DateTime.parse
   #
-  # Nil and empty strings and retuned as nil.
-  # Rasies InvalidLsDateError if it cannot be transformed
+  # Nil and empty strings and returned as nil.
+  # Raises InvalidLsDateError if it cannot be transformed
   def self.transform_date(date)
     TypeCheck.check date, String, allow_nil: true
     return nil if date.blank?

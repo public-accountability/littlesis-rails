@@ -15,7 +15,7 @@ $database = {
 
 $rails_env = ENV.fetch('RAILS_ENV', 'development')
 
-$littlesis_systemd_services = %w[nginx.service redis-server.service redis-server.service littlesis.socket littlesis.service littlesis-goodjob.service littlesis-manticore.service littlesis-backup.service].freeze
+$littlesis_systemd_services = %w[nginx.service redis-server.service littlesis.socket littlesis.service littlesis-goodjob.service littlesis-manticore.service].freeze
 $littlesis_docker_services = %w[app postgres redis nginx esbuild manticore jsserver].freeze
 
 $env_vars = {}
@@ -38,7 +38,7 @@ Commands
            data             external data ETL tools
            fec              FEC data ETL tools
            sec              SEC data ETL tools
-           edit             select file to open with $EDITDOR
+           edit             select file to open with $EDITOR
            runner           run bin/rails runner <file>
            script           execute named script in lib/scripts/
            esbuild          bundle javascript
@@ -142,6 +142,8 @@ def status
 
   if production_environment?
     $littlesis_systemd_services.each { |s| systemd_service_check(s) }
+    backup_status = system("systemctl show littlesis-backup.service | grep -q -G '^Result=success'") ? '✓' : 'X'
+    puts "[#{backup_status}] littlesis-backup.service"
   else
     running_services = `docker compose ps --services --filter status=running`.split("\n")
 
@@ -225,7 +227,7 @@ when 'docker', 'docker_compose', 'docker-compose'
 when 'up'
   exec "docker compose --profile development up -d"
 when 'down'
-  exec "docker compose down"
+  exec "docker compose --profile development down"
 when 'delete'
   exit 1 if production_environment?
 

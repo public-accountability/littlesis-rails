@@ -17,6 +17,7 @@ jobs:
 
     steps:
       - checkout
+      - run: rbenv install
       - run: bin/littlesis setup-folders
       - run: bin/littlesis build
       - run: bin/littlesis up

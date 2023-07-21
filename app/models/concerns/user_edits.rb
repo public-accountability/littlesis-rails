@@ -7,7 +7,7 @@
 #   - active_user
 #   - uniq_active_users
 #
-# A class +Edits+ for retriving a list of edits
+# A class +Edits+ for retrieving a list of edits
 # done by the user
 module UserEdits
   ACTIVE_USERS_PER_PAGE = 15

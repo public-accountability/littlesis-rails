@@ -54,7 +54,7 @@ module NetworkAnalysis
     PARAMS_BY_QUERY["#{query}_#{ext.downcase}".to_sym]
   end
 
-  # Queries for 2nd degree connected entities based on provided critieria.
+  # Queries for 2nd degree connected entities based on provided criteria.
   # Returns an array of Hashes with three keys: connected_entity, connecting_entities, stat
   #
   # Takes five arguments

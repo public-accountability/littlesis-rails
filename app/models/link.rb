@@ -31,7 +31,7 @@ class Link < ApplicationRecord
     end
   end
 
-  # Modfies link attributes for the network hash
+  # Modifies link attributes for the network hash
   # Corrects the entity 1 & 2 positions for reverse links and
   # set ids eq relationship_id
   TRANSFORM_LINK_INTO_NETWORK_HASH = proc do |h|
@@ -42,7 +42,7 @@ class Link < ApplicationRecord
     h
   end
 
-  # Retrives first and second degree relationships
+  # Retrieves first and second degree relationships
   #
   # Relationships are returned as a simple hash instead of your regular
   # ActiveRecord object to save on memory as we may have a lot of records here.

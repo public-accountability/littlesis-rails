@@ -8,9 +8,8 @@
 
 # In relationship.rb, the association is setup like such:
 #    has_one :trans, class_name: "Transaction"
-# which mostly solves the problem. However, because sometimes
-# relationship association models are constantized
-# from strings, it is helpful to be able to use `Trans` to
-# referer to a Transaction
+# which mostly solves the problem. However, because relationship
+# association models are sometimes constantized from strings, it is
+# helpful to be able to use `Trans` to refer to a Transaction
 
 Trans = Transaction

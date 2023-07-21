@@ -178,7 +178,7 @@ module EntityExtensions
   end
 
   # Adds a new extension. Creates ExtensionRecord and extension model if required
-  # Call with the name of the extenion model or with the definition id
+  # Call with the name of the extension model or with the definition id
   # It will not create duplicates and is safe to run multiple times with with the same value
   # Example: Entity.find(123).add_extension('Business')
   def add_extension(name_or_id, fields = {})
@@ -211,12 +211,12 @@ module EntityExtensions
     self
   end
 
-  # Merges extensions attribues for already existing extensions
+  # Merges extensions attributes for already existing extensions
   # This will only merge fields that are nil -- it won't update already existing fields
   # Example:
   #   If school.attributes['tuition'] => 'nil'
   #   then merge_extension('school', { tuition' => 20_000 }) will change
-  #   the school tutition attribute to 20_000.
+  #   the school tuition attribute to 20_000.
   #   However if school.attributes['tuition'] => 5_000, merge_extension('school', { tuition' => 20_000 }) will do nothing
   #   and school.attributes['tuition']  will remain at 5_000
   def merge_extension(name_or_id, fields)

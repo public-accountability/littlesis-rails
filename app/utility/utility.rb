@@ -135,7 +135,7 @@ module Utility
     end
   end
 
-  # converts all values that resopnd .blank?
+  # converts all values that respond to .blank?
   # to nil, except for false
   def self.nilify_blank_vals(h)
     h.transform_values do |val|
