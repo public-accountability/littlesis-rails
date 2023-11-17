@@ -15,7 +15,7 @@ test:
 
 development:
   <<: *defaults
-  address: manticore
+  address: localhost
   mysql41: 9312
 
 production:
