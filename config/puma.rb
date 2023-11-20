@@ -1,8 +1,5 @@
 # Specifies the `environment` that Puma will run in.
-#
-rails_env = ENV.fetch("RAILS_ENV") { "development" }
-
-environment rails_env
+environment ENV.fetch("RAILS_ENV") { "development" }
 
 # Puma can serve each request in a thread from an internal thread pool.
 # The `threads` method setting takes two numbers: a minimum and maximum.
@@ -10,20 +7,12 @@ environment rails_env
 # the maximum value specified for Puma. Default is set to 5 threads for minimum
 # and maximum; this matches the default thread size of Active Record.
 #
-# threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
-threads_count = 5
+threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
 threads threads_count, threads_count
 
-if rails_env == 'production'
-  bind ENV.fetch('LITTLESIS_SOCKET') { "unix:///run/littlesis.sock" }
-  pidfile ENV.fetch('LITTLESIS_PIDFILE') { '/var/www/littlesis/tmp/puma.pid' }
-  state_path ENV.fetch('LITTLESIS_PUMA_STATE') { '/var/www/littlesis/tmp/puma.state' }
-else
-  # Defaults to 8080 on 127.0.0.1 in development. To serve on all interfaces set
-  # the environment variable LITTLESIS_BIND to "tcp://0.0.0.0:8080"
-  bind ENV.fetch('LITTLESIS_BIND') { "tcp://127.0.0.1:8080" }
-  pidfile ENV.fetch('LITTLESIS_PIDFILE') { 'tmp/puma.pid' }
-end
+bind ENV.fetch('LITTLESIS_BIND') { "unix:///run/littlesis.sock" }
+pidfile ENV.fetch('LITTLESIS_PIDFILE') { 'tmp/puma.pid' }
+state_path ENV.fetch('LITTLESIS_PUMA_STATE') { 'tmp/puma.state' }
 
 # Specifies the number of `workers` to boot in clustered mode.
 # Workers are forked webserver processes. If using threads and workers together

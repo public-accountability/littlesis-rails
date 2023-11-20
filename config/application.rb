@@ -18,6 +18,7 @@ module LittleSis
       r301     %r{/user/(.*)},                            '/users/$1'
     end
 
+
     Rails.application.default_url_options = {
       host: config.littlesis.fetch(:host, 'littlesis.org'),
       protocol: config.littlesis.fetch(:protocol, 'https')
