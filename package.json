@@ -21,7 +21,7 @@
     "parsleyjs": "^2.9.2",
     "puppeteer": "^19",
     "select2": "^4.1.0-rc.0",
-    "sharp": "^0.31",
+    "sharp": "^0.32",
     "tinycarousel": "^2.1.8",
     "trix": "^1.3.1"
   },
