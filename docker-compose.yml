@@ -36,10 +36,10 @@ services:
       - "test.host:127.0.0.1"
 
   redis:
-    image: redis:6
+    image: docker.io/library/redis:6
 
   postgres:
-    image: postgres:14
+    image: docker.io/library/postgres:15
     command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
     shm_size: "2gb"
     volumes:
@@ -58,10 +58,9 @@ services:
       retries: 10
 
   nginx:
-    image: nginx:latest
+    image: docker.io/library/nginx:latest
     ports:
       - "127.0.0.1:8081:80"
-      - "127.0.0.1:9000:9000"
     volumes:
       - ./:/littlesis
       - ./config/docker/nginx.conf:/etc/nginx/nginx.conf

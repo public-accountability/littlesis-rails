@@ -1,116 +1,96 @@
 ## Development
 
-Our development setup is docker-based. You'll need ruby, docker, & docker-compose installed and located in your path. `bin/littlesis` is a helper program that will let you easily interact with the docker containers to do common development tasks such as starting the rails console, running tests, viewing logs, etc without having to remember esoteric docker & bash commands. `bin/littlesis` can also used for production.
+LittleSis is developed using docker or podman.
 
-To see the script's features run: `bin/littlesis help`
+Clone this repo: `git clone https://github.com/public-accountability/littlesis-rails`
 
-You can install the program with a symlink: `ln -s (readlink -f bin/littlesis) ~/.local/bin/littlesis`
+Build the image: `podman build -t littlesis:latest --env RAILS_ENV=development .`
 
-### Installation Steps
+Create folders: `mkdir -p tmp data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher`
 
-1) Clone this repo: `git clone https://github.com/public-accountability/littlesis-rails`
+Start the docker containers: `podman-compose up -d`
 
-2) Create folders: `littlesis setup-folders`
+To run a command in the main app use `podman-compose exec app <CMD>` . For instance, to view all available rake tasks use `podman-compose exec bin/rake --tasks`. If this becomes tiresome, you might create some aliases like `abbr --add littlesis-rails 'podman-compose exec app bin/rails'`.
 
-3) Build the docker image: `littlesis build`
+Setup the database: `podman-compose exec app bin/rails db:schema:load` && `podman-compose exec app bin/rails db:seed`
 
-4) Start the docker containers: `littlesis up`
+Alternatively, load a copy of the database: `zcat littlesis.sql.gz | psql postgresql://littlesis:themanbehindthemanbehindthethrone/littlesis`
 
-5) Setup database: `littlesis rake db:schema:load` && `littlesis rake db:seed`
+Compile dev and test assets:  `podman-compose exec app bin/rails assets:precompile` && `podman-compose exec -e RAILS_ENV=test app bin/rails assets:precompile`
 
-   Alternatively, load a copy of the database: `zcat littlesis.sql.gz | littlesis psql`
+Setup the test database: `podman-compose exec -e RAILS_ENV=test app bin/rails db:reset`
 
-6) Compile dev and test assets: `littlesis rake assets:precompile` && `littlesis --test rake assets:precompile`
+Run the tests: `podman-compose exec -e RAILS_ENV=test app bin/rspec`
 
-7) Setup the testing database: `littlesis --test rake db:reset`
+Create manticore indexes: `podman-compose exec bin/rake rake ts:index` This may take a while.
 
-8) Run the tests: `littlesis test`
+Setup development users: `podman-compose exec bin/script create_development_users.rb`
 
-9) Create manticore indexes: `littlesis rake ts:index`
-
-This may take a while.
-
-10) Visit port `8080` for Puma and `8081` for nginx
-
-The configurations for nginx and postgres are located the folder config/docker
-
-11) Setup development users: `littlesis script create_development_users.rb`
-
+Visit port `8080` for Puma and `8081` for nginx. The configurations for nginx and postgres are located the folder config/docker
 
 ### LittleSis commands
 
 ``` sh
-# Run docker commands
-littlesis docker pause
-littlesis docker unpause
-
-# View rails logs
-littlesis logs
-# Clear rails logs
-littlesis rake log:clear
-# Follow docker logs
-littlesis docker -- logs -f esbuild
-
 # Build javascript
-littlesis rake javascript:build
+bin/rake javascript:build
 
 # Download oligrapher assets
-littlesis script oligrapher_download_assets.rb "v4.0.1"
+bin/script oligrapher_download_assets.rb "v4.0.1"
 
 # Compile assets
-littlesis rake assets:precompile
+bin/rake assets:precompile
 
 # Edit secret variables
-littlsis rails credentials:edit
+bin/rails credentials:edit
 
 # Thinking sphinx
-littlesis rake ts:configure
-littlesis rake ts:index
+bin/rake ts:configure
+bin/rake ts:index
 
 # Stats on new entities & relationships
-littlesis rake stats:year[2021]
+bin/rake stats:year[2021]
 
 # Unitedstates.io data
-littlesis rake legislators:import
-littlesis rake legislators:import_party_memberships
-littlesis rake legislators:import_relationships
+bin/rake legislators:import
+bin/rake legislators:import_party_memberships
+bin/rake legislators:import_relationships
 
 # External Data tools
-littlesis data list
-littlesis data download nycc
-littlesis data transform nycc
-littlesis data load nycc
-littlesis data report nycc
-littlesis fec -- --help
-littlesis sec -- --help
+bin/data list
+bin/data download nycc
+bin/data transform nycc
+bin/data load nycc
+bin/data report nycc
+bin/fec --help
+bin/sec -- --help
 
 # Update public data
-littlesis runner "PublicData.run"
+bin/rails runner "PublicData.run"
 
 # Update Network Map Collections
-littlesis rake maps:update_all_entity_map_collections
+bin/rake maps:update_all_entity_map_collections
 
 # Create users for testing
-littlesis script create_development_users.rb
-littlesis script create_example_user.rb
+bin/script create_development_users.rb
+bin/script create_example_user.rb
 
 # Rails console
-littlesis console
+bin/rails console
 
 # Send reset password instructions
-littlesis runner "User.find_by(email: <EMAIL>).send_reset_password_instructions"
+bin/rails runner "User.find_by(email: <EMAIL>).send_reset_password_instructions"
 ```
 
-### bin/littlesis in production
+### frequent production commands
 
 ``` sh
-littlesis git fetch origin
-littlesis git -- switch --detach COMMIT
-littlesis bundle install
-littlesis npm ci
-littlesis rake javascript:build
-littlesis rake assets:precompile
-littlesis script download_oligrapher_assets.rb TAG
+cd /littlesis
+git fetch origin
+git switch --detach COMMIT
+bin/bundle install
+npm ci
+bin/rake javascript:build
+bin/rake assets:precompile
+bin/script download_oligrapher_assets.rb TAG
 systemctl restart littlesis.service littlesis-goodjob.service
-littlesis status
 ```

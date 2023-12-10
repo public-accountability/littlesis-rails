@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+exec (
+       [
+         File.join(__dir__, 'rails'),
+         "runner",
+         File.expand_path(File.join(__dir__, "../lib/scripts/sec"))
+       ] + ARGV
+     ).join(' ')
