@@ -1,23 +1,29 @@
 defaults: &defaults
   # morphology: stem_en
   query_log_min_msec: 200
-  min_infix_len: 3
+  # min_infix_len: 3
+  min_prefix_len: 3
   min_word_len: 1
   charset_table: non_cjk
   html_strip: true
   mem_limit:  512M
+  skip_running_check: true
+  # wordforms: "/full/path/to/wordforms.txt"
+  # exceptions: "/full/path/to/exceptions.txt"
+  # stopwords: "/full/path/to/stopwords.txt"
 
 test:
   <<: *defaults
-  mysql41: 9307
-  mem_limit:  1024M
+  mem_limit:  24M
   batch_size: 10000
+  address: 127.0.0.1
+  mysql41: 9313
+  skip_running_check: false
 
 development:
   <<: *defaults
-  address: localhost
-  mysql41: 9312
+  address: manticore
 
 production:
   <<: *defaults
-  socket: "/var/www/littlesis/tmp/production.sphinx"
+  address: 127.0.0.1

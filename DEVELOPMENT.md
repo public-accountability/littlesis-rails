@@ -1,34 +1,62 @@
 ## Development
 
-LittleSis is developed using docker or podman.
+LittleSis is developed using docker
 
 Clone this repo: `git clone https://github.com/public-accountability/littlesis-rails`
 
-Build the image: `podman build -t littlesis:latest --env RAILS_ENV=development .`
+Build the image: `bin/build`
 
-Create folders: `mkdir -p tmp data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher`
+Build a smaller production image: `env RAILS_ENV=production bin/build`
 
-Start the docker containers: `podman-compose up -d`
+Install ruby gems and javascript packages
 
-To run a command in the main app use `podman-compose exec app <CMD>` . For instance, to view all available rake tasks use `podman-compose exec bin/rake --tasks`. If this becomes tiresome, you might create some aliases like `abbr --add littlesis-rails 'podman-compose exec app bin/rails'`.
+``` sh
+docker compose run --rm app bundle config --global path vendor/bundle
+docker compose run --rm app bundle install
+docker compose run --rm app npm install
+```
 
-Setup the database: `podman-compose exec app bin/rails db:schema:load` && `podman-compose exec app bin/rails db:seed`
+Start all the docker containers: `docker compose up -d`
 
-Alternatively, load a copy of the database: `zcat littlesis.sql.gz | psql postgresql://littlesis:themanbehindthemanbehindthethrone/littlesis`
+Start one of the docker containers: `docker compose up -d postgres`
 
-Compile dev and test assets:  `podman-compose exec app bin/rails assets:precompile` && `podman-compose exec -e RAILS_ENV=test app bin/rails assets:precompile`
+Run any command using the app container `docker compose exec app <CMD>`. For instance, to view all available rake tasks use `docker compose exec app bin/rake --tasks`.
 
-Setup the test database: `podman-compose exec -e RAILS_ENV=test app bin/rails db:reset`
+To run a command in database as administrator use `docker compose exec -u postgres postgres psql`
 
-Run the tests: `podman-compose exec -e RAILS_ENV=test app bin/rspec`
+Setup an app database user:
 
-Create manticore indexes: `podman-compose exec bin/rake rake ts:index` This may take a while.
+``` sh
+docker compose exec -u postgres postgres psql --command="CREATE ROLE littlesis WITH NOSUPERUSER CREATEDB LOGIN PASSWORD 'themanbehindthemanbehindthethrone'"
+```
 
-Setup development users: `podman-compose exec bin/script create_development_users.rb`
+You can also access the database on the host: `psql postgresql://littlesis:themanbehindthemanbehindthethrone@localhost:8090/littlesis`
+
+The folder data is mounted at /data inside the postgres container, which you can run any sql or pgdump files there, for instance: `docker compose exec -u postgres postgres pg_restore -d <DATABASE> /data/archive.pgdump`
+
+Setup the database:
+
+``` sh
+docker compose exec app bin/rails db:reset
+```
+
+The test database
+
+``` sh
+docker compose exec -e RAILS_ENV=test app bin/rails db:reset
+docker compose exec -e RAILS_ENV=test app bin/rails assets:precompile
+docker compose exec -e RAILS_ENV=test app bin/rails ts:configure
+```
+
+Compile assets:  `docker compose exec app bin/rails assets:precompile`
+
+Run the tests: `docker compose exec -e RAILS_ENV=test app bin/rspec`
+
+Create manticore indexes: `docker compose exec app bin/rails ts:rt:index` This may take a while.
+
+Setup development users: `docker compose exec app bin/script create_development_users.rb`
 
 Visit port `8080` for Puma and `8081` for nginx. The configurations for nginx and postgres are located the folder config/docker
-
-### LittleSis commands
 
 ``` sh
 # Build javascript
@@ -80,6 +108,7 @@ bin/rails console
 # Send reset password instructions
 bin/rails runner "User.find_by(email: <EMAIL>).send_reset_password_instructions"
 ```
+
 
 ### frequent production commands
 

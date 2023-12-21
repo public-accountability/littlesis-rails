@@ -39,8 +39,7 @@ gem 'turbo-rails', '> 0.8', '< 7.0.0'
 gem 'stimulus-rails'
 
 # Search
-# gem 'thinking-sphinx', '~> 5.1'
-gem 'thinking-sphinx', git: 'https://github.com/pat/thinking-sphinx', ref: '13d0db24ce14a45bc6757b79760bb341d0185360'
+gem 'thinking-sphinx'
 
 # handle currencies etc
 gem 'money'
@@ -55,8 +54,7 @@ gem 'http-accept'
 gem 'text', '>= 1.3.1'
 
 group :test do
-  # puma 6 support. wait for release after 3.37.1.
-  gem 'capybara', git: 'https://github.com/teamcapybara/capybara', ref: '5c8674713fa964211de43138180edfab1cc041ce'
+  gem 'capybara'
   gem 'database_cleaner'
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.0'
