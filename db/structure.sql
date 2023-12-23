@@ -101,28 +101,6 @@ $$;
 
 
 --
--- Name: newer_than_three_years(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.newer_than_three_years(t timestamp without time zone) RETURNS boolean
-    LANGUAGE sql
-    AS $$
-   SELECT t > (CURRENT_DATE - interval '3 year');
-$$;
-
-
---
--- Name: newer_than_two_years(timestamp without time zone); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.newer_than_two_years(t timestamp without time zone) RETURNS boolean
-    LANGUAGE sql
-    AS $$
-   SELECT t > (CURRENT_DATE - interval '2 year');
-$$;
-
-
---
 -- Name: recent_entity_edits(integer, text); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -191,28 +169,6 @@ CREATE FUNCTION public.round_ten_minutes(timestamp without time zone) RETURNS ti
     AS $_$
   SELECT date_trunc('hour', $1) + interval '10 min' * round(date_part('minute', $1) / 10.0)
 $_$;
-
-
---
--- Name: timestamp_if_newer_than_x_years(timestamp without time zone, integer); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.timestamp_if_newer_than_x_years(t timestamp without time zone, x integer) RETURNS timestamp without time zone
-    LANGUAGE sql
-    AS $$
-   SELECT CASE WHEN t > (CURRENT_DATE  - make_interval(years := x)) THEN t ELSE NULL END;
-$$;
-
-
---
--- Name: true_or_null(boolean); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION public.true_or_null(b boolean) RETURNS boolean
-    LANGUAGE sql IMMUTABLE
-    AS $$
-   SELECT CASE WHEN b IS TRUE THEN TRUE ELSE NULL END;
-$$;
 
 
 SET default_tablespace = '';
@@ -1984,6 +1940,45 @@ ALTER SEQUENCE public.generic_id_seq OWNED BY public.generic.id;
 
 
 --
+-- Name: good_job_batches; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.good_job_batches (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    description text,
+    serialized_properties jsonb,
+    on_finish text,
+    on_success text,
+    on_discard text,
+    callback_queue_name text,
+    callback_priority integer,
+    enqueued_at timestamp(6) without time zone,
+    discarded_at timestamp(6) without time zone,
+    finished_at timestamp(6) without time zone
+);
+
+
+--
+-- Name: good_job_executions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.good_job_executions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    active_job_id uuid NOT NULL,
+    job_class text,
+    queue_name text,
+    serialized_params jsonb,
+    scheduled_at timestamp(6) without time zone,
+    finished_at timestamp(6) without time zone,
+    error text
+);
+
+
+--
 -- Name: good_job_processes; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1992,6 +1987,19 @@ CREATE TABLE public.good_job_processes (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     state jsonb
+);
+
+
+--
+-- Name: good_job_settings; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.good_job_settings (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    key text,
+    value jsonb
 );
 
 
@@ -2014,7 +2022,12 @@ CREATE TABLE public.good_jobs (
     concurrency_key text,
     cron_key text,
     retried_good_job_id uuid,
-    cron_at timestamp without time zone
+    cron_at timestamp without time zone,
+    batch_id uuid,
+    batch_callback_id uuid,
+    is_discrete boolean,
+    executions_count integer,
+    job_class text
 );
 
 
@@ -5419,11 +5432,35 @@ ALTER TABLE ONLY public.generic
 
 
 --
+-- Name: good_job_batches good_job_batches_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.good_job_batches
+    ADD CONSTRAINT good_job_batches_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: good_job_executions good_job_executions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.good_job_executions
+    ADD CONSTRAINT good_job_executions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: good_job_processes good_job_processes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.good_job_processes
     ADD CONSTRAINT good_job_processes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: good_job_settings good_job_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.good_job_settings
+    ADD CONSTRAINT good_job_settings_pkey PRIMARY KEY (id);
 
 
 --
@@ -7584,10 +7621,31 @@ CREATE UNIQUE INDEX index_fec_matches_on_sub_id ON public.fec_matches USING btre
 
 
 --
+-- Name: index_good_job_executions_on_active_job_id_and_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_job_executions_on_active_job_id_and_created_at ON public.good_job_executions USING btree (active_job_id, created_at);
+
+
+--
+-- Name: index_good_job_settings_on_key; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_good_job_settings_on_key ON public.good_job_settings USING btree (key);
+
+
+--
 -- Name: index_good_jobs_jobs_on_finished_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_good_jobs_jobs_on_finished_at ON public.good_jobs USING btree (finished_at) WHERE ((retried_good_job_id IS NULL) AND (finished_at IS NOT NULL));
+
+
+--
+-- Name: index_good_jobs_jobs_on_priority_created_at_when_unfinished; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_jobs_on_priority_created_at_when_unfinished ON public.good_jobs USING btree (priority DESC NULLS LAST, created_at) WHERE (finished_at IS NULL);
 
 
 --
@@ -7602,6 +7660,20 @@ CREATE INDEX index_good_jobs_on_active_job_id ON public.good_jobs USING btree (a
 --
 
 CREATE INDEX index_good_jobs_on_active_job_id_and_created_at ON public.good_jobs USING btree (active_job_id, created_at);
+
+
+--
+-- Name: index_good_jobs_on_batch_callback_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_batch_callback_id ON public.good_jobs USING btree (batch_callback_id) WHERE (batch_callback_id IS NOT NULL);
+
+
+--
+-- Name: index_good_jobs_on_batch_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_good_jobs_on_batch_id ON public.good_jobs USING btree (batch_id) WHERE (batch_id IS NOT NULL);
 
 
 --
@@ -8467,6 +8539,10 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220330204713'),
 ('20220407140849'),
 ('20220413172917'),
-('20220720163026');
+('20220720163026'),
+('20230922170118'),
+('20230922170119'),
+('20230922170120'),
+('20230922170121');
 
 
