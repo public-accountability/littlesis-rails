@@ -1,6 +1,5 @@
 production:
   adapter: postgresql
-  encoding: unicode
   reconnect: true
   sslmode: prefer
   pool: 15
@@ -11,7 +10,6 @@ production:
 
 development:
   adapter: postgresql
-  encoding: unicode
   database: littlesis
   pool: 15
   username: littlesis
@@ -20,7 +18,6 @@ development:
 
 test:
   adapter: postgresql
-  encoding: unicode
   database: littlesis_test
   username: littlesis
   password: themanbehindthemanbehindthethrone
