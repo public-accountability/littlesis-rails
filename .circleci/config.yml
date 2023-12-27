@@ -17,15 +17,31 @@ jobs:
 
     steps:
       - checkout
-      - run: rbenv install
       - run: bin/build
-      - run: docker-compose up -d postgres
-      - run: timeout 10 sh -c 'while true; do if docker-compose exec --user postgres postgres pg_isready; then break; else sleep 1;fi done'
-      - run: docker-compose run --rm -e RAILS_ENV=test app bin/rails db:reset
-      - run: docker-compose run --rm -e RAILS_ENV=test app bin/rails javascript:build
-      - run: docker-compose run --rm -e RAILS_ENV=test app bin/rails assets:precompile
-      - run: docker-compose run --rm -e RAILS_ENV=test app bin/rails ts:configure
-      - run: docker-compose run --rm -e RAILS_ENV=test -e CIRCLECI=true -e CI=true app bin/rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xmlts:configure
+      - run: docker compose up -d postgres
+      - run: timeout 10 sh -c 'while true; do if docker compose exec --user postgres postgres pg_isready; then break; else sleep 1;fi done'
+      - run: docker compose run --rm app bundle config --global path vendor/bundle
+      - restore_cache:
+          name: Restore bundle cache
+          key: vendor-bundle-{{ checksum "Gemfile.lock" }}
+      - run: docker compose run --rm app bundle bundle install
+      - save_cache:
+          key: vendor-bundle-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ./vendor/bundle
+      - restore_cache:
+          name: Restore npm cache
+          key: node-modules-{{ checksum "package-lock.json" }}
+      - run: docker compose run --rm app npm install
+      - save_cache:
+          key: node-modules-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
+      - run: docker compose run --rm -e RAILS_ENV=test app bin/rails db:reset
+      - run: docker compose run --rm -e RAILS_ENV=test app bin/rails javascript:build
+      - run: docker compose run --rm -e RAILS_ENV=test app bin/rails assets:precompile
+      - run: docker compose run --rm -e RAILS_ENV=test app bin/rails ts:configure
+      - run: docker compose run --rm -e RAILS_ENV=test -e CIRCLECI=true -e CI=true app bin/rspec --format documentation --format RspecJunitFormatter -o ./tmp/rspec/rspec.xmlts:configure
       - store_test_results:
           path: tmp/rspec
 
