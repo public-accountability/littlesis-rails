@@ -11,7 +11,7 @@ This repository [littlesis-rails](https://github.com/public-accountability/littl
 
 ## Project history & software
 
-Matthew Skomarovsky co-founded LittleSis and was the lead developer behind the project, with help from co-founder Kevin Connor. LittleSis started in 2009 as a [PHP application](https://github.com/littlesis-org/littlesis). The port to Ruby on Rails began in 2013 and finished in 2017.
+Matthew Skomarovsky ([@lovemedicine](https://github.com/lovemedicine)) co-founded LittleSis and was the lead developer behind the project, with help from co-founder Kevin Connor. LittleSis started in 2009 as a [PHP application](https://github.com/littlesis-org/littlesis). The port to Ruby on Rails began in 2013 and finished in 2017.
 
 Ziggy ([@aepyornis](https://github.com/aepyornis)) joined in 2016 and currently maintains the project.
 
