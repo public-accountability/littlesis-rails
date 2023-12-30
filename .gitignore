@@ -48,6 +48,8 @@
 .irb-history
 .gem
 *.swp
+.irb_history
+.npm/
 
 # Generated test error files
 spec/testdata/*_errors.txt

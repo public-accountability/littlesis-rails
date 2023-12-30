@@ -26,10 +26,11 @@ services:
     command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
     shm_size: "2gb"
     volumes:
+      - ./config/docker/pg-setup-database.sh:/docker-entrypoint-initdb.d/pg-setup-database.sh
       - ./config/docker/postgresql.conf:/etc/postgresql.conf
-      - ./data:/data
-      - ./db/postgresql/archive:/archive
       - ./db/postgresql/primary:/var/lib/postgresql/data
+      - ./db/postgresql/archive:/archive
+      - ./data:/data
     ports:
       - "8090:5432"
     environment:

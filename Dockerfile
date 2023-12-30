@@ -24,24 +24,7 @@ RUN if [ $RAILS_ENV = "development" ]; then \
     && curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.33.0/geckodriver-v0.33.0-linux64.tar.gz" | tar xzf - -C /usr/local/bin \
     ; fi
 
-
-RUN useradd --home /littlesis -s /bin/bash -u 1000 littlesis
-USER littlesis
 WORKDIR /littlesis
+ENV BUNDLE_APP_CONFIG /littlesis/.bundle
 EXPOSE 8080
 CMD /littlesis/bin/puma
-# docker compose run app bundle config --global path vendor/bundle
-
-# throw errors if Gemfile has been modified since Gemfile.lock
-# RUN if [ $RAILS_ENV = "production" ]; then \
-#     bundle config --global frozen 1; fi
-
-# COPY /Gemfile.lock ./Gemfile ./
-# RUN bundle install
-
-# # ensure package-lock in production
-# RUN if [ $RAILS_ENV = "production" ]; then \
-#     npm config set package-lock-only 'true'; fi
-
-# COPY ./package.json ./package-lock.json ./
-# RUN npm ci
