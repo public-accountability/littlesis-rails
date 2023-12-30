@@ -26,5 +26,6 @@ RUN if [ $RAILS_ENV = "development" ]; then \
 
 WORKDIR /littlesis
 ENV BUNDLE_APP_CONFIG /littlesis/.bundle
+RUN gem update --system
 EXPOSE 8080
-CMD /littlesis/bin/puma
+CMD /usr/local/bin/bundle exec puma
