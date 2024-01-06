@@ -1,6 +1,7 @@
 version: "3"
 
 # 8080 app
+# 8081 nginx
 # 8888 jsserver
 # 8090 db
 # 8091 replica
@@ -48,6 +49,13 @@ services:
   #     - "8091:5432"
   #   environment:
   #     POSTGRES_PASSWORD: "littlesis"
+
+  nginx:
+    image: docker.io/library/nginx:latest
+    volumes:
+      - ./public:/littlesis/public
+    ports:
+     - 8081:8081
 
   manticore:
     image: littlesis:latest
