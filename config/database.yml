@@ -11,14 +11,13 @@ production:
 development:
   adapter: postgresql
   database: littlesis
-  pool: 15
   username: littlesis
   password: themanbehindthemanbehindthethrone
-  host: postgres
+  host: localhost
 
 test:
   adapter: postgresql
   database: littlesis_test
   username: littlesis
   password: themanbehindthemanbehindthethrone
-  host: postgres
+  host: localhost

@@ -68,7 +68,8 @@ module LittleSis
 
     config.active_record.schema_format = :sql
 
-    config.assets.css_compressor = :sass
+    # config.assets.css_compressor = :sass
+    config.assets.css_compressor = nil
     config.assets.js_compressor = false
 
     config.generators do |g|
