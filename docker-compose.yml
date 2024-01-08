@@ -2,10 +2,11 @@ version: "3"
 
 # 8080 app
 # 8081 nginx
-# 8888 jsserver
+# 8086 manticore
+# 8088 manticore
 # 8090 db
 # 8091 replica
-# 9306,9308 manticore
+# 8888 jsserver
 
 services:
   app:
@@ -55,23 +56,23 @@ services:
     volumes:
       - ./public:/littlesis/public
     ports:
-     - 8081:8081
+     - 8081:80
 
   manticore:
     image: littlesis:latest
     shm_size: "512mb"
     command: ["searchd", "--nodetach", "--config", "/etc/manticore.conf"]
     ports:
-     - 9306:9306
-     - 9308:9308
+     - 8086:9306
+     - 8088:9308
     volumes:
       - ./:/littlesis
       - ./config/development.sphinx.conf:/etc/manticore.conf
+      - /home/ziggy/code/public-accountability/littlesis-rails/log:/home/ziggy/code/public-accountability/littlesis-rails/log
 
   esbuild:
     image: littlesis:latest
     command: ["npm", "run", "build-watch"]
-    profiles: ["esbuild", "development"]
     volumes:
       - ./:/littlesis
     depends_on:
@@ -80,6 +81,5 @@ services:
   jsserver:
     image: jsserver:latest
     build: ./lib/js/server
-    profiles: ["jsserver", "development"]
     depends_on:
       - app

@@ -5,7 +5,7 @@ require 'json'
 url = "https://api.github.com/repos/public-accountability/oligrapher/releases"
 
 # rails-root/public/oligrapher
-outdir  = File.expand_path(File.join(File.dirname(__FILE__), "../../public/oligrapher"))
+outdir = File.expand_path(File.join(File.dirname(__FILE__), "../../public/oligrapher"))
 
 if ARGV[0] == '--list'
   JSON.parse(Net::HTTP.get(URI(url))).each do |release|

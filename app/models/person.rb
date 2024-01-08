@@ -4,7 +4,7 @@ class Person < ApplicationRecord
   # Provides: SHORT_FIRST_NAMES, LONG_FIRST_NAMES, DISPLAY_ATTRIBUTES
   include PersonConstants
 
-  serialize :nationality, Array
+  serialize :nationality, type: Array
 
   has_paper_trail on: [:update, :destroy],
                   meta: { entity1_id: :entity_id },
