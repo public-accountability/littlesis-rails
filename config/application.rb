@@ -18,7 +18,6 @@ module LittleSis
       r301     %r{/user/(.*)},                            '/users/$1'
     end
 
-
     Rails.application.default_url_options = {
       host: config.littlesis.fetch(:host, 'littlesis.org'),
       protocol: config.littlesis.fetch(:protocol, 'https')
@@ -67,10 +66,6 @@ module LittleSis
     config.active_storage.draw_routes = true
 
     config.active_record.schema_format = :sql
-
-    # config.assets.css_compressor = :sass
-    config.assets.css_compressor = nil
-    config.assets.js_compressor = false
 
     config.generators do |g|
       g.test_framework :rspec, view_specs: false, controller_specs: true

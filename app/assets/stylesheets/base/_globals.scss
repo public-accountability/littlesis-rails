@@ -14,36 +14,23 @@ $small_header_image_size: 80px;
 $red: #CC5454;
 $red_light: #CC8585;
 $red_lighter: rgba(204,133,133,0.4);
+$light-maroon: $red_lighter;
+$maroon: rgba(204, 84, 84, 1);
 $profile_tab_red: $red_light;
 $profile_tab_red_active: $red;
-
 $gray: #555;
 $light_gray: #f4f4f4;
 $light_gray2: #f8f9fa;
 $tiny_image_size: 35px;
 $small_image_size: 50px;
 $old_blue: rgb(51, 122, 183);
-
 $gray-base:              #000;
 $gray-darker:            lighten($gray-base, 13.5%); // #222
 $gray-dark:              lighten($gray-base, 20%);   // #333
 $gray:                   lighten($gray-base, 33.5%); // #555
 $gray-light:             lighten($gray-base, 46.7%); // #777
-$gray-lighter: lighten($gray-base, 93.5%); // #eee
-
-// customize bootstrap variables:
-//$primary: $old_blue !default;
-$primary: $logo_blue_light;
-
-//$font-size-base: 0.9rem;
-// $navbar_height: 55px;
+$gray-lighter:           lighten($gray-base, 93.5%); // #eee
+$tag_margin: 0.4em;
 $header_color: $light_gray2;
-
 $font-family-sans-serif: Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, system-ui, -apple-system;
-
-@font-face {
-    font-family: Roboto;
-    src: font-url('roboto-v29-latin-regular.woff2') format('woff2'),
-         font-url('roboto-v29-latin-regular.woff') format('woff'),
-         font-url('Roboto-Regular.ttf') format('truetype');
-}
+$primary: $logo_blue_light;

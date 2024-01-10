@@ -20,6 +20,7 @@ Rails.application.configure do
   config.assets.debug = false
   config.assets.digest = false
   config.assets.quiet = true
+  config.assets.paths << Rails.root.join('node_modules')
 
   # Raises error for missing translations
   config.i18n.raise_on_missing_translations = false

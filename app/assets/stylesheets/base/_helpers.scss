@@ -1,3 +1,4 @@
+@use "globals";
 /* helper css utilities */
 // Padding and margins
 
@@ -17,7 +18,6 @@
         -moz-osx-font-smoothing: grayscale;
     }
 }
-
 
 .top-1em {
   padding-top: 1em;
@@ -86,7 +86,7 @@
 // link helpers
 
 .link-blue {
-  color: $link_blue;
+  color: globals.$link_blue;
 }
 
 .icon-link {
@@ -123,7 +123,7 @@
 
 .red-button {
     /* background-color: #A04040; */
-    background-color: $red;
+    background-color: globals.$red;
     color: #fff;
 }
 
@@ -144,10 +144,10 @@
 
 .btn-red {
     // @extend .btn-secondary;
-    background-color: $red;
+    background-color: globals.$red;
 
     &:hover {
-	background-color: $red_light;
+	background-color: globals.$red_light;
     }
 }
 
@@ -163,7 +163,7 @@
     }
 
     &:focus, &.focus {
-	box-shadow: 0 0 0 $btn-focus-width rgba(#333, .5);
+	box-shadow: 0 0 0 .25rem rgba(#333, .5);
     }
 
     &.disabled, &:disabled {
@@ -198,7 +198,7 @@
 // Borders and boxes
 
 .light-gray-box {
-    background-color: $light_gray;
+    background-color: globals.$light_gray;
     padding: 0.3em;
 }
 
@@ -208,7 +208,7 @@
 }
 
 .grey-bottom-border {
-    border-bottom: 1.2px solid $gray;
+    border-bottom: 1.2px solid globals.$gray;
 }
 
 .thin-grey-bottom-border {

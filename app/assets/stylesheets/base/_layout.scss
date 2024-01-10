@@ -1,3 +1,5 @@
+@use "globals";
+
 html {
   height: 100%;
   width: 100%;
@@ -30,21 +32,21 @@ body {
 
 a {
   text-decoration: none;
-  color: $link_blue;
+  color: globals.$link_blue;
 
   &:hover {
     text-decoration: underline;
-    color: $link_blue_hover;
+    color: globals.$link_blue_hover;
   }
 }
 
 nav.navbar  {
   font-size: 14px;
 
-  background-color: $header_color;
+  background-color: globals.$header_color;
 
   img {
-    background-color: $header_color;
+    background-color: globals.$header_color;
     max-width: 180px;
   }
 
@@ -79,11 +81,11 @@ nav.navbar  {
 
   #top_donate_link {
     a {
-      background-color: $red;
+      background-color: globals.$red;
       color: #fff;
 
       &:hover {
-	background-color: $red_light;
+	background-color: globals.$red_light;
 	color: black;
 	box-shadow: -3px 3px 3px #737373;
       }
