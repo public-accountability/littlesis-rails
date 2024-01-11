@@ -1,3 +1,5 @@
+@use "../base/globals";
+
 .entity-profile-image {
     a > img {
 	cursor: pointer;
@@ -36,7 +38,7 @@
     }
 
     .source-links-pager:hover {
-	color: $link_blue;
+	color: globals.$link_blue;
     }
 
     .link-arrow-text {

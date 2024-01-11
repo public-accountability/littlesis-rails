@@ -1,11 +1,11 @@
 @font-face {
-    font-family: 'Give You Glory';
-    src: font_url('GiveYouGlory-Regular.ttf');
+  font-family: 'Give You Glory';
+  src: font_url('GiveYouGlory-Regular.ttf');
 }
 
 @font-face {
-    font-family: 'Voltaire';
-    src: font_url('Voltaire-Regular.ttf');
+  font-family: 'Voltaire';
+  src: font_url('Voltaire-Regular.ttf');
 }
 
 $swamped_max_width: 1400px;
@@ -16,204 +16,200 @@ $swamped_green: #689A74;
 $swamped_blue: #A8BEEF;
 
 #swamped {
-    max-width: $swamped_max_width;
-    padding-left: $swamped_padding;
-    padding-right: $swamped_padding;
-    margin: 0 auto;
+  max-width: $swamped_max_width;
+  padding-left: $swamped_padding;
+  padding-right: $swamped_padding;
+  margin: 0 auto;
 }
 
 footer {
-    padding-left: $swamped_padding;
-    padding-right: $swamped_padding;
-    margin: 0 auto;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: right;
+  padding-left: $swamped_padding;
+  padding-right: $swamped_padding;
+  margin: 0 auto;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: right;
+  color: black;
+
+  p {
+    background-color: #fff;
+    float: right;
+    padding: 2px;
+    border-radius: 5px;
+  }
+
+  a {
+    font-family: 'Give You Glory';
     color: black;
+    font-size: 28px;
 
-    p {
-        background-color: #fff;
-        float: right;
-        padding: 2px;
-        border-radius: 5px;
+    &:hover {
+      color: $swamped_green;
+      text-decoration: underline dashed $swamped_blue;
     }
-
-    a {
-        font-family: 'Give You Glory';
-        color: black;
-        font-size: 28px;
-
-        &:hover {
-            color: $swamped_green;
-            text-decoration: underline dashed $swamped_blue;
-        }
-    }
+  }
 }
 
 .modal-title {
-    font-family: 'Give You Glory';
-    color: black;
-    font-size: 25px;
+  font-family: 'Give You Glory';
+  color: black;
+  font-size: 25px;
 }
 
 .modal-body, .modal-footer {
-    font-family: 'Voltaire';
+  font-family: 'Voltaire';
 }
 
 .header-image {
-    position: relative;
-    img {
-        width: 100%;
-        max-height: 500px;
-    }
+  position: relative;
+  img {
+    width: 100%;
+    max-height: 500px;
+  }
 }
 
 .header-text {
-    font-size: 52px;
-    font-family: 'Give You Glory';
-    position: absolute;
-    top: 20px;
-    left: 20px;
+  font-size: 52px;
+  font-family: 'Give You Glory';
+  position: absolute;
+  top: 20px;
+  left: 20px;
 }
 
 .header-subtext {
-    font-family: 'Voltaire';
-    font-size: 12px;
-    display: none;
-    max-width: 330px;
-    position: absolute;
-    text-align: center;
-    top: 85px;
-    left: 40px;
+  font-family: 'Voltaire';
+  font-size: 12px;
+  display: none;
+  max-width: 330px;
+  position: absolute;
+  text-align: center;
+  top: 85px;
+  left: 40px;
 }
 
 .header-buttons {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
 
-    button {
-        border: 0;
-        background-color: $swamped_purple;
-        &:hover {
-            background-color: $swamped_orange;
-        }
-
-        color: black;
+  button {
+    border: 0;
+    background-color: $swamped_purple;
+    &:hover {
+      background-color: $swamped_orange;
     }
 
+    color: black;
+  }
 }
 
 .header-spacer {
-    height: 20px;
-    background: linear-gradient(#fff, rgba(0, 0, 0, -1));
+  height: 20px;
+  background: linear-gradient(#fff, rgba(0, 0, 0, -1));
 }
 
 .image-row {}
 
 .content-row {
-    font-family: 'Voltaire';
+  font-family: 'Voltaire';
 }
 
 .btn-rat {
-    &:hover {
-        background-color: #FFF;
-        .rat-img {
-             animation-name: ratspin;
-             animation-duration: 1000ms;
-             animation-iteration-count: infinite;
-             animation-timing-function: linear;
-        }
+  &:hover {
+    background-color: #FFF;
+    .rat-img {
+      animation-name: ratspin;
+      animation-duration: 1000ms;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
     }
+  }
 }
 
 #btn-scroll.ratspin {
-    color: $swamped_green;
+  color: $swamped_green;
 
-    svg {
-        animation-name: ratspin;
-        animation-duration: 1000ms;
-        animation-iteration-count: infinite;
-        animation-timing-function: linear;
-    }
+  svg {
+    animation-name: ratspin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
 }
 
 .rat-img {
-    height: 21px;
+  height: 21px;
 }
 
 .rat-unknown {
-    color: $swamped_orange;
-    border-bottom: 1px dashed $swamped_blue;
+  color: $swamped_orange;
+  border-bottom: 1px dashed $swamped_blue;
 }
 
 .rats {
-    font-size: 18px;
-    text-align: center;
+  font-size: 18px;
+  text-align: center;
 
-    p {
-        line-height: 3em;
+  p {
+    line-height: 3em;
+  }
+
+  a {
+    color: $swamped_purple;
+
+    &:hover {
+      color: $swamped_orange;
+      text-decoration: underline dashed $swamped_blue;
     }
-
-    a {
-        color: $swamped_purple;
-
-        &:hover {
-            color: $swamped_orange;
-            text-decoration: underline dashed $swamped_blue;
-        }
-    }
+  }
 }
 
-
-
 @keyframes ratspin {
-    from {transform:rotate(0deg);}
-    to {transform:rotate(360deg);}
+  from {transform:rotate(0deg);}
+  to {transform:rotate(360deg);}
 }
 
 
 @media (min-width: 666px) {
-    .header-text {
-        font-size: 60px;
-    }
+  .header-text {
+    font-size: 60px;
+  }
 }
 
 @media (min-width: 800px) {
-    .header-subtext {
-        display: block;
-        max-width: 175px;
-    }
+  .header-subtext {
+    display: block;
+    max-width: 175px;
+  }
 }
 
 @media (min-width: 1000px) {
-    .header-subtext {
-        display: block;
-        font-size: 14px;
-        max-width: 264px;
-        left: 30px;
-    }
+  .header-subtext {
+    display: block;
+    font-size: 14px;
+    max-width: 264px;
+    left: 30px;
+  }
 }
 
 @media (min-width: 1300px) {
-    .header-subtext {
-        display: block;
-        font-size: 14px;
-        max-width: 300px;
-        left: 25px;
-    }
+  .header-subtext {
+    display: block;
+    font-size: 14px;
+    max-width: 300px;
+    left: 25px;
+  }
 }
 
-
 @media (max-height: 800px) {
-    .header-image {
-        img {
-            max-height: 425px;
-        }
+  .header-image {
+    img {
+      max-height: 425px;
     }
+  }
 
-    #swamped {
-        max-width: $swamped_max_width - 200;
-    }
+  #swamped {
+    max-width: $swamped_max_width - 200;
+  }
 }

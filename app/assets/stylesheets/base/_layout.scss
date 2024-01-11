@@ -1,4 +1,6 @@
+@use "sass:map";
 @use "globals";
+@use "bootstrap/scss/bootstrap";
 
 html {
   height: 100%;
@@ -63,11 +65,11 @@ nav.navbar  {
   }
 
   .navbar-right-menu-item {
-    @include media-breakpoint-up(sm) {
-      display: none;
+    @media (min-width: map.get(globals.$grid-breakpoints, "sm")) {
+       display: none;
     }
 
-    @include media-breakpoint-up(lg) {
+    @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
       display: inherit;
     }
   }

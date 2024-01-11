@@ -1,3 +1,5 @@
+@use "../base/globals";
+
 .littlesis_carousel_wrapper {
     width: 1060px;
     margin: auto;
@@ -15,7 +17,7 @@
 .littlesis_carousel .viewport {
   float: left;
   width: 960px;
-  height: $small_column_width;
+  height: globals.$small_column_width;
   overflow: hidden;
   position: relative;
   background-color: #f8f8f8;
@@ -53,14 +55,14 @@
   border-bottom: 0px solid #ddd;
   margin-top: 0em;
   margin-bottom: 0em;
-  height: $small_column_width;
+  height: globals.$small_column_width;
 }
 
 .entity_carousel_image
 {
   float: left;
-  height: $small_column_width;
-  width: $small_column_width;
+  height: globals.$small_column_width;
+  width: globals.$small_column_width;
   background-size: cover;
   background-position: center center;
 }
@@ -74,7 +76,7 @@
 .entity_carousel_text
 {
   float: right;
-  width: 952px - $small_column_width;
+  width: (952px - globals.$small_column_width);
   padding: 1.5em;
   padding-left: 30px;
   padding-top: 1.2em;

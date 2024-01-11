@@ -34,3 +34,13 @@ $tag_margin: 0.4em;
 $header_color: $light_gray2;
 $font-family-sans-serif: Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, system-ui, -apple-system;
 $primary: $logo_blue_light;
+
+/// bootstrap defaults
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+)

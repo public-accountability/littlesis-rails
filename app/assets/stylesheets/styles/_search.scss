@@ -1,18 +1,18 @@
 div.search-results {
 
-    h3, .search-result-wrapper {
-	@extend .w-100;
-    }
+  h3, .search-result-wrapper {
+    width: 100%;
+  }
 
-    .entity-search-result {
-	margin-bottom: 0.9em;
-	line-height: 16px;
-    }
+  .entity-search-result {
+    margin-bottom: 0.9em;
+    line-height: 16px;
+  }
 
-    .search-result-link {
-	font-size: 15px;
-	font-weight: 800;
-    }
+  .search-result-link {
+    font-size: 15px;
+    font-weight: 800;
+  }
 
 }
 
@@ -38,29 +38,29 @@ div.search-results {
 
 
 .entity-search-container {
-    position:relative;
+  position:relative;
 
-    input {
-	&:focus {
-	    outline: 0;
-	}
+  input {
+    &:focus {
+      outline: 0;
     }
+  }
 }
 
 .entity-search-input-group {
-    @extend .input-group;
-    margin-bottom: 0;
+  // @extend .input-group;
+  margin-bottom: 0;
 }
 
 .entity-search-menu {
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ebebeb;
-    border-top: 0;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ebebeb;
+  border-top: 0;
 }
 
 .entity-search-dataset {
-    display: block;
+  display: block;
 
 }
 
@@ -70,10 +70,10 @@ div.search-results {
 }
 
 .entity-search-suggestion-name-link {
-    color: black;
-    margin-left: 5px;
+  color: black;
+  margin-left: 5px;
 }
 .entity-search-suggestion-blurb {
-    font-size: 0.8em;
-    color: #666;
+  font-size: 0.8em;
+  color: #666;
 }

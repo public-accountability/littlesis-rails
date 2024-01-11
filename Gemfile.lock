@@ -91,7 +91,9 @@ GEM
       rouge (>= 1.0.0)
     bigdecimal (3.1.5)
     bindex (0.8.1)
-    bootsnap (1.17.0)
+    binding_of_caller (1.0.0)
+      debug_inspector (>= 0.0.1)
+    bootsnap (1.17.1)
       msgpack (~> 1.2)
     builder (3.2.4)
     capybara (3.39.2)
@@ -122,6 +124,7 @@ GEM
     debug (1.9.1)
       irb (~> 1.10)
       reline (>= 0.3.8)
+    debug_inspector (1.2.0)
     devise (4.9.3)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -145,7 +148,7 @@ GEM
     factory_bot_rails (6.4.3)
       factory_bot (~> 6.4)
       railties (>= 5.0.0)
-    faker (3.2.2)
+    faker (3.2.3)
       i18n (>= 1.8.11, < 2)
     ffi (1.16.3)
     fugit (1.9.0)
@@ -210,7 +213,7 @@ GEM
     middleware (0.1.0)
     mini_magick (4.12.0)
     mini_mime (1.1.5)
-    minitest (5.20.0)
+    minitest (5.21.1)
     money (6.16.0)
       i18n (>= 0.6.4, <= 2)
     msgpack (1.7.2)
@@ -233,7 +236,7 @@ GEM
       activerecord (>= 6.1)
       request_store (~> 1.4)
     parallel (1.24.0)
-    parser (3.3.0.2)
+    parser (3.3.0.3)
       ast (~> 2.4.1)
       racc
     pg (1.5.4)
@@ -465,6 +468,7 @@ PLATFORMS
 
 DEPENDENCIES
   better_errors
+  binding_of_caller
   bootsnap (>= 1.4.3)
   capybara
   csv

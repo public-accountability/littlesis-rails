@@ -1,8 +1,11 @@
+@use "sass:map";
+@use "../base/globals";
+
 .dashboard-title-link {
   a {
     color: rgb(33, 37, 41);
     &:hover {
-      color: $link_blue;
+      color: globals.$link_blue;
     }
   }
 }
@@ -19,18 +22,18 @@
   text-align: center;
   font-size: 1rem;
 
-  @include media-breakpoint-up(lg) {
+  @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
     text-align: left;
   }
 
   a {
     font-size: 1.3rem;
 
-    @include media-breakpoint-up(md) {
+    @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
       font-size: 1rem;
     }
 
-    @include media-breakpoint-up(xl) {
+    @media (min-width: map.get(globals.$grid-breakpoints, "xl")) {
       font-size: 1.3rem;
     }
 
@@ -55,7 +58,7 @@
 
     font-size: 20px;
 
-    @include media-breakpoint-up(lg) {
+    @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
       font-size: 24px;
     }
 
@@ -83,11 +86,11 @@
 div.social-media-buttons {
   text-align: center;
 
-  @include media-breakpoint-up(sm) {
+  @media (min-width: map.get(globals.$grid-breakpoints, "sm")) {
     text-align: left;
   }
 
-  @include media-breakpoint-up(md) {
+  @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
     margin-top: 5px;
   }
 
@@ -131,8 +134,8 @@ div#donate-button-container  {
     padding: 0.3em;
     border-radius: 0.15em;
     box-shadow: -4px 4px 10px #888888;
-    background-color: $gray-dark;
-    color: $gray-lighter;
+    background-color: globals.$gray-dark;
+    color: globals.$gray-lighter;
   }
 
   #donation-header-text-small {
@@ -144,12 +147,12 @@ div#donate-button-container  {
   font-size: 1rem;
   line-height: 20px;
 
-  @include media-breakpoint-up(sm) {
+  @media (min-width: map.get(globals.$grid-breakpoints, "sm")) {
     font-size: 1.3rem;
     line-height: 30px;
   }
 
-  @include media-breakpoint-up(md) {
+  @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
     font-size: 1.5rem;
   }
 }
@@ -162,11 +165,11 @@ div#donate-button-container  {
   h1 {
     font-size: 2rem;
 
-    @include media-breakpoint-up(sm) {
+    @media (min-width: map.get(globals.$grid-breakpoints, "sm")) {
       font-size: 2.3rem;
     }
 
-    @include media-breakpoint-up(md) {
+    @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
       font-size: 3rem;
     }
   }
@@ -186,11 +189,11 @@ div#donate-button-container  {
   #eyes-on-ties-img {
     padding: 50px;
 
-    @include media-breakpoint-up(md) {
+    @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
       padding: 10px;
     }
 
-    @include media-breakpoint-up(lg) {
+    @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
       padding: 30px;
     }
 
@@ -201,7 +204,7 @@ div#donate-button-container  {
   .littlesis_carousel_wrapper {
     display: none;
 
-    @include media-breakpoint-up(lg) {
+    @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
       display: block;
     }
   }

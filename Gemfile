@@ -73,6 +73,7 @@ group :development do
   # gem 'ruby-prof'
   gem "debug", ">= 1.0.0"
   gem 'better_errors'
+  gem "binding_of_caller"
   gem 'rack-mini-profiler', require: false
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false

@@ -3,7 +3,7 @@
 <% username = request.user.username %>
 
 <div class="row">
-  <div id="user-request-description">
+  <div id="user-request-description" class="col-sm-12">
     <strong>The following <%= request.description %> was requested by
       <%= link_to username, "/users/#{username}"%>
       at <%= l request.created_at %>:

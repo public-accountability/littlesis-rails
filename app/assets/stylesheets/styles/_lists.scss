@@ -1,3 +1,5 @@
+@use "../base/globals";
+
 td.lists_table_name {
   min-width: 350px;
   font-weight: bold;
@@ -14,7 +16,7 @@ td.lists_table_name {
   }
 
   a:hover {
-      text-decoration: none;
+    text-decoration: none;
   }
 }
 
@@ -32,15 +34,15 @@ td.lists_table_name {
 
 .list_tabs ul.tabs {
   li a {
-    background-color: $red_light;
+    background-color: globals.$red_light;
   }
 
   li:hover a {
-    background-color: $red;
+    background-color: globals.$red;
   }
 
   li.active a {
-    background-color: $red;
+    background-color: globals.$red;
   }
 }
 
@@ -94,28 +96,28 @@ td.lists_table_name {
     border: 0;
     margin-right: 0.5em;
     color: white;
-    background-color: $red_light;
+    background-color: globals.$red_light;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     text-decoration: none;
   }
 
   li.active a, a:hover {
-    background-color: $red;
+    background-color: globals.$red;
   }
 
 }
 
 #list-search-container, .list-actions {
-    .select2-container .select2-selection--single {
-        height: 38px !important;
-    }
+  .select2-container .select2-selection--single {
+    height: 38px !important;
+  }
 }
 
 
 .list-sort-icon {
-    &:hover {
-        background-color: $blue-100;
-        cursor: pointer;
-    }
+  &:hover {
+    background-color: globals.$logo_blue_light;
+    cursor: pointer;
+  }
 }

@@ -1,0 +1,126 @@
+@use "base/globals";
+
+@mixin matcher-text-link {
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline !important;
+  }
+
+}
+
+#entity-matcher-ui {
+  display: flex;
+  height: 500px;
+  width: 100%;
+}
+
+div.leftSide, div.rightSide {
+  flex: 1;
+  padding: 1em;
+  border: 1px solid black;
+}
+
+div.leftSide {
+  position: relative;
+  background-color: #d3d3d330;
+  margin-right: 0.5em;
+}
+
+div.rightSide {
+  background-color: white;
+  margin-left: 0.5em;
+}
+
+.dataset-item-header {}
+
+.dataset-item-footer {
+  position: absolute;
+  width: 100%;
+  margin: 0 -1em;
+  bottom: 0;
+  padding: 1em;
+
+  a {
+    @include matcher-text-link;
+    color: globals.$link_blue;
+  }
+}
+
+#dataset-item-info-container {
+  max-height: 400px;
+  overflow: auto;
+}
+
+#dataset-item-info {
+  .item-info-wrapper {
+    margin-bottom: 0.5em;
+  }
+
+  .item-info-title {
+    margin-right: 1em;
+    font-weight: bold;
+  }
+
+  .item-info-value {}
+}
+
+#potential-matches {
+  height: 100%;
+}
+
+#potential-matches-list {
+  max-height: 70%;
+  overflow: auto;
+}
+
+.create-new-entity-button a {
+  @include matcher-text-link;
+  font-weight: bold;
+}
+
+div.potential-match-card {
+  display: flex;
+  align-itmes: flex-start;
+  margin-botton: 0.5em;
+  margin-top: 0.5em;
+  // justify-content: space-around;
+
+  .potential-match-entity-image-wrapper {
+    width: 50px;
+    height: 50px;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .potential-match-entity {
+    flex-grow: 2;
+
+    h1 {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    p {
+      font-size: 0.8em;
+    }
+
+    .potential-match-entity-blurb {}
+
+  }
+
+  .potential-match-buttons {
+    a {
+      @include matcher-text-link;
+      color: globals.$link_blue;
+    }
+  }
+
+}
+
+a.nextItem, a.ownerQueueLink {
+  @include matcher-text-link;
+  color: globals.$link_blue;
+}

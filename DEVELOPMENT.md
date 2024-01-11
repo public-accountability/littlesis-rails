@@ -59,14 +59,15 @@ Setup development users: `docker compose exec app bin/script create_development_
 Visit port `8080` for Puma and `8081` for nginx. The configurations for nginx and postgres are located the folder config/docker
 
 ``` sh
-# Build javascript
-bin/rake javascript:build
+# Build javascript & css
+bin/rails javascript:build
+bin/rails dartsass:build
 
 # Download oligrapher assets
-bin/script oligrapher_download_assets.rb "v4.0.1"
+bin/script download_oligrapher_assets.rb "v4.0.15"
 
 # Compile assets
-bin/rake assets:precompile
+bin/rails assets:precompile
 
 # Edit secret variables
 bin/rails credentials:edit

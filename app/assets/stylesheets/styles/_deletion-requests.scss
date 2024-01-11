@@ -1,3 +1,5 @@
+@use "user-requests.scss";
+
 #entity-deletion-action-buttons,
 #list-deletion-action-buttons {
     @extend .user-request-action-buttons;

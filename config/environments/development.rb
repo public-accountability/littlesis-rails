@@ -19,7 +19,7 @@ Rails.application.configure do
   # Debug mode disables concatenation and preprocessing of assets.
   config.assets.debug = false
   config.assets.digest = false
-  config.assets.quiet = true
+  config.assets.quiet = false
   config.assets.paths << Rails.root.join('node_modules')
 
   # Raises error for missing translations

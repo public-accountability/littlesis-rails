@@ -1,22 +1,27 @@
 @use "globals";
+@use "bootstrap/scss/bootstrap";
 /* helper css utilities */
 // Padding and margins
 
 // icons are loaded in sperate css file, bootstrap-icon.scss,
 // however this is also copied over so that we can use "@extend bootstrap-icon" in styles.
+@mixin bootstrap-icon {
+  &::before {
+    display: inline-block;
+    font-family: bootstrap-icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: -.125em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
 .bootstrap-icon {
-    &::before {
-        display: inline-block;
-        font-family: bootstrap-icons !important;
-        font-style: normal;
-        font-weight: normal !important;
-        font-variant: normal;
-        text-transform: none;
-        line-height: 1;
-        vertical-align: -.125em;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
+  @include bootstrap-icon;
 }
 
 .top-1em {
@@ -172,26 +177,29 @@
     }
 }
 
+@mixin action-button {
+  cursor: pointer;
+  font-size: 14px;
+  top: -6px;
+  color: #444;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-right: 3px;
+  -moz-border-radius:10px;
+  border-radius: 10px;
+
+  &:hover {
+    color: #000;
+    background-color: #ddf;
+    text-decoration: none;
+  }
+}
 
 .action-button {
-    cursor: pointer;
-    font-size: 14px;
-    top: -6px;
-    color: #444;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    padding: 4px;
-    padding-left: 8px;
-    padding-right: 8px;
-    margin-right: 3px;
-    -moz-border-radius:10px;
-    border-radius: 10px;
-
-    &:hover {
-	color: #000;
-	background-color: #ddf;
-	text-decoration: none;
-    }
+  @include action-button;
 }
 
 

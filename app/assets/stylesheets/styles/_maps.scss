@@ -1,3 +1,6 @@
+@use "../base/globals";
+@use "../base/helpers";
+
 table.oligrapher_grid {
     width: 100%;
 }
@@ -23,7 +26,7 @@ table.oligrapher_grid {
     }
 
     rect.hover {
-        stroke: $link_blue;
+        stroke: globals.$link_blue;
         // stroke-width: 1.5;
         fill: none;
     }
@@ -45,7 +48,7 @@ div.map-search-input-group {
     height: 100%;
 
     span::before {
-        @extend .bootstrap-icon;
+        @include helpers.bootstrap-icon;
         font-size: 1.2rem;
         content: "\f4e1";
     }
