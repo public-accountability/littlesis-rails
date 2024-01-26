@@ -2,6 +2,7 @@
 
 // customize bootstrap variables
 @use "bootstrap/scss/bootstrap" with (
+  $font-family-sans-serif: globals.$font-family-sans-serif,
   $primary: globals.$logo_blue_light
 );
 
