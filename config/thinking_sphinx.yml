@@ -22,7 +22,7 @@ test:
 
 development:
   <<: *defaults
-  address: 127.0.0.1
+  address: manticore
 
 production:
   <<: *defaults

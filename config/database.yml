@@ -13,7 +13,8 @@ development:
   database: littlesis
   username: littlesis
   password: themanbehindthemanbehindthethrone
-  host: localhost
+  # host: localhost
+  host: postgres
 
 test:
   adapter: postgresql
@@ -21,3 +22,4 @@ test:
   username: littlesis
   password: themanbehindthemanbehindthethrone
   host: postgres
+  # host: localhost

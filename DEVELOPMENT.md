@@ -11,7 +11,7 @@ Build a smaller production image: `env RAILS_ENV=production bin/build`
 Install ruby gems and javascript packages
 
 ``` sh
-docker compose run --rm app bundle config --global path vendor/bundle
+docker compose run --rm app bundle config path vendor/bundle
 docker compose run --rm app bundle install
 docker compose run --rm app npm install
 ```
@@ -24,10 +24,11 @@ Run any command using the app container `docker compose exec app <CMD>`. For ins
 
 To run a command in database as administrator use `docker compose exec -u postgres postgres psql`
 
-Setup an app database user:
+Setup database user and database:
 
 ``` sh
 docker compose exec -u postgres postgres psql --command="CREATE ROLE littlesis WITH NOSUPERUSER CREATEDB LOGIN PASSWORD 'themanbehindthemanbehindthethrone'"
+docker compose exec -u postgres postgres psql --command="CREATE DATABASE littlesis WITH OWNER littlesis"
 ```
 
 You can also access the database on the host: `psql postgresql://littlesis:themanbehindthemanbehindthethrone@localhost:8090/littlesis`
@@ -44,8 +45,11 @@ The test database
 
 ``` sh
 docker compose exec -e RAILS_ENV=test app bin/rails db:reset
+docker compose exec -e RAILS_ENV=test app bin/rails dartsass:build
+docker compose exec -e RAILS_ENV=test app bin/rails javascript:build
 docker compose exec -e RAILS_ENV=test app bin/rails assets:precompile
 docker compose exec -e RAILS_ENV=test app bin/rails ts:configure
+
 ```
 
 Compile assets:  `docker compose exec app bin/rails assets:precompile`

@@ -68,7 +68,6 @@ services:
     volumes:
       - ./:/littlesis
       - ./config/development.sphinx.conf:/etc/manticore.conf
-      - /home/ziggy/code/public-accountability/littlesis-rails/log:/home/ziggy/code/public-accountability/littlesis-rails/log
 
   esbuild:
     image: littlesis:latest
