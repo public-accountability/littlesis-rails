@@ -15,5 +15,5 @@ end
   user.update_columns(created_at: 1.week.ago, confirmed_at: 1.hour.ago)
   user.create_user_profile!(name: Faker::Name.name, reason: Faker::Music::Prince.lyric)
   user.reset_password(password, password)
-  ColorPrinter.print_green "created #{username} with password #{password}"
+  ColorPrinter.print_green "created #{username} #{email} with password #{password}"
 end
