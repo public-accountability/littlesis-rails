@@ -1,116 +1,130 @@
 ## Development
 
-Our development setup is docker-based. You'll need ruby, docker, & docker-compose installed and located in your path. `bin/littlesis` is a helper program that will let you easily interact with the docker containers to do common development tasks such as starting the rails console, running tests, viewing logs, etc without having to remember esoteric docker & bash commands. `bin/littlesis` can also used for production.
+LittleSis is developed using docker
 
-To see the script's features run: `bin/littlesis help`
+Clone this repo: `git clone https://github.com/public-accountability/littlesis-rails`
 
-You can install the program with a symlink: `ln -s (readlink -f bin/littlesis) ~/.local/bin/littlesis`
+Build the image: `bin/build`
 
-### Installation Steps
+Build a smaller production image: `env RAILS_ENV=production bin/build`
 
-1) Clone this repo: `git clone https://github.com/public-accountability/littlesis-rails`
-
-2) Create folders: `littlesis setup-folders`
-
-3) Build the docker image: `littlesis build`
-
-4) Start the docker containers: `littlesis up`
-
-5) Setup database: `littlesis rake db:schema:load` && `littlesis rake db:seed`
-
-   Alternatively, load a copy of the database: `zcat littlesis.sql.gz | littlesis psql`
-
-6) Compile dev and test assets: `littlesis rake assets:precompile` && `littlesis --test rake assets:precompile`
-
-7) Setup the testing database: `littlesis --test rake db:reset`
-
-8) Run the tests: `littlesis test`
-
-9) Create manticore indexes: `littlesis rake ts:index`
-
-This may take a while.
-
-10) Visit port `8080` for Puma and `8081` for nginx
-
-The configurations for nginx and postgres are located the folder config/docker
-
-11) Setup development users: `littlesis script create_development_users.rb`
-
-
-### LittleSis commands
+Install ruby gems and javascript packages
 
 ``` sh
-# Run docker commands
-littlesis docker pause
-littlesis docker unpause
-
-# View rails logs
-littlesis logs
-# Clear rails logs
-littlesis rake log:clear
-# Follow docker logs
-littlesis docker -- logs -f esbuild
-
-# Build javascript
-littlesis rake javascript:build
-
-# Download oligrapher assets
-littlesis script oligrapher_download_assets.rb "v4.0.1"
-
-# Compile assets
-littlesis rake assets:precompile
-
-# Edit secret variables
-littlsis rails credentials:edit
-
-# Thinking sphinx
-littlesis rake ts:configure
-littlesis rake ts:index
-
-# Stats on new entities & relationships
-littlesis rake stats:year[2021]
-
-# Unitedstates.io data
-littlesis rake legislators:import
-littlesis rake legislators:import_party_memberships
-littlesis rake legislators:import_relationships
-
-# External Data tools
-littlesis data list
-littlesis data download nycc
-littlesis data transform nycc
-littlesis data load nycc
-littlesis data report nycc
-littlesis fec -- --help
-littlesis sec -- --help
-
-# Update public data
-littlesis runner "PublicData.run"
-
-# Update Network Map Collections
-littlesis rake maps:update_all_entity_map_collections
-
-# Create users for testing
-littlesis script create_development_users.rb
-littlesis script create_example_user.rb
-
-# Rails console
-littlesis console
-
-# Send reset password instructions
-littlesis runner "User.find_by(email: <EMAIL>).send_reset_password_instructions"
+docker compose run --rm app bundle config path vendor/bundle
+docker compose run --rm app bundle install
+docker compose run --rm app npm install
 ```
 
-### bin/littlesis in production
+Start all the docker containers: `docker compose up -d`
+
+Start one of the docker containers: `docker compose up -d postgres`
+
+Run any command using the app container `docker compose exec app <CMD>`. For instance, to view all available rake tasks use `docker compose exec app bin/rake --tasks`.
+
+To run a command in database as administrator use `docker compose exec -u postgres postgres psql`
+
+Setup database user and database:
 
 ``` sh
-littlesis git fetch origin
-littlesis git -- switch --detach COMMIT
-littlesis bundle install
-littlesis npm ci
-littlesis rake javascript:build
-littlesis rake assets:precompile
-littlesis script download_oligrapher_assets.rb TAG
+docker compose exec -u postgres postgres psql --command="CREATE ROLE littlesis WITH NOSUPERUSER CREATEDB LOGIN PASSWORD 'themanbehindthemanbehindthethrone'"
+docker compose exec -u postgres postgres psql --command="CREATE DATABASE littlesis WITH OWNER littlesis"
+```
+
+You can also access the database on the host: `psql postgresql://littlesis:themanbehindthemanbehindthethrone@localhost:8090/littlesis`
+
+The folder data is mounted at /data inside the postgres container, which you can run any sql or pgdump files there, for instance: `docker compose exec -u postgres postgres pg_restore -d <DATABASE> /data/archive.pgdump`
+
+Setup the database:
+
+``` sh
+docker compose exec app bin/rails db:reset
+```
+
+The test database
+
+``` sh
+docker compose exec -e RAILS_ENV=test app bin/rails db:reset
+docker compose exec -e RAILS_ENV=test app bin/rails dartsass:build
+docker compose exec -e RAILS_ENV=test app bin/rails javascript:build
+docker compose exec -e RAILS_ENV=test app bin/rails assets:precompile
+docker compose exec -e RAILS_ENV=test app bin/rails ts:configure
+
+```
+
+Compile assets:  `docker compose exec app bin/rails assets:precompile`
+
+Run the tests: `docker compose exec -e RAILS_ENV=test app bin/rspec`
+
+Create manticore indexes: `docker compose exec app bin/rails ts:rt:index` This may take a while.
+
+Setup development users: `docker compose exec app bin/script create_development_users.rb`
+
+Visit port `8080` for Puma and `8081` for nginx. The configurations for nginx and postgres are located the folder config/docker
+
+``` sh
+# Build javascript & css
+bin/rails javascript:build
+bin/rails dartsass:build
+
+# Download oligrapher assets
+bin/script download_oligrapher_assets.rb "v4.0.15"
+
+# Compile assets
+bin/rails assets:precompile
+
+# Edit secret variables
+bin/rails credentials:edit
+
+# Thinking sphinx
+bin/rake ts:configure
+bin/rake ts:index
+
+# Stats on new entities & relationships
+bin/rake stats:year[2021]
+
+# Unitedstates.io data
+bin/rake legislators:import
+bin/rake legislators:import_party_memberships
+bin/rake legislators:import_relationships
+
+# External Data tools
+bin/data list
+bin/data download nycc
+bin/data transform nycc
+bin/data load nycc
+bin/data report nycc
+bin/fec --help
+bin/sec -- --help
+
+# Update public data
+bin/rails runner "PublicData.run"
+
+# Update Network Map Collections
+bin/rake maps:update_all_entity_map_collections
+
+# Create users for testing
+bin/script create_development_users.rb
+bin/script create_example_user.rb
+
+# Rails console
+bin/rails console
+
+# Send reset password instructions
+bin/rails runner "User.find_by(email: <EMAIL>).send_reset_password_instructions"
+```
+
+
+### frequent production commands
+
+``` sh
+cd /littlesis
+git fetch origin
+git switch --detach COMMIT
+bin/bundle install
+npm ci
+bin/rake javascript:build
+bin/rake assets:precompile
+bin/script download_oligrapher_assets.rb TAG
 systemctl restart littlesis.service littlesis-goodjob.service
-littlesis status
 ```

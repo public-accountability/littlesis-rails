@@ -16,8 +16,8 @@ class User < ApplicationRecord
   }.freeze
 
   enum :role, ROLES, default: :user
-  serialize :abilities, UserAbilities
-  serialize :settings, UserSettings
+  serialize :abilities, coder: UserAbilities, type: UserAbilities
+  serialize :settings, coder: UserSettings, type: UserSettings
 
   validates :email, presence: true, uniqueness: { case_sensitive: false }
   validates :username,

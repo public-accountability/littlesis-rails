@@ -1,0 +1,19 @@
+@use "../base/globals";
+
+form {
+  .parsley-error {
+    border: 1px solid red;
+  }
+
+  .parsley-errors-list {
+    color: red;
+    padding-left: 1rem;
+  }
+
+  .btn-link {
+    color: globals.$link-blue;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+}

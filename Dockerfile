@@ -1,63 +1,33 @@
-FROM ruby:3.1.4-bullseye
+FROM docker.io/library/ruby:3.2.2-bookworm
 LABEL maintainer="dev@littlesis.org"
+ARG RAILS_ENV=$RAILS_ENV
 
-RUN apt-get update && apt-get upgrade -y && apt-get -y install \
-    brotli \
-    build-essential \
-    bzip2 \
-    coreutils \
-    curl \
-    git \
-    gnupg \
-    grep \
-    gzip \
-    imagemagick \
-    libasound2 \
-    libdbus-glib-1-dev \
-    libgtk-3-0 \
-    libmagickwand-dev \
-    libsqlite3-dev \
-    libvips42 \
-    libx11-xcb1 \
-    libnss3 \
-    libdrm2 \
-    libgbm1 \
-    lsof \
-    redis-tools \
-    rsync \
-    sqlite3 \
-    unzip \
-    zip
+RUN apt-get update && apt-get upgrade -y && apt-get -y --no-install-recommends install \
+    build-essential coreutils curl git grep gzip postgresql-client rclone rsync sqlite3 unzip zip zstd brotli imagemagick redis-tools \
+    nodejs npm \
+    libmagickwand-dev libpq-dev libsqlite3-dev libpng-dev libsodium-dev libmariadbd-dev
 
-# Postgres
-RUN curl "https://www.postgresql.org/media/keys/ACCC4CF8.asc" > /usr/share/keyrings/ACCC4CF8.asc
-RUN echo "deb [signed-by=/usr/share/keyrings/ACCC4CF8.asc] http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-RUN apt-get update && apt-get install -y postgresql-client-14 libpq-dev
+# maticore
+RUN curl "https://repo.manticoresearch.com/manticore-repo.noarch.deb" >  /tmp/manticore-repo.noarch.deb  && dpkg -i /tmp/manticore-repo.noarch.deb && apt-get update
+RUN apt-get -y install manticore || apt-get -y install manticore
 
-# Manticore
-RUN curl "https://repo.manticoresearch.com/manticore-repo.noarch.deb" >  /tmp/manticore-repo.noarch.deb
-RUN dpkg -i /tmp/manticore-repo.noarch.deb && apt-get update && apt-get -y install manticore manticore-columnar-lib
+# firefox-esr, chromium
+RUN if [ $RAILS_ENV = "development" ]; then \
+    apt-get -y --no-install-recommends install firefox-esr chromium; fi
 
-# Node
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
-RUN apt-get install -y nodejs
-RUN npm install -g npm
-
-# Firefox and Geckodriver
-RUN curl -L "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" | tar xjf - -C /opt
-RUN printf "#!/bin/sh\nexec /opt/firefox/firefox \$@\n" > /usr/local/bin/firefox && chmod +x /usr/local/bin/firefox && firefox -version
-# f5fcaf6aa1a45b06cb1cae99ff51d487173de8f776f647e18b750f7eccecbbd9
-RUN curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.31.0/geckodriver-v0.31.0-linux64.tar.gz" | tar xzf - -C /usr/local/bin
+# install firefox-beta, geckodriver, chromium
+RUN if [ $RAILS_ENV = "development" ]; then \
+    curl "https://packages.mozilla.org/apt/repo-signing-key.gpg" -o /etc/apt/keyrings/packages.mozilla.org.asc \
+    && gpg --show-key /etc/apt/keyrings/packages.mozilla.org.asc \
+    && echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | tee /etc/apt/sources.list.d/mozilla.list \
+    && apt-get update && apt-get install -y firefox-beta \
+    && curl -L "https://github.com/mozilla/geckodriver/releases/download/v0.34.0/geckodriver-v0.34.0-linux64.tar.gz" > /tmp/geckodriver-v0.34.0-linux64.tar.gz \
+    && echo '79b2e77edd02c0ec890395140d7cdc04a7ff0ec64503e62a0b74f88674ef1313 /tmp/geckodriver-v0.34.0-linux64.tar.gz' | sha256sum --check \
+    && tar xzf /tmp/geckodriver-v0.34.0-linux64.tar.gz -C /usr/local/bin \
+    ; fi
 
 WORKDIR /littlesis
-
-COPY ./Gemfile.lock ./Gemfile ./
-# throw errors if Gemfile has been modified since Gemfile.lock
-RUN bundle config --global frozen 1
-RUN bundle install
-
-COPY ./package.json ./package-lock.json ./
-RUN npm install --includes=dev
+ENV BUNDLE_APP_CONFIG /littlesis/.bundle
+RUN gem update --system
 EXPOSE 8080
-
-CMD ["bundle", "exec", "puma"]
+CMD /usr/local/bin/bundle exec puma

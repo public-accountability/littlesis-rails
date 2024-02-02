@@ -1,0 +1,45 @@
+.user-request-action-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center !important;
+  align-items: center;
+  form {
+    margin: .5em;
+  }
+  :nth-child(3) {
+    margin-left: .5em;
+  }
+}
+
+#merge-report-action-buttons {
+  @extend .user-request-action-buttons;
+}
+
+
+#user-request-description {
+  background-color: lightgray;
+  border: 1px solid gray;
+  border-radius: .3em;
+  padding: 1em !important;
+
+  strong {
+    font-size: 14px;
+  }
+
+  p {
+    font-size: 12px;
+    padding-top: 1em;
+  }
+}
+
+.user-request-justification {
+  margin: 0 auto;
+  font-weight: bold;
+  text-align: center;
+}
+
+form.user-request-form {
+  input, textarea {
+    margin: 5px;
+  }
+}

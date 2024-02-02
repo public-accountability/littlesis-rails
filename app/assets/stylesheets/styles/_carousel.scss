@@ -1,0 +1,118 @@
+@use "../base/globals";
+
+.littlesis_carousel_wrapper {
+    width: 1060px;
+    margin: auto;
+}
+
+.littlesis_carousel {
+    height: 300px;
+    x-overflow:hidden;
+    position: relative;
+    a.buttons img {
+        cursor: pointer;
+    }
+}
+
+.littlesis_carousel .viewport {
+  float: left;
+  width: 960px;
+  height: globals.$small_column_width;
+  overflow: hidden;
+  position: relative;
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  /* box-shadow: inset 3px 3px 5px 2px #ccc; */
+}
+
+.littlesis_carousel .buttons { display: block; margin: 125px 0px 0 0; float: left; }
+.littlesis_carousel .next { margin: 125px 0 0 0px; }
+.littlesis_carousel .disable { /* visibility: hidden; */ }
+.littlesis_carousel .overview { list-style: none; padding: 0; margin: 0;  position: absolute; left: 0; top: 0; }
+.littlesis_carousel .overview li{ float: left; margin: 0 20px 0 0; padding: 0px; height: 295px; width: 956px;}
+
+.littlesis_carousel .pager { overflow:hidden; list-style: none; clear: both; margin: 0 0 0 45px; }
+.littlesis_carousel .pager li { float: left; }
+
+.littlesis_carousel .pagenum {
+	background-color: #fff;
+	text-decoration: none;
+	text-align: center;
+	padding: 5px;
+	color: #555555;
+	font-size: 14px;
+	font-weight: bold;
+	display: block;
+}
+
+.littlesis_carousel .active { color: #fff; background-color:  #555555; }
+
+/* entity/carousel */
+
+.entity_carousel
+{
+  clear: both;
+  border-bottom: 0px solid #ddd;
+  margin-top: 0em;
+  margin-bottom: 0em;
+  height: globals.$small_column_width;
+}
+
+.entity_carousel_image
+{
+  float: left;
+  height: globals.$small_column_width;
+  width: globals.$small_column_width;
+  background-size: cover;
+  background-position: center center;
+}
+
+.entity_carousel .entity_carousel_image img
+{
+  max-width: 160px;
+  border: 0;
+}
+
+.entity_carousel_text
+{
+  float: right;
+  width: (952px - globals.$small_column_width);
+  padding: 1.5em;
+  padding-left: 30px;
+  padding-top: 1.2em;
+  padding-bottom: 0.5em;
+}
+
+.entity_carousel_name
+{
+  font-size: 3em;
+  line-height: 1.2em;
+  font-weight: 500;
+}
+
+.entity_carousel_description
+{
+  font-size: 1.5em;
+  font-weight: 300;
+}
+
+.entity_carousel_connections {
+  width: 100%;
+  margin-top: 0.3em;
+
+  td {
+    vertical-align: top;
+    padding-right: 2em;
+    max-width: 400px;
+    min-width: 200px;
+  }
+
+  h4 {
+    margin-bottom: 0.3em;
+  }
+}
+
+.entity_carousel ul
+{
+  margin: 0;
+}

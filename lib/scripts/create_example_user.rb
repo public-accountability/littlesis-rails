@@ -21,6 +21,7 @@ ColorPrinter.print_blue <<-MSG
 
   new user created:
   ----------------------
+  username: #{user.username}
   email: #{email}
   password: #{password}
   ----------------------

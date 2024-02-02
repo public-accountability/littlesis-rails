@@ -1,0 +1,91 @@
+@use "bootstrap/scss/bootstrap";
+
+
+#relationships-table {
+  border-bottom-color: rgb(221, 221, 221);
+
+  width: 100%;
+
+
+  tbody, thead th {
+    border-bottom-color: rgb(221, 221, 221);
+  }
+
+  .entity-link {
+    font-weight: 500;
+  }
+
+  span.entity-blurb {
+    margin-left: 10px;
+  }
+}
+
+#relationships-filters {
+  select {
+    min-width: 200px;
+    max-width: 280px;
+  }
+
+  input, select {
+    @extend .form-control;
+    @extend .me-2;
+  }
+
+  #relationships-filters-checkboxes {
+    @extend .form-check;
+    @extend .form-check-inline;
+
+    input {
+      margin-left: 5px !important;
+      margin-right: 5px !important;
+    }
+  }
+
+  #relationships-filters-line2, #relationships-filters-line1 {
+    // discontinued in bootstrap5
+      // @extend .form-inline;
+  }
+
+  #relationships-filters-line2 {
+    margin-top: 5px;
+
+    label:hover {
+      text-decoration: underline;
+    }
+  }
+
+  #relationships-search {
+    width: 200px !important;
+  }
+
+  #relationships-amount {
+    width: 125px;
+  }
+}
+
+// allows <div.buttons> to nicely fix to the left of it
+#relationships-table_info {
+  clear: none;
+  margin-top: 3px;
+}
+
+// filters
+
+#relationships-filters, #datatable-filters {
+  background-color: #eee;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+// // Delete Entity From List style
+// #datatable-table {
+//   .bi-x-lg {
+//     @extend .hvr-pop;
+//     color: #aaa;
+
+//     &:hover {
+//         color: #666666;
+//     }
+
+//   }
+// }

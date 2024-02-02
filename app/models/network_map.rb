@@ -7,7 +7,7 @@ class NetworkMap < ApplicationRecord
   DEFAULT_FORMAT = 'jpeg'
 
   attribute :graph_data, OligrapherGraphData::Type.new
-  serialize :editors, Array
+  serialize :editors, type: Array
   has_paper_trail skip: [:search_tsvector], versions: { class_name: 'ApplicationVersion' }
 
   delegate :url_helpers, to: 'Rails.application.routes'

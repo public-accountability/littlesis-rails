@@ -1,0 +1,43 @@
+@use "user-requests.scss";
+
+#entity-deletion-action-buttons,
+#list-deletion-action-buttons {
+    @extend .user-request-action-buttons;
+}
+
+#deletion-report {
+    padding: 1em 0 1em 0;
+    .entity-deletion-overview,
+    .list-deletion-overview { // header
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+    .entity-deletion-name,
+    .list-deletion-name { // name & relationship
+        display: flex;
+        flex-direction: row;
+        font-weight: bold;
+        align-items: center;
+        margin-top: 1em;
+        border-top: solid 1px lightgray;
+        div {
+            display: flex;
+        }
+        :nth-child(1) {
+            font-size: 1.5em;
+        }
+        :nth-child(2){
+            position: relative;
+            top: .5em;
+            margin-left: 1em;
+        }
+    }
+    .entity-deletion-blurb,
+    .list-deletion-blurb { // blurb
+        font-weight: italic;
+        color: gray;
+        padding-bottom: 1em;
+        margin-bottom: 1em;
+        border-bottom: solid 1px lightgray;
+    }
+}

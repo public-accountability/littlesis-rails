@@ -1,104 +1,84 @@
 version: "3"
 
-volumes:
-  postgres-data:
-    name: rails_postgres-data
-
-networks:
-  default:
-    name: littlesis
+# 8080 app
+# 8081 nginx
+# 8086 manticore
+# 8088 manticore
+# 8090 db
+# 8091 replica
+# 8888 jsserver
 
 services:
   app:
     image: littlesis:latest
-    stdin_open: true
-    tty: true
-    init: true
     shm_size: "2gb"
     ports:
-      - "127.0.0.1:8080:8080"
-      - "127.0.0.1:3035:3035"
+      - "8080:8080"
     volumes:
       - ./:/littlesis
-      # see https://stackoverflow.com/questions/30043872/docker-compose-node-modules-not-present-in-a-volume-after-npm-install-succeeds
-      - /littlesis/node_modules
-    depends_on:
-      redis:
-        condition: service_started
-      postgres:
-        condition: service_healthy
     environment:
-      - RAILS_ENV=development
       - LITTLESIS_BIND=tcp://0.0.0.0:8080
       - RAILS_SERVE_STATIC_FILES=true
-      - WEB_CONCURRENCY=1
-    extra_hosts:
-      - "test.host:127.0.0.1"
 
   redis:
-    image: redis:6
+    image: docker.io/library/redis:6
 
   postgres:
-    image: postgres:14
+    image: docker.io/library/postgres:15
     command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
     shm_size: "2gb"
     volumes:
-      - ./config/docker/postgresql.conf:/etc/postgresql.conf
       - ./config/docker/pg-setup-database.sh:/docker-entrypoint-initdb.d/pg-setup-database.sh
+      - ./config/docker/postgresql.conf:/etc/postgresql.conf
+      - ./db/postgresql/primary:/var/lib/postgresql/data
+      - ./db/postgresql/archive:/archive
       - ./data:/data
-      - postgres-data:/var/lib/postgresql/data
     ports:
-      - "127.0.0.1:5432:5432"
+      - "8090:5432"
     environment:
-      POSTGRES_PASSWORD: "postgres"
-    healthcheck:
-      test: "pg_isready"
-      timeout: 5s
-      interval: 10s
-      retries: 10
+      POSTGRES_PASSWORD: "littlesis"
+
+  # replica:
+  #   image: docker.io/library/postgres:15
+  #   command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
+  # volumes:
+  #   - ./config/docker/postgresql.conf:/etc/postgresql.conf
+  #   - ./data:/data
+  #   - ./db/postgresql/archive:/archive
+  #   - ./db/postgresql/replica:/var/lib/postgresql/data
+  #   ports:
+  #     - "8091:5432"
+  #   environment:
+  #     POSTGRES_PASSWORD: "littlesis"
 
   nginx:
-    image: nginx:latest
-    ports:
-      - "127.0.0.1:8081:80"
-      - "127.0.0.1:9000:9000"
+    image: docker.io/library/nginx:latest
     volumes:
-      - ./:/littlesis
-      - ./config/docker/nginx.conf:/etc/nginx/nginx.conf
-      - ./log:/var/log/nginx
-    links:
-      - app
+      - ./public:/littlesis/public
+    ports:
+     - 8081:80
 
   manticore:
     image: littlesis:latest
-    command:
-      [
-        "searchd",
-        "--config",
-        "/littlesis/config/development.sphinx.conf",
-        "--nodetach",
-        "--listen",
-        "9312:mysql",
-      ]
+    shm_size: "512mb"
+    command: ["searchd", "--nodetach", "--config", "/etc/manticore.conf"]
+    ports:
+     - 8086:9306
+     - 8088:9308
     volumes:
       - ./:/littlesis
-
-  jsserver:
-    image: jsserver:latest
-    build: ./lib/js/server
-    profiles: ["jsserver", "development"]
-    ports:
-      - "127.0.0.1:8888:8888"
-    links:
-      - postgres
-      - app
+      - ./config/development.sphinx.conf:/etc/manticore.conf
 
   esbuild:
     image: littlesis:latest
     command: ["npm", "run", "build-watch"]
-    profiles: ["esbuild", "development"]
     volumes:
       - ./:/littlesis
-      - /littlesis/node_modules
-    environment:
-      - RAILS_ENV=development
+    depends_on:
+      - app
+
+  jsserver:
+    image: jsserver:latest
+    build: ./lib/js/server
+    depends_on:
+      - app

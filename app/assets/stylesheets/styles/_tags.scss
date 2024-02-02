@@ -1,0 +1,237 @@
+@use "../base/globals";
+@use "../base/helpers";
+@use "../base/hover";
+
+/* TAGS */
+
+// $light-maroon: rgba(204,133,133,0.4);
+// $maroon: rgba(204, 84, 84, 1);
+// $tag_margin: 0.4em;
+
+.tag-like {
+  border: 1px solid globals.$red;
+  background-color: globals.$light-maroon;
+  color: globals.$maroon;
+  &:hover { color: globals.$maroon; }
+}
+
+.tag {
+  @extend .tag-like;
+  border-radius: .2em;
+  margin-right: globals.$tag_margin;
+  margin-top: globals.$tag_margin;
+  padding: .3em;
+  display: inline-block;
+  list-style: none;
+}
+
+.big-tag {
+  @extend .tag-like;
+  border-radius: .2em;
+  margin-right: globals.$tag_margin;
+  margin-top: globals.$tag_margin;
+  padding: .2em;
+}
+
+.gray-description-text {
+  font-size: 1em;
+  font-style: italic;
+  color: gray;
+}
+
+// TAG SIDEBAR STYLES
+
+#tags-edit-list, #tags-list {
+  padding-left: 0;
+  list-style: none;
+  margin-top: 1em;
+
+  .tag-disabled{
+    @extend .tag;
+    background-color: gray;
+    border: 1px solid black;
+    color: black;
+  }
+
+  .tag-remove-icon {
+    @extend .bootstrap-icon;
+    @extend .hvr-pop;
+    &::before {
+      content: "\f62a";
+    }
+    color: globals.$red;
+    cursor: pointer;
+    font-size: 0.7em;
+    margin-left: 0.5em;
+  }
+
+  .tag-lock-icon {
+    @extend .bootstrap-icon;
+
+    &::before {
+      content: "\f47b";
+    }
+
+    color: black;
+    font-size: 0.7em;
+    margin-left: 0.5em;
+  }
+}
+
+#tags-save-button, #tags-cancel-button {
+  // @extend .btn;
+  // @extend .btn-xs;
+  margin-left: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+#tags-save-button {
+  // @extend .btn-primary;
+}
+
+#tags-cancel-button {
+  // @extend .btn-secondary;
+}
+
+.tags-edit-glyph {
+  @extend .bootstrap-icon;
+  @extend .pencil-icon;
+
+  margin-bottom: 0.5em;
+  cursor: pointer;
+  &:hover { color: globals.$red; }
+}
+
+
+input#tag_name {
+  max-width: 250px;
+}
+
+// TAGS INDEX STYLES
+
+#tags-index-container {
+  #tags-index-list {
+    margin-top: 2em;
+    ul {
+      padding: 0;
+    }
+    .item {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      .tag-container {
+        padding-right: .5em;
+        margin-right: .5em;
+        border-right: 1px solid gray;
+        width: 10em;
+        text-align: right;
+        .tag {
+          @extend .tag;
+        }
+      }
+      .description {
+        @extend .gray-description-text;
+      }
+    }
+  }
+}
+
+// TAG HOMEPAGE STYLES
+
+#tag-show-container {
+  #tag-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    #tag-title {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      #tag-name {
+        font-size: 2em;
+      }
+      #tag-description {
+        @extend .gray-description-text;
+        margin: 0 0 .4em .4em; // TRBL
+      }
+    }
+    #tag-overview-link {
+      margin: 0 .4em .4em 0; // TRBL
+      align-self: flex-end;
+    }
+  }
+  #tag-nav {
+    margin-top: 1em;
+  }
+  #tagable-lists{
+    .tagable-list {
+      margin: 1em 0 1em 0; // TRBL
+      .tagable-list-subheader {
+        background-color: globals.$maroon;
+        color: white;
+        padding: .2em 0 .2em .4em; // TRBL
+        border-radius: 0.2em;
+        font-size: 1.5em;
+      }
+      .tagable-list-empty-message {
+        margin: 1em;
+        font-style: italic;
+      }
+      .tagable-list-items {
+        display: flex;
+        flex-direction: column;
+        margin: 1em 0 1em -2em; // TRBL
+        .tagable-list-item {
+          display: flex;
+          flex-direction: row;
+          align-items: flex-end;
+          align-content: flex-start;
+          lign-height: 1.5em;
+          .tagable-list-item-name {
+            white-space: nowrap;
+          }
+          .tagable-list-item-description {
+            text-align: left;
+            margin-left: .5em;
+            font-size: .8em;
+            color: gray;
+            font-style: italic;
+          }
+          .tagable-list-item-sort-info {
+            margin-left: 1em;
+            padding: .1em .5em .1em .5em;
+            font-size: .6em;
+            background-color: lightgray;
+            border-radius: .2em;
+            color: white;
+          }
+        }
+      }
+    }
+    .tagable-list-pagination {
+      padding-left: 1em;
+    }
+  }
+}
+
+
+#edit-tags-modal {
+
+  .btn {
+    display: block;
+    margin-top: 5px;
+  }
+
+  .select2-container {
+    min-width: 200px;
+  }
+
+  .modal-dialog {
+    max-width: 350px;
+  }
+
+  .modal-content {
+    min-height: 200px;
+  }
+
+}

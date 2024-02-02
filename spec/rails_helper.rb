@@ -42,7 +42,7 @@ ActiveRecord::Migration.maintain_test_schema!
 
 Capybara.register_driver :headless_chrome do |app|
   options = Selenium::WebDriver::Chrome::Options.new
-  options.headless!
+  options.add_argument('-headless')
   options.add_argument('--ignore-certificate-errors')
   options.add_argument('--window-size=1280,1920')
   options.add_argument('--no-sandbox')
@@ -52,10 +52,9 @@ end
 
 Capybara.register_driver :headless_firefox do |app|
   options = Selenium::WebDriver::Firefox::Options.new(log_level: :trace)
-  options.headless!
+  options.add_argument('-headless')
   options.add_preference('devtools.console.stdout.content', true)
-
-  Capybara::Selenium::Driver.new(app, browser: :firefox, capabilities: [options])
+  Capybara::Selenium::Driver.new(app, browser: :firefox, options: options)
 end
 
 Capybara.raise_server_errors = false

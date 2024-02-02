@@ -1,4 +1,4 @@
-@import "base/globals";
+@use "base/globals";
 
 $profile_page_fs_entity_heading: 2.75rem;
 $profile_page_fs_subcategory: 1.5rem;  // 18px 1.5rem ?
@@ -7,242 +7,240 @@ $profile_page_fs_small: 0.8rem;
 $profile_page_fs_blurb: $profile_page_fs_small;
 $profile_page_fs_relationship: $profile_page_fs_small;
 
-
 #entity-profile-page-header {
-    h1, h2 {
-        cursor: default;
+  h1, h2 {
+    cursor: default;
+  }
+
+  h1 {
+    font-size: $profile_page_fs_entity_heading;
+
+    a {
+      text-decoration: none;
+    }
+  }
+
+  .profile-page-editable-blurb {
+    .bi-pencil-fill {
+      display: none;
+      cursor: pointer;
     }
 
-    h1 {
-        font-size: $profile_page_fs_entity_heading;
-
-        a {
-            text-decoration: none;
-        }
+    &:hover .bi-pencil-fill {
+      display: inline;
     }
 
-    .profile-page-editable-blurb {
-        .bi-pencil-fill {
-            display: none;
-            cursor: pointer;
-        }
+    .bi-pencil-fill:hover  {
+      display: inline;
+      color: globals.$logo_blue_lighter;
+    }
+  }
 
-        &:hover .bi-pencil-fill {
-            display: inline;
-        }
+  .entity-name {}
+  .entity-blurb-text {}
 
-        .bi-pencil-fill:hover  {
-            display: inline;
-            color: $logo_blue_lighter;
-        }
+  #profile-page-entity-summary-container {
+    a.collapsed::after {
+      content: 'more »';
     }
 
-    .entity-name {}
-    .entity-blurb-text {}
-
-    #profile-page-entity-summary-container {
-        a.collapsed::after {
-            content: 'more »';
-        }
-
-        a:not(.collapsed)::after {
-            content: '« less';
-        }
-
-        a {
-            position: absolute;
-            right: -5px;
-            bottom: 0;
-        }
-
+    a:not(.collapsed)::after {
+      content: '« less';
     }
 
-    #profile-page-entity-summary {
-        margin-bottom: 2px;
-        padding-right: 60px;
-        line-height: 1rem;
-        font-size: $profile_page_fs_small;
-        text-align: justify;
-        /* text-justify: inter-word; */
-
-        &.collapse:not(.show) {
-            display: block;
-            max-height: 3rem;   /* 3x line height for 3 lines*/
-            overflow: hidden;
-        }
-
-        &.collapsing {
-            height: 3rem;
-        }
+    a {
+      position: absolute;
+      right: -5px;
+      bottom: 0;
     }
+
+  }
+
+  #profile-page-entity-summary {
+    margin-bottom: 2px;
+    padding-right: 60px;
+    line-height: 1rem;
+    font-size: $profile_page_fs_small;
+    text-align: justify;
+    /* text-justify: inter-word; */
+
+    &.collapse:not(.show) {
+      display: block;
+      max-height: 3rem;   /* 3x line height for 3 lines*/
+      overflow: hidden;
+    }
+
+    &.collapsing {
+      height: 3rem;
+    }
+  }
 }
 
 #entity-profile-page {
-    .profile-page-content-col {}
+  .profile-page-content-col {}
 
-    .profile-page-sidebar-col {}
+  .profile-page-sidebar-col {}
 
-    .profile-page-tabs {
-        display: flex;
-        justify-content: flex-start;
-        gap: 10px;
-        border-bottom: 1px solid $profile_tab_red_active; /* #CC5454; */
+  .profile-page-tabs {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    border-bottom: 1px solid globals.$profile_tab_red_active; /* #CC5454; */
 
+    a {
+      text-decoration: none;
+
+      padding: 10px 10px 4px 10px;
+      background-color: globals.$profile_tab_red;
+      color: white;
+      /* border-radius: 8px; */
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+
+      &.active {
+        background-color: globals.$profile_tab_red_active;
+      }
+
+      &:hover {
+        background-color: globals.$profile_tab_red_active;
+        box-shadow: -4px 4px 10px 1px rgba(204,84,84,0.5);
+      }
+    }
+  }
+
+  .profile-page-controls {
+
+    button.dropdown-toggle {
+      border: 0;
+    }
+
+    .btn:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    i {
+      font-size: 1rem;
+    }
+
+  }
+
+
+  .profile-page-subcategory {
+    h2 {
+      font-size: $profile_page_fs_subcategory;
+      // font-weight: 700;
+    }
+
+  }
+
+  .profile-page-grouped-link {
+    padding-top: 0.5em;
+    padding-bottom: 0.25em;
+    border-top: 1px solid #ddd;
+
+    &:hover {
+      background-color: #f8f8f8;
+    }
+
+
+    a {
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline dotted globals.$logo_blue_lighter;
+      }
+    }
+
+    .profile-page-other-entity {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      .other-entity-name {
         a {
-            text-decoration: none;
-
-            padding: 10px 10px 4px 10px;
-            background-color: $profile_tab_red;
-            color: white;
-            /* border-radius: 8px; */
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-
-            &.active {
-                background-color: $profile_tab_red_active;
-            }
-
-            &:hover {
-                background-color: $profile_tab_red_active;
-                box-shadow: -4px 4px 10px 1px rgba(204,84,84,0.5);
-            }
+          line-height: 24px;
+          color: #008;
+          font-size: $profile_page_fs_name;
+          font-weight: 700;
         }
+      }
+
+      .other-entity-blurb {
+        cursor: default;
+        padding-left: 0.5em;
+        font-size: $profile_page_fs_blurb;
+      }
     }
 
-    .profile-page-controls {
+    .profile-page-relationships {
+      font-size: $profile_page_fs_relationship;
+      line-height: 16px;
 
-        button.dropdown-toggle {
-            border: 0;
-        }
+      span.more-relationships {
+        cursor: pointer;
+        color: #008;
 
-        .btn:focus {
-            outline: none;
-            box-shadow: none;
-        }
+      }
+    }
+  }
 
-        i {
-            font-size: 1rem;
-        }
+  i.bi-arrows-collapse, i.bi-arrows-expand {
+    font-size: 1.25rem;
+    cusror: pointer;
+  }
 
+  .profile-page-subcategory-pagination {
+
+    i {
+
+      cursor: pointer;
+
+      &:hover {
+        acolor: globals.$link_blue;
+      }
     }
 
-
-    .profile-page-subcategory {
-        h2 {
-            font-size: $profile_page_fs_subcategory;
-            // font-weight: 700;
-        }
-
+    a.disabled > i {
+      // color: lightgray;
+      cursor: not-allowed;
     }
-
-    .profile-page-grouped-link {
-        padding-top: 0.5em;
-        padding-bottom: 0.25em;
-        border-top: 1px solid #ddd;
-
-        &:hover {
-            background-color: #f8f8f8;
-        }
-
-
-        a {
-            text-decoration: none;
-            &:hover {
-                text-decoration: underline dotted $logo_blue_lighter;
-            }
-        }
-
-        .profile-page-other-entity {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-
-            .other-entity-name {
-                a {
-                    line-height: 24px;
-                    color: #008;
-                    font-size: $profile_page_fs_name;
-                    font-weight: 700;
-                }
-            }
-
-            .other-entity-blurb {
-                cursor: default;
-                padding-left: 0.5em;
-                font-size: $profile_page_fs_blurb;
-            }
-        }
-
-        .profile-page-relationships {
-            font-size: $profile_page_fs_relationship;
-            line-height: 16px;
-
-            span.more-relationships {
-                cursor: pointer;
-                color: #008;
-
-            }
-        }
-    }
-
-    i.bi-arrows-collapse, i.bi-arrows-expand {
-        font-size: 1.25rem;
-        cusror: pointer;
-    }
-
-
-    .profile-page-subcategory-pagination {
-
-        i {
-
-            cursor: pointer;
-
-            &:hover {
-                color: $link_blue;
-            }
-        }
-
-        a.disabled > i {
-            // color: lightgray;
-            cursor: not-allowed;
-        }
-    }
+  }
 }
 
 
 #profile-page-sidebar {
 
-    h3 {
-        font-size: $profile_page_fs_subcategory;
-        border-bottom: 1px solid #e7e7e7;
+  h3 {
+    font-size: $profile_page_fs_subcategory;
+    border-bottom: 1px solid #e7e7e7;
+  }
+
+  .profile-page-sidebar-heading {}
+
+  #tags-edit-button {
+    font-size: 1rem;
+  }
+
+  .sidebar-featured-resources {
+    font-size: $profile_page_fs_blurb;
+  }
+
+  .sidebar-data-partner p {
+    font-size: $profile_page_fs_blurb;
+  }
+
+  .sidebar-source-links {
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: $profile_page_fs_blurb;
+
+    a.disabled {
+      pointer-events: none;
+
+      i {
+        cursor: not-allowed;
+        color: lightgray;
+      }
     }
-
-    .profile-page-sidebar-heading {}
-
-    #tags-edit-button {
-        font-size: 1rem;
-    }
-
-    .sidebar-featured-resources {
-        font-size: $profile_page_fs_blurb;
-    }
-
-    .sidebar-data-partner p {
-        font-size: $profile_page_fs_blurb;
-    }
-
-    .sidebar-source-links {
-        white-space: nowrap;
-        overflow: hidden;
-        font-size: $profile_page_fs_blurb;
-
-        a.disabled {
-            pointer-events: none;
-
-            i {
-                cursor: not-allowed;
-                color: lightgray;
-            }
-        }
-    }
+  }
 }

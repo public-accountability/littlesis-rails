@@ -1,4 +1,4 @@
-FROM node:18
+FROM docker.io/library/node:20
 ENV LITTLESIS_JS_HOST 0.0.0.0
 ENV LITTLESIS_JS_PORT 8888
 WORKDIR /app

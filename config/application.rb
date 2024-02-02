@@ -18,7 +18,6 @@ module LittleSis
       r301     %r{/user/(.*)},                            '/users/$1'
     end
 
-
     Rails.application.default_url_options = {
       host: config.littlesis.fetch(:host, 'littlesis.org'),
       protocol: config.littlesis.fetch(:protocol, 'https')
@@ -52,6 +51,7 @@ module LittleSis
 
     config.cache_store = :redis_cache_store, { url: config.littlesis[:redis_url] }
 
+    config.assets.paths << Rails.root.join('node_modules')
     # config.assets.paths << "#{Rails.root}/vendor/assets/images"
     config.active_job.queue_adapter = :good_job
 
@@ -67,9 +67,6 @@ module LittleSis
     config.active_storage.draw_routes = true
 
     config.active_record.schema_format = :sql
-
-    config.assets.css_compressor = :sass
-    config.assets.js_compressor = false
 
     config.generators do |g|
       g.test_framework :rspec, view_specs: false, controller_specs: true

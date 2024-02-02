@@ -1,0 +1,224 @@
+@use "sass:map";
+@use "../base/globals";
+
+.dashboard-title-link {
+  a {
+    color: rgb(33, 37, 41);
+    &:hover {
+      color: globals.$link_blue;
+    }
+  }
+}
+
+#dashboard-your-lists {
+  #dashboard-lists-links {
+    a {
+      font-weight: bold;
+    }
+  }
+}
+
+#homepage-lists {
+  text-align: center;
+  font-size: 1rem;
+
+  @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
+    text-align: left;
+  }
+
+  a {
+    font-size: 1.3rem;
+
+    @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
+      font-size: 1rem;
+    }
+
+    @media (min-width: map.get(globals.$grid-breakpoints, "xl")) {
+      font-size: 1.3rem;
+    }
+
+
+    line-height: 38px;
+    text-decoration: underline dotted;
+
+    &:hover {
+      text-decoration: underline solid;
+    }
+    /* color: $link_blue; */
+  }
+
+  span.homepage-counter > span {
+    display: inline;
+    background: linear-gradient(to bottom, #fff, #bbb);
+    color: #000;
+    border-radius: 4px;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-weight: bold;
+
+    font-size: 20px;
+
+    @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
+      font-size: 24px;
+    }
+
+  }
+}
+
+#data-summary-table {
+  td {
+    vertical-align: bottom;
+    font-size: 1em;
+  }
+  tr td:first-child {
+    text-align: right;
+    padding-right: 1em;
+    font-size: 0.8em;
+    font-family: "Courier New", Courier, monospace;
+  }
+
+  tr td:nth-child(2) {
+    text-align: left;
+  }
+
+}
+
+div.social-media-buttons {
+  text-align: center;
+
+  @media (min-width: map.get(globals.$grid-breakpoints, "sm")) {
+    text-align: left;
+  }
+
+  @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
+    margin-top: 5px;
+  }
+
+  > div {
+    display: inline-block;
+    height: 25px;
+  }
+}
+
+div#donate-button-container  {
+  display: inline-block;
+  a {
+    color: white;
+    background-color: #cc5454;
+    text-decoration: none;
+    height: 22px;
+
+  }
+  .btn-sm {
+    font-size: 11px;
+    line-height: 10px;
+  }
+}
+
+#join-page-get-involved p {
+  text-align: justify;
+}
+
+#donation-header {
+
+  h1 {
+    display: inline-block;
+  }
+
+  p {
+    font-size: 1.1em;
+    line-height: 1.1;
+  }
+
+  #donation-header-text {
+    padding: 0.3em;
+    border-radius: 0.15em;
+    box-shadow: -4px 4px 10px #888888;
+    background-color: globals.$gray-dark;
+    color: globals.$gray-lighter;
+  }
+
+  #donation-header-text-small {
+    padding-left: 0.8em;
+  }
+}
+
+.homepage-subheading {
+  font-size: 1rem;
+  line-height: 20px;
+
+  @media (min-width: map.get(globals.$grid-breakpoints, "sm")) {
+    font-size: 1.3rem;
+    line-height: 30px;
+  }
+
+  @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
+    font-size: 1.5rem;
+  }
+}
+
+#homepage-who-we-are-row {
+  div:first-of-type > div {
+    max-width: 690px;
+  }
+
+  h1 {
+    font-size: 2rem;
+
+    @media (min-width: map.get(globals.$grid-breakpoints, "sm")) {
+      font-size: 2.3rem;
+    }
+
+    @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
+      font-size: 3rem;
+    }
+  }
+}
+
+#homepage-explore-row {
+  div.col > div {
+    height: 180px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  #eyes-on-ties-img {
+    padding: 50px;
+
+    @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
+      padding: 10px;
+    }
+
+    @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
+      padding: 30px;
+    }
+
+  }
+}
+
+#homepage-carousel-row {
+  .littlesis_carousel_wrapper {
+    display: none;
+
+    @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
+      display: block;
+    }
+  }
+}
+
+#homepage-oligrapher-images {
+  a {
+    display: inline-block;
+  }
+}
+
+.littlesis-trix-row {
+  .trix-content {
+    padding-top: 0;
+    padding-left: 0;
+  }
+}

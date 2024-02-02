@@ -1,0 +1,67 @@
+@use "../base/globals";
+@use "../base/helpers";
+
+table.oligrapher_grid {
+    width: 100%;
+}
+
+#oligrapher-chart-subheader {
+    overflow: hidden;
+}
+
+#oligrapher-chart > svg {
+    rect {
+        stroke: lightgray;
+        stroke-width: 1;
+        stroke-opacity: 1;
+        fill: white;
+        fill-opacity: 0.2;
+        pointer-events: none;
+    }
+
+    image {}
+
+    image:hover {
+        cursor: pointer;
+    }
+
+    rect.hover {
+        stroke: globals.$link_blue;
+        // stroke-width: 1.5;
+        fill: none;
+    }
+}
+
+.oligrapher-chart-heading-row {
+    // position: sticky;
+}
+
+div.map-search-input-group {
+    button:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+}
+
+.personal-map-search {
+    cursor: pointer;
+    height: 100%;
+
+    span::before {
+        @include helpers.bootstrap-icon;
+        font-size: 1.2rem;
+        content: "\f4e1";
+    }
+
+    &:hover span::before {
+        content: "\f4dd";
+    }
+
+    &.checked span::before {
+        content: "\f4da";
+    }
+
+    &.checked:hover span::before {
+        content: "\f4d8";
+    }
+}

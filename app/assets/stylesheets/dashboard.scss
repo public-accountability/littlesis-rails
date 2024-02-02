@@ -1,80 +1,73 @@
-@import 'bootstrap/scss/_functions';
-@import 'bootstrap/scss/_variables';
-@import 'bootstrap/scss/mixins/_breakpoints';
+@use "sass:map";
+@use "base/globals";
 
 @font-face {
-    font-family: 'AveriaBold';
-    src: font-url('AveriaSerifLibre-Bold.ttf') format('truetype');
+  font-family: 'AveriaBold';
+  src: font-url('AveriaSerifLibre-Bold.ttf') format('truetype');
 }
 
 @font-face {
-    font-family: 'Averia';
-    src: font-url('AveriaSerifLibre-Regular.ttf') format('truetype');
+  font-family: 'Averia';
+  src: font-url('AveriaSerifLibre-Regular.ttf') format('truetype');
 }
-
 
 #dashboard {
-    h1 {
-        font-family: 'AveriaBold';
+  h1 {
+    font-family: 'AveriaBold';
+  }
+
+  h3, h4 {
+    font-family: 'Averia';
+  }
+
+  small.arrows {
+    i {
+      cursor: pointer;
     }
 
-    h3, h4 {
-        font-family: 'Averia';
+    .disabled {
+      color: lightgray;
+      cursor: default;
     }
-
-
-
-    small.arrows {
-        i {
-            cursor: pointer;
-        }
-
-        .disabled {
-            color: lightgray;
-            cursor: default;
-        }
-
-
-    }
+  }
 }
 
 #dashboard-bulletins {
+  margin-top: 1em;
 
-    margin-top: 1em;
+  @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
+    magin-left: 3em;
+    margin-top: 0;
+  }
 
-    @include media-breakpoint-up(md) {
-        magin-left: 3em;
-        margin-top: 0;
+  .card  {
+    margin-bottom: 1.5em;
+
+    .trix-content {
+      padding: 0;
     }
-
-    .card  {
-        margin-bottom: 1.5em;
-
-        .trix-content {
-            padding: 0;
-        }
-    }
+  }
 }
 
 
 #dashboard-search-form {
 
-    @include media-breakpoint-up(lg) {
-        padding-right: 6em;
-    }
+  @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
+    padding-right: 6em;
+  }
 
-    // input {
-    //     font-size: 0.8em;
-    //     width: 100%;
-    //     max-width: 275px;
+  // input {
+  //     font-size: 0.8em;
+  //     width: 100%;
+  //     max-width: 275px;
 
-    //     @include media-breakpoint-up(lg) {
-    //         max-width: 350px;
-    //     }
-    // }
+  //     @include media-breakpoint-up(lg) {
+  //         max-width: 350px;
+  //     }
+  // }
 }
 
 
 #dashboard-bulletins-table tr > th:nth-child(2) {
-    width: 40px;
+  width: 40px;
 }
