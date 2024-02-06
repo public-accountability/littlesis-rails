@@ -11,6 +11,9 @@ Devise.setup do |config|
   config.case_insensitive_keys = [:email]
   config.strip_whitespace_keys = [:email]
 
+  config.responder.error_status = :unprocessable_entity
+  config.responder.redirect_status = :see_other
+
   # Tell if authentication through request.params is enabled. True by default.
   # config.params_authenticatable = true
 

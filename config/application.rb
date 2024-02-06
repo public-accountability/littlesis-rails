@@ -50,6 +50,8 @@ module LittleSis
     config.i18n.fallbacks = [:en]
 
     config.cache_store = :redis_cache_store, { url: config.littlesis[:redis_url] }
+    config.session_store :cookie_store, key: "_littlesis_#{Rails.env}", expire_after: 90.days, domain: :all
+    # config.session_store :cache_store, key: "_littlesis_#{Rails.env}"
 
     config.assets.paths << Rails.root.join('node_modules')
     # config.assets.paths << "#{Rails.root}/vendor/assets/images"

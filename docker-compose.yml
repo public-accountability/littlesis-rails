@@ -55,8 +55,10 @@ services:
     image: docker.io/library/nginx:latest
     volumes:
       - ./public:/littlesis/public
+      - ./config/docker/nginx.conf:/etc/nginx/nginx.conf
     ports:
      - 8081:80
+
 
   manticore:
     image: littlesis:latest

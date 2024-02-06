@@ -1,3 +1,4 @@
 # Be sure to restart your server when you modify this file.
 
-LittleSis::Application.config.session_store :cache_store, key: '_lilsis_session'
+# Rails.application.config.session_store :cache_store, key: "_littlesis_#{Rails.env}"
+# , domain: :all, expire_after: 90.days

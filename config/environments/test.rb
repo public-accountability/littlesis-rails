@@ -5,6 +5,7 @@ Rails.application.configure do
 
   config.cache_store = :memory_store, { size: 16.megabytes }
   config.action_controller.perform_caching = false
+  config.session_store :cache_store, key: "_littlesis_#{Rails.env}"
 
   # The test environment is used exclusively to run your application's
   # test suite. You never need to work with it otherwise. Remember that
