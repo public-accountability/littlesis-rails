@@ -4,24 +4,17 @@
  * Licensed under MIT (https://github.com/twbs/icons/blob/main/LICENSE)
  */
 
-$bootstrap-icons-font: "bootstrap-icons" !default;
-$bootstrap-icons-font-dir: "./assets" !default;
-$bootstrap-icons-font-file: "#{$bootstrap-icons-font-dir}/#{$bootstrap-icons-font}" !default;
-$bootstrap-icons-font-hash: "24e3eb84d0bcaf83d77f904c78ac1f47" !default;
-$bootstrap-icons-font-src: url("#{$bootstrap-icons-font-file}.woff2?#{$bootstrap-icons-font-hash}") format("woff2"),
-                           url("#{$bootstrap-icons-font-file}.woff?#{$bootstrap-icons-font-hash}") format("woff") !default;
-
 @font-face {
   font-display: block;
-  font-family: $bootstrap-icons-font;
-  src: $bootstrap-icons-font-src;
+  font-family: "bootstrap-icons";
+  src: url("bootstrap-icons.woff2") format("woff2"), url("bootstrap-icons.woff") format("woff");
 }
 
 .bi::before,
 [class^="bi-"]::before,
 [class*=" bi-"]::before {
   display: inline-block;
-  font-family: $bootstrap-icons-font !important;
+  font-family: "bootstrap-icons" !important;
   font-style: normal;
   font-weight: normal !important;
   font-variant: normal;
