@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '7.1.2'
+gem 'rails', '7.1.3'
 
 gem 'pg'
 gem 'mysql2', '~> 0.5.2'
@@ -21,7 +21,7 @@ gem 'kramdown'
 gem 'rack-rewrite', '~> 1.5.1'
 
 # users and authentication
-gem 'devise', '~> 4.7'
+gem 'devise'
 
 # Versioning
 gem 'paper_trail'

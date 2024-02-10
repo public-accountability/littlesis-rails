@@ -92,7 +92,7 @@ feature "Signing up for an account", type: :feature do
 
       expect([User.count, UserProfile.count]).to eq counts
 
-      expect(page.status_code).to eq 200
+      expect(page.status_code).to eq 422
       page_has_selector 'h2', text: 'Get Involved'
 
       expect(page).to have_css('.alert-danger', text: 'Username has already been taken')
