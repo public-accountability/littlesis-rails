@@ -98,7 +98,10 @@ bin/fec --help
 bin/sec -- --help
 
 # Update public data
-bin/rails runner "PublicData.run"
+bin/rails public_data:run
+
+# Generate sitemap
+bin/rails sitemap:run
 
 # Update Network Map Collections
 bin/rake maps:update_all_entity_map_collections
