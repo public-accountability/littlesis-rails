@@ -16,6 +16,8 @@ module LittleSis
     config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
       r301     %r{^/(beginnerhelp|advancedhelp)$},        '/help'
       r301     %r{/user/(.*)},                            '/users/$1'
+      r301     %r{^/list/([0-9]+)/(.+)$},                 '/lists/$1'
+      r301     %r{^/MapThePower$},                        '/toolkit'
     end
 
     Rails.application.default_url_options = {
@@ -27,7 +29,7 @@ module LittleSis
     config.action_controller.default_url_options = Rails.application.default_url_options
     config.action_mailer.default_url_options = Rails.application.default_url_options
 
-    config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
+    # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
     config.time_zone = 'UTC'
     config.active_record.default_timezone = :utc
