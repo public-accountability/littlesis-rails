@@ -38,7 +38,7 @@ new_headers = ["corpu", "entity_automatch", "entity_name", "entity_id", "entity_
 headers = old_header + new_headers
 
 output = CSV::Table.new([], headers: headers)
-m
+
 Dir[Rails.root.join('data', 'corpu', '*.csv')].each do |filepath|
   ColorPrinter.print_blue filepath
   corpu = File.basename(filepath, ".csv")

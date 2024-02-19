@@ -3,7 +3,7 @@
 # Takes corpu-results and create 4 csv files in data/
 # corpu-universities, corpu-entities, corpu-relationships, corpu-existing_relationships
 
-CORPU_RESULTS = File.expand_path("~/Documents/corpu/corpu_results-2023-09-18.csv")
+CORPU_RESULTS = Rails.root.join("data/corpu-results-2023-11-10.csv")
 
 require 'csv'
 
@@ -39,7 +39,7 @@ Universities = {
 
 
 # [name,blurb,primary_ext,description1]   # ,is_current,start_date,end_date,is_board,is_executive,compensation,notes]
-# ["Name", "Industry", "If Other, what", "Corporate entity", "Position details", "FF-tie Other", "Past", "Notes", "Relevant sources", "corpu", "entity_automatch", "entity_name", "entity_id", "entity_url", "other_entity_automatch", "other_entity_name", "other_entity_id", "other_entity_url", "other_entity_existing_relationship"]
+# ["Name", "Industry", "If Other, what", "Corporate Entity", "Position details", "FF-tie Other", "Past", "Notes", "Relevant sources", "corpu", "entity_automatch", "entity_name", "entity_id", "entity_url", "other_entity_automatch", "other_entity_name", "other_entity_id", "other_entity_url", "other_entity_existing_relationship"]
 
 NewEntity = Struct.new(:name, :blub, :primary_ext)
 NewPositionRelationship = Struct.new(:entity1,
@@ -77,15 +77,15 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
             else
               # add entity to list of entities to be created if needed
               unless entities.map(&:name).include?(row['Name'])
-                entities << NewEntity.new(row['Name'], "Board member of #{row['corpu'].titleize}", "Person")
+                entities << NewEntity.new(row['Name'], "Board member of #{row['School'].titleize}", "Person")
               end
               # set entity1_id to be the name of entity that will be created
               row['Name']
             end
 
   # add school relationship
-  unless relationships.find { |r| r.entity1 == entity1 && r.entity2 == Universities.fetch(row['corpu']) }
-    school = Entity.find(Universities.fetch(row['corpu']))
+  unless relationships.find { |r| r.entity1 == entity1 && r.entity2 == Universities.fetch(row['School']) }
+    school = Entity.find(Universities.fetch(row['School']))
 
     relationships << NewPositionRelationship.new(
       entity1: entity1,
@@ -101,7 +101,7 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
   end
 
   # add corporate relationship
-  if row["Corporate entity"].present?
+  if row["Corporate Entity"].present?
     if row["other_entity_existing_relationship"].present?
       existing_relationships << row["other_entity_existing_relationship"]
     else
@@ -110,23 +110,23 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
                   row["other_entity_id"]
                 else
                   # create org
-                  unless entities.map(&:name).include?(row["Corporate entity"])
-                    entities << NewEntity.new(row["Corporate entity"], nil, "Org")
+                  unless entities.map(&:name).include?(row["Corporate Entity"])
+                    entities << NewEntity.new(row["Corporate Entity"], nil, "Org")
                   end
 
-                  row["Corporate entity"]
+                  row["Corporate Entity"]
                 end
 
       relationships << NewPositionRelationship.new(entity1: entity1,
                                                    entity2: entity2,
-                                                   description1: row["Position details"]&.tr('""', ''),
-                                                   is_current: row['Past'] == '1' ? true : nil,
-                                                   board_member: is_board_member(row["Position details"] || ""),
+                                                   description1: row["Position"]&.tr('""', ''),
+                                                   is_current: row['Position in Past'] == '1' ? false : nil,
+                                                   board_member: is_board_member(row["Position"] || ""),
                                                    notes: row['Notes'],
                                                    entity1_automatch: entity1_automatch,
                                                    entity2_automatch: entity2_automatch,
                                                    entity1_name: entity1_automatch ? row['entity_name'] : row['Name'],
-                                                   entity2_name: entity2_automatch ? row['other_entity_name'] : row["Corporate entity"],
+                                                   entity2_name: entity2_automatch ? row['other_entity_name'] : row["Corporate Entity"],
                                                    entity1_url: entity1_automatch ? row['entity_url'] : nil,
                                                    entity2_url: entity2_automatch ? row['other_entity_url'] : nil,
                                                   )
