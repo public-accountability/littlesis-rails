@@ -65,28 +65,6 @@ def find_entity(name)
   return entity
 end
 
-def create_document(url)
-  # This next find line is to prevent duplicates in this particular import case
-  document = Document.find_by_url(url)
-  if !document.present?
-    # TODO Missing name.  Can we get this?
-    document = Document.create({
-      url: url
-    })
-  end
-  return document[:id]
-end
-
-def create_source(url, entity_id, entity_type)
-  # TODO Multiple sources?
-  document_id = create_document(url)
-  Reference.create({
-    document_id: document_id,
-    referenceable_id: entity_id,
-    referenceable_type: entity_type
-  })
-end
-
 def create_entity(name, blurb, entity_type, source)
   # This next find line is to prevent duplicates in this particular import case
   entity = find_entity(name)
@@ -99,7 +77,6 @@ def create_entity(name, blurb, entity_type, source)
     })
   end
   # TODO what if the entity already exists but the blurb is empty?
-  create_source(source, entity[:id], entity_type)
   return entity[:id]
 end
 
@@ -128,7 +105,7 @@ def create_relationship(person_id, org_id, category_id, title, is_current = nil,
   })
   # FIXME Creating positions doesn't work.  Two steps?
   #create_position(is_board_member(title), relationship[:id])
-  create_source(url, org_id, 'Relationship')
+  relationship.add_reference({url: url})
   return relationship[:id]
 end
 
