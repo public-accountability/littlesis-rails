@@ -124,7 +124,7 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
   if row['entity_automatch'] != 1
     person_id = create_entity(
       row['Name'],
-      row['Position'].concat(" at ").concat(row['Corporate Entity']),
+      row['Blurb'],
       'Person',
       row['Relevant Sources']
     )
