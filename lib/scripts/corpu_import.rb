@@ -101,7 +101,9 @@ def create_relationship(person_id, org_id, category_id, title, is_current = nil,
   if is_board_member(title)
     relationship.position.update(is_board: true)
   end
-  relationship.add_reference({url: url})
+  if url.present?
+    relationship.add_reference({url: url})
+  end
   return relationship[:id]
 end
 
