@@ -1,0 +1,229 @@
+#!/usr/bin/env -S rails runner
+
+require 'csv'
+
+# Open the CSV file
+CORPU_RESULTS = Rails.root.join("data/corpu-compiled-cleaned.24-02-20.test.csv")
+
+Universities = {
+  'MIT' => 14933,
+  'Brown' => 15175,
+  'Columbia' => 14924,
+  'Cornell' => 15057,
+  'Dartmouth' => 15061,
+  'Duke' => 15105,
+  'FL_State' => 34122,
+  'Georgetown' => 15196,
+  'Harvard_Corporation' => 267445,
+  'Harvard_Overseers' => 402987,
+  'Michigan' => 14989,
+  'Morgan_St' => 52324,
+  'NYU' => 15003,
+  'Princeton' => 14950,
+  'StJohns' => 33961,
+  'Temple' => 15272,
+  'UCONN_Foundation' => 142084,
+  'UC_Berkeley' => 68692,
+  'UC_Regents' => 407075,
+  'UC_San_Diego_Foundation' => 48770,
+  'UC_Santa_Cruz_Foundation' => 142439,
+  'UConn' => 42367,
+  'UNC_Chapel_Hill' => 33907,
+  'USD' => 34395,
+  'U_Penn' => 14957,
+  'U_Penn_Wharton' => 14959,
+  'Williams' => 15200
+}
+
+def is_board_member(details)
+  if details.present?
+    details = details.downcase
+    if details.include?("board member") ||
+       details.include?("chairman") ||
+       details.include?("president")
+     return true
+    end
+  end
+  nil
+end
+
+def tag_entity(tag_id, tagable_type, tagable_id)
+  # This next find line is to prevent duplicates in this particular import case
+  tagging = Tagging.find_by(tag_id: tag_id, tagable_id: tagable_id)
+  if !tagging.present?
+    # Tag Object
+    Tagging.create({
+      tag_id: tag_id,
+      tagable_class: tagable_type,
+      tagable_id: tagable_id
+    })
+  end
+end
+
+def find_entity(name)
+  entity = Entity.find_by(name: name)
+  return entity
+end
+
+def create_document(url)
+  # This next find line is to prevent duplicates in this particular import case
+  document = Document.find_by_url(url)
+  if !document.present?
+    # TODO Missing name.  Can we get this?
+    document = Document.create({
+      url: url
+    })
+  end
+  return document[:id]
+end
+
+def create_source(url, entity_id, entity_type)
+  # TODO Multiple sources?
+  document_id = create_document(url)
+  Reference.create({
+    document_id: document_id,
+    referenceable_id: entity_id,
+    referenceable_type: entity_type
+  })
+end
+
+def create_entity(name, blurb, entity_type, source)
+  # This next find line is to prevent duplicates in this particular import case
+  entity = find_entity(name)
+  if !entity.present?
+    # Create Entity
+    entity = Entity.create({
+      name: name,
+      blurb: blurb,
+      primary_ext: entity_type
+    })
+  end
+  # TODO what if the entity already exists but the blurb is empty?
+  create_source(source, entity[:id], entity_type)
+  return entity[:id]
+end
+
+def find_relationship(person_id, org_id)
+  relationship = Relationship.find_by({entity1_id: person_id, entity2_id: org_id})
+  return relationship
+end
+
+def update_relationship(relationship_id, title)
+  relationship = Relationship.update({id: relationship_id, description1: title})
+  return relationship[:id]
+end
+
+def create_position(is_board, relationship_id)
+  position = Position.find_by({relationship_id: relationship_id})
+  Position.create({is_board: is_board, id: position[:id]})
+end
+
+def create_relationship(person_id, org_id, category_id, title, is_current = nil, url)
+  relationship = Relationship.create({
+    entity1_id: person_id,
+    entity2_id: org_id,
+    category_id: category_id,
+    description1: title,
+    is_current: is_current == '1' ? false : nil
+  })
+  # FIXME Creating positions doesn't work.  Two steps?
+  #create_position(is_board_member(title), relationship[:id])
+  create_source(url, org_id, 'Relationship')
+  return relationship[:id]
+end
+
+def add_entity_to_list(list_id, entity_id)
+  list_entity = ListEntity.find_by({list_id: list_id, entity_id: entity_id})
+  if !list_entity.present?
+    list_entity = ListEntity.create({
+      list_id: list_id,
+      entity_id: entity_id
+    })
+  end
+end
+
+# Loop through the rows of the CSV
+CSV.foreach(CORPU_RESULTS, headers: true) do |row|
+
+  # Create Person if it doesn't automatch
+  person_id = row['entity_id']
+  if !person_id.present?
+    person_id = create_entity(
+      row['Name'],
+      row['Position'].concat(" at ").concat(row['Corporate Entity']),
+      'Person',
+      row['Relevant Sources']
+    )
+  end
+  # Tag the Person with CorpU
+  tag_entity(36, 'Entity', person_id)
+  # Add the Person to the CorpU List
+  add_entity_to_list(3482, person_id)
+  # If the Person has a Fossil Fuel Tie,
+  # also tag and list them accordingly
+  if row['Fossil Fuel Tie'] == '1'
+    tag_entity(34, 'Entity', person_id)
+    add_entity_to_list(3483, person_id)
+  end
+  
+  if row['Corporate Entity'].present?
+    # Create Org if it doesn't automatch
+    org_id = row['other_entity_id']
+    if !org_id.present? && 
+      org_id = create_entity(
+        row['Corporate Entity'],
+        nil,
+        'Org',
+        row['Relevant Sources']
+      )
+    end
+    # Tag the Org with CorpU
+    tag_entity(36, 'Entity', org_id)
+    # Add the Org to the CorpU List
+    add_entity_to_list(3482, org_id)
+   
+    # Create Relationship if it doesn't exist
+    if !row["other_entity_existing_relationship"].present?
+      existing_org_relationship = find_relationship(person_id, org_id)
+      if !existing_org_relationship
+        org_relationship_id = create_relationship(
+          person_id,
+          org_id,
+          1,
+          row['Position'],
+          row['Position in Past'],
+          row['Relevant Sources']
+        )
+      else
+        # FIXME How do you update relationships?
+        #org_relationship_id = update_relationship(existing_org_relationship[:id], row['Position'])
+      end
+    end
+    # Tag the org relationship with CorpU
+    tag_entity(36, 'Relationship', org_relationship_id)
+  end
+
+  # Create Board Relationship to the school
+  school_id = Universities.fetch(row['School'])
+  existing_school_relationship = find_relationship(person_id, org_id)
+  if !existing_school_relationship
+    school_relationship_id = create_relationship(
+      person_id,
+      school_id,
+      1,
+      'Board Member',
+      nil,
+      row['Relevant Sources']
+    )
+  else
+    # FIXME How do you update relationships?
+    #school_relationship_id = update_relationship(existing_school_relationship[:id], 'Board Member')
+  end
+  # Tag the school with CorpU
+  tag_entity(36, 'Entity', school_id)
+  # Tag the school relationship with CorpU
+  tag_entity(36, 'Relationship', school_relationship_id)
+  # Add the School to the CorpU List
+  add_entity_to_list(3482, school_id)
+
+end
