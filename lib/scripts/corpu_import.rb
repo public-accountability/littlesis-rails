@@ -69,7 +69,6 @@ def create_entity(name, blurb, entity_type, source)
   # This next find line is to prevent duplicates in this particular import case
   entity = find_entity(name)
   if !entity.present?
-    # Create Entity
     entity = Entity.create({
       name: name,
       blurb: blurb,
@@ -120,14 +119,15 @@ end
 CSV.foreach(CORPU_RESULTS, headers: true) do |row|
 
   # Create Person if it doesn't automatch
-  person_id = row['entity_id']
-  if !person_id.present?
+  if row['entity_automatch'] != 1
     person_id = create_entity(
       row['Name'],
       row['Position'].concat(" at ").concat(row['Corporate Entity']),
       'Person',
       row['Relevant Sources']
     )
+  else
+    person_id = row['entity_id']
   end
   # Tag the Person with CorpU
   tag_entity(36, 'Entity', person_id)
@@ -142,14 +142,15 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
   
   if row['Corporate Entity'].present?
     # Create Org if it doesn't automatch
-    org_id = row['other_entity_id']
-    if !org_id.present? && 
+    if row['other_entity_automatch'] != 1
       org_id = create_entity(
         row['Corporate Entity'],
         nil,
         'Org',
         row['Relevant Sources']
       )
+    else
+      org_id = row['other_entity_id']
     end
     # Tag the Org with CorpU
     tag_entity(36, 'Entity', org_id)
