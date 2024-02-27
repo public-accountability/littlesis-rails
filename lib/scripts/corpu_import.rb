@@ -86,13 +86,9 @@ def find_relationship(person_id, org_id)
 end
 
 def update_relationship(relationship_id, title)
-  relationship = Relationship.update({id: relationship_id, description1: title})
+  relationship = Relationship.find(relationship_id)
+  relationship.update({description1: title})
   return relationship[:id]
-end
-
-def create_position(is_board, relationship_id)
-  position = Position.find_by({relationship_id: relationship_id})
-  Position.create({is_board: is_board, id: position[:id]})
 end
 
 def create_relationship(person_id, org_id, category_id, title, is_current = nil, url)
@@ -103,8 +99,9 @@ def create_relationship(person_id, org_id, category_id, title, is_current = nil,
     description1: title,
     is_current: is_current == '1' ? false : nil
   })
-  # FIXME Creating positions doesn't work.  Two steps?
-  #create_position(is_board_member(title), relationship[:id])
+  if is_board_member(title)
+    relationship.position.update(is_board: true)
+  end
   relationship.add_reference({url: url})
   return relationship[:id]
 end
@@ -172,8 +169,7 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
           row['Relevant Sources']
         )
       else
-        # FIXME How do you update relationships?
-        #org_relationship_id = update_relationship(existing_org_relationship[:id], row['Position'])
+        org_relationship_id = update_relationship(existing_org_relationship[:id], row['Position'])
       end
     end
     # Tag the org relationship with CorpU
@@ -193,8 +189,7 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
       row['Relevant Sources']
     )
   else
-    # FIXME How do you update relationships?
-    #school_relationship_id = update_relationship(existing_school_relationship[:id], 'Board Member')
+    school_relationship_id = update_relationship(existing_school_relationship[:id], 'Board Member')
   end
   # Tag the school with CorpU
   tag_entity(36, 'Entity', school_id)
