@@ -90,7 +90,7 @@ def update_relationship(relationship_id, title)
   return relationship[:id]
 end
 
-def create_relationship(person_id, org_id, category_id, title, is_current = nil, url)
+def create_relationship(person_id, org_id, category_id, title, is_current = nil)
   relationship = Relationship.create({
     entity1_id: person_id,
     entity2_id: org_id,
@@ -101,10 +101,16 @@ def create_relationship(person_id, org_id, category_id, title, is_current = nil,
   if is_board_member(title)
     relationship.position.update(is_board: true)
   end
-  if url.present?
-    relationship.add_reference({url: url})
-  end
   return relationship[:id]
+end
+
+def create_relationship_source(relationship_id, url)
+  relationship = Relationship.find(relationship_id)
+  begin
+    relationship.add_reference({url: url})
+  rescue
+    binding.break
+  end
 end
 
 def add_entity_to_list(list_id, entity_id)
@@ -168,9 +174,17 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
           org_id,
           1,
           row['Position'],
-          row['Position in Past'],
-          row['Relevant Sources']
+          row['Position in Past']
         )
+        if row['Relevant Sources'].present?
+          create_relationship_source(org_relationship_id, row['Relevant Sources'])
+        end
+        if row['Relevant Sources 2'].present?
+          create_relationship_source(org_relationship_id, row['Relevant Sources 2'])
+        end
+        if row['Relevant Sources 3'].present?
+          create_relationship_source(org_relationship_id, row['Relevant Sources 3'])
+        end
       else
         org_relationship_id = update_relationship(existing_org_relationship[:id], row['Position'])
       end
@@ -187,10 +201,17 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
       person_id,
       school_id,
       1,
-      'Board Member',
-      nil,
-      row['Relevant Sources']
+      'Board Member'
     )
+    if row['Relevant Sources'].present?
+      create_relationship_source(school_relationship_id, row['Relevant Sources'])
+    end
+    if row['Relevant Sources 2'].present?
+      create_relationship_source(school_relationship_id, row['Relevant Sources 2'])
+    end
+    if row['Relevant Sources 3'].present?
+      create_relationship_source(school_relationship_id, row['Relevant Sources 3'])
+    end
   else
     school_relationship_id = update_relationship(existing_school_relationship[:id], 'Board Member')
   end
