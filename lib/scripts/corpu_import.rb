@@ -127,7 +127,7 @@ end
 CSV.foreach(CORPU_RESULTS, headers: true) do |row|
 
   # Create Person if it doesn't automatch
-  if row['entity_automatch'] != 1
+  if row['entity_automatch'] != '1'
     person_id = create_entity(
       row['Name'],
       row['Blurb'],
@@ -150,7 +150,7 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
   
   if row['Corporate Entity'].present?
     # Create Org if it doesn't automatch
-    if row['other_entity_automatch'] != 1
+    if row['other_entity_automatch'] != '1'
       org_id = create_entity(
         row['Corporate Entity'],
         nil,
