@@ -3,7 +3,7 @@
 require 'csv'
 
 # Open the CSV file
-CORPU_RESULTS = Rails.root.join("data/corpu-compiled-cleaned.24-02-20.test.csv")
+CORPU_RESULTS = Rails.root.join("data/corpu-compiled-cleaned.24-02-20.csv")
 
 Universities = {
   'MIT' => 14933,
@@ -106,11 +106,7 @@ end
 
 def create_relationship_source(relationship_id, url)
   relationship = Relationship.find(relationship_id)
-  begin
-    relationship.add_reference({url: url})
-  rescue
-    binding.break
-  end
+  relationship.add_reference({url: url})
 end
 
 def add_entity_to_list(list_id, entity_id)
