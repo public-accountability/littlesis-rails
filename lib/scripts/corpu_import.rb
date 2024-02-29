@@ -143,6 +143,10 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
     tag_entity(34, 'Entity', person_id)
     add_entity_to_list(3509, person_id)
   end
+  # Tag close automatch as a possible duplicate
+  if row['entity_automatch'] != '0'
+    tag_entity(38, 'Entity', person_id)
+  end
   
   if row['Corporate Entity'].present?
     # Create Org if it doesn't automatch
@@ -158,6 +162,10 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
     end
     # Tag the Org with CorpU
     tag_entity(37, 'Entity', org_id)
+    # Tag close automatch as a possible duplicate
+    if row['entity_automatch'] != '0'
+      tag_entity(38, 'Entity', org_id)
+    end
     # Add the Org to the CorpU List
     add_entity_to_list(3508, org_id)
    
