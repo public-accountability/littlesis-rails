@@ -35,6 +35,12 @@ Universities = {
   'Williams' => 15200
 }
 
+CORPU_TAG_ID = 37
+FF_TAG_ID = 34
+CORPU_LIST_ID = 3508
+FF_LIST_ID = 3509
+DUPE_TAG_ID = 38
+
 def is_board_member(details)
   if details.present?
     details = details.downcase
@@ -134,18 +140,18 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
     person_id = row['entity_id']
   end
   # Tag the Person with CorpU
-  tag_entity(37, 'Entity', person_id)
+  tag_entity(CORPU_TAG_ID, 'Entity', person_id)
   # Add the Person to the CorpU List
-  add_entity_to_list(3508, person_id)
+  add_entity_to_list(CORPU_LIST_ID, person_id)
   # If the Person has a Fossil Fuel Tie,
   # also tag and list them accordingly
   if row['Fossil Fuel Tie'] == '1'
-    tag_entity(34, 'Entity', person_id)
-    add_entity_to_list(3509, person_id)
+    tag_entity(FF_TAG_ID, 'Entity', person_id)
+    add_entity_to_list(FF_LIST_ID, person_id)
   end
   # Tag close automatch as a possible duplicate
   if row['entity_automatch'] != '0'
-    tag_entity(38, 'Entity', person_id)
+    tag_entity(DUPE_TAG_ID, 'Entity', person_id)
   end
   
   if row['Corporate Entity'].present?
@@ -161,13 +167,13 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
       org_id = row['other_entity_id']
     end
     # Tag the Org with CorpU
-    tag_entity(37, 'Entity', org_id)
+    tag_entity(CORPU_TAG_ID, 'Entity', org_id)
     # Tag close automatch as a possible duplicate
     if row['entity_automatch'] != '0'
-      tag_entity(38, 'Entity', org_id)
+      tag_entity(DUPE_TAG_ID, 'Entity', org_id)
     end
     # Add the Org to the CorpU List
-    add_entity_to_list(3508, org_id)
+    add_entity_to_list(CORPU_LIST_ID, org_id)
    
     # Create Relationship if it doesn't exist
     if !row["other_entity_existing_relationship"].present?
@@ -194,7 +200,7 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
       end
     end
     # Tag the org relationship with CorpU
-    tag_entity(37, 'Relationship', org_relationship_id)
+    tag_entity(CORPU_TAG_ID, 'Relationship', org_relationship_id)
   end
 
   # Create Board Relationship to the school
@@ -220,10 +226,10 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
     school_relationship_id = update_relationship(existing_school_relationship[:id], 'Board Member')
   end
   # Tag the school with CorpU
-  tag_entity(37, 'Entity', school_id)
+  tag_entity(CORPU_TAG_ID, 'Entity', school_id)
   # Tag the school relationship with CorpU
-  tag_entity(37, 'Relationship', school_relationship_id)
+  tag_entity(CORPU_TAG_ID, 'Relationship', school_relationship_id)
   # Add the School to the CorpU List
-  add_entity_to_list(3508, school_id)
+  add_entity_to_list(CORPU_LIST_ID, school_id)
 
 end
