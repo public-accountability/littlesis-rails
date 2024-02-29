@@ -169,7 +169,7 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
   end
 
   # Tag close automatch as a possible duplicate
-  if row['entity_automatch'] != '0'
+  if row['entity_automatch'] == '0'
     tag_entity(DUPE_TAG_ID, 'Entity', person_id)
   end
   
@@ -199,7 +199,7 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
     end
 
     # Tag close automatch as a possible duplicate
-    if row['entity_automatch'] != '0'
+    if row['entity_automatch'] == '0'
       tag_entity(DUPE_TAG_ID, 'Entity', org_id)
     end
 
