@@ -191,11 +191,11 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
     # Add the Org to the CorpU List
     add_entity_to_list(CORPU_LIST_ID, org_id)
 
-    # If the Person has a Fossil Fuel Tie,
+    # If the Org has a Fossil Fuel Tie,
     # also tag and list them accordingly
     if row['Fossil Fuel Tie'] == '1'
-      tag_entity(FF_TAG_ID, 'Entity', person_id)
-      add_entity_to_list(FF_LIST_ID, person_id)
+      tag_entity(FF_TAG_ID, 'Entity', org_id)
+      add_entity_to_list(FF_LIST_ID, org_id)
     end
 
     # Tag close automatch as a possible duplicate
