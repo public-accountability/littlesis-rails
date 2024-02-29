@@ -35,11 +35,17 @@ Universities = {
   'Williams' => 15200
 }
 
+CORPU_USER_ID = 22495
 CORPU_TAG_ID = 37
 FF_TAG_ID = 34
 CORPU_LIST_ID = 3508
 FF_LIST_ID = 3509
 DUPE_TAG_ID = 38
+
+def audit_trail
+  PaperTrail.request(whodunnit: CORPU_USER_ID.to_s)
+  yield
+end
 
 def is_board_member(details)
   if details.present?
@@ -58,11 +64,13 @@ def tag_entity(tag_id, tagable_type, tagable_id)
   tagging = Tagging.find_by(tag_id: tag_id, tagable_id: tagable_id)
   if !tagging.present?
     # Tag Object
-    Tagging.create({
-      tag_id: tag_id,
-      tagable_class: tagable_type,
-      tagable_id: tagable_id
-    })
+    audit_trail do
+      Tagging.create({
+        tag_id: tag_id,
+        tagable_class: tagable_type,
+        tagable_id: tagable_id
+      })
+    end
   end
 end
 
@@ -73,16 +81,18 @@ end
 
 def create_entity(name, blurb, entity_type, source)
   # This next find line is to prevent duplicates in this particular import case
-  entity = find_entity(name)
-  if !entity.present?
-    entity = Entity.create({
-      name: name,
-      blurb: blurb,
-      primary_ext: entity_type
-    })
+  audit_trail do
+    entity = find_entity(name)
+    if !entity.present?
+        entity = Entity.create({
+          name: name,
+          blurb: blurb,
+          primary_ext: entity_type
+        })
+    end
+    # TODO what if the entity already exists but the blurb is empty?
+    return entity[:id]
   end
-  # TODO what if the entity already exists but the blurb is empty?
-  return entity[:id]
 end
 
 def find_relationship(person_id, org_id)
@@ -97,31 +107,37 @@ def update_relationship(relationship_id, title)
 end
 
 def create_relationship(person_id, org_id, category_id, title, is_current = nil)
-  relationship = Relationship.create({
-    entity1_id: person_id,
-    entity2_id: org_id,
-    category_id: category_id,
-    description1: title,
-    is_current: is_current == '1' ? false : nil
-  })
-  if is_board_member(title)
-    relationship.position.update(is_board: true)
+  audit_trail do
+    relationship = Relationship.create({
+      entity1_id: person_id,
+      entity2_id: org_id,
+      category_id: category_id,
+      description1: title,
+      is_current: is_current == '1' ? false : nil
+    })
+    if is_board_member(title)
+      relationship.position.update(is_board: true)
+    end
+    return relationship[:id]
   end
-  return relationship[:id]
 end
 
 def create_relationship_source(relationship_id, url)
   relationship = Relationship.find(relationship_id)
-  relationship.add_reference({url: url})
+  audit_trail do
+    relationship.add_reference({url: url})
+  end
 end
 
 def add_entity_to_list(list_id, entity_id)
   list_entity = ListEntity.find_by({list_id: list_id, entity_id: entity_id})
   if !list_entity.present?
-    list_entity = ListEntity.create({
-      list_id: list_id,
-      entity_id: entity_id
-    })
+    audit_trail do
+      list_entity = ListEntity.create({
+        list_id: list_id,
+        entity_id: entity_id
+      })
+    end
   end
 end
 
