@@ -42,10 +42,7 @@ CORPU_LIST_ID = 3508
 FF_LIST_ID = 3509
 DUPE_TAG_ID = 38
 
-def audit_trail
-  PaperTrail.request(whodunnit: CORPU_USER_ID.to_s)
-  yield
-end
+PaperTrail.request.whodunnit = CORPU_USER_ID.to_s
 
 def is_board_member(details)
   if details.present?
@@ -64,13 +61,7 @@ def tag_entity(tag_id, tagable_type, tagable_id)
   tagging = Tagging.find_by(tag_id: tag_id, tagable_id: tagable_id)
   if !tagging.present?
     # Tag Object
-    audit_trail do
-      Tagging.create({
-        tag_id: tag_id,
-        tagable_class: tagable_type,
-        tagable_id: tagable_id
-      })
-    end
+    tagable_type.constantize.find(tagable_id).add_tag(tag_id)
   end
 end
 
@@ -81,17 +72,15 @@ end
 
 def create_entity(name, blurb, entity_type, source)
   # This next find line is to prevent duplicates in this particular import case
-  audit_trail do
-    entity = find_entity(name)
-    if !entity.present?
-        entity = Entity.create({
-          name: name,
-          blurb: blurb,
-          primary_ext: entity_type
-        })
-    end
-    return entity[:id]
+  entity = find_entity(name)
+  if !entity.present?
+    entity = Entity.create({
+      name: name,
+      blurb: blurb,
+      primary_ext: entity_type
+    })
   end
+  return entity[:id]
 end
 
 def find_relationship(person_id, org_id)
@@ -106,37 +95,31 @@ def update_relationship(relationship_id, title)
 end
 
 def create_relationship(person_id, org_id, category_id, title, is_current = nil)
-  audit_trail do
-    relationship = Relationship.create({
-      entity1_id: person_id,
-      entity2_id: org_id,
-      category_id: category_id,
-      description1: title,
-      is_current: is_current == '1' ? false : nil
-    })
-    if is_board_member(title)
-      relationship.position.update(is_board: true)
-    end
-    return relationship[:id]
+  relationship = Relationship.create({
+    entity1_id: person_id,
+    entity2_id: org_id,
+    category_id: category_id,
+    description1: title,
+    is_current: is_current == '1' ? false : nil
+  })
+  if is_board_member(title)
+    relationship.position.update(is_board: true)
   end
+  return relationship[:id]
 end
 
 def create_relationship_source(relationship_id, url)
   relationship = Relationship.find(relationship_id)
-  audit_trail do
-    relationship.add_reference({url: url})
-  end
+  relationship.add_reference({url: url})
 end
 
 def add_entity_to_list(list_id, entity_id)
   list_entity = ListEntity.find_by({list_id: list_id, entity_id: entity_id})
   if !list_entity.present?
-    audit_trail do
-      list_entity = ListEntity.create({
-        list_id: list_id,
-        entity_id: entity_id
-      })
-    end
+    list_entity = ListEntity.create({
+      list_id: list_id,
+      entity_id: entity_id
+    })
   end
 end
 
@@ -226,10 +209,10 @@ CSV.foreach(CORPU_RESULTS, headers: true) do |row|
       else
         org_relationship_id = update_relationship(existing_org_relationship[:id], row['Position'])
       end
-    end
 
-    # Tag the org relationship with CorpU
-    tag_entity(CORPU_TAG_ID, 'Relationship', org_relationship_id)
+      # Tag the org relationship with CorpU
+      tag_entity(CORPU_TAG_ID, 'Relationship', org_relationship_id)
+    end
   end
 
   # Create Board Relationship to the school
