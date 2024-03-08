@@ -352,6 +352,7 @@ LittleSis::Application.routes.draw do
   scope path: "/database" do
     resources :contact, only: [:index, :create]
 
+    get "/" => 'home#index'
     get "/newsletter" => "pages#newsletter"
     get "/disclaimer" => "pages#disclaimer"
     get "/about" => "pages#about"
