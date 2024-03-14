@@ -1,6 +1,8 @@
 ## Development
 
-LittleSis is developed using docker
+LittleSis is developed using Docker
+
+### Build the application
 
 Clone this repo: `git clone https://github.com/public-accountability/littlesis-rails`
 
@@ -8,7 +10,7 @@ Build the image: `bin/build`
 
 Build a smaller production image: `env RAILS_ENV=production bin/build`
 
-Install ruby gems and javascript packages
+Install Ruby gems and JavaScript packages
 
 ``` sh
 docker compose run --rm app bundle config path vendor/bundle
@@ -16,13 +18,9 @@ docker compose run --rm app bundle install
 docker compose run --rm app npm install
 ```
 
-Start all the docker containers: `docker compose up -d`
+### Load the data
 
-Start one of the docker containers: `docker compose up -d postgres`
-
-Run any command using the app container `docker compose exec app <CMD>`. For instance, to view all available rake tasks use `docker compose exec app bin/rake --tasks`.
-
-To run a command in database as administrator use `docker compose exec -u postgres postgres psql`
+Start the PostgreSQL Docker containers: `docker compose up -d postgres`
 
 Setup database user and database:
 
@@ -31,17 +29,72 @@ docker compose exec -u postgres postgres psql --command="CREATE ROLE littlesis W
 docker compose exec -u postgres postgres psql --command="CREATE DATABASE littlesis WITH OWNER littlesis"
 ```
 
-You can also access the database on the host: `psql postgresql://littlesis:themanbehindthemanbehindthethrone@localhost:8090/littlesis`
+You can also access the database on the host: `psql postgresql://littlesis:themanbehindthemanbehindthethrone@localhost:8090/littlesis`.
 
-The folder data is mounted at /data inside the postgres container, which you can run any sql or pgdump files there, for instance: `docker compose exec -u postgres postgres pg_restore -d <DATABASE> /data/archive.pgdump`
+Contact LittleSis about getting an anonymized copy of the database.  Our convention is to store this in the /data/ directory within the code base.  The examples below assume this location.
 
-Setup the database:
+The full database is quite large, so to reduce the size there are a handful of the tables to exclude that will significantly reduce it.  In order to do that, you can generate a table list from the database copy and use that list to filter the tables to import.
 
-``` sh
-docker compose exec app bin/rails db:reset
+```
+docker compose exec -u postgres postgres pg_restore -l data/database.pgdump > data/database.table-list
 ```
 
-The test database
+Edit the database.table-list file and comment out the the following TABLE DATA rows.
+
+* external_data_fec_contributions
+* external_data_nyc_contributions
+* external_data_nycc
+* external_data_nys_disclosures
+* external_data_nys_filers
+* external_entities
+* ny_disclosures
+* os_donations
+* versions
+
+Since the data folder is mounted at /data inside the postgres container, you can run any sql or pgdump files from there.  To load the database while filtering out the large tables, you can run:
+
+``` sh
+docker compose exec -u postgres postgres pg_restore -j 2 -v -L /data/database.table-list -d littlesis /data/database.pgdump
+```
+
+To load the entire database, you can run:
+
+``` sh
+docker compose exec -u postgres postgres pg_restore -d littlesis /data/database.pgdump
+```
+
+### Compile the application and index the data
+
+Start the remaining docker containers: `docker compose up -d`.
+
+Compile assets:
+
+``` sh
+docker compose exec app bin/rails dartsass:build
+docker compose exec app bin/rails javascript:build
+docker compose exec app bin/rails assets:precompile
+```
+
+Create manticore configuration and indexes:
+
+``` sh
+docker compose exec app bundle exec rails ts:configure
+docker compose exec app bin/rails ts:rt:index
+```
+
+Indexing will likely take a while.
+
+Setup development users: `docker compose exec app bin/script create_development_users.rb`.
+
+Visit port `8080` for Puma and `8081` for nginx. The configurations for nginx and postgres are located the folder config/docker
+
+Run any command using the app container `docker compose exec app <CMD>`. For instance, to view all available rake tasks use `docker compose exec app bin/rake --tasks`.
+
+To run a command in database as administrator use `docker compose exec -u postgres postgres psql`
+
+## Testing
+
+LittleSis has quite extensive testing coverage.  The steps to run this locally are similar to the above except compiling should be against the test environment,
 
 ``` sh
 docker compose exec -e RAILS_ENV=test app bin/rails db:reset
@@ -52,15 +105,9 @@ docker compose exec -e RAILS_ENV=test app bin/rails ts:configure
 
 ```
 
-Compile assets:  `docker compose exec app bin/rails assets:precompile`
-
 Run the tests: `docker compose exec -e RAILS_ENV=test app bin/rspec`
 
-Create manticore indexes: `docker compose exec app bin/rails ts:rt:index` This may take a while.
-
-Setup development users: `docker compose exec app bin/script create_development_users.rb`
-
-Visit port `8080` for Puma and `8081` for nginx. The configurations for nginx and postgres are located the folder config/docker
+---
 
 ``` sh
 # Build javascript & css
@@ -117,8 +164,7 @@ bin/rails console
 bin/rails runner "User.find_by(email: <EMAIL>).send_reset_password_instructions"
 ```
 
-
-### frequent production commands
+### Frequent Production Commands
 
 ``` sh
 cd /littlesis
