@@ -47,14 +47,14 @@ class Navmenu
   def about_menu
     [t('vocab.about').capitalize,
      [
-       ['LittleSis', '/about'],
+       ['LittleSis', '/database/about'],
        (@user.nil? ? [t('vocab.signup').titleize, '/join'] : nil),
        [t('vocab.help').capitalize, '/help'],
        ['API', '/api'],
-       [t('vocab.disclaimer'), '/disclaimer'],
-       [t('phrases.contact_us').titleize, '/contact'],
-       [t('vocab.donate').capitalize, '/donate'],
-       ["Newsletter", '/newsletter']
+       [t('vocab.disclaimer'), '/database/disclaimer'],
+       [t('phrases.contact_us').titleize, '/database/contact'],
+       [t('vocab.donate').capitalize, '/database/donate'],
+       ["Newsletter", '/database/newsletter']
      ].compact
     ]
   end

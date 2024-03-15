@@ -23,4 +23,16 @@ describe 'Home requests' do
       end
     end
   end
+
+  describe 'page redirects' do
+    specify do
+      get "/about"
+      expect(response).to redirect_to("/database/about")
+    end
+
+    specify do
+      get "/bulk_data"
+      expect(response).to redirect_to("/database/bulk_data")
+    end
+  end
 end

@@ -49,7 +49,7 @@ class HomeController < ApplicationController
   end
 
   def index
-    redirect_to_dashboard_if_signed_in unless request.env['PATH_INFO'] == '/home'
+    redirect_to_dashboard_if_signed_in unless ['/home', '/database'].include?(request.env['PATH_INFO'])
     @dots_connected = dots_connected
     @carousel_entities = carousel_entities
     @stats = ExtensionRecord.data_summary

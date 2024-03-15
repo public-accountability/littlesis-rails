@@ -1,8 +1,8 @@
 describe PagesController, type: :controller do
   it { is_expected.to route(:get, '/oligrapher/about').to(action: :oligrapher) }
-  it { is_expected.to route(:get, '/donate').to(action: :donate) }
-  it { is_expected.to route(:get, '/about').to(action: :about) }
-  it { is_expected.to route(:get, '/disclaimer').to(action: :disclaimer) }
+  it { is_expected.to route(:get, '/database/donate').to(action: :donate) }
+  it { is_expected.to route(:get, '/database/about').to(action: :about) }
+  it { is_expected.to route(:get, '/database/disclaimer').to(action: :disclaimer) }
   it { is_expected.not_to route(:get, '/bad_page').to(action: :display) }
   it { is_expected.to route(:get, '/pages/new').to(action: :new) }
   it { is_expected.to route(:get, '/pages/666').to(action: :show, id: '666') }
@@ -12,11 +12,11 @@ describe PagesController, type: :controller do
   it { is_expected.to route(:patch, '/pages/666').to(action: :update, id: '666') }
   it { is_expected.to route(:post, '/pages').to(action: :create) }
   it { is_expected.to route(:get, '/pages').to(action: :index) }
-  it { is_expected.to route(:get, '/swamped').to(action: :swamped) }
-  it { is_expected.to route(:post, '/swamped').to(action: :swamped) }
-  it { is_expected.to route(:get, '/bulk_data').to(action: :bulk_data) }
-  it { is_expected.to route(:get, '/public_data/relationships.json.gz').to(action: :public_data, file: 'relationships.json.gz') }
-  it { is_expected.not_to route(:get, '/public_data/example.json').to(action: :public_data) }
+  it { is_expected.to route(:get, '/database/swamped').to(action: :swamped) }
+  it { is_expected.to route(:post, '/database/swamped').to(action: :swamped) }
+  it { is_expected.to route(:get, '/database/bulk_data').to(action: :bulk_data) }
+  it { is_expected.to route(:get, '/database/public_data/relationships.json.gz').to(action: :public_data, file: 'relationships.json.gz') }
+  it { is_expected.not_to route(:get, '/database/public_data/example.json').to(action: :public_data) }
 
   describe 'create page' do
     let(:params) { { page: { name: 'new_page', title: 'this is a new page' } } }

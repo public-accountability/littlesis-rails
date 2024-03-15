@@ -55,8 +55,6 @@ LittleSis::Application.routes.draw do
   get 'newsletters/confirmation/:secret' => 'newsletters#confirmation',
       constraints: { secret: /[[:xdigit:]]{32}/ }
 
-  resources :contact, only: [:index, :create]
-
   # charts
 
   get 'charts/sankey'
@@ -342,18 +340,29 @@ LittleSis::Application.routes.draw do
   get "/pages/:page/edit" => "pages#edit_by_name", constraints: { page: %r{[A-z]+[^/]+} }
   resources :pages, only: [:new, :create, :edit, :update, :index, :show]
 
-  get "/newsletter" => "pages#newsletter"
-  get "/disclaimer" => "pages#disclaimer"
-  get "/about" => "pages#about"
+  # redirect pages to /database
+  get "/newsletter", to: redirect('/database/newsletter', status: 302)
+  get "/disclaimer", to: redirect('/database/disclaimer', status: 302)
+  get "/about", to: redirect('/database/about', status: 302)
+  get "/donate", to: redirect('/database/donate', status: 302)
+  get "/swamped", to: redirect('/database/swamped', status: 302)
+  post "/swamped", to: redirect('/database/swamped', status: 302)
+  get '/bulk_data', to: redirect('/database/bulk_data', status: 302)
 
-  # Other Pages
+  scope path: "/database" do
+    resources :contact, only: [:index, :create]
 
-  get "/donate" => "pages#donate"
-  get "/swamped" => "pages#swamped"
-  post "/swamped" => "pages#swamped"
-  get '/bulk_data' => 'pages#bulk_data'
-  get '/public_data/:file' => 'pages#public_data',
-      constraints: { file: /(entities|relationships)\.json(\.gz)?/ }
+    get "/" => 'home#index'
+    get "/newsletter" => "pages#newsletter"
+    get "/disclaimer" => "pages#disclaimer"
+    get "/about" => "pages#about"
+    get "/donate" => "pages#donate"
+    get "/swamped" => "pages#swamped"
+    post "/swamped" => "pages#swamped"
+    get '/bulk_data' => 'pages#bulk_data'
+    get '/public_data/:file' => 'pages#public_data',
+        constraints: { file: /(entities|relationships)\.json(\.gz)?/ }
+  end
 
   # Partners
 
