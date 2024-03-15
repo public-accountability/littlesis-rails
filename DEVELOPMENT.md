@@ -22,16 +22,9 @@ docker compose run --rm app npm install
 
 Start the PostgreSQL Docker containers: `docker compose up -d postgres`
 
-Setup database user and database:
-
-``` sh
-docker compose exec -u postgres postgres psql --command="CREATE ROLE littlesis WITH NOSUPERUSER CREATEDB LOGIN PASSWORD 'themanbehindthemanbehindthethrone'"
-docker compose exec -u postgres postgres psql --command="CREATE DATABASE littlesis WITH OWNER littlesis"
-```
-
 You can also access the database on the host: `psql postgresql://littlesis:themanbehindthemanbehindthethrone@localhost:8090/littlesis`.
 
-Contact LittleSis about getting an anonymized copy of the database.  Our convention is to store this in the /data/ directory within the code base.  The examples below assume this location.
+Contact LittleSis about getting a development copy of the database.  Our convention is to store this in the /data/ directory within the code base.  The examples below assume this location.
 
 The full database is quite large, so to reduce the size there are a handful of the tables to exclude that will significantly reduce it.  In order to do that, you can generate a table list from the database copy and use that list to filter the tables to import.
 
