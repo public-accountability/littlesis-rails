@@ -24,33 +24,9 @@ Start the PostgreSQL Docker containers: `docker compose up -d postgres`
 
 You can also access the database on the host: `psql postgresql://littlesis:themanbehindthemanbehindthethrone@localhost:8090/littlesis`.
 
-Contact LittleSis about getting a development copy of the database.  Our convention is to store this in the /data/ directory within the code base.  The examples below assume this location.
+Contact LittleSis about getting a development copy of the database.  Our convention is to store this in the /data/ directory within the code base, and therefore accessible inside the Docker container.
 
-The full database is quite large, so to reduce the size there are a handful of the tables to exclude that will significantly reduce it.  In order to do that, you can generate a table list from the database copy and use that list to filter the tables to import.
-
-```
-docker compose exec -u postgres postgres pg_restore -l data/database.pgdump > data/database.table-list
-```
-
-Edit the database.table-list file and comment out the the following TABLE DATA rows.
-
-* external_data_fec_contributions
-* external_data_nyc_contributions
-* external_data_nycc
-* external_data_nys_disclosures
-* external_data_nys_filers
-* external_entities
-* ny_disclosures
-* os_donations
-* versions
-
-Since the data folder is mounted at /data inside the postgres container, you can run any sql or pgdump files from there.  To load the database while filtering out the large tables, you can run:
-
-``` sh
-docker compose exec -u postgres postgres pg_restore -j 2 -v -L /data/database.table-list -d littlesis /data/database.pgdump
-```
-
-To load the entire database, you can run:
+To load the database, run:
 
 ``` sh
 docker compose exec -u postgres postgres pg_restore -d littlesis /data/database.pgdump
