@@ -44,10 +44,9 @@ docker compose exec app bin/rails javascript:build
 docker compose exec app bin/rails assets:precompile
 ```
 
-Create manticore configuration and indexes:
+Create Manticore indexes:
 
 ``` sh
-docker compose exec app bundle exec rails ts:configure
 docker compose exec app bin/rails ts:rt:index
 ```
 

@@ -29,9 +29,6 @@
 # Ignore sphinx indexes
 /db/sphinx
 
-# Ignore sphinx config
-/config/*sphinx.conf
-
 # Ignore compiled assets
 /public/assets/*
 /public/oligrapher/*
