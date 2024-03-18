@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+raise RuntimeError if ENV['RAILS_ENV'] == 'production'
+
 require 'getoptlong'
 require 'fileutils'
 
@@ -6,33 +8,29 @@ require 'fileutils'
 REPO = File.expand_path('..', __dir__).freeze
 Dir.chdir(REPO)
 
-$database = {
-  name: ENV.fetch('LITTLESIS_DATABASE_NAME', 'littlesis'),
-  user: ENV.fetch('LITTLESIS_DATABASE_USER', 'littlesis'),
-  password: ENV.fetch('LITTLESIS_DATABASE_PASSWORD', 'themanbehindthemanbehindthethrone'),
-  host: ENV.fetch('LITTLESIS_DATABASE_HOST', 'postgres')
-}
+DOCKER_COMPOSE = "docker compose".freeze
+SERVICES = %w[app postgres redis nginx esbuild manticore jsserver].freeze
+FOLDERS = %w[tmp data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher].freeze
 
-$rails_env = ENV.fetch('RAILS_ENV', 'development')
+HELP = <<TEXT
+Usage: littlesis [options] <command> -- [arguments for command]
 
-$littlesis_systemd_services = %w[nginx.service redis-server.service littlesis.socket littlesis.service littlesis-goodjob.service littlesis-manticore.service].freeze
-$littlesis_docker_services = %w[app postgres redis nginx esbuild manticore jsserver].freeze
-
-$env_vars = {}
-
-def help
-  puts <<TEXT
-Usage: littlesis [-tdP] <command> [--] [arguments for command]
+Options
+          --help            Show this help message
+          --verbose         Debug information
+          --pretend         Print command to be executed
+          --test            Set RAILS_ENV = test
+          --development     Set RAILS_ENV = development (default)
+          -e NAME=var       Add env variable to docker exec
 
 Commands
            docker           run any docker compose comand
            up               start docker containers
            down             stop docker containers
-           delete           deletes database by removing docker volumes
            build            build littlesis docker image
            bash             interative bash shell
            logs             follow rails logs
-           status           check status of applications
+           status           check status of docker containers
            console          launch rails console
            redis            launch redi cli
            data             external data ETL tools
@@ -40,9 +38,8 @@ Commands
            sec              SEC data ETL tools
            edit             select file to open with $EDITOR
            runner           run bin/rails runner <file>
-           script           execute named script in lib/scripts/
+           script           execute named script in lib/scripts
            esbuild          bundle javascript
-           pgenv            use: fish> eval (pgenv)
 
 Aliases
            bundle
@@ -58,249 +55,164 @@ Aliases
            git
            rg
            find
-
 TEXT
+
+## parse args
+
+if ARGV.empty?
+  puts HELP
+  exit
 end
 
-def set_env_to_test
-  $rails_env = 'test'
-  $database[:name] = 'littlesis_test'
-  ENV['RAILS_ENV'] = $rails_env
-end
+# docker env vars
+$env_vars = {
+  'RAILS_ENV' => ENV.fetch('RAILS_ENV', 'development')
+}
 
-def production_environment?
-  $rails_env == 'production'
-end
+$verbose = false
+$pretend = false
 
-def database_connection
-  "postgresql://#{$database[:user]}:#{$database[:password]}@#{$database[:host]}/#{$database[:name]}"
-end
-
-def setup_folders
-  %w[tmp data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images
-     public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher].each do |folder|
-    FileUtils.mkdir_p File.join(REPO, folder)
-  end
-end
-
-def app_exec_docker(cmd, use_exec:, container:, compose_command:)
-  enviroment = +"-e RAILS_ENV=#{$rails_env}"
-  $env_vars.each_pair { |k, v| enviroment << " -e #{k}=#{v}"  }
-  docker_compose = "docker compose #{compose_command} #{enviroment} #{container} #{cmd}"
-
-  if use_exec
-    exec docker_compose
-  else
-    `#{docker_compose}`
-  end
-end
-
-def app_exec_production(cmd, use_exec:)
-  ENV['RAILS_ENV'] = $rails_env
-  $env_vars.each_pair { |k, v| ENV[k] = v }
-
-  if use_exec
-    exec cmd
-  else
-    `#{cmd}`
-  end
-end
-
-def app_exec(cmd, bin: false, use_exec: false, container: 'app', compose_command: 'run --rm')
-  bin_path = $rails_env == 'production' ? '/var/www/littlesis/bin' : '/littlesis/bin'
-  cmd = "#{bin_path}/#{cmd}" if bin
-
-  if $rails_env == 'production'
-    app_exec_production(cmd, use_exec: use_exec)
-  else
-    app_exec_docker(cmd, use_exec: use_exec, container: container, compose_command: compose_command)
-  end
-end
-
-def app_exec_bin(cmd, **kwargs)
-  app_exec(cmd, bin: true, **kwargs)
-end
-
-def app_exec_bin!(cmd, **kwargs)
-  app_exec(cmd, bin: true, use_exec: true, **kwargs)
-end
-
-def git(cmd)
-  Dir.chdir(REPO) { `git #{cmd}` }
-end
-
-def systemd_service_check(service)
-  status = system("systemctl is-active -q #{service}") ? '✓' : 'X'
-  puts "[#{status}] #{service}"
-end
-
-def status
-  puts "Host\t#{File.read('/etc/hostname').chomp}"
-  puts "Path\t#{REPO}"
-  puts "Env\t#{$rails_env}"
-  printf git('log --format="%h %cs %s" -n 1')
-
-  if production_environment?
-    $littlesis_systemd_services.each { |s| systemd_service_check(s) }
-    backup_status = system("systemctl show littlesis-backup.service | grep -q -G '^Result=success'") ? '✓' : 'X'
-    puts "[#{backup_status}] littlesis-backup.service"
-  else
-    running_services = `docker compose ps --services --filter status=running`.split("\n")
-
-    $littlesis_docker_services.each do |service|
-      puts "[#{running_services.include?(service) ? '✓' : 'X'}] #{service} "
-    end
-  end
-end
-
-def yes_or_no?(msg)
-  printf "#{msg}\n\e[31mpress 'y' to continue: \e[0m"
-  $stdin.gets.strip.casecmp('y').zero?
-end
-
-def logs
-  prefix = if production_environment?
-             "/var/www/littlesis"
-           else
-             "/littlesis"
-           end
-
-  logfile = "#{prefix}/log/#{$rails_env}.log"
-
-  app_exec "/usr/bin/tail -f #{logfile}", use_exec: true
-end
-
-def pgenv
-  puts <<~TEXT
-    set -x PGHOST  #{$database[:host]};
-    set -x PGUSER #{$database[:user]};
-    set -x PGPASSWORD #{$database[:password]};
-    set -x PGDATABASE #{$database[:name]};
-  TEXT
-end
-
-# Start processing options
-
-opts = GetoptLong.new(
+GetoptLong.new(
   ['--help', '-h', GetoptLong::NO_ARGUMENT],
+  ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
+  ['--pretend', GetoptLong::NO_ARGUMENT],
   ['--test', '-t', GetoptLong::NO_ARGUMENT],
   ['--development', '-d', GetoptLong::NO_ARGUMENT],
   ['--production', '-P', GetoptLong::NO_ARGUMENT],
   ['--branch', GetoptLong::REQUIRED_ARGUMENT],
   ['--environment', '-e', GetoptLong::REQUIRED_ARGUMENT]
-)
-
-opts.each do |name, val|
+).each do |name, val|
   case name
   when '--help'
-    help
+    puts HELP
     exit
+  when '--verbose'
+    $verbose = true
+  when '--pretend'
+    $pretend = true
   when '--test'
-    set_env_to_test
+    $env_vars['RAILS_ENV'] = 'test'
   when '--development'
-    $rails_env = 'development'
+    $env_vars['RAILS_ENV'] = 'development'
   when '--production'
-    $rails_env = 'production'
+    raise RuntimeError
   when '--environment'
     raise ArgumentError, "invalid env var" unless val.include?('=')
-    k,v  = val.split('=')
-    $env_vars[k] =v
+
+    k, v = val.strip.split('=')
+    $env_vars[k] = v
   end
 end
 
-ENV['RAILS_ENV'] = $rails_env
+CHOICE = ARGV.first
+REST = ARGV[1..].join(' ')
 
-if ARGV.empty?
-  help
-  exit
+def shell_exec(cmd)
+  warn cmd if $verbose || $pretend
+  exec cmd unless $pretend
 end
 
-rest = ARGV[1..].join(' ')
+def docker_exec(container, cmd, rest = nil, extra_flags: nil)
+  raise RuntimeError unless SERVICES.include?(container.to_s)
 
-case ARGV.first
+  cmd = [
+    DOCKER_COMPOSE,
+    "exec",
+    $env_vars.to_a.map { |arr| arr.join("=") }.map { "-e #{_1}" }.join(' '),
+    extra_flags,
+    container.to_s,
+    cmd,
+    rest
+  ].compact.join(' ')
+
+  shell_exec cmd
+end
+
+def print_status
+  puts "#{File.read('/etc/hostname').chomp}:#{REPO}"
+  printf `git log --format="%h %cs %s" -n 1`
+  running_services = `docker compose ps --services --filter status=running`.split("\n")
+
+  exit_status = 0
+
+  SERVICES.each do |service|
+    running = running_services.include?(service)
+    exit_status = 1 unless running
+    puts "[#{running ? '✓' : 'X'}] #{service} "
+  end
+  exit exit_status
+end
+
+case CHOICE
 when 'help'
-  help
+  puts HELP
 when 'setup-folders'
-  setup_folders
-when 'docker', 'docker_compose', 'docker-compose'
-  exec "docker compose #{rest}"
-when 'up'
-  exec "docker compose --profile development up -d"
-when 'down'
-  exec "docker compose --profile development down"
-when 'delete'
-  exit 1 if production_environment?
-
-  if yes_or_no?("This is will delete the postgres database.")
-    exec "docker compose down -v"
+  FOLDERS.each do |folder|
+    FileUtils.mkdir_p File.join(REPO, folder)
   end
+when 'status'
+  print_status
+when 'd', 'docker', 'docker_compose', 'docker-compose', 'compose'
+  shell_exec "docker compose #{REST}"
+when 'up'
+  shell_exec "docker compose up -d"
+when 'down'
+  shell_exec "docker compose down"
 when 'build'
-  exec "docker build -t littlesis:latest ."
+  shell_exec "bin/build"
+when 'logs'
+  logfile = "/littlesis/log/#{$env_vars['RAILS_ENV']}.log"
+  docker_exec :app, "tail -f #{logfile}"
 when 'pumactl'
-  app_exec_bin "pumactl -p tmp/puma.pid #{rest}", use_exec: true, compose_command: "exec"
+  docker_exec :app, "bundle exec pumactl -p tmp/puma.pid", REST
 when 'test', 'rspec'
-  set_env_to_test
-  app_exec_bin "rspec #{rest}", use_exec: true
+  $env_vars['RAILS_ENV'] = 'test'
+  docker_exec :app, "bundle exec rspec", REST
 when 'rails'
-  app_exec_bin "rails #{rest}", use_exec: true
-when 'bundle'
-  app_exec_bin "bundle #{rest}", use_exec: true
-when 'gem'
-  gem_path = production_environment? ? '/home/littlesis/.rbenv/shims/gem' : '/usr/local/bin/gem'
-  app_exec "#{gem_path} #{rest}", use_exec: true
-when 'npm'
-  app_exec "npm #{rest}", use_exec: true
-when 'rake'
-  app_exec_bin! "rake #{rest}"
+  docker_exec :app, "bundle exec rails", REST
 when 'runner'
-  app_exec_bin! "rails runner #{rest}"
+  docker_exec :app, "bundle exec rails runner", REST
+when 'bundle'
+  docker_exec :app, "bundle", REST
+when 'rake'
+  docker_exec :app, "bundle exec rake", REST
 when 'script'
-  if rest == 'list'
+  if REST == 'list'
     puts Dir[File.join(REPO, "lib/scripts/*")].map { File.basename(_1) }.join("\n")
   else
-    app_exec_bin! "bundle exec lib/scripts/#{rest}"
+    docker_exec :app, "bundle exec lib/scripts/#{REST}"
   end
 when 'bash'
-  app_exec "/bin/bash --login #{rest}", use_exec: true, compose_command: "exec"
+  docker_exec :app, "bash --login", REST
 when 'console', 'c'
-  app_exec_bin! "rails c #{rest}"
+  docker_exec :app, "bundle exec rails c"
 when 'redis'
-  redis_host = production_environment? ? '127.0.0.1' : 'redis'
-  app_exec "/usr/bin/redis-cli -h #{redis_host} #{rest}", use_exec: true
+  docker_exec :redis, "redis-cli"
 when 'data'
-  app_exec_bin! "rails runner lib/scripts/data.rb #{rest}"
+  docker_exec :app, "bundle exec rails runner lib/scripts/data.rb", REST
 when 'fec'
-  app_exec_bin! "rails runner lib/scripts/fec #{rest}"
+  docker_exec :app, "bundle exec rails runner lib/scripts/fec", REST
 when 'sec'
-  app_exec_bin! "rails runner lib/scripts/sec #{rest}"
-when 'git'
-  puts git(rest)
-when 'rg', 'search'
-  exec "rg #{rest}"
-when 'find'
-  exec "find #{rest}"
+  docker_exec :app, "bundle exec rails runner lib/scripts/sec", REST
+when 'git', 'rg', 'find'
+  shell_exec [CHOICE, REST].join(' ')
 when 'edit'
-  selected = if rest == ''
-               `fd | fzf`.chomp
-             else
-               rest
-             end
-  exec "$EDITOR #{selected}"
+  shell_exec "$EDITOR #{REST == '' ? `fd | fzf`.chomp : REST}"
 when 'node'
-  app_exec "/usr/bin/node #{rest}", use_exec: true
-when 'psql'
-  app_exec "psql #{database_connection} #{rest}", use_exec: true, container: 'postgres'
-when 'pg_dump', 'pg_restore', 'pg_dumpall', 'pg_basebackup'
-  app_exec "#{ARGV.first}  #{rest}", use_exec: true, container: 'postgres', compose_command: 'exec --user postgres'
-when 'status'
-  status
-when 'logs'
-  logs
+  docker_exec :app, "node", REST
+when 'psql', 'pg_dump', 'pg_restore', 'pg_dumpall', 'pg_basebackup'
+  docker_exec :postgres, CHOICE, REST, extra_flags: '-u postgres'
 when 'esbuild'
-  app_exec "npm run build", use_exec: true
-when 'pgenv'
-  pgenv
+  docker_exec :app, "npm run build"
+when 'print-docker-command'
+  puts [
+         DOCKER_COMPOSE,
+         "--project-directory #{REPO}",
+         "exec",
+         $env_vars.to_a.map { |arr| arr.join("=") }.map { "-e #{_1}" }.join(' '),
+         "app"
+       ].join(' ')
 else
-  puts "Invalid Command: #{ARGV.first}"
+  warn "Invalid Command: #{CHOICE}"
   exit 1
 end
