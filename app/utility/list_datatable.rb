@@ -103,11 +103,11 @@ class ListDatatable
   end
 
   def interlocks?
-    @force_interlocks or (@num_links < 5000)
+    @force_interlocks or (@num_links < 50000)
   end
 
   def lists?
-    @entity_ids.count < 500
+    @entity_ids.count < 5000
   end
 
   private
