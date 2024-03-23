@@ -1,4 +1,4 @@
-<% content_for(:page_title, raw(@list.name)) %>
+<% content_for(:page_title, sanitize(@list.name)) %>
 
 <%= render partial: 'header', locals: { list: @list } %>
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :edits } %>
