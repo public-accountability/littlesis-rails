@@ -5,7 +5,6 @@ if ARGV[0].nil?
 elsif ARGV[0] == 'list'
   puts Dir[File.expand_path(File.join(__dir__, "../lib/scripts/*"))].map { File.basename(_1) }.join("\n")
 else
-  bundle = File.join(__dir__, 'bundle')
   script = File.expand_path(File.join(__dir__, "../lib/scripts", ARGV[0]))
-  exec "#{bundle} exec #{script} #{ARGV[1..].join(' ')}"
+  exec "bundle exec #{script} #{ARGV[1..].join(' ')}"
 end

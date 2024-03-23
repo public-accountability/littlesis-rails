@@ -10,7 +10,7 @@ Dir.chdir(REPO)
 
 DOCKER_COMPOSE = "docker compose".freeze
 SERVICES = %w[app postgres redis nginx esbuild manticore jsserver].freeze
-FOLDERS = %w[tmp data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher].freeze
+FOLDERS = %w[tmp data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher db/postgresql db/postgresql/primary db/postgresql/replica db/postgresql/archive].freeze
 
 HELP = <<TEXT
 Usage: littlesis [options] <command> -- [arguments for command]
