@@ -1,6 +1,8 @@
-## Development
+# LittleSis Development
 
 LittleSis is developed using Docker
+
+## Setup
 
 ### Build the application
 
@@ -60,6 +62,7 @@ Run any command using the app container `docker compose exec app <CMD>`. For ins
 
 To run a command in database as administrator use `docker compose exec -u postgres postgres psql`
 
+
 ## Testing
 
 LittleSis has quite extensive testing coverage.  The steps to run this locally are similar to the above except compiling should be against the test environment,
@@ -70,78 +73,93 @@ docker compose exec -e RAILS_ENV=test app bin/rails dartsass:build
 docker compose exec -e RAILS_ENV=test app bin/rails javascript:build
 docker compose exec -e RAILS_ENV=test app bin/rails assets:precompile
 docker compose exec -e RAILS_ENV=test app bin/rails ts:configure
-
 ```
 
 Run the tests: `docker compose exec -e RAILS_ENV=test app bin/rspec`
 
----
 
-``` sh
-# Build javascript & css
-bin/rails javascript:build
-bin/rails dartsass:build
+## bin/littlesis helper
 
-# Download oligrapher assets
-bin/script download_oligrapher_assets.rb "v4.0.15"
+``` fish
+# add bin/littlesis to your path
+ln -f -s /path/to/littlesis-rails/bin/littlesis /usr/local/bin/littlesis
 
-# Compile assets
-bin/rails assets:precompile
+# docker control
+littlesis up
+littlesis down
+litltesis status
+littlesis d top
 
-# Edit secret variables
-bin/rails credentials:edit
-
-# Thinking sphinx
-bin/rake ts:configure
-bin/rake ts:index
-
-# Stats on new entities & relationships
-bin/rake stats:year[2021]
-
-# Unitedstates.io data
-bin/rake legislators:import
-bin/rake legislators:import_party_memberships
-bin/rake legislators:import_relationships
-
-# External Data tools
-bin/data list
-bin/data download nycc
-bin/data transform nycc
-bin/data load nycc
-bin/data report nycc
-bin/fec --help
-bin/sec -- --help
-
-# Update public data
-bin/rails public_data:run
-
-# Generate sitemap
-bin/rails sitemap:run
-
-# Update Network Map Collections
-bin/rake maps:update_all_entity_map_collections
+# Testing
+littlesis --test rails db:reset
+littlesis --test rails assets:precompile
+littlesis test
+littlesis test spec/models/entity_spec.rb
 
 # Create users for testing
-bin/script create_development_users.rb
-bin/script create_example_user.rb
+littlesis script create_development_users.rb
+littlesis script create_example_user.rb
 
-# Rails console
-bin/rails console
+# Rails tasks
+littlesis rails -- --tasks
+littlesis rails credentials:edit
+littlesis rails db:migrate
 
-# Send reset password instructions
-bin/rails runner "User.find_by(email: <EMAIL>).send_reset_password_instructions"
+# Thinking sphinx
+littlesis rails ts:configure
+littlesis rails ts:rt:index
+
+# External data tools
+littlesis data -- download nycc
+littlesis data -- transform nycc
+littlesis data -- load nycc
+littlesis data -- report nycc
+littlesis fec -- --help
+littlesis sec -- --help
+littlesis rails legislators:import
+littlesis rails legislators:import_party_memberships
+littlesis rails legislators:import_relationships
 ```
 
-### Frequent Production Commands
+## Production
 
-``` sh
-cd /littlesis
-git fetch origin
-git switch --detach COMMIT
-bin/bundle install
-npm ci
-bin/rake javascript:build
-bin/rake assets:precompile
-bin/script download_oligrapher_assets.rb TAG
+``` fish
+function lscmd --description 'run a command as the littlesis user'
+    sudo -u littlesis -D /littlesis fish -c "$argv"
+end
+
+lscmd git fetch
+lscmd git pull
+lscmd git switch --detach COMMIT
+
+# bundle
+lscmd bundle config path 'vendor/bundle'
+lsbin bundle config without 'development test'
+lscmd bundle install
+
+# assets
+lscmd npm ci
+lscmd bundle exec rails javascript:build
+lscmd bundle exec rails dartsass:build
+lscmd bundle exec rails assets:precompile
+lscmd bundle exec lib/scripts/download_oligrapher_assets.rb "v4.0.15"
+
+# restarting
+lscmd bundle exec pumactl phased-restart
 systemctl restart littlesis.service littlesis-goodjob.service
+
+# rails tasks
+lscmd bundle exec rails users:send_reset_password_instructions[user@example.com]
+lscmd bundle exec rails maps:screenshot:featured
+lscmd bundle exec rails maps:screenshot:missing
+lscmd bundle exec rails maps:update_all_entity_map_collections
+
+# generate public dataset and sitemap
+lscmd bundle exec rails public_data:run
+lscmd bundle exec rails sitemap:run
+
+# external data
+lscmd bundle exec rails legislators:import
+lscmd bundle exec rails legislators:import_party_memberships
+lscmd bundle exec rails legislators:import_relationships
 ```
