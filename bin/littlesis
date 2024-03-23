@@ -212,6 +212,8 @@ when 'print-docker-command'
          $env_vars.to_a.map { |arr| arr.join("=") }.map { "-e #{_1}" }.join(' '),
          "app"
        ].join(' ')
+when 'lint'
+  docker_exec :app, "bundle exec rubocop", REST
 else
   warn "Invalid Command: #{CHOICE}"
   exit 1

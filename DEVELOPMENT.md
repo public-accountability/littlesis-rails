@@ -95,6 +95,7 @@ littlesis --test rails db:reset
 littlesis --test rails assets:precompile
 littlesis test
 littlesis test spec/models/entity_spec.rb
+littlesis lint app/models/entity.rb
 
 # Create users for testing
 littlesis script create_development_users.rb
