@@ -1,4 +1,4 @@
-<% content_for(:page_title, @list.name) %>
+<% content_for(:page_title, sanitize(@list.name)) %>
 
 <%= render partial: 'header', locals: { list: @list } %>
 <% if user_signed_in?  %>
