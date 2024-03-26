@@ -1,4 +1,11 @@
 namespace :users do
+  desc "User.find_by(email: <EMAIL>).send_reset_password_instructions"
+  task :send_reset_password_instructions, [:email] => :environment do |_, args|
+    User
+      .find_by(email: args.fetch(:email).downcase)
+      .send_reset_password_instructions
+  end
+
   desc 'recent signups since date'
   task :recent_signups, [:date] => :environment do |_, args|
     since = DateTime.parse(args[:date])
