@@ -26,8 +26,8 @@
     "trix": "^2.0.8"
   },
   "scripts": {
-    "build": "config/esbuild.js",
-    "build-watch": "config/esbuild.js --watch",
+    "build": "bin/esbuild",
+    "build-watch": "bin/esbuild --watch",
     "build-analyze": "esbuild app/javascript/*.* --outdir=/tmp --bundle --minify --analyze",
     "test": "mocha spec/javascripts"
   },
