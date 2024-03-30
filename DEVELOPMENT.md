@@ -8,17 +8,7 @@ LittleSis is developed using Docker
 
 Clone this repo: `git clone https://github.com/public-accountability/littlesis-rails`
 
-Build the image: `bin/build`
-
-Build a smaller production image: `env RAILS_ENV=production bin/build`
-
-Install Ruby gems and JavaScript packages
-
-``` sh
-docker compose run --rm app bundle config path vendor/bundle
-docker compose run --rm app bundle install
-docker compose run --rm app npm install
-```
+Build the docker image: `bin/build`
 
 ### Load the data
 
@@ -58,9 +48,18 @@ Setup development users: `docker compose exec app bin/script create_development_
 
 Visit port `8080` for Puma and `8081` for nginx. The configurations for nginx and postgres are located the folder config/docker
 
+
+### Docker Tips
+
 Run any command using the app container `docker compose exec app <CMD>`. For instance, to view all available rake tasks use `docker compose exec app bin/rake --tasks`.
 
+Re-install gems: `docker compose exec app bundle install`
+
 To run a command in database as administrator use `docker compose exec -u postgres postgres psql`
+
+To build a smaller production docker image: `env RAILS_ENV=production bin/build`
+
+Disable docker cache: `env DOCKER_BUILD_OPTS="--no-cache" bin/build`
 
 
 ## Testing
@@ -123,6 +122,7 @@ littlesis rails legislators:import_relationships
 ```
 
 ## Production
+
 
 ``` fish
 function lscmd --description 'run a command as the littlesis user'

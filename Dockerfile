@@ -15,7 +15,7 @@ RUN apt-get -y install manticore || apt-get -y install manticore
 RUN if [ $RAILS_ENV = "development" ]; then \
     apt-get -y --no-install-recommends install firefox-esr chromium; fi
 
-# install firefox-beta, geckodriver, chromium
+# install firefox-beta, geckodriver
 RUN if [ $RAILS_ENV = "development" ]; then \
     curl "https://packages.mozilla.org/apt/repo-signing-key.gpg" -o /etc/apt/keyrings/packages.mozilla.org.asc \
     && gpg --show-key /etc/apt/keyrings/packages.mozilla.org.asc \
@@ -26,8 +26,15 @@ RUN if [ $RAILS_ENV = "development" ]; then \
     && tar xzf /tmp/geckodriver-v0.34.0-linux64.tar.gz -C /usr/local/bin \
     ; fi
 
-WORKDIR /littlesis
-ENV BUNDLE_APP_CONFIG /littlesis/.bundle
 RUN gem update --system
+
+WORKDIR /littlesis
+
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+COPY package.json package-lock.json ./
+RUN npm install
+
 EXPOSE 8080
-CMD /usr/local/bin/bundle exec puma
+CMD bundle exec puma
