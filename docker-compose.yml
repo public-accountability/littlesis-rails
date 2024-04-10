@@ -37,19 +37,6 @@ services:
     environment:
       POSTGRES_PASSWORD: "littlesis"
 
-  # replica:
-  #   image: docker.io/library/postgres:15
-  #   command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
-  # volumes:
-  #   - ./config/docker/postgresql.conf:/etc/postgresql.conf
-  #   - ./data:/data
-  #   - ./db/postgresql/archive:/archive
-  #   - ./db/postgresql/replica:/var/lib/postgresql/data
-  #   ports:
-  #     - "8091:5432"
-  #   environment:
-  #     POSTGRES_PASSWORD: "littlesis"
-
   nginx:
     image: docker.io/library/nginx:latest
     volumes:
@@ -57,7 +44,6 @@ services:
       - ./config/docker/nginx.conf:/etc/nginx/nginx.conf
     ports:
      - 8081:80
-
 
   manticore:
     image: littlesis:latest
