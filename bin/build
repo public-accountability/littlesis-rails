@@ -10,7 +10,7 @@ DOCKER_BUILD_OPTS=${DOCKER_BUILD_OPTS:-""}
 echo "PWD: $(pwd)" >&2
 echo "RAILS_ENV = $RAILS_ENV" >&2
 
-mkdir -p tmp data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher db/postgresql db/postgresql/primary db/postgresql/replica db/postgresql/archive
+mkdir -p tmp tmp/binlog tmp/binlog/development data data/external_data data/external_data/original data/external_data/csv public/oligrapher public/images public/images/large public/images/original public/images/profile public/images/small public/images/oligrapher db/postgresql db/postgresql/primary db/postgresql/replica db/postgresql/archive
 
 echo docker build $DOCKER_BUILD_OPTS -t "$NAME:$VERSION" -t "$NAME-$RAILS_ENV:$VERSION" --build-arg "RAILS_ENV=$RAILS_ENV" .
 docker build $DOCKER_BUILD_OPTS -t "$NAME:$VERSION" -t "$NAME-$RAILS_ENV:$VERSION" --build-arg "RAILS_ENV=$RAILS_ENV" .
