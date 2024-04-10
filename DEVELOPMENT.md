@@ -67,11 +67,11 @@ Disable docker cache: `env DOCKER_BUILD_OPTS="--no-cache" bin/build`
 LittleSis has quite extensive testing coverage.  The steps to run this locally are similar to the above except compiling should be against the test environment,
 
 ``` sh
-docker compose exec -e RAILS_ENV=test app bin/rails db:reset
-docker compose exec -e RAILS_ENV=test app bin/rails dartsass:build
-docker compose exec -e RAILS_ENV=test app bin/rails javascript:build
-docker compose exec -e RAILS_ENV=test app bin/rails assets:precompile
-docker compose exec -e RAILS_ENV=test app bin/rails ts:configure
+docker compose exec -e RAILS_ENV=test app bundle exec rails db:reset
+docker compose exec -e RAILS_ENV=test app bundle exec rails dartsass:build
+docker compose exec -e RAILS_ENV=test app bundle exec rails javascript:build
+docker compose exec -e RAILS_ENV=test app bundle exec rails assets:precompile
+docker compose exec -e RAILS_ENV=test app bundle exec rails ts:configure
 ```
 
 Run the tests: `docker compose exec -e RAILS_ENV=test app bin/rspec`
