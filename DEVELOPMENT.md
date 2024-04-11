@@ -36,7 +36,7 @@ docker compose exec app bin/rails javascript:build
 docker compose exec app bin/rails assets:precompile
 ```
 
-Create Manticore indexes:
+Create a ```tmp/binlog/development``` directory in the project root, then generate Manticore indexes:
 
 ``` sh
 docker compose exec app bin/rails ts:rt:index
