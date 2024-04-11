@@ -8,17 +8,7 @@ LittleSis is developed using Docker
 
 Clone this repo: `git clone https://github.com/public-accountability/littlesis-rails`
 
-Build the image: `bin/build`
-
-Build a smaller production image: `env RAILS_ENV=production bin/build`
-
-Install Ruby gems and JavaScript packages
-
-``` sh
-docker compose run --rm app bundle config path vendor/bundle
-docker compose run --rm app bundle install
-docker compose run --rm app npm install
-```
+Build the docker image: `bin/build`
 
 ### Load the data
 
@@ -46,7 +36,7 @@ docker compose exec app bin/rails javascript:build
 docker compose exec app bin/rails assets:precompile
 ```
 
-Create Manticore indexes:
+Create a ```tmp/binlog/development``` directory in the project root, then generate Manticore indexes:
 
 ``` sh
 docker compose exec app bin/rails ts:rt:index
@@ -58,9 +48,18 @@ Setup development users: `docker compose exec app bin/script create_development_
 
 Visit port `8080` for Puma and `8081` for nginx. The configurations for nginx and postgres are located the folder config/docker
 
+
+### Docker Tips
+
 Run any command using the app container `docker compose exec app <CMD>`. For instance, to view all available rake tasks use `docker compose exec app bin/rake --tasks`.
 
+Re-install gems: `docker compose exec app bundle install`
+
 To run a command in database as administrator use `docker compose exec -u postgres postgres psql`
+
+To build a smaller production docker image: `env RAILS_ENV=production bin/build`
+
+Disable docker cache: `env DOCKER_BUILD_OPTS="--no-cache" bin/build`
 
 
 ## Testing
@@ -68,11 +67,11 @@ To run a command in database as administrator use `docker compose exec -u postgr
 LittleSis has quite extensive testing coverage.  The steps to run this locally are similar to the above except compiling should be against the test environment,
 
 ``` sh
-docker compose exec -e RAILS_ENV=test app bin/rails db:reset
-docker compose exec -e RAILS_ENV=test app bin/rails dartsass:build
-docker compose exec -e RAILS_ENV=test app bin/rails javascript:build
-docker compose exec -e RAILS_ENV=test app bin/rails assets:precompile
-docker compose exec -e RAILS_ENV=test app bin/rails ts:configure
+docker compose exec -e RAILS_ENV=test app bundle exec rails db:reset
+docker compose exec -e RAILS_ENV=test app bundle exec rails dartsass:build
+docker compose exec -e RAILS_ENV=test app bundle exec rails javascript:build
+docker compose exec -e RAILS_ENV=test app bundle exec rails assets:precompile
+docker compose exec -e RAILS_ENV=test app bundle exec rails ts:configure
 ```
 
 Run the tests: `docker compose exec -e RAILS_ENV=test app bin/rspec`
@@ -123,6 +122,7 @@ littlesis rails legislators:import_relationships
 ```
 
 ## Production
+
 
 ``` fish
 function lscmd --description 'run a command as the littlesis user'
