@@ -14,7 +14,7 @@ describe 'Oligrapher' do
     after { logout(user) }
 
     def has_script_src(page, query_string)
-      page.all("script").filter { _1['src'].include?(query_string) }.length.positive?
+      page.all("script").filter { _1['src']&.include?(query_string) }.length.positive?
     end
 
     it 'uses new oligrapher path' do
