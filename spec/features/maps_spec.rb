@@ -46,7 +46,7 @@ describe 'Oligrapher' do
       visit oligrapher_path(map)
       successfully_visits_page oligrapher_path(map)
       expect(
-        page.all("script").filter { _1['src'].include?("oligrapher-42022f34c3dfdefdff91beabdb9445be0066ada7.js") }.length.positive?
+        page.all("script").filter { _1['src']&.include?("oligrapher-42022f34c3dfdefdff91beabdb9445be0066ada7.js") }.length.positive?
       ).to be true
     end
   end
