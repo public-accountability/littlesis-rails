@@ -60,8 +60,6 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     address: "localhost",
     port: 25,
-    enable_starttls_auto: true,
-    authentication: :plain
   }
 
   # config.i18n.fallbacks = [I18n.default_locale]
