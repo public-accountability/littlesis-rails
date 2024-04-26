@@ -63,8 +63,4 @@ production:
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
   powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
   opensecrets_api_key: <%= Rails.application.credentials.opensecrets_api_key %>
-  smtp_address: <%= Rails.application.credentials.smtp_address %>
-  smtp_domain: <%= Rails.application.credentials.smtp_domain %>
-  smtp_user_name: <%= Rails.application.credentials.smtp_user_name %>
-  smtp_password: <%= Rails.application.credentials.smtp_password %>
   restricted_ips: <%= Rails.application.credentials.restricted_ips %>
