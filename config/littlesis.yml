@@ -47,7 +47,7 @@ development:
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
   powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
   oligrapher_commit: dev
-  donation_banner_display: some
+  donation_banner_display: false
 
 production:
   <<: *defaults

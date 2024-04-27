@@ -3,6 +3,7 @@ $logo_blue: rgb(28, 71, 103);
 $logo_blue_light: rgb(41, 105, 153);
 $logo_blue_lighter: rgb(55, 139, 204);
 $user_image_size: 48px;
+$dark_blue: #01087c;
 $link_blue: #008;
 $link_blue_hover: #2a6496;
 $left_column_width: 640px;
@@ -31,7 +32,8 @@ $gray:                   lighten($gray-base, 33.5%); // #555
 $gray-light:             lighten($gray-base, 46.7%); // #777
 $gray-lighter:           lighten($gray-base, 93.5%); // #eee
 $tag_margin: 0.4em;
-$header_color: $light_gray2;
+// $header_color: $light_gray2;
+$header_color: $dark_blue;
 $font-family-sans-serif: Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, system-ui, -apple-system;
 $primary: $logo_blue_light;
 

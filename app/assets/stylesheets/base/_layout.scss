@@ -43,20 +43,26 @@ a {
 }
 
 nav.navbar  {
-  font-size: 14px;
+  font-size: 16px;
+
+  @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
+    font-size: 18px;
+  }
 
   background-color: globals.$header_color;
 
+  // Logo
   img {
-    background-color: globals.$header_color;
+    //background-color: globals.$header_color;
     max-width: 180px;
   }
 
+  // menu text
   .nav-link {
-    color: #777;
+    color: #E5E6F1;
 
     &:hover {
-      color: #333;
+      color: #B2B4D7;
     }
   }
 
@@ -73,7 +79,6 @@ nav.navbar  {
       display: inherit;
     }
   }
-
 
   form#navbar-search {
     input {
