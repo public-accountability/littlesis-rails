@@ -1,0 +1,290 @@
+en:
+  littlesis:
+    littlesis: LittleSis
+    pai: Public Accountability Initiative
+    eyes_on_the_ties: Le radar des costards
+    person: personne
+    organization: organisation
+    relationship: relation
+    entity: entité
+    list: liste
+    map: carte
+    tag: tag
+    oligrapher: oligrapher
+    datasets: "jeux de données"
+    interlocks: apparentés
+    links: liens
+    external_links: Liens externes
+    reference: référence
+    document: document
+    entity_extensions:
+      Person: "Personne"
+      Org: "Organisation"
+      PoliticalCandidate: "Homme politique"
+      ElectedRepresentative: "Réprésentant élu"
+      Business: "Economie"
+      GovernmentBody: "Gouvernment"
+      School: "Enseignement"
+      MembershipOrg: "Organisation par adhésion"
+      Philanthropy: "Philanthropie"
+      NonProfit: "Association à but non lucratif"
+      PoliticalFundraising: "Comité de campagne électoral"
+      PrivateCompany: "Etablissement privé"
+      PublicCompany: "Etablissement public"
+      IndustryTrade: "Syndicat inter-professionel"
+      LawFirm: "Cabinet d'avocat"
+      LobbyingFirm: "Agence de lobbying"
+      PublicRelationsFirm: "Agence de relations publiques"
+      IndividualCampaignCommittee: "Comité de campagne électorale individuelle"
+      Pac: "Comité d'Action Politique (PAC)"
+      OtherCampaignCommittee: "Autre comité de campagne"
+      MediaOrg: "Média"
+      ThinkTank: "Groupe de réflexion"
+      Cultural: "Arts et Culture"
+      SocialClub: "Cercle privé"
+      ProfessionalAssociation: "Association professionnel"
+      PoliticalParty: "Parti politique"
+      LaborUnion: "Syndicat"
+      Gse: "Entreprise financée par l'Etat"
+      BusinessPerson: "Personnalité économique"
+      Lobbyist: "Lobbyiste"
+      Academic: "Universitaire"
+      MediaPersonality: "Personnalité médiatique"
+      ConsultingFirm: "Cabinet de consultants"
+      PublicIntellectual: "Intellectuel public"
+      PublicOfficial: "Personnalité publique"
+      Lawyer: "Avocat"
+      Couple: "Couple"
+      ResearchInstitute: "Institut de recherche académique"
+      GovernmentAdvisoryBody: "Organe juridictionnel et consultatif"
+      EliteConsensus: "Elite Consensus Group"
+    tabs:
+      relationships: relations
+      interlocks: apparentés
+      giving: dons
+      data: données
+
+  vocab:
+    about: à propos
+    alias: alias
+    edits: éditions
+    signup: inscription
+    login: connexion
+    logout: déconnexion
+    actions: actions
+    add: ajouter
+    alive: vivant
+    all: tout
+    back: retour
+    birth_date: "Date de naissance"
+    birthplace: "Lieu de naissance"
+    bulk: vrac
+    cancel: annuler
+    category: catégorie
+    citations: citations
+    click: cliquez
+    confirmation: confirmation
+    create: créer
+    current: actuel
+    dashboard: "tableau de bord"
+    data: données
+    death_date: "date du décès"
+    delete: effacer
+    description: description
+    details: détails
+    disclaimer: Avertissement
+    donate: donnez
+    donation: donation
+    edit: éditer
+    email: courriel
+    end_date: date_fin
+    explore: explorer
+    family: falmille
+    features: Outils
+    featured: "mis en avant"
+    flag: signaler
+    gender: genre
+    generic: générique
+    giving: donne
+    grant: subvention
+    here: ici
+    help: aide
+    join: joindre
+    lists: listes
+    language: langues
+    lobbying: lobbying
+    location: lieu
+    merge: fusionner
+    newsletter: newsletter
+    name: nom
+    next: suivant
+    nickname: surnom
+    password: "mot de passe"
+    position: position
+    prefix: préfixe
+    previous: précédent
+    professional: professionel
+    reference: référence
+    remove: enlever
+    relationships: relations
+    search: chercher
+    service: service
+    settings: réglages
+    social: social
+    star: star
+    start_date: "date de début"
+    suffix: suffixe
+    summary: résumé
+    tags: tags
+    toolkit: "boite à outils"
+    transaction: transaction
+    types: types
+    update: "mise à jour"
+    username: "nom d'utilisateur"
+    website: site web
+    birth_date: "date de naissance"
+    death_date: "date de décès"
+    is_current: "Actuel?"
+    is_alive: "Vivant?"
+    primary: principal
+    submit: valider
+
+
+  phrases:
+    advanced_tools: "Outils avancés"
+    a_project_of: "une projet de"
+    add_a_new_entity: "Cliquer ici pour ajouter une nouvelle entité"
+    create_new_entity: "Ajouter une Entité"
+    create_new_relationship: "Créer une nouvelle relation"
+    click_to_add: "Cliquer ici"
+    contact_us: "Contactez nous"
+    add_a_relationship: "pour ajouter une relation"
+    add_bulk: "ajouter en vrac"
+    additional_names: "autres noms pour la personne"
+    articles_documenting: "Articles documentant l'info de cette page"
+    basic_info: "Info de base"
+    become_an_analyst: "Devenez un analyste"
+    cancel: "Supprimer mon compte"
+    cant_find_what: "Vous ne trouvez pas ce que vous cherchez?"
+    click_here: "cliquez ici"
+    connect_this_entity: "Connecter cette entité à d'autres sites"
+    create_a_new: "créer une nouvelle"
+    create_new_alias: "Créer un nouvel alias"
+    create_new_reference: "Créer une nouvelle référence"
+    creating_new_relationship_between: "Créer une nouvelle relation entre"
+    current_password: "Mot de passe actuel"
+    confirm_password: "Confirmation du mot de passe"
+    data_summary: "Résumé des données+"
+    data_partner: "Partenaires pour les données"
+    edited_by: "edité par"
+    existing_source: "Source existante"
+    export_csv: "Exporter en CSV"
+    get_involved: "Impliquez-vous"
+    get_started_map: "Commencez une nouvelle carte"
+    instructional_videos: "vidéos explicatives"
+    just_cleaning_up: "Juste un peu de ménage"
+    lists_of: "Liste de groupes et de gens par nos analystes"
+    make_primary: "passer Principal"
+    change_default_name: "Cliquez passer Principal pour changer le nom par défaut de l'entité"
+    map the power: "Cartographiez les pouvoirs"
+    match_donations: "donations correspondantes"
+    need_your_password: "nous avons besoin de votre mot de passe actuel pour confirmer les changements"
+    forgot_your_password: "Mot de passe oublié?"
+    missing_confirmation: "Vous n'avez pas reçu les instructions de confirmation?"
+    recent_edits: "Editions récentes"
+    related_entity: "entité liée"
+    relationship_category: "Catégorie de relation"
+    report_a_bug: "signaler un bug"
+    search_for_a_name: "rechercher un nom"
+    send_me_your_newsletter: "envoyez-moi votre lettre d'information"
+    sign_up_for: "créez votre compte Littlesis"
+    source_links: "liens sources"
+    tell_me_more_about: "Dites-en plus à propos de"
+    terms: "termes d'utilisation"
+    visual_tool: "Outil en ligne de cartographie visuelle"
+    welcome: "Bienvenue sur LittleSis!"
+    where_is_this: "D'où vient l'information?"
+    your_email: "votre courriel"
+    your_lists: "vos listes"
+    your_maps: "Vos cartes"
+    your_recent_edits: "Vos éditions récentes"
+    your_settings: "vos réglages"
+    edit_your_settings: "Modifiez vos réglages"
+    add_relationship: ajouter une relation
+    network_maps: "Cartes réseaux"
+    remember_me: "Souvenez-vous de moi"
+    short_sentence: "une petite phrase"
+    enter_a_blurb: "Saisissez une petite présentation de moins de 200 caractères"
+
+  pages:
+    tags: "Les tags permettetn de regrouper par thématiques les personnes, organisations, listes, and relations dans LittleSis. Voici une liste de tout les tags actuels. Vous ne trouvez pas celui qu'il vous faut? Utilisez ce formulaire pour demander sa création!"
+    oligrapher: "Oligrapher est un outils pour visualiser les réseaux d'influence en utilisant les données de Littlesis"
+    stub_profile: "Ceci est une page de profil de démonstration – il n'y a pas de relations dans la base de données."
+    join:
+      get_involved: "LittleSis rassemble une communauté d'investigateurs croyant dans la transparence et la responsabilité, dans la société et l'économie. Notre tâche est d'étudier, de documenter et exposer les réseaux qui étranglent notre démocratie, pour que les projets de changements puissent réclamer leur part de pouvoir."
+      request_an_account: "Nous recherchons des investigateurs, des programmeurs, artistes et organisateurs pour agrandir notre communauté. Si vous voulez vous impliquer inscrivez-vous pour devenir un analyste LittleSis et commencez à ajouter de l'information au site."
+      watch_our_videos: "Vous pouvez consulter nos %{videos_link} pour plus d'information sur la prise en main de nos outils."
+      user_agreement:
+        i_understand: "Je comprends que la mission de LittleSis's mission est de repérer les personnes et groupes à la richesse démesurée, capables d'influencer les politiques publiques, et d'accèder aux gouvernants. En tant qu'analyste Littlesis il est de ma responsabilité de m'assurer que l'information apportée correspond à la mission du site, est exacte et documentée par des sources publiques établies. Le personnel de LittleSis peut révoquer mes droits d'édition ou desactiver mon compte si je ne suis pas ces directives en toute bonne foi. Le personnel de LittleSis peut révoquer mes droits d'édition et effacer les éditions, cartes ou listes que j'ai créées et qui serait en violation de ces termes d'utilisation, en incluant aussi:"
+        promote_violence: "Les contributions faisant promotion de la violence ou de la haine contre un groupe marginalisé ou bien utilisant un langage de haine"
+        outside_purview: "Les contributions sortant du cadre de notre mission est de repérer les personnes et groupes à la richesse et à l'influence démesurée"
+        spam_database: "Les contributions à but publicitaires (spam)"
+        if_in_violation: "Je comprends que si je viole l'un de ces termes d'utilisation, la capacité d'édition de mon compte sera restreinte le temps que le personnel de LittleSis examine et efface tout contenu inapproprié sur le site. Si cette violation est involontaire je pourrai faire appel pour que ces restrictions soient levées, mais cette décision reste à la discrétion du personnel de LittleSis. Des violations répétées méneront à la suspension de mon compte LittleSis."
+        i_accept: "J'accepte les termes d'utilisation ci-dessus"
+      what_are_your_research interests: Quels sont vos centres d'intérêts?
+      what_using_for:  Dans quel but pensez-vous utiliser LittleSis?
+      solve_math_problem: S'il vous plait indiquez la réponse de ce problème simple de mathématique
+      name_and_email: votre nom et courriel ne sera pas public
+      email_confirmation: Un courriel avec un lien de confirmation est en route.
+      after_confirming: Après confirmation de votre courriel, vous pourrez vous connecter avec votre courriel et mot de passe ici
+      having_problems: En cas de problème d'inscription contactez-nous sur 
+      no_confirmation instructions: Vous n'avez pas reçu d'instruction de confirmation?
+      do_not_share_email: "Nous ne partageons votre email avec personne."
+      confirmation_is_required:  "Une vérification de courriel est demandée pour utiliser LittleSis, et une confirmation vous sera envoyée à la validation de ce formulaire."
+      username_pattern_message: "Les noms d'utilisateurs doivent comporter au moins trois caractères et commencer par une lettre. Lettre, chiffres et tirets_bas autorisés."
+      public_username: "ceci est votre nom public d'utilisateur. Toutes vos éditions seront enregistrées sous ce nom visible aux autres utilisateurs de LittleSis."
+      minimum_8_letters: "Minimum 8 lettres"
+      password_length_message: 'Le mot de passe doit avoir au moins 8 caractères'
+      password_confirmation_no_match: "Votre mot de passe et sa confirmation ne sont pas identiques"
+      send_me_your_newsletter: "Inscrivez-moi à la lettre d'information"
+      you_have_to_accept: "Vous devez d'abord accepter les termes d'utilisation"
+    home:
+      littlesis_is: "est une base de données gratuite sur qui-connait-qui dans les sommets du pouvoir et de l'économie."
+      littlesis_is_alt: "est une base de données gratuite sur qui&zwj;-&zwj;connait&zwj;-&zwj;qui dans les sommets du pouvoir et de l'économie."
+      opposite_of_big_brother: "l'opposé de Big Brother"
+      grassroots_watchdog: "Nous sommes les lanceurs d'alerte de la base, reliant les points entre les gens et les organisations les plus puissantes du monde"
+      power_research: "Boite à outils de recherche et formation"
+      news_and_analysis: "Actualités et analyses par LittleSis"
+      visual_mapping_tool: "Outil  de diagramme visuel"
+      map_the_power_with_oligrapher: "Cartographiez le pouvoir avec Oligrapher"
+      oligrapher_is: "est un outils pour visualiser les réseaux d'influlence en se basant sur les données de LittleSis."
+      oligrapher_get_started: "Commencez une nouvelle carte"
+      signup_for: "pour un compte Littlesis"
+      dots_connected: "Les points reliés"
+      paid_for_politicians: "Politiciens remerciés"
+      corporate_fat_cats: "Corporate fat cats"
+      revolving_door_lobbyists: "Lobbyistes pantoufleurs"
+      super_pacs: "Secretive Super PACs"
+      elite_think_tanks: "Elite think tanks"
+      involuntary_facebook: "Un facebook involontaire des 1%"
+      names_behind_the_news: "Les noms derrière les actualités"
+      think_and_do: "Think and do tank"
+      unique_resource: "Une ressource unique pour scruter le copinage, les conflits d'intérêts et la corruption systémique."
+      made_for_watchdogs: "Fait pour les lanceurs d'alerte"
+
+
+  # kaminari pagination labels
+  views:
+    pagination:
+      first: "&laquo;"
+      last: "&raquo;"
+      previous: "&lsaquo;"
+      next: "&rsaquo;"
+      truncate: "..."
+  date:
+    formats:
+      default: "%B %-e, %Y, %-l%p"
+  time:
+    formats:
+      default: "%B %-e, %Y, %-l%p"
+      with_minutes: "%B %e, %Y, %-l:%M%p"
