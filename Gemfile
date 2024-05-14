@@ -71,7 +71,6 @@ end
 
 group :development do
   # gem 'ruby-prof'
-  gem "debug", ">= 1.0.0"
   gem 'better_errors'
   gem "binding_of_caller"
   gem 'rack-mini-profiler', require: false
@@ -84,8 +83,9 @@ group :development do
 end
 
 group :test, :development do
-  gem 'memory_profiler'
+  gem "debug", ">= 1.0.0"
   gem 'faker', '>= 2.13'
+  gem 'memory_profiler'
   gem 'selenium-webdriver', '>= 4.0.0'
 end
 
