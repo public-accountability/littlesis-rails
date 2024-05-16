@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  AVAILABLE_LOCALES = HTTP::Accept::Languages::Locales.new(["en", "es"]).freeze
+  AVAILABLE_LOCALES = HTTP::Accept::Languages::Locales.new(["en", "es", "fr"]).freeze
   BULK_MAXIMUM = 100
 
   include ParametersHelper
