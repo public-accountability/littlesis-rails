@@ -29,6 +29,37 @@ const SPANISH_TRANSLATION = {
 }
 
 
+const FRENCH_TRANSLATION = {
+  board_members: "Administrateurs",
+  board_memberships: "Mandats d'administrateurs",
+  governments: "Mandats public",
+  businesses: "Fonctions économiques",
+  campaign_contributions: "Contributions aux campagnes électorales",
+  campaign_contributors: "Contributeur de campagnes électorales",
+  children: "Organisations pour l'enfance",
+  donations: "Donations",
+  donors: "Donateurs",
+  family: "Famille",
+  generic: "Autres liens",
+  holdings: "Société d'investissements",
+  lobbied_by: "Influencé par",
+  lobbies: "Influence",
+  members: "Membres",
+  memberships: "Affiliations",
+  offices: "Dans le bureau de",
+  owners: "Propriétaires",
+  parents: "Parenté",
+  positions: "Fonctions",
+  schools: "Enseignement",
+  social: "Relations sociales",
+  staff: "Dirigeants et employés",
+  students: "Etudiants",
+  transactions: "Services ou Transactions"
+}
+
+
+
+
 // English is rendered by default. Unlike most other phrases on our site
 // translation done in javascript because profile pages are cached.
 export default class extends Controller {
@@ -42,9 +73,18 @@ export default class extends Controller {
         this.element.innerText = SPANISH_TRANSLATION[this.subcategoryValue]
       }
     }
+    if (this.frenchRequested()) {
+      if (FRENCH_TRANSLATION[this.subcategoryValue]) {
+        this.element.innerText = FRENCH_TRANSLATION[this.subcategoryValue]
+      }
+    }
   }
 
   spanishRequested() {
     return document.head.querySelector('meta[name="locale"]')?.content === 'es'
   }
+  frenchRequested() {
+    return document.head.querySelector('meta[name="locale"]')?.content === 'fr'
+  }
+
 }
