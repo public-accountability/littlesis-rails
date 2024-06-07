@@ -124,7 +124,7 @@ class RelationshipsController < ApplicationController
       update_entity_last_user
       render json: { 'relationship_id' => @relationship.id,
                      'url' => @relationship.url,
-                     'path' => relationship_path(@relationship) }, status: :created
+                     'path' => edit_relationship_path(@relationship) }, status: :created
     else
       Rails.logger.warn @relationship.errors.full_messages
       render json: { error: @relationship.errors.full_messages }, status: :bad_request
