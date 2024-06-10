@@ -43,9 +43,9 @@ describe 'Relationships Requests' do
       it 'responds with json containing the relationship id' do
         request.call
         relationship = Relationship.last
-        expect(json).to eq("path" => "/relationships/#{relationship.id}",
+        expect(json).to eq("path" => "/relationships/#{relationship.id}/edit",
                            "relationship_id" => relationship.id,
-                           "url"=> "http://test.host/relationships/#{relationship.id}")
+                           "url"=> "http://test.host/relationships/#{relationship.id}/edit")
       end
 
       context 'with board membership relationships' do
