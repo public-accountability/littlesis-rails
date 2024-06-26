@@ -21,6 +21,15 @@ module PersonConstants
       name_suffix: 'Sufijo',
       name_nick: 'Apodo',
       birthplace: 'Lugar de nacimiento'
+    },
+    fr: {
+      name_first: 'Prénom',
+      name_last: 'Nom de famille',
+      name_middle: 'Deuxième nom',
+      name_prefix: 'Préfixe',
+      name_suffix: 'Suffixe',
+      name_nick: 'Surnom',
+      birthplace: 'Lieu de naissance'
     }
   }.freeze
 
