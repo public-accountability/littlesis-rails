@@ -11,7 +11,7 @@
           name="settings[language]"
           aria-label="Select Langauge"
           onchange="this.closest('form').submit()">
-          <%= options_for_select([ ["English", 'en'], ['Spanish', 'es'] ], current_user.settings.language) %>
+          <%= options_for_select([ ["English", 'en'], ['Spanish', 'es'], ['French', 'fr'] ], current_user.settings.language) %>
         </select>
       </div>
     </div>
