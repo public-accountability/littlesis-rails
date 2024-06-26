@@ -36,7 +36,7 @@ const FRENCH_TRANSLATION = {
   businesses: "Fonctions",
   campaign_contributions: "Contributions aux campagnes électorales",
   campaign_contributors: "Contributeur de campagnes électorales",
-  children: "Organisations affiliées,
+  children: "Organisations affiliées,"
   donations: "Donations",
   donors: "Donateurs",
   family: "Famille",
