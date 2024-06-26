@@ -46,7 +46,8 @@ module LittleSis
       Time,
       ActiveRecord::Type::Time::Value,
       ActiveSupport::TimeWithZone,
-      ActiveSupport::TimeZone
+      ActiveSupport::TimeZone,
+      ActiveSupport::HashWithIndifferentAccess
     ]
 
     config.i18n.fallbacks = [:en]
