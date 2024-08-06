@@ -20,6 +20,10 @@ $profile_page_fs_relationship: $profile_page_fs_small;
     }
   }
 
+  .modal-content {
+    width: 700px;
+  }
+
   .profile-page-editable-blurb {
     .bi-pencil-fill {
       display: none;
@@ -213,6 +217,10 @@ $profile_page_fs_relationship: $profile_page_fs_small;
   h3 {
     font-size: $profile_page_fs_subcategory;
     border-bottom: 1px solid #e7e7e7;
+  }
+
+  .modal-content {
+    width: 700px;
   }
 
   .profile-page-sidebar-heading {}
