@@ -50,7 +50,7 @@ module ApplicationHelper
   end
 
   def og_tags(title:, image:, url:, type: 'website')
-    tag.meta(proeprty: 'og:type', content: type) +
+    tag.meta(property: 'og:type', content: type) +
       tag.meta(property: 'og:title', content: title) +
       tag.meta(property: 'og:url', content: url) +
       tag.meta(property: 'og:image', content: image)
