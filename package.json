@@ -19,7 +19,7 @@
     "p-limit": "^5.0.0",
     "papaparse": "^5.4.1",
     "parsleyjs": "^2.9.2",
-    "puppeteer": "^21",
+    "puppeteer": "^23",
     "select2": "^4.1.0-rc.0",
     "sharp": "^0.33",
     "tinycarousel": "^2.1.8",
