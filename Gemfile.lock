@@ -162,7 +162,8 @@ GEM
       fugit (>= 1.1)
       railties (>= 6.0.0)
       thor (>= 0.14.1)
-    google-protobuf (4.26.0-x86_64-linux)
+    google-protobuf (4.27.5-x86_64-linux)
+      bigdecimal
       rake (>= 13)
     htmlentities (4.3.4)
     http-accept (2.2.1)
@@ -292,7 +293,7 @@ GEM
       thor (~> 1.0, >= 1.2.2)
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
-    rake (13.1.0)
+    rake (13.2.1)
     rbs (2.8.4)
     rdoc (6.6.2)
       psych (>= 4.0.0)
