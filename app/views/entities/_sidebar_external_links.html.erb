@@ -1,0 +1,56 @@
+<div data-controller="edit-tags" data-turbo="false">
+  <% if current_user&.editor? %>
+    <div class="modal" tabindex="-1" aria-hidden="true" data-edit-tags-target="modal" id="edit-external-links-modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6><%= t('littlesis.external_links') %><small class="text-muted ps-2">connect this entity to other sites</small></h6>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <div id="edit-external-links-container" class="w-100">
+              <% ExternalLink.find_or_initialize_links_for(@entity).each do |el| %>
+                <div class="row mb-2">
+                  <div class="col-8 col-sm-7 col-md-6">
+                    <%= form_for el, html: { class: '', id: "#{el.link_type}_external_link_form" } do |f| %>
+	                    <% unless el.persisted?  %>
+	                      <%= f.hidden_field :entity_id %>
+	                      <%= f.hidden_field :link_type %>
+	                    <% end %>
+	                    <div class="input-group mb-2">
+    	                  <div class="input-group-prepend">
+	                        <div class="input-group-text"><%= el.link_type.capitalize %>:</div>
+	                      </div>
+	                      <%= f.text_field :link_id, class: 'form-control', id: "#{el.link_type}_external_link_link_id_input" %>
+	                      <div class="input-group-append">
+	                        <%= f.submit t('vocab.submit').capitalize, class: %w[btn btn-primary] %>
+	                      </div>
+	                    </div>
+                    <% end # end form_for%>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="col-12">
+    <h3 class="profile-page-sidebar-heading">
+      <%= t('littlesis.external_links').titleize %>
+      <% if current_user&.editor? %>
+        <span id="external-links-controls" class="ms-2">
+          <span id="external-links-edit-button" class="tags-edit-glyph" data-bs-toggle="modal" data-bs-target="#edit-external-links-modal">
+          </span>
+        </span>
+      <% end %>
+    </h3>
+  </div>
+
+  <div class="col-12">
+    <%= render partial: 'entities/sidebar/external_links' %>
+  </div>
+</div>
