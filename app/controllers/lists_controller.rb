@@ -15,7 +15,7 @@ class ListsController < ApplicationController
 
   def index
     params.with_defaults!(order_column: :created_at, order_direction: :desc)
-    lists_query = ListsIndexQuery.new
+    lists_query = ListsIndexQuery.new(user_id: current_user&.id)
     lists_query.page(params[:page] || 1)
     lists_query.only_featured if ParametersHelper.cast_to_boolean(params[:featured])
     lists_query.for_entity(params[:entity_id]) if params[:entity_id]
