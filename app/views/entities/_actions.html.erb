@@ -3,6 +3,9 @@
     <div id="action-buttons">
       <%= link_to t('phrases.add_relationship'), concretize_add_relationship_entity_path(@entity), class: "action-button" %>
       <%= link_to t('vocab.edit'), concretize_edit_entity_path(@entity), class: "action-button" %>
+      <turbo-frame id="edit-profile-modal">
+        <%= link_to t('vocab.edit'), "/entities/#{@entity.id}/edit_profile", class: "action-button" %>
+      </turbo-frame>
       <%= link_to t('vocab.flag'), flag_path, class: "action-button" %>
 
       <% if @entity.permissions_for(current_user).deleteable %>
