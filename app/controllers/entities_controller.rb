@@ -98,6 +98,10 @@ class EntitiesController < ApplicationController
     set_entity_references
   end
 
+  def edit_profile
+    render partial: 'edit_profile'
+  end
+
   def update
     EntityUpdateService.run(entity: @entity,
                             params: params,
