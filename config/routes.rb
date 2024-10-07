@@ -137,6 +137,7 @@ LittleSis::Application.routes.draw do
               to: 'entities#grouped_links'
           get 'source_links'
           get 'edit_profile'
+          get 'edit_external_links'
         end
 
         resources :images, controller: 'entities/images'
