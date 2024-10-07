@@ -1,34 +1,12 @@
-<% tags = @entity.tags_for(current_user) %>
-
-<div data-controller="edit-tags" data-turbo="false">
-  <% if current_user&.editor? %>
-    <div class="modal" tabindex="-1" aria-hidden="true" data-edit-tags-target="modal" id="edit-tags-modal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h6>Add or remove tags</h6>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-
-          <div class="modal-body">
-            <%= form_with url: tags_entity_path(@entity) do |f| %>
-
-              <select name="tags[ids][]" multiple="multiple" data-edit-tags-target="select" autocomplete="off">
-                <%= options_for_select(tags.options, tags.fetch(:current)) %>
-              </select>
-
-              <%= f.submit "Update", class: 'btn btn-sm btn-primary mt-3' %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-  <% end %>
+<div data-controller="edit-tags">
 
   <div class="col-12">
     <h3 class="profile-page-sidebar-heading">
       <%= t('vocab.tags').capitalize %>
       <% if current_user&.editor? %>
+        <turbo-frame id="edit-tags-modal">
+          <%= link_to t('vocab.edit'), "/entities/#{@entity.id}/edit_tags", class: "action-button" %>
+        </turbo-frame>
         <span id="tags-controls" class="ms-2">
           <span id="tags-edit-button" class="tags-edit-glyph" data-bs-toggle="modal" data-bs-target="#edit-tags-modal">
           </span>
