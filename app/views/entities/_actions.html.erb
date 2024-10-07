@@ -4,7 +4,6 @@
       <turbo-frame id="add-relationship-modal">
         <%= link_to t('phrases.add_relationship'), "/entities/#{@entity.id}/add_relationship", class: "action-button" %>
       </turbo-frame>
-      <%= link_to t('vocab.edit'), concretize_edit_entity_path(@entity), class: "action-button" %>
       <turbo-frame id="edit-profile-modal">
         <%= link_to t('vocab.edit'), "/entities/#{@entity.id}/edit_profile", class: "action-button" %>
       </turbo-frame>

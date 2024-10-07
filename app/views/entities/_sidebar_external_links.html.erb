@@ -1,0 +1,13 @@
+<div class="col-12">
+  <h3 class="profile-page-sidebar-heading">
+    <%= t('littlesis.external_links').titleize %>
+    <turbo-frame id="edit-external-links-modal">
+      <span id="external-links-controls" class="ms-2">
+        <%= link_to '', "/entities/#{@entity.id}/edit_external_links", id: "external-links-edit-button", class: "tags-edit-glyph" %>
+      </span>
+    </turbo-frame>
+  </h3>
+</div>
+<div class="col-12">
+  <%= render partial: 'entities/sidebar/external_links' %>
+</div>

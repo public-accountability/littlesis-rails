@@ -35,15 +35,7 @@
   <%# External Links %>
   <% unless @entity.external_links.count.zero? %>
     <div class="row mt-3">
-      <div class="col-12">
-        <h3 class="profile-page-sidebar-heading"><%= t('littlesis.external_links').titleize %></h3>
-        <turbo-frame id="edit-external-links-modal">
-          <%= link_to t('vocab.edit'), "/entities/#{@entity.id}/edit_external_links", class: "action-button" %>
-        </turbo-frame>
-      </div>
-      <div class="col-12">
-        <%= render partial: 'entities/sidebar/external_links' %>
-      </div>
+      <%= render partial: 'sidebar_external_links' %>
     </div>
   <% end %>
 
