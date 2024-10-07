@@ -106,6 +106,10 @@ class EntitiesController < ApplicationController
     render partial: 'edit_external_links'
   end
 
+  def edit_tags
+    render partial: 'edit_tags'
+  end
+
   def update
     EntityUpdateService.run(entity: @entity,
                             params: params,
