@@ -1,0 +1,24 @@
+<%= turbo_frame_tag "edit-tags-modal" do %>
+  <% tags = @entity.tags_for(current_user) %>
+  <% if current_user&.editor? %>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6>Add or remove tags</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <%= form_with url: tags_entity_path(@entity) do |f| %>
+
+            <select name="tags[ids][]" multiple="multiple" data-edit-tags-target="select" autocomplete="off">
+              <%= options_for_select(tags.options, tags.fetch(:current)) %>
+            </select>
+
+            <%= f.submit "Update", class: 'btn btn-sm btn-primary mt-3' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
