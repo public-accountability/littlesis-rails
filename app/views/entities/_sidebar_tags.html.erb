@@ -1,21 +1,18 @@
-<div data-controller="edit-tags">
-
-  <div class="col-12">
-    <h3 class="profile-page-sidebar-heading">
-      <%= t('vocab.tags').capitalize %>
-      <% if current_user&.editor? %>
-        <turbo-frame id="edit-tags-modal">
-          <%= link_to t('vocab.edit'), "/entities/#{@entity.id}/edit_tags", class: "action-button" %>
-        </turbo-frame>
+<div class="col-12">
+  <h3 class="profile-page-sidebar-heading">
+    <%= t('vocab.tags').capitalize %>
+    <% if current_user&.editor? %>
+      <turbo-frame id="edit-tags-modal">
         <span id="tags-controls" class="ms-2">
-          <span id="tags-edit-button" class="tags-edit-glyph" data-bs-toggle="modal" data-bs-target="#edit-tags-modal">
-          </span>
+          <%= link_to '', "/entities/#{@entity.id}/edit_tags", id: "tags-edit-button", class: "tags-edit-glyph" %>
         </span>
-      <% end %>
-    </h3>
-  </div>
-
-  <div class="col-12">
-    <%= display_tags(@entity.tags) %>
-  </div>
+      </turbo-frame>
+      </span>
+    <% end %>
+  </h3>
 </div>
+
+<div class="col-12">
+  <%= display_tags(@entity.tags) %>
+</div>
+
