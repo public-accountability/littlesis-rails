@@ -1,35 +1,37 @@
 <%= turbo_frame_tag "edit-external-links-modal" do %>
   <% if current_user&.editor? %>
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h6><%= t('littlesis.external_links') %><small class="text-muted ps-2">connect this entity to other sites</small></h6>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-  
-        <div class="modal-body">
-          <div id="edit-external-links-container" class="w-100">
-            <% ExternalLink.find_or_initialize_links_for(@entity).each do |el| %>
-              <div class="row mb-2">
-                <div class="col-8 col-sm-7 col-md-6">
-                  <%= form_for el, html: { class: '', id: "#{el.link_type}_external_link_form" } do |f| %>
-                         <% unless el.persisted?  %>
-                           <%= f.hidden_field :entity_id %>
-                           <%= f.hidden_field :link_type %>
-                         <% end %>
-                         <div class="input-group mb-2">
-                       <div class="input-group-prepend">
-                             <div class="input-group-text"><%= el.link_type.capitalize %>:</div>
+    <div class="modal" data-controller="modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6><%= t('littlesis.external_links') %><small class="text-muted ps-2">connect this entity to other sites</small></h6>
+            <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
+          </div>
+
+          <div class="modal-body">
+            <div id="edit-external-links-container" class="w-100">
+              <% ExternalLink.find_or_initialize_links_for(@entity).each do |el| %>
+                <div class="row mb-2">
+                  <div class="col-8 col-sm-7 col-md-12">
+                    <%= form_for el, html: { class: '', id: "#{el.link_type}_external_link_form" } do |f| %>
+                           <% unless el.persisted?  %>
+                             <%= f.hidden_field :entity_id %>
+                             <%= f.hidden_field :link_type %>
+                           <% end %>
+                           <div class="input-group mb-2">
+                         <div class="input-group-prepend">
+                               <div class="input-group-text"><%= el.link_type.capitalize %>:</div>
+                             </div>
+                             <%= f.text_field :link_id, class: 'form-control', id: "#{el.link_type}_external_link_link_id_input" %>
+                             <div class="input-group-append">
+                               <%= f.submit t('vocab.submit').capitalize, class: %w[btn btn-primary] %>
+                             </div>
                            </div>
-                           <%= f.text_field :link_id, class: 'form-control', id: "#{el.link_type}_external_link_link_id_input" %>
-                           <div class="input-group-append">
-                             <%= f.submit t('vocab.submit').capitalize, class: %w[btn btn-primary] %>
-                           </div>
-                         </div>
-                  <% end # end form_for%>
+                    <% end # end form_for%>
+                  </div>
                 </div>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
