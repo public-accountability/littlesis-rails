@@ -10,7 +10,7 @@
           </div>
 
           <div class="modal-body">
-            <%= form_with url: tags_entity_path(@entity) do |f| %>
+            <%= form_with url: tags_entity_path(@entity), data: {turbo_frame: "_top"} do |f| %>
 
               <select name="tags[ids][]" multiple="multiple" data-edit-tags-target="select" autocomplete="off">
                 <%= options_for_select(tags.options, tags.fetch(:current)) %>
