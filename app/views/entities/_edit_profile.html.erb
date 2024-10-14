@@ -6,12 +6,12 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h6><% content_for(:page_title, "#{t('vocab.edit').capitalize}: #{@entity.name}") %></h6>
+              <h6><%= "#{t('vocab.edit').capitalize}: #{@entity.name}" %></h6>
               <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
             </div>
 
             <div class="modal-body">
-              <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder, data: {controller: "entity-edit"} do |f| %>
+              <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder, data: {turbo_frame: "_top", controller: "entity-edit"} do |f| %>
 
                 <div class="row mb-2 mt-2">
                   <div class="col-sm-12 col-md-6">
