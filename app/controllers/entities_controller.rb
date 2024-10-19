@@ -106,6 +106,11 @@ class EntitiesController < ApplicationController
     render partial: 'edit_external_links'
   end
 
+  def edit_featured_resources
+    @entity = Entity.find(params[:id])
+    render partial: 'entities/sidebar/edit_featured_resources'
+  end
+
   def edit_tags
     render partial: 'edit_tags'
   end
