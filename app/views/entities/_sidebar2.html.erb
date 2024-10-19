@@ -139,7 +139,9 @@
 
           <% if current_user.role.include?(:feature_items) %>
             <li>
-              <%= render partial: 'entities/sidebar/edit_featured_resources', object: @entity, as: :entity %>
+              <turbo-frame id="edit-featured-resources-modal">
+                <%= link_to 'Add/Remove Featured Resource', "/entities/#{@entity.id}/edit_featured_resources"  %>
+              </turbo-frame>
             </li>
           <% end %>
 

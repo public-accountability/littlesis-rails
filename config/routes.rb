@@ -138,6 +138,7 @@ LittleSis::Application.routes.draw do
           get 'source_links'
           get 'edit_profile'
           get 'edit_external_links'
+          get 'edit_featured_resources'
           get 'edit_tags'
         end
 
