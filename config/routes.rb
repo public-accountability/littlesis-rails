@@ -241,6 +241,14 @@ LittleSis::Application.routes.draw do
   post '/relationships/bulk_add' => 'relationships#bulk_add!'
   get '/relationships/find_similar' => 'relationships#find_similar'
 
+  constraints(id: %r{[0-9]+(-[^/]+)?}) do
+    resources :relationships, controller: 'relationships' do
+      member do
+        get 'edit_relationship'
+      end
+    end
+  end
+
   resources :relationships, except: [:index, :new] do
     member do
       post 'reverse_direction'
