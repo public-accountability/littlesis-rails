@@ -1,42 +1,43 @@
-<div class="modal" tabindex="-1" role="dialog" id="edit-featured-resources">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Update Featured Resources</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
+<%= turbo_frame_tag "edit-featured-resources-modal" do %>
+  <div class="modal" id="edit-featured-resources" data-controller="modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Featured Resources</h5>
+          <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
+        </div>
 
-      <div class="modal-body">
-        <% entity.featured_resources.each_with_index do |fr| %>
-          <div class="mb-2">
-            <%= link_to truncate(fr.title, length: 30), fr.url, title: fr.url, target: '_blank' %>
-            <%= button_to(featured_resource_path(fr), method: :delete, form: { onsubmit: "return confirm('Are you sure?')" }, class: 'btn btn-outline-warning border-0 btn-sm ml-1', form_class: 'd-inline' ) do %>
-              <i class="bi bi-trash text-dark"></i>
+        <div class="modal-body">
+          <% @entity.featured_resources.each_with_index do |fr| %>
+            <div class="mb-2">
+              <%= link_to truncate(fr.title, length: 30), fr.url, title: fr.url, target: '_blank' %>
+              <%= button_to(featured_resource_path(fr), method: :delete, form: { onsubmit: "return confirm('Are you sure?')" }, class: 'btn btn-outline-warning border-0 btn-sm ml-1', form_class: 'd-inline' ) do %>
+                <i class="bi bi-trash text-dark"></i>
+              <% end %>
+            </div>
+          <% end %>
+
+          <div class="mt-2">
+            <p>add a new link:</p>
+            <%= form_with model: FeaturedResource.new, data: {turbo_frame: "_top"} do |f| %>
+              <%= f.hidden_field :entity_id, value: @entity.id %>
+
+              <div class="mt-2">
+                <%= f.label :title %>
+                <%= f.text_field :title, class: 'form-control', required: true %>
+              </div>
+
+              <div class="mt-2 mb-2">
+                <%= f.label :url %>
+                <%= f.url_field :url, class: 'form-control', required: true, data: { 'parsley-type' => 'url' } %>
+              </div>
+
+              <%= f.submit "Submit", class: 'btn btn-primary' %>
             <% end %>
           </div>
-        <% end %>
-
-        <div class="mt-2">
-          <p>add a new link:</p>
-          <%= form_with model: FeaturedResource.new do |f| %>
-            <%= f.hidden_field :entity_id, value: entity.id %>
-
-            <div class="mt-2">
-              <%= f.label :title %>
-              <%= f.text_field :title, class: 'form-control', required: true %>
-            </div>
-
-            <div class="mt-2 mb-2">
-              <%= f.label :url %>
-              <%= f.url_field :url, class: 'form-control', required: true, data: { 'parsley-type' => 'url' } %>
-            </div>
-
-            <%= f.submit "Submit", class: 'btn btn-primary' %>
-          <% end %>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-<%= link_to 'Add/Remove Featured Resource', '#', data: { "bs-toggle" =>  'modal', "bs-target" => '#edit-featured-resources' } %>
+  <div class="modal-backdrop show" style="pointer-events: auto;"></div>
+<% end %>
