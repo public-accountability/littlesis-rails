@@ -1,22 +1,19 @@
 <%= turbo_frame_tag "add-relationship-modal" do %>
-  <div class="modal">
+  <div class="modal" data-controller="modal" data-action="keyup@window->modal#closeWithKeyboard">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h6><%= t('littlesis.external_links') %><small class="text-muted ps-2">connect this entity to other sites</small></h6>
+          <h6><%= t('phrases.create_new_relationship') %></h6>
           <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
         </div>
         <div class="modal-body">
-          <%= render partial: 'explain_categories_modal' %>
 
           <div class="mt-1" data-turbo="true">
             <turbo-frame id="add-relationship-page">
               <turbo-frame id="add-relationship-search">
                 <div class=row data-add-relationship-target="search" data-turbo="true">
-                  <div class="col-6">
-                    <h2 title="Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.">
-                      <%= t('phrases.create_new_relationship') %>
-                    </h2>
+                  <div class="col-12">
+                    <p><small>Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below."</small></p>
 
                     <form action="<%= add_relationship_search_entities_path %>" data-turbo-frame="add-relationship-results">
                       <div class="input-group">
@@ -36,4 +33,5 @@
       </div>
     </div>
   </div>
+  <div class="modal-backdrop show" style="pointer-events: auto;"></div>
 <% end %>
