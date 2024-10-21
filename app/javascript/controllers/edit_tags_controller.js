@@ -12,9 +12,25 @@ export default class extends Controller {
     }
   }
 
-  hideModal() {
-    this.element.nextSibling.nextSibling.remove()
-    this.element.parentElement.removeAttribute("src")
-    this.element.remove()
+  close() {
+    window.location.reload()
+  }
+
+  // hide modal when clicking ESC
+  // action: "keyup@window->modal#closeWithKeyboard"
+  closeWithKeyboard(e) {
+    console.log(e);
+    if (e.code === "Escape") {
+      this.close()
+    }
+  }
+  // hide modal when clicking outside of modal
+  // action: "click@window->modal#closeBackground"
+  closeBackground(e) {
+    console.log(e);
+    if (e && this.modalTarget.contains(e.target)) {
+      return
+    }
+    this.close()
   }
 }

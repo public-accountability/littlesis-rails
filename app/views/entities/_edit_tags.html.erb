@@ -1,12 +1,12 @@
 <%= turbo_frame_tag "edit-tags-modal" do %>
   <% tags = @entity.tags_for(current_user) %>
   <% if current_user&.editor? %>
-    <div class="modal" data-controller="edit-tags" data-edit-tags-target="modal">
+    <div class="modal" data-controller="edit-tags" data-edit-tags-target="modal" data-action="keyup@window->modal#closeWithKeyboard">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h6>Add or remove tags</h6>
-            <%= button_tag "", data: { action: "edit-tags#hideModal" }, type: "button", class: "btn-close" %>
+            <%= button_tag "", data: { action: "edit-tags#close" }, type: "button", class: "btn-close" %>
           </div>
 
           <div class="modal-body">
