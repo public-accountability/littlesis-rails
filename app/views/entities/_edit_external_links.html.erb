@@ -8,7 +8,7 @@
 <div id="edit-external-links-container" class="w-100">
   <% ExternalLink.find_or_initialize_links_for(@entity).each do |el| %>
     <div class="row mb-2">
-      <div class="col-8 col-sm-7 col-md-6">
+      <div class="col-8 col-sm-7 col-md-9">
         <%= form_for el, html: { class: '', id: "#{el.link_type}_external_link_form" } do |f| %>
 	  <% unless el.persisted?  %>
 	    <%= f.hidden_field :entity_id %>
