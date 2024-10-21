@@ -5,7 +5,7 @@
 </div>
 
 <div class="row">
-  <div class="col-8 col-sm-7 col-md-6">
+  <div class="col-8 col-sm-7 col-md-9">
     <p> <%= t('phrases.create_new_alias') %>:</p>
     <%= form_for @entity.aliases.new do |f| %>
       <%= f.hidden_field :entity_id, value: @entity.id %>
@@ -18,7 +18,7 @@
 </div>
 
 <div class="row mt-2">
-  <div class="col-sm-8 col-md-6 top-1em">
+  <div class="col-sm-8 col-md-9 top-1em">
     <% if @entity.aliases.size > 1 %>
       <p class="mt-1"><%= t('phrases.change_default_name') %></p>
     <% end %>

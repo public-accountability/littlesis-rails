@@ -14,7 +14,7 @@
               <%= form_for @entity, method: 'patch', class: 'form-horizontal', builder: LsFormBuilder, data: {turbo_frame: "_top", controller: "entity-edit"} do |f| %>
 
                 <div class="row mb-2 mt-2">
-                  <div class="col-sm-12 col-md-6">
+                  <div class="col-sm-12 col-md-9">
                     <%= render partial: 'shared/editing/reference_widget',
                              locals: { documents: RecentEntityReferencesQuery.run(@entity) } %>
                   </div>
