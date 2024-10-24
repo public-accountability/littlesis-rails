@@ -67,6 +67,9 @@ application.register("lists-search", ListsSearchController)
 import MatchContributionsController from "./match_contributions_controller"
 application.register("match-contributions", MatchContributionsController)
 
+import ModalController from "./modal_controller"
+application.register("modal", ModalController)
+
 import NavigationFormController from "./navigation_form_controller"
 application.register("navigation-form", NavigationFormController)
 

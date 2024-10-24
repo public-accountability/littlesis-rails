@@ -136,6 +136,10 @@ LittleSis::Application.routes.draw do
               constraints: { subcategory: Regexp.new(Link::Subcategory::SUBCATEGORIES.join('|')), page: /[0-9]+/ },
               to: 'entities#grouped_links'
           get 'source_links'
+          get 'edit_profile'
+          get 'edit_external_links'
+          get 'edit_featured_resources'
+          get 'edit_tags'
         end
 
         resources :images, controller: 'entities/images'
@@ -236,6 +240,14 @@ LittleSis::Application.routes.draw do
   get '/relationships/bulk_add' => 'relationships#bulk_add'
   post '/relationships/bulk_add' => 'relationships#bulk_add!'
   get '/relationships/find_similar' => 'relationships#find_similar'
+
+  constraints(id: %r{[0-9]+(-[^/]+)?}) do
+    resources :relationships, controller: 'relationships' do
+      member do
+        get 'edit_relationship'
+      end
+    end
+  end
 
   resources :relationships, except: [:index, :new] do
     member do
