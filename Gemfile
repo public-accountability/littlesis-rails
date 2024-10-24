@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 7.1.3'
+gem 'rails', '~> 7.1.4'
 
 gem 'pg'
 gem 'mysql2', '~> 0.5.2'
@@ -16,6 +16,7 @@ gem 'nokogiri'
 gem 'zeitwerk'
 gem 'rexml'
 gem 'kramdown'
+gem 'logger'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
