@@ -10,4 +10,5 @@ ThinkingSphinx::Index.define :list, :with => :real_time do
   has entity_count, type: :integer
   has created_at, type: :timestamp
   has updated_at, type: :timestamp
+  has creator_user_id, type: :bigint
 end
