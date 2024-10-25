@@ -63,6 +63,9 @@ doc/
 # Everything in the data folder is ignored outright
 /data/*
 
+# Ignore one-time import scripts
+lib/scripts/*import.rb
+
 # add data files here if they need to be included:
 !/data/swamped.json
 !/data/fec_transaction_types.csv
