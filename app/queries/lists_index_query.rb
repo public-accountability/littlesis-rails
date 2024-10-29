@@ -12,10 +12,6 @@ class ListsIndexQuery
       page: 1,
       per_page: 20
     }
-
-    # This creates what seems to be correct sql:
-    # SELECT *, IF(creator_user_id = 12 OR access!=2, 0,1) AS users_or_private FROM `list_core` WHERE `users_or_private` = 1 AND `is_deleted` = 0 AND `sphinx_deleted` = 0 LIMIT 0, 20 OPTION cutoff=0
-
     order_by :created_at
   end
 
