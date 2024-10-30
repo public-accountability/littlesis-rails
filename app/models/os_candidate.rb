@@ -1,2 +1,0 @@
-class OsCandidate < ApplicationRecord
-end
