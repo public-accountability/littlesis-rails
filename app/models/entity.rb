@@ -90,10 +90,6 @@ class Entity < ApplicationRecord
   # Location and Address
   has_many :locations, inverse_of: :entity, dependent: :destroy
 
-  # NY Election
-  has_many :ny_filer_entities
-  has_many :ny_filers, through: :ny_filer_entities
-
   has_many :featured_resources, dependent: :destroy
 
   # SCOPES

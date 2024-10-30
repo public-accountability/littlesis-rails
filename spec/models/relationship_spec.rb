@@ -16,10 +16,10 @@ describe Relationship, type: :model do
     it { is_expected.to have_one(:ownership) }
     it { is_expected.to belong_to(:category) }
     it { is_expected.to belong_to(:last_user).optional }
-    it { is_expected.to have_many(:os_matches) }
-    it { is_expected.to have_many(:os_donations) }
-    it { is_expected.to have_many(:ny_matches) }
-    it { is_expected.to have_many(:ny_disclosures) }
+    it { is_expected.not_to have_many(:os_matches) }
+    it { is_expected.not_to have_many(:os_donations) }
+    it { is_expected.not_to have_many(:ny_matches) }
+    it { is_expected.not_to have_many(:ny_disclosures) }
 
     it 'aliases trans as transaction' do
       expect(Trans).to eql Transaction
@@ -383,36 +383,6 @@ describe Relationship, type: :model do
       expect(donation.start_date).to eq '1999-01-01'
       donation.update_end_date_if_later nil
       expect(donation.end_date).to eq '2012-01-01'
-    end
-  end
-
-  describe '#update_ny_contribution_info' do
-    before do
-      donor = create(:entity_person, name: 'I <3 ny politicans')
-      elected = create(:entity_org)
-      ny_filer = create(:ny_filer)
-      @rel = Relationship.create!(entity1_id: donor.id, entity2_id: elected.id, category_id: 5)
-      disclosure1 = create(:ny_disclosure, amount1: 2000, schedule_transaction_date: '1999-01-01', ny_filer: ny_filer)
-      disclosure2 = create(:ny_disclosure, amount1: 3000, schedule_transaction_date: '2017-01-01', ny_filer: ny_filer)
-      create(:ny_match, ny_disclosure_id: disclosure1.id, donor_id: donor.id, recip_id: elected.id, relationship: @rel)
-      create(:ny_match, ny_disclosure_id: disclosure2.id, donor_id: donor.id, recip_id: elected.id, relationship: @rel)
-      @rel.update_ny_donation_info
-    end
-
-    specify do
-      expect(@rel.amount).to eq 5_000
-      expect(@rel.description1).to eql "NYS Campaign Contribution"
-      expect(@rel.filings).to eq 2
-      expect(@rel.start_date).to eq '1999-01-01'
-      expect(@rel.end_date).to eq '2017-01-01'
-    end
-
-    it 'can be chained with .save to update the db' do
-      expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings'))
-        .to eql("amount" => nil, "filings" => nil)
-      @rel.update_ny_donation_info.save
-      expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings'))
-        .to eql("amount" => 5000, "filings" => 2)
     end
   end
 
