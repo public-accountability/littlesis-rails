@@ -1,2 +1,0 @@
-class OsCommittee < ApplicationRecord
-end
