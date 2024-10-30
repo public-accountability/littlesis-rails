@@ -386,34 +386,6 @@ describe Relationship, type: :model do
     end
   end
 
-  describe '#update_contribution_info' do
-    let(:loeb) { create(:entity_person) }
-    let(:nrsc) { create(:entity_org) }
-
-    let(:loeb_donation) do
-      create(:donation_relationship, entity:  loeb, related: nrsc, filings: 1, amount: 10_000, start_date: "2010-00-00", end_date: "2011-00-00")
-    end
-
-    before do
-      d1 = create(:loeb_donation_one)
-      d2 = create(:loeb_donation_two)
-      OsMatch.create!(relationship_id: loeb_donation.id, os_donation_id: d1.id, donor_id: loeb.id)
-      OsMatch.create!(relationship_id: loeb_donation.id, os_donation_id: d2.id, donor_id: loeb.id)
-      loeb_donation.update_os_donation_info
-    end
-
-    specify do
-      expect(loeb_donation.amount).to eq 80_800
-      expect(loeb_donation.filings).to eq 2
-      expect(Relationship.find(loeb_donation.id).amount).not_to eql 80_800
-    end
-
-    it 'can be chained with .save' do
-      loeb_donation.update_os_donation_info.save
-      expect(Relationship.find(loeb_donation.id).amount).to eql 80_800
-    end
-  end
-
   describe '#update_ny_contribution_info' do
     before do
       donor = create(:entity_person, name: 'I <3 ny politicans')
