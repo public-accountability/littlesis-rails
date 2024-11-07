@@ -59,7 +59,8 @@ production:
   asset_host: littlesis.org
   protocol: https
   beta: false
-  donation_banner_display: false
+  show_donation_banner: true
+  donation_banner_display: all
   carousel_list_id: 1257
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
   powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
