@@ -4,9 +4,7 @@
 
 <div class="ps-2">
   <span>•</span>
-  <turbo-frame id="edit-relationship-modal">
-    <%= link_to grouped_link.first.link_content, "/relationships/#{grouped_link.first.relationship.id}/edit_relationship" %>
-  </turbo-frame>
+  <%= link_to grouped_link.first.link_content, relationship_path(grouped_link.first.relationship) %>
 
   <% if grouped_link.length > 1 %>
     <span class="more-relationships"
