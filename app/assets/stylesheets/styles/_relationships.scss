@@ -260,3 +260,12 @@ div.entity-match-box {
     font-size: 1.2rem;
   }
 }
+
+#relationship-page {
+  .modal {
+    display: block;
+  }
+  .select2-container {
+    z-index: 1060;
+  }
+}

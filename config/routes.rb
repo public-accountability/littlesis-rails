@@ -245,6 +245,7 @@ LittleSis::Application.routes.draw do
     resources :relationships, controller: 'relationships' do
       member do
         get 'edit_relationship'
+        get 'edit_tags'
       end
     end
   end
