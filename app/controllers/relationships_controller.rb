@@ -75,6 +75,11 @@ class RelationshipsController < ApplicationController
     render partial: 'edit_relationship'
   end
 
+  def edit_tags
+    @relationship = Relationship.find(params[:id])
+    render partial: 'edit_tags'
+  end
+
   # PATCH /relationships/:id
   #
   # if the parameter "reverse_direction" is passed with this request,
