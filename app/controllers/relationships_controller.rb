@@ -70,6 +70,11 @@ class RelationshipsController < ApplicationController
     @selected_document_id = params[:new_ref].present? ? @relationship.documents.last&.id : nil
   end
 
+  def add_source
+    @relationship = Relationship.find(params[:id])
+    render partial: 'shared/reference_new', locals: {model: @relationship, reference: @reference }
+  end
+
   def edit_relationship
     @relationship = Relationship.find(params[:id])
     render partial: 'edit_relationship'
