@@ -1,22 +1,12 @@
-<% if user_signed_in? %>
-  <%= render partial: 'shared/reference_new', locals: {model: @relationship, reference: @reference } %>
-<% end %>
-
 <div class="row">
   <div class="relationship-updated-at-text">
     <em><%= "Updated #{time_ago_in_words(@relationship.updated_at)} ago" %></em>
   </div>
 </div>
 
+<%# Sources %>
 <div class="row mt-2">
-  <h4>
-    Source Links
-    <% if user_signed_in? && current_user.editor? %>
-      <a href="#add-reference-modal" data-bs-toggle="modal" >
-        <i class="bi bi-plus" title="Add a source" aira-hidden="true"></i>
-      </a>
-    <% end %>
-  </h4>
+    <%= render partial: 'sidebar_source' %>
 </div>
 
 <div class="row">

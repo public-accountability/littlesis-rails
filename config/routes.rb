@@ -244,6 +244,7 @@ LittleSis::Application.routes.draw do
   constraints(id: %r{[0-9]+(-[^/]+)?}) do
     resources :relationships, controller: 'relationships' do
       member do
+        get 'add_source'
         get 'edit_relationship'
         get 'edit_tags'
       end
