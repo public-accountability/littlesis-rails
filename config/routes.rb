@@ -280,6 +280,13 @@ LittleSis::Application.routes.draw do
        as: 'dismiss_helper'
 
   resources :documents, only: [:edit, :update]
+  constraints(id: %r{[0-9]+(-[^/]+)?}) do
+    resources :documents, controller: 'documents' do
+      member do
+        get 'edit_document'
+      end
+    end
+  end
 
   # Tags
 
