@@ -9,10 +9,6 @@
     <%= render partial: 'sidebar_source' %>
 </div>
 
-<div class="row">
-  <%= render partial: 'sources', locals: {relationship: @relationship } %>
-</div>
-
 <%# TAGS %>
 <% if @relationship.tags.present? || current_user&.editor? %>
   <div class="row mt-1">
