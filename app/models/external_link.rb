@@ -110,7 +110,7 @@ class ExternalLink < ApplicationRecord
 
   PLACEHOLDER = '{}'
   WIKIPEDIA_REGEX = Regexp.new 'https?:\/\/en.wikipedia.org\/wiki\/?(.+)', Regexp::IGNORECASE
-  TWITTER_REGEX = Regexp.new 'https?:\/\/(twitter|x).com\/?(.+)', Regexp::IGNORECASE
+  TWITTER_REGEX = Regexp.new 'https?:\/\/(?:twitter|x).com\/?(.+)', Regexp::IGNORECASE
 
   validates :link_type, presence: true
   validates :entity_id, presence: true
