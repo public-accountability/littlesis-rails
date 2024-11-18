@@ -136,6 +136,7 @@ LittleSis::Application.routes.draw do
               constraints: { subcategory: Regexp.new(Link::Subcategory::SUBCATEGORIES.join('|')), page: /[0-9]+/ },
               to: 'entities#grouped_links'
           get 'source_links'
+          get 'add_source'
           get 'edit_profile'
           get 'edit_external_links'
           get 'edit_featured_resources'
