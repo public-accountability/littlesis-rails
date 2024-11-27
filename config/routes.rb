@@ -289,6 +289,14 @@ LittleSis::Application.routes.draw do
     end
   end
 
+  constraints(id: %r{[0-9]+(-[^/]+)?}) do
+    resources :lists, controller: 'lists' do
+      member do
+        get 'add_source'
+      end
+    end
+  end
+
   # Tags
 
   get '/tags/request' => 'tags#tag_request'
