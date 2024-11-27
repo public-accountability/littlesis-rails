@@ -42,6 +42,11 @@ class ListsController < ApplicationController
   def edit
   end
 
+  def add_source
+    @list = List.find(params[:id])
+    render partial: 'shared/reference_new', locals: {model: @list, reference: @reference }
+  end
+
   def create
     @list = List.new(list_params)
     @list.creator_user_id = current_user.id
