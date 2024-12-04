@@ -18,6 +18,11 @@ class DocumentsController < ApplicationController
     end
   end
 
+  def edit_document
+    @document = Document.find(params[:id])
+    render partial: 'edit_document'
+  end
+
   private
 
   def set_document
