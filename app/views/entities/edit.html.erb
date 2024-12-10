@@ -111,7 +111,7 @@
 
   <%# Regions %>
   <%= edit_entity_form_section(
-    f.label(:regions, "#{t('vocab.location').capitalize}: ", class: label_class),
+    f.label(:regions, "#{t('vocab.region').capitalize}: ", class: label_class),
     f.select(:regions,
              options_for_select(Location.regions.to_a, selected: @entity.region_numbers),
              { include_blank: true},
