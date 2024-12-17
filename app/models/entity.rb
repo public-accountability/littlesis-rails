@@ -451,10 +451,6 @@ class Entity < ApplicationRecord
     locations.pluck(:region)
   end
 
-  def primary_region
-    locations.order(region: :asc).pick(:region)
-  end
-
   def region_numbers
     regions.map { |r| Location.regions[r] }
   end
@@ -573,7 +569,7 @@ class Entity < ApplicationRecord
     end
     info[:website] = website if website.present?
     info[:aliases] = also_known_as.join(', ') unless also_known_as.empty?
-    info[:region] = primary_region if primary_region
+    info[:region] = regions.join(', ') unless regions.empty?
 
     info
   end
