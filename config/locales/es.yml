@@ -110,6 +110,7 @@ es:
     tags: etiquetas
     lists: listas
     password: "contraseña"
+    region: "región"
 
 
   phrases:
