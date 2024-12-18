@@ -31,7 +31,7 @@ module PublicData
   end
 
   def self.gzip
-    system "gzip --keep #{DIR.join('entities.json')}"
-    system "gzip --keep #{DIR.join('relationships.json')}"
+    system "gzip --force --keep #{DIR.join('entities.json')}"
+    system "gzip --force --keep #{DIR.join('relationships.json')}"
   end
 end
