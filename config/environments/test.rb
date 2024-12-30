@@ -9,6 +9,7 @@ Rails.application.configure do
 
   # Don't raise an error on page load if there are pending migrations
   config.active_record.migration_error = false
+  config.active_record.maintain_test_schema = false
 
   # The test environment is used exclusively to run your application's
   # test suite. You never need to work with it otherwise. Remember that
