@@ -19,8 +19,8 @@ defaults: &defaults
   beta: false
   noediting: false
   firefox_binary: /opt/firefox
-  oligrapher_commit: "8cb80e632c0958fe8d166661131fee2ab1dd3945"
-  oligrapher_beta: "d87f09e5505eb4f591f6e6c9c19d7aedfebd2c78"
+  oligrapher_commit: "f72874c6e90e409409f0bb4c903645c630cf4f31"
+  oligrapher_beta: "cd62a6da6cb321968250dd9c19612396ce6b6774"
   chrome_extension_id: "aomlfehiiambdpbkeegelpbfkjenonhe"
 
 test:
