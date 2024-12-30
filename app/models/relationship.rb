@@ -82,14 +82,6 @@ class Relationship < ApplicationRecord
   belongs_to :category, class_name: "RelationshipCategory", inverse_of: :relationships
   belongs_to :last_user, class_name: "User", foreign_key: "last_user_id", optional: true
 
-  # Open Secrets
-  has_many :os_matches, inverse_of: :relationship
-  has_many :os_donations, through: :os_matches
-
-  # NY Contributions
-  has_many :ny_matches, inverse_of: :relationship
-  has_many :ny_disclosures, through: :ny_matches
-
   # FEC Matches
   # has_many :fec_committee_matches, class_name: 'FECMatch', foreign_key: 'committee_relationship_id', inverse_of: :committee_relationship
   # has_many :fec_candidate_matches, class_name: 'FECMatch', foreign_key: 'candidate_relationship_id', inverse_of: :candidate_relationship
@@ -492,17 +484,6 @@ class Relationship < ApplicationRecord
     if date.sp_unknown? || new_date > date.coerce_to_date
       update_attribute :end_date, new_date.to_s
     end
-  end
-
-  #############################
-  # NYS Contributions helpers #
-  #############################
-
-  def update_ny_donation_info
-    self.attributes = { amount: ny_disclosures.sum(:amount1), filings: ny_disclosures.count }
-    self.attributes = { description1: "NYS Campaign Contribution" } if description1.blank?
-    self.attributes = { start_date: ny_transaction_date('asc'), end_date: ny_transaction_date('desc') }
-    self
   end
 
   ##############################

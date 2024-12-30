@@ -90,16 +90,6 @@ class Entity < ApplicationRecord
   # Location and Address
   has_many :locations, inverse_of: :entity, dependent: :destroy
 
-  # OpenSecrets
-  has_many :matched_contributions, class_name: 'OsMatch', inverse_of: :donor, foreign_key: 'donor_id'
-  has_many :contributions, through: :matched_contributions, source: :os_donation
-  has_many :donors, class_name: 'OsMatch', inverse_of: :recipient, foreign_key: 'recip_id'
-  has_many :committee_donors, class_name: 'OsMatch', inverse_of: :committee, foreign_key: 'cmte_id'
-
-  # NY Election
-  has_many :ny_filer_entities
-  has_many :ny_filers, through: :ny_filer_entities
-
   has_many :featured_resources, dependent: :destroy
 
   # SCOPES
