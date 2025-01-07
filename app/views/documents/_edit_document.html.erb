@@ -1,4 +1,4 @@
-<%= turbo_frame_tag "edit-document" do %>
+<%= turbo_frame_tag "documents_edit_#{@document.id}" do %>
   <div class="modal" data-controller="modal" data-action="keyup@window->modal#closeWithKeyboard">
     <div class="modal-dialog">
       <div class="modal-content">
