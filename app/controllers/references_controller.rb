@@ -5,6 +5,7 @@ class ReferencesController < ApplicationController
   before_action :authenticate_user!, except: [:entity, :documents]
   before_action :current_user_can_edit?, except: [:entity, :documents]
   before_action :set_referenceable, only: [:create, :documents]
+  before_action :user_can_edit_this_referenceable, only: [:create]
 
   def create
     @referenceable.add_reference(reference_params(:data).to_h)
@@ -101,4 +102,11 @@ class ReferencesController < ApplicationController
       home_dashboard_path
     end
   end
+
+  def user_can_edit_this_referenceable
+    if @referenceable.respond_to?(:user_can_edit?) && !@referenceable.user_can_edit?(current_user)
+       raise Exceptions::PermissionError
+    end
+  end
+
 end
