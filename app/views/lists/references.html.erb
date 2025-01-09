@@ -10,7 +10,7 @@
   </div>
 </div>
 
-<% if user_signed_in? %>
+<% if user_signed_in? && @list.user_can_edit?(current_user) %>
 
   <%= render partial: 'shared/reference_new', locals: { model: @list } %>
 
