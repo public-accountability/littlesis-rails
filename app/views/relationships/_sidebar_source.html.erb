@@ -1,8 +1,8 @@
   <h4>
     Source Links
     <% if user_signed_in? && current_user.editor? %>
-      <turbo-frame id="add-source-modal">
-        <%= link_to '', "/relationships/#{@relationship.id}/add_source", class: "bi bi-plus" %>
+      <%= link_to '', "/relationships/#{@relationship.id}/add_source", class: "bi bi-plus", data: { turbo: true, turbo_frame: 'source-modal'} %>
+      <turbo-frame id="source-modal">
       </turbo-frame>
     <% end %>
   </h4>
