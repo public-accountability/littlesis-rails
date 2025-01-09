@@ -1,35 +1,23 @@
 <% content_for(:page_title, sanitize(@list.name)) %>
-<%= render partial: 'header', locals: { list: @list } %>
-<%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :sources } %>
+<div id="list-sources-page">
+  <%= render partial: 'header', locals: { list: @list } %>
+  <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :sources } %>
 
-<div class="row">
-  <div id="list-sources">
-    <% @list.documents.each do |doc| %>
-      <%= link_to(doc.name.presence || doc.url, doc.url) %><br>
-    <% end %>
-  </div>
-</div>
-
-<% if user_signed_in? && @list.user_can_edit?(current_user) %>
-
-  <%= render partial: 'shared/reference_new', locals: { model: @list } %>
-
-  <div class="row top-3em">
-    <div class="col-3">
-      <button type="button"
-	      class="btn btn-primary"
-	      data-bs-toggle="modal"
-	      data-bs-target="#add-reference-modal">Add a new source</button>
+  <div class="row">
+    <div id="list-sources">
+      <% @list.documents.each do |doc| %>
+        <%= link_to(doc.name.presence || doc.url, doc.url) %><br>
+      <% end %>
     </div>
   </div>
 
-  <% if user_signed_in? %>
+  <% if user_signed_in? && @list.user_can_edit?(current_user) %>
     <div class="row top-3em">
       <div class="col-3">
-        <turbo-frame id="add-source-modal">
-          <%= link_to 'Add a new source', "/lists/#{@list.id}/add_source", class: "btn btn-primary", id: "add-new-reference-link" %>
-        </turbo-frame>
+        <%= link_to 'Add a new source', "/lists/#{@list.id}/add_source", class: "btn btn-primary", id: "add-new-reference-link", data: { turbo: true, turbo_frame: 'source-modal'} %>
       </div>
     </div>
+    <turbo-frame id="source-modal">
+    </turbo-frame>
   <% end %>
 </div>
