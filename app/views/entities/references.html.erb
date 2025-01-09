@@ -1,19 +1,12 @@
 <%= render partial: 'header2', locals: { hide_summary: true }  %>
 
-<% if user_signed_in? %>
-  <turbo-frame id="add-source-modal">
-  </turbo-frame>
-<% end %>
-
 <div class="row mt-1">
   <div class="col">
     <div>
       <h2 class="d-inline-block">Source documents</h2>
       <% if user_signed_in? %>
-        <turbo-frame>
-          <%= link_to 'Create new reference', "/entities/#{@entity.id}/add_source", class: "ps-2 d-inline-block", id: "add-new-refernce-link",
-                      data: { turbo_frame: 'add-source-modal' }
-          %>
+        <%= link_to 'Create new reference', "/entities/#{@entity.id}/add_source", class: "ps-2 d-inline-block", id: "add-new-reference-link", data: { turbo: true, turbo_frame: 'source-modal' } %>
+        <turbo-frame id="source-modal">
         </turbo-frame>
       <% end %>
     </div>
