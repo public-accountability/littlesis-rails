@@ -139,9 +139,7 @@
 
           <% if current_user.role.include?(:feature_items) %>
             <li>
-              <turbo-frame id="edit-featured-resources-modal">
-                <%= link_to 'Add/Remove Featured Resource', "/entities/#{@entity.id}/edit_featured_resources"  %>
-              </turbo-frame>
+              <%= link_to 'Add/Remove Featured Resource', "/entities/#{@entity.id}/edit_featured_resources", data: { turbo: true, turbo_frame: 'profile-modal'}  %>
             </li>
           <% end %>
 
