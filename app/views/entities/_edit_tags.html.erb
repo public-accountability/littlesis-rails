@@ -1,4 +1,4 @@
-<%= turbo_frame_tag "edit-tags-modal" do %>
+<%= turbo_frame_tag "profile-modal" do %>
   <% tags = @entity.tags_for(current_user) %>
   <% if current_user&.editor? %>
     <div class="modal" data-controller="edit-tags" data-edit-tags-target="modal" data-action="keyup@window->edit-tags#closeWithKeyboard">
