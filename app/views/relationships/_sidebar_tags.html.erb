@@ -1,11 +1,9 @@
 <h4>
   Tags
-  <% if user_signed_in? %>
-    <turbo-frame id="edit-relationship-tags-modal">
-      <span id="tags-controls" class="ms-2">
-        <%= link_to '', "/relationships/#{@relationship.id}/edit_tags", id: "tags-edit-button", class: "tags-edit-glyph" %>
-      </span>
-    </turbo-frame>
+  <% if user_signed_in? %>    
+    <span id="tags-controls" class="ms-2">
+      <%= link_to '', "/relationships/#{@relationship.id}/edit_tags", id: "tags-edit-button", class: "tags-edit-glyph", data: { turbo: true, turbo_frame: 'relationship-modal'} %>
+    </span>
   <% end %>
 </h4>
 
