@@ -1,8 +1,8 @@
 <div class="row actions-row mt-2">
   <div id="actions" class="col-md-8 col-sm-8">
     <div id="action-buttons">
-      <%= link_to t('phrases.add_relationship'), "/entities/#{@entity.id}/add_relationship", class: "action-button", data: { turbo: true, turbo_frame: 'profile-modal'} %>
-      <%= link_to t('vocab.edit'), "/entities/#{@entity.id}/edit_profile", class: "action-button", data: { turbo: true, turbo_frame: 'profile-modal'} %>
+      <%= link_to t('phrases.add_relationship'), "/entities/#{@entity.id}/add_relationship", class: "action-button", data: { turbo: true, turbo_frame: 'modal'} %>
+      <%= link_to t('vocab.edit'), "/entities/#{@entity.id}/edit_profile", class: "action-button", data: { turbo: true, turbo_frame: 'modal'} %>
       <%= link_to t('vocab.flag'), flag_path, class: "action-button" %>
 
       <% if @entity.permissions_for(current_user).deleteable %>

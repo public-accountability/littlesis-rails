@@ -2,7 +2,7 @@
   Tags
   <% if user_signed_in? %>    
     <span id="tags-controls" class="ms-2">
-      <%= link_to '', "/relationships/#{@relationship.id}/edit_tags", id: "tags-edit-button", class: "tags-edit-glyph", data: { turbo: true, turbo_frame: 'relationship-modal'} %>
+      <%= link_to '', "/relationships/#{@relationship.id}/edit_tags", id: "tags-edit-button", class: "tags-edit-glyph", data: { turbo: true, turbo_frame: 'modal'} %>
     </span>
   <% end %>
 </h4>

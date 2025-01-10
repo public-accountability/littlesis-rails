@@ -246,26 +246,6 @@ $profile_page_fs_relationship: $profile_page_fs_small;
   }
 }
 
-.modal {
-  display: block;
-  .btn-primary {
-    padding:var(--bs-btn-padding-y) var(--bs-btn-padding-x)!important;
-    font-size:var(--bs-btn-font-size)!important;
-    color:var(--bs-btn-color)!important;
-    border:var(--bs-btn-border-width) solid var(--bs-btn-border-color)!important;
-    border-radius:var(--bs-btn-border-radius)!important;
-    background-color:var(--bs-btn-bg)!important;
-  }
-  .btn-secondary {
-    padding:var(--bs-btn-padding-y) var(--bs-btn-padding-x)!important;
-    font-size:var(--bs-btn-font-size)!important;
-    color:var(--bs-btn-color)!important;
-    border:var(--bs-btn-border-width) solid var(--bs-btn-border-color)!important;
-    border-radius:var(--bs-btn-border-radius)!important;
-    background-color:var(--bs-btn-bg)!important;
-  }
-}
-
 .select2-container {
   z-index: 1060;
 }
