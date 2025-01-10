@@ -5,7 +5,7 @@
     <div>
       <h2 class="d-inline-block">Source documents</h2>
       <% if user_signed_in? %>
-        <a class="ps-2 d-inline-block" href="#add-reference-modal" data-bs-toggle="modal" id="add-new-refernce-link">Create new reference</a>
+        <%= link_to 'Create new reference', "/entities/#{@entity.id}/add_source", class: "ps-2 d-inline-block", id: "add-new-reference-link", data: { turbo: true, turbo_frame: 'modal' } %>
       <% end %>
     </div>
 
@@ -17,7 +17,3 @@
     </div>
   </div>
 </div>
-
-<% if user_signed_in? && current_user.editor? %>
-  <%= render partial: 'shared/reference_new', locals: { model: @entity, reference: nil } %>
-<% end %>

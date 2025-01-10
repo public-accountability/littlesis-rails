@@ -1,5 +1,5 @@
 <div id="relationship-action-buttons" class="col-md-8 col-sm-6">
-  <%= link_to "edit", edit_relationship_path(@relationship), class: 'action-button', title: 'Edit this relationship'  %>
+  <%= link_to "edit", "/relationships/#{@relationship.id}/edit_relationship", class: 'action-button', title: 'Edit this relationship', data: { turbo: true, turbo_frame: 'modal'} %>
   <%= link_to "flag", flag_path, class: 'action-button', title: 'Report an issue'  %>
 
   <% if @relationship.permissions_for(current_user).fetch(:deleteable) %>
