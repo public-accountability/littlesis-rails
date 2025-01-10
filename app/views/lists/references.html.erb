@@ -14,10 +14,8 @@
   <% if user_signed_in? && @list.user_can_edit?(current_user) %>
     <div class="row top-3em">
       <div class="col-3">
-        <%= link_to 'Add a new source', "/lists/#{@list.id}/add_source", class: "btn btn-primary", id: "add-new-reference-link", data: { turbo: true, turbo_frame: 'source-modal'} %>
+        <%= link_to 'Add a new source', "/lists/#{@list.id}/add_source", class: "btn btn-primary", id: "add-new-reference-link", data: { turbo: true, turbo_frame: 'modal'} %>
       </div>
     </div>
-    <turbo-frame id="source-modal">
-    </turbo-frame>
   <% end %>
 </div>

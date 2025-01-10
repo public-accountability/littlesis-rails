@@ -1,4 +1,4 @@
-<%= turbo_frame_tag "relationship-modal" do %>
+<%= turbo_frame_tag "modal" do %>
   <% tags = @relationship.tags_for(current_user) %>
   <div class="modal" data-controller="edit-tags" data-edit-tags-target="modal" data-action="keyup@window->edit-tags#closeWithKeyboard">
     <div class="modal-dialog">

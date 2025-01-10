@@ -5,9 +5,7 @@
     <div>
       <h2 class="d-inline-block">Source documents</h2>
       <% if user_signed_in? %>
-        <%= link_to 'Create new reference', "/entities/#{@entity.id}/add_source", class: "ps-2 d-inline-block", id: "add-new-reference-link", data: { turbo: true, turbo_frame: 'source-modal' } %>
-        <turbo-frame id="source-modal">
-        </turbo-frame>
+        <%= link_to 'Create new reference', "/entities/#{@entity.id}/add_source", class: "ps-2 d-inline-block", id: "add-new-reference-link", data: { turbo: true, turbo_frame: 'modal' } %>
       <% end %>
     </div>
 
