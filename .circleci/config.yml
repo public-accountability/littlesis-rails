@@ -13,7 +13,7 @@ jobs:
       resource_class: large
 
     environment:
-      RAILS_ENV: development
+      RAILS_ENV: test
 
     steps:
       - checkout

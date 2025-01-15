@@ -42,8 +42,6 @@ class EntityMerger
       @cmp_entity&.save!
       @relationships.each(&:merge!)
       @locations.each(&:save!)
-      merge_os_donations!
-      replace_os_match_cmte_id!
       set_merged_id_and_delete
     end
   end
@@ -236,18 +234,7 @@ class EntityMerger
   end
 
   def merge_relationships
-    source.relationships.includes(:os_matches).each do |relationship|
-      # OpenSecrets Relationships are handled in merge_os_donations!
-      if relationship.os_matches.exists?
-        @os_match_relationships << relationship
-        next
-      end
-
-      if relationship.ny_matches.exists?
-        @ny_match_relationships << relationship
-        next
-      end
-
+    source.relationships.each do |relationship|
       attributes = relationship.attributes.except('id', 'entity1_id', 'entity2_id', 'updated_at', 'created_at')
 
       if relationship.entity1_id == source.id
@@ -266,27 +253,6 @@ class EntityMerger
         @potential_duplicate_relationships << new_relationship
       end
     end
-  end
-
-  def merge_os_donations!
-    @os_match_relationships.each do |rel|
-      if rel.entity1_id == source.id
-        os_donation_ids = rel.os_matches.map(&:os_donation_id)
-        rel.os_matches.each(&:destroy!)
-        os_donation_ids.each { |i| OsMatch.create!(os_donation_id: i, donor_id: dest.id) }
-      elsif rel.entity2_id == source.id
-        rel.os_matches.each { |m| m.update!(recip_id: dest.id) }
-        rel.update!(entity2_id: dest.id)
-        rel.links.where(is_reverse: false).update_all(entity2_id: dest.id)
-        rel.links.where(is_reverse: true).update_all(entity1_id: dest.id)
-      else
-        raise Exceptions::ThatsWeirdError
-      end
-    end
-  end
-
-  def replace_os_match_cmte_id!
-    OsMatch.where(cmte_id: source.id).update_all(cmte_id: dest.id)
   end
 
   def set_merged_id_and_delete

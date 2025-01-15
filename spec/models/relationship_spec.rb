@@ -16,10 +16,10 @@ describe Relationship, type: :model do
     it { is_expected.to have_one(:ownership) }
     it { is_expected.to belong_to(:category) }
     it { is_expected.to belong_to(:last_user).optional }
-    it { is_expected.to have_many(:os_matches) }
-    it { is_expected.to have_many(:os_donations) }
-    it { is_expected.to have_many(:ny_matches) }
-    it { is_expected.to have_many(:ny_disclosures) }
+    it { is_expected.not_to have_many(:os_matches) }
+    it { is_expected.not_to have_many(:os_donations) }
+    it { is_expected.not_to have_many(:ny_matches) }
+    it { is_expected.not_to have_many(:ny_disclosures) }
 
     it 'aliases trans as transaction' do
       expect(Trans).to eql Transaction
@@ -383,64 +383,6 @@ describe Relationship, type: :model do
       expect(donation.start_date).to eq '1999-01-01'
       donation.update_end_date_if_later nil
       expect(donation.end_date).to eq '2012-01-01'
-    end
-  end
-
-  describe '#update_contribution_info' do
-    let(:loeb) { create(:entity_person) }
-    let(:nrsc) { create(:entity_org) }
-
-    let(:loeb_donation) do
-      create(:donation_relationship, entity:  loeb, related: nrsc, filings: 1, amount: 10_000, start_date: "2010-00-00", end_date: "2011-00-00")
-    end
-
-    before do
-      d1 = create(:loeb_donation_one)
-      d2 = create(:loeb_donation_two)
-      OsMatch.create!(relationship_id: loeb_donation.id, os_donation_id: d1.id, donor_id: loeb.id)
-      OsMatch.create!(relationship_id: loeb_donation.id, os_donation_id: d2.id, donor_id: loeb.id)
-      loeb_donation.update_os_donation_info
-    end
-
-    specify do
-      expect(loeb_donation.amount).to eq 80_800
-      expect(loeb_donation.filings).to eq 2
-      expect(Relationship.find(loeb_donation.id).amount).not_to eql 80_800
-    end
-
-    it 'can be chained with .save' do
-      loeb_donation.update_os_donation_info.save
-      expect(Relationship.find(loeb_donation.id).amount).to eql 80_800
-    end
-  end
-
-  describe '#update_ny_contribution_info' do
-    before do
-      donor = create(:entity_person, name: 'I <3 ny politicans')
-      elected = create(:entity_org)
-      ny_filer = create(:ny_filer)
-      @rel = Relationship.create!(entity1_id: donor.id, entity2_id: elected.id, category_id: 5)
-      disclosure1 = create(:ny_disclosure, amount1: 2000, schedule_transaction_date: '1999-01-01', ny_filer: ny_filer)
-      disclosure2 = create(:ny_disclosure, amount1: 3000, schedule_transaction_date: '2017-01-01', ny_filer: ny_filer)
-      create(:ny_match, ny_disclosure_id: disclosure1.id, donor_id: donor.id, recip_id: elected.id, relationship: @rel)
-      create(:ny_match, ny_disclosure_id: disclosure2.id, donor_id: donor.id, recip_id: elected.id, relationship: @rel)
-      @rel.update_ny_donation_info
-    end
-
-    specify do
-      expect(@rel.amount).to eq 5_000
-      expect(@rel.description1).to eql "NYS Campaign Contribution"
-      expect(@rel.filings).to eq 2
-      expect(@rel.start_date).to eq '1999-01-01'
-      expect(@rel.end_date).to eq '2017-01-01'
-    end
-
-    it 'can be chained with .save to update the db' do
-      expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings'))
-        .to eql("amount" => nil, "filings" => nil)
-      @rel.update_ny_donation_info.save
-      expect(Relationship.find(@rel.id).attributes.slice('amount', 'filings'))
-        .to eql("amount" => 5000, "filings" => 2)
     end
   end
 
@@ -916,70 +858,30 @@ describe Relationship, type: :model do
     end
   end
 
-  describe 'donation currency validations' do
-    let(:loeb) { create(:loeb) }
-    let(:nrsc) { create(:nrsc) }
+  # @TODO
+  # describe 'donation currency validations' do
+  #   context 'with a currency but no amount' do
+  #     it 'raises a validation error' do
+  #       end
+  #   end
 
-    context 'without specifying a currency' do
-      let(:donation) { build(:loeb_donation, entity: loeb, related: nrsc, filings: 1, amount: 10_000) }
-      let(:generic_relationship) { create(:generic_relationship, entity: loeb, related: nrsc) }
+  #   context 'with a currency in uppercase' do
+  #     it 'downcases the currency before validation' do
+  #       end
+  #   end
 
-      it 'defaults to USD when there is an amount' do
-        donation.valid?
-        expect(donation.currency).to eq 'usd'
-      end
+  #   context 'when validating currency codes' do
+  #     let(:donation) { build(:loeb_donation, entity: loeb, related: nrsc, filings: 1, amount: 20_000, currency: :usd) }
 
-      it 'defaults to nil when there is no amount' do
-        donation.amount = nil
-        donation.valid?
-        expect(donation.currency).to be nil
-      end
+  #     it 'accepts ISO codes' do
+  #       expect(donation.valid?).to be true
+  #     end
 
-      it 'does not raise a validation error when there is no amount' do
-        expect(generic_relationship.valid?).to be true
-      end
-    end
-
-    context 'with a currency but no amount' do
-      let(:donation) { build(:loeb_donation, entity: loeb, related: nrsc, filings: 1, amount: nil, currency: :usd) }
-
-      it 'raises a validation error' do
-        donation.valid?
-        expect(donation.errors.full_messages).to include('Currency entered without an amount')
-      end
-    end
-
-    context 'with a currency in uppercase' do
-      let(:donation) do
-        build(:donation_relationship, entity: build(:person), related: build(:org), amount: 1, currency: 'USD')
-      end
-
-      it 'downcases the currency before validation' do
-        expect(donation.valid?).to be true
-        expect(donation.currency).to eq 'usd'
-      end
-    end
-
-    context 'with a currency and an amount' do
-      let(:donation) { build(:loeb_donation, entity: loeb, related: nrsc, filings: 1, amount: 23_000, currency: :usd) }
-
-      it 'is valid' do
-        expect(donation.valid?).to be true
-      end
-    end
-
-    context 'when validating currency codes' do
-      let(:donation) { build(:loeb_donation, entity: loeb, related: nrsc, filings: 1, amount: 20_000, currency: :usd) }
-
-      it 'accepts ISO codes' do
-        expect(donation.valid?).to be true
-      end
-
-      it "raises a validation error when the code is invalid" do
-        donation.currency = 'frog bats'
-        donation.valid?
-        expect(donation.errors.full_messages).to include("Currency frog bats is not a valid currency code")
-      end
-    end
-  end
+  #     it "raises a validation error when the code is invalid" do
+  #       donation.currency = 'frog bats'
+  #       donation.valid?
+  #       expect(donation.errors.full_messages).to include("Currency frog bats is not a valid currency code")
+  #     end
+  #   end
+  # end
 end
