@@ -27,7 +27,7 @@ export default class extends Controller {
 
               if (userSignedIn) {
                 let turboFrameId = `documents_edit_${row.id}`
-                html += `<turbo-frame id="${turboFrameId}"><a href="/documents/${row.id}/edit_document" class="ms-2"><i class="bi bi-pencil-square hvr-pop ml-1"></i></a></turbo-frame>`
+                html += `<a href="/documents/${row.id}/edit_document" class="ms-2" data-turbo="true" data-turbo-frame="${turboFrameId}"><i class="bi bi-pencil-square hvr-pop ml-1"></i></a><turbo-frame id="${turboFrameId}"></turbo-frame>`
               }
 
               return html
