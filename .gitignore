@@ -26,7 +26,8 @@
 /log
 !/log/.keep
 
-# Ignore sphinx indexes
+# Ignore sphinx production config file and indexes
+config/production.sphinx.conf
 /db/sphinx
 
 # Ignore compiled assets
