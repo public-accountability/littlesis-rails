@@ -11,7 +11,7 @@
           <% @entity.featured_resources.each_with_index do |fr| %>
             <div class="mb-2">
               <%= link_to truncate(fr.title, length: 30), fr.url, title: fr.url, target: '_blank' %>
-              <%= button_to(featured_resource_path(fr), method: :delete, form: { onsubmit: "return confirm('Are you sure?')" }, class: 'btn btn-outline-warning border-0 btn-sm ml-1', form_class: 'd-inline' ) do %>
+              <%= button_to(featured_resource_path(fr), method: :delete, form: { onsubmit: "return confirm('Are you sure?')", data: {turbo_frame: "_top"} }, class: 'btn btn-outline-warning border-0 btn-sm ml-1', form_class: 'd-inline' ) do %>
                 <i class="bi bi-trash text-dark"></i>
               <% end %>
             </div>
