@@ -42,6 +42,11 @@ class ListsController < ApplicationController
   def edit
   end
 
+  def edit_list
+    @list = List.find(params[:id])
+    render partial: 'edit_list', locals: {model: @list }
+  end
+
   def add_source
     @list = List.find(params[:id])
     render partial: 'shared/reference_new', locals: {model: @list, reference: @reference }

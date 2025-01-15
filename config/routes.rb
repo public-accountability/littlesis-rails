@@ -293,6 +293,7 @@ LittleSis::Application.routes.draw do
     resources :lists, controller: 'lists' do
       member do
         get 'add_source'
+        get 'edit_list'
       end
     end
   end
