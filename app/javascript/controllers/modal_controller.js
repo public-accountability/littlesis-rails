@@ -4,13 +4,14 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
 
   close(event) {
-    window.location.reload()
+    document.querySelector('.modal-backdrop').remove();
+    document.querySelector('.modal').remove();
+    document.querySelector('#modal').removeAttribute('src');
   }
 
   // hide modal when clicking ESC
   // action: "keyup@window->turbo-modal#closeWithKeyboard"
   closeWithKeyboard(e) {
-    console.log(e);
     if (e.code === "Escape") {
       this.close()
     }
@@ -18,7 +19,6 @@ export default class extends Controller {
   // hide modal when clicking outside of modal
   // action: "click@window->turbo-modal#closeBackground"
   closeBackground(e) {
-    console.log(e);
     if (e && this.modalTarget.contains(e.target)) {
       return
     }
