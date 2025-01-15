@@ -1,4 +1,4 @@
-FROM docker.io/library/ruby:3.3.5-bookworm
+FROM docker.io/library/ruby:3.3.6-bookworm
 LABEL maintainer="dev@littlesis.org"
 ARG RAILS_ENV=$RAILS_ENV
 
