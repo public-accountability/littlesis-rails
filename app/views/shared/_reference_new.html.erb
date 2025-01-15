@@ -41,7 +41,7 @@
           </div>
 
           <!-- FORM -->
-          <%= form_tag("/references", method: 'post', id: "reference-form", multipart: true) do %>
+          <%= form_tag("/references", method: 'post', id: "reference-form", multipart: true, data: {turbo_frame: "_top"}) do %>
 
             <%= hidden_field(:data, :referenceable_id, value: model.id) %>
             <%= hidden_field(:data, :referenceable_type, value: model.class.name) %>
