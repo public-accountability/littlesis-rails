@@ -42,6 +42,6 @@ If PAI receives proper notification of copyright infringement, we will take step
 
 Email: copyright@public-accountability.org
 
-Snail mail: Public Accountability Initiative, 66 Elmwood Ave #191 Buffalo, NY 14222
+Snail mail: Public Accountability Initiative, 266 Elmwood Ave #191 Buffalo, NY 14222
 
 In accordance with Section 512(i)(1)(a) of the DMCA, PAI will, in appropriate circumstances, disable and/or terminate the accounts of users who are repeat infringers.

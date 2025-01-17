@@ -44,6 +44,6 @@ La Iniciativa de Responsabilidad Pública (PAI) se esfuerza por asegurar que el 
 
 Correo electrónico: copyright@public-accountability.org
 
-Dirección de correo postal: Public Accountability Initiative, 66 Elmwood Ave #191 Buffalo, NY 14222
+Dirección de correo postal: Public Accountability Initiative, 266 Elmwood Ave #191 Buffalo, NY 14222
 
 De acuerdo a la sección 512(i)(1)(a) del DMCA, PAI, bajo las circunstancias pertinentes, se inutilizará y/o se cancelará la cuenta de aquellos usuarios que cometan este tipo de infracciones de forma repetida.
