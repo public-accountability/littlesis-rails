@@ -13,44 +13,38 @@
 
 #source-links-container {
     li {
-	cursor: pointer;
+        cursor: pointer;
     }
 }
 
 .basic-info-table {
     th, td {
-	border-top: none !important;
+        border-top: none !important;
     }
 }
 
 #profile-page-sidebar {
-    p, li, td {
-	font-size: 14px;
-    }
-
+    font-size: 1rem;
+    line-height: 1.25rem;
 }
 
 #sidebar-source-links {
     /* font-size: 12px; */
     .source-links-pager {
-	cursor: pointer;
-	font-size: 12px;
+        cursor: pointer;
+        font-size: .8rem;
     }
 
     .source-links-pager:hover {
-	color: globals.$link_blue;
+        color: globals.$link_blue;
     }
 
     .link-arrow-text {
-	font-size: 12px;
-    }
-
-    .link-arrow {
-	font-size: 14px;
+        font-size: .8rem;
     }
 
     .link-count {
-	font-size: 12px;
+        font-size: .8rem;
     }
 }
 
