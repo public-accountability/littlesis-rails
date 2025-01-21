@@ -4,14 +4,14 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h6>Edit Relationship</h6>
+          <h3>Edit Relationship</h3>
           <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
         </div>
 
         <div class="modal-body">
           <%= form_for @relationship, method: 'patch', html: { class: 'edit-relationship-form', data: {turbo_frame: "_top" } }, builder: LsFormBuilder do |f| %>
             <div class="row mt-4 mb-4">
-              <div class="col-sm-8 col-md-6">
+              <div class="col-sm-8 col-md-10">
                 <%= render partial: 'shared/editing/reference_widget',
                            locals: {
                              documents: @relationship.documents.to_a,
@@ -41,7 +41,7 @@
             <% if requires_description_fields %>
               <div class="row mb-3">
                 <div class="col">
-          	<%= description_fields(f) %>
+                  <%= description_fields(f) %>
                 </div>
               </div>
             <% end %>
@@ -144,7 +144,7 @@
 
             <%= edit_entity_form_section(
               f.label(:notes, 'Notes', class: label_class),
-              f.text_area(:notes,  size: '40x6')
+              f.text_area(:notes,  size: '32x6')
             ) %>
 
             <div class="row">

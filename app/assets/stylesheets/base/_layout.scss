@@ -129,6 +129,14 @@ nav.navbar  {
   }
 }
 
+.btn-primary {
+  background-color: globals.$dark_blue;
+}
+
+.bg-primary {
+  background-color: globals.$dark_blue!important;
+}
+
 div.spacer {
   height: 1em;
 }

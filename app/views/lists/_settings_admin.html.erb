@@ -1,12 +1,14 @@
 <% if current_user.admin? %>
-  <div class="row" id="list-admin-settings-container">
-    <div class="col-sm-4 col-md-3 bg-info bottom-1em m-left-1em" style="border-radius: .3em;">
-      <h4>Admin Settings</h4>
-      <%= f.check_box :is_admin %>
-      <%= f.label "Admin only" %>
-      <br/>
-      <%= f.check_box :is_featured %>
-      <%= f.label :featured %>
+  <div id="list-admin-settings-container">
+    <div class="row form-group">
+      <div class="col-sm-4 col-md-6 bg-info m-left-1em" style="border-radius: .3em;">
+        <h4>Admin Settings</h4>
+        <%= f.check_box :is_admin %>
+        <%= f.label "Admin only" %>
+        <br/>
+        <%= f.check_box :is_featured %>
+        <%= f.label :featured %>
+      </div>
     </div>
   </div>
 <% end %>

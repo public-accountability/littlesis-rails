@@ -159,9 +159,9 @@ $profile_page_fs_relationship: $profile_page_fs_small;
       .other-entity-name {
         a {
           line-height: 24px;
-          color: #008;
           font-size: $profile_page_fs_name;
           font-weight: 700;
+          text-decoration: none;
         }
       }
 
@@ -175,6 +175,9 @@ $profile_page_fs_relationship: $profile_page_fs_small;
     .profile-page-relationships {
       font-size: $profile_page_fs_relationship;
       line-height: 16px;
+      a {
+        text-decoration: none;
+      }
 
       span.more-relationships {
         cursor: pointer;

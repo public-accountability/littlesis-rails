@@ -11,7 +11,11 @@
 .tag-like {
   background-color: globals.$red_light;
   color: white;
-  &:hover { color: globals.$maroon; }
+  &:hover {
+    background-color: globals.$red;
+    color: white;
+    text-decoration: none;
+  }
 }
 
 .tag {
