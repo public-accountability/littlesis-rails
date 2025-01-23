@@ -146,6 +146,7 @@ LittleSis::Application.routes.draw do
         resources :images, controller: 'entities/images' do
           member do
             get 'deletion_request_modal', to: 'entities/images#deletion_request_modal'
+            get 'edit_caption_modal', to: 'entities/images#edit_caption_modal'
           end
         end
         resources :list_entities, only: :create, controller: 'entities/list_entities'

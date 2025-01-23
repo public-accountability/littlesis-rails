@@ -9,7 +9,7 @@
 
   <td>
     <p class="image-caption" title="Edit this caption">
-      <span onclick="$('#<%=image_caption_modal_id %>').modal('show')"><%= image.title %></span>
+      <%= link_to image.title, edit_caption_modal_entity_image_path(id: image.id), data: { turbo_frame: 'modal', turbo: true } %>
     </p>
     <em>Posted <%= image.created_at.strftime("%F") %></em></p>
   </td>

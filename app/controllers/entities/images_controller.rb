@@ -5,8 +5,8 @@ module Entities
     include EntitiesHelper
 
     before_action :authenticate_user!, :current_user_can_edit?
-    before_action :set_entity
-    before_action :set_image, only: %i[update destroy, deletion_request_modal]
+    before_action :set_entity, except: %w[edit_caption_modal]
+    before_action :set_image, only: %i[update destroy deletion_request_modal edit_caption_modal]
 
     def index
     end
@@ -45,6 +45,10 @@ module Entities
 
     def deletion_request_modal
       render partial: 'deletion_requests/images/modal_form'
+    end
+
+    def edit_caption_modal
+      render partial: 'edit_caption_modal', locals: { image: @image }
     end
 
     private
