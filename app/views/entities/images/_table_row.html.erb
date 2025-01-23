@@ -1,7 +1,5 @@
 <%# locals: image %>
 
-<% image_caption_modal_id = "image-#{image.id}-caption-modal" %>
-
 <tr>
   <td>
     <%= link_to(image_tag(image.image_path('profile'), :class => 'img-responsive'), image.image_path("large")) %>
@@ -9,7 +7,7 @@
 
   <td>
     <p class="image-caption" title="Edit this caption">
-      <%= link_to image.title, edit_caption_modal_entity_image_path(id: image.id), data: { turbo_frame: 'modal', turbo: true } %>
+      <%= link_to image.title, edit_caption_modal_entity_image_path(id: image.id, entity_id: @entity.id), data: { turbo_frame: 'modal', turbo: true } %>
     </p>
     <em>Posted <%= image.created_at.strftime("%F") %></em></p>
   </td>
@@ -25,7 +23,7 @@
     <br>
 
 
-    <%= link_to 'Request Deletion', deletion_request_modal_entity_image_path(id: image.id, entity_id: @entity.id), data: { turbo_frame: 'modal', turbo: true } %>
+    <%= link_to 'Request Deletion', deletion_request_modal_entity_image_path(id: image.id, entity_id: @entity.id), data: { turbo_frame: 'modal', turbo: true }, id: "open_deletion_request_modal_#{image.id}" %>
 
     <br/>
 
