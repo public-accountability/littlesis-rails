@@ -143,7 +143,11 @@ LittleSis::Application.routes.draw do
           get 'edit_tags'
         end
 
-        resources :images, controller: 'entities/images'
+        resources :images, controller: 'entities/images' do
+          member do
+            get 'deletion_request_modal', to: 'entities/images#deletion_request_modal'
+          end
+        end
         resources :list_entities, only: :create, controller: 'entities/list_entities'
 
         collection do

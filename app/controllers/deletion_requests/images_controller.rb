@@ -12,7 +12,11 @@ module DeletionRequests
         ImageDeletionRequest.create!(request_params)
       end
 
-      redirect_back fallback_location: home_dashboard_path, notice: 'Request is pending'
+      if turbo_frame_request?
+        render partial: 'request_pending', locals: { image: @image }
+      else
+        redirect_back fallback_location: home_dashboard_path, notice: 'Request is pending'
+      end
     end
 
     private

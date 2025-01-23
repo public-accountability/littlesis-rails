@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
 
   close(event) {
-    document.querySelector('.modal-backdrop').remove();
+    document.querySelector('.modal-backdrop')?.remove();
     document.querySelector('.modal').remove();
     document.querySelector('#modal').removeAttribute('src');
   }

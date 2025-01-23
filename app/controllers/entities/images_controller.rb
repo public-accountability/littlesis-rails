@@ -6,7 +6,7 @@ module Entities
 
     before_action :authenticate_user!, :current_user_can_edit?
     before_action :set_entity
-    before_action :set_image, only: %i[update destroy]
+    before_action :set_image, only: %i[update destroy, deletion_request_modal]
 
     def index
     end
@@ -41,6 +41,10 @@ module Entities
 
       flash[:notice] = 'Image deleted'
       redirect_to concretize_entity_images_path(@entity)
+    end
+
+    def deletion_request_modal
+      render partial: 'deletion_requests/images/modal_form'
     end
 
     private

@@ -1,6 +1,5 @@
 <%# locals: image %>
 
-<% image_deletion_request_modal_id = "image-#{image.id}-deletion-request-modal" %>
 <% image_caption_modal_id = "image-#{image.id}-caption-modal" %>
 
 <tr>
@@ -25,9 +24,8 @@
     <% end %>
     <br>
 
-    <a href="#"' onclick="$('#<%=image_deletion_request_modal_id %>').modal('show')">
-      Request deletion
-    </a>
+
+    <%= link_to 'Request Deletion', deletion_request_modal_entity_image_path(id: image.id, entity_id: @entity.id), data: { turbo_frame: 'modal', turbo: true } %>
 
     <br/>
 
@@ -45,52 +43,3 @@
 
   </td>
 </tr>
-
-<div class="modal fade" tabindex="-1" role="dialog" id="<%= image_deletion_request_modal_id %>">
-  <div class="modal-dialog image-modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Request Image Deletion</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body image-modal-body">
-        <p>Briefly, why should this image be destroyed?</p>
-        <%= form_tag(deletion_requests_images_path, method: :post) do %>
-          <%= hidden_field_tag :image_id, image.id %>
-          <%= hidden_field_tag :entity_id, @entity.id, id: 'image_deletion_request_entity_id' %>
-          <div class="input-group">
-            <input type="text" name="justification"/>
-            <div class="input-group-append">
-              <button type="submit" class="btn">Submit</button>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" tabindex="-1" role="dialog" id="<%= image_caption_modal_id %>">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content image-modal">
-      <div class="modal-header">
-        <h5 class="modal-title">Update image caption</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body image-modal-body">
-        <%=  form_with(model: image, url: "/images/#{image.id}/update", method: "post") do |image_form| %>
-          <div class="input-group">
-            <%= image_form.text_field :caption %>
-            <div class="input-group-append">
-              <button type="submit" class="btn">Submit</button>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
