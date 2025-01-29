@@ -21,9 +21,6 @@
         <div class="mb-3">
           <%= check_box_tag :'newsletters[tags][]', 'newsletter', true, id: 'newsletters_tags_newsletter' %>
           <%= label_tag "newsletters_tags_newsletter", "General", class: "form-label" %>
-          <br/>
-          <%= check_box_tag :'newsletters[tags][]', 'tech', true, id: 'newsletters_tags_tech' %>
-          <%= label_tag "newsletters_tags_tech", "Technology", class: "form-label" %>
         </div>
 
         <%= form.submit "Submit", class: "btn btn-primary" %>
