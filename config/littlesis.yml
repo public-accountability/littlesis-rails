@@ -47,8 +47,7 @@ development:
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
   powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
   oligrapher_commit: dev
-  show_donation_banner: true
-  donation_banner_display: all
+  donation_banner_display: false
 
 production:
   <<: *defaults
@@ -59,8 +58,7 @@ production:
   asset_host: littlesis.org
   protocol: https
   beta: false
-  show_donation_banner: true
-  donation_banner_display: all
+  donation_banner_display: false
   carousel_list_id: 1257
   action_network_api_key: <%= Rails.application.credentials.action_network_api_key %>
   powerbase_api_key: <%= Rails.application.credentials.powerbase_api_key %>
