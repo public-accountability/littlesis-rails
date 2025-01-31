@@ -53,7 +53,7 @@ describe "Relationship Page", :type => :feature do
 
     specify do
       expect(page).to have_selector '#tags-container'
-      expect(page).to have_selector 'span.tags-edit-glyph'
+      expect(page).to have_selector 'a.tags-edit-glyph'
       expect(page).to have_selector '#tags-list li', text: tag.name
     end
   end

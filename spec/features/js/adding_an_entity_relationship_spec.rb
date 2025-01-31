@@ -22,7 +22,7 @@ feature 'Adding an entity relationship', :sphinx, type: :feature, js: true do
     within '#action-buttons' do
       click_on 'add relationship'
     end
-    expect(page).to have_css('h2', text: 'Create a new relationship')
+    expect(page).to have_css('h3', text: 'Create a new relationship')
 
     fill_in 'add-relationship-search-input', with: entity2.name
     click_on 'add-relationship-search-button'
