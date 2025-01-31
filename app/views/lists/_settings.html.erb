@@ -39,14 +39,14 @@
   <% end %>
 
   <div class="row form-group">
-    <div class="col-sm-8 col-md-6">
+    <div class="col-sm-8 col-md-10">
       <%= f.check_box :is_ranked %>
       <%= f.label :ranked %>
     </div>
   </div>
 
   <div class="row form-group">
-    <div class="col-sm-8 col-md-6">
+    <div class="col-sm-8 col-md-10">
       <%= f.label :sort_by %>
       <%= f.select :sort_by, Entity::SORTABLE_ATTRIBUTES.collect {|a| [a.to_s.humanize, a]}, { include_blank: true } %>
     </div>

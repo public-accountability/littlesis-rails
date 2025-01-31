@@ -9,10 +9,13 @@
 // $tag_margin: 0.4em;
 
 .tag-like {
-  border: 1px solid globals.$red;
-  background-color: globals.$light-maroon;
-  color: globals.$maroon;
-  &:hover { color: globals.$maroon; }
+  background-color: globals.$red_light;
+  color: white;
+  &:hover {
+    background-color: globals.$red;
+    color: white;
+    text-decoration: none;
+  }
 }
 
 .tag {
@@ -149,6 +152,9 @@ input#tag_name {
       align-items: flex-end;
       #tag-name {
         font-size: 2em;
+        h1 {
+          display: inline;
+        }
       }
       #tag-description {
         @extend .gray-description-text;
@@ -167,11 +173,7 @@ input#tag_name {
     .tagable-list {
       margin: 1em 0 1em 0; // TRBL
       .tagable-list-subheader {
-        background-color: globals.$maroon;
-        color: white;
-        padding: .2em 0 .2em .4em; // TRBL
-        border-radius: 0.2em;
-        font-size: 1.5em;
+        padding-left: .4em; // TRBL
       }
       .tagable-list-empty-message {
         margin: 1em;
@@ -180,7 +182,7 @@ input#tag_name {
       .tagable-list-items {
         display: flex;
         flex-direction: column;
-        margin: 1em 0 1em -2em; // TRBL
+        margin: 1em 0 1em -1em; // TRBL
         .tagable-list-item {
           display: flex;
           flex-direction: row;

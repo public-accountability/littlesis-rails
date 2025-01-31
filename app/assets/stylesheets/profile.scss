@@ -2,8 +2,8 @@
 
 $profile_page_fs_entity_heading: 2.75rem;
 $profile_page_fs_subcategory: 1.5rem;  // 18px 1.5rem ?
-$profile_page_fs_name: 1rem;
-$profile_page_fs_small: 0.8rem;
+$profile_page_fs_name: 1.2rem;
+$profile_page_fs_small: 1rem;
 $profile_page_fs_blurb: $profile_page_fs_small;
 $profile_page_fs_relationship: $profile_page_fs_small;
 
@@ -159,9 +159,9 @@ $profile_page_fs_relationship: $profile_page_fs_small;
       .other-entity-name {
         a {
           line-height: 24px;
-          color: #008;
           font-size: $profile_page_fs_name;
           font-weight: 700;
+          text-decoration: none;
         }
       }
 
@@ -174,7 +174,9 @@ $profile_page_fs_relationship: $profile_page_fs_small;
 
     .profile-page-relationships {
       font-size: $profile_page_fs_relationship;
-      line-height: 16px;
+      a {
+        text-decoration: none;
+      }
 
       span.more-relationships {
         cursor: pointer;

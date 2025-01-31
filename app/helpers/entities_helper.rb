@@ -251,8 +251,8 @@ module EntitiesHelper
   # </div>
   def edit_entity_form_section(label, input)
     input_div_wrapper_class = 'row mb-3'
-    left_col_class = 'col-2'
-    right_col_class = 'col-9'
+    left_col_class = 'col-3'
+    right_col_class = 'col-8'
 
     tag.div(class: input_div_wrapper_class) do
       tag.div(label, class: left_col_class) + tag.div(input, class: right_col_class)
