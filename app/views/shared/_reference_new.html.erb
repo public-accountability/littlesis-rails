@@ -74,12 +74,12 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-action="click@window->modal#closeWithButton">Close</button>
           <button class="btn btn-primary" type="submit" value="Submit" form="reference-form">Submit</button>
         </div>
 
       </div>
     </div>
   </div>
-  <div class="modal-backdrop show" style="pointer-events: auto;"></div>
+  <div class="modal-backdrop show" data-action="click@window->modal#closeWithBackground" style="pointer-events: auto;"></div>
 <% end %>
