@@ -1,26 +1,37 @@
-<%= render partial: 'header2', locals: { entity: @entity } %>
-<%= render partial: 'explain_categories_modal' %>
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal" data-controller="modal" data-action="keyup@window->modal#closeWithKeyboard">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><%= t('phrases.create_new_relationship') %></h3>
+          <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
+        </div>
+        <div class="modal-body">
 
-<div class="mt-1" data-turbo="true">
-  <turbo-frame id="add-relationship-page">
-    <turbo-frame id="add-relationship-search">
-      <div class=row data-add-relationship-target="search" data-turbo="true">
-        <div class="col-6">
-          <h2 title="Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below.">
-            <%= t('phrases.create_new_relationship') %>
-          </h2>
+          <div class="mt-1" data-turbo="true">
+            <turbo-frame id="add-relationship-page">
+              <turbo-frame id="add-relationship-search">
+                <div class=row data-add-relationship-target="search" data-turbo="true">
+                  <div class="col-12">
+                    <p><small>Find the person or organization you want to add a relationship to. If your search doesn't locate it, you'll have the option to create it below."</small></p>
 
-          <form action="<%= add_relationship_search_entities_path %>" data-turbo-frame="add-relationship-results">
-            <div class="input-group">
-              <input name="entity1_id" type="hidden" class="form-control" value="<%= @entity.id %>">
-              <input name="q" type="text" class="form-control" placeholder="<%= t('vocab.name').capitalize %>" aria-label="Name to search" id="add-relationship-search-input">
-              <button class="btn btn-primary" id="add-relationship-search-button"><%= t('vocab.search').capitalize %></button>
-            </div>
-          </form>
+                    <form action="<%= add_relationship_search_entities_path %>" data-turbo-frame="add-relationship-results">
+                      <div class="input-group">
+                        <input name="entity1_id" type="hidden" class="form-control" value="<%= @entity.id %>">
+                        <input name="q" type="text" class="form-control" placeholder="<%= t('vocab.name').capitalize %>" aria-label="Name to search" id="add-relationship-search-input">
+                        <button class="btn btn-primary" id="add-relationship-search-button"><%= t('vocab.search').capitalize %></button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <turbo-frame id="add-relationship-results">
+                </turbo-frame>
+              </turbo-frame>
+            </turbo-frame>
+          </div>
         </div>
       </div>
-      <turbo-frame id="add-relationship-results">
-      </turbo-frame>
-    </turbo-frame>
-  </turbo-frame>
-</div>
+    </div>
+  </div>
+  <div class="modal-backdrop show" style="pointer-events: auto;"></div>
+<% end %>

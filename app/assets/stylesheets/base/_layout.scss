@@ -18,6 +18,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  font-size: 1.2rem;
 }
 
 #littlesis-scroll-wrapper {
@@ -31,6 +32,16 @@ body {
 #littlesis-body {
   height: 100%;
   width: 100%;
+
+  .modal {
+    display: block;
+  }
+
+  h1, h2, h3, h4 {
+    color: globals.$dark_blue;
+    font-family: 'Alfa Slab One', serif;
+  }
+
 }
 
 a {
@@ -50,11 +61,12 @@ nav.navbar  {
     font-size: 18px;
   }
 
-  background-color: globals.$header_color;
+  background-image: url("dots_right.e7c04a.png"),linear-gradient(90deg,globals.$dark_blue 0,#cd402c 61%,#8f2d5e 99%);
+  background-position: 100% 0,50% 50%;
+  background-repeat: no-repeat,repeat;
 
   // Logo
   img {
-    //background-color: globals.$header_color;
     max-width: 180px;
   }
 
@@ -63,10 +75,11 @@ nav.navbar  {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28229, 230, 241, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e")
   }
   .nav-link {
-    color: #E5E6F1;
+    color: white;
 
     &:hover {
-      color: #B2B4D7;
+      color: globals.$dark_blue;
+      text-decoration:none;
     }
   }
 
@@ -92,24 +105,39 @@ nav.navbar  {
 
   #top_donate_link {
     a {
-      background-color: globals.$red;
+      background-color: globals.$dark_blue;
+      border-radius: 50px;
       color: #fff;
-
-      &:hover {
-	background-color: globals.$red_light;
-	color: black;
-	box-shadow: -3px 3px 3px #737373;
-      }
+      font-family: Alfa Slab One,serif;
+      font-weight: 400;
+      font-size: 21px;
+      padding: 3px 40px;
     }
   }
 
   h6 {
     margin-top:.5rem;
     color: white;
+
     a {
-      color: #cc5454;
+
+      &:hover {
+        color: globals.$dark_blue;
+      }
     }
   }
+}
+
+.btn-primary {
+  background-color: globals.$dark_blue;
+}
+
+.bg-primary {
+  background-color: globals.$dark_blue!important;
+}
+
+.bg-warning {
+  background-color: globals.$red_lighter!important;
 }
 
 div.spacer {

@@ -122,4 +122,30 @@ describe 'Images', js: true do
       expect(image.reload.is_deleted).to be true
     end
   end
+
+  describe "Requesting deletion", js: true do
+    let(:image) { create(:image, entity: create(:entity_org)) }
+    let(:user) { create_editor }
+
+    before do
+      setup_image_path image
+      visit concretize_entity_images_path(image.entity)
+    end
+
+    scenario do
+      page_has_selector 'a', text: 'Request Deletion'
+      click_on "open_deletion_request_modal_#{image.id}"
+      page_has_selector '.image-modal-dialog'
+      page_has_selector '.modal-title', text: 'Request Image Deletion'
+      page_has_no_selector '#image_deletion_request_pending'
+
+      within '#modal' do
+        fill_in 'justification', with: 'image no good'
+        click_on 'Submit'
+      end
+
+      page_has_selector '#image_deletion_request_pending'
+      expect(ImageDeletionRequest.last.justification).to eq 'image no good'
+    end
+  end
 end

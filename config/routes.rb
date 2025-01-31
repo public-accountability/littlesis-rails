@@ -136,9 +136,19 @@ LittleSis::Application.routes.draw do
               constraints: { subcategory: Regexp.new(Link::Subcategory::SUBCATEGORIES.join('|')), page: /[0-9]+/ },
               to: 'entities#grouped_links'
           get 'source_links'
+          get 'add_source'
+          get 'edit_profile'
+          get 'edit_external_links'
+          get 'edit_featured_resources'
+          get 'edit_tags'
         end
 
-        resources :images, controller: 'entities/images'
+        resources :images, controller: 'entities/images' do
+          member do
+            get 'deletion_request_modal', to: 'entities/images#deletion_request_modal'
+            get 'edit_caption_modal', to: 'entities/images#edit_caption_modal'
+          end
+        end
         resources :list_entities, only: :create, controller: 'entities/list_entities'
 
         collection do
@@ -237,6 +247,16 @@ LittleSis::Application.routes.draw do
   post '/relationships/bulk_add' => 'relationships#bulk_add!'
   get '/relationships/find_similar' => 'relationships#find_similar'
 
+  constraints(id: %r{[0-9]+(-[^/]+)?}) do
+    resources :relationships, controller: 'relationships' do
+      member do
+        get 'add_source'
+        get 'edit_relationship'
+        get 'edit_tags'
+      end
+    end
+  end
+
   resources :relationships, except: [:index, :new] do
     member do
       post 'reverse_direction'
@@ -266,6 +286,22 @@ LittleSis::Application.routes.draw do
        as: 'dismiss_helper'
 
   resources :documents, only: [:edit, :update]
+  constraints(id: %r{[0-9]+(-[^/]+)?}) do
+    resources :documents, controller: 'documents' do
+      member do
+        get 'edit_document'
+      end
+    end
+  end
+
+  constraints(id: %r{[0-9]+(-[^/]+)?}) do
+    resources :lists, controller: 'lists' do
+      member do
+        get 'add_source'
+        get 'edit_list'
+      end
+    end
+  end
 
   # Tags
 

@@ -4,19 +4,20 @@ $logo_blue_light: rgb(41, 105, 153);
 $logo_blue_lighter: rgb(55, 139, 204);
 $user_image_size: 48px;
 $dark_blue: #01087c;
-$link_blue: #008;
-$link_blue_hover: #2a6496;
+$link_blue: #01087c;
+$link_blue_hover: #cd402c;
 $left_column_width: 640px;
 $right_column_width: 310px;
 $small_column_width: $right_column_width;
 $big_column_width: $left_column_width;
 $border_grey: #e7e7e7;
 $small_header_image_size: 80px;
-$red: #CC5454;
-$red_light: #CC8585;
-$red_lighter: rgba(204,133,133,0.4);
-$light-maroon: $red_lighter;
+$red: #8F2D5E;
+$red_light: rgba(143,45,94,0.7);
+$red_lighter: rgba(143,45,94,0.4);
+$red_lightest: rgba(143,45,94,0.1);
 $maroon: rgba(204, 84, 84, 1);
+$light-maroon: $red_lighter;
 $profile_tab_red: $red_light;
 $profile_tab_red_active: $red;
 $gray: #555;
@@ -34,7 +35,7 @@ $gray-lighter:           lighten($gray-base, 93.5%); // #eee
 $tag_margin: 0.4em;
 // $header_color: $light_gray2;
 $header_color: $dark_blue;
-$font-family-sans-serif: Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, system-ui, -apple-system;
+$font-family-sans-serif: Nunito Sans, sans-serif, system-ui, -apple-system;
 $primary: $logo_blue_light;
 
 /// bootstrap defaults

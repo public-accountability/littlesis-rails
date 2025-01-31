@@ -1,0 +1,5 @@
+<%= turbo_frame_tag  "documents_edit_#{@document.id}" do %>
+  <%= link_to "/documents/#{@document.id}/edit_document", class: 'ms-2'  do %>
+    <i class="bi bi-pencil-square hvr-pop ml-1"></i>
+  <% end %>
+<% end %>

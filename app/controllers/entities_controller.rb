@@ -98,6 +98,28 @@ class EntitiesController < ApplicationController
     set_entity_references
   end
 
+  def add_source
+    @entity = Entity.find(params[:id])
+    render partial: 'shared/reference_new', locals: {model: @entity, reference: @reference }
+  end
+
+  def edit_profile
+    render partial: 'edit_profile'
+  end
+
+  def edit_external_links
+    render partial: 'edit_external_links'
+  end
+
+  def edit_featured_resources
+    @entity = Entity.find(params[:id])
+    render partial: 'entities/sidebar/edit_featured_resources'
+  end
+
+  def edit_tags
+    render partial: 'edit_tags'
+  end
+
   def update
     EntityUpdateService.run(entity: @entity,
                             params: params,

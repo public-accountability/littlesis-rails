@@ -1,0 +1,52 @@
+<%= turbo_frame_tag "documents_edit_#{@document.id}" do %>
+  <div class="modal" data-controller="modal" data-action="keyup@window->modal#closeWithKeyboard">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Edit document: <%= @document.name %></h3>
+          <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
+        </div>
+
+        <div class="modal-body">
+          <%= form_for(@document) do |f| %>
+
+            <div class="form-group form-group-sm">
+              <b><%= label_tag(:url, "Source URL") %></b>
+              <div>
+                <%= @document.url %>
+              </div>
+            </div>
+
+            <div class="form-group form-group-sm">
+              <b><%= label_tag(:name, "Display Name") %></b>
+              <div>
+                <%= f.text_field(:name, required: true, size: 40) %>
+              </div>
+            </div>
+
+            <div class="form-group form-group-sm">
+              <b><%= label_tag(:publication_date, "Publication Date") %></b>
+              <div>
+                <%= f.text_field(:publication_date) %>
+                <%= content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)') %>
+              </div>
+            </div>
+
+            <div class="form-group form-group-sm">
+              <b><%= label_tag(:excerpt, "Excerpt") %></b>
+              <div>
+                <%= f.text_area(:excerpt, size: "40x6") %>
+              </div>
+            </div>
+
+            <div>
+              <%= f.submit("Update", class: "btn btn-primary") %>
+            </div>
+
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop show" style="pointer-events: auto;"></div>
+<% end %>

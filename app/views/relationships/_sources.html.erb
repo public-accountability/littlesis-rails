@@ -3,13 +3,11 @@
     <% relationship.documents.each do |doc|  %>
       <tr>
         <td>
-	  <%= link_to excerpt( (doc.name.blank? ? doc.url : doc.name) ), doc.url, 'target' => '_blank' %>
-	  <% if user_signed_in? %>
-            <%= link_to edit_document_path(doc) do %>
-              <i class="bi bi-pencil-square ml-l hvr-pop"></i>
-            <% end %>
+          <%= link_to excerpt( (doc.name.blank? ? doc.url : doc.name) ), doc.url, 'target' => '_blank' %>
+          <% if user_signed_in? %>
+            <%= link_to '', "/documents/#{doc.id}/edit_document", class: "bi bi-pencil-square ml-l hvr-pop", data: { turbo: true, turbo_frame: "documents_edit_#{doc.id}"} %><turbo-frame id="documents_edit_<%= doc.id %>"></turbo-frame>
           <% end %>
-	</td>
+        </td>
       </tr>
     <% end %>
   </tbody>

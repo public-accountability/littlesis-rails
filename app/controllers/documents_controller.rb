@@ -12,10 +12,20 @@ class DocumentsController < ApplicationController
     @document.assign_attributes(document_params)
     if @document.valid?
       @document.save!
-      redirect_to home_dashboard_path
+
+      if turbo_frame_request?
+        render partial: 'edit_document_button'
+      else
+        redirect_to home_dashboard_path
+      end
     else
       redirect_to edit_document_path(@document)
     end
+  end
+
+  def edit_document
+    @document = Document.find(params[:id])
+    render partial: 'edit_document'
   end
 
   private

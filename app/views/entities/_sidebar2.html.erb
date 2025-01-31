@@ -35,12 +35,7 @@
   <%# External Links %>
   <% unless @entity.external_links.count.zero? %>
     <div class="row mt-3">
-      <div class="col-12">
-        <h3 class="profile-page-sidebar-heading"><%= t('littlesis.external_links').titleize %></h3>
-      </div>
-      <div class="col-12">
-        <%= render partial: 'entities/sidebar/external_links' %>
-      </div>
+      <%= render partial: 'sidebar_external_links' %>
     </div>
   <% end %>
 
@@ -144,7 +139,7 @@
 
           <% if current_user.role.include?(:feature_items) %>
             <li>
-              <%= render partial: 'entities/sidebar/edit_featured_resources', object: @entity, as: :entity %>
+              <%= link_to 'Add/Remove Featured Resource', "/entities/#{@entity.id}/edit_featured_resources", data: { turbo: true, turbo_frame: 'modal'}  %>
             </li>
           <% end %>
 

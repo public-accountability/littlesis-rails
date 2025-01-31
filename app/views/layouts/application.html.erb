@@ -40,6 +40,11 @@
 
         <%= yield %>
 
+        <% if user_signed_in? %>
+          <turbo-frame id="modal">
+          </turbo-frame>
+        <% end %>
+
         <% unless content_for? :hide_footer %>
           <%= render 'shared/footer' %>
         <% end %>

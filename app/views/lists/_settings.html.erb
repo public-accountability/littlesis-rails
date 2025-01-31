@@ -6,7 +6,7 @@
 
   <% if current_user.role.include?(:edit_list)  %>
     <div class="row justify-content-start">
-      <div class="col-sm col-md-4">
+      <div class="col-sm col-md-6">
         <%= label_tag 'Access level' %><br/>
 
         <div id="list-config-access-buttons" class="btn-group m-bottom-1em" role="group" aria-label="...">
@@ -39,14 +39,14 @@
   <% end %>
 
   <div class="row form-group">
-    <div class="col-sm-8 col-md-6">
+    <div class="col-sm-8 col-md-10">
       <%= f.check_box :is_ranked %>
       <%= f.label :ranked %>
     </div>
   </div>
 
   <div class="row form-group">
-    <div class="col-sm-8 col-md-6">
+    <div class="col-sm-8 col-md-10">
       <%= f.label :sort_by %>
       <%= f.select :sort_by, Entity::SORTABLE_ATTRIBUTES.collect {|a| [a.to_s.humanize, a]}, { include_blank: true } %>
     </div>

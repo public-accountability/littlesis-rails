@@ -8,11 +8,8 @@ describe 'entities/add_relationship' do
       render
     end
 
-    specify { css 'a.entity-name2' }
-    specify { css 'h2', :text => "Create a new relationship" }
+    specify { css 'h3', :text => "Create a new relationship" }
+    specify { css 'button.btn-close' }
     specify { css '#add-relationship-page' }
-
-    it { is_expected.to render_template(partial: '_header2') }
-    it { is_expected.to render_template(partial: '_explain_categories_modal') }
   end
 end

@@ -2,7 +2,7 @@
   <div class="col">
     <div class="list-actions">
       <% if @permissions[:configurable] %>
-        <%= link_to('edit', edit_list_path(list), class: 'btn btn-clear') %>
+        <%= link_to('edit', "/lists/#{@list.id}/edit_list", class: 'btn btn-clear', data: { turbo: true, turbo_frame: 'modal'}) %>
         <%= button_to('delete', list_path(list),
                       class: 'btn btn-clear',
                       method: :delete,

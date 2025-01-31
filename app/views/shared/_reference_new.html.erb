@@ -1,82 +1,85 @@
-<script>
- window.addEventListener('DOMContentLoaded', function() {
-   const fileInput = document.querySelector('#reference-form input[type="file"]')
+<%= turbo_frame_tag "modal" do %>
+  <script>
+   window.addEventListener('DOMContentLoaded', function() {
+     const fileInput = document.querySelector('#reference-form input[type="file"]')
 
-   if (!fileInput) { return }
+     if (!fileInput) { return }
 
-   fileInput.value = ''
+     fileInput.value = ''
 
-   fileInput.addEventListener('change', function() {
-     document.querySelector('#reference-form input[type="url"]').required = (this.value == '')
+     fileInput.addEventListener('change', function() {
+       document.querySelector('#reference-form input[type="url"]').required = (this.value == '')
+     })
+
    })
+  </script>
 
- })
-</script>
-
-<div class="modal" id="add-reference-modal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add a new reference<br><small><%= model.name %></small></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-
-        <!-- Error Alert -->
-        <div id="reference-error-alert" class="alert alert-warning" role="alert" style="display:none;">
-          <p class="text-center"><strong>We're sorry!</strong>
-            <p>The LittleSis database had issues with the following fields:</p>
-            <div id="reference-errors"></div>
+  <div class="modal" data-controller="modal" data-action="keyup@window->modal#closeWithKeyboard">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Add a new reference<br><small><%= model.name %></small></h3>
+          <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
         </div>
+        <div class="modal-body">
 
-        <!-- Loading -->
-        <div id="reference-loading" style="display: none;">
-          <h3 class="text-center">Adding a new reference ... </h3>
-          <div class="progress">
-            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-              <span class="sr-only">Loading</span>
+          <!-- Error Alert -->
+          <div id="reference-error-alert" class="alert alert-warning" role="alert" style="display:none;">
+            <p class="text-center"><strong>We're sorry!</strong>
+              <p>The LittleSis database had issues with the following fields:</p>
+              <div id="reference-errors"></div>
+          </div>
+
+          <!-- Loading -->
+          <div id="reference-loading" style="display: none;">
+            <h3 class="text-center">Adding a new reference ... </h3>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span class="sr-only">Loading</span>
+              </div>
             </div>
           </div>
+
+          <!-- FORM -->
+          <%= form_tag("/references", method: 'post', id: "reference-form", multipart: true, data: {turbo_frame: "_top"}) do %>
+
+            <%= hidden_field(:data, :referenceable_id, value: model.id) %>
+            <%= hidden_field(:data, :referenceable_type, value: model.class.name) %>
+
+            <div>
+              <%= label_tag(:data_url, "Source URL*", class: "form-label") %>
+              <%= url_field(:data, :url, required: true, class: 'form-control') %>
+
+              <% if current_user.role.include?(:upload) %>
+                <%= file_field :data, :primary_source_document, accept: Document::ACCEPTED_MIME_TYPES.join(','), class: 'form-control mt-2' %>
+              <% end %>
+            </div>
+
+            <div class="mt-2">
+              <%= label_tag(:data_name, "Display Name*", class: "form-label") %>
+                <%= text_field(:data, :name, required: true, class: 'form-control') %>
+            </div>
+
+            <div class="mt-2">
+              <%= label_tag(:data_publication_date, "Publication Date", class: "form-label") %>
+              <input type="text" name="data[publication_date]" id="data_publication_date" class="form-control">
+            </div>
+
+            <div class="mt-2">
+              <%= label_tag(:data_excerpt, "Excerpt", class: "form-label") %>
+              <%= text_area(:data, :excerpt, size: "27x4", class: 'form-control')  %>
+            </div>
+
+          <% end %>
         </div>
 
-        <!-- FORM -->
-        <%= form_tag("/references", method: 'post', id: "reference-form", multipart: true) do %>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-primary" type="submit" value="Submit" form="reference-form">Submit</button>
+        </div>
 
-          <%= hidden_field(:data, :referenceable_id, value: model.id) %>
-          <%= hidden_field(:data, :referenceable_type, value: model.class.name) %>
-
-          <div>
-            <%= label_tag(:data_url, "Source URL*", class: "form-label") %>
-            <%= url_field(:data, :url, required: true, class: 'form-control') %>
-
-            <% if current_user.role.include?(:upload) %>
-              <%= file_field :data, :primary_source_document, accept: Document::ACCEPTED_MIME_TYPES.join(','), class: 'form-control mt-2' %>
-            <% end %>
-          </div>
-
-          <div class="mt-2">
-            <%= label_tag(:data_name, "Display Name*", class: "form-label") %>
-              <%= text_field(:data, :name, required: true, class: 'form-control') %>
-          </div>
-
-          <div class="mt-2">
-            <%= label_tag(:data_publication_date, "Publication Date", class: "form-label") %>
-            <input type="text" name="data[publication_date]" id="data_publication_date" class="form-control">
-          </div>
-
-          <div class="mt-2">
-            <%= label_tag(:data_excerpt, "Excerpt", class: "form-label") %>
-            <%= text_area(:data, :excerpt, size: "27x4", class: 'form-control')  %>
-          </div>
-
-        <% end %>
       </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button class="btn btn-primary" type="submit" value="Submit" form="reference-form">Submit</button>
-      </div>
-
     </div>
   </div>
-</div>
+  <div class="modal-backdrop show" style="pointer-events: auto;"></div>
+<% end %>

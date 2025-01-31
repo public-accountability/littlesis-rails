@@ -53,7 +53,7 @@ describe 'edit entity page', type: :feature, js: true do
         click_on "edit"
       end
 
-      expect(page).to have_current_path concretize_edit_entity_path(entity)
+      expect(page).to have_current_path concretize_entity_path(entity)
       expect(page).to have_field('Market capitalization', with: 123.0)
       expect(page).to have_field('Assets', with: 432.0)
       expect(page).to have_field('Net income', with: 999)

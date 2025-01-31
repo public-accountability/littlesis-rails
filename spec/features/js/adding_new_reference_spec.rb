@@ -1,4 +1,4 @@
-describe 'Entity References', type: :feature, js: :true do
+describe 'Entity References', type: :feature, js: true do
   let(:user) do
     create_collaborator
   end
@@ -14,10 +14,10 @@ describe 'Entity References', type: :feature, js: :true do
 
   scenario 'Adding a url' do
     expect(page.find('table[data-entity-references-table-target="table"] tbody tr')).to have_content('No data available in table')
-    find('#add-new-refernce-link').click
+    click_on 'add-new-reference-link'
 
-    within '#add-reference-modal' do
-      within '#reference-form' do
+    within '#modal' do
+      within '.modal-body' do
         fill_in 'data_url', with: url
         fill_in 'data_name', with: 'example link'
       end
@@ -30,10 +30,11 @@ describe 'Entity References', type: :feature, js: :true do
   end
 
   scenario 'Uploading a primary source document' do
-    find('#add-new-refernce-link').click
+    click_on 'add-new-reference-link'
 
-    within '#add-reference-modal' do
-      within '#reference-form' do
+    within '#modal' do
+      within '.modal-body' do
+        fill_in 'data_url', with: url
         attach_file 'data_primary_source_document', Rails.root.join('spec/testdata/example.png')
         fill_in 'data_name', with: 'field notes'
       end
