@@ -115,7 +115,7 @@ describe 'lists', type: :feature do
         click_on 'edit'
       end
 
-      expect(page).to have_css('h3', text: 'Edit:'})
+      expect(page).to have_css('h3', text: 'Edit:')
       within '.edit_list' do
         select '', from: 'Sort by'
         click_on 'Save'
