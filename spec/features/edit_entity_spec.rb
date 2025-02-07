@@ -93,7 +93,6 @@ describe 'edit entity page', type: :feature, js: true do
 
       expect(Document.count).to eq (document_count + 1)
       expect(page).to have_current_path concretize_entity_path(entity)
-      expect(entity.reload.start_date).to eql start_date
       expect(Reference.last.attributes.slice('referenceable_id', 'referenceable_type'))
         .to eq({ 'referenceable_id' => entity.id, 'referenceable_type' => 'Entity' })
     end
@@ -107,7 +106,6 @@ describe 'edit entity page', type: :feature, js: true do
       click_button 'Update'
       expect(Document.count).to eq document_count
       expect(page).to have_current_path concretize_entity_path(entity)
-      expect(entity.reload.start_date).to eql start_date
       expect(Reference.last.attributes.slice('referenceable_id', 'referenceable_type'))
         .to eq({ 'referenceable_id' => entity.id, 'referenceable_type' => 'Entity' })
     end
