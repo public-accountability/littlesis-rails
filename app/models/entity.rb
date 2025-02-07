@@ -554,7 +554,6 @@ class Entity < ApplicationRecord
     if org?
       info[:start_date] = LsDate.new(start_date).basic_info_display unless start_date.nil?
       info[:end_date] = LsDate.new(end_date).basic_info_display unless end_date.nil?
-      info[:revenue] = ActiveSupport::NumberHelper.number_to_human(org.revenue) unless org.revenue.blank?
     end
     info[:website] = website if website.present?
     info[:aliases] = also_known_as.join(', ') unless also_known_as.empty?
