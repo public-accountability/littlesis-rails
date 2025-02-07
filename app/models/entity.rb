@@ -548,9 +548,8 @@ class Entity < ApplicationRecord
     info = {}
     info[:types] = types.join(', ')
     if person?
-      info[:gender] = person.gender if person.gender_id.present?
-      info[:birthday] = LsDate.new(start_date).basic_info_display unless start_date.nil?
-      info[:date_of_death] = LsDate.new(end_date).basic_info_display unless end_date.nil?
+      # Removing birthdate, death date and gender.
+      # Leaving conditional for possible future use
     end
     if org?
       info[:start_date] = LsDate.new(start_date).basic_info_display unless start_date.nil?

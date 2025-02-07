@@ -1,11 +1,6 @@
 <div class="col-md-3 col-sm-3" id="about-sidebar">
     <div class="thin-grey-bottom-border">
         <h3 class="text-center"><%= @entity.name %></h3>
-	<% if @entity.person? %>
-            <% cache @entity.person do %>
-		<%= render partial: 'about_sidebar', locals: { person: @entity.person } %>
-            <% end %>
-	<% end %>
     </div>
     <br>
 
