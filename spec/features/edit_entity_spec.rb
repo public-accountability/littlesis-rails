@@ -43,8 +43,6 @@ describe 'edit entity page', type: :feature, js: true do
       within ".edit_entity" do
         find('input[name="reference[just_cleaning_up]"]').click
         fill_in 'Market capitalization', with: 123.0
-        fill_in 'Assets', with: 432.0
-        fill_in 'Net income', with: 999
         fill_in 'Annual profit', with: 10_101
         click_button 'Update'
       end
@@ -55,32 +53,30 @@ describe 'edit entity page', type: :feature, js: true do
 
       expect(page).to have_current_path concretize_entity_path(entity)
       expect(page).to have_field('Market capitalization', with: 123.0)
-      expect(page).to have_field('Assets', with: 432.0)
-      expect(page).to have_field('Net income', with: 999)
       expect(page).to have_field('Annual profit', with: 10_101)
     end
   end
 
-  feature 'changing start date' do
-    scenario 'setting date to "1 May, 1970"' do
-      expect(entity.start_date).to eq nil
-
-      find('input[name="reference[just_cleaning_up]"]').click
-
-      within ".edit_entity" do
-        fill_in 'entity_start_date', :with => "1 May, 1970"
-        click_button 'Update'
-      end
-
-      expect(entity.reload.start_date).to eq '1970-05-01'
-
-      within "#action-buttons" do
-        click_on "edit"
-      end
-
-      expect(page).to have_field('Start date', with: '1970-05-01')
-    end
-  end
+  #feature 'changing start date' do
+  #  scenario 'setting date to "1 May, 1970"' do
+  #    expect(entity.start_date).to eq nil
+  #
+  #    find('input[name="reference[just_cleaning_up]"]').click
+  #
+  #    within ".edit_entity" do
+  #      fill_in 'entity_start_date', :with => "1 May, 1970"
+  #      click_button 'Update'
+  #    end
+  #
+  #    expect(entity.reload.start_date).to eq '1970-05-01'
+  #
+  #    within "#action-buttons" do
+  #      click_on "edit"
+  #    end
+  #
+  #    expect(page).to have_field('Start date', with: '1970-05-01')
+  #  end
+  #end
 
   feature 'adding new references', js: true do
     let(:url) { Faker::Internet.unique.url }
@@ -93,12 +89,10 @@ describe 'edit entity page', type: :feature, js: true do
       click_button 'reference-widget-create-new-reference'
       fill_in 'reference[url]', :with => url
       fill_in 'reference[name]', :with => ref_name
-      fill_in 'entity_start_date', :with => start_date
       click_button 'Update'
 
       expect(Document.count).to eq (document_count + 1)
       expect(page).to have_current_path concretize_entity_path(entity)
-      expect(entity.reload.start_date).to eql start_date
       expect(Reference.last.attributes.slice('referenceable_id', 'referenceable_type'))
         .to eq({ 'referenceable_id' => entity.id, 'referenceable_type' => 'Entity' })
     end
@@ -109,11 +103,9 @@ describe 'edit entity page', type: :feature, js: true do
       click_button 'reference-widget-create-new-reference'
       fill_in 'reference[url]', :with => url
       fill_in 'reference[name]', :with => ref_name
-      fill_in 'entity_start_date', :with => start_date
       click_button 'Update'
       expect(Document.count).to eq document_count
       expect(page).to have_current_path concretize_entity_path(entity)
-      expect(entity.reload.start_date).to eql start_date
       expect(Reference.last.attributes.slice('referenceable_id', 'referenceable_type'))
         .to eq({ 'referenceable_id' => entity.id, 'referenceable_type' => 'Entity' })
     end

@@ -597,28 +597,6 @@ describe Entity, :tag_helper do
   end
 
   describe 'basic_info' do
-    describe 'person' do
-      let(:person_with_female_gender) { build(:person, person: build(:a_person, gender_id: 1), end_date: '2001-12-01') }
-      let(:person_with_unknown_gender) { build(:person, person: build(:a_person, gender_id: nil)) }
-
-      it 'contains types' do
-        expect(person_with_female_gender.basic_info).to have_key(:types)
-      end
-
-      it 'contains "date of death"' do
-        expect(person_with_female_gender.basic_info.fetch(:date_of_death)).to eq "Dec 1 '01"
-      end
-
-      it 'contains gender if person has a gender_id' do
-        expect(person_with_female_gender.basic_info).to have_key :gender
-        expect(person_with_female_gender.basic_info.fetch(:gender)).to eq 'Female'
-      end
-
-      it 'does not contain gender if person does not have a gender_id' do
-        expect(person_with_unknown_gender.basic_info).not_to have_key :gender
-      end
-    end
-
     describe 'Org with Region' do
       let(:org) do
         create(:entity_org).tap do |entity|

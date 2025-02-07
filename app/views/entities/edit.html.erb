@@ -34,18 +34,6 @@
   ) %>
 
   <%= edit_entity_form_section(
-    f.label(:start_date, (@entity.person? ? t('vocab.birth_date') : t('vocab.start_date')).capitalize, class: label_class),
-    f.text_field(:start_date) # + content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)')
-  ) %>
-
-  <%= edit_entity_form_section(
-    f.label(:end_date, (@entity.person? ? t('vocab.death_date') : t('vocab.end_date')).capitalize, class: label_class),
-    f.text_field(:end_date) # + content_tag(:small, '(YYYY-MM-DD. Use 1968-05-00 to specify May 1968)')
-  ) %>
-
-
-
-  <%= edit_entity_form_section(
     f.label(:is_current, (@entity.person? ? t('vocab.is_alive') : t('vocab.is_current')), class: label_class),
     f.tri_boolean(:is_current)
   ) %>
@@ -57,16 +45,12 @@
 
   <% if @entity.person?  %>
     <%= f.fields_for :person do |person_form| %>
-      <% %i[name_first name_middle name_last name_prefix name_suffix name_nick birthplace].each do |attribute| %>
+      <% %i[name_first name_middle name_last name_prefix name_suffix].each do |attribute| %>
         <%= edit_entity_form_section(
           person_form.label(attribute, Person::DISPLAY_ATTRIBUTES[I18n.locale][attribute], class: label_class),
           person_form.text_field(attribute)
         ) %>
       <% end %>
-      <%= edit_entity_form_section(
-        person_form.label(:gender, t('vocab.gender').capitalize, class: label_class),
-        person_form.select(:gender_id, gender_select_options(person_form))
-      ) %>
     <% end %>
   <% end %>
 
@@ -84,14 +68,6 @@
       <%= edit_entity_form_section(
         business_form.label(:marketcap, 'Market capitalization', class: label_class),
         business_form.number_field(:marketcap)
-      ) %>
-      <%= edit_entity_form_section(
-        business_form.label(:assets, 'Assets', class: label_class),
-        business_form.number_field(:assets)
-      ) %>
-      <%= edit_entity_form_section(
-        business_form.label(:net_income, 'Net income', class: label_class),
-        business_form.number_field(:net_income)
       ) %>
       <%= edit_entity_form_section(
         business_form.label(:annual_profit, 'Annual profit', class: label_class),
