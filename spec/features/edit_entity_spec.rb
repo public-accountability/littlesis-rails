@@ -127,7 +127,7 @@ describe 'edit entity page', type: :feature, js: true do
       expect(ExternalLink.count).to eq(external_link_count + 1)
       expect(ExternalLink.last.link_id).to eq wikipedia_name
       expect(ExternalLink.last.entity_id).to eq entity.id
-      expect(page).to have_current_path concretize_edit_entity_path(entity)
+      expect(page).to have_current_path concretize_entity_path(entity)
 
       within('#twitter_external_link_form') do
         fill_in 'external_link[link_id]', with: twitter_username
@@ -137,7 +137,7 @@ describe 'edit entity page', type: :feature, js: true do
       expect(ExternalLink.count).to eq(external_link_count + 2)
       expect(Entity.find(entity.id).external_links.count).to eq 2
       expect(ExternalLink.last.link_id).to eq twitter_username
-      expect(page).to have_current_path concretize_edit_entity_path(entity)
+      expect(page).to have_current_path concretize_entity_path(entity)
     end
 
     feature 'modifying existing external link' do
@@ -153,7 +153,7 @@ describe 'edit entity page', type: :feature, js: true do
         expect(ExternalLink.count).to eql external_link_count
         expect(ExternalLink.last.link_id).to eql 'new_page_name'
         expect(ExternalLink.last.entity_id).to eql entity.id
-        expect(page).to have_current_path concretize_edit_entity_path(entity)
+        expect(page).to have_current_path concretize_entity_path(entity)
       end
 
       scenario 'deleting existing text' do
@@ -165,7 +165,7 @@ describe 'edit entity page', type: :feature, js: true do
           click_button 'Submit'
         end
         expect(ExternalLink.count).to eql(external_link_count - 1)
-        expect(page).to have_current_path concretize_edit_entity_path(entity)
+        expect(page).to have_current_path concretize_entity_path(entity)
       end
     end
   end
