@@ -16,7 +16,7 @@ class DocumentsController < ApplicationController
       if turbo_frame_request?
         render partial: 'edit_document_button'
       else
-        redirect_to home_dashboard_path
+        redirect_to document_path(@document)
       end
     else
       redirect_to edit_document_path(@document)

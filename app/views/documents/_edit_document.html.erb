@@ -8,7 +8,7 @@
         </div>
 
         <div class="modal-body">
-          <%= form_for(@document) do |f| %>
+          <%= form_for(@document, data: {turbo_frame: "_top"}) do |f| %>
 
             <div class="form-group form-group-sm">
               <b><%= label_tag(:url, "Source URL") %></b>
