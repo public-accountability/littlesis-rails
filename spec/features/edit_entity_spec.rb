@@ -129,6 +129,7 @@ describe 'edit entity page', type: :feature, js: true do
       expect(ExternalLink.last.entity_id).to eq entity.id
       expect(page).to have_current_path concretize_entity_path(entity)
 
+      visit concretize_edit_entity_path(entity)
       within('#twitter_external_link_form') do
         fill_in 'external_link[link_id]', with: twitter_username
         click_button 'Submit'
