@@ -10,13 +10,14 @@ class DocumentsController < ApplicationController
 
   def update
     @document.assign_attributes(document_params)
+    session[:return_to] ||= request.referer
     if @document.valid?
       @document.save!
 
       if turbo_frame_request?
         render partial: 'edit_document_button'
       else
-        redirect_to document_path(@document)
+        redirect_to session.delete(:return_to)
       end
     else
       redirect_to edit_document_path(@document)

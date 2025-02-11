@@ -29,7 +29,7 @@ feature 'Editing documents' do
       page_has_selector "input\#document_name[value='#{document.name}']"
       fill_in 'document_name', with: new_attrs[:name]
       click_button 'Update'
-      successfully_visits_page home_dashboard_path
+      successfully_visits_page edit_document_path(document)
       visit edit_document_path(document)
       successfully_visits_page edit_document_path(document)
       page_has_selector "input\#document_name[value='#{new_attrs[:name]}']"
@@ -39,7 +39,7 @@ feature 'Editing documents' do
       successfully_visits_page edit_document_path(document)
       fill_in 'document_publication_date', with: '2017-01-01'
       click_button 'Update'
-      successfully_visits_page home_dashboard_path
+      successfully_visits_page edit_document_path(document)
       visit edit_document_path(document)
       successfully_visits_page edit_document_path(document)
       page_has_selector "input\#document_publication_date[value='2017-01-01']"
