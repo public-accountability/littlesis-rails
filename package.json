@@ -11,7 +11,7 @@
     "d3-sankey": "^0.12.3",
     "datatables.net": "^1.13.8",
     "datatables.net-dt": "^1.13.8",
-    "esbuild": "^0.19",
+    "esbuild": "^0.25",
     "file-saver": "^2.0.5",
     "jquery": "^3.7.1",
     "lodash-es": "^4.17.21",
