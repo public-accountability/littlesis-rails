@@ -58,9 +58,12 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = !config.littlesis.beta
 
   config.action_mailer.smtp_settings = {
-    address: "localhost",
-    port: 25,
-    enable_starttls_auto: false,
+    address: config.littlesis.smtp_address,
+    port: 587,
+    enable_starttls_auto: true,
+    user_name: config.littlesis.smtp_user_name,
+    password: config.littlesis.smtp_password,
+    authentication: :plain
   }
 
   # config.i18n.fallbacks = [I18n.default_locale]
