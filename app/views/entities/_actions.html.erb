@@ -3,7 +3,7 @@
     <div id="action-buttons">
       <%= link_to t('phrases.add_relationship'), "/entities/#{@entity.id}/add_relationship", class: "action-button", data: { turbo: true, turbo_frame: 'modal'} %>
       <%= link_to t('vocab.edit'), "/entities/#{@entity.id}/edit_profile", class: "action-button", data: { turbo: true, turbo_frame: 'modal'} %>
-      <%= link_to t('vocab.flag'), flag_path, class: "action-button" %>
+      <%= link_to t('vocab.flag'), flag_path, class: "action-button", data: { turbo: true, turbo_frame: 'modal'} %>
 
       <% if @entity.permissions_for(current_user).deleteable %>
         <%= button_to(t('vocab.remove'), concretize_entity_path(@entity),
