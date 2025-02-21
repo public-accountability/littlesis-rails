@@ -57,26 +57,26 @@ describe 'edit entity page', type: :feature, js: true do
     end
   end
 
-  #feature 'changing start date' do
-  #  scenario 'setting date to "1 May, 1970"' do
-  #    expect(entity.start_date).to eq nil
-  #
-  #    find('input[name="reference[just_cleaning_up]"]').click
-  #
-  #    within ".edit_entity" do
-  #      fill_in 'entity_start_date', :with => "1 May, 1970"
-  #      click_button 'Update'
-  #    end
-  #
-  #    expect(entity.reload.start_date).to eq '1970-05-01'
-  #
-  #    within "#action-buttons" do
-  #      click_on "edit"
-  #    end
-  #
-  #    expect(page).to have_field('Start date', with: '1970-05-01')
-  #  end
-  #end
+  feature 'changing start date' do
+    scenario 'setting date to "1 May, 1970"' do
+      expect(entity.start_date).to eq nil
+  
+      find('input[name="reference[just_cleaning_up]"]').click
+  
+      within ".edit_entity" do
+        fill_in 'entity_start_date', :with => "1 May, 1970"
+        click_button 'Update'
+      end
+  
+      expect(entity.reload.start_date).to eq '1970-05-01'
+  
+      within "#action-buttons" do
+        click_on "edit"
+      end
+  
+      expect(page).to have_field('Start date', with: '1970-05-01')
+    end
+  end
 
   feature 'adding new references', js: true do
     let(:url) { Faker::Internet.unique.url }
