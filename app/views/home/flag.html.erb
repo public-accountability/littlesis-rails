@@ -1,37 +1,44 @@
-<div class="row">
-  <div class="col">
-    <h1>Flag for Review</h1>
-    <p>Report a problem or inaccuracies concerning this LittleSis page</p>
-    <p>
-      <span><%= link_to @flag_form.page, @flag_form.page, target: '_blank' %></span>
-    </p>
-  </div>
-</div>
+<%= turbo_frame_tag "modal" do %>
 
-<div class="row">
-  <div class="col">
-    <%= form_tag '/flag', method: 'post', class: 'w-100' do %>
-      <%= hidden_field_tag 'page', @flag_form.page  %>
+    <% label_class = 'col-form-label'.freeze %>
+      <div class="modal" data-controller="modal" data-action="keyup@window->modal#closeWithKeyboard">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Flag for Review</h3>
+              <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
+            </div>
 
-      <div class="form-group form-row">
-        <label for="flagEmail" class="col-sm-2 col-form-label">Email</label>
-        <div class="col-md-6 col-sm-10">
-          <%= email_field_tag('email', @flag_form.email, required: true, id: 'flagEmail', class: 'form-control') %>
+            <div class="modal-body">
+              <p>Report a problem or inaccuracies concerning this LittleSis page</p>
+              <span><%= link_to @flag_form.page, @flag_form.page, target: '_blank' %></span>
+              <%= form_tag '/flag', method: 'post', class: 'w-100' do %>
+                <%= hidden_field_tag 'page', @flag_form.page  %>
+
+                <div class="form-group form-row">
+                  <label for="flagEmail" class="col-sm-2 col-form-label">Email</label>
+                  <div class="col-md-6 col-sm-10">
+                    <%= email_field_tag('email', @flag_form.email, required: true, id: 'flagEmail', class: 'form-control') %>
+                  </div>
+                </div>
+
+                <div class="form-group form-row">
+                  <label for="flagMessage" class="col-sm-2 col-form-label">Message</label>
+                  <div class="col-md-6 col-sm-10">
+                    <%= text_area_tag 'message', @flag_form.message, class: 'form-control', size: '25x5', id: 'flagMessage', required: true %>
+                  </div>
+                </div>
+
+                <div class="form-group form-row">
+                  <div class="col">
+                    <%= submit_tag("submit", class: 'btn btn-primary') %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
         </div>
       </div>
+      <div class="modal-backdrop show" style="pointer-events: auto;"></div>
 
-      <div class="form-group form-row">
-        <label for="flagMessage" class="col-sm-2 col-form-label">Message</label>
-        <div class="col-md-6 col-sm-10">
-	  <%= text_area_tag 'message', @flag_form.message, class: 'form-control', size: '25x5', id: 'flagMessage', required: true %>
-        </div>
-      </div>
-
-      <div class="form-group form-row">
-        <div class="col">
-          <%= submit_tag("submit", class: 'btn btn-primary') %>
-        </div>
-      </div>
-    <% end %>
-  </div>
-</div>
+<% end %>
