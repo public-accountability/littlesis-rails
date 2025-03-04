@@ -125,7 +125,7 @@
             <% if @relationship.is_donation? || @relationship.is_transaction? %>
               <%= edit_entity_form_section(
                 f.label(:goods, 'Goods/services', class: label_class),
-                f.text_area(:goods,  size: '40x5')
+                f.text_area(:goods,  size: '32x5')
               ) %>
             <% end %>
 
