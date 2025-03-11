@@ -2,9 +2,8 @@
 
 class ContactForm
   include ActiveModel::Model
-  include FormHcaptcha
 
-  attr_accessor :name, :email, :subject, :message, :very_important_wink_wink
+  attr_accessor :name, :email, :subject, :message, :very_important_wink_wink, :user_signed_in
 
   validates :name, :message, :email, presence: true
 
