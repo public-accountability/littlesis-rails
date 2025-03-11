@@ -2,7 +2,7 @@
 
 class ContactForm
   include ActiveModel::Model
-  include FormMathCaptcha
+  include FormHcaptcha
 
   attr_accessor :name, :email, :subject, :message, :very_important_wink_wink
 

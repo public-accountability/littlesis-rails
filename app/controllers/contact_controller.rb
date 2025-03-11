@@ -29,10 +29,6 @@ class ContactController < ApplicationController
         :email,
         :subject,
         :message,
-        :math_captcha_first,
-        :math_captcha_second,
-        :math_captcha_operation,
-        :math_captcha_answer,
         :very_important_wink_wink
       ).to_h.tap { |h| h.store(:user_signed_in, user_signed_in?) }
   end

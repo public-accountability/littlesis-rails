@@ -35,8 +35,7 @@
 
       <div class="mb-2">
         <% unless user_signed_in?  %>
-          <script src="https://js.hcaptcha.com/1/api.js?hl=en" async defer></script>
-          <div class="h-captcha" data-sitekey="0cfe85d6-57b6-4cb0-8434-2fac6064f3ae"></div>
+          <%= render partial: '/application/hcaptcha', locals: {f: f, input_class: 'form-control', label_class: '' } %>
         <% end %>
       </div>
 
