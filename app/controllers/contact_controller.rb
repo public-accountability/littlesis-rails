@@ -22,7 +22,7 @@ class ContactController < ApplicationController
   end
 
   private def contact_params
-    params
+    form_params = params
       .require(:contact_form)
       .permit(
         :name,
@@ -31,5 +31,9 @@ class ContactController < ApplicationController
         :message,
         :very_important_wink_wink
       ).to_h.tap { |h| h.store(:user_signed_in, user_signed_in?) }
+
+      form_params[:g_recaptcha_response] = params[:contact_form][:'g-recaptcha-response'] if params[:contact_form][:'g-recaptcha-response'].present?
+
+      form_params
   end
 end
