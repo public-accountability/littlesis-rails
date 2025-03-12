@@ -46,8 +46,8 @@ describe 'contact/index', type: :view do
       css 'textarea#contact_form_message', count: 1
     end
 
-    it 'has math captcha_answer' do
-      css '#contact_form_math_captcha_answer'
+    it 'has hcaptcha' do
+      css '.h-captcha'
     end
   end
 end

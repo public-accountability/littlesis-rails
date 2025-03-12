@@ -15,7 +15,6 @@ feature 'Contact Us Form' do
     fill_in 'Email', with: email
     select 'Press inquiry', from: 'Subject'
     fill_in 'Message', with: message
-    fill_in_math_captcha('contact_form')
 
     click_button 'submit'
     expect(page.html).to include 'Your message has been sent. Thank you!'
@@ -33,27 +32,27 @@ feature 'Contact Us Form' do
     fill_in 'Email', with: email
     select 'Press inquiry', from: 'Subject'
     fill_in 'Message', with: 'Что пройдет, то будет мил'
-    fill_in_math_captcha('contact_form')
 
     click_button 'submit'
     expect(page.html).to include CGI.escapeHTML(ErrorsController::YOU_ARE_SPAM)
     expect { last_email_sent }.to raise_error(RuntimeError, 'No email has been sent!')
   end
 
-  scenario 'Solving the math captcha incorrectly' do
-    visit contact_index_path
-    successfully_visits_page contact_index_path
-
-    fill_in 'Name', with: name
-    fill_in 'Email', with: email
-    select 'Press inquiry', from: 'Subject'
-    fill_in 'Message', with: message
-
-    find('#contact_form_math_captcha_answer').fill_in(with: 10_000)
-
-    click_button 'submit'
-    expect(page.html).to include 'Incorrect solution to the math problem. Please try again.'
-  end
+  # TODO Can we replace this test?
+  #scenario 'Solving the math captcha incorrectly' do
+  #  visit contact_index_path
+  #  successfully_visits_page contact_index_path
+  #
+  #  fill_in 'Name', with: name
+  #  fill_in 'Email', with: email
+  #  select 'Press inquiry', from: 'Subject'
+  #  fill_in 'Message', with: message
+  #
+  #  find('#contact_form_math_captcha_answer').fill_in(with: 10_000)
+  #
+  #  click_button 'submit'
+  #  expect(page.html).to include 'Incorrect solution to the math problem. Please try again.'
+  #end
 
   scenario 'a bot finds the honeypot' do
     visit contact_index_path
@@ -75,7 +74,7 @@ feature 'Contact Us Form' do
     visit contact_index_path
     successfully_visits_page contact_index_path
 
-    expect(page).not_to have_selector '#contact_form_math_captcha_answer'
+    expect(page).not_to have_selector '.h-captcha'
     expect(page.html).to include user.username
     select 'Press inquiry', from: 'Subject'
     fill_in 'Message', with: message
