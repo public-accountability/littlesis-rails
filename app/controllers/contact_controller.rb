@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class ContactController < ApplicationController
-  include FormHcaptcha
-
-  before_action -> { verify(params) }, only: :create
-
   def index
     @contact = ContactForm.new(
       name: current_user&.username,
