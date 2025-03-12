@@ -5,7 +5,7 @@ module FormHcaptcha
 
   def verify(params)
     uri = URI('https://hcaptcha.com/siteverify')
-    res = Net::HTTP.post_form(uri, 'secret' => Rails.application.credentials.hcaptcha_secret_key,
+    res = Net::HTTP.post_form(uri, 'secret' => Rails.application.config.littlesis.hcaptcha_secret_key,
                                    'response' => params['g-recaptcha-response'])
 
     response_data = JSON.parse(res.body)

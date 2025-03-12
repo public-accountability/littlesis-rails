@@ -22,6 +22,8 @@ defaults: &defaults
   oligrapher_commit: "f72874c6e90e409409f0bb4c903645c630cf4f31"
   oligrapher_beta: "cd62a6da6cb321968250dd9c19612396ce6b6774"
   chrome_extension_id: "aomlfehiiambdpbkeegelpbfkjenonhe"
+  hcaptcha_site_key: "10000000-ffff-ffff-ffff-000000000001"
+  hcaptcha_secret_key: "0x0000000000000000000000000000000000000000"
 
 test:
   <<: *defaults
@@ -68,3 +70,5 @@ production:
   smtp_user_name: <%= Rails.application.credentials.smtp_user_name %>
   smtp_password: <%= Rails.application.credentials.smtp_password %>
   restricted_ips: <%= Rails.application.credentials.restricted_ips %>
+  hcaptcha_site_key: <%= Rails.application.credentials.hcaptcha_site_key %>
+  hcaptcha_secret_key: <%= Rails.application.credentials.hcaptcha_secret_key %>
