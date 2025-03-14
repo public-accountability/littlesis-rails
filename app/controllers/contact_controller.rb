@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class ContactController < ApplicationController
+  include FormHcaptcha
+
+  before_action -> { user_signed_in? ? true : verify_hcaptcha(params) }, only: :create
+
   def index
     @contact = ContactForm.new(
       name: current_user&.username,
@@ -22,7 +26,7 @@ class ContactController < ApplicationController
   end
 
   private def contact_params
-    form_params = params
+    params
       .require(:contact_form)
       .permit(
         :name,
@@ -30,10 +34,6 @@ class ContactController < ApplicationController
         :subject,
         :message,
         :very_important_wink_wink
-      ).to_h.tap { |h| h.store(:user_signed_in, user_signed_in?) }
-
-      form_params[:g_recaptcha_response] = params[:contact_form][:'g-recaptcha-response'] if params[:contact_form][:'g-recaptcha-response'].present?
-
-      form_params
+      )
   end
 end
