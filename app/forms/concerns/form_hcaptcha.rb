@@ -4,6 +4,8 @@ module FormHcaptcha
   extend ActiveSupport::Concern
 
   def verify_hcaptcha(response)
+    return true if !Rails.env.production?
+
     uri = URI('https://hcaptcha.com/siteverify')
     res = Net::HTTP.post_form(uri, 'secret' => Rails.application.config.littlesis.hcaptcha_secret_key,
                                    'response' => response[:'g-recaptcha-response'])
