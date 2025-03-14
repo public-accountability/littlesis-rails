@@ -1,0 +1,4 @@
+<%= f.label('spam_test', :class => label_class) do %>
+  <div class="h-captcha" data-sitekey="<%= Rails.application.config.littlesis.hcaptcha_site_key %>"></div>
+  <script src="https://js.hcaptcha.com/1/api.js?hl=en" async defer></script>
+<% end %>

@@ -35,7 +35,7 @@
 
       <div class="mb-2">
         <% unless user_signed_in?  %>
-          <%= render partial: '/application/math_captcha', locals: {f: f, input_class: 'form-control', label_class: '' } %>
+          <%= render partial: '/application/hcaptcha', locals: {f: f, input_class: 'form-control', label_class: '' } %>
         <% end %>
       </div>
 
