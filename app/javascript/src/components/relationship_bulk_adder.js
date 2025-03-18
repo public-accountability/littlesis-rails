@@ -770,6 +770,7 @@ export default function RelationshipBulkAdder() {
     var data = prepareTableData(tableToJson('#table', relationshipDetailsAsObject()))
     $.ajax({
       method: 'POST',
+      beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
       url: '/relationships/bulk_add',
       contentType: 'application/json',
       dataType: "json",
