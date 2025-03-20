@@ -20,7 +20,7 @@ describe SpamDetector do
     end
 
     specify do
-      expect(SpamDetector.mostly_cyrillic?("it's okay to have use some кириллица")).to be false
+      expect(SpamDetector.mostly_cyrillic?("it's okay to have use some кириллица but not a lot in order to pass")).to be false
     end
   end
 end
