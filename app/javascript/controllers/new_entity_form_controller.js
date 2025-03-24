@@ -84,7 +84,7 @@ export default class extends Controller {
         `
 <div>
   <a href="${result.url}" target="_blank"><strong>${result.name}</strong></a>
-  <em>&nbsp;${result.blurb}</em>
+  <em>&nbsp;${result.blurb || "" }</em>
 </div>
        `)
 
