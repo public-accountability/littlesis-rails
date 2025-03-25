@@ -25,4 +25,10 @@ class SpamDetector
       .public_send(:/, string.length)
       .public_send(:>=, CYRILLIC_MIN)
   end
+
+  # A spam bot is promoting CBD
+  def self.bug_report?(params)
+    page = params['page']
+    return true if page.downcase.include?('cbd')
+  end
 end
