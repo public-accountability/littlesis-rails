@@ -21,7 +21,7 @@ module ExternalDataset
 
     # %w[15E 15 24T 22Y 10 24I 15C 11 31 20Y 32]
 
-    filter(:fec_year, :enum, select: %w[2022 2020 2018 2016 2014 2012], include_blank: false, default: '2020', header: 'Year')
+    filter(:fec_year, :enum, select: %w[2024 2022 2020 2018 2016 2014 2012], include_blank: false, default: '2020', header: 'Year')
     filter(:transaction_tp, :enum, select: TRANSACTION_TYPE_OPTIONS, multiple: true, header: 'Transaction Type')
     filter(:cmte_id, header: 'Committee ID')
 
