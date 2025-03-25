@@ -27,7 +27,7 @@ class SpamDetector
   end
 
   # A spam bot is promoting CBD
-  def self.bug_report?(params)
+  def self.cbd?(params)
     page = params['page']
     return true if page.downcase.include?('cbd')
   end

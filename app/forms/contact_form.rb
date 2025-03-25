@@ -14,5 +14,6 @@ class ContactForm
   def not_spam
     errors.add(:base, ErrorsController::YOU_ARE_SPAM) if very_important_wink_wink.present?
     errors.add(:base, ErrorsController::YOU_ARE_SPAM) if SpamDetector.mostly_cyrillic?(message)
+    errors.add(:base, ErrorsController::YOU_ARE_SPAM) if SpamDetector.cbd?(message)
   end
 end
