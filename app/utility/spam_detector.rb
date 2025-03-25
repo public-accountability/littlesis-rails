@@ -2,7 +2,7 @@
 
 class SpamDetector
   CYRILLIC_RANGE = ("\u0400".ord.."\u04FF".ord).freeze
-  CYRILLIC_MIN = 0.2
+  CYRILLIC_MIN = 0.4
 
   # A spam bot is submitting fake bug reports using a random url in the page parameter
   def self.bug_report?(params)
