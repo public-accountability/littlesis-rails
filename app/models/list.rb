@@ -20,7 +20,7 @@ class List < ApplicationRecord
   has_many :entities, through: :list_entities
   has_many :images, through: :entities
 
-  validates :name, presence: true
+  validates :name, presence: true, length: { maximum: 100 }
   validates :short_description, length: { maximum: 255 }
 
   scope :public_scope, -> { where("access <> #{::Permissions::ACCESS_PRIVATE}") }
