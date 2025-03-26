@@ -92,9 +92,6 @@
   <% if @no_results %>
     <div class="col">
       <p><strong>No results found.</strong></p>
-      <% if user_signed_in? && params[:q].length >= 3 %>
-        <p>Can't find something that should be on LittleSis? <%= link_to('Add It', new_entity_path(:name => params[:q]), class: "btn btn-primary") %></p>
-      <% end %>
     </div>
   <% elsif @sphinx_error %>
     <div class="col">
@@ -103,5 +100,8 @@
         <p class="font-weight-light text-muted"><%= link_to "Report a bug", bug_report_path(bug_report_short_summary: "Error when searching for \"#{params[:q]}\"") %></p>
       </div>
     </div>
+  <% end %>
+  <% if user_signed_in? %>
+    <p>Can't find something that should be on LittleSis? <%= link_to('Add It', new_entity_path(:name => params[:q]), class: "btn btn-primary") %></p>
   <% end %>
 </div>
