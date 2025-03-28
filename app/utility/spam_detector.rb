@@ -26,9 +26,11 @@ class SpamDetector
       .public_send(:>=, CYRILLIC_MIN)
   end
 
-  # A spam bot is promoting CBD
-  def self.cbd?(string)
+  # Check for common spam keywords
+  def self.spam_words?(string)
     return false if string.blank?
-    return string.downcase.include?('cbd')
+
+    spam_word_list = ['cbd', 'web3', 'blockchain']
+    return spam_word_list.any? { |word| string.downcase.include?(word) }
   end
 end
