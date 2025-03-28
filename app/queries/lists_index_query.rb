@@ -22,7 +22,7 @@ class ListsIndexQuery
 
   def for_entity(entity_or_id)
     entity = Entity.entity_for(entity_or_id)
-    @options[:with] = { id_number: entity.lists.pluck(:id) }
+    @options[:with] = @options[:with].merge(id_number: entity.lists.pluck(:id))
     self
   end
 
