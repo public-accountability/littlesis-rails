@@ -12,7 +12,6 @@
 /db/*.sqlite3
 /db/*.sqlite3-journal
 
-
 # Ignore postgres data
 /db/postgresql
 
@@ -48,6 +47,7 @@ config/production.sphinx.conf
 *.swp
 .irb_history
 .npm/
+.aider*
 
 # Generated test error files
 spec/testdata/*_errors.txt
