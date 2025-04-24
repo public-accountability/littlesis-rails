@@ -30,7 +30,7 @@
     <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= f.label :email, 'Email', class: label_class %>
       <%= f.email_field :email, autofocus: true, required: true, class: input_class %>
-      <small><em><%= t('pages.join.do_not_share_email') %><br/><%= t('pages.join.confirmation_is_required') %></em></small>
+      <small><em><%= t('pages.join.confirmation_is_required') %><br/><%= t('pages.join.do_not_share_email_html') %></em></small>
     <% end %>
 
     <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
