@@ -30,7 +30,7 @@ class SpamDetector
   def self.spam_words?(string)
     return false if string.blank?
 
-    spam_word_list = ['cbd', 'delta-9', 'thc', 'gummies', 'web3', 'blockchain', 'Christ', 'God', 'Jesus']
+    spam_word_list = ['cbd', 'delta-9', 'thc', 'gummies', 'web3', 'blockchain', 'Christ', 'God', 'Jesus', 'poker', 'betting']
     return spam_word_list.any? { |word| string.downcase.include?(word) }
   end
 end
