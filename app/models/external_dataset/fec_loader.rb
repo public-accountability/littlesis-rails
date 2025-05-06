@@ -10,7 +10,7 @@
 #
 module ExternalDataset
   class FECLoader
-    YEARS = (10..22).to_a.delete_if(&:odd?).map(&:to_s).freeze
+    YEARS = (23..24).to_a.delete_if(&:odd?).map(&:to_s).freeze
 
     FILENAME_LOOKUP = {
       fec_candidates: 'cn',
