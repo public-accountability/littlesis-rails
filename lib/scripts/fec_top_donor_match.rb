@@ -4,7 +4,7 @@ require 'csv'
 
 # Open the CSV file
 # Includes the FEC name and a pre-matched LS entity id called donor_id
-TOP_FEC_DONORS = Rails.root.join("data/top-2024-fec-donors.csv")
+TOP_FEC_DONORS = Rails.root.join("data/top-2024-fec-donors-clean-up.csv")
 
 USER_ID = 22227
 PaperTrail.request.whodunnit = USER_ID.to_s
@@ -78,7 +78,7 @@ CSV.foreach(TOP_FEC_DONORS, headers: true) do |row|
   add_entity_to_list(TOP_FEC_DONOR_LIST_ID, row['entity_id'])
 
   # Look up FEC contributions based on name
-  fec_contributions = ExternalDataset.fec_contributions.where(name: row['name'], fec_year: 2024)
+  fec_contributions = ExternalDataset.fec_contributions.where(name: row['name'], state: row['state'], fec_year: 2024)
 
   # Loop through each contribution and
   # run an FEC Match with the LS id and the FEC contribution id
