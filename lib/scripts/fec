@@ -1,4 +1,5 @@
 #!/usr/bin/env -S rails runner
 
+require 'optionparser'
 require 'fec'
 FEC::Cli.start
