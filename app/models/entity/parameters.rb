@@ -62,6 +62,14 @@ class Entity
       @controller_params.require(:entity)[:regions].delete_if(&:blank?).map(&:to_i)
     end
 
+    def submitted_with_countries?
+      @controller_params.require(:entity).key?(:countries)
+    end
+
+    def country_codes
+      @controller_params.require(:entity)[:countries].delete_if(&:blank?).map(&:to_s)
+    end
+
     private
 
     def existing_reference_params

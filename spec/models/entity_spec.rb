@@ -1148,6 +1148,33 @@ describe Entity, :tag_helper do
     end
   end
 
+  describe 'Country methods' do
+    let(:entity) { create(:entity_org) }
+
+    it 'adds country' do
+      expect { entity.add_country('China') }.to change { entity.reload.locations.count }.from(0).to(1)
+    end
+
+    it 'adds country, skipping duplicates' do
+      expect { 2.times { entity.add_country('China') } }.to change { entity.reload.locations.count }.from(0).to(1)
+    end
+
+    it 'raises error for invalid country' do
+      expect { entity.add_region('Babylon') }.to raise_error(ArgumentError)
+    end
+
+    it 'removes country' do
+      expect { entity.add_country('China') }.to change { entity.reload.locations.count }.from(0).to(1)
+      expect { entity.remove_country('China') }.to change { entity.reload.locations.count }.from(1).to(0)
+    end
+
+    it 'does not remove country associated with addresses' do
+      entity.add_country('China')
+      entity.reload.locations.where(country: 'China').first.create_address!(city: "上海市")
+      expect { entity.remove_country('China') }.not_to change { entity.reload.locations.count }
+    end
+  end
+
   describe '#featured_lists' do
     let(:entity) { create(:entity_org) }
     let(:featured_list) { create(:list, is_featured: true) }
