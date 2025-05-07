@@ -20,6 +20,8 @@ LittleSis is an online open-content collaborative project that accepts contribut
 
 None of the authors, contributors, sponsors, administrators, sysops, or anyone else connected with LittleSis in any way whatsoever can be responsible for the appearance of any inaccurate or libelous information or for your use of the information contained in or linked from these web pages.
 
+To request a review of particular pages by the LittleSis team, submit our [Review Form](https://littlesis.org/information-review-form/) with the requisite information.
+
 ## No contract; limited license
 
 Please make sure that you understand that the information provided here is being provided freely, and that no kind of agreement or contract is created between you and the owners or users of this site, the owners of the servers upon which it is housed, the individual LittleSis contributors, any project administrators, sysops or anyone else who is in any way connected with this project or sister projects subject to your claims against them directly. You are being granted a limited license to copy anything from this site; it does not create or imply any contractual or extracontractual liability on the part of LittleSis or any of its agents, members, organizers or other users.
