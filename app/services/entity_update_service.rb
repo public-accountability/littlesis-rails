@@ -25,6 +25,13 @@ module EntityUpdateService
           entity.remove_regions(*current_regions.difference(proposed_regions))
         end
 
+        if entity_params.submitted_with_countries?
+          current_countries = entity.country_codes.to_set
+          proposed_countries = entity_params.country_codes.to_set
+          entity.add_countries(*proposed_countries.difference(current_countries))
+          entity.remove_countries(*current_countries.difference(proposed_countries))
+        end
+
         entity.save!
       end
     end
