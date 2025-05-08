@@ -55,11 +55,11 @@ class Entity
     end
 
     def region_numbers
-      @controller_params.require(:entity)[:regions].delete_if(&:blank?).map(&:to_i)
+      @controller_params.require(:entity)[:regions]&.delete_if(&:blank?)&.map(&:to_i)
     end
 
     def country_codes
-      @controller_params.require(:entity)[:countries].delete_if(&:blank?).map(&:to_s)
+      @controller_params.require(:entity)[:countries]&.delete_if(&:blank?)&.map(&:to_s)
     end
 
     private
