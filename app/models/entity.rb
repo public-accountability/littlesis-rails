@@ -438,7 +438,7 @@ class Entity < ApplicationRecord
   end
 
   def regions
-    locations.pluck(:region)
+    locations.pluck(:region).compact
   end
 
   def region_numbers
@@ -476,7 +476,7 @@ class Entity < ApplicationRecord
   end
 
   def countries
-    locations.pluck(:country)
+    locations.pluck(:country).compact
   end
 
   def country_codes

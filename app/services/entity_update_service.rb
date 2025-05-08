@@ -18,19 +18,15 @@ module EntityUpdateService
 
         entity.update_extension_records(entity_params.extension_def_ids)
 
-        if entity_params.submitted_with_regions?
-          current_regions = entity.region_numbers.to_set
-          proposed_regions = entity_params.region_numbers.to_set
-          entity.add_regions(*proposed_regions.difference(current_regions))
-          entity.remove_regions(*current_regions.difference(proposed_regions))
-        end
+        current_regions = entity.region_numbers.to_set
+        proposed_regions = entity_params.region_numbers.to_set
+        entity.add_regions(*proposed_regions.difference(current_regions))
+        entity.remove_regions(*current_regions.difference(proposed_regions))
 
-        if entity_params.submitted_with_countries?
-          current_countries = entity.country_codes.to_set
-          proposed_countries = entity_params.country_codes.to_set
-          entity.add_countries(*proposed_countries.difference(current_countries))
-          entity.remove_countries(*current_countries.difference(proposed_countries))
-        end
+        current_countries = entity.country_codes.to_set
+        proposed_countries = entity_params.country_codes.to_set
+        entity.add_countries(*proposed_countries.difference(current_countries))
+        entity.remove_countries(*current_countries.difference(proposed_countries))
 
         entity.save!
       end
