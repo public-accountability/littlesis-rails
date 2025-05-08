@@ -54,12 +54,12 @@ class Entity
                                  .permit(:name, :url, :excerpt, :publication_date, :primary_source_document)
     end
 
-    def submitted_with_regions?
-      @controller_params.require(:entity).key?(:regions)
+    def region_numbers
+      @controller_params.require(:entity)[:regions]&.delete_if(&:blank?)&.map(&:to_i)
     end
 
-    def region_numbers
-      @controller_params.require(:entity)[:regions].delete_if(&:blank?).map(&:to_i)
+    def country_codes
+      @controller_params.require(:entity)[:countries]&.delete_if(&:blank?)&.map(&:to_s)
     end
 
     private

@@ -438,7 +438,7 @@ class Entity < ApplicationRecord
   end
 
   def regions
-    locations.pluck(:region)
+    locations.pluck(:region).compact
   end
 
   def region_numbers
@@ -451,6 +451,44 @@ class Entity < ApplicationRecord
 
   def remove_regions(*regions)
     regions.each(&method(:remove_region))
+  end
+
+  def add_country(country)
+    unless Location.countries.key?(country) || Location.countries.values.include?(country)
+      raise ArgumentError, "invalid country: #{country}"
+    end
+
+    locations.create!(country: country) unless locations.exists?(country: country)
+  end
+
+  def remove_country(country)
+    unless Location.countries.key?(country) || Location.countries.values.include?(country)
+      raise ArgumentError, "invalid country: #{country}"
+    end
+
+    if (location_for_country = locations.find_by(country: country))
+      if location_for_country.address
+        Rails.logger.warn "cannot remove location with address for #{name_with_id}."
+      else
+        location_for_country.destroy
+      end
+    end
+  end
+
+  def countries
+    locations.pluck(:country).compact
+  end
+
+  def country_codes
+    countries.map { |c| Location.countries[c] }
+  end
+
+  def add_countries(*countries)
+    countries.each(&method(:add_country))
+  end
+
+  def remove_countries(*countries)
+    countries.each(&method(:remove_country))
   end
 
   ##
@@ -558,6 +596,7 @@ class Entity < ApplicationRecord
     info[:website] = website if website.present?
     info[:aliases] = also_known_as.join(', ') unless also_known_as.empty?
     info[:region] = regions.join(', ') unless regions.empty?
+    info[:country] = countries.join(', ') unless countries.empty?
 
     info
   end

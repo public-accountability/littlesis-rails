@@ -111,6 +111,7 @@ es:
     lists: listas
     password: "contraseña"
     region: "región"
+    countries: "países"
 
 
   phrases:

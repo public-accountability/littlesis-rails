@@ -3,6 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   connect(){
     $('#entity_regions').select2()
+    $('#entity_countries').select2()
   }
 
   checkType(event) {
