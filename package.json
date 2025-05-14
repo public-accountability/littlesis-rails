@@ -23,7 +23,7 @@
     "select2": "^4.1.0-rc.0",
     "sharp": "^0.33",
     "tinycarousel": "^2.1.8",
-    "trix": "^2.1.12"
+    "trix": "^2.1.15"
   },
   "scripts": {
     "build": "bin/esbuild",
