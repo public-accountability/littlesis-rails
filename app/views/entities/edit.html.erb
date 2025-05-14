@@ -99,9 +99,18 @@
 
   <%# Regions %>
   <%= edit_entity_form_section(
-    f.label(:regions, "#{t('vocab.region').capitalize}: ", class: label_class),
+    f.label(:regions, "#{t('vocab.region').capitalize}", class: label_class),
     f.select(:regions,
              options_for_select(Location.regions.to_a, selected: @entity.region_numbers),
+             { include_blank: true},
+             { multiple: true })
+  ) %>
+
+  <%# Countries %>
+  <%= edit_entity_form_section(
+    f.label(:countries, "#{t('vocab.countries').capitalize}", class: label_class),
+    f.select(:countries,
+             options_for_select(Location.countries.to_a, selected: @entity.country_codes),
              { include_blank: true},
              { multiple: true })
   ) %>
