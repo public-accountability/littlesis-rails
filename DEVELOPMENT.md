@@ -74,7 +74,7 @@ docker compose exec -e RAILS_ENV=test app bundle exec rails assets:precompile
 docker compose exec -e RAILS_ENV=test app bundle exec rails ts:configure
 ```
 
-Run the tests: `docker compose exec -e RAILS_ENV=test app bin/rspec`
+Run the tests: `docker compose exec -e RAILS_ENV=test app rspec`
 
 
 ## bin/littlesis helper
