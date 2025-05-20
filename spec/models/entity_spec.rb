@@ -608,6 +608,17 @@ describe Entity, :tag_helper do
         expect(org.basic_info[:region]).to eq 'Latin America and Caribbean'
       end
     end
+    describe 'Org with Country' do
+      let(:org) do
+        create(:entity_org).tap do |entity|
+          entity.add_country('Mexico')
+        end
+      end
+
+      it 'set country' do
+        expect(org.basic_info[:country]).to eq 'Mexico'
+      end
+    end
   end
 
   describe 'primary_alias' do
@@ -1160,7 +1171,7 @@ describe Entity, :tag_helper do
     end
 
     it 'raises error for invalid country' do
-      expect { entity.add_region('Babylon') }.to raise_error(ArgumentError)
+      expect { entity.add_country('Babylon') }.to raise_error(ArgumentError)
     end
 
     it 'removes country' do
