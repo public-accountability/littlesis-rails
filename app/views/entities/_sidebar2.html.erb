@@ -26,9 +26,7 @@
       <h3 class="profile-page-sidebar-heading"><%= t('phrases.basic_info') %></h3>
     </div>
     <div class="col-12">
-      <%= cache [@entity, 'basic_info']  do %>
-        <%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
-      <% end %>
+      <%= render partial: 'entities/sidebar/basic_info', locals: {basic_info: @entity.basic_info} %>
     </div>
   </div>
 
