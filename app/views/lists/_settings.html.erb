@@ -4,7 +4,7 @@
     list_settings_list_access_name_value: Permissions::ACCESS_MAPPING[@list.access].downcase
   } do %>
 
-  <% if current_user.role.include?(:edit_list)  %>
+  <% if current_user.role.include?(:edit_list) || (@list.creator_user_id == current_user.id)  %>
     <div class="row justify-content-start">
       <div class="col-sm col-md-6">
         <%= label_tag 'Access level' %><br/>
