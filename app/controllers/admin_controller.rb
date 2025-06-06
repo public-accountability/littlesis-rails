@@ -15,6 +15,10 @@ class AdminController < ApplicationController
     @users = UserSignupsGrid.new do |scope|
       scope.page(params[:user_signups_page] || 1).per(10)
     end
+
+    @lists = ListsGrid.new do |scope|
+      scope.page(params[:lists_page] || 1).per(10)
+    end
   end
 
   def tags

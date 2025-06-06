@@ -46,6 +46,14 @@
   </div>
 </div>
 
+<div class="row admin-table-row">
+  <div class="col">
+    <h2>Recent Lists</h2>
+    <%= datagrid_table(@lists, html: { class: 'table table-responsive-lg table-sm' }) %>
+    <%= paginate(@lists.assets, param_name: :lists_page) %>
+  </div>
+</div>
+
 
 <div class="row mt-4">
   <div class="col-12 col-sm-6 p-2 rounded bg-light">
