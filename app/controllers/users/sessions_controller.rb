@@ -18,10 +18,16 @@ class Users::SessionsController < Devise::SessionsController
   #   super
   # end
 
-  # protected
+  protected
 
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_sign_in_params
   #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
   # end
+
+  # Send user to home dashboard
+  # https://github.com/heartcombo/devise/blob/v4.9.4/lib/devise/controllers/helpers.rb#L171
+  def signed_in_root_path(resource_or_scope)
+    home_dashboard_path
+  end
 end
