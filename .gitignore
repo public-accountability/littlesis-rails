@@ -48,6 +48,7 @@ config/production.sphinx.conf
 .irb_history
 .npm/
 .aider*
+.direnv/
 
 # Generated test error files
 spec/testdata/*_errors.txt
