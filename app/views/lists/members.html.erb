@@ -4,6 +4,9 @@
 <% if user_signed_in?  %>
   <%= render partial: 'list_actions', locals: { list: @list, person_count: @list.entities.people.count } %>
 <% end %>
+<div id="list-edited-history" class="d-inline-block">
+  <%= ListLastEditorPresenter.html(@list) %>
+</div>
 <%= render partial: "lists/tabs", locals: { list: @list, selected_tab: :members } %>
 
 <div class="row">

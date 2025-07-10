@@ -32,6 +32,10 @@ td.lists_table_name {
   font-weight: 300;
 }
 
+#list-edited-history {
+  float:right;
+}
+
 .list_tabs ul.tabs {
   li a {
     background-color: globals.$red_light;
