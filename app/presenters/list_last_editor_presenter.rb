@@ -43,8 +43,8 @@ class ListLastEditorPresenter
     else
       @last_edited_at = last_list_edit.created_at
 
-      if last_list_edit.user_id && last_list_edit.user.present?
-        last_list_edit.user
+      if last_list_edit.last_user_id && last_list_edit.user.present?
+        User.find(last_list_edit.last_user_id)
       else
         User.system_user
       end
@@ -54,6 +54,6 @@ class ListLastEditorPresenter
   def last_list_edit
     return @_last_list_edit if defined?(@_last_list_edit)
 
-    @_last_list_edit = List.find_by(id: @list.id)
+    @_last_list_edit = List.find(@list.id)
   end
 end
