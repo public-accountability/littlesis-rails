@@ -14,7 +14,8 @@ class HomeController < ApplicationController
     [88, 'corporate_fat_cats'],
     [102, 'revolving_door_lobbyists'],
     [114, 'super_pacs'],
-    [34, 'elite_think_tanks']
+    [34, 'elite_think_tanks'],
+    [0, 'regional_powerbrokers']
   ].freeze
 
   def dashboard

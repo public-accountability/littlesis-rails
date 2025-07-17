@@ -9,7 +9,6 @@
     <div class="row">
       <h1>LittleSis<span style="color: #cc5454;">*</span> <%= t('pages.home.littlesis_is') %></h1>
       <div style="font-weight: 300; font-size: 14px; color: #cc5454;"><span style="font-size: 16px; font-weight: bold;">*</span> <%= t 'pages.home.opposite_of_big_brother' %></div>
-      <div class="mt-3 homepage-subheading""><%= t 'pages.home.grassroots_watchdog' %></div>
     </div>
 
     <div class="row row-cols-1 row-cols-sm-2 mt-3">
@@ -36,7 +35,7 @@
 <div class="row row-cols-1 row-cols-md-3 mt-3 mb-3 g-lg-4" id="homepage-explore-row">
   <div class="col">
     <div>
-      <%= image_tag "map_the_power_RGB.gif" %>
+      <%= image_tag "map_the_power.png" %>
     </div>
 
     <h5 class="mt-2 text-center"><%= link_to t('pages.home.power_research'), toolkit_path %></h5>
@@ -82,14 +81,14 @@
       <h3><%= t('pages.home.involuntary_facebook') %></h3>
     </div>
 
-    <p>We bring transparency to influential social networks by tracking the key relationships of politicians, business leaders, lobbyists, financiers, and their affiliated institutions. We help answer questions such as:</p>
+    <p>We bring transparency to influential social networks at the local, state, national, and international level. We track the key relationships of politicians, business leaders, lobbyists, financiers, and their affiliated institutions. We help answer questions such as:</p>
     <ul>
       <li><em>Who do the wealthiest Americans donate their money to?</em></li>
       <li><em>Where did White House officials work before they were appointed?</em></li>
       <li><em>Which lobbyists are married to politicians? Who do they lobby for?</em></li>
     </ul>
 
-    <p>All of this information is public, but scattered. We bring it together in one place. Our data derives from government filings, news articles, and other reputable sources. Some data sets are updated automatically; the rest is filled in by our user community. <%= link_to "More Features", "/features", class: 'link-blue'  %></p>
+    <p>All of this information is public, but scattered. We bring it together in one place. Our data derives from government filings, news articles, and other reputable sources. Some data sets are updated automatically; the rest is filled in by our user community.</p>
 
     <div class="thin-grey-bottom-border mb-3">
       <h3><%= t('littlesis.eyes_on_the_ties') %></h3>
@@ -101,13 +100,13 @@
       <h3><%= t('pages.home.made_for_watchdogs') %></h3>
     </div>
 
-    <p>We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <%= link_to "Get Involved", "/join", class: 'link-blue' %>.</p>
+    <p>We're bringing together a community of watchdogs who believe in transparency and accountability where it matters most. We're looking for journalists, researchers, programmers, artists and organizers to lend a hand. <%= link_to "Get Involved", "https://mapthepower.net/research-tools-for-organizers-2025/", class: 'link-blue' %>.</p>
 
     <div class="thin-grey-bottom-border mb-3">
       <h3><%= t('pages.home.think_and_do') %></h3>
     </div>
 
-    <p>LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability. We receive financial support from <%= link_to 'foundations', 'https://public-accountability.org/about/funding/', class: 'link-blue' %> and benefit from free software written by the open source community.</p>
+    <p>LittleSis is a project of Public Accountability Initiative, a 501(c)3 organization focused on corporate and government accountability.</p>
     <p>The <%= link_to "code", "https://github.com/public-accountability/littlesis-rails", class: 'link-blue' %> powering LittleSis is free & open source.</p>
   </div>
   <div class="col-sm-1"></div>

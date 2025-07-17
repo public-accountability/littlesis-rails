@@ -11,7 +11,7 @@
   <div>
     <% HomeController::DOTS_CONNECTED_LISTS.each do |x| %>
       <% id, translation_key =  x %>
-      ✔ <%= link_to t("pages.home.#{translation_key}"), List.find(id) %><br />
+      ✔ <%= t("pages.home.#{translation_key}") %><br />
     <% end %>
   </div>
 

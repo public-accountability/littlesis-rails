@@ -192,18 +192,6 @@ div#donate-button-container  {
     object-fit: contain;
   }
 
-  #eyes-on-ties-img {
-    padding: 50px;
-
-    @media (min-width: map.get(globals.$grid-breakpoints, "md")) {
-      padding: 10px;
-    }
-
-    @media (min-width: map.get(globals.$grid-breakpoints, "lg")) {
-      padding: 30px;
-    }
-
-  }
 }
 
 #homepage-carousel-row {
