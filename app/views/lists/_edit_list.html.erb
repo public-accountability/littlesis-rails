@@ -1,91 +1,89 @@
 <%= turbo_frame_tag "modal" do %>
 
-  <% if current_user&.editor? %>
-    <% label_class = 'col-form-label'.freeze %>
-      <div class="modal" data-controller="modal" data-action="keyup@window->modal#closeWithKeyboard">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h3><%= "#{t('vocab.edit').capitalize}: #{@list.name}" %></h3>
-              <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
-            </div>
+  <% label_class = 'col-form-label'.freeze %>
+    <div class="modal" data-controller="modal" data-action="keyup@window->modal#closeWithKeyboard">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3><%= "#{t('vocab.edit').capitalize}: #{@list.name}" %></h3>
+            <%= button_tag "", data: { action: "modal#close", aria_label: "Close" }, type: "button", class: "btn-close" %>
+          </div>
 
-            <div class="modal-body">
-              <%= form_for(@list, data: {turbo_frame: "_top"}) do |f| %>
-                <% if @list.errors.any? %>
-                  <div id="error_explanation">
-                    <h2><%= pluralize(@list.errors.count, "error") %> prohibited this list from being saved:</h2>
+          <div class="modal-body">
+            <%= form_for(@list, data: {turbo_frame: "_top"}) do |f| %>
+              <% if @list.errors.any? %>
+                <div id="error_explanation">
+                  <h2><%= pluralize(@list.errors.count, "error") %> prohibited this list from being saved:</h2>
 
-                    <ul>
-                      <% @list.errors.full_messages.each do |msg| %>
-                        <li><%= msg %></li>
-                      <% end %>
-                    </ul>
-                  </div>
-                <% end %>
-
-                <div class="row form-group">
-                  <div class="col-sm-8 col-md-10">
-                    <%= f.label "Name*" %>
-                    <%= f.text_field :name, class: "form-control", placeholder: "5-100 characters, no colons" %>
-                  </div>
+                  <ul>
+                    <% @list.errors.full_messages.each do |msg| %>
+                      <li><%= msg %></li>
+                    <% end %>
+                  </ul>
                 </div>
-
-                <div class="row form-group">
-                  <div class="col-sm-10 col-md-10">
-                    <%= f.label :short_description %>
-                    <%= f.text_field :short_description, class: "form-control" %>
-                  </div>
-                </div>
-
-                <div class="row form-group">
-                  <div class="col-sm-10 col-md-10">
-                    <%= f.label :description %>
-                    <%= f.text_area :description, class: "textarea_medium form-control", size: '6x8' %>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-sm-10 col-md-10">
-                    <h2>Tags</h2>
-                    <%= render 'edit_tags' %>
-                  </div>
-                </div>
-
-                <div class="row bottom-1em">
-                  <div class="col-sm-4">
-                    <h2>Settings</h2>
-                  </div>
-                </div>
-
-                <div class="row form-group">
-                  <div class="col-sm-6 col-md-10">
-                    <%= f.label "Custom field name" %>
-                    <%= f.text_field :custom_field_name, class: "form-control", placeholder: "name of editable field providing context for each entity" %>
-                  </div>
-                </div>
-
-
-                <%= render 'settings',  f: f %>
-
-                <%= render 'settings_admin', f: f %>
-
-                <%= hidden_field_tag :redirect_to, members_list_path(@list) %>
-
-                <div class="row top-1em bottom-1em">
-                  <div class="col-sm-8 col-md-10">
-                    <%= f.submit "Save", class: "btn btn-primary" %>
-                    <%= link_to 'Cancel', members_list_path(@list), class: "btn btn-secondary" %>
-                  </div>
-                </div>
-
               <% end %>
-            </div>
+
+              <div class="row form-group">
+                <div class="col-sm-8 col-md-10">
+                  <%= f.label "Name*" %>
+                  <%= f.text_field :name, class: "form-control", placeholder: "5-100 characters, no colons" %>
+                </div>
+              </div>
+
+              <div class="row form-group">
+                <div class="col-sm-10 col-md-10">
+                  <%= f.label :short_description %>
+                  <%= f.text_field :short_description, class: "form-control" %>
+                </div>
+              </div>
+
+              <div class="row form-group">
+                <div class="col-sm-10 col-md-10">
+                  <%= f.label :description %>
+                  <%= f.text_area :description, class: "textarea_medium form-control", size: '6x8' %>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-10 col-md-10">
+                  <h2>Tags</h2>
+                  <%= render 'edit_tags' %>
+                </div>
+              </div>
+
+              <div class="row bottom-1em">
+                <div class="col-sm-4">
+                  <h2>Settings</h2>
+                </div>
+              </div>
+
+              <div class="row form-group">
+                <div class="col-sm-6 col-md-10">
+                  <%= f.label "Custom field name" %>
+                  <%= f.text_field :custom_field_name, class: "form-control", placeholder: "name of editable field providing context for each entity" %>
+                </div>
+              </div>
+
+
+              <%= render 'settings',  f: f %>
+
+              <%= render 'settings_admin', f: f %>
+
+              <%= hidden_field_tag :redirect_to, members_list_path(@list) %>
+
+              <div class="row top-1em bottom-1em">
+                <div class="col-sm-8 col-md-10">
+                  <%= f.submit "Save", class: "btn btn-primary" %>
+                  <%= link_to 'Cancel', members_list_path(@list), class: "btn btn-secondary" %>
+                </div>
+              </div>
+
+            <% end %>
           </div>
         </div>
       </div>
-      <div class="modal-backdrop show" style="pointer-events: auto;"></div>
     </div>
+    <div class="modal-backdrop show" style="pointer-events: auto;"></div>
+  </div>
 
-  <% end %>
 <% end %>
