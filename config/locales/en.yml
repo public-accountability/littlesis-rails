@@ -252,8 +252,8 @@ en:
       send_me_your_newsletter: "Send me your newsletter (we send one every 1-2 months)"
       you_have_to_accept: "Unfortunately, you have to accept the terms first"
     home:
-      littlesis_is: "is a free database of who-knows-who of business and government"
-      littlesis_is_alt: "is a free database of who&zwj;-&zwj;knows&zwj;-&zwj;who at the heights of business and government."
+      littlesis_is: "is a free database of who knows who in business and government"
+      littlesis_is_alt: "is a free database of who knows who in business and government."
       opposite_of_big_brother: "opposite of Big Brother"
       power_research: "Power research toolkit and training"
       news_and_analysis: "News and reporting from LittleSis"
