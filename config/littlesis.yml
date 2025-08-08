@@ -19,8 +19,8 @@ defaults: &defaults
   beta: false
   noediting: false
   firefox_binary: /opt/firefox
-  oligrapher_commit: "d596730d9f3a00f9074ef350aa9b774b13444ef5"
-  oligrapher_beta: "d596730d9f3a00f9074ef350aa9b774b13444ef5"
+  oligrapher_commit: "caa7fcda2a5c4e267edec6d3b21bac6828613a6f"
+  oligrapher_beta: "caa7fcda2a5c4e267edec6d3b21bac6828613a6f"
   chrome_extension_id: "aomlfehiiambdpbkeegelpbfkjenonhe"
   hcaptcha_site_key: "10000000-ffff-ffff-ffff-000000000001"
   hcaptcha_secret_key: "0x0000000000000000000000000000000000000000"
