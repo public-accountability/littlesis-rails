@@ -159,6 +159,7 @@ LittleSis::Application.routes.draw do
           # add relationship turbo frames
           get 'add_relationship/search' => 'entities/add_relationship#search'
           get 'add_relationship/new'  => 'entities/add_relationship#new'
+          get 'add_relationship/new_entity'  => 'entities/add_relationship#new_entity'
         end
       end
     end

@@ -19,5 +19,12 @@ module Entities
       @entity2 = Entity.find(params[:entity2_id])
       render partial: 'entities/add_relationship/new'
     end
+
+    # Turbo Frame: /entities/add_relationship/new_entity
+    def new_entity
+      @entity1 = Entity.find(params[:entity1_id])
+      @entity2 = Entity.new(name: params[:entity2_name].presence)
+      render partial: 'entities/add_relationship/new_entity', locals: { entity: @entity2, related_entity: @entity1 }
+    end
   end
 end

@@ -2,6 +2,7 @@
   <div class="row">
     <div class="col ms-2 mt-2">
       <p>no entities found</p>
+      <p>Want to add <%= link_to "a new entity", "/entities/add_relationship/new_entity?entity1_id=#{params[:entity1_id]}&entity2_name=#{params[:q]}", class: "btn btn-info btn-sm", data: { "turbo-frame" => "add-relationship-search" } %>?</p>
     </div>
   </div>
 </turbo-frame>

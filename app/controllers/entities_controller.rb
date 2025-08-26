@@ -79,7 +79,9 @@ class EntitiesController < ApplicationController
       if request.format.json? || chrome_extension_request?
         render json: json_success_response
       elsif turbo_frame_request?
-        render partial: 'new_entity_result'
+        @entity1 = Entity.find(params[:entity][:related_entity_id])
+        @entity2 = @entity
+        render partial: 'entities/add_relationship/new'
       else
         redirect_to concretize_edit_entity_path(@entity)
       end

@@ -25,6 +25,7 @@
           <% end %>
         </tbody>
       </table>
+      <p>Not the correct entity?  <%= link_to "Add a new one", "/entities/add_relationship/new_entity?entity1_id=#{params[:entity1_id]}&entity2_name=#{params[:q]}", class: "btn btn-info btn-sm", data: { "turbo-frame" => "add-relationship-search" } %></p>
     </div>
   </div>
 </turbo-frame>
