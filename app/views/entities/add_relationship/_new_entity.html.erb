@@ -15,7 +15,7 @@
 	      </ul>
             </div>
           <% end %>
-      
+
           <%= f.hidden_field "related_entity_id", value: params[:entity1_id] %>
           <div>
             <%= f.label t('vocab.name').capitalize, for: :entity_name, class: 'form-label' %>
@@ -29,31 +29,31 @@
                }
             %>
           </div>
-      
+
           <div class="mt-2">
             <%= f.label t('vocab.description').capitalize, for: :entity_blurb, class: 'form-label' %>
             <%= f.text_field :blurb, class: "form-control", placeholder: t('phrases.short_sentence'), pattern: '.{0,200}', title: t('phrases.enter_a_blurb') %>
           </div>
-      
+
           <br>
           <%= f.label "Type", class: 'form-label' %>
           <br>
-      
+
           <label class="radio-inline">
             <%= f.radio_button :primary_ext, "Person", data: { 'action' => 'change->new-entity-form#selectPrimaryExt' }, autocomplete: 'off' %> Person
           </label>
-      
+
           <label class="radio-inline">
             <%= f.radio_button :primary_ext, "Org", data: { 'action' => 'change->new-entity-form#selectPrimaryExt' }, autocomplete: 'off' %> Org
           </label>
           <br>
           <br>
-      
+
           <div data-new-entity-form-target="otherTypes" style="display: none;">
             <%= f.label "Other types", class: 'form-label' %>
             <br>
           </div>
-      
+
           <div data-new-entity-form-target="personTypes" style="display: none;">
             <% ExtensionDefinition.person_types.each do |type| %>
 	      <div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
@@ -61,7 +61,7 @@
             <br>
             <br>
           </div>
-      
+
           <div data-new-entity-form-target="orgTypes" style="display: none;">
             <% ExtensionDefinition.org_types.each do |type| %>
 	      <div class="entity-type"><%= check_box_tag "types[]", type.name %> <%= type.display_name %></div>
@@ -69,24 +69,23 @@
             <br>
             <br>
           </div>
-      
+
           <div data-new-entity-form-target="warning" class="alert alert-warning" style="display: none;">
             <span>Valid names are at least two words</span>
           </div>
-      
+
           <div class="actions" data-turbo="true">
             <%= f.submit t('vocab.add').capitalize, class: "btn btn-primary" %>
           </div>
         <% end %>
-      
-      
+
         <div data-new-entity-form-target="wait" style="display: none;" class="mt-2">
           <h3>Wait! Does this entity already exist?</h3>
           <div data-new-entity-form-target="existing">
           </div>
           <br>
         </div>
-      
+
       </div>
     </div>
   </div>

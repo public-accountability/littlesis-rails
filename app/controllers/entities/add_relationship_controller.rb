@@ -24,7 +24,7 @@ module Entities
     def new_entity
       @entity1 = Entity.find(params[:entity1_id])
       @entity2 = Entity.new(name: params[:entity2_name].presence)
-      render partial: 'entities/add_relationship/new_entity', locals: { entity: @entity2, related_entity: @entity1 }
+      render partial: 'entities/add_relationship/new_entity', locals: { related_entity: @entity1, entity: @entity2 }
     end
   end
 end
