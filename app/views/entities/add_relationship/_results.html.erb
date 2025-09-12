@@ -13,7 +13,7 @@
           <% @results.each do |entity| %>
             <tr>
               <td>
-                <%= link_to "select", add_relationship_new_entities_path(entity1_id: params[:entity1_id], entity2_id: entity.id), class: "btn btn-info btn-sm", data: { "turbo-frame" => "add-relationship-page" } %>
+                <%= link_to "select", add_relationship_new_entities_path(entity1_id: params[:entity1_id], entity2_id: entity.id), class: "btn btn-info btn-sm", data: { "turbo-frame" => "add-relationship-search" } %>
               </td>
               <td>
                 <%= link_to entity.name, concretize_entity_path(entity), target: '_blank' %>
