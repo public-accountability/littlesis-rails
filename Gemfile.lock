@@ -316,7 +316,7 @@ GEM
       railties (>= 5.2)
     reverse_markdown (2.1.1)
       nokogiri
-    rexml (3.3.9)
+    rexml (3.4.2)
     riddle (2.4.3)
     roo (2.10.1)
       nokogiri (~> 1)
