@@ -1,8 +1,8 @@
 feature "Signing up for an account", type: :feature do
   let(:user_info) do
     Struct
-      .new(:name, :email, :password, :username, :about_you)
-      .new(Faker::Name.name, Faker::Internet.email, Faker::Internet.password(min_length: 8), random_username, Faker::Books::Lovecraft.sentence)
+      .new(:email, :password, :username, :about_you)
+      .new(Faker::Internet.email, Faker::Internet.password(min_length: 8), random_username, Faker::Books::Lovecraft.sentence)
   end
 
   before do
@@ -28,7 +28,6 @@ feature "Signing up for an account", type: :feature do
   scenario 'Fills out form and signs up' do
     counts = [User.count, UserProfile.count]
 
-    fill_in 'user_user_profile_attributes_name', :with => user_info.name
     fill_in 'user_email', :with => user_info.email
     fill_in 'user_username', :with => user_info.username
     fill_in 'user_password', :with => user_info.password
@@ -51,7 +50,6 @@ feature "Signing up for an account", type: :feature do
   scenario 'Fills out form and signs up with location field' do
     location = 'the center of the earth'
 
-    fill_in 'user_user_profile_attributes_name', :with => user_info.name
     fill_in 'user_email', :with => user_info.email
     fill_in 'user_username', :with => user_info.username
     fill_in 'user_password', :with => user_info.password
@@ -79,7 +77,6 @@ feature "Signing up for an account", type: :feature do
     scenario 'Shows error message regarding the username' do
       counts = [User.count, UserProfile.count]
 
-      fill_in 'user_user_profile_attributes_name', :with => user_info.name
       fill_in 'user_email', :with => user_info.email
       fill_in 'user_username', :with => username # different than the above example
       fill_in 'user_password', :with => user_info.password
@@ -102,7 +99,6 @@ feature "Signing up for an account", type: :feature do
   scenario 'answering the math problem incorrectly' do
     counts = [User.count, UserProfile.count]
 
-    fill_in 'user_user_profile_attributes_name', :with => user_info.name
     fill_in 'user_email', :with => user_info.email
     fill_in 'user_username', :with => user_info.username
     fill_in 'user_password', :with => user_info.password
