@@ -237,12 +237,11 @@ en:
       what_are_your_research interests: What are your research interests?
       what_using_for:  What are you hoping to use LittleSis for?
       solve_math_problem: Please solve the following math problem
-      name_and_email: Your name and email will not be public
       email_confirmation: An email with a confirmation link is on the way.
       after_confirming: After confirming your email address, you'll be able to login using your email and password here
       having_problems: If you are having any problems with the registration process please contact us at
       no_confirmation instructions: Didn't receive confirmation instructions?
-      do_not_share_email_html: "We do not share your email with anyone, but we do keep it on file. You can create a dedicated email address for this account with a privacy-conscious email host, such as <a href='https://proton.me/mail' target='_blank'>Proton Mail</a> or <a href='https://tuta.com/secure-email' target='_blank'>Tuta Mail</a>, if you prefer."
+      do_not_share_email_html: "Your email address will not be public, and we do not share it with anyone, but we do keep it on file. You can create a dedicated email address for this account with a privacy-conscious email host, such as <a href='https://proton.me/mail' target='_blank'>Proton Mail</a> or <a href='https://tuta.com/secure-email' target='_blank'>Tuta Mail</a>, if you prefer."
       confirmation_is_required:  "Email verification is required to use LittleSis, and a confirmation will be sent out after you submit this form."
       username_pattern_message: "Usernames must be at least 3 characters and start with a letter. Only letters, numbers, and underscores are allowed."
       public_username: "This is your public username. Any edits you do will be recorded with this name and visible to other LittleSis users. If you'd prefer the information you add to LittleSis be unconnected to other online accounts you have, choose a unique username."

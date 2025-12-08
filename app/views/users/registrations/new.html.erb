@@ -22,12 +22,6 @@
   <%= f.fields_for :user_profile do |profile_fields| %>
 
     <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
-      <%= profile_fields.label :name, t('vocab.name').capitalize, class: label_class %>
-      <%= profile_fields.text_field :name, class: input_class, required: true %>
-      <small><em><%= t('pages.join.name_and_email') %></em></small>
-    <% end %>
-
-    <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
       <%= f.label :email, 'Email', class: label_class %>
       <%= f.email_field :email, autofocus: true, required: true, class: input_class %>
       <small><em><%= t('pages.join.confirmation_is_required') %><br/><%= t('pages.join.do_not_share_email_html') %></em></small>
