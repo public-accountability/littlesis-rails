@@ -54,11 +54,9 @@
 // }
 
 trix-toolbar {
-    position: fixed;
+    position: relative;
     z-index: 1;
     background: white;
-    filter: drop-shadow(0 0.7rem 0.8rem lightgray);
-    padding: 1rem;
 
     .trix-button-group {
         margin-bottom: 0;
