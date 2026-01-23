@@ -2,7 +2,7 @@
   "name": "app",
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",
-    "@hotwired/turbo-rails": "^7.3.0",
+    "@hotwired/turbo-rails": "^8.0.21",
     "@popperjs/core": "^2.11.8",
     "@rails/actiontext": "^7.1.2",
     "base64-arraybuffer": "^1.0.2",
