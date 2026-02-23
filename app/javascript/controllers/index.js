@@ -13,6 +13,9 @@ application.register("admin-maps", AdminMapsController)
 import AdminUserActionsController from "./admin_user_actions_controller"
 application.register("admin-user-actions", AdminUserActionsController)
 
+import AnalyticsOptOutFirstTimeController from "./analytics_opt_out_first_time_controller"
+application.register("analytics-opt-out-first-time", AnalyticsOptOutFirstTimeController)
+
 import CarouselController from "./carousel_controller"
 application.register("carousel", CarouselController)
 
