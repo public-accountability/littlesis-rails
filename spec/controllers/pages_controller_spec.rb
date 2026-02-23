@@ -3,6 +3,9 @@ describe PagesController, type: :controller do
   it { is_expected.to route(:get, '/database/donate').to(action: :donate) }
   it { is_expected.to route(:get, '/database/about').to(action: :about) }
   it { is_expected.to route(:get, '/database/disclaimer').to(action: :disclaimer) }
+  it { is_expected.to route(:get, '/database/terms_of_use').to(action: :terms_of_use) }
+  it { is_expected.to route(:get, '/database/privacy_policy').to(action: :privacy_policy) }
+  it { is_expected.to route(:get, '/database/cookie_policy').to(action: :cookie_policy) }
   it { is_expected.not_to route(:get, '/bad_page').to(action: :display) }
   it { is_expected.to route(:get, '/pages/new').to(action: :new) }
   it { is_expected.to route(:get, '/pages/666').to(action: :show, id: '666') }

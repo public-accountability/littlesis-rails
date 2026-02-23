@@ -380,6 +380,9 @@ LittleSis::Application.routes.draw do
   # redirect pages to /database
   get "/newsletter", to: redirect('/database/newsletter', status: 302)
   get "/disclaimer", to: redirect('/database/disclaimer', status: 302)
+  get "/terms_of_use", to: redirect('/database/terms_of_use', status: 302)
+  get "/privacy_policy", to: redirect('/database/privacy_policy', status: 302)
+  get "/cookie_policy", to: redirect('/database/cookie_policy', status: 302)
   get "/about", to: redirect('/database/about', status: 302)
   get "/donate", to: redirect('/database/donate', status: 302)
   get "/swamped", to: redirect('/database/swamped', status: 302)
@@ -392,6 +395,9 @@ LittleSis::Application.routes.draw do
     get "/" => 'home#index'
     get "/newsletter" => "pages#newsletter"
     get "/disclaimer" => "pages#disclaimer"
+    get "/terms_of_use" => "pages#terms_of_use"
+    get "/privacy_policy" => "pages#privacy_policy"
+    get "/cookie_policy" => "pages#cookie_policy"
     get "/about" => "pages#about"
     get "/donate" => "pages#donate"
     get "/swamped" => "pages#swamped"

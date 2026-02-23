@@ -8,7 +8,7 @@ module Pages
   end
 
   LOCALES = %i[en es].freeze
-  PAGES = %i[disclaimer about].freeze
+  PAGES = %i[disclaimer terms_of_use privacy_policy cookie_policy about].freeze
 
   HTML = PAGES.each_with_object({}) do |page, h|
     h[page] = {}
