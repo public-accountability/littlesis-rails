@@ -66,6 +66,24 @@ class PagesController < ApplicationController
     render :page
   end
 
+  def terms_of_use
+    @title = I18n.locale == :es ? 'Terms of Use' : 'Terms of Use'
+    @content = Pages.get(:terms_of_use, I18n.locale)
+    render :page
+  end
+
+  def privacy_policy
+    @title = I18n.locale == :es ? 'Privacy Policy' : 'Privacy Policy'
+    @content = Pages.get(:privacy_policy, I18n.locale)
+    render :page
+  end
+
+  def cookie_policy
+    @title = I18n.locale == :es ? 'Cookie Policy' : 'Cookie Policy'
+    @content = Pages.get(:cookie_policy, I18n.locale)
+    render :page
+  end
+
   def about
     @title = I18n.locale == :es ? 'Sobre' : 'About'
     @content = Pages.get(:about, I18n.locale)
