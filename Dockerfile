@@ -8,8 +8,10 @@ RUN apt-get update && apt-get upgrade -y && apt-get -y --no-install-recommends i
     libmagickwand-dev libpq-dev libsqlite3-dev libpng-dev libsodium-dev libmariadbd-dev
 
 # maticore
-RUN curl "https://repo.manticoresearch.com/manticore-repo.noarch.deb" >  /tmp/manticore-repo.noarch.deb  && dpkg -i /tmp/manticore-repo.noarch.deb && apt-get update
-RUN apt-get -y install manticore || apt-get -y install manticore
+RUN curl "https://repo.manticoresearch.com/manticore-repo.noarch.deb" >  /tmp/manticore-repo.noarch.deb \
+    && dpkg -i /tmp/manticore-repo.noarch.deb \
+    && apt-get update \
+    && apt-get -y install manticore
 
 # firefox-esr, chromium
 RUN if [ $RAILS_ENV != "production" ]; then \
