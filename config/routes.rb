@@ -14,6 +14,7 @@ LittleSis::Application.routes.draw do
   get '/home' => 'home#index'
   get '/flag' => 'home#flag'
   post '/flag' => 'home#flag'
+  get "/analytics_opt_out" => "home#analytics_opt_out"
   post '/home/newsletter_signup' => 'home#newsletter_signup'
   post '/home/pai_signup(/:tag)' => 'home#pai_signup'
   get '/test' => 'home#test'
@@ -383,6 +384,7 @@ LittleSis::Application.routes.draw do
   get "/terms_of_use", to: redirect('/database/terms_of_use', status: 302)
   get "/privacy_policy", to: redirect('/database/privacy_policy', status: 302)
   get "/cookie_policy", to: redirect('/database/cookie_policy', status: 302)
+  get "/analytics_opt_out", to: redirect('/database/analytics_opt_out', status: 302)
   get "/about", to: redirect('/database/about', status: 302)
   get "/donate", to: redirect('/database/donate', status: 302)
   get "/swamped", to: redirect('/database/swamped', status: 302)
