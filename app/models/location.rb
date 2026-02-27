@@ -78,6 +78,7 @@ class Location < ApplicationRecord
                   'Germany' => 'DE',
                   'Ghana' => 'GH',
                   'Greece' => 'GR',
+                  'Greenland' => 'GL',
                   'Grenada' => 'GD',
                   'Guatemala' => 'GT',
                   'Guinea' => 'GN',
