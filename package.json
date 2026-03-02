@@ -32,6 +32,6 @@
     "test": "mocha spec/javascripts"
   },
   "devDependencies": {
-    "mocha": "^10"
+    "mocha": "^11"
   }
 }
