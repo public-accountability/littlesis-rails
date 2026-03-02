@@ -32,6 +32,7 @@
     "test": "mocha spec/javascripts"
   },
   "devDependencies": {
-    "mocha": "^11"
+    "mocha": "^11",
+    "serialize-javascript": "^7"
   }
 }
