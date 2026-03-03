@@ -7,8 +7,8 @@
    # Provides some nice helpers for multiple system compatibility
    flake-utils.url = "github:numtide/flake-utils";
    # Specify the nixpkgs for our particular ruby version
-   # https://lazamar.co.uk/nix-versions/?channel=nixpkgs-unstable&package=ruby
-   nixpkgs.url = "github:nixos/nixpkgs/e6f23dc08d3624daab7094b701aa3954923c6bbb";
+   # https://search.nixos.org/packages?channel=25.11&query=nodejs
+   nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
   };
 
   outputs = { self, nixpkgs, flake-utils, flake-compat }:
@@ -27,6 +27,7 @@
             # Packages required for development.
             buildInputs = [
               ruby
+              nodejs
             ];
           };
         });
