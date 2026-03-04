@@ -15,7 +15,6 @@ module FormHcaptcha
     return if ActiveModel::Type::Boolean.new.cast(response_data['success'])
 
     flash[:alert] = 'hCaptcha could not be verified. Please try again.'
-    redirect_to request.referrer || root_path
 
   end
 end
