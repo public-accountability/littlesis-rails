@@ -76,9 +76,7 @@
     <% end %>
 
     <%= bs_row_column(row_class: 'row mb-2', column_class: 'col-12 col-md-10 col-lg-8') do %>
-      <%= fields_for :math_captcha do |f2| %>
-        <%= render partial: 'math_captcha', locals: { f: f2, label_class: label_class, input_class: input_class } %>
-      <% end %>
+      <%= render partial: '/application/hcaptcha', locals: { f: f, label_class: label_class, input_class: input_class } %>
     <% end %>
 
     <%= bs_row_column(row_class: 'row mb-2 mt-2', column_class: 'col-12 col-md-10 col-lg-8') do %>

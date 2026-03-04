@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  include FormHcaptcha
+
   # GET /join
   def new
     super do |user|
@@ -10,12 +12,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /join
   def create
-    if NewUserForm.new(math_captcha_params).valid?
+    if verify_hcaptcha(params)
       super do |user|
         flash.now[:errors] = user.errors.full_messages unless user.persisted? && user.valid?
       end
     else
-      flash.now[:errors] = ['Failed to solve the math problem']
+      flash.now[:errors] = ['Failed to complete hCaptcha']
       self.resource = resource_class.new sign_up_params
       respond_with_navigational(resource) { render :new }
     end
@@ -93,16 +95,5 @@ class Users::RegistrationsController < Devise::RegistrationsController
       .require(:settings)
       .permit(*UserSettings::DEFAULTS.keys)
       .to_h
-  end
-
-  def math_captcha_params
-    params
-      .require(:math_captcha)
-      .permit(
-        :math_captcha_first,
-        :math_captcha_second,
-        :math_captcha_operation,
-        :math_captcha_answer
-    )
   end
 end
