@@ -32,7 +32,6 @@ feature "Signing up for an account", type: :feature do
     fill_in 'user_username', :with => user_info.username
     fill_in 'user_password', :with => user_info.password
     fill_in 'user_password_confirmation', :with => user_info.password
-    fill_in_math_captcha('math_captcha')
     find(:css, "#terms_of_use").set(true)
     fill_in 'about-you-input', :with => user_info.about_you
 
@@ -57,7 +56,6 @@ feature "Signing up for an account", type: :feature do
     find(:css, "#terms_of_use").set(true)
     fill_in 'about-you-input', :with => user_info.about_you
     fill_in 'user_user_profile_attributes_location', :with => location
-    fill_in_math_captcha('math_captcha')
 
     click_button 'Sign up'
 
@@ -83,7 +81,6 @@ feature "Signing up for an account", type: :feature do
       fill_in 'user_password_confirmation', :with => user_info.password
       find(:css, "#terms_of_use").set(true)
       fill_in 'about-you-input', :with => user_info.about_you
-      fill_in_math_captcha('math_captcha')
 
       click_button 'Sign up'
 
@@ -96,23 +93,24 @@ feature "Signing up for an account", type: :feature do
     end
   end
 
-  scenario 'answering the math problem incorrectly' do
-    counts = [User.count, UserProfile.count]
+  # TODO Can we replace this test?
+  #scenario 'answering the math problem incorrectly' do
+  #  counts = [User.count, UserProfile.count]
 
-    fill_in 'user_email', :with => user_info.email
-    fill_in 'user_username', :with => user_info.username
-    fill_in 'user_password', :with => user_info.password
-    fill_in 'user_password_confirmation', :with => user_info.password
-    fill_in 'math_captcha[math_captcha_answer]', with: 10_000
+  #  fill_in 'user_email', :with => user_info.email
+  #  fill_in 'user_username', :with => user_info.username
+  #  fill_in 'user_password', :with => user_info.password
+  #  fill_in 'user_password_confirmation', :with => user_info.password
+  #  fill_in 'math_captcha[math_captcha_answer]', with: 10_000
 
-    find(:css, "#terms_of_use").set(true)
-    fill_in 'about-you-input', :with => user_info.about_you
+  #  find(:css, "#terms_of_use").set(true)
+  #  fill_in 'about-you-input', :with => user_info.about_you
 
-    click_button 'Sign up'
+  #  click_button 'Sign up'
 
-    expect([User.count, UserProfile.count]).to eq counts
-    expect(page.status_code).to eq 200
+  #  expect([User.count, UserProfile.count]).to eq counts
+  #  expect(page.status_code).to eq 200
 
-    expect(page).to have_css('.alert-danger', text: 'Failed to solve the math problem')
-  end
+  #  expect(page).to have_css('.alert-danger', text: 'Failed to solve the math problem')
+  #end
 end
