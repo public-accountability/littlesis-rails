@@ -17,7 +17,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
         flash.now[:errors] = user.errors.full_messages unless user.persisted? && user.valid?
       end
     else
-      flash.now[:errors] = ['Failed to complete hCaptcha']
+      flash.now[:errors] = 'hCaptcha could not be verified. Please try again.'
       self.resource = resource_class.new sign_up_params
       respond_with_navigational(resource) { render :new }
     end

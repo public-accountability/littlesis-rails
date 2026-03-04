@@ -10,12 +10,9 @@ module FormHcaptcha
     res = Net::HTTP.post_form(uri, 'secret' => Rails.application.config.littlesis.hcaptcha_secret_key,
                                    'response' => response[:'g-recaptcha-response'])
 
-    response_data = JSON.parse(res.body)
+    res_body = JSON.parse(res.body)
 
-    return if ActiveModel::Type::Boolean.new.cast(response_data['success'])
-
-    flash[:alert] = 'hCaptcha could not be verified. Please try again.'
-
+    return ActiveModel::Type::Boolean.new.cast(res_body['success'])
   end
 end
 
