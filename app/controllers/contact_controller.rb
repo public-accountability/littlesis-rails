@@ -3,7 +3,7 @@
 class ContactController < ApplicationController
   include FormHcaptcha
 
-  before_action -> { user_signed_in? ? true : verify_hcaptcha(params) }, only: :create
+  before_action :verify_captcha_for_guests, only: :create
 
   def index
     @contact = ContactForm.new(
@@ -22,6 +22,15 @@ class ContactController < ApplicationController
     else
       flash.now[:errors] = @contact.errors.full_messages
       render template: 'contact/index'
+    end
+  end
+
+  private def verify_captcha_for_guests
+    return if user_signed_in?
+
+    unless verify_hcaptcha(params)
+      flash.now[:errors] = 'hCaptcha could not be verified. Please try again.'
+      redirect_to action: :index
     end
   end
 
