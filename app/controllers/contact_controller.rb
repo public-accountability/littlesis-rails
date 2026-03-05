@@ -29,7 +29,7 @@ class ContactController < ApplicationController
     return if user_signed_in?
 
     unless verify_hcaptcha(params)
-      flash.now[:errors] = 'hCaptcha could not be verified. Please try again.'
+      flash[:errors] = 'hCaptcha could not be verified. Please try again.'
       redirect_to action: :index
     end
   end
