@@ -17,6 +17,7 @@ gem 'zeitwerk'
 gem 'rexml'
 gem 'kramdown'
 gem 'logger'
+gem 'connection_pool', '<3'
 
 # Rack middleware
 gem 'rack-rewrite', '~> 1.5.1'
