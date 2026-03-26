@@ -5,9 +5,9 @@ feature "asking for things that don't exist", type: :feature do
     expect { visit entity_path(entity) }.not_to raise_error
   end
 
-  scenario 'returns a 404 for non-HTML formats' do
+  scenario 'returns a 500 for non-HTML formats' do
     expect { visit '/wombat.coffin' }.not_to raise_error
-    expect(page).to have_http_status 404
+    expect(page).to have_http_status 500
   end
 
   scenario "returns a 404 and custom error page for bad URLs with HTML format" do
