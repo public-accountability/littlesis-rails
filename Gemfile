@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 7.1.4'
+gem 'rails', '~> 7.2.3.1'
 
 gem 'pg'
 gem 'mysql2', '~> 0.5.2'
