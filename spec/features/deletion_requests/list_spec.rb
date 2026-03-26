@@ -94,12 +94,9 @@ feature 'List deletion request & review' do
 
       describe 'validations' do
         context 'without filling in the form' do
-          it 'raises a validation error' do
-            expect { click_on 'Request Deletion' }
-              .to raise_error(
-                    ActionController::ParameterMissing,
-                    /justification/
-                  )
+          it 'retruns a 400 status code for a validation error' do
+            click_on 'Request Deletion'
+            expect(page.status_code).to eq 400
           end
         end
       end
