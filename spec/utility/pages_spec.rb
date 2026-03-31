@@ -1,6 +1,6 @@
 describe Pages do
   specify do
-    expect(Pages::HTML.keys).to eq %w[disclaimer terms_of_use privacy_policy cookie_policy about]
+    expect(Pages::HTML.keys).to eq %w[disclaimer terms_of_use privacy_policy cookie_notice about]
   end
 
   specify do
@@ -19,8 +19,8 @@ describe Pages do
   end
 
   specify do
-    expect(Pages.get(:cookie_policy, :en)[0..2]).to eq '<h1'
-    expect(Pages.get(:cookie_policy, :es)[0..2]).to eq '<h1'
+    expect(Pages.get(:cookie_notice, :en)[0..2]).to eq '<h1'
+    expect(Pages.get(:cookie_notice, :es)[0..2]).to eq '<h1'
   end
 
   specify do
@@ -36,6 +36,6 @@ describe Pages do
   end
 
   specify do
-    expect(Pages.get(:cookie_policy, :en)).to eq Pages.get(:cookie_policy, :pl)
+    expect(Pages.get(:cookie_notice, :en)).to eq Pages.get(:cookie_notice, :pl)
   end
 end
