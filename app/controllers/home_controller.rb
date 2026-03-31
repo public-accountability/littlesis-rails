@@ -4,7 +4,7 @@ class HomeController < ApplicationController
   include SpamHelper
 
   before_action :authenticate_user!,
-                except: [:dismiss, :index, :flag, :token, :newsletter_signup, :pai_signup, :test]
+                except: [:dismiss, :index, :flag, :token, :newsletter_signup, :pai_signup, :test, :analytics_opt_out]
 
   skip_before_action :verify_authenticity_token, only: [:pai_signup]
 
@@ -96,6 +96,9 @@ class HomeController < ApplicationController
 
   def test
     head :ok
+  end
+
+  def analytics_opt_out
   end
 
   private
