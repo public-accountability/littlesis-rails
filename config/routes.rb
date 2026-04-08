@@ -383,7 +383,7 @@ LittleSis::Application.routes.draw do
   get "/disclaimer", to: redirect('/database/disclaimer', status: 302)
   get "/terms_of_use", to: redirect('/database/terms_of_use', status: 302)
   get "/privacy_policy", to: redirect('/database/privacy_policy', status: 302)
-  get "/cookie_notice", to: redirect('/database/cookie_notice', status: 302)
+  get "/cookies_notice", to: redirect('/database/cookies_notice', status: 302)
   get "/analytics_opt_out", to: redirect('/database/analytics_opt_out', status: 302)
   get "/about", to: redirect('/database/about', status: 302)
   get "/donate", to: redirect('/database/donate', status: 302)
@@ -399,7 +399,7 @@ LittleSis::Application.routes.draw do
     get "/disclaimer" => "pages#disclaimer"
     get "/terms_of_use" => "pages#terms_of_use"
     get "/privacy_policy" => "pages#privacy_policy"
-    get "/cookie_notice" => "pages#cookie_notice"
+    get "/cookies_notice" => "pages#cookies_notice"
     get "/about" => "pages#about"
     get "/donate" => "pages#donate"
     get "/swamped" => "pages#swamped"
