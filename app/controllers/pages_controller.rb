@@ -78,9 +78,9 @@ class PagesController < ApplicationController
     render :page
   end
 
-  def cookie_notice
-    @title = I18n.locale == :es ? 'Cookie Policy' : 'Cookie Policy'
-    @content = Pages.get(:cookie_notice, I18n.locale)
+  def cookies_notice
+    @title = I18n.locale == :es ? 'Cookies Policy' : 'Cookies Policy'
+    @content = Pages.get(:cookies_notice, I18n.locale)
     render :page
   end
 
