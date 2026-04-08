@@ -74,8 +74,8 @@ GEM
       minitest (>= 5.1, < 6)
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
-    addressable (2.8.6)
-      public_suffix (>= 2.0.2, < 6.0)
+    addressable (2.9.0)
+      public_suffix (>= 2.0.2, < 8.0)
     ast (2.4.2)
     backport (1.2.0)
     base64 (0.3.0)
@@ -252,7 +252,7 @@ GEM
     psych (5.3.1)
       date
       stringio
-    public_suffix (5.0.4)
+    public_suffix (7.0.5)
     puma (6.4.3)
       nio4r (~> 2.0)
     raabro (1.4.0)
