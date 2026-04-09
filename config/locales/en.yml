@@ -85,6 +85,7 @@ en:
     citations: citations
     click: click
     confirmation: confirmation
+    cookies_notice: Cookies Notice
     countries: countries
     create: create
     current: current
@@ -125,6 +126,7 @@ en:
     position: position
     prefix: prefix
     previous: previous
+    privacy_policy: Privacy Policy
     professional: professional
     reference: reference
     region: region
@@ -139,6 +141,7 @@ en:
     suffix: suffix
     summary: summary
     tags: tags
+    terms_of_use: Terms of Use
     toolkit: toolkit
     transaction: transaction
     types: types

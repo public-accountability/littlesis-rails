@@ -52,6 +52,9 @@ class Navmenu
        [t('vocab.help').capitalize, '/help'],
        ['API', '/api'],
        [t('vocab.disclaimer'), '/database/disclaimer'],
+       [t('vocab.privacy_policy'), '/database/privacy_policy'],
+       [t('vocab.terms_of_use'), '/database/terms_of_use'],
+       [t('vocab.cookies_notice'), '/database/cookies_notice'],
        [t('phrases.contact_us').titleize, '/database/contact'],
        [t('vocab.donate').capitalize, '/database/donate'],
        ["Newsletter", '/database/newsletter']
