@@ -30,7 +30,8 @@
     "build-watch": "bin/esbuild --watch",
     "build-analyze": "esbuild app/javascript/*.* --outdir=/tmp --bundle --minify --analyze",
     "test": "mocha spec/javascripts",
-    "audit:ci": "better-npm-audit audit"
+    "audit:report": "better-npm-audit audit",
+    "audit:ci": "better-npm-audit audit --level high"
   },
   "devDependencies": {
     "better-npm-audit": "^3.11.0",
