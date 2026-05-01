@@ -32,6 +32,7 @@
     "test": "mocha spec/javascripts"
   },
   "devDependencies": {
+    "better-npm-audit": "^3.11.0",
     "mocha": "^11",
     "serialize-javascript": "^7"
   }
