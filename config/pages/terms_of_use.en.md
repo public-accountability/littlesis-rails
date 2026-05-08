@@ -4,7 +4,7 @@ Last Modified: March 31, 2026
 
 ### Acceptance of the Terms of Use
  
-These terms of use are entered into by and between You and Public Accountability Initiative (”PAI,” “LittleSis,” “we,” or “us”). The following terms and conditions, together with our [Privacy Policy](https://dev.littlesis.org/privacy_policy), which are expressly incorporated herein by reference (collectively, the “Terms of Use”), govern your access to and use of the littlesis.org domain, any content, websites, functionality, and services offered on or through those domains (including without limitation the [LittleSis Database](https://littlesis.org/database), the [LittleSis API](https://littlesis.org/api)), our Chrome browser extension, and any other online services provided by Company that expressly incorporate these terms (collectively the “Services”). These Terms of Use do not apply to any other websites or domains operated by PAI.  These Terms of Use are in addition to any other written agreement between us, provided that to the extent there is a conflict or inconsistency between these Terms of Use and such other agreement, the latter shall have precedence. 
+These terms of use are entered into by and between You and Public Accountability Initiative (”PAI,” “LittleSis,” “we,” or “us”). The following terms and conditions, together with our [Privacy Policy](https://littlesis.org/privacy_policy), which are expressly incorporated herein by reference (collectively, the “Terms of Use”), govern your access to and use of the littlesis.org domain, any content, websites, functionality, and services offered on or through those domains (including without limitation the [LittleSis Database](https://littlesis.org/database), the [LittleSis API](https://littlesis.org/api)), our Chrome browser extension, and any other online services provided by Company that expressly incorporate these terms (collectively the “Services”). These Terms of Use do not apply to any other websites or domains operated by PAI.  These Terms of Use are in addition to any other written agreement between us, provided that to the extent there is a conflict or inconsistency between these Terms of Use and such other agreement, the latter shall have precedence. 
 
 Please read the Terms of Use carefully before you start to use the Services. By using the Services, you accept and agree to be bound and abide by these Terms of Use, including our Privacy Policy. If you do not want to agree to these Terms of Use, you must not access or use the Services.
 
@@ -170,7 +170,7 @@ We may update the Services, including the content on the Services, from time to 
 
 ### Information About You and Your Visits to the Services
 
-All information we collect on the Services is subject to our [Privacy Policy](https://dev.littlesis.org/privacy_policy). By using the Services, you consent to all actions taken by us with respect to your information in compliance with the Privacy Policy.
+All information we collect on the Services is subject to our [Privacy Policy](https://littlesis.org/privacy_policy). By using the Services, you consent to all actions taken by us with respect to your information in compliance with the Privacy Policy.
 
 ### Links from the Services
 

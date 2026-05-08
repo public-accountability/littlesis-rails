@@ -4,7 +4,7 @@ Last Updated: March 31, 2026
 
 This Privacy Policy (“Policy”) explains the information collection, use, and sharing practices of Public Accountability Initiative (“PAI,” “we,” “us,” and “our”).
 
-This policy describes the types of information we may collect about you or that you may provide when accessing and/or using this site and any other online services provided by PAI that expressly incorporate these terms (collectively, the “Services”), whether as a guest or registered user, and our practices for collecting, using, maintaining, protecting, and disclosing that information. Use of the Services is subject to our [Terms of Use](https://dev.littlesis.org/terms_or_use), which incorporates this Privacy Policy.
+This policy describes the types of information we may collect about you or that you may provide when accessing and/or using this site and any other online services provided by PAI that expressly incorporate these terms (collectively, the “Services”), whether as a guest or registered user, and our practices for collecting, using, maintaining, protecting, and disclosing that information. Use of the Services is subject to our [Terms of Use](https://littlesis.org/terms_or_use), which incorporates this Privacy Policy.
 
 This policy applies to information we collect through the Services. It does not apply to information collected by any third party, including through any application or content (including third-party platforms, payment processors or advertisers) that may link to or be accessible from or on the Services.
 
@@ -62,7 +62,7 @@ We and our service providers also collect data about your use of the Services th
 
 Please note that you can change your settings to notify you when a cookie is being set or updated, or to block cookies altogether. Please consult the “Help” section of your browser for more information (e.g., Internet Explorer; Google Chrome; Mozilla Firefox; or Apple Safari). Please note that by blocking any or all cookies, you may not have access to certain features or offerings of the Services.
 
-For more information about how we use cookies, please see our [Cookies Notice](https://dev.littlesis.org/cookie_notice).
+For more information about how we use cookies, please see our [Cookies Notice](https://littlesis.org/cookie_notice).
 
 #### Information We Collect from Third Parties
 
