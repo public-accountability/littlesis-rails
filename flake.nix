@@ -28,6 +28,7 @@
             buildInputs = [
               ruby
               nodejs
+              bundler-audit
             ];
           };
         });
