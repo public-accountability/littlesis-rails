@@ -29,6 +29,12 @@
               ruby
               nodejs
               bundler-audit
+              libyaml
+              pkg-config
+              libpq
+              mysql80
+              openssl
+              zstd
             ];
           };
         });
