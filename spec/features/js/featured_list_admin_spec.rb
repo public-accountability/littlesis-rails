@@ -19,7 +19,7 @@ else
 
         visit "/"
 
-        find("#navmenu-dropdown-Explore").click
+        find("#littlesisNavbarContent #navmenu-dropdown-Explore").click
 
         within '.dropdown-menu.show' do
           click_on 'Lists'
