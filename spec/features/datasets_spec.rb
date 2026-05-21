@@ -17,7 +17,7 @@ describe 'Datasets' do
 
     it 'shows datatables' do
       expect(page.status_code).to eq 200
-      page_has_selector 'table.datagrid'
+      page_has_selector 'table.datagrid-table'
     end
   end
 end
