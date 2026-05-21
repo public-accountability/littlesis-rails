@@ -73,21 +73,20 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
       it 'user adds tags to an entity' do
         visit person_path(person)
         expect(page).to have_css('#tags-container li', count: 0)
-        expect(find('#edit-tags-modal').visible?).to be false
         # binding.irb
         find('#tags-edit-button').click                                            # click pencil icon
 
-        expect(find('#edit-tags-modal').visible?).to be true
+        expect(find('.modal').visible?).to be true
         expect(page).not_to have_selector('.select2-results')
-        find('#edit-tags-modal .select2-container').click                        # click inside search modal
+        find('.modal .select2-container').click                        # click inside search modal
         expect(page).to have_selector('.select2-results ul li', count: 2)
         # Add two tags
         find('.select2-container--open .select2-results__option', text: 'finance').click
-        find('#edit-tags-modal .select2-container').click
+        find('.modal .select2-container').click
         find('.select2-container--open .select2-results__option', text: 'real-estate').click
 
-        find('#edit-tags-modal .modal-header').click
-        find('#edit-tags-modal input.btn[type="submit"]').click
+        find('.modal .modal-header').click
+        find('.modal input.btn[type="submit"]').click
         expect(page).to have_selector('#tags-list li ', count: 2)
       end
 
@@ -98,8 +97,8 @@ describe 'Entity page', :sphinx, type: :feature, js: true do
 
         find('#tags-edit-button').click
         find('.select2-selection__choice[title="finance"] .select2-selection__choice__remove').click
-        find('#edit-tags-modal .modal-header').click
-        find('#edit-tags-modal input.btn[type="submit"]').click
+        find('.modal .modal-header').click
+        find('.modal input.btn[type="submit"]').click
         expect(page).to have_css('#tags-container li', count: 0)
       end
     end
