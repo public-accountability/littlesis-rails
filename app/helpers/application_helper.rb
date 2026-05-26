@@ -92,6 +92,11 @@ module ApplicationHelper
     end
   end
 
+  def dark_mode?
+    user_signed_in? &&
+      current_user.settings.dark_mode
+  end
+
   def show_stars?
     user_signed_in? &&
       current_user.role.include?(:star_relationship) &&

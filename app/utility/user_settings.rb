@@ -5,6 +5,7 @@ class UserSettings
   DEFAULTS = {
     default_tag: :oligrapher,
     language: :en,
+    dark_mode: false,
     show_stars: false,
     oligrapher_beta: false
   }.freeze
@@ -12,6 +13,7 @@ class UserSettings
   CONVERTERS = Hash.new(->(x) { x }).tap do |hash|
     hash[:default_tag] = ->(x) { x.to_sym }
     hash[:language] = ->(x) { x.to_sym }
+    hash[:dark_mode] = ->(x) { ActiveModel::Type::Boolean.new.cast(x) }
     hash[:show_stars] = ->(x) { ActiveModel::Type::Boolean.new.cast(x) }
     hash[:oligrapher_beta] = ->(x) { ActiveModel::Type::Boolean.new.cast(x) }
   end.with_indifferent_access.freeze
