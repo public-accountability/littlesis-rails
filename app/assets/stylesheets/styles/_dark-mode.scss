@@ -1,0 +1,44 @@
+$dark_mode_red: #D64545;
+$dark_mode_red_hover: #E85858;
+
+html[data-bs-theme="dark"] {
+
+  #littlesis-body {
+    h1, h2, h3, h4 {
+      color: $dark_mode_red;
+    }
+
+    a {
+      color: $dark_mode_red;
+
+      &:hover {
+        color: $dark_mode_red_hover;
+      }
+    }
+
+    .btn-primary {
+      background-color: $dark_mode_red;
+    }
+
+    #tag-show-container #tagable-lists .tagable-list .tagable-list-items .tagable-list-item .tagable-list-item-sort-info {
+      background-color: #2B3035;
+    }
+
+    #oligrapher-container {
+      #oligrapher-graph-container {
+        #oligrapher-header-right-wrapper #toggle-action-menu {
+          color: #dee2e6;
+        }
+        #oligrapher-zoomcontrol button {
+          background-color: #212529;
+        }
+        a {
+          text {
+            color: #dee2e6!important;
+          }
+        }
+      }
+    }
+  }
+}
+
