@@ -1,7 +1,13 @@
+$bs_dark_mode_text_color: #DEE2E6;
+$bs_dark_mode_background_color: #212529;
 $dark_mode_red: #D64545;
 $dark_mode_red_hover: #E85858;
 
 html[data-bs-theme="dark"] {
+
+  .select2-dropdown {
+    background-color: $bs_dark_mode_background_color;
+  }
 
   #littlesis-body {
     h1, h2, h3, h4 {
@@ -18,25 +24,82 @@ html[data-bs-theme="dark"] {
 
     .btn-primary {
       background-color: $dark_mode_red;
+      color: $bs_dark_mode_text_color;
+    }
+
+    .datagrid-form,
+    .datagrid-table th {
+      background-color: $bs_dark_mode_background_color;
+    }
+
+    // Entities
+    #entity-profile-page-header {
+      #action-buttons a,
+      #action-buttons form button {
+        color: $bs_dark_mode_text_color;
+        background-color: $bs_dark_mode_background_color;
+      }
+    } 
+    #entity-profile-page {
+      .profile-page-tabs a,
+      #entity-edited-history {
+        color: $bs_dark_mode_text_color;
+      }
+      .profile-page-grouped-link:hover {
+        background-color: #323539;
+      }
+    }
+
+
+    // Lists
+    .bg-info {
+      background-color: $bs_dark_mode_background_color!important;
+    }
+    .list-access-level-help {
+      color: $bs_dark_mode_text_color;
+    }
+    #datatable-filters {
+      background-color: $bs_dark_mode_background_color;
+    }
+    #list-tab-menu li.tab a,
+    #datatable-filters a.btn {
+      color: $bs_dark_mode_text_color;
     }
 
     #tag-show-container #tagable-lists .tagable-list .tagable-list-items .tagable-list-item .tagable-list-item-sort-info {
       background-color: #2B3035;
     }
 
+    // Oligrapher
     #oligrapher-container {
+      #toggle-action-menu svg {
+        fill: $bs_dark_mode_text_color!important;
+      }
       #oligrapher-graph-container {
-        #oligrapher-header-right-wrapper #toggle-action-menu {
-          color: #dee2e6;
-        }
         #oligrapher-zoomcontrol button {
-          background-color: #212529;
+          background-color: $bs_dark_mode_background_color;
         }
-        a {
-          text {
-            color: #dee2e6!important;
-          }
+        text[fill] {
+          fill: #999!important;
         }
+        text[fill]:hover {
+          fill: $bs_dark_mode_text_color!important;
+        }
+        rect[fill] {
+          fill: none!important;
+        }
+        path.edge-path-selected {
+          stroke: $bs_dark_mode_text_color!important;
+        }
+      }
+      .annotation-list-item,
+      .oligrapher-annotation-highlighting-tip,
+      .oligrapher-user-message,
+      .ck-content.ck-editor__editable {
+        background-color: $bs_dark_mode_background_color;
+      }
+      #oligrapher-annotation-form-header {
+        color: $bs_dark_mode_text_color;
       }
     }
   }
