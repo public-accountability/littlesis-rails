@@ -102,6 +102,11 @@ html[data-bs-theme="dark"] {
         color: $bs_dark_mode_text_color;
       }
     }
+
+    // Admin
+    #user-request-description {
+      background-color: $bs_dark_mode_background_color;
+    }
   }
 }
 
