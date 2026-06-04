@@ -1,7 +1,7 @@
 $bs_dark_mode_text_color: #DEE2E6;
 $bs_dark_mode_background_color: #212529;
-$dark_mode_red: #D64545;
-$dark_mode_red_hover: #E85858;
+$dark_mode_link: #D4AF37;
+$dark_mode_link_hover: #E8C547;
 
 html[data-bs-theme="dark"] {
 
@@ -11,20 +11,24 @@ html[data-bs-theme="dark"] {
 
   #littlesis-body {
     h1, h2, h3, h4 {
-      color: $dark_mode_red;
+      color: $dark_mode_link;
     }
 
     a {
-      color: $dark_mode_red;
+      color: $dark_mode_link;
 
       &:hover {
-        color: $dark_mode_red_hover;
+        color: $dark_mode_link_hover;
       }
     }
 
-    .btn-primary {
-      background-color: $dark_mode_red;
+    #footer {
       color: $bs_dark_mode_text_color;
+    }
+
+    .btn-primary {
+      background-color: $dark_mode_link;
+      color: $bs_dark_mode_background_color;
     }
 
     .datagrid-form,
