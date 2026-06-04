@@ -22,6 +22,10 @@ html[data-bs-theme="dark"] {
       }
     }
 
+    .littlesis_carousel .viewport {
+      background-color: $bs_dark_mode_background_color;
+    }
+
     #footer {
       color: $bs_dark_mode_text_color;
     }
