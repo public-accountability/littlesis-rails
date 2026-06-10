@@ -3,8 +3,12 @@
     "active": true,
     "notes": "CVE-2026-34043 serial-javascript.  This has been fixed in the main project module list, but not in the mocha subproject one. https://github.com/mochajs/mocha/pull/5873"
   },
-  "1115723": {
+  "1119440": {
     "active": true,
     "notes": "CVE-2026-34043 serial-javascript.  This has been fixed in the main project module list, but not in the mocha subproject one. https://github.com/mochajs/mocha/pull/5873"
+  },
+  "1112706": {
+    "active": true,
+    "notes": "CVE-2026-24001 jsdiff.  This has been fixed in the main project module list, but not in the mocha subproject one.  https://github.com/mochajs/mocha/issues/5781"
   }
 }
