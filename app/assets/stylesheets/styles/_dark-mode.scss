@@ -45,13 +45,6 @@ html[data-bs-theme="dark"] {
     }
 
     // Entities
-    #entity-profile-page-header {
-      #action-buttons a,
-      #action-buttons form button {
-        color: $bs_dark_mode_text_color;
-        background-color: $bs_dark_mode_background_color;
-      }
-    } 
     #entity-profile-page {
       .profile-page-tabs a,
       #entity-edited-history {

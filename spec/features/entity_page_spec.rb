@@ -178,7 +178,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       end
 
       it 'has action buttons' do
-        page_has_selector ".action-button", count: 3
+        page_has_selector ".btn-clear", count: 6
       end
     end
   end # end describe header
