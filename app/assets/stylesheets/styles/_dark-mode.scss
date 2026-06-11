@@ -34,6 +34,10 @@ html[data-bs-theme="dark"] {
       background-color: $dark_mode_link;
       color: $bs_dark_mode_background_color;
     }
+    .btn-clear {
+      background-color: $bs_dark_mode_background_color;
+      color: $dark_mode_link;
+    }
 
     .datagrid-form,
     .datagrid-table th {
@@ -55,6 +59,12 @@ html[data-bs-theme="dark"] {
       }
       .profile-page-grouped-link:hover {
         background-color: #323539;
+      }
+      .profile-page-grouped-link .profile-page-relationships span.more-relationships {
+        color: $dark_mode_link;
+      }
+      .tag {
+        color: $bs_dark_mode_text_color;
       }
     }
 
