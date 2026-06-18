@@ -30,7 +30,7 @@ gem 'paper_trail'
 
 # Pagination
 gem 'kaminari'
-gem 'good_job'
+gem "good_job", "~> 3.99"
 
 # Assets and images
 gem 'image_processing'
