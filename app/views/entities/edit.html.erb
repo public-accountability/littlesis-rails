@@ -57,7 +57,7 @@
 
   <% if @entity.person?  %>
     <%= f.fields_for :person do |person_form| %>
-      <% %i[name_first name_middle name_last name_prefix name_suffix].each do |attribute| %>
+      <% %i[name_prefix name_first name_middle name_last name_suffix].each do |attribute| %>
         <%= edit_entity_form_section(
           person_form.label(attribute, Person::DISPLAY_ATTRIBUTES[I18n.locale][attribute], class: label_class),
           person_form.text_field(attribute)
