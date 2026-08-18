@@ -53,7 +53,6 @@
       <% @entities.each do |entity| %>
         <div class="search-result-wrapper entity-search-result">
 	  <span class="search-result-link"><%= entity_link(entity) %></span> &nbsp;<em><%= highlight((entity.blurb or ""), params[:q]) %></em><br>
-	  <span class="entity-search-result-summary"><%= highlight(truncate((entity.summary or ""), length: 70), params[:q]) %></span>
         </div>
       <% end %>
     </div>

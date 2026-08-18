@@ -28,11 +28,6 @@
     f.text_field(:blurb, class: 'form-control')
   ) %>
 
-  <%= edit_entity_form_section(
-    f.label(:summary, t('vocab.summary').capitalize, class: label_class),
-    f.text_area(:summary, class: 'form-control', size: '40x6')
-  ) %>
-
   <% if @entity.org?  %>
     <%= edit_entity_form_section(
       f.label(:start_date, t('vocab.start_date').capitalize, class: label_class),

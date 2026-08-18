@@ -48,19 +48,4 @@ optional locals: hide_actions & hide_summary
       <%= render partial: 'entities/actions' %>
     <% end %>
   <% end %>
-
-  <% unless local_assigns[:hide_summary] %>
-    <% if @entity.summary.present? %>
-      <div class="row mt-2">
-        <div class="col-12 col-md-8">
-          <div id="profile-page-entity-summary-container" class="position-relative" data-controller="profile--entity-summary">
-            <p class="collapse" id="profile-page-entity-summary" aria-expanded="false">
-              <%= @entity.summary %>
-              <a role="button" class="collapsed" data-bs-toggle="collapse" href="#profile-page-entity-summary" aria-expanded="false" aria-controls="profile-page-entity-summary"></a>
-            </p>
-          </div>
-        </div>
-      </div>
-    <% end %>
-  <% end %>
 </div>
