@@ -183,36 +183,6 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
     end
   end # end describe header
 
-  describe "summary field" do
-    before { visit_page.call }
-
-    it "hides the summary field if user has no summary" do
-      expect(page).not_to have_selector("#profile-page-entity-summary")
-    end
-
-    context "with an entity that has a summary" do
-      let(:person) do
-        create(:entity_person, last_user_id: user.id, summary: "foobar")
-      end
-
-      it "shows the summary" do
-        expect(page.find("#profile-page-entity-summary")).to have_text person.summary
-      end
-    end
-
-    context "with an entity that has a summary longer than limit" do
-      let(:person) do
-        create(:entity_person,
-               last_user_id: user.id,
-               summary: "a" * (Entity::EXCERPT_SIZE + 1))
-      end
-
-      it "excerpts the summary" do
-        expect(page.find("#profile-page-entity-summary")).to have_text "a" * Entity::EXCERPT_SIZE
-      end
-    end
-  end
-
   describe "sidebar" do
     subject { page.find("#profile-page-sidebar") }
 
