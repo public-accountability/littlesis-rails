@@ -76,7 +76,12 @@ class Api::EntitiesController < Api::ApiController
   end
 
   def set_entity
-    @entity = Entity.unscoped.find(params[:id])
+    begin
+      @entity = Entity.unscoped.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      @entity = Entity.unscoped.where(qid: params[:id]).first
+      raise ActiveRecord::RecordNotFound if @entity.nil?
+    end
     raise Entity::EntityDeleted if @entity.is_deleted?
   end
 
