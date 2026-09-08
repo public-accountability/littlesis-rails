@@ -158,7 +158,7 @@ class EntitiesController < ApplicationController
   end
 
   def validate
-    essential_entity_attributes = params.require(:entity).permit(:name, :blurb, :primary_ext).to_h
+    essential_entity_attributes = params.require(:entity).permit(:name, :blurb, :primary_ext, :qid).to_h
     entity = Entity.new(essential_entity_attributes)
     entity.valid?
     render json: entity.errors.to_json
@@ -181,7 +181,7 @@ class EntitiesController < ApplicationController
   def create_bulk_payload
     params
       .require('data')
-      .map { |r| r.permit('attributes' => %w[name blurb primary_ext])['attributes'] }
+      .map { |r| r.permit('attributes' => %w[name blurb primary_ext qid])['attributes'] }
   end
 
   def add_extensions
@@ -196,7 +196,8 @@ class EntitiesController < ApplicationController
         name: @entity.name,
         description: @entity.blurb,
         url: @entity.url,
-        primary_ext: @entity.primary_ext
+        primary_ext: @entity.primary_ext,
+        qid: @entity.qid
       }
     }
   end

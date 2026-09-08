@@ -47,7 +47,7 @@ module Lists
       Utility.nilify_blank_vals(
         params
         .require(:entity)
-        .permit(:name, :blurb, :primary_ext)
+        .permit(:name, :blurb, :primary_ext, :qid)
         .to_h
         .merge(last_user_id: User.derive_last_user_id_from(current_user))
       ).with_indifferent_access
