@@ -10,7 +10,7 @@ class Entity
     def update_entity
       ParametersHelper.prepare_params(
         @controller_params.require(:entity).permit(
-          :name, :blurb, :summary, :website, :start_date, :end_date, :is_current,
+          :name, :blurb, :summary, :website, :start_date, :end_date, :is_current, :qid,
           person_attributes: [:name_first, :name_middle, :name_last, :name_prefix, :name_suffix, :name_nick, :birthplace, :gender_id, :id],
           public_company_attributes: [:ticker, :id],
           school_attributes: [:is_private, :id],
@@ -29,7 +29,7 @@ class Entity
       Utility.nilify_blank_vals(
         @controller_params
           .require(:entity)
-          .permit(:name, :blurb, :primary_ext)
+          .permit(:name, :blurb, :primary_ext, :qid)
           .to_h
           .merge(last_user_id: User.derive_last_user_id_from(current_user))
           .with_indifferent_access

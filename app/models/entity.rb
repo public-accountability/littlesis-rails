@@ -102,6 +102,7 @@ class Entity < ApplicationRecord
   validates :blurb, length: { maximum: 200 }
   validates :start_date, length: { maximum: 10 }, date: true
   validates :end_date, length: { maximum: 10 }, date: true
+  validates :qid, length: { maximum: 16 }
 
   before_validation :trim_name_whitespace, :set_last_user_id
   after_create :create_primary_alias, :create_primary_ext

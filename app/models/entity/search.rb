@@ -9,7 +9,8 @@ class Entity
         blurb: e.blurb,
         types: e.extension_ids[1..].map { |i| ExtensionDefinition::DISPLAY_NAMES.dig(I18n.locale, i) }.join(', '),
         slug: e.slug,
-        id: e.id }
+        id: e.id,
+        qid: e.qid }
     end
 
     # String, Hash -> ThinkingShinx::Search
