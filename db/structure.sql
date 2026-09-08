@@ -1232,7 +1232,8 @@ CREATE TABLE public.entities (
     last_user_id bigint,
     merged_id bigint,
     delta boolean DEFAULT true NOT NULL,
-    link_count bigint DEFAULT 0 NOT NULL
+    link_count bigint DEFAULT 0 NOT NULL,
+    qid text
 );
 
 
@@ -7695,6 +7696,7 @@ ALTER TABLE ONLY public.transactions
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260807214659'),
 ('20260618180933'),
 ('20260618180932'),
 ('20260618180931'),
