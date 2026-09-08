@@ -1,7 +1,6 @@
 ThinkingSphinx::Index.define :entity, :with => :real_time do
   indexes name, sortable: true
   indexes blurb
-  indexes summary
   indexes also_known_as_index, as: :aliases
   indexes person.name_nick, as: :name_nick
 
