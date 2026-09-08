@@ -3,8 +3,10 @@ ThinkingSphinx::Index.define :entity, :with => :real_time do
   indexes blurb
   indexes also_known_as_index, as: :aliases
   indexes person.name_nick, as: :name_nick
+  indexes qid, as: :qid_text
 
   has primary_ext, type: :string
+  has qid, as: :qid, type: :string
   has is_deleted, type: :boolean
   has last_user_id, type: :integer
   has updated_at, type: :timestamp
