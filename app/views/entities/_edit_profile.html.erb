@@ -117,9 +117,11 @@
                            { multiple: true })
                 ) %>
 
+                <% search_name = @entity.person? ? "#{@entity.person.name_first} #{@entity.person.name_last}" : @entity.primary_alias&.name %>
+                <% wikidata_search_url = search_name ? "https://www.wikidata.org/w/index.php?search=#{CGI.escape(search_name)}" : nil %>
                 <%= edit_entity_form_section(
                   f.label(:qid, 'Wikidata QID', class: label_class),
-                  f.text_field(:qid)
+                  f.text_field(:qid) + (wikidata_search_url ? content_tag(:div, content_tag(:small, "Search for #{search_name} on #{link_to 'Wikidata', wikidata_search_url, target: '_blank'}".html_safe), class: 'mt-1') : '')
                 ) %>
 
                 <div class="row mb-3">
