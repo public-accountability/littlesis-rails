@@ -21,4 +21,9 @@
       </li>
     <% end %>
   <% end %>
+  <% if @entity.qid %>
+    <li>
+      <a href="https://www.wikidata.org/wiki/<%= @entity.qid %>" target='_blank'>Wikidata: <%= @entity.qid %></a>
+    </li>
+  <% end %>
 </ul>

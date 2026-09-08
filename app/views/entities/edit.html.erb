@@ -110,6 +110,11 @@
              { multiple: true })
   ) %>
 
+  <%= edit_entity_form_section(
+    f.label(:qid, 'Wikidata QID', class: label_class),
+    f.text_field(:qid)
+  ) %>
+
   <div class="row mb-3">
     <div class="col-8">
       <%= f.submit t('vocab.update').capitalize, class: 'btn btn-primary' %>
