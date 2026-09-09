@@ -106,6 +106,28 @@ describe EntitySearchService do
     end
   end
 
+  describe 'wikidata qid search' do
+    it 'searches qid_text field when query is a QID' do
+      expect(Entity).to receive(:search).with("@(qid_text) Q27865661", defaults).once
+      EntitySearchService.new(query: 'Q27865661').search
+    end
+
+    it 'accepts lowercase qids' do
+      expect(Entity).to receive(:search).with("@(qid_text) q27865661", defaults).once
+      EntitySearchService.new(query: 'q27865661').search
+    end
+
+    it 'does not override fields when explicitly provided' do
+      expect(Entity).to receive(:search).with(search_term_with_notes, defaults.merge(per_page: 5)).once
+      EntitySearchService.new(query: 'Q27865661', num: 5, fields: %w[name aliases notes]).search
+    end
+
+    it 'does not treat queries with other text as qids' do
+      expect(Entity).to receive(:search).with(search_term, defaults).once
+      EntitySearchService.new(query: 'Q something').search
+    end
+  end
+
   describe 'can filtering by tags', :sphinx do
     before do
       Tag.remove_instance_variable(:@lookup) if Tag.instance_variable_defined?(:@lookup)
@@ -129,6 +151,25 @@ describe EntitySearchService do
 
     it 'finds 1 entities when filtering by nyc tag' do
       expect(EntitySearchService.new(query: "apple", tags: "nyc").search.length).to eq 1
+    end
+  end
+
+  describe 'searching by wikidata qid', :sphinx do
+    before do
+      setup_sphinx
+      create(:entity_org, qid: 'Q12345')
+    end
+
+    after do
+      teardown_sphinx
+    end
+
+    it 'finds entities by their Wikidata QID' do
+      expect(EntitySearchService.new(query: 'Q12345').search.length).to eq 1
+    end
+
+    it 'finds entities by lowercase Wikidata QID' do
+      expect(EntitySearchService.new(query: 'q12345').search.length).to eq 1
     end
   end
 end

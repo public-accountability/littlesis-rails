@@ -2,6 +2,7 @@
 
 class EntitySearchService
   ONLY_NUMBERS = /\A[[:digit:]]+\Z/.freeze
+  WIKIDATA_QID = /\A[Qq][0-9]+\Z/.freeze
 
   DEFAULT_OPTIONS = {
     with: { is_deleted: false },
@@ -22,6 +23,9 @@ class EntitySearchService
   def initialize(query:, **kwargs)
     @query = LsSearch.escape(query)
     @options = DEFAULT_OPTIONS.deep_merge(kwargs)
+
+    # If the query is a Wikidata QID, search the qid_text field instead of names/aliases
+    @options[:fields] = %w[qid_text] if WIKIDATA_QID.match?(query.strip) && kwargs[:fields].nil?
 
     @search_options = {
       with: @options[:with],
