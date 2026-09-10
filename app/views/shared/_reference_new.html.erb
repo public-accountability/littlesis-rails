@@ -1,18 +1,39 @@
 <%= turbo_frame_tag "modal" do %>
   <script>
-   window.addEventListener('DOMContentLoaded', function() {
-     const fileInput = document.querySelector('#reference-form input[type="file"]')
+    window.addEventListener('DOMContentLoaded', function() {
+      const fileInput = document.querySelector('#reference-form input[type="file"]')
+      const urlInput = document.querySelector('#reference-form input[type="url"]')
+      const disallowedDomains = <%= Document.disallowed_domains.to_json %>
 
-     if (!fileInput) { return }
+      if (!fileInput) { return }
 
-     fileInput.value = ''
+      fileInput.value = ''
 
-     fileInput.addEventListener('change', function() {
-       document.querySelector('#reference-form input[type="url"]').required = (this.value == '')
-     })
+      fileInput.addEventListener('change', function() {
+        urlInput.required = (this.value == '')
+      })
 
-   })
-  </script>
+      document.querySelector('#reference-form').addEventListener('submit', function(e) {
+        const url = urlInput.value.trim()
+        if (url) {
+          try {
+            const urlObj = new URL(url)
+            const hostname = urlObj.hostname.toLowerCase()
+            if (disallowedDomains.some(domain => hostname === domain || hostname.endsWith('.' + domain))) {
+              e.preventDefault()
+              document.querySelector('#reference-errors').innerHTML = '<p>Source URL cannot be from a disallowed source (wikipedia.org, etc.)</p>'
+              document.querySelector('#reference-error-alert').style.display = 'block'
+              urlInput.focus()
+              return false
+            }
+          } catch (err) {
+            // Invalid URL, will be caught by HTML5 validation
+          }
+        }
+      })
+
+    })
+   </script>
 
   <div class="modal" data-controller="modal" data-action="keyup@window->modal#closeWithKeyboard">
     <div class="modal-dialog">
