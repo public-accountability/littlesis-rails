@@ -14,6 +14,13 @@ class Document < ApplicationRecord
             presence: true,
             unless: :primary_source?
 
+  validates :url,
+            exclusion: {
+              in: ->(doc) { disallowed_domains },
+              message: "%{value} is from a disallowed source"
+            },
+            if: ->(doc) { doc.url.present? && !doc.primary_source? }
+
   validates :url_hash,
             presence: true,
             uniqueness: { case_sensitive: true },
@@ -22,7 +29,7 @@ class Document < ApplicationRecord
   validates :name, length: { maximum: 255 }
   validates :publication_date, date: true
 
-  before_validation :trim_whitespace, :set_hash, :convert_date
+  before_validation :trim_whitespace, :set_hash, :convert_date, :validate_url_domain
 
   unless Rails.env.development?
     after_create -> { InternetArchiveJob.perform_later(url) }, :unless => :primary_source?
@@ -68,6 +75,28 @@ class Document < ApplicationRecord
 
   def self.url_to_hash(url)
     Digest::SHA1.hexdigest(url)
+  end
+
+  def self.disallowed_domains
+    ['wikipedia.org', 'wikipedia.com', 'wikimedia.org']
+  end
+
+  def validate_url_domain
+    return if url.blank? || primary_source?
+
+    begin
+      uri = URI.parse(url)
+      hostname = uri.hostname.downcase
+
+      self.class.disallowed_domains.each do |domain|
+        if hostname == domain || hostname.end_with?('.' + domain)
+          errors.add(:url, "is from a disallowed source (#{domain})")
+          break
+        end
+      end
+    rescue URI::InvalidURIError
+      # Invalid URL, will be caught by url: true validation
+    end
   end
 
   private
