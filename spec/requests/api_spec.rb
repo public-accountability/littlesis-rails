@@ -26,7 +26,8 @@ describe Api, :pagination_helper do
             'types' => %w[Person Lawyer],
             'aliases' => lawyer.aliases.map(&:name),
             'tags' => [],
-            'updated_at' => lawyer.updated_at.iso8601
+            'updated_at' => lawyer.updated_at.iso8601,
+            'qid' => lawyer.qid
           },
           'links' => { 'self' => Rails.application.routes.url_helpers.entity_url(lawyer) }
         },

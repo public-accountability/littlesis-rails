@@ -119,7 +119,7 @@ describe EntitySearchService do
 
     it 'does not override fields when explicitly provided' do
       expect(Entity).to receive(:search).with(search_term_with_notes, defaults.merge(per_page: 5)).once
-      EntitySearchService.new(query: 'Q27865661', num: 5, fields: %w[name aliases notes]).search
+      EntitySearchService.new(query: 'foo', num: 5, fields: %w[name aliases notes]).search
     end
 
     it 'does not treat queries with other text as qids' do
