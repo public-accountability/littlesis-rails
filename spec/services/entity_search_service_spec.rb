@@ -123,7 +123,7 @@ describe EntitySearchService do
     end
 
     it 'does not treat queries with other text as qids' do
-      expect(Entity).to receive(:search).with(search_term, defaults).once
+      expect(Entity).to receive(:search).with("@(name,aliases) Q something", defaults).once
       EntitySearchService.new(query: 'Q something').search
     end
   end
