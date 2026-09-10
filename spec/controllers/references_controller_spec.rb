@@ -52,6 +52,24 @@ describe ReferencesController, type: :controller do
     end
   end
 
+  describe 'POST /reference with disallowed URL' do
+    login_user
+    let(:relationship) do
+      create(:generic_relationship, entity: create(:entity_person), related: create(:entity_org))
+    end
+
+    it 'rejects wikipedia.org URLs' do
+      post_data = { data: { referenceable_id: relationship.id,
+                            url: 'https://en.wikipedia.org/wiki/Something',
+                            name: 'a website',
+                            referenceable_type: "Relationship" } }
+      post(:create, params: post_data)
+      expect(response).to have_http_status :found
+      expect(Reference.count).to eq 0
+      expect(Document.count).to eq 0
+    end
+  end
+
   describe 'DELETE /reference' do
     login_user :admin
     let(:existing_ref_id) { 1 }

@@ -51,6 +51,18 @@ describe Document, type: :model do
       expect(document.valid?).to be true
       expect(document.publication_date).to eql '1999-00-00'
     end
+
+    it 'rejects wikipedia.org URLs' do
+      document = build(:document, url: 'https://en.wikipedia.org/wiki/Something', name: 'a website')
+      expect(document.valid?).to be false
+      expect(document.errors[:url]).to include('https://en.wikipedia.org/wiki/Something is from a disallowed source (wikipedia.org)')
+    end
+
+    it 'rejects subdomains of disallowed domains' do
+      document = build(:document, url: 'https://en.m.wikipedia.org/wiki/Something', name: 'a website')
+      expect(document.valid?).to be false
+      expect(document.errors[:url]).to include('https://en.m.wikipedia.org/wiki/Something is from a disallowed source (wikipedia.org)')
+    end
   end
 
   describe 'find_by_url' do
