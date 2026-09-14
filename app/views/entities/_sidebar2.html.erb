@@ -31,7 +31,7 @@
   </div>
 
   <%# External Links %>
-  <% unless @entity.external_links.count.zero? %>
+  <% if @entity.external_links.count.positive? || @entity.qid.present? %>
     <div class="row mt-3">
       <%= render partial: 'sidebar_external_links' %>
     </div>
