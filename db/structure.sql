@@ -1233,7 +1233,7 @@ CREATE TABLE public.entities (
     merged_id bigint,
     delta boolean DEFAULT true NOT NULL,
     link_count bigint DEFAULT 0 NOT NULL,
-    qid text
+    qid character varying(255)
 );
 
 
