@@ -136,7 +136,6 @@ class EntitiesController < ApplicationController
       redirect_to concretize_entity_path(@entity)
     else
       set_entity_references
-      @reference_params = params.require(:reference).permit(:name, :url, :excerpt, :publication_date).to_h if params[:reference]
       render :edit
     end
   end

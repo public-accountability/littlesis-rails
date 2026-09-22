@@ -65,6 +65,7 @@ describe ReferencesController, type: :controller do
                             referenceable_type: "Relationship" } }
       post(:create, params: post_data)
       expect(response).to have_http_status :found
+      expect(flash[:alert]).to include('is not an allowed source domain')
       expect(Reference.count).to eq 0
       expect(Document.count).to eq 0
     end

@@ -23,15 +23,14 @@ class ReferencesController < ApplicationController
       end
     else
       respond_to do |format|
-        format.html do
-          if turbo_frame_request?
-            render partial: 'shared/reference_new', locals: { model: @referenceable }, status: :bad_request
-          else
-            redirect_back(fallback_location: after_create_reference_fallback_location)
-          end
-        end
+        format.html { redirect_back(fallback_location: after_create_reference_fallback_location) }
         format.json { render json: { errors: @referenceable.errors }, status: :bad_request }
       end
+    end
+  rescue Document::DocumentAttributes::InvalidDocumentError => e
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: after_create_reference_fallback_location, alert: e.message) }
+      format.json { render json: { error: e.message }, status: :bad_request }
     end
   end
 

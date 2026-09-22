@@ -111,7 +111,6 @@ class RelationshipsController < ApplicationController
     if @relationship.valid?
       return redirect_back fallback_location: relationship_path(@relationship)
     else
-      @reference_params = reference_params
       return render :edit
     end
   end
