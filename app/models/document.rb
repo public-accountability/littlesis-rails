@@ -14,13 +14,6 @@ class Document < ApplicationRecord
             presence: true,
             unless: :primary_source?
 
-  validates :url,
-            exclusion: {
-              in: ->(doc) { disallowed_domains },
-              message: "%{value} is from a disallowed source"
-            },
-            if: ->(doc) { doc.url.present? && !doc.primary_source? }
-
   validates :url_hash,
             presence: true,
             uniqueness: { case_sensitive: true },
@@ -29,7 +22,9 @@ class Document < ApplicationRecord
   validates :name, length: { maximum: 255 }
   validates :publication_date, date: true
 
-  before_validation :trim_whitespace, :set_hash, :convert_date, :validate_url_domain
+  validate :validate_url_domain
+
+  before_validation :trim_whitespace, :set_hash, :convert_date
 
   unless Rails.env.development?
     after_create -> { InternetArchiveJob.perform_later(url) }, :unless => :primary_source?
