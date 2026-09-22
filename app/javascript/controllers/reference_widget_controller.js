@@ -26,11 +26,11 @@ export default class extends Controller {
     $(this.selectTarget).select2(select2Configuration)
     $(this.selectTarget).on('change', this.selectExistingSource.bind(this))
     this.selectExistingSource()
-    
+
     if (this.newDocumentUrlTarget?.value?.trim()) {
       this.toggleNewDocument()
     }
-    
+
     if (this.newDocumentUrlTarget) {
       this.newDocumentUrlTarget.addEventListener('input', () => {
         this.newDocumentUrlTarget.setCustomValidity('')
@@ -41,7 +41,7 @@ export default class extends Controller {
         }
       })
     }
-    
+
     this.formElement = this.element.closest('form')
     if (this.formElement) {
       this.formElement.addEventListener('submit', this.validateUrl.bind(this))
@@ -51,9 +51,9 @@ export default class extends Controller {
   validateUrl(event) {
     const url = this.newDocumentUrlTarget?.value?.trim()
     if (!url) return
-    
+
     if (this.newDocumentTarget?.offsetParent === null) return
-    
+
     let host = null
     try {
       const urlObj = new URL(url)
@@ -61,7 +61,7 @@ export default class extends Controller {
     } catch {
       return
     }
-    
+
     if (this.disallowedDomainsValue.some(domain => host === domain || host.endsWith('.' + domain))) {
       event.preventDefault()
       this.newDocumentUrlTarget.setCustomValidity(`Source URLs from ${host} are not allowed (e.g. Wikipedia)`)
