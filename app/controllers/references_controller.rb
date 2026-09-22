@@ -24,9 +24,13 @@ class ReferencesController < ApplicationController
     else
       respond_to do |format|
         format.html do
-          format.html { redirect_back(fallback_location: after_create_reference_fallback_location) }
-          format.json { render json: { errors: @referenceable.errors }, status: :bad_request }
+          if turbo_frame_request?
+            render partial: 'shared/reference_new', locals: { model: @referenceable }, status: :bad_request
+          else
+            redirect_back(fallback_location: after_create_reference_fallback_location)
+          end
         end
+        format.json { render json: { errors: @referenceable.errors }, status: :bad_request }
       end
     end
   end
