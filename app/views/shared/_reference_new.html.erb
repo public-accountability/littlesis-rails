@@ -1,71 +1,44 @@
 <%= turbo_frame_tag "modal" do %>
   <script>
-    function showErrorAlert(message) {
-      const errorAlert = document.querySelector('#reference-error-alert')
-      const errorDiv = document.querySelector('#reference-errors')
-      if (errorAlert && errorDiv) {
-        if (message) {
-          errorDiv.innerHTML = '<p>' + message + '</p>'
-          errorAlert.style.display = 'block'
-        } else {
-          errorDiv.innerHTML = ''
-          errorAlert.style.display = 'none'
-        }
-      }
-    }
+    (function() {
+      const form = document.querySelector('#reference-form')
+      if (!form) return
 
-    function validateDisallowedDomains(url) {
-      const disallowedDomains = <%= Document.disallowed_domains.to_json %>
-      try {
-        const urlObj = new URL(url)
-        const hostname = urlObj.hostname.toLowerCase()
-        return !disallowedDomains.some(domain => hostname === domain || hostname.endsWith('.' + domain))
-      } catch (err) {
-        return false
-      }
-    }
+      const urlInput = form.querySelector('input[type="url"]')
+      const fileInput = form.querySelector('input[type="file"]')
+      const disallowed = <%= Document::DISALLOWED_DOMAINS.to_json %>
 
-    function setupFormValidation() {
-      const fileInput = document.querySelector('#reference-form input[type="file"]')
-      const urlInput = document.querySelector('#reference-form input[type="url"]')
-
-      if (!fileInput) { return }
-
-      const serverErrors = <% if defined?(@referenceable) && @referenceable && @referenceable.errors.any? %>
-        <%= @referenceable.errors.full_messages.to_json %>
-      <% else %>
-        []
-      <% end %>
-      if (serverErrors.length > 0) {
-        showErrorAlert(serverErrors.join('<br>'))
+      if (fileInput) {
+        fileInput.value = ''
+        fileInput.addEventListener('change', () => {
+          urlInput.required = !fileInput.value
+        })
       }
 
-      fileInput.value = ''
-
-      fileInput.addEventListener('change', function() {
-        urlInput.required = (this.value == '')
+      urlInput.addEventListener('input', () => {
+        urlInput.setCustomValidity('')
       })
 
-      // Clear server error when URL changes
-      urlInput.addEventListener('input', function() {
-        if (urlInput.value.trim()) {
-          showErrorAlert('')
-        }
-      })
-
-      document.querySelector('#reference-form').addEventListener('submit', function(e) {
+      form.addEventListener('submit', (e) => {
         const url = urlInput.value.trim()
-        if (url && !validateDisallowedDomains(url)) {
+        if (!url) return
+
+        let host = null
+        try {
+          host = new URL(url).hostname.toLowerCase()
+        } catch {
+          return
+        }
+
+        if (host && disallowed.some(d => host === d || host.endsWith('.' + d))) {
+          urlInput.setCustomValidity(`Source URLs from ${host} are not allowed (e.g. Wikipedia)`)
           e.preventDefault()
-          showErrorAlert('Source URL cannot be from a disallowed source (wikipedia.org, etc.)')
+          urlInput.reportValidity()
           urlInput.focus()
-          return false
         }
       })
-    }
-
-    window.addEventListener('turbo:load', setupFormValidation)
-   </script>
+    })()
+  </script>
 
   <div class="modal" data-controller="modal" data-action="keyup@window->modal#closeWithKeyboard">
     <div class="modal-dialog">

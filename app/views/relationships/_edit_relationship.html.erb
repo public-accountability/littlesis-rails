@@ -15,8 +15,7 @@
                 <%= render partial: 'shared/editing/reference_widget',
                            locals: {
                              documents: @relationship.documents.to_a,
-                             selected: @selected_document_id,
-                             reference_params: @reference_params || {}
+                             selected: @selected_document_id
                            }
                 %>
               </div>

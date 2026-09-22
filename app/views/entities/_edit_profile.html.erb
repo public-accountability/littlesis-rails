@@ -16,7 +16,7 @@
                 <div class="row mb-2 mt-2">
                   <div class="col-sm-12 col-md-9">
                     <%= render partial: 'shared/editing/reference_widget',
-                             locals: { documents: RecentEntityReferencesQuery.run(@entity), reference_params: @reference_params || {} } %>
+                             locals: { documents: RecentEntityReferencesQuery.run(@entity) } %>
                   </div>
 
                   <div class="col-sm-12 col-md-5 col-md-offset-1">

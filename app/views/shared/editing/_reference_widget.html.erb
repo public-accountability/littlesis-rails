@@ -3,7 +3,7 @@ locals: documents: [<Document>], selected, reference_params: {}
 Also see controllers/reference_widget_controller.js
 %>
 
-<div data-controller="reference-widget" id="reference-widget">
+<div data-controller="reference-widget reference-form" id="reference-widget" data-reference-widget-disallowed-domains-value="<%= Document::DISALLOWED_DOMAINS.to_json %>">
   <div class="card">
     <div class="card-header">
       <span class="card-title"><%= t('phrases.where_is_this') %></span>
@@ -50,7 +50,7 @@ Also see controllers/reference_widget_controller.js
           <label class="col-form-label">Url</label>
         </div>
         <div class="col-auto mw-2">
-          <input class="form-control" type="url" name="reference[url]" data-reference-widget-target="newDocumentInput newDocumentUrl" value="<%= reference_params[:url] %>" />
+          <input class="form-control" type="url" name="reference[url]" data-reference-widget-target="newDocumentInput newDocumentUrl" data-reference-form-target="url" value="<%= params.dig(:reference, :url) %>" />
         </div>
       </div>
 
@@ -59,7 +59,7 @@ Also see controllers/reference_widget_controller.js
           <label class="col-form-label"><%= t('vocab.name').capitalize %></label>
         </div>
         <div class="col-auto mw-2">
-          <input class="form-control" type="text" name="reference[name]" data-reference-widget-target="newDocumentInput newDocumentName" value="<%= reference_params[:name] %>" />
+          <input class="form-control" type="text" name="reference[name]" data-reference-widget-target="newDocumentInput newDocumentName" data-reference-form-target="name" value="<%= params.dig(:reference, :name) %>" />
         </div>
         <div class="col-1 ps-0">
           <button class="btn bg-transparent" data-action="reference-widget#titleExtractor" data-reference-widget-target="titleExtractorButton" role="button">
