@@ -29,6 +29,12 @@ describe Referenceable, type: :model do
       expect(referenceable.errors[:base]).to include '"this is a bad url" is not a valid url'
     end
 
+    it 'invalidates the model if the URL is from a disallowed domain' do
+      referenceable.validate_reference('url' => 'https://en.wikipedia.org/wiki/Something', 'name' => 'wikipedia')
+      expect(referenceable.valid?).to be false
+      expect(referenceable.errors[:base]).to include 'is not an allowed source domain'
+    end
+
     it 'invalidates the model if the document name is too long' do
       referenceable.validate_reference(url: Faker::Internet.url, name: ('X' * 256))
       expect(referenceable.valid?).to be false
@@ -68,6 +74,10 @@ describe Referenceable, type: :model do
 
     it 'raises error if url is invalid' do
       expect { entity_person.add_reference(url: 'bad_url') }.to raise_error(Document::DocumentAttributes::InvalidDocumentError)
+    end
+
+    it 'raises error if url is from disallowed domain' do
+      expect { entity_person.add_reference(url: 'https://en.wikipedia.org/wiki/Something') }.to raise_error(Document::DocumentAttributes::InvalidDocumentError)
     end
 
     it 'creates new reference' do

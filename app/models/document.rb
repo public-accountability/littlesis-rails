@@ -72,26 +72,21 @@ class Document < ApplicationRecord
     Digest::SHA1.hexdigest(url)
   end
 
-  def self.disallowed_domains
-    ['wikipedia.org', 'wikipedia.com', 'wikimedia.org']
+  DISALLOWED_DOMAINS = %w[wikipedia.org wikipedia.com wikimedia.org].freeze
+
+  def self.disallowed_source?(url)
+    host = URI.parse(url).hostname.to_s.downcase
+    DISALLOWED_DOMAINS.any? { |d| host == d || host.end_with?(".#{d}") }
+  rescue URI::InvalidURIError, URI::BadURIError, NoMethodError
+    false
   end
 
   def validate_url_domain
-    return if url.blank? || primary_source?
+    return if url.blank? || primary_source? || !self.class.disallowed_source?(url)
 
-    begin
-      uri = URI.parse(url)
-      hostname = uri.hostname.downcase
-
-      self.class.disallowed_domains.each do |domain|
-        if hostname == domain || hostname.end_with?('.' + domain)
-          errors.add(:url, "is from a disallowed source (#{domain})")
-          break
-        end
-      end
-    rescue URI::InvalidURIError
-      # Invalid URL, will be caught by url: true validation
-    end
+    host = URI.parse(url).hostname.to_s.downcase
+    domain = DISALLOWED_DOMAINS.find { |d| host == d || host.end_with?(".#{d}") }
+    errors.add(:url, "is from a disallowed source (#{domain})") if domain
   end
 
   private

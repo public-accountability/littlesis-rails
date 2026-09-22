@@ -55,13 +55,18 @@ describe Document, type: :model do
     it 'rejects wikipedia.org URLs' do
       document = build(:document, url: 'https://en.wikipedia.org/wiki/Something', name: 'a website')
       expect(document.valid?).to be false
-      expect(document.errors[:url]).to include('https://en.wikipedia.org/wiki/Something is from a disallowed source (wikipedia.org)')
+      expect(document.errors[:url]).to include('is from a disallowed source (wikipedia.org)')
     end
 
     it 'rejects subdomains of disallowed domains' do
       document = build(:document, url: 'https://en.m.wikipedia.org/wiki/Something', name: 'a website')
       expect(document.valid?).to be false
-      expect(document.errors[:url]).to include('https://en.m.wikipedia.org/wiki/Something is from a disallowed source (wikipedia.org)')
+      expect(document.errors[:url]).to include('is from a disallowed source (wikipedia.org)')
+    end
+
+    it 'allows non-disallowed domains' do
+      document = build(:document, url: 'https://nytimes.com/article', name: 'a website')
+      expect(document.valid?).to be true
     end
   end
 

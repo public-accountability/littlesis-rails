@@ -43,7 +43,7 @@ class Document
     def valid?
       return false if name && name.length >= 255
 
-      primary_source? || (url.present? && Document.valid_url?(url))
+      primary_source? || (url.present? && Document.valid_url?(url) && !Document.disallowed_source?(url))
     end
 
     def validate!
@@ -55,6 +55,8 @@ class Document
         'A source URL is required'
       elsif !Document.valid_url?(url)
         "\"#{url}\" is not a valid url"
+      elsif Document.disallowed_source?(url)
+        "\"#{url}\" is not an allowed source domain"
       elsif name.length >= 255
         'Name is too long (maximum is 255 characters)'
       end
