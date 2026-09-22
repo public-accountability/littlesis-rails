@@ -8,6 +8,8 @@ const select2Configuration = {
   "allowClear": true
 }
 
+const disallowedDomains = <%= Document.disallowed_domains.to_json %>
+
 export default class extends Controller {
   static targets = ["select",
                     "existingSource",
@@ -23,6 +25,60 @@ export default class extends Controller {
     $(this.selectTarget).select2(select2Configuration)
     $(this.selectTarget).on('change', this.selectExistingSource.bind(this))
     this.selectExistingSource()
+    
+    // If there's a URL value, show the new document form
+    if (this.newDocumentUrlTarget?.value?.trim()) {
+      this.toggleNewDocument()
+    }
+    
+    // Remove error styling when URL changes
+    if (this.newDocumentUrlTarget) {
+      this.newDocumentUrlTarget.addEventListener('input', () => {
+        this.newDocumentUrlTarget.classList.remove('is-invalid')
+        const errorMessage = this.newDocumentUrlTarget.nextElementSibling
+        if (errorMessage && errorMessage.classList.contains('invalid-feedback')) {
+          errorMessage.remove()
+        }
+      })
+    }
+    
+    this.formElement = this.element.closest('form')
+    if (this.formElement) {
+      this.formElement.addEventListener('submit', this.validateUrl.bind(this))
+    }
+  }
+
+  validateUrl(event) {
+    const url = this.newDocumentUrlTarget?.value?.trim()
+    if (!url) return
+    
+    try {
+      const urlObj = new URL(url)
+      const hostname = urlObj.hostname.toLowerCase()
+      
+      if (disallowedDomains.some(domain => hostname === domain || hostname.endsWith('.' + domain))) {
+        event.preventDefault()
+        this.showInlineError('Source URL cannot be from a disallowed source (wikipedia.org, etc.)')
+        this.newDocumentUrlTarget.focus()
+        return false
+      }
+    } catch (err) {
+      // Invalid URL, will be caught by HTML5 validation
+    }
+  }
+
+  showInlineError(message) {
+    // Add error styling to the URL input
+    this.newDocumentUrlTarget.classList.add('is-invalid')
+    
+    // Create error message element if it doesn't exist
+    let errorMessage = this.newDocumentUrlTarget.nextElementSibling
+    if (!errorMessage || !errorMessage.classList.contains('invalid-feedback')) {
+      errorMessage = document.createElement('div')
+      errorMessage.className = 'invalid-feedback d-block'
+      this.newDocumentUrlTarget.after(errorMessage)
+    }
+    errorMessage.textContent = message
   }
 
   toggleJustCleaningUp(event) {
