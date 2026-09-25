@@ -68,6 +68,12 @@ describe Document, type: :model do
       document = build(:document, url: 'https://nytimes.com/article', name: 'a website')
       expect(document.valid?).to be true
     end
+
+    it 'allows primary source documents to skip url domain validation' do
+      d = Document.new(name: 'field notes', ref_type: 'primary_source')
+      d.primary_source_document.attach(io: io, filename: 'example.png')
+      expect(d.valid?).to be true
+    end
   end
 
   describe 'find_by_url' do

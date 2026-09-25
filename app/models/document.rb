@@ -82,9 +82,9 @@ class Document < ApplicationRecord
   end
 
   def validate_url_domain
-    return if url.blank? || !self.class.disallowed_source?(url)
+    return if primary_source?
 
-    return if primary_source? && !primary_source_document.attached?
+    return if url.blank? || !self.class.disallowed_source?(url)
 
     host = URI.parse(url).hostname.to_s.downcase
     domain = DISALLOWED_DOMAINS.find { |d| host == d || host.end_with?(".#{d}") }
