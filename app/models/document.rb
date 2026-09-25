@@ -72,7 +72,7 @@ class Document < ApplicationRecord
     Digest::SHA1.hexdigest(url)
   end
 
-  DISALLOWED_DOMAINS = %w[wikipedia.org wikipedia.com wikimedia.org].freeze
+  DISALLOWED_DOMAINS = %w[wikipedia.org wikipedia.com wikimedia.org canarymission.org].freeze
 
   def self.disallowed_source?(url)
     host = URI.parse(url).hostname.to_s.downcase
