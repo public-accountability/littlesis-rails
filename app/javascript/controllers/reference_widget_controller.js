@@ -64,7 +64,7 @@ export default class extends Controller {
 
     if (this.disallowedDomainsValue.some(domain => host === domain || host.endsWith('.' + domain))) {
       event.preventDefault()
-      this.newDocumentUrlTarget.setCustomValidity(`Source URLs from ${host} are not allowed (e.g. Wikipedia)`)
+      this.newDocumentUrlTarget.setCustomValidity(`Source URLs from ${host} are not allowed.`)
       this.newDocumentUrlTarget.reportValidity()
       this.newDocumentUrlTarget.focus()
     }

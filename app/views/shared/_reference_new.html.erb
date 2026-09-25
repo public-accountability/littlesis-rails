@@ -31,7 +31,7 @@
         }
 
         if (host && disallowed.some(d => host === d || host.endsWith('.' + d))) {
-          urlInput.setCustomValidity(`Source URLs from ${host} are not allowed (e.g. Wikipedia)`)
+          urlInput.setCustomValidity(`Source URLs from ${host} are not allowed.`)
           e.preventDefault()
           urlInput.reportValidity()
           urlInput.focus()
