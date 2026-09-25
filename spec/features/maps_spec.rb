@@ -11,7 +11,7 @@ describe 'Oligrapher' do
 
   describe 'oligrapher creation page' do
     before { login_as(user, scope: :user) }
-    after { logout(user) }
+      after { logout(:user) }
 
     def has_script_src(page, query_string)
       page.all("script").filter { _1['src']&.include?(query_string) }.length.positive?
@@ -68,7 +68,7 @@ describe 'Oligrapher' do
       visit oligrapher_path(private_map)
     end
 
-    after { logout(user) }
+      after { logout(:user) }
 
     it 'map page is viewable' do
       successfully_visits_page oligrapher_path(private_map)

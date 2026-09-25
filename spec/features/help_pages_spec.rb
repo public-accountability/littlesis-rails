@@ -20,7 +20,7 @@ feature 'help pages' do
 
     before { login_as(admin, scope: :user) }
 
-    after { logout(admin) }
+    after { logout(:user) }
 
     scenario 'creating a new help page' do
       original_help_page_count = HelpPage.count

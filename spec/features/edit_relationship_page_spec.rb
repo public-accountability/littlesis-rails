@@ -15,7 +15,7 @@ describe 'Edit Relationship Page', type: :feature do
   describe 'user is logged in' do
     before { login_as(user, scope: :user) }
 
-    after { logout(user) }
+      after { logout(:user) }
 
     describe 'Editing a hiearchical relationship' do
       before { visit edit_relationship_path(hierarchy_relationship) }

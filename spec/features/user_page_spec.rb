@@ -10,7 +10,7 @@ feature 'User Pages' do
     entity.update!(is_current: true, last_user_id: user_for_page.id)
   end
 
-  after { logout(user) }
+  after { logout(:user) }
 
   describe 'User Page' do
     scenario 'visiting the page via the user name' do

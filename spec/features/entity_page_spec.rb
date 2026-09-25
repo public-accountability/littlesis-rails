@@ -136,9 +136,8 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
   end
 
   describe "header" do
-    before { visit_page.call }
-
     context 'with an anonymous user' do
+      before { visit_page.call }
       it "shows the entity's name" do
         expect(page).to have_selector 'h1', text: person.name
       end
@@ -165,8 +164,9 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
       let(:user) { create_editor }
 
       before { login_as(user, scope: :user) }
+      before { visit_page.call }
 
-      after { logout(user) }
+      after { logout(:user) }
 
       it 'has editable blurb' do
         expect(page).not_to have_selector '#editable-blurb'
@@ -299,7 +299,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       before { login_as(user, scope: :user) }
 
-      after { logout(user) }
+      after { logout(:user) }
 
       describe 'viewing cmp entity page (in strata)' do
         before { visit concretize_entity_path(entity_in_strata) }
@@ -319,7 +319,7 @@ describe "Entity Page", :network_analysis_helper, :pagination_helper, type: :fea
 
       before { login_as(user, scope: :user) }
 
-      after { logout(user) }
+      after { logout(:user) }
 
       context 'with a regular user' do
         context 'without tags' do
