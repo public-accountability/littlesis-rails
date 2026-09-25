@@ -102,6 +102,7 @@ export default class extends Controller {
       this.justCleaningUpTarget.required = true
     }
     this.newDocumentInputTargets.map(elem => elem.required = false)
+    this.newDocumentUrlTarget.setCustomValidity('')
   }
 
   titleExtractor(event) {
