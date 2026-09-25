@@ -32,7 +32,7 @@ describe Referenceable, type: :model do
     it 'invalidates the model if the URL is from a disallowed domain' do
       referenceable.validate_reference('url' => 'https://en.wikipedia.org/wiki/Something', 'name' => 'wikipedia')
       expect(referenceable.valid?).to be false
-      expect(referenceable.errors[:base]).to include 'is not an allowed source domain'
+      expect(referenceable.errors[:base]).to include '"https://en.wikipedia.org/wiki/Something" is not an allowed source domain'
     end
 
     it 'invalidates the model if the document name is too long' do
