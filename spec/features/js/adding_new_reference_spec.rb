@@ -25,8 +25,8 @@ describe 'Entity References', type: :feature, js: true do
     end
 
     expect(entity.reload.documents.last.url).to eq url
+    expect(page).to have_selector('table[data-entity-references-table-target="table"] tbody tr td:first-child', text: 'example link')
     expect(page.all('table[data-entity-references-table-target="table"] tbody tr').count).to eq 1
-    expect(page.find('table[data-entity-references-table-target="table"] tbody tr td:first-child').text).to include 'example link'
   end
 
   scenario 'Uploading a primary source document' do

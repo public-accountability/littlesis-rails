@@ -14,7 +14,7 @@ describe 'user registration', js: true do
       fill_in 'user_password', with: 'trolleron'
       fill_in 'user_password_confirmation', with: 'trolleron'
       fill_in 'about-you-input', with: 'investigating Trystero and related matters'
-      find("#terms_of_use").set(false)
+      find("#terms_of_use").set(true)
       find('#user-registration-submit-button').click
       expect(page).to have_text("An email with a confirmation link is on the way.", wait: 10)
       expect(User.last.username).to eq 'oedipa'

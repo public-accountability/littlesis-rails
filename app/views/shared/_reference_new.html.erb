@@ -6,7 +6,7 @@
 
       const urlInput = form.querySelector('input[type="url"]')
       const fileInput = form.querySelector('input[type="file"]')
-      const disallowed = <%= Document::DISALLOWED_DOMAINS.to_json %>
+      const disallowed = <%= Document::DISALLOWED_DOMAINS.to_json.html_safe %>
 
       if (fileInput) {
         fileInput.value = ''
