@@ -9,7 +9,7 @@ class UserRequest < ApplicationRecord
              inverse_of: :reviewed_requests,
              optional: true
 
-  enum status: %i[pending approved denied]
+  enum :status, %i[pending approved denied]
 
   TYPES = {
     merge: 'MergeRequest',

@@ -36,7 +36,7 @@ class Document < ApplicationRecord
 
   ACCEPTED_MIME_TYPES = ['application/pdf', 'text/html', 'image/png', 'image/jpeg', 'text/csv'].freeze
 
-  enum ref_type: { generic: 1,
+  enum :ref_type, { generic: 1,
                    fec: 2,
                    primary_source: 3 }
 
