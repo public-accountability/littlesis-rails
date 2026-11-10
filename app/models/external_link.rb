@@ -99,7 +99,7 @@ class ExternalLink < ApplicationRecord
     }
   }.with_indifferent_access.freeze
 
-  enum link_type: LINK_TYPES.transform_values { |x| x[:enum_val] }.freeze
+  enum :link_type, LINK_TYPES.transform_values { |x| x[:enum_val] }.freeze
   belongs_to :entity
 
   has_paper_trail on:  %i[create destroy update],
